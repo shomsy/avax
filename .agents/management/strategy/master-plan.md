@@ -754,7 +754,7 @@ Do not write from scratch unless the plan explicitly says the feature is new or 
 Create:
 
 ```text
-Code-Review-And-ToDo/component-suite-migration-truth.md
+EVIDENCE/component-suite-migration-truth.md
 ```
 
 Run and record:
@@ -1296,7 +1296,7 @@ Then run governance review against all `how-to-*.md` files.
 Create:
 
 ```text
-Code-Review-And-ToDo/governance-compliance-after-suite-migration.md
+EVIDENCE/governance-compliance-after-suite-migration.md
 ```
 
 Required sections:
@@ -1460,7 +1460,7 @@ system is lying somewhere.
 Final report:
 
 ```text
-Code-Review-And-ToDo/component-suite-migration-final-report.md
+EVIDENCE/component-suite-migration-final-report.md
 ```
 
 Required sections:
@@ -1580,7 +1580,7 @@ Rules:
 - Documentation comes last.
 
 Implementation phases:
-1. Create Code-Review-And-ToDo/component-suite-migration-truth.md.
+1. Create EVIDENCE/component-suite-migration-truth.md.
 2. Inventory every component and classify target suite/component/action.
 3. Create target suite skeleton.
 4. Move existing code into target suites.
@@ -1608,7 +1608,7 @@ Implementation phases:
 19. Run kluster_code_review_auto if configured after file changes.
 20. Only after all checks pass, write docs under docs/.
 21. Delete obsolete docs and stale local component docs.
-22. Create Code-Review-And-ToDo/component-suite-migration-final-report.md.
+22. Create EVIDENCE/component-suite-migration-final-report.md.
 
 Acceptance criteria:
 - components root contains only suite folders plus temporary bridges if explicitly documented.

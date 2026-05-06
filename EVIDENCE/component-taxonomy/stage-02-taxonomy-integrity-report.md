@@ -24,9 +24,9 @@ Make the physical component tree match the Stage 01 frozen component taxonomy.
 - `components/` physical tree now contains only canonical suites:
   `Application`, `CLI`, `DataStack`, `DeveloperTools`, `HTTP`, `Identity`, `Operations`, `Presentation`, `Security`.
 - Non-canonical component roots are preserved under
-  `Code-Review-And-ToDo/archive/noncanonical-components/stage-02/`.
+  `EVIDENCE/archive/noncanonical-components/stage-02/`.
 - Nested capability `System` folders were removed from production component paths.
-- `CURRENT_TRUTH.md`, `TODO.md`, and `Code-Review-And-ToDo/EXECUTION.md` were updated after validation.
+- `CURRENT_TRUTH.md`, `TODO.md`, and `EVIDENCE/EXECUTION.md` were updated after validation.
 
 ## Files Intentionally Not Touched
 

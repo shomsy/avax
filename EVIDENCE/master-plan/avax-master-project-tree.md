@@ -2,7 +2,7 @@
 
 Date: 2026-05-05  
 Status: FROZEN TARGET / COMPONENT TAXONOMY GREEN / REPOSITORY RED  
-Source: `CURRENT_TRUTH.md`, `Code-Review-And-ToDo/EXECUTION.md`, `.agents/how-to/*.md`
+Source: `CURRENT_TRUTH.md`, `EVIDENCE/EXECUTION.md`, `.agents/how-to/*.md`
 
 ## Stage 01 Decision
 
@@ -48,7 +48,7 @@ public/
 routes/
 storage/
 tmp/
-Code-Review-And-ToDo/
+EVIDENCE/
 .agents/
 .github/
 ```
@@ -162,7 +162,7 @@ generic
 ## Archived Forbidden Production Component Roots
 
 Stage 01 observed these non-canonical roots directly under `components/`. Stage 02 archived them under
-`Code-Review-And-ToDo/archive/noncanonical-components/stage-02/` as non-production recovery material:
+`EVIDENCE/archive/noncanonical-components/stage-02/` as non-production recovery material:
 
 ```text
 components/.idea/
@@ -283,9 +283,9 @@ These roots are allowed but must not be counted as V1 Kernel proof:
 labs/
 benchmarks/
 examples/
-Code-Review-And-ToDo/recovery-staging/
-Code-Review-And-ToDo/recovery-generated/
-Code-Review-And-ToDo/recovery-reports/
+EVIDENCE/recovery-staging/
+EVIDENCE/recovery-generated/
+EVIDENCE/recovery-reports/
 ```
 
 `labs/SystemDesignKit` remains planning-only until V1 Kernel Green and the V2 platform baseline gates allow V3 work.

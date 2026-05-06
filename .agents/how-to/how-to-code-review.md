@@ -330,7 +330,7 @@ If these sections are missing, the review fails the review process itself.
 ## Required Artifacts (Deliverables)
 
 The review must produce these file review.md as output
-in the folder Code-Review-And-ToDo with sections:
+in the folder EVIDENCE with sections:
 
 - `ARCHITECTURE NOTES` (or this doc filled in)
 - `GOVERNANCE INVENTORY` (all discovered `how-to-*.md` documents)

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-out_dir="Code-Review-And-ToDo/muscle-recovery/git-sources"
+out_dir="EVIDENCE/muscle-recovery/git-sources"
 mkdir -p "${out_dir}"
 
 refs=(

@@ -110,7 +110,7 @@ Stop the review immediately if any of the following cannot be produced:
 ## Required Artifacts (Deliverables)
 
 The review must produce these file review.md as output 
-in the folder Code-Review-And-ToDo with sections:
+in the folder EVIDENCE with sections:
 
 - `ARCHITECTURE NOTES` (or this doc filled in)
 - `FINDINGS` (all findings using the standard template)

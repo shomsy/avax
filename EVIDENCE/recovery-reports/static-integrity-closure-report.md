@@ -12,7 +12,7 @@ No V2, V3, V4, MigrationRunner, new framework feature, broad cleanup, or optimis
 
 All captured command output is under:
 
-`Code-Review-And-ToDo/recovery-reports/v1-03-validation/`
+`EVIDENCE/recovery-reports/v1-03-validation/`
 
 ## Minimal Repairs During Validation
 
@@ -84,7 +84,7 @@ Latest audit summary from `03b-broken-refs-audit-after-compat.log`:
 - Audit CRITICAL: 124
 - Audit MINOR: 90
 
-Latest categorization from `Code-Review-And-ToDo/v1-integrity/broken-reference-groups.md`:
+Latest categorization from `EVIDENCE/v1-integrity/broken-reference-groups.md`:
 
 - TEST-ONLY: 71
 - DOCS-ONLY: 0

@@ -2,7 +2,7 @@
 
 Date: 2026-05-05  
 Status: FROZEN TARGET / STAGE 02 TAXONOMY GREEN / REPOSITORY RED  
-Source: `CURRENT_TRUTH.md`, `Code-Review-And-ToDo/EXECUTION.md`, `.agents/how-to/*.md`
+Source: `CURRENT_TRUTH.md`, `EVIDENCE/EXECUTION.md`, `.agents/how-to/*.md`
 
 ## Stage 01 Decision
 
@@ -32,24 +32,24 @@ and diagnostics.
 
 ## Archived Non-Canonical Top-Level Component Roots
 
-| Old Path                       | Classification                                           | Stage 02 Result                                                                                              |
-|--------------------------------|----------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
-| `components/.idea`             | Editor metadata inside production tree                   | Archived under `Code-Review-And-ToDo/archive/noncanonical-components/stage-02/`.                            |
-| `components/Data`              | Duplicate or legacy data owner                           | Archived as non-production recovery material.                                                               |
-| `components/DataLayer`         | Forbidden owner; DataLayer is not a V1 suite             | Archived as non-production recovery material.                                                               |
-| `components/DependencyMap`     | Tooling/developer diagnostics owner                      | Archived as non-production recovery material.                                                               |
-| `components/Documentation`     | Documentation/code-generation concern in production tree | Archived as non-production recovery material.                                                               |
-| `components/DumpDebugger`      | Developer diagnostics concern                            | Archived as non-production recovery material.                                                               |
-| `components/GracefulShutdown`  | Runtime lifecycle concern                                | Archived as non-production recovery material.                                                               |
-| `components/Infrastructure`    | Generic forbidden platform bucket                        | Archived as non-production recovery material.                                                               |
-| `components/Logging`           | Operational logging concern                              | Archived as non-production recovery material.                                                               |
-| `components/Performance`       | Benchmark/performance concern                            | Archived as non-production recovery material.                                                               |
-| `components/Persistence`       | Data persistence concern                                 | Archived as non-production recovery material.                                                               |
-| `components/ResourceGovernor`  | Runtime resource governance concern                      | Archived as non-production recovery material.                                                               |
-| `components/Response`          | HTTP response concern                                    | Archived as non-production recovery material.                                                               |
-| `components/Server`            | Runtime/server adapter concern                           | Archived as non-production recovery material.                                                               |
-| `components/StatelessBoundary` | Runtime safety concern                                   | Archived as non-production recovery material.                                                               |
-| `components/WorkerManager`     | Worker lifecycle concern                                 | Archived as non-production recovery material.                                                               |
+| Old Path                       | Classification                                           | Stage 02 Result                                                      |
+|--------------------------------|----------------------------------------------------------|----------------------------------------------------------------------|
+| `components/.idea`             | Editor metadata inside production tree                   | Archived under `EVIDENCE/archive/noncanonical-components/stage-02/`. |
+| `components/Data`              | Duplicate or legacy data owner                           | Archived as non-production recovery material.                        |
+| `components/DataLayer`         | Forbidden owner; DataLayer is not a V1 suite             | Archived as non-production recovery material.                        |
+| `components/DependencyMap`     | Tooling/developer diagnostics owner                      | Archived as non-production recovery material.                        |
+| `components/Documentation`     | Documentation/code-generation concern in production tree | Archived as non-production recovery material.                        |
+| `components/DumpDebugger`      | Developer diagnostics concern                            | Archived as non-production recovery material.                        |
+| `components/GracefulShutdown`  | Runtime lifecycle concern                                | Archived as non-production recovery material.                        |
+| `components/Infrastructure`    | Generic forbidden platform bucket                        | Archived as non-production recovery material.                        |
+| `components/Logging`           | Operational logging concern                              | Archived as non-production recovery material.                        |
+| `components/Performance`       | Benchmark/performance concern                            | Archived as non-production recovery material.                        |
+| `components/Persistence`       | Data persistence concern                                 | Archived as non-production recovery material.                        |
+| `components/ResourceGovernor`  | Runtime resource governance concern                      | Archived as non-production recovery material.                        |
+| `components/Response`          | HTTP response concern                                    | Archived as non-production recovery material.                        |
+| `components/Server`            | Runtime/server adapter concern                           | Archived as non-production recovery material.                        |
+| `components/StatelessBoundary` | Runtime safety concern                                   | Archived as non-production recovery material.                        |
+| `components/WorkerManager`     | Worker lifecycle concern                                 | Archived as non-production recovery material.                        |
 
 These archived roots are not production owners and must not be counted as V1 proof.
 

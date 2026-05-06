@@ -73,6 +73,6 @@ Keeping these under one HTTP suite avoids scattered ownership.
 ## References
 
 - ToDo.md - HTTP Suite Normalization Plan
-- Code-Review-And-ToDo/http-suite-normalization-truth.md
+- EVIDENCE/http-suite-normalization-truth.md
 
 *Created: 2026-04-28*

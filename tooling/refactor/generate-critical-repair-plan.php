@@ -1,6 +1,6 @@
 <?php
 
-$lines = file('Code-Review-And-ToDo/v1-integrity/broken-reference-groups.md', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+$lines = file('EVIDENCE/v1-integrity/broken-reference-groups.md', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
 $criticalRefs = [];
 $currentCategory = '';
@@ -109,5 +109,5 @@ foreach ($criticalRefs as $symbol => $data) {
     $markdown .= "| `$symbol` | $count | `$sample` | `$canonical` | $fixType | Low | PENDING |\n";
 }
 
-file_put_contents('Code-Review-And-ToDo/v1-integrity/critical-broken-reference-repair-plan.md', $markdown);
+file_put_contents('EVIDENCE/v1-integrity/critical-broken-reference-repair-plan.md', $markdown);
 echo 'Plan created with '.count($criticalRefs)." critical references.\n";

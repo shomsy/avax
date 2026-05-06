@@ -128,7 +128,7 @@ foreach ($oldDeclarations as $key => $old) {
         continue;
     }
 
-    if (str_contains($old['file'], '/Code-Review-And-ToDo/')) {
+    if (str_contains($old['file'], '/EVIDENCE/')) {
         continue;
     }
 

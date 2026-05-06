@@ -414,14 +414,14 @@ If something is missing:
 
 Component-local `README.md` is allowed only as a short ownership summary.
 
-`Code-Review-And-ToDo/` is allowed only for temporary recovery reports, validation evidence, audits, and execution artifacts.
+`EVIDENCE/` is allowed only for temporary recovery reports, validation evidence, audits, and execution artifacts.
 
 ### Rules
 
 ```text
 architecture docs live in docs/
 component ownership summaries may live as components/<Area>/<Component>/README.md
-recovery and validation evidence may live in Code-Review-And-ToDo/recovery-reports/
+recovery and validation evidence may live in EVIDENCE/recovery-reports/
 no random documentation may be scattered elsewhere
 if component README and docs disagree, docs are canonical unless README is explicitly newer and linked
 ```

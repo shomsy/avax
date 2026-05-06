@@ -56,7 +56,7 @@ final class CheckComponentSuiteStructure
 
     private array $helperFolders
         = [
-            'Code-Review-And-ToDo',
+            'EVIDENCE',
             'Context',
             'Dispatcher',
             'Enums',

@@ -29,19 +29,19 @@ recovery-smoke-persistence:
 
 recovery-summary:
 	@echo "== Recovery reports =="
-	@ls -lah Code-Review-And-ToDo/recovery-reports || true
+	@ls -lah EVIDENCE/recovery-reports || true
 	@echo ""
 	@echo "== Database extracted =="
-	@grep -c '^|' Code-Review-And-ToDo/recovery-reports/database-extracted-backup-files.md || true
+	@grep -c '^|' EVIDENCE/recovery-reports/database-extracted-backup-files.md || true
 	@echo ""
 	@echo "== Persistence extracted =="
-	@grep -c '^|' Code-Review-And-ToDo/recovery-reports/persistence-extracted-backup-files.md || true
+	@grep -c '^|' EVIDENCE/recovery-reports/persistence-extracted-backup-files.md || true
 	@echo ""
 	@echo "== Database PHPStan top families =="
-	@sed -n '1,80p' Code-Review-And-ToDo/recovery-reports/database-phpstan-families.md || true
+	@sed -n '1,80p' EVIDENCE/recovery-reports/database-phpstan-families.md || true
 	@echo ""
 	@echo "== Persistence PHPStan top families =="
-	@sed -n '1,80p' Code-Review-And-ToDo/recovery-reports/persistence-phpstan-families.md || true
+	@sed -n '1,80p' EVIDENCE/recovery-reports/persistence-phpstan-families.md || true
 	@echo ""
 	@echo "== Git status =="
 	@git status --short

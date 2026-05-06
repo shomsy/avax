@@ -142,7 +142,7 @@ final class FreezeRecoveredComponentsTaxonomy
             ? "✅ Recovered components taxonomy freeze applied.\n"
             : "✅ Dry-run complete. No files changed.\n";
 
-        echo "Report: Code-Review-And-ToDo/component-taxonomy/recovered-components-taxonomy-report.md\n";
+        echo "Report: EVIDENCE/component-taxonomy/recovered-components-taxonomy-report.md\n";
 
         if (! $this->apply) {
             echo PHP_EOL;
@@ -257,7 +257,7 @@ final class FreezeRecoveredComponentsTaxonomy
 
     private function writeReport(string $status): void
     {
-        $report = $this->path('Code-Review-And-ToDo/component-taxonomy/recovered-components-taxonomy-report.md');
+        $report = $this->path('EVIDENCE/component-taxonomy/recovered-components-taxonomy-report.md');
         $directory = dirname($report);
 
         if (! is_dir($directory)) {

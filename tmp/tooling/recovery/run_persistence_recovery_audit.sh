@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
-mkdir -p Code-Review-And-ToDo/recovery-reports Code-Review-And-ToDo/recovery-staging/from-backup
+mkdir -p EVIDENCE/recovery-reports EVIDENCE/recovery-staging/from-backup
 
 echo "== Git status =="
-git status --short | tee Code-Review-And-ToDo/recovery-reports/persistence-git-status.txt
+git status --short | tee EVIDENCE/recovery-reports/persistence-git-status.txt
 
 echo "== Extract backup persistence files =="
 python3 tooling/recovery/extract_backup_files.py \
@@ -14,14 +14,14 @@ python3 tooling/recovery/extract_backup_files.py \
   --prefix 'tests/ORM/' \
   --prefix 'tests/Unit/Persistence/' \
   --prefix 'tests/Unit/ORM/' \
-  --out Code-Review-And-ToDo/recovery-staging/from-backup/persistence \
-  --report Code-Review-And-ToDo/recovery-reports/persistence-extracted-backup-files.md
+  --out EVIDENCE/recovery-staging/from-backup/persistence \
+  --report EVIDENCE/recovery-reports/persistence-extracted-backup-files.md
 
 echo "== Make old-to-new map =="
 python3 tooling/recovery/make_old_to_new_map.py \
   --component persistence \
-  --staging Code-Review-And-ToDo/recovery-staging/from-backup/persistence \
-  --out Code-Review-And-ToDo/recovery-reports/persistence-old-to-new-map.md
+  --staging EVIDENCE/recovery-staging/from-backup/persistence \
+  --out EVIDENCE/recovery-reports/persistence-old-to-new-map.md
 
 echo "== Composer/autoload =="
 composer validate --no-check-publish
@@ -35,10 +35,10 @@ php tooling/refactor/check-runtime-leaks.php
 
 echo "== PHPStan persistence =="
 if [ -d components/DataStack/Persistence ]; then
-  vendor/bin/phpstan analyse components/DataStack/Persistence --memory-limit=1G --error-format=raw --no-progress > Code-Review-And-ToDo/recovery-reports/persistence-phpstan.raw || true
-  python3 tooling/recovery/group_phpstan_errors.py --input Code-Review-And-ToDo/recovery-reports/persistence-phpstan.raw --out Code-Review-And-ToDo/recovery-reports/persistence-phpstan-families.md
+  vendor/bin/phpstan analyse components/DataStack/Persistence --memory-limit=1G --error-format=raw --no-progress > EVIDENCE/recovery-reports/persistence-phpstan.raw || true
+  python3 tooling/recovery/group_phpstan_errors.py --input EVIDENCE/recovery-reports/persistence-phpstan.raw --out EVIDENCE/recovery-reports/persistence-phpstan-families.md
 else
-  echo "components/DataStack/Persistence not found." | tee Code-Review-And-ToDo/recovery-reports/persistence-phpstan.raw
+  echo "components/DataStack/Persistence not found." | tee EVIDENCE/recovery-reports/persistence-phpstan.raw
 fi
 
 echo "== PublicSurface smoke =="
@@ -52,4 +52,4 @@ fi
 echo "== Report-only guard =="
 python3 tooling/recovery/assert_not_report_only_complete.py || true
 
-echo "DONE. See Code-Review-And-ToDo/recovery-reports/"
+echo "DONE. See EVIDENCE/recovery-reports/"

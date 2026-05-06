@@ -12,7 +12,7 @@ restoration, V2 implementation, or V3 implementation.
 - Read current truth, execution, TODO, reports, and how-to governance.
 - Re-run validation commands needed to make status honest.
 - Update `CURRENT_TRUTH.md`.
-- Ensure `TODO.md` points to `Code-Review-And-ToDo/EXECUTION.md`.
+- Ensure `TODO.md` points to `EVIDENCE/EXECUTION.md`.
 - Record current RED/YELLOW/GREEN state.
 - Name the next allowed stage.
 
@@ -30,7 +30,7 @@ restoration, V2 implementation, or V3 implementation.
 
 - `AGENTS.md`
 - `CURRENT_TRUTH.md`
-- `Code-Review-And-ToDo/EXECUTION.md`
+- `EVIDENCE/EXECUTION.md`
 - `TODO.md`
 - `how-to-write-avax.md`
 - `.agents/how-to/how-to-architecture.md`
@@ -43,18 +43,18 @@ restoration, V2 implementation, or V3 implementation.
 - `.agents/how-to/how-to-code-style.md`
 - `.agents/how-to/how-to-unit-test.md`
 - `.agents/how-to/how-to-production-readiness.md`
-- `Code-Review-And-ToDo/truth-reconciliation/truth-reconciliation-report.md`
-- `Code-Review-And-ToDo/v1-integrity/final-critical-broken-reference-closure-report.md`
-- `Code-Review-And-ToDo/v1-integrity/static-integrity-closure-report.md`
-- `Code-Review-And-ToDo/v1-integrity/phpstan-framework-system-report.md`
-- `Code-Review-And-ToDo/v1-integrity/test-coverage-reality-report.md`
+- `EVIDENCE/truth-reconciliation/truth-reconciliation-report.md`
+- `EVIDENCE/v1-integrity/final-critical-broken-reference-closure-report.md`
+- `EVIDENCE/v1-integrity/static-integrity-closure-report.md`
+- `EVIDENCE/v1-integrity/phpstan-framework-system-report.md`
+- `EVIDENCE/v1-integrity/test-coverage-reality-report.md`
 
 ## Files Changed
 
 - `CURRENT_TRUTH.md`
 - `TODO.md`
-- `Code-Review-And-ToDo/EXECUTION.md`
-- `Code-Review-And-ToDo/v1-lockdown/v1-current-truth-correction-report.md`
+- `EVIDENCE/EXECUTION.md`
+- `EVIDENCE/v1-lockdown/v1-current-truth-correction-report.md`
 
 ## Files Intentionally Not Touched
 
@@ -67,7 +67,7 @@ restoration, V2 implementation, or V3 implementation.
 Pre-existing dirty files were left intact:
 
 - `.codex`
-- `Code-Review-And-ToDo/recovery-reports/database-builder-focused-phpstan.raw`
+- `EVIDENCE/recovery-reports/database-builder-focused-phpstan.raw`
 - `components/DataStack/Database/System/Capabilities/Query/Execution/PDOExecutor.php`
 
 ## Validation Commands
@@ -137,9 +137,9 @@ socket permission errors; reruns through approved escalation produced the eviden
   with 124 CRITICAL.
 - `CURRENT_TRUTH.md` records the current PHPUnit configuration failure.
 - `CURRENT_TRUTH.md` records the component-suite and superglobal audit failures.
-- `TODO.md` now explicitly points to `Code-Review-And-ToDo/EXECUTION.md` as the active stage lock.
+- `TODO.md` now explicitly points to `EVIDENCE/EXECUTION.md` as the active stage lock.
 - `TODO.md` now records Stage 00 completion, RED repository readiness, and Stage 01 as the next allowed action.
-- `Code-Review-And-ToDo/EXECUTION.md` now marks Stage 00 as completed and makes Stage 01 the active read/documentation
+- `EVIDENCE/EXECUTION.md` now marks Stage 00 as completed and makes Stage 01 the active read/documentation
   stage.
 
 ## Remaining Risks

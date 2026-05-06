@@ -55,13 +55,13 @@ or
 
 Input:
 - CURRENT_TRUTH.md
-- Code-Review-And-ToDo/v1-integrity/broken-reference-groups.md
-- Code-Review-And-ToDo/v1-integrity/critical-broken-reference-repair-plan.md
-- Code-Review-And-ToDo/v1-integrity/critical-broken-reference-repair-report.md
-- Code-Review-And-ToDo/v1-integrity/compatibility-bridge-map.md
+- EVIDENCE/v1-integrity/broken-reference-groups.md
+- EVIDENCE/v1-integrity/critical-broken-reference-repair-plan.md
+- EVIDENCE/v1-integrity/critical-broken-reference-repair-report.md
+- EVIDENCE/v1-integrity/compatibility-bridge-map.md
 
 Output:
-- Code-Review-And-ToDo/v1-integrity/final-critical-broken-reference-closure-report.md
+- EVIDENCE/v1-integrity/final-critical-broken-reference-closure-report.md
 ```
 
 Tasks:
@@ -160,20 +160,20 @@ Do not fix all PHPStan errors yet.
 First classify accurately.
 
 Input:
-- Code-Review-And-ToDo/v1-integrity/phpstan-error-groups.md
-- Code-Review-And-ToDo/v1-integrity/phpstan-full-raw.txt
+- EVIDENCE/v1-integrity/phpstan-error-groups.md
+- EVIDENCE/v1-integrity/phpstan-full-raw.txt
 - final broken reference closure report
 
 Output:
-- Code-Review-And-ToDo/v1-integrity/phpstan-battle-map.md
-- Code-Review-And-ToDo/v1-integrity/phpstan-full-after-broken-ref-closure.txt
+- EVIDENCE/v1-integrity/phpstan-battle-map.md
+- EVIDENCE/v1-integrity/phpstan-full-after-broken-ref-closure.txt
 ```
 
 Commands:
 
 ```bash
 vendor/bin/phpstan analyse framework components tests --memory-limit=1G --error-format=raw --no-progress \
-  > Code-Review-And-ToDo/v1-integrity/phpstan-full-after-broken-ref-closure.txt || true
+  > EVIDENCE/v1-integrity/phpstan-full-after-broken-ref-closure.txt || true
 
 php tooling/refactor/categorize-phpstan-errors.php
 ```
@@ -235,7 +235,7 @@ Do not change behavior.
 Only split files and update namespaces/imports if needed.
 
 Output:
-- Code-Review-And-ToDo/v1-integrity/multi-class-file-split-report.md
+- EVIDENCE/v1-integrity/multi-class-file-split-report.md
 ```
 
 Create script if missing:
@@ -283,7 +283,7 @@ Reason:
 framework/System owns runtime lifecycle. If this layer is dirty, V1 Kernel Green cannot be trusted.
 
 Output:
-- Code-Review-And-ToDo/v1-integrity/phpstan-framework-system-report.md
+- EVIDENCE/v1-integrity/phpstan-framework-system-report.md
 ```
 
 Commands:
@@ -329,7 +329,7 @@ Acceptance:
 Make Application/Cache clean because it was recently touched for namespace repair.
 
 Output:
-- Code-Review-And-ToDo/v1-integrity/phpstan-application-cache-report.md
+- EVIDENCE/v1-integrity/phpstan-application-cache-report.md
 ```
 
 Commands:
@@ -367,7 +367,7 @@ Acceptance:
 Make request/response stable because they are kernel-path components.
 
 Output:
-- Code-Review-And-ToDo/v1-integrity/phpstan-http-request-response-report.md
+- EVIDENCE/v1-integrity/phpstan-http-request-response-report.md
 ```
 
 Commands:
@@ -405,7 +405,7 @@ Acceptance:
 Make database core analyzable.
 
 Output:
-- Code-Review-And-ToDo/v1-integrity/phpstan-datastack-database-report.md
+- EVIDENCE/v1-integrity/phpstan-datastack-database-report.md
 ```
 
 Commands:
@@ -442,7 +442,7 @@ Acceptance:
 Clean existing runtime muscles before V2 engine work.
 
 Output:
-- Code-Review-And-ToDo/v1-integrity/phpstan-operations-core-report.md
+- EVIDENCE/v1-integrity/phpstan-operations-core-report.md
 ```
 
 Commands:
@@ -487,7 +487,7 @@ Acceptance:
 Turn “12 tests pass” into an honest V1 proof plan.
 
 Output:
-- Code-Review-And-ToDo/v1-integrity/v1-test-expansion-plan.md
+- EVIDENCE/v1-integrity/v1-test-expansion-plan.md
 ```
 
 Tasks:
@@ -543,7 +543,7 @@ Only after prior stages.
 Prove or reject V1 Kernel Green with full evidence.
 
 Output:
-- Code-Review-And-ToDo/v1-integrity/v1-kernel-green-proof-report.md
+- EVIDENCE/v1-integrity/v1-kernel-green-proof-report.md
 ```
 
 Commands:
@@ -611,11 +611,11 @@ You are working on AvaX V1 Static Integrity Recovery.
 
 Read:
 1. CURRENT_TRUTH.md
-2. Code-Review-And-ToDo/EXECUTION.md
+2. EVIDENCE/EXECUTION.md
 3. TODO.md
-4. Code-Review-And-ToDo/v1-integrity/broken-reference-groups.md
-5. Code-Review-And-ToDo/v1-integrity/critical-broken-reference-repair-report.md
-6. Code-Review-And-ToDo/v1-integrity/phpstan-error-groups.md
+4. EVIDENCE/v1-integrity/broken-reference-groups.md
+5. EVIDENCE/v1-integrity/critical-broken-reference-repair-report.md
+6. EVIDENCE/v1-integrity/phpstan-error-groups.md
 
 Current truth:
 Composer GREEN.
@@ -644,7 +644,7 @@ Goal:
 Reduce remaining CRITICAL broken refs to zero unresolved production-critical refs, or classify every remaining one with evidence.
 
 Required output:
-Code-Review-And-ToDo/v1-integrity/final-critical-broken-reference-closure-report.md
+EVIDENCE/v1-integrity/final-critical-broken-reference-closure-report.md
 
 Required validation:
 composer validate --no-check-publish

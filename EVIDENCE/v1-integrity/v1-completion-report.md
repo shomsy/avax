@@ -8,7 +8,7 @@ Valid evidence shows:
 
 - PHPStan errors: 7088 production errors
 - PHPStan test errors: tests also fail
-- Broken refs: 184 (118 CRITICAL) - mostly from Code-Review-And-ToDo/recovery-staging/from-backup
+- Broken refs: 184 (118 CRITICAL) - mostly from EVIDENCE/recovery-staging/from-backup
 
 The recovery staging folder should NOT be counted as production source.
 The broken-ref audit needs scope fix.

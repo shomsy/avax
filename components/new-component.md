@@ -469,7 +469,7 @@ docs/
     │   ├── InspectDataLayer/
     │   │   ├── how-this-works.md
     │   │   └── one-md-file-per-source-file.md
-    │   └── Code-Review-And-ToDo/
+    │   └── EVIDENCE/
     │       ├── review.md
     │       └── todo.md
     │
@@ -511,7 +511,7 @@ docs/
             ├── InspectSaga/
             │   ├── how-this-works.md
             │   └── one-md-file-per-source-file.md
-            └── Code-Review-And-ToDo/
+            └── EVIDENCE/
                 ├── review.md
                 └── todo.md
 ```
@@ -576,7 +576,7 @@ ToDo:
 [ ] DL-0107: Popisati koji delovi Database-a mapiraju na DataLayer/InspectDataLayer.
 [ ] DL-0108: Obeležiti šta ne postoji: CDC, Outbox, governance, consistency, distribution, operations.
 [ ] DL-0109: Obeležiti šta ne sme da se pomera sada.
-[ ] DL-0110: Napraviti docs/Foundation/DataLayer/Code-Review-And-ToDo/review.md sa odlukom Keep and Improve.
+[ ] DL-0110: Napraviti docs/Foundation/DataLayer/EVIDENCE/review.md sa odlukom Keep and Improve.
 ```
 
 Acceptance criteria:
@@ -1705,8 +1705,8 @@ Candidate. Takođe mora imati as-built flow, primary axis, responsibility/bounda
 Za ovaj rad review gate treba da bude:
 
 ```txt
-docs/Foundation/DataLayer/Code-Review-And-ToDo/review.md
-docs/Foundation/ApplicationWorkflow/Saga/Code-Review-And-ToDo/review.md
+docs/Foundation/DataLayer/EVIDENCE/review.md
+docs/Foundation/ApplicationWorkflow/Saga/EVIDENCE/review.md
 ```
 
 ## DataLayer review checklist
@@ -1824,7 +1824,7 @@ MILESTONE 1: DataLayer and Saga Architecture Skeleton
 [ ] Kreiran Foundation/ApplicationWorkflow/Saga tree.
 [ ] Kreiran docs mirror za oba.
 [ ] Napisani root how-this-works.md fajlovi.
-[ ] Napisani Code-Review-And-ToDo/todo.md fajlovi.
+[ ] Napisani EVIDENCE/todo.md fajlovi.
 [ ] DataLayer koristi Foundation/Database samo kroz UseDatabaseRuntime.
 [ ] Saga koristi DataLayer samo kroz transaction/outbox/state boundaries.
 [ ] Nema business saga logic u DataLayer.

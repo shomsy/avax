@@ -2,7 +2,7 @@
 
 Date: 2026-05-03  
 Status: RED  
-Source: Stage 04 from `Code-Review-And-ToDo/avax-master-development-plan-v1.md`
+Source: Stage 04 from `EVIDENCE/avax-master-development-plan-v1.md`
 
 ## Completion Rules
 

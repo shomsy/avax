@@ -10,10 +10,10 @@ Commit: af2a7840 Avax refactor by master plan.
 
 ```
 M avax.txt
-?? Code-Review-And-ToDo/stabilization/
+?? EVIDENCE/stabilization/
 ```
 
-**Status:** Working tree mostly clean. Modified `avax.txt` and newly created `Code-Review-And-ToDo/stabilization/`
+**Status:** Working tree mostly clean. Modified `avax.txt` and newly created `EVIDENCE/stabilization/`
 directory.
 
 ---

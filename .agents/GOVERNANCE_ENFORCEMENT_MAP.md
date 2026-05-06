@@ -2,25 +2,25 @@
 
 This document maps rules to their source documents, checkers, and reports.
 
-| Rule                                | Source Document                         | Checker                                                         | Report                                                          |
-|-------------------------------------|-----------------------------------------|-----------------------------------------------------------------|-----------------------------------------------------------------|
-| canonical component shape           | how-to-design-components.md section 6   | tooling/refactor/check-component-canonical-shape.php            | Code-Review-And-ToDo/recovery-reports/component-shape-report.md |
-| forbidden system folders            | how-to-design-components.md section 6.7 | tooling/refactor/check-forbidden-system-folders.php             | forbidden-system-folders-report.md                              |
-| PublicSurface must not own behavior | how-to-design-components.md section 6.2 | tooling/refactor/check-public-surface.php                       | public-surface-report.md                                        |
-| no Adapters/ dumping ground         | how-to-design-components.md / GoF rule  | tooling/refactor/check-advanced-pattern-folder-violations.php   | advanced-pattern-report.md                                      |
-| no Commands/ Queries/ Handlers/     | how-to-design-components.md / GoF rule  | tooling/refactor/check-advanced-pattern-folder-violations.php   | advanced-pattern-report.md                                      |
-| no UseCases/ folder                 | how-to-design-components.md section 6.8 | tooling/refactor/check-forbidden-folders.php                    | forbidden-folders-report.md                                     |
-| no Security/Services/Managers/      | how-to-system-security.md section 38    | tooling/security/check-security-naming.php                      | security-naming-report.md                                       |
-| no Performance/Services/Managers/   | how-to-system-performance.md section 35 | tooling/performance/check-performance-naming.php                | performance-naming-report.md                                    |
-| docs mirror source                  | how-to-document.md                      | tooling/refactor/check-docs-mirror.php                          | docs-mirror-report.md                                           |
-| documentation location              | how-to-document.md / resolution rule    | manual review                                                   | N/A                                                             |
-| filesystem-first documentation      | how-to-document.md section 3            | manual review                                                   | N/A                                                             |
-| stage lock enforcement              | how-to-design-components.md section 5   | tooling/governance/check-stage-lock.php                         | stage-lock-report.md                                            |
-| governance index current            | GOVERNANCE_INDEX.md                     | tooling/governance/check-governance-index-current.php           | governance-index-report.md                                      |
-| component promotion                 | how-to-design-components.md section 4   | Code-Review-And-ToDo/templates/component-promotion-checklist.md | N/A                                                             |
-| security baseline                   | how-to-system-security.md               | manual review                                                   | security-baseline.md                                            |
-| performance baseline                | how-to-system-performance.md            | manual review                                                   | performance-baseline.md                                         |
-| production readiness gates          | how-to-production-readiness.md          | manual review                                                   | production-readiness-report.md                                  |
+| Rule                                | Source Document                         | Checker                                                       | Report                                              |
+|-------------------------------------|-----------------------------------------|---------------------------------------------------------------|-----------------------------------------------------|
+| canonical component shape           | how-to-design-components.md section 6   | tooling/refactor/check-component-canonical-shape.php          | EVIDENCE/recovery-reports/component-shape-report.md |
+| forbidden system folders            | how-to-design-components.md section 6.7 | tooling/refactor/check-forbidden-system-folders.php           | forbidden-system-folders-report.md                  |
+| PublicSurface must not own behavior | how-to-design-components.md section 6.2 | tooling/refactor/check-public-surface.php                     | public-surface-report.md                            |
+| no Adapters/ dumping ground         | how-to-design-components.md / GoF rule  | tooling/refactor/check-advanced-pattern-folder-violations.php | advanced-pattern-report.md                          |
+| no Commands/ Queries/ Handlers/     | how-to-design-components.md / GoF rule  | tooling/refactor/check-advanced-pattern-folder-violations.php | advanced-pattern-report.md                          |
+| no UseCases/ folder                 | how-to-design-components.md section 6.8 | tooling/refactor/check-forbidden-folders.php                  | forbidden-folders-report.md                         |
+| no Security/Services/Managers/      | how-to-system-security.md section 38    | tooling/security/check-security-naming.php                    | security-naming-report.md                           |
+| no Performance/Services/Managers/   | how-to-system-performance.md section 35 | tooling/performance/check-performance-naming.php              | performance-naming-report.md                        |
+| docs mirror source                  | how-to-document.md                      | tooling/refactor/check-docs-mirror.php                        | docs-mirror-report.md                               |
+| documentation location              | how-to-document.md / resolution rule    | manual review                                                 | N/A                                                 |
+| filesystem-first documentation      | how-to-document.md section 3            | manual review                                                 | N/A                                                 |
+| stage lock enforcement              | how-to-design-components.md section 5   | tooling/governance/check-stage-lock.php                       | stage-lock-report.md                                |
+| governance index current            | GOVERNANCE_INDEX.md                     | tooling/governance/check-governance-index-current.php         | governance-index-report.md                          |
+| component promotion                 | how-to-design-components.md section 4   | EVIDENCE/templates/component-promotion-checklist.md           | N/A                                                 |
+| security baseline                   | how-to-system-security.md               | manual review                                                 | security-baseline.md                                |
+| performance baseline                | how-to-system-performance.md            | manual review                                                 | performance-baseline.md                             |
+| production readiness gates          | how-to-production-readiness.md          | manual review                                                 | production-readiness-report.md                      |
 
 ## Checker Types
 
@@ -47,10 +47,10 @@ This document maps rules to their source documents, checkers, and reports.
 
 ## Report Locations
 
-- Recovery reports: `Code-Review-And-ToDo/recovery-reports/`
-- Security reports: `Code-Review-And-ToDo/security/`
-- Performance reports: `Code-Review-And-ToDo/performance/`
-- Governance reports: `Code-Review-And-ToDo/governance/`
+- Recovery reports: `EVIDENCE/recovery-reports/`
+- Security reports: `EVIDENCE/security/`
+- Performance reports: `EVIDENCE/performance/`
+- Governance reports: `EVIDENCE/governance/`
 
 ## Validation Commands
 

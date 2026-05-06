@@ -384,7 +384,7 @@ final class FreezeComponentTaxonomy
             ? "✅ Component taxonomy freeze applied.\n"
             : "✅ Dry-run complete. No files changed.\n";
 
-        echo "Report: Code-Review-And-ToDo/component-taxonomy/component-taxonomy-freeze-report.md\n";
+        echo "Report: EVIDENCE/component-taxonomy/component-taxonomy-freeze-report.md\n";
 
         if (! $this->apply) {
             echo PHP_EOL;
@@ -518,7 +518,7 @@ final class FreezeComponentTaxonomy
 
     private function writeReport(string $status): void
     {
-        $report = $this->path('Code-Review-And-ToDo/component-taxonomy/component-taxonomy-freeze-report.md');
+        $report = $this->path('EVIDENCE/component-taxonomy/component-taxonomy-freeze-report.md');
         $directory = dirname($report);
 
         if (! is_dir($directory)) {

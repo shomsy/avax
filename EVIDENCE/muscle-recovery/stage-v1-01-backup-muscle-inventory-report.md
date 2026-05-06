@@ -25,13 +25,13 @@ then classify it into the V1/V2/V3 roadmap without restoring production code.
 
 - `tooling/recovery/build-muscle-inventory.php`
 - `tooling/recovery/export-git-source-snapshots.sh`
-- `Code-Review-And-ToDo/muscle-recovery/git-sources/*.paths`
-- `Code-Review-And-ToDo/muscle-recovery/git-sources/*.log`
-- `Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.md`
-- `Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.json`
+- `EVIDENCE/muscle-recovery/git-sources/*.paths`
+- `EVIDENCE/muscle-recovery/git-sources/*.log`
+- `EVIDENCE/muscle-recovery/backup-muscle-inventory.md`
+- `EVIDENCE/muscle-recovery/backup-muscle-inventory.json`
 - `CURRENT_TRUTH.md`
 - `TODO.md`
-- `Code-Review-And-ToDo/EXECUTION.md`
+- `EVIDENCE/EXECUTION.md`
 
 ## Files Intentionally Not Touched
 
@@ -47,7 +47,7 @@ bash tooling/recovery/export-git-source-snapshots.sh
 php tooling/recovery/build-muscle-inventory.php
 php -l tooling/recovery/build-muscle-inventory.php
 bash -n tooling/recovery/export-git-source-snapshots.sh
-wc -l Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.md Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.json
+wc -l EVIDENCE/muscle-recovery/backup-muscle-inventory.md EVIDENCE/muscle-recovery/backup-muscle-inventory.json
 ```
 
 ## Validation Result
@@ -68,8 +68,8 @@ GREEN / REPORT-ONLY
   - V3: 16
   - human-decision: 1,613
 - Generated inventory files:
-  - `Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.md`
-  - `Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.json`
+    - `EVIDENCE/muscle-recovery/backup-muscle-inventory.md`
+    - `EVIDENCE/muscle-recovery/backup-muscle-inventory.json`
 
 ## Remaining Risks
 

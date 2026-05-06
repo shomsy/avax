@@ -12,7 +12,7 @@ Before editing code, the agent must answer all sections.
 Read:
 
 - `CURRENT_TRUTH.md`
-- `Code-Review-And-ToDo/EXECUTION.md`
+- `EVIDENCE/EXECUTION.md`
 - `.agents/management/ACTIVE.md`
 
 Answer:

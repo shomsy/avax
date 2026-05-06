@@ -382,7 +382,7 @@ final class MuscleInventoryBuilder
             'docs-governance' => [
                 '.agents/',
                 'ai prompts/',
-                'code-review-and-todo/',
+                'EVIDENCE/',
                 'current_truth.md',
                 'todo.md',
                 'how-to',
@@ -658,7 +658,7 @@ final class MuscleInventoryBuilder
             'cli-console' => 'components/CLI/Console',
             'developer-tools' => 'components/DeveloperTools',
             'system-design' => 'labs/SystemDesignKit',
-            'docs-governance' => 'Code-Review-And-ToDo or docs',
+            'docs-governance' => 'EVIDENCE or docs',
             default => 'human-decision',
         };
     }
@@ -1044,7 +1044,7 @@ final class MuscleInventoryBuilder
     private function gitSnapshotExists(string $ref): bool
     {
         $safe = $this->safeRefName($ref);
-        $base = $this->repoRoot.'/Code-Review-And-ToDo/muscle-recovery/git-sources/'.$safe;
+        $base = $this->repoRoot . '/EVIDENCE/muscle-recovery/git-sources/' . $safe;
 
         return is_file($base.'.paths') || is_file($base.'.log');
     }
@@ -1055,7 +1055,7 @@ final class MuscleInventoryBuilder
     private function readGitSnapshot(string $ref): array
     {
         $safe = $this->safeRefName($ref);
-        $base = $this->repoRoot.'/Code-Review-And-ToDo/muscle-recovery/git-sources/'.$safe;
+        $base = $this->repoRoot . '/EVIDENCE/muscle-recovery/git-sources/' . $safe;
 
         return [
             'paths' => $this->readLineFile($base.'.paths'),
@@ -1137,8 +1137,8 @@ final class MuscleInventoryBuilder
 $repoRoot = dirname(__DIR__, 2);
 $builder = new MuscleInventoryBuilder(
     $repoRoot,
-    $repoRoot.'/Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.md',
-    $repoRoot.'/Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.json'
+    $repoRoot . '/EVIDENCE/muscle-recovery/backup-muscle-inventory.md',
+    $repoRoot . '/EVIDENCE/muscle-recovery/backup-muscle-inventory.json'
 );
 
 $builder->build(

@@ -25,17 +25,17 @@ Forbidden:
 
 - CURRENT_TRUTH.md
 - AGENTS.md
-- Code-Review-And-ToDo/EXECUTION.md
+- EVIDENCE/EXECUTION.md
 - TODO.md
-- Code-Review-And-ToDo/avax-master-development-plan-v1.md
-- Code-Review-And-ToDo/avax-master-plan-v2-pucamo-u-metu.md
-- Code-Review-And-ToDo/avax-v3-executable-system-design-framework-plan.md
-- Code-Review-And-ToDo/production-readiness-report.md (stub — contains only a pointer)
-- Code-Review-And-ToDo/production-readiness/component-phpstan-error-groups.md
-- Code-Review-And-ToDo/component-taxonomy/taxonomy-cleanup-final-report.md
-- Code-Review-And-ToDo/master-plan/component-completion-matrix.md
-- Code-Review-And-ToDo/truth-reconciliation/truth-reconciliation-findings.md (previous)
-- Code-Review-And-ToDo/truth-reconciliation/truth-reconciliation-report.md (previous)
+- EVIDENCE/avax-master-development-plan-v1.md
+- EVIDENCE/avax-master-plan-v2-pucamo-u-metu.md
+- EVIDENCE/avax-v3-executable-system-design-framework-plan.md
+- EVIDENCE/production-readiness-report.md (stub — contains only a pointer)
+- EVIDENCE/production-readiness/component-phpstan-error-groups.md
+- EVIDENCE/component-taxonomy/taxonomy-cleanup-final-report.md
+- EVIDENCE/master-plan/component-completion-matrix.md
+- EVIDENCE/truth-reconciliation/truth-reconciliation-findings.md (previous)
+- EVIDENCE/truth-reconciliation/truth-reconciliation-report.md (previous)
 - how-to-write-avax.md
 - .agents/how-to/*.md (discovered 10 files)
 

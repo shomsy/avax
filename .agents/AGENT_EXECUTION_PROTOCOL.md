@@ -7,7 +7,7 @@ The agent must read:
 1. `AGENTS.md` (root contract)
 2. `.agents/GOVERNANCE_INDEX.md` (navigation map)
 3. `CURRENT_TRUTH.md` (project state)
-4. `Code-Review-And-ToDo/EXECUTION.md` (active task)
+4. `EVIDENCE/EXECUTION.md` (active task)
 5. `.agents/management/ACTIVE.md` (active stage)
 6. relevant `.agents/how-to/*.md` (governance rules)
 7. relevant `.agents/skills/**` (task playbook)

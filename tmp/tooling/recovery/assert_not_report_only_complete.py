@@ -12,7 +12,7 @@ def changed_files() -> list[str]:
         files.append(path)
     return files
 def is_report_only(path: str) -> bool:
-    return path.startswith('Code-Review-And-ToDo/') or path.startswith('.phpunit') or path.startswith('tooling/recovery/') or path == 'Makefile.recovery' or path.endswith(REPORT_EXTENSIONS)
+    return path.startswith('EVIDENCE/') or path.startswith('.phpunit') or path.startswith('tooling/recovery/') or path == 'Makefile.recovery' or path.endswith(REPORT_EXTENSIONS)
 def main() -> int:
     files = changed_files()
     if not files: print('No changed files.'); return 1

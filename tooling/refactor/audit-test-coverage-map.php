@@ -42,5 +42,5 @@ $markdown .= "- `tests/PublicApi/DatabasePublicApiTest.php`\n\n";
 $markdown .= "## Recommendation\n";
 $markdown .= "Before V1 Kernel Green can be claimed, the Missing Kernel Feature Tests and Missing Public API Tests MUST be implemented and pass. The test suite MUST grow to cover the major public surfaces.\n";
 
-file_put_contents('Code-Review-And-ToDo/v1-integrity/test-coverage-reality-report.md', $markdown);
+file_put_contents('EVIDENCE/v1-integrity/test-coverage-reality-report.md', $markdown);
 echo "Test Reality Report generated.\n";

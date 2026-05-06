@@ -295,7 +295,7 @@ final class ComponentMuscleAuditBuilder
 
     private function normalizeTarget(string $target): string
     {
-        if ($target === 'Code-Review-And-ToDo or docs') {
+        if ($target === 'EVIDENCE or docs') {
             return 'docs/governance';
         }
 
@@ -530,7 +530,7 @@ final class ComponentMuscleAuditBuilder
         }
 
         if ($target === 'docs/governance') {
-            return 'Code-Review-And-ToDo/ or docs/';
+            return 'EVIDENCE/ or docs/';
         }
 
         if ($target === 'human-decision') {
@@ -655,9 +655,9 @@ final class ComponentMuscleAuditBuilder
 $repoRoot = dirname(__DIR__, 2);
 $builder = new ComponentMuscleAuditBuilder(
     $repoRoot,
-    $repoRoot.'/Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.json',
-    $repoRoot.'/Code-Review-And-ToDo/muscle-recovery/component-muscle-audit.md',
-    $repoRoot.'/Code-Review-And-ToDo/muscle-recovery/component-muscle-audit.json'
+    $repoRoot . '/EVIDENCE/muscle-recovery/backup-muscle-inventory.json',
+    $repoRoot . '/EVIDENCE/muscle-recovery/component-muscle-audit.md',
+    $repoRoot . '/EVIDENCE/muscle-recovery/component-muscle-audit.json'
 );
 
 $builder->build();

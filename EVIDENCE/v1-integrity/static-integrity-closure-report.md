@@ -27,7 +27,7 @@ Remove or classify static integrity blockers before any V1 muscle restoration.
 
 ## Files Changed
 
-- Code-Review-And-ToDo/v1-integrity/broken-reference-groups.md (generated)
+- EVIDENCE/v1-integrity/broken-reference-groups.md (generated)
 
 ## Validation Commands
 

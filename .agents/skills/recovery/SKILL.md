@@ -26,8 +26,8 @@ Use this skill when the user asks for:
 - `.agents/how-to/how-to-architecture-extension-with-ddd.md`
 - `.agents/how-to/how-to-use-advanced-architecture-patterns.md`
 - `CURRENT_TRUTH.md`
-- `Code-Review-And-ToDo/EXECUTION.md`
-- relevant recovery reports in `Code-Review-And-ToDo/recovery-reports/`
+- `EVIDENCE/EXECUTION.md`
+- relevant recovery reports in `EVIDENCE/recovery-reports/`
 
 ## Rules
 

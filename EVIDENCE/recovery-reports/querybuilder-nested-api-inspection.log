@@ -260,17 +260,17 @@ components/DataStack/Database/System/Capabilities/Query/Builder/Concerns/HasCond
 components/DataStack/Database/System/Capabilities/Query/Builder/Concerns/HasConditions.php:109:        $clone->state = $clone->state->addWhere(where: new NestedWhereNode(
 components/DataStack/Database/System/Capabilities/Query/Grammar/Grammar.php:7:use Avax\Components\DataStack\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
 components/DataStack/Database/System/Capabilities/Query/Grammar/Grammar.php:230:            if ($node instanceof NestedWhereNode) {
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/AST/how-this-works.md:44:- `NestedWhereNode.php` participates directly in the behavior owned by this folder.
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/AST/how-this-works.md:59:- Start with `NestedWhereNode.php` participates directly in the behavior owned by this folder.
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/AST/NestedWhereNode.php:14:final readonly class NestedWhereNode
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/QueryState.php:8:use Avax\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/QueryState.php:42:     * @param array<WhereNode|NestedWhereNode> $wheres        The hierarchical collection of logical filters and
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/QueryState.php:238:     * @param WhereNode|NestedWhereNode $where Filter node data.
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/QueryState.php:240:    public function addWhere(WhereNode|NestedWhereNode $where) : self
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Builder/Concerns/HasConditions.php:9:use components\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Builder/Concerns/HasConditions.php:57:            return $this->whereNested(callback: $column, boolean: $boolean);
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Builder/Concerns/HasConditions.php:103:    protected function whereNested(Closure $callback, string $boolean = 'AND') : self
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Builder/Concerns/HasConditions.php:110:        $clone->state = $clone->state->addWhere(where: new NestedWhereNode(
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/BaseGrammar.php:7:use Avax\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/BaseGrammar.php:235:            if ($node instanceof NestedWhereNode) {
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/AST/how-this-works.md:44:- `NestedWhereNode.php` participates directly in the behavior owned by this folder.
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/AST/how-this-works.md:59:- Start with `NestedWhereNode.php` participates directly in the behavior owned by this folder.
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/AST/NestedWhereNode.php:14:final readonly class NestedWhereNode
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/QueryState.php:8:use Avax\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/QueryState.php:42:     * @param array<WhereNode|NestedWhereNode> $wheres        The hierarchical collection of logical filters and
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/QueryState.php:238:     * @param WhereNode|NestedWhereNode $where Filter node data.
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/QueryState.php:240:    public function addWhere(WhereNode|NestedWhereNode $where) : self
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Builder/Concerns/HasConditions.php:9:use components\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Builder/Concerns/HasConditions.php:57:            return $this->whereNested(callback: $column, boolean: $boolean);
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Builder/Concerns/HasConditions.php:103:    protected function whereNested(Closure $callback, string $boolean = 'AND') : self
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Builder/Concerns/HasConditions.php:110:        $clone->state = $clone->state->addWhere(where: new NestedWhereNode(
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/BaseGrammar.php:7:use Avax\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/BaseGrammar.php:235:            if ($node instanceof NestedWhereNode) {
 tests/Unit/Components/DataStack/Database/QueryBuilderReadHelpersTest.php:106:            ->whereNested(callback: static function (QueryBuilder $query): void {

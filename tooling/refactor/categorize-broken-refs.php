@@ -46,8 +46,8 @@ function brokenRefUsageIsNonProduction(string $file): bool
         str_contains($relativeFile, '/labs/') ||
         str_starts_with($relativeFile, 'tooling/') ||
         str_contains($relativeFile, '/tooling/') ||
-        str_starts_with($relativeFile, 'Code-Review-And-ToDo/') ||
-        str_contains($relativeFile, '/Code-Review-And-ToDo/') ||
+        str_starts_with($relativeFile, 'EVIDENCE/') ||
+        str_contains($relativeFile, '/EVIDENCE/') ||
         str_contains($relativeFile, 'test_') ||
         str_contains($relativeFile, 'benchmarks')
     ) {
@@ -120,5 +120,5 @@ foreach ($categories as $cat => $refs) {
     $markdown .= "\n";
 }
 
-file_put_contents('Code-Review-And-ToDo/v1-integrity/broken-reference-groups.md', $markdown);
-echo "Categorization complete. Output written to Code-Review-And-ToDo/v1-integrity/broken-reference-groups.md\n";
+file_put_contents('EVIDENCE/v1-integrity/broken-reference-groups.md', $markdown);
+echo "Categorization complete. Output written to EVIDENCE/v1-integrity/broken-reference-groups.md\n";

@@ -62,11 +62,11 @@ These are concepts, not folders:
 
 ## Recovery Sources
 
-| Source                            | Status             |
-|-----------------------------------|--------------------|
-| CURRENT_TRUTH.md                  | Current evidence   |
-| Code-Review-And-ToDo/EXECUTION.md | Active task        |
-| Recovery reports                  | Evidence from work |
+| Source                | Status             |
+|-----------------------|--------------------|
+| CURRENT_TRUTH.md      | Current evidence   |
+| EVIDENCE/EXECUTION.md | Active task        |
+| Recovery reports      | Evidence from work |
 
 ---
 

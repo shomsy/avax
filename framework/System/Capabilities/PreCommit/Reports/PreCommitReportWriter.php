@@ -10,7 +10,7 @@ use Avax\Framework\System\Capabilities\PreCommit\Models\PreCommitResult;
  * PreCommit Report Writer
  *
  * Writes validation reports to files.
- * Saves reports to Code-Review-And-ToDo/pre-commit/
+ * Saves reports to EVIDENCE/pre-commit/
  */
 final readonly class PreCommitReportWriter
 {
@@ -22,8 +22,8 @@ final readonly class PreCommitReportWriter
     {
         $basePath = getcwd();
 
-        $this->reportPath = $reportPath ?? $basePath.'/Code-Review-And-ToDo/pre-commit';
-        $this->todoPath = $todoPath ?? $basePath.'/Code-Review-And-ToDo/pre-commit/pre-commit-todo.md';
+        $this->reportPath = $reportPath ?? $basePath . '/EVIDENCE/pre-commit';
+        $this->todoPath   = $todoPath ?? $basePath . '/EVIDENCE/pre-commit/pre-commit-todo.md';
     }
 
     public function writeReport(PreCommitResult $preCommitResult): bool

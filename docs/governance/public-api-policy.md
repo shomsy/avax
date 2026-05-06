@@ -156,4 +156,4 @@ The following are exempt from the public API versioning rules:
 
 - `docs/governance/deprecation-policy.md` — deprecation lifecycle and timelines
 - `docs/governance/compatibility-policy.md` — compatibility bridges and alias lifecycle
-- `Code-Review-And-ToDo/api/api-classification-matrix.md` — per-component API classification
+- `EVIDENCE/api/api-classification-matrix.md` — per-component API classification

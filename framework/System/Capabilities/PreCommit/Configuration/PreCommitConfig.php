@@ -80,8 +80,8 @@ final class PreCommitConfig
             'DetectTodoComments',
         ];
 
-        $this->reportPath = $reportPath ?? $basePath.'/Code-Review-And-ToDo/pre-commit';
-        $this->todoPath = $todoPath ?? $basePath.'/Code-Review-And-ToDo/pre-commit/pre-commit-todo.md';
+        $this->reportPath = $reportPath ?? $basePath . '/EVIDENCE/pre-commit';
+        $this->todoPath   = $todoPath ?? $basePath . '/EVIDENCE/pre-commit/pre-commit-todo.md';
         $this->toolingPath = $toolingPath ?? $basePath.'/tooling';
     }
 

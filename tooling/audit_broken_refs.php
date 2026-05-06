@@ -58,16 +58,16 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($baseDir))
     }
 
     // Exclude non-production recovery staging/generation folders
-    if (str_contains((string) $path, '/Code-Review-And-ToDo/recovery-staging/')) {
+    if (str_contains((string) $path, '/EVIDENCE/recovery-staging/')) {
         continue;
     }
 
-    if (str_contains((string) $path, '/Code-Review-And-ToDo/recovery-generated/')) {
+    if (str_contains((string) $path, '/EVIDENCE/recovery-generated/')) {
         continue;
     }
 
     // Exclude archive folders
-    if (str_contains((string) $path, '/Code-Review-And-ToDo/archive/')) {
+    if (str_contains((string) $path, '/EVIDENCE/archive/')) {
         continue;
     }
 

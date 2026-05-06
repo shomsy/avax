@@ -320,7 +320,7 @@ Operations/Notifications/System/
 
 ## Output Files
 
-1. `/home/shomsy/projects/avax/Code-Review-And-ToDo/muscle-recovery/v1-muscle-restore-map.md` (this file)
+1. `/home/shomsy/projects/avax/EVIDENCE/muscle-recovery/v1-muscle-restore-map.md` (this file)
 
 ---
 

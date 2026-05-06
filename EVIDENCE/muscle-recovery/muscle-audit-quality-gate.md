@@ -161,10 +161,10 @@ Each major feature expanded to sub-features/capabilities:
 
 ## Files Changed
 
-- `Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.json` (typo fix)
-- `Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.md` (wording fix)
-- `Code-Review-And-ToDo/muscle-recovery/component-muscle-audit.md` (wording fix)
-- `Code-Review-And-ToDo/muscle-recovery/v1-muscle-restore-map.md` (new)
+- `EVIDENCE/muscle-recovery/backup-muscle-inventory.json` (typo fix)
+- `EVIDENCE/muscle-recovery/backup-muscle-inventory.md` (wording fix)
+- `EVIDENCE/muscle-recovery/component-muscle-audit.md` (wording fix)
+- `EVIDENCE/muscle-recovery/v1-muscle-restore-map.md` (new)
 
 ---
 
@@ -190,7 +190,7 @@ These are known and will be addressed in V1-03 Static Integrity Closure.
 
 ## Output
 
-- `Code-Review-And-ToDo/muscle-recovery/muscle-audit-quality-gate.md` (this file)
+- `EVIDENCE/muscle-recovery/muscle-audit-quality-gate.md` (this file)
 
 ---
 

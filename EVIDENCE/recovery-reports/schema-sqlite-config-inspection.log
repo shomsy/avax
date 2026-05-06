@@ -214,36 +214,36 @@ components/Operations/ApplicationWorkflow/System/Capabilities/Orchestration/Kube
 components/Operations/ApplicationWorkflow/System/Capabilities/Orchestration/Kubernetes/Probes.php:60:        echo "Closing database connections\n";
 examples/minimal-http-app/config/database.php:33:        'sqlite' => [
 examples/minimal-http-app/config/database.php:34:            'connection' => 'sqlite:' . env(key: 'SQLITE_DB_PATH', default: 'database.sqlite'),
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Integrations/AvaxContainer/DatabaseServiceProvider.php:107:            ->usingConfig(config: $this->resolveDatabaseConfig())
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Integrations/Console/MigrateFreshCommand.php:49:            'sqlite' => $pdo->exec(statement: 'PRAGMA foreign_keys = OFF'),
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Integrations/Console/MigrateFreshCommand.php:60:            'sqlite' => $pdo->exec(statement: 'PRAGMA foreign_keys = ON'),
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Integrations/Console/MigrateFreshCommand.php:72:            'sqlite' => "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name",
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:86:            'sqlite' => $this->readFirstColumn(
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:87:                sql: "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name"
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:130:            'sqlite' => $this->readSqliteCreateTable(table: $table),
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:139:            query: "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = :name LIMIT 1"
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/Dialect.php:11:    case SQLITE        = 'sqlite';
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:37:        if (! extension_loaded(extension: 'sqlite3')) {
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/IsolationLevel.php:31:            'sqlite'     => $this === self::READ_COMMITTED || $this === self::SERIALIZABLE,
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/OpenConnection/how-this-works.md:3:owner: foundation-database-connections
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/how-this-works.md:3:owner: foundation-database-connections
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/ConnectionPool.php:21: * Connection pool implementation for managing a set of reusable database connections.
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/how-this-works.md:3:owner: foundation-database-connections
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/PoolState.php:12: * databases; it just keeps track of the numbers (How many connections are open?
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/Contracts/how-this-works.md:3:owner: foundation-database-connections
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:12: * The "Personal Assistant" for picking up and returning database connections.
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/how-this-works.md:3:owner: foundation-database-connections
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/how-this-works.md:3:owner: foundation-database-connections
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Contracts/how-this-works.md:3:owner: foundation-database-connections
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/RunWithConnection/how-this-works.md:3:owner: foundation-database-connections
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Connections.php:16: * Public capability owner for database connections and pools.
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Exceptions/how-this-works.md:3:owner: foundation-database-connections
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ValueObjects/ConnectionConfig.php:25:     * @param string $driver   The type of engine (e.g., 'mysql' or 'sqlite').
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ValueObjects/how-this-works.md:3:owner: foundation-database-connections
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ValueObjects/Dsn.php:26:     * @param string $driver   The type of database (e.g., 'mysql', 'sqlite').
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ValueObjects/Dsn.php:41:        // SQLite:   "sqlite:/path/to/db.sqlite"
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ValueObjects/Dsn.php:44:            'sqlite' => sprintf('sqlite:%s', $database),
-Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Configuration/DatabaseBuilder.php:11:    public function addConnection(string $name, array $config): self
+EVIDENCE/recovery-staging/from-backup/database/components/Database/Integrations/AvaxContainer/DatabaseServiceProvider.php:107:            ->usingConfig(config: $this->resolveDatabaseConfig())
+EVIDENCE/recovery-staging/from-backup/database/components/Database/Integrations/Console/MigrateFreshCommand.php:49:            'sqlite' => $pdo->exec(statement: 'PRAGMA foreign_keys = OFF'),
+EVIDENCE/recovery-staging/from-backup/database/components/Database/Integrations/Console/MigrateFreshCommand.php:60:            'sqlite' => $pdo->exec(statement: 'PRAGMA foreign_keys = ON'),
+EVIDENCE/recovery-staging/from-backup/database/components/Database/Integrations/Console/MigrateFreshCommand.php:72:            'sqlite' => "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name",
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:86:            'sqlite' => $this->readFirstColumn(
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:87:                sql: "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name"
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:130:            'sqlite' => $this->readSqliteCreateTable(table: $table),
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:139:            query: "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = :name LIMIT 1"
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/Dialect.php:11:    case SQLITE        = 'sqlite';
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:37:        if (! extension_loaded(extension: 'sqlite3')) {
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/IsolationLevel.php:31:            'sqlite'     => $this === self::READ_COMMITTED || $this === self::SERIALIZABLE,
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/OpenConnection/how-this-works.md:3:owner: foundation-database-connections
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/how-this-works.md:3:owner: foundation-database-connections
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/ConnectionPool.php:21: * Connection pool implementation for managing a set of reusable database connections.
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/how-this-works.md:3:owner: foundation-database-connections
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/PoolState.php:12: * databases; it just keeps track of the numbers (How many connections are open?
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/Contracts/how-this-works.md:3:owner: foundation-database-connections
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:12: * The "Personal Assistant" for picking up and returning database connections.
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/how-this-works.md:3:owner: foundation-database-connections
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/how-this-works.md:3:owner: foundation-database-connections
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Contracts/how-this-works.md:3:owner: foundation-database-connections
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/RunWithConnection/how-this-works.md:3:owner: foundation-database-connections
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Connections.php:16: * Public capability owner for database connections and pools.
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Exceptions/how-this-works.md:3:owner: foundation-database-connections
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ValueObjects/ConnectionConfig.php:25:     * @param string $driver   The type of engine (e.g., 'mysql' or 'sqlite').
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ValueObjects/how-this-works.md:3:owner: foundation-database-connections
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ValueObjects/Dsn.php:26:     * @param string $driver   The type of database (e.g., 'mysql', 'sqlite').
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ValueObjects/Dsn.php:41:        // SQLite:   "sqlite:/path/to/db.sqlite"
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ValueObjects/Dsn.php:44:            'sqlite' => sprintf('sqlite:%s', $database),
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Configuration/DatabaseBuilder.php:11:    public function addConnection(string $name, array $config): self
 
 == Database public surface constructor ==
 <?php

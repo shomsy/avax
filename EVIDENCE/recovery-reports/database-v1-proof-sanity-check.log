@@ -3,8 +3,8 @@ master
 4a876aa2c
 
 == Git status ==
-?? Code-Review-And-ToDo/recovery-reports/database-v1-proof-checkpoint.md
-?? Code-Review-And-ToDo/recovery-reports/database-v1-proof-sanity-check.log
+?? EVIDENCE/recovery-reports/database-v1-proof-checkpoint.md
+?? EVIDENCE/recovery-reports/database-v1-proof-sanity-check.log
 ?? Framework.txt
 
 == Expected tests exist ==

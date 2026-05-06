@@ -1,8 +1,8 @@
 
 == GIT STATUS AFTER VALIDATION ==
  M .phpunit.cache/test-results
- M Code-Review-And-ToDo/v1-integrity/broken-reference-groups.md
- M Code-Review-And-ToDo/v1-integrity/static-integrity-closure-report.md
+ M EVIDENCE/v1-integrity/broken-reference-groups.md
+ M EVIDENCE/v1-integrity/static-integrity-closure-report.md
  M TODO.md
  M components/Application/Facade/System/Foundation/BaseFacade.php
  M components/Application/Text/System/Capabilities/Extract/ExtractDigits.php
@@ -20,5 +20,5 @@
  M components/Application/Text/System/Capabilities/Transform/TransformToUpper.php
  M components/Application/Text/System/Capabilities/Transform/TransformTrim.php
  M how-to-write-avax.md
-?? Code-Review-And-ToDo/v1-integrity/v1-completion-report.md
-?? Code-Review-And-ToDo/v1-truth-verification/
+?? EVIDENCE/v1-integrity/v1-completion-report.md
+?? EVIDENCE/v1-truth-verification/

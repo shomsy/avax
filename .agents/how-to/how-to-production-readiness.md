@@ -3,7 +3,7 @@
 Started: 2026-05-01  
 Status: **In progress**  
 Current Readiness: **Architecture: YELLOW/GREEN candidate · Testing/Integrity: RED · Production: RED**  
-Roadmap Source: `Code-Review-And-ToDo/master-plan/avax-master-development-plan.md`  
+Roadmap Source: `EVIDENCE/master-plan/avax-master-development-plan.md`  
 Current Truth Source: `CURRENT_TRUTH.md`
 
 ---
@@ -244,7 +244,7 @@ Required output:
 
 ```text
 CURRENT_TRUTH.md
-Code-Review-And-ToDo/master-plan/phase-status.md
+EVIDENCE/master-plan/phase-status.md
 ```
 
 Acceptance:
@@ -272,8 +272,8 @@ and reference-architecture tree before more repair work.
 Required output:
 
 ```text
-Code-Review-And-ToDo/master-plan/avax-master-project-tree.md
-Code-Review-And-ToDo/master-plan/component-owner-map.md
+EVIDENCE/master-plan/avax-master-project-tree.md
+EVIDENCE/master-plan/component-owner-map.md
 ```
 
 Acceptance:
@@ -352,7 +352,7 @@ Required output:
 docs/governance/public-api-policy.md
 docs/governance/deprecation-policy.md
 docs/governance/compatibility-policy.md
-Code-Review-And-ToDo/master-plan/api-classification-matrix.md
+EVIDENCE/master-plan/api-classification-matrix.md
 ```
 
 Acceptance:
@@ -400,7 +400,7 @@ A component is complete only when:
 Required output:
 
 ```text
-Code-Review-And-ToDo/master-plan/component-completion-matrix.md
+EVIDENCE/master-plan/component-completion-matrix.md
 ```
 
 Priority:
@@ -434,7 +434,7 @@ Required output:
 
 ```text
 build/canonical-class-map.json
-Code-Review-And-ToDo/master-plan/canonical-class-map.md
+EVIDENCE/master-plan/canonical-class-map.md
 ```
 
 Each class entry must include:
@@ -890,7 +890,7 @@ php tooling/audit_broken_refs.php
 Output:
 
 ```text
-Code-Review-And-ToDo/production-readiness/component-phpstan-error-groups.md
+EVIDENCE/production-readiness/component-phpstan-error-groups.md
 ```
 
 Groups:

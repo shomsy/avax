@@ -425,13 +425,13 @@ recovery/
 Ako ne želiš novi `recovery/` folder u root-u, stavi u:
 
 ```text
-Code-Review-And-ToDo/recovery/
+EVIDENCE/recovery/
 ```
 
 Moj izbor:
 
 ```text
-Code-Review-And-ToDo/recovery/
+EVIDENCE/recovery/
 ```
 
 jer je to audit/migration artefakt, ne source.
@@ -471,18 +471,18 @@ PHASE 11 Final cleanup
 # PHASE 0: Recovery setup
 
 ```text
-[ ] Create Code-Review-And-ToDo/recovery/
-[ ] Move or copy avax-backup.txt reference into Code-Review-And-ToDo/recovery/source-reference.md
+[ ] Create EVIDENCE/recovery/
+[ ] Move or copy avax-backup.txt reference into EVIDENCE/recovery/source-reference.md
 [ ] Keep original avax-backup.txt in place until recovery is complete
 [ ] Add note: do not autoload avax-backup.txt
 [ ] Add note: do not delete avax-backup.txt during recovery
-[ ] Add recovery status file: Code-Review-And-ToDo/recovery/recovery-status.md
+[ ] Add recovery status file: EVIDENCE/recovery/recovery-status.md
 ```
 
 Create:
 
 ```text
-Code-Review-And-ToDo/recovery/recovery-status.md
+EVIDENCE/recovery/recovery-status.md
 ```
 
 Content:
@@ -521,10 +521,10 @@ AI mora prvo da izvuče inventar, ne da odmah piše kod.
 Create:
 
 ```text
-Code-Review-And-ToDo/recovery/old-feature-inventory.md
-Code-Review-And-ToDo/recovery/old-public-api-inventory.md
-Code-Review-And-ToDo/recovery/old-vendor-monolith-inventory.md
-Code-Review-And-ToDo/recovery/old-tests-inventory.md
+EVIDENCE/recovery/old-feature-inventory.md
+EVIDENCE/recovery/old-public-api-inventory.md
+EVIDENCE/recovery/old-vendor-monolith-inventory.md
+EVIDENCE/recovery/old-tests-inventory.md
 ```
 
 AI zadatak:
@@ -567,7 +567,7 @@ Mail/Notifications, Queues/Jobs, ORM/query builders, String/Text helperi, I18N, 
 Create:
 
 ```text
-Code-Review-And-ToDo/recovery/old-to-new-ownership-map.md
+EVIDENCE/recovery/old-to-new-ownership-map.md
 ```
 
 Target mapping:
@@ -2030,11 +2030,11 @@ docs/
 Final reports:
 
 ```text
-Code-Review-And-ToDo/recovery/feature-recovery-final-report.md
-Code-Review-And-ToDo/recovery/vendor-monolith-placement-report.md
-Code-Review-And-ToDo/recovery/unrecovered-features-report.md
-Code-Review-And-ToDo/recovery/compatibility-bridges-report.md
-Code-Review-And-ToDo/recovery/tests-and-quality-gates-report.md
+EVIDENCE/recovery/feature-recovery-final-report.md
+EVIDENCE/recovery/vendor-monolith-placement-report.md
+EVIDENCE/recovery/unrecovered-features-report.md
+EVIDENCE/recovery/compatibility-bridges-report.md
+EVIDENCE/recovery/tests-and-quality-gates-report.md
 ```
 
 ---

@@ -36,7 +36,7 @@ final class CanonicalTreeDefinition
                         'examples/',
                         'tooling/',
                         'build/',
-                        'Code-Review-And-ToDo/',
+                        'EVIDENCE/',
                     ],
                     'required_dirs' => [
                         'framework/System' => [

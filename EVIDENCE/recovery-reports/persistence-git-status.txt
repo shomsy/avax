@@ -1,6 +1,6 @@
  M .phpunit.cache/test-results
-?? Code-Review-And-ToDo/recovery-reports/
-?? Code-Review-And-ToDo/recovery-staging/
+?? EVIDENCE/recovery-reports/
+?? EVIDENCE/recovery-staging/
 ?? Makefile.recovery
 ?? tests/Unit/Generated/
 ?? tooling/recovery/

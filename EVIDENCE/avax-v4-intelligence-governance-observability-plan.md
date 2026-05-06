@@ -1,7 +1,7 @@
 Da. Evo ga kao **save-ready `.md` plan**. Ja bih ga sačuvao kao:
 
 ```text
-Code-Review-And-ToDo/avax-v4-intelligence-governance-observability-plan.md
+EVIDENCE/avax-v4-intelligence-governance-observability-plan.md
 ```
 
 Plan se oslanja na postojeći V3 smer: AvaX ne treba da bude infrastruktura, nego framework koji disciplinuje korišćenje infrastrukture kroz contracts, ports, adapters, orchestration, failure policy, diagnostics, testing harness, simulation model, reference architecture i operator visibility.  Takođe se naslanja na cache roadmap gde se V4 već prirodno pojavljuje kao distributed cache promotion, cache warming i metrics backends, plus princip “observability as first-class concern”.

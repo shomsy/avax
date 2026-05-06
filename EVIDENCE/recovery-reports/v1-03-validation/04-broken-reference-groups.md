@@ -310,67 +310,122 @@
   - examples/minimal-http-app/config/middleware.php:12 (use-statement)
   - examples/minimal-http-app/config/middleware.php:34 (class-const-fetch)
 - **Avax\Components\Database\System\Capabilities\Connections\Connections** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:23 (constructor-param)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:37 (return-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:7 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:23 (
+      constructor-param)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:37 (
+      return-type)
 - **Avax\Components\Database\System\Capabilities\Connections\DatabaseConnection** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Flows/RunDatabaseTransaction/RunDatabaseTransaction.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Flows/RunDatabaseTransaction/RunDatabaseTransaction.php:11 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Flows/ConnectToDatabase/ResolveConnectionConfiguration.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Flows/ConnectToDatabase/ConnectToDatabase.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Flows/ConnectToDatabase/ConnectToDatabase.php:11 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Flows/ConnectToDatabase/ConnectToDatabase.php:13 (new)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Flows/RunDatabaseQuery/PrepareDatabaseQuery.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Flows/RunDatabaseQuery/RunDatabaseQuery.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Flows/RunDatabaseQuery/RunDatabaseQuery.php:11 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/DatabaseInterface.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/DatabaseInterface.php:11 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Flows/RunDatabaseTransaction/RunDatabaseTransaction.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Flows/RunDatabaseTransaction/RunDatabaseTransaction.php:
+    11 (param-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Flows/ConnectToDatabase/ResolveConnectionConfiguration.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Flows/ConnectToDatabase/ConnectToDatabase.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Flows/ConnectToDatabase/ConnectToDatabase.php:
+    11 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Flows/ConnectToDatabase/ConnectToDatabase.php:
+    13 (new)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Flows/RunDatabaseQuery/PrepareDatabaseQuery.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Flows/RunDatabaseQuery/RunDatabaseQuery.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Flows/RunDatabaseQuery/RunDatabaseQuery.php:
+    11 (param-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/DatabaseInterface.php:7 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/DatabaseInterface.php:11 (
+      return-type)
 - **Avax\Components\Database\System\Capabilities\Migrations\Migrations** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Migrations.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Migrations.php:15 (constructor-param)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:8 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:27 (constructor-param)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Migrations.php:7 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Migrations.php:15 (
+      constructor-param)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:8 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:27 (
+      constructor-param)
 - **Avax\Components\Database\System\Capabilities\Migrations\Schema\Schema** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:9 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:26 (constructor-param)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Schema.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Schema.php:15 (constructor-param)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:9 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:26 (
+      constructor-param)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Schema.php:7 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Schema.php:15 (
+      constructor-param)
 - **Avax\Components\Database\System\Capabilities\ORM\EntityManager** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:10 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:25 (constructor-param)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/EntityManager.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/EntityManager.php:17 (constructor-param)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:10 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:25 (
+      constructor-param)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/EntityManager.php:7 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/EntityManager.php:17 (
+      constructor-param)
 - **Avax\Components\Database\System\Capabilities\ORM\Metadata\EntityMetadata** [MINOR]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/EntityManager.php:8 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/EntityManager.php:20 (return-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/EntityManager.php:8 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/EntityManager.php:20 (
+      return-type)
 - **Avax\Components\Database\System\Capabilities\ORM\Repositories\EntityRepository** [MINOR]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/EntityManager.php:9 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/EntityManager.php:55 (return-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/EntityManager.php:9 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/EntityManager.php:55 (
+      return-type)
 - **Avax\Components\Database\System\Capabilities\Query\Builder\QueryBuilder** [MINOR]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:11 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:72 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Query.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Query.php:26 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Query.php:31 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Query.php:36 (return-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:11 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:72 (
+      return-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Query.php:7 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Query.php:26 (return-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Query.php:31 (return-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Query.php:36 (return-type)
 - **Avax\Components\Database\System\Capabilities\Query\Query** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:12 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:24 (constructor-param)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Query.php:8 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Query.php:17 (constructor-param)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:12 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:24 (
+      constructor-param)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Query.php:8 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Query.php:17 (
+      constructor-param)
 - **Avax\Components\Database\System\Capabilities\Query\ValueObjects\Expression** [MINOR]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Query.php:9 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Query.php:41 (return-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Query.php:9 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Query.php:41 (return-type)
 - **Avax\Components\Database\System\Capabilities\Telemetry\Telemetry** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Telemetry.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Telemetry.php:15 (constructor-param)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:13 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:29 (constructor-param)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Telemetry.php:7 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Telemetry.php:15 (
+      constructor-param)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:13 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:29 (
+      constructor-param)
 - **Avax\Components\Database\System\Capabilities\Transactions\Transactions** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Transactions.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Transactions.php:15 (constructor-param)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:14 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:28 (constructor-param)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Transactions.php:7 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Transactions.php:15 (
+      constructor-param)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:14 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Database.php:28 (
+      constructor-param)
 - **Avax\Components\HTTP\Middleware\CorsMiddleware** [MINOR]
   - examples/minimal-http-app/config/middleware.php:13 (use-statement)
   - examples/minimal-http-app/config/middleware.php:31 (class-const-fetch)
@@ -390,190 +445,431 @@
   - examples/minimal-http-app/config/filesystems.php:5 (use-statement)
   - examples/minimal-http-app/config/filesystems.php:13 (static-call)
 - **Avax\DataFoundation\ObjectHandling\DTO\AbstractDTO** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:34 (extends)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:
+    34 (extends)
 - **Avax\DataFoundation\Validation\Attributes\Rules\IntegerRule** [MINOR]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:8 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:37 (attribute)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:41 (attribute)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:45 (attribute)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:49 (attribute)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:53 (attribute)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:57 (attribute)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:
+    8 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:
+    37 (attribute)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:
+    41 (attribute)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:
+    45 (attribute)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:
+    49 (attribute)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:
+    53 (attribute)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php:
+    57 (attribute)
 - **Avax\Database\Integrations\Console\MigrateCommand** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Integrations/Console/MigrateFreshCommand.php:15 (constructor-param)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/Integrations/Console/MigrateFreshCommand.php:
+      15 (constructor-param)
 - **Avax\Database\System\Capabilities\Connections\Contracts\DatabaseConnection** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/RunTransaction/Transaction.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/RunTransaction/Transaction.php:21 (property-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/RunTransaction/Transaction.php:27 (constructor-param)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/RunTransaction/Transaction.php:38 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/RunTransaction/Transaction.php:117 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/Locks.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/Locks.php:11 (constructor-param)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/Contracts/TransactionManagerInterface.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/Contracts/TransactionManagerInterface.php:87 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/OpenConnection/BuildPhysicalConnection.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/OpenConnection/BuildPhysicalConnection.php:24 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/OpenConnection/PdoConnection.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/OpenConnection/PdoConnection.php:16 (implements)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/Contracts/ConnectionPoolInterface.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/Contracts/ConnectionPoolInterface.php:36 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/Contracts/ConnectionPoolInterface.php:43 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:48 (implements)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:51 (property-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:79 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:93 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:119 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:18 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:26 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:26 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:54 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:113 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/RunWithConnection/RunWithConnection.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Connections.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Connections.php:36 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/RunTransaction/Transaction.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/RunTransaction/Transaction.php:
+    21 (property-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/RunTransaction/Transaction.php:
+    27 (constructor-param)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/RunTransaction/Transaction.php:
+    38 (param-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/RunTransaction/Transaction.php:
+    117 (return-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/Locks.php:7 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/Locks.php:11 (
+      constructor-param)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/Contracts/TransactionManagerInterface.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/Contracts/TransactionManagerInterface.php:
+    87 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/OpenConnection/BuildPhysicalConnection.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/OpenConnection/BuildPhysicalConnection.php:
+    24 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/OpenConnection/PdoConnection.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/OpenConnection/PdoConnection.php:
+    16 (implements)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/Contracts/ConnectionPoolInterface.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/Contracts/ConnectionPoolInterface.php:
+    36 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/Contracts/ConnectionPoolInterface.php:
+    43 (param-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:
+    48 (implements)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:
+    51 (property-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:
+    79 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:
+    93 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:
+    119 (param-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:
+    18 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:
+    26 (param-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:
+    26 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:
+    54 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:
+    113 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/RunWithConnection/RunWithConnection.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Connections.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Connections.php:
+    36 (return-type)
 - **Avax\Database\System\Capabilities\Connections\OpenConnection\OpenConnection** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:10 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:115 (new)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:
+    10 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:
+    115 (new)
 - **Avax\Database\System\Capabilities\Connections\Pools\BaseConnectionPool** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/MySQLPool.php:7 (extends)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/RetryablePool.php:12 (constructor-param)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/MySQLPool.php:
+    7 (extends)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/RetryablePool.php:
+    12 (constructor-param)
 - **Avax\Database\System\Capabilities\Connections\Pools\ConnectionPool** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:8 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:36 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:44 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:44 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:11 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:85 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:91 (new)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:
+    8 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:
+    36 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:
+    44 (param-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:
+    44 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:
+    11 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:
+    85 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:
+    91 (new)
 - **Avax\Database\System\Capabilities\Connections\Pools\PoolStats** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/ConnectionPoolInterface.php:15 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/ShardedPool.php:68 (new)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/ShardedPool.php:78 (new)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/ConnectionPoolInterface.php:
+    15 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/ShardedPool.php:
+    68 (new)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Pools/ShardedPool.php:
+    78 (new)
 - **Avax\Database\System\Capabilities\Migrations\ReadMigrationStatus\ReadMigrationStatus** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Integrations/Console/MigrateStatusCommand.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Integrations/Console/MigrateStatusCommand.php:12 (constructor-param)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:11 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:157 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:159 (new)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Migrations.php:11 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Migrations.php:49 (return-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/Integrations/Console/MigrateStatusCommand.php:
+      7 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/Integrations/Console/MigrateStatusCommand.php:
+      12 (constructor-param)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:
+      11 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:
+      157 (return-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:
+      159 (new)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/Migrations.php:11 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/Migrations.php:49 (return-type)
 - **Avax\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/RollbackMigrations/RollbackMigrations.php:9 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/RollbackMigrations/RollbackMigrations.php:19 (constructor-param)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:14 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:138 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:140 (new)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Migrations.php:13 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Migrations.php:31 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/RollbackMigrations/RollbackMigrations.php:
+    9 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/RollbackMigrations/RollbackMigrations.php:
+    19 (constructor-param)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:
+      14 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:
+      138 (return-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:
+      140 (new)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/Migrations.php:13 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/Migrations.php:31 (return-type)
 - **Avax\Database\System\Capabilities\Migrations\SeedDatabase\Seeder** [MINOR]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Integrations/Console/SeedCommand.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:16 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:169 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:173 (instanceof)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Migrations.php:14 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Migrations.php:71 (param-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/Integrations/Console/SeedCommand.php:7 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:
+      16 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:
+      169 (param-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:
+      173 (instanceof)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/Migrations.php:14 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/Migrations.php:71 (param-type)
 - **Avax\Database\System\Capabilities\Query\Advanced\CTE\CTEBuilder** [MINOR]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Advanced/CTE/RecursiveCTE.php:17 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Advanced/CTE/RecursiveCTE.php:17 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Advanced/CTE/RecursiveCTE.php:
+    17 (param-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Advanced/CTE/RecursiveCTE.php:
+    17 (return-type)
 - **Avax\Database\System\Capabilities\Query\Advanced\Upsert\OnConflict** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Advanced/Upsert/UpsertBuilder.php:15 (constructor-param)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Advanced/Upsert/UpsertBuilder.php:
+    15 (constructor-param)
 - **Avax\Database\System\Capabilities\Query\Builder\QueryBuilder** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Schema/DropTable.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Schema/DropTable.php:15 (constructor-param)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Schema/Schema.php:8 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Schema/Schema.php:51 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:8 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:19 (property-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:23 (constructor-param)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Design/BaseMigration.php:8 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Design/BaseMigration.php:24 (property-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Design/BaseMigration.php:33 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Design/BaseMigration.php:83 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:17 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:129 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/ORM/Repository.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/ORM/Repository.php:19 (constructor-param)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/ORM/Repository.php:64 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:8 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:33 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:45 (new)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Builder/Concerns/HasSoftDeletes.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Builder/Concerns/HasOrders.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Builder/Concerns/HasControlStructures.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Builder/Concerns/HasGroups.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Query.php:8 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Query.php:44 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Query.php:53 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/DatabaseInterface.php:11 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/DatabaseInterface.php:35 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Schema/DropTable.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Schema/DropTable.php:
+    15 (constructor-param)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Schema/Schema.php:
+    8 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Schema/Schema.php:
+    51 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:
+    8 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:
+    19 (property-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:
+    23 (constructor-param)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Design/BaseMigration.php:
+    8 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Design/BaseMigration.php:
+    24 (property-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Design/BaseMigration.php:
+    33 (param-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Design/BaseMigration.php:
+    83 (return-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:
+      17 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php:
+      129 (return-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/ORM/Repository.php:7 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/ORM/Repository.php:19 (
+      constructor-param)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/ORM/Repository.php:64 (
+      return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:
+    8 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:
+    33 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:
+    45 (new)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Builder/Concerns/HasSoftDeletes.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Builder/Concerns/HasOrders.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Builder/Concerns/HasControlStructures.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Builder/Concerns/HasGroups.php:
+    7 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Query.php:8 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Query.php:44 (
+      return-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Query.php:53 (
+      return-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/DatabaseInterface.php:11 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/DatabaseInterface.php:35 (return-type)
 - **Avax\Database\System\Capabilities\Query\Exceptions\QueryException** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRValidator.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRValidator.php:17 (new)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRValidator.php:
+      7 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRValidator.php:
+      17 (new)
 - **Avax\Database\System\Capabilities\Query\Execution\PDOExecutor** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:9 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:37 (new)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:
+    9 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:
+    37 (new)
 - **Avax\Database\System\Capabilities\Query\Execution\QueryOrchestrator** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:10 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:36 (new)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:
+    10 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:
+    36 (new)
 - **Avax\Database\System\Capabilities\Query\Grammar\MySQLGrammar** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Query.php:27 (new)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Query.php:27 (new)
 - **Avax\Database\System\Capabilities\Query\IR\Nodes\QueryNode** [MINOR]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRNormalizer.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRNormalizer.php:15 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRNormalizer.php:23 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRValidator.php:8 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRValidator.php:12 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRValidator.php:24 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRTransformer.php:12 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRTransformer.php:21 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRTransformer.php:43 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRTransformer.php:116 (param-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRNormalizer.php:
+      7 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRNormalizer.php:
+      15 (param-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRNormalizer.php:
+      23 (param-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRValidator.php:
+      8 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRValidator.php:
+      12 (param-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRValidator.php:
+      24 (param-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRTransformer.php:
+      12 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRTransformer.php:
+      21 (param-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRTransformer.php:
+      43 (param-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRTransformer.php:
+      116 (param-type)
 - **Avax\Database\System\Capabilities\Query\Projections\Projection** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Projections/ProjectionBuilder.php:7 (implements)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Projections/ProjectionBuilder.php:
+    7 (implements)
 - **Avax\Database\System\Capabilities\Query\State\AST\JoinNode** [MINOR]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/QueryState.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/QueryState.php:228 (param-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/QueryState.php:
+      7 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/QueryState.php:
+      228 (param-type)
 - **Avax\Database\System\Capabilities\Query\State\AST\NestedWhereNode** [MINOR]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/QueryState.php:8 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/QueryState.php:240 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/BaseGrammar.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/BaseGrammar.php:235 (instanceof)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/QueryState.php:
+      8 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/State/QueryState.php:
+      240 (param-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/BaseGrammar.php:
+    7 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/BaseGrammar.php:
+    235 (instanceof)
 - **Avax\Database\System\Capabilities\Telemetry\Config\Config** [MINOR]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Telemetry.php:7 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Telemetry.php:21 (return-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/Telemetry.php:7 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/Telemetry.php:21 (return-type)
 - **Avax\Database\System\Capabilities\Telemetry\Events\Contracts\EventBusInterface** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Telemetry/Events/EventBus.php:8 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Telemetry/Events/EventBus.php:16 (implements)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Telemetry/Events/EventBus.php:
+    8 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Telemetry/Events/EventBus.php:
+    16 (implements)
 - **Avax\Database\System\Capabilities\Telemetry\Support\ExecutionScope** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Telemetry.php:9 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Telemetry.php:26 (return-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:13 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:26 (constructor-param)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Execution/ExecutorInterface.php:8 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Execution/ExecutorInterface.php:32 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Execution/ExecutorInterface.php:47 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Query.php:13 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Query.php:28 (constructor-param)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:14 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:29 (property-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:41 (constructor-param)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:46 (static-call)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:101 (param-type)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Connections.php:11 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Connections.php:57 (param-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/Telemetry.php:9 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/Telemetry.php:26 (return-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:
+    13 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:
+    26 (constructor-param)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Execution/ExecutorInterface.php:
+    8 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Execution/ExecutorInterface.php:
+    32 (param-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Execution/ExecutorInterface.php:
+    47 (param-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Query.php:13 (
+      use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Query.php:28 (
+      constructor-param)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:
+    14 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:
+    29 (property-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:
+    41 (constructor-param)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:
+    46 (static-call)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:
+    101 (param-type)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Connections.php:
+    11 (use-statement)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Connections/Connections.php:
+    57 (param-type)
 - **Avax\Database\System\Capabilities\Telemetry\Telemetry** [CRITICAL]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Telemetry.php:10 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/Telemetry.php:14 (constructor-param)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/DatabaseInterface.php:13 (use-statement)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/DatabaseInterface.php:33 (return-type)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/Telemetry.php:10 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/Telemetry.php:14 (constructor-param)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/DatabaseInterface.php:13 (use-statement)
+    - EVIDENCE/recovery-staging/from-backup/database/components/Database/System/DatabaseInterface.php:33 (return-type)
 - **Avax\Database\System\Capabilities\Transactions\IsolationLevel** [MINOR]
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/IsolationLevels.php:9 (class-const-fetch)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/IsolationLevels.php:10 (class-const-fetch)
-  - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/IsolationLevels.php:11 (class-const-fetch)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/IsolationLevels.php:
+    9 (class-const-fetch)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/IsolationLevels.php:
+    10 (class-const-fetch)
+    -
+    EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/IsolationLevels.php:
+    11 (class-const-fetch)
   - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/IsolationLevels.php:12 (class-const-fetch)
   - Code-Review-And-ToDo/recovery-staging/from-backup/database/components/Database/System/Capabilities/Transactions/IsolationLevels.php:13 (class-const-fetch)
 - **Avax\Database\System\Capabilities\Transactions\RunTransaction\RunTransaction** [CRITICAL]

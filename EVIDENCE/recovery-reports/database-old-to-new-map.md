@@ -1,11 +1,11 @@
 # Old To New Map — database
 
-Staging: `Code-Review-And-ToDo/recovery-staging/from-backup/database`
+Staging: `EVIDENCE/recovery-staging/from-backup/database`
 
 | Old/staged file                                                                                     | Suggested new target                                                                                 | Action        | Status  |
 |-----------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|---------------|---------|
-| `components/Database/Code-Review-And-ToDo/refactor-plan.md`                                         | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/refactor-plan.md`              | review        | pending |
-| `components/Database/Code-Review-And-ToDo/review.md`                                                | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/review.md`                     | review        | pending |
+| `components/Database/EVIDENCE/refactor-plan.md`                                                     | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/refactor-plan.md`              | review        | pending |
+| `components/Database/EVIDENCE/review.md`                                                            | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/review.md`                     | review        | pending |
 | `components/Database/Database.php`                                                                  | `components/DataStack/Database/System/PublicSurface/Database.php`                                    | restore/slice | pending |
 | `components/Database/Database.txt`                                                                  | `components/DataStack/Database/System/PublicSurface/Database.txt`                                    | review        | pending |
 | `components/Database/EntityManager.php`                                                             | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/EntityManager.php`             | restore/slice | pending |

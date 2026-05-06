@@ -14,9 +14,9 @@ Before any work starts, read these documents in this order:
 1. CURRENT_TRUTH.md
 2. EXECUTION.md
 3. TODO.md
-4. Code-Review-And-ToDo/master-plan/avax-master-development-plan-v1.md
-5. Code-Review-And-ToDo/master-plan/avax-master-plan-v2-pucamo-u-metu.md
-6. Code-Review-And-ToDo/master-plan/avax-v3-executable-system-design-framework-plan.md
+4. EVIDENCE/master-plan/avax-master-development-plan-v1.md
+5. EVIDENCE/master-plan/avax-master-plan-v2-pucamo-u-metu.md
+6. EVIDENCE/master-plan/avax-v3-executable-system-design-framework-plan.md
 7. .agents/how-to/*.md
 ```
 
@@ -177,13 +177,13 @@ Stage V1-02: Current Component Muscle Audit
 Recent completed evidence:
 
 ```text
-Code-Review-And-ToDo/master-plan/stage-01-final-project-tree-freeze-report.md
-Code-Review-And-ToDo/component-taxonomy/stage-02-taxonomy-integrity-report.md
-Code-Review-And-ToDo/muscle-recovery/stage-v1-01-backup-muscle-inventory-report.md
-Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.md
-Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.json
-Code-Review-And-ToDo/muscle-recovery/component-muscle-audit.md
-Code-Review-And-ToDo/muscle-recovery/component-muscle-audit.json
+EVIDENCE/master-plan/stage-01-final-project-tree-freeze-report.md
+EVIDENCE/component-taxonomy/stage-02-taxonomy-integrity-report.md
+EVIDENCE/muscle-recovery/stage-v1-01-backup-muscle-inventory-report.md
+EVIDENCE/muscle-recovery/backup-muscle-inventory.md
+EVIDENCE/muscle-recovery/backup-muscle-inventory.json
+EVIDENCE/muscle-recovery/component-muscle-audit.md
+EVIDENCE/muscle-recovery/component-muscle-audit.json
 ```
 
 All other stages are read-only context until Stage V1-03 is complete.
@@ -200,7 +200,7 @@ Remove or classify static integrity blockers before any V1 muscle restoration.
 [ ] Repair production PSR-4 skips that are local filename/namespace mismatches.
 [ ] Keep test-layer skips classified unless the repair is needed for static integrity.
 [ ] Run targeted PHPStan checks listed in TODO.md.
-[ ] Record Code-Review-And-ToDo/v1-integrity/static-integrity-closure-report.md.
+[ ] Record EVIDENCE/v1-integrity/static-integrity-closure-report.md.
 ```
 
 ### Stage V1-03 Forbidden Work

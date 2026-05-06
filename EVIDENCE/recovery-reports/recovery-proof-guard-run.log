@@ -1,8 +1,8 @@
 python3 tooling/recovery/assert_not_report_only_complete.py
 Changed files:
 - .phpunit.cache/test-results
-- Code-Review-And-ToDo/recovery-reports/
-- Code-Review-And-ToDo/recovery-staging/
+- EVIDENCE/recovery-reports/
+- EVIDENCE/recovery-staging/
 - Makefile.recovery
 - components/Application/Localization/
 - components/Operations/Events/how-this-works.md

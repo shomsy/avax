@@ -548,7 +548,7 @@ function pathShouldBeSkipped(string $path): bool
 {
     $skipped = [
         '/vendor/',
-        '/Code-Review-And-ToDo/',
+        '/EVIDENCE/',
         '/build/',
         '/.git/',
         '/.phpunit.cache/',

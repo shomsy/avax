@@ -530,7 +530,7 @@ Allowed:
 
 ```text
 components/<Area>/<Component>/README.md
-Code-Review-And-ToDo/security-reports/
+EVIDENCE/security-reports/
 docs/security/
 ```
 

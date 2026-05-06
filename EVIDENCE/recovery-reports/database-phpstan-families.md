@@ -1,6 +1,6 @@
 # PHPStan Error Families
 
-Input: `Code-Review-And-ToDo/recovery-reports/database-phpstan.raw`
+Input: `EVIDENCE/recovery-reports/database-phpstan.raw`
 
 | Family                      | Count |
 |-----------------------------|------:|

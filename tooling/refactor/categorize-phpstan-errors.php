@@ -1,9 +1,9 @@
 <?php
 
 $phpstanCmd = 'vendor/bin/phpstan analyse framework components tests --memory-limit=1G --error-format=raw --no-progress';
-shell_exec("$phpstanCmd > Code-Review-And-ToDo/v1-integrity/phpstan-full-raw.txt 2>&1 || true");
+shell_exec("$phpstanCmd > EVIDENCE/v1-integrity/phpstan-full-raw.txt 2>&1 || true");
 
-$lines = file('Code-Review-And-ToDo/v1-integrity/phpstan-full-raw.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+$lines = file('EVIDENCE/v1-integrity/phpstan-full-raw.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
 $components = [];
 $errorTypes = [];
@@ -84,5 +84,5 @@ foreach ($components as $comp => $families) {
     $markdown .= "\n";
 }
 
-file_put_contents('Code-Review-And-ToDo/v1-integrity/phpstan-error-groups.md', $markdown);
+file_put_contents('EVIDENCE/v1-integrity/phpstan-error-groups.md', $markdown);
 echo "Categorization complete.\n";

@@ -172,7 +172,7 @@ try {
             exit($validator->run());
 
         case 'discipline:report':
-            $reportPath = $rootDir . '/Code-Review-And-ToDo/pre-commit/latest.json';
+            $reportPath = $rootDir . '/EVIDENCE/pre-commit/latest.json';
             if (! file_exists($reportPath)) {
                 echo "No discipline report found. Run 'php avax discipline:check' first.\n";
                 exit(1);
@@ -186,7 +186,7 @@ try {
             exit(0);
 
         case 'discipline:status':
-            $reportPath = $rootDir . '/Code-Review-And-ToDo/pre-commit/latest.json';
+            $reportPath = $rootDir . '/EVIDENCE/pre-commit/latest.json';
             if (! file_exists($reportPath)) {
                 echo "✅ No issues found (no report yet)\n";
                 exit(0);

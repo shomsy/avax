@@ -1,6 +1,6 @@
 <?php
 
-$log = file_get_contents('Code-Review-And-ToDo/v1-integrity/autoload-skip-report.txt');
+$log = file_get_contents('EVIDENCE/v1-integrity/autoload-skip-report.txt');
 preg_match_all('/Class (.*?) located in \.\/(.*?) does not comply/', $log, $matches);
 
 $skips = [];

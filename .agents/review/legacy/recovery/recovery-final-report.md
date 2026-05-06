@@ -38,7 +38,7 @@ cleanup verification.
 |------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
 | `components/HTTP/Router/RouterRuntimeInterface.php`                                      | Updated to extend canonical interface for backward compat                            |
 | `tests/Foundation/Container/Capabilities/Providers/Runtime/Http/HttpApplicationTest.php` | Fixed import namespaces for RouterRuntimeInterface, ServerRequest, ResponseInterface |
-| `Code-Review-And-ToDo/recovery/recovery-status.md`                                       | Updated all phase statuses, blockers resolved, remaining issues                      |
+| `EVIDENCE/recovery/recovery-status.md`                                       | Updated all phase statuses, blockers resolved, remaining issues                      |
 | `ToDo.md`                                                                                | Marked TASK-007 and TASK-013 as completed; added status notes to all tasks           |
 
 ---

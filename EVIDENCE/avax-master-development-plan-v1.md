@@ -188,7 +188,7 @@ avax/
     canonical-class-map.json
     reports/
 
-  Code-Review-And-ToDo/
+  EVIDENCE/
     master-plan/
     component-taxonomy/
     component-completion/

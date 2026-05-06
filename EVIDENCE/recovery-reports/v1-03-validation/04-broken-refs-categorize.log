@@ -1,4 +1,4 @@
 Script started on 2026-05-06 01:34:22+02:00 [COMMAND="php tooling/refactor/categorize-broken-refs.php" <not executed on terminal>]
-^@Categorization complete. Output written to Code-Review-And-ToDo/v1-integrity/broken-reference-groups.md
+^@Categorization complete. Output written to EVIDENCE/v1-integrity/broken-reference-groups.md
 
 Script done on 2026-05-06 01:34:25+02:00 [COMMAND_EXIT_CODE="0"]

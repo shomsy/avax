@@ -100,9 +100,9 @@ if ($result->isSuccess()) {
 
 - [x] **Created `tooling/refactor/check-namespace-drift.php`:** Namespace drift checker that verifies 2623+ PHP files
 - [x] **Created Phase review documents:**
-    - `Code-Review-And-ToDo/scattered-structure-review.md`
-    - `Code-Review-And-ToDo/recovered-skeletons.md`
-    - `Code-Review-And-ToDo/normalization-review.md`
+    - `EVIDENCE/scattered-structure-review.md`
+    - `EVIDENCE/recovered-skeletons.md`
+    - `EVIDENCE/normalization-review.md`
 
 #### 🔴 Critical Fixes / Deletions
 

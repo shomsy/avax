@@ -33,4 +33,4 @@ labs/SystemDesignKit/
   spikes/
 ```
 
-See: Code-Review-And-ToDo/avax-v3-executable-system-design-framework-plan.md
+See: EVIDENCE/avax-v3-executable-system-design-framework-plan.md

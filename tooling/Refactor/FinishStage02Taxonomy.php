@@ -65,13 +65,13 @@ final class NotImplemented extends Exception
         $this->moveDir('public', 'examples/golden-path-app/public');
 
         $this->moveFile('merge-files.sh', 'tooling/refactor/merge-files.sh');
-        $this->createDir('Code-Review-And-ToDo/archive');
-        $this->moveFile('avax.txt', 'Code-Review-And-ToDo/archive/avax.txt');
+        $this->createDir('EVIDENCE/archive');
+        $this->moveFile('avax.txt', 'EVIDENCE/archive/avax.txt');
         $this->removeFile('test-v2.php');
 
         // 4. Address components/ files
         $this->moveFile('components/new-component.md', 'docs/components/new-component.md');
-        $this->moveFile('components/components.txt', 'Code-Review-And-ToDo/archive/components.txt');
+        $this->moveFile('components/components.txt', 'EVIDENCE/archive/components.txt');
 
         echo "Stage 02 Taxonomy Repair Finished.\n";
     }

@@ -151,9 +151,9 @@ docs/decisions/0004-public-surface-boundary.md
 docs/decisions/0005-runtime-adapters-must-not-leak.md
 docs/decisions/0006-request-state-must-be-scoped.md
 
-Code-Review-And-ToDo/review.md
-Code-Review-And-ToDo/migration-map.md
-Code-Review-And-ToDo/risk-register.md
+EVIDENCE/review.md
+EVIDENCE/migration-map.md
+EVIDENCE/risk-register.md
 ```
 
 ## Tasks
@@ -752,7 +752,7 @@ creation/modification/code change i u planning mode-u.
 Za svaki veći slice:
 
 ```text
-Code-Review-And-ToDo/<slice>/review.md
+EVIDENCE/<slice>/review.md
 ```
 
 Mora sadržati:
@@ -984,7 +984,7 @@ First implementation slice:
 7. Add docs mirror under docs/framework/System.
 8. Run targeted tests and quality gates.
 9. Run kluster code verification if available and configured.
-10. Produce Code-Review-And-ToDo/review.md with:
+10. Produce EVIDENCE/review.md with:
    - GOVERNANCE INVENTORY
    - GOVERNANCE COMPLIANCE REPORT
    - GOVERNANCE FINDINGS
@@ -3003,9 +3003,9 @@ testovi dokazuju spoljni scenario. Contract testovi dokazuju da adapteri poštuj
 Status: DONE
 Notes:
 
-- DONE: `docs/governance/`, `docs/decisions/`, `Code-Review-And-ToDo/migration-map.md`, and
-  `Code-Review-And-ToDo/risk-register.md` were added.
-- DONE: governance inventory and compliance reporting live in `Code-Review-And-ToDo/review.md`.
+- DONE: `docs/governance/`, `docs/decisions/`, `EVIDENCE/migration-map.md`, and
+  `EVIDENCE/risk-register.md` were added.
+- DONE: governance inventory and compliance reporting live in `EVIDENCE/review.md`.
 
 ```text
 [x] Add how-to-architecture-extension.md to docs/governance/
@@ -3017,8 +3017,8 @@ Notes:
 [x] Create docs/decisions/0005-runtime-adapters-must-not-leak-into-core.md
 [x] Create docs/decisions/0006-request-state-must-be-scoped.md
 [x] Create docs/decisions/0007-docs-mirror-source-structure.md
-[x] Create Code-Review-And-ToDo/migration-map.md
-[x] Create Code-Review-And-ToDo/risk-register.md
+[x] Create EVIDENCE/migration-map.md
+[x] Create EVIDENCE/risk-register.md
 ```
 
 ## Phase 1: Create framework/System skeleton
@@ -3197,7 +3197,7 @@ Reason:
 Status: PARTIAL
 Reason:
 
-- DONE: migration order and reuse strategy are documented in `Code-Review-And-ToDo/migration-map.md`.
+- DONE: migration order and reuse strategy are documented in `EVIDENCE/migration-map.md`.
 - PARTIAL: components are not migrated in order yet.
 - PARTIAL: `Response` was only stabilized enough for safe reuse by `framework/System`; `Request`, `Router`,
   `Middleware`, and the rest remain future slices.
@@ -4058,7 +4058,7 @@ For `DataFoundation`, `DataLayer`, and `Database`, document:
 Output file:
 
 ```text
-Code-Review-And-ToDo/data-stack-inventory.md
+EVIDENCE/data-stack-inventory.md
 ```
 
 ---
@@ -4388,7 +4388,7 @@ Specific checks:
 [ ] List current dependencies
 [ ] List stateful/static behavior
 [ ] List duplicate responsibilities
-[ ] Write Code-Review-And-ToDo/data-stack-inventory.md
+[ ] Write EVIDENCE/data-stack-inventory.md
 ```
 
 ### Phase B: Naming Decision
@@ -4857,7 +4857,7 @@ The inventory must document:
 Recommended output:
 
 ```text
-Code-Review-And-ToDo/components/<component-name>-inventory.md
+EVIDENCE/components/<component-name>-inventory.md
 ```
 
 No component migration is allowed without this inventory.

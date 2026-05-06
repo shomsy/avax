@@ -28,9 +28,9 @@ work continues.
 
 ## Files Changed
 
-- `Code-Review-And-ToDo/master-plan/avax-master-project-tree.md`
-- `Code-Review-And-ToDo/master-plan/component-owner-map.md`
-- `Code-Review-And-ToDo/master-plan/stage-01-final-project-tree-freeze-report.md`
+- `EVIDENCE/master-plan/avax-master-project-tree.md`
+- `EVIDENCE/master-plan/component-owner-map.md`
+- `EVIDENCE/master-plan/stage-01-final-project-tree-freeze-report.md`
 
 ## Files Intentionally Not Touched
 
@@ -44,7 +44,7 @@ work continues.
 Pre-existing dirty files remained untouched:
 
 - `.codex`
-- `Code-Review-And-ToDo/recovery-reports/database-builder-focused-phpstan.raw`
+- `EVIDENCE/recovery-reports/database-builder-focused-phpstan.raw`
 - `components/DataStack/Database/System/Capabilities/Query/Execution/PDOExecutor.php`
 
 ## Validation Commands
@@ -72,7 +72,7 @@ V3 Implementation: LOCKED
 
 ## Evidence
 
-- The target root tree is frozen in `Code-Review-And-ToDo/master-plan/avax-master-project-tree.md`.
+- The target root tree is frozen in `EVIDENCE/master-plan/avax-master-project-tree.md`.
 - The target framework tree is frozen as `framework/System/{PublicSurface,Flows,Capabilities,Configuration,Foundation}`.
 - The target V1 component suites are frozen as:
   `Application`, `CLI`, `DataStack`, `DeveloperTools`, `HTTP`, `Identity`, `Operations`, `Presentation`, `Security`.

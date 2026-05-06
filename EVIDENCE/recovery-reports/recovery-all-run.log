@@ -1,13 +1,13 @@
 bash tooling/recovery/run_database_recovery_audit.sh
 == Git status ==
-?? Code-Review-And-ToDo/recovery-reports/
+?? EVIDENCE/recovery-reports/
 ?? Makefile.recovery
 ?? tooling/recovery/
 == Extract backup database files ==
 Extracted 356 files
-Report: Code-Review-And-ToDo/recovery-reports/database-extracted-backup-files.md
+Report: EVIDENCE/recovery-reports/database-extracted-backup-files.md
 == Make old-to-new map ==
-Wrote Code-Review-And-ToDo/recovery-reports/database-old-to-new-map.md; mapped 356 files
+Wrote EVIDENCE/recovery-reports/database-old-to-new-map.md; mapped 356 files
 == Composer/autoload ==
 ./composer.json is valid
 Generating optimized autoload files
@@ -237,7 +237,7 @@ PASS
 PASS
 == PHPStan database ==
 Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
-Wrote Code-Review-And-ToDo/recovery-reports/database-phpstan-families.md
+Wrote EVIDENCE/recovery-reports/database-phpstan-families.md
 == PublicSurface smoke ==
 Wrote tests/Unit/Generated/DataStackDatabasePublicSurfaceSmokeTest.php
 PHPUnit 10.5.63 by Sebastian Bergmann and contributors.
@@ -253,28 +253,28 @@ OK (2 tests, 2 assertions)
 == Report-only guard ==
 Changed files:
 - .phpunit.cache/test-results
-- Code-Review-And-ToDo/recovery-reports/
-- Code-Review-And-ToDo/recovery-staging/
+- EVIDENCE/recovery-reports/
+- EVIDENCE/recovery-staging/
 - Makefile.recovery
 - tests/Unit/Generated/
 - tooling/recovery/
 
 Production-impacting files detected:
 - tests/Unit/Generated/
-DONE. See Code-Review-And-ToDo/recovery-reports/
+DONE. See EVIDENCE/recovery-reports/
 bash tooling/recovery/run_persistence_recovery_audit.sh
 == Git status ==
  M .phpunit.cache/test-results
-?? Code-Review-And-ToDo/recovery-reports/
-?? Code-Review-And-ToDo/recovery-staging/
+?? EVIDENCE/recovery-reports/
+?? EVIDENCE/recovery-staging/
 ?? Makefile.recovery
 ?? tests/Unit/Generated/
 ?? tooling/recovery/
 == Extract backup persistence files ==
 Extracted 20 files
-Report: Code-Review-And-ToDo/recovery-reports/persistence-extracted-backup-files.md
+Report: EVIDENCE/recovery-reports/persistence-extracted-backup-files.md
 == Make old-to-new map ==
-Wrote Code-Review-And-ToDo/recovery-reports/persistence-old-to-new-map.md; mapped 20 files
+Wrote EVIDENCE/recovery-reports/persistence-old-to-new-map.md; mapped 20 files
 == Composer/autoload ==
 ./composer.json is valid
 Generating optimized autoload files
@@ -504,7 +504,7 @@ PASS
 PASS
 == PHPStan persistence ==
 Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
-Wrote Code-Review-And-ToDo/recovery-reports/persistence-phpstan-families.md
+Wrote EVIDENCE/recovery-reports/persistence-phpstan-families.md
 == PublicSurface smoke ==
 Wrote tests/Unit/Generated/DataStackPersistencePublicSurfaceSmokeTest.php
 PHPUnit 10.5.63 by Sebastian Bergmann and contributors.
@@ -520,12 +520,12 @@ OK (2 tests, 2 assertions)
 == Report-only guard ==
 Changed files:
 - .phpunit.cache/test-results
-- Code-Review-And-ToDo/recovery-reports/
-- Code-Review-And-ToDo/recovery-staging/
+- EVIDENCE/recovery-reports/
+- EVIDENCE/recovery-staging/
 - Makefile.recovery
 - tests/Unit/Generated/
 - tooling/recovery/
 
 Production-impacting files detected:
 - tests/Unit/Generated/
-DONE. See Code-Review-And-ToDo/recovery-reports/
+DONE. See EVIDENCE/recovery-reports/

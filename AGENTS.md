@@ -76,7 +76,7 @@ AGENTS.md
 .agents/GOVERNANCE_INDEX.md if present
 .agents/how-to/**
 CURRENT_TRUTH.md
-Code-Review-And-ToDo/EXECUTION.md
+EVIDENCE/EXECUTION.md
 active task files
 relevant source files
 ```
@@ -139,7 +139,7 @@ This order decides which rule wins when documents disagree.
 1. `AGENTS.md`
 2. `.agents/GOVERNANCE_INDEX.md`
 3. `.agents/how-to/**`
-4. `Code-Review-And-ToDo/EXECUTION.md`, only for active stage and execution order
+4. `EVIDENCE/EXECUTION.md`, only for active stage and execution order
 5. `CURRENT_TRUTH.md`, only for current project status
 6. `.agents/.rules/AGENTS.md`
 7. `.agents/.rules/governance/core/quality/quality-gates.md`
@@ -201,12 +201,12 @@ Project state must be read in this order.
 This order describes current status, not rule priority.
 
 1. `CURRENT_TRUTH.md`
-2. `Code-Review-And-ToDo/EXECUTION.md`
+2. `EVIDENCE/EXECUTION.md`
 3. `.agents/management/ACTIVE.md`
 4. `.agents/management/TODO.md`
 5. `.agents/management/BUGS.md`
-6. `Code-Review-And-ToDo/master-plan/*.md`
-7. `Code-Review-And-ToDo/recovery-reports/*.md`
+6. `EVIDENCE/master-plan/*.md`
+7. `EVIDENCE/recovery-reports/*.md`
 8. latest validation reports
 9. older review/archive files
 10. backup dumps and historical snapshots
@@ -254,7 +254,7 @@ For implementation, refactor, recovery, or review work, the agent must read:
 AGENTS.md
 .agents/GOVERNANCE_INDEX.md if present
 CURRENT_TRUTH.md
-Code-Review-And-ToDo/EXECUTION.md if present
+EVIDENCE/EXECUTION.md if present
 relevant .agents/how-to/*.md documents
 relevant source files
 relevant tests
@@ -625,7 +625,7 @@ tests/
 docs/
   Canonical long-form documentation.
 
-Code-Review-And-ToDo/
+EVIDENCE/
   Execution plans, recovery reports, validation evidence, audits, and temporary operational artifacts.
 ```
 
@@ -647,7 +647,7 @@ docs/
 components/<Area>/<Component>/README.md
   Allowed only as a short component ownership summary when useful.
 
-Code-Review-And-ToDo/
+EVIDENCE/
   Temporary recovery reports, validation evidence, audits, execution plans, and operational artifacts.
 
 inline PHPDoc/comments
@@ -659,7 +659,7 @@ Rules:
 ```text
 Architecture documentation lives in docs/.
 Component ownership summaries may live beside the component.
-Recovery and validation evidence may live in Code-Review-And-ToDo/.
+Recovery and validation evidence may live in EVIDENCE/.
 Random documentation must not be scattered elsewhere.
 If component README and docs disagree, canonical docs win unless the README is explicitly newer and linked to a pending docs update.
 ```
@@ -774,10 +774,10 @@ Reusable mounted rules:
 Project execution and evidence workspace:
 
 ```text
-Code-Review-And-ToDo/
-Code-Review-And-ToDo/recovery-reports/
-Code-Review-And-ToDo/master-plan/
-Code-Review-And-ToDo/templates/
+EVIDENCE/
+EVIDENCE/recovery-reports/
+EVIDENCE/master-plan/
+EVIDENCE/templates/
 ```
 
 ## 16. Agent Workspace Routing

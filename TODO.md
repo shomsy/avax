@@ -4,7 +4,7 @@ Status: canonical AI TODO plan
 Purpose: restore and preserve AvaX “muscle” from `avax-backup.txt`, `Framework.txt`, `components/components.txt`, and
 local Git history, but implement it under the new architecture, governance, and V1/V2/V3 roadmap.  
 Execution rule: V1 must be proven before V2 implementation. V2 platform baseline must be proven before V3 production implementation.
-Execution control: `Code-Review-And-ToDo/EXECUTION.md` is the active stage lock. If this file and `EXECUTION.md`
+Execution control: `EVIDENCE/EXECUTION.md` is the active stage lock. If this file and `EXECUTION.md`
 disagree, `EXECUTION.md` wins.
 
 Current active result:
@@ -192,7 +192,7 @@ Tasks:
 
 ```text
 [ ] Read CURRENT_TRUTH.md.
-[ ] Read Code-Review-And-ToDo/EXECUTION.md.
+[ ] Read EVIDENCE/EXECUTION.md.
 [ ] Read TODO.md.
 [ ] Read latest v1-integrity reports.
 [ ] Correct any false GREEN state.
@@ -203,7 +203,7 @@ Tasks:
 Output:
 
 ```text
-Code-Review-And-ToDo/v1-lockdown/v1-current-truth-correction-report.md
+EVIDENCE/v1-lockdown/v1-current-truth-correction-report.md
 ```
 
 Acceptance:
@@ -246,8 +246,8 @@ Tasks:
 Output:
 
 ```text
-Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.md
-Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.json
+EVIDENCE/muscle-recovery/backup-muscle-inventory.md
+EVIDENCE/muscle-recovery/backup-muscle-inventory.json
 ```
 
 Required table:
@@ -314,7 +314,7 @@ Tasks:
 Output:
 
 ```text
-Code-Review-And-ToDo/muscle-recovery/component-muscle-audit.md
+EVIDENCE/muscle-recovery/component-muscle-audit.md
 ```
 
 Required table:
@@ -369,7 +369,7 @@ Tasks:
 Output:
 
 ```text
-Code-Review-And-ToDo/v1-integrity/static-integrity-closure-report.md
+EVIDENCE/v1-integrity/static-integrity-closure-report.md
 ```
 
 Commands:
@@ -564,7 +564,7 @@ Rules:
 Output for Wave V1-A:
 
 ```text
-Code-Review-And-ToDo/muscle-recovery/v1-wave-a-small-muscles-report.md
+EVIDENCE/muscle-recovery/v1-wave-a-small-muscles-report.md
 ```
 
 Acceptance:
@@ -666,7 +666,7 @@ Acceptance:
 Output for Wave V1-B:
 
 ```text
-Code-Review-And-ToDo/muscle-recovery/v1-wave-b-framework-muscles-report.md
+EVIDENCE/muscle-recovery/v1-wave-b-framework-muscles-report.md
 ```
 
 ---
@@ -808,7 +808,7 @@ V2 scope:
 Output for Wave V1-C:
 
 ```text
-Code-Review-And-ToDo/muscle-recovery/v1-wave-c-complex-runtime-muscles-report.md
+EVIDENCE/muscle-recovery/v1-wave-c-complex-runtime-muscles-report.md
 ```
 
 ---
@@ -962,7 +962,7 @@ V2 scope:
 Output for Wave V1-D:
 
 ```text
-Code-Review-And-ToDo/muscle-recovery/v1-wave-d-massive-muscles-report.md
+EVIDENCE/muscle-recovery/v1-wave-d-massive-muscles-report.md
 ```
 
 ---
@@ -1035,7 +1035,7 @@ If security policy owns auth requirement, place policy under HTTP/Security and a
 Output:
 
 ```text
-Code-Review-And-ToDo/muscle-recovery/v1-wave-e-new-missing-features-report.md
+EVIDENCE/muscle-recovery/v1-wave-e-new-missing-features-report.md
 ```
 
 ---
@@ -1475,11 +1475,11 @@ You are working on AvaX Muscular System Lockdown.
 
 Read first:
 1. CURRENT_TRUTH.md
-2. Code-Review-And-ToDo/EXECUTION.md
+2. EVIDENCE/EXECUTION.md
 3. TODO.md
 4. avax-backup.txt
-5. Code-Review-And-ToDo/v1-integrity/*
-6. Code-Review-And-ToDo/master-plan/*
+5. EVIDENCE/v1-integrity/*
+6. EVIDENCE/master-plan/*
 
 Current truth:
 V1 Kernel Green is NOT PROVEN.
@@ -1504,9 +1504,9 @@ Goal:
 Create a complete muscle inventory from avax-backup.txt and compare it with the current component tree.
 
 Outputs:
-- Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.md
-- Code-Review-And-ToDo/muscle-recovery/backup-muscle-inventory.json
-- Code-Review-And-ToDo/muscle-recovery/component-muscle-audit.md
+- EVIDENCE/muscle-recovery/backup-muscle-inventory.md
+- EVIDENCE/muscle-recovery/backup-muscle-inventory.json
+- EVIDENCE/muscle-recovery/component-muscle-audit.md
 
 For each old feature, classify:
 - old path

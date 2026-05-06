@@ -34,7 +34,6 @@ class TemplateEngine extends BladeOne
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    #[Override]
     public function __construct(
         string $templatePath,
         string $compiledPath,

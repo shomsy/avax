@@ -9,29 +9,48 @@ use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindin
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\ProviderBootPlan;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDependency;
 use Avax\Components\Application\Container\System\Container;
+use Avax\Components\Application\Container\System\ContainerInterface;
 
-final class DeterministicOrderingSmokeTest implements RegisterDependency
+final readonly class OrderingProviderAlpha implements RegisterDependency
 {
+    public function __construct(private ContainerInterface $container) {}
+
     public function dependsOn(): array
     {
         return [];
     }
+
+    public function register() : void {}
+
+    public function boot() : void {}
 }
 
-final class OrderingProviderBeta implements RegisterDependency
+final readonly class OrderingProviderBeta implements RegisterDependency
 {
+    public function __construct(private ContainerInterface $container) {}
+
     public function dependsOn(): array
     {
         return [OrderingProviderAlpha::class];
     }
+
+    public function register() : void {}
+
+    public function boot() : void {}
 }
 
-final class OrderingProviderGamma implements RegisterDependency
+final readonly class OrderingProviderGamma implements RegisterDependency
 {
+    public function __construct(private ContainerInterface $container) {}
+
     public function dependsOn(): array
     {
         return [OrderingProviderAlpha::class];
     }
+
+    public function register() : void {}
+
+    public function boot() : void {}
 }
 
 final class OrderingTaggedA
@@ -93,9 +112,9 @@ function normalizedArtifactMetadata(Container $container): array
 }
 
 $providerPlan = ProviderBootPlan::build(instances: [
-    OrderingProviderGamma::class => new OrderingProviderGamma(app: makeTestContainer()),
-    OrderingProviderAlpha::class => new OrderingProviderAlpha(app: makeTestContainer()),
-    OrderingProviderBeta::class => new OrderingProviderBeta(app: makeTestContainer()),
+                                                       OrderingProviderGamma::class => new OrderingProviderGamma(container: makeTestContainer()->engine()),
+                                                       OrderingProviderAlpha::class => new OrderingProviderAlpha(container: makeTestContainer()->engine()),
+                                                       OrderingProviderBeta::class  => new OrderingProviderBeta(container: makeTestContainer()->engine()),
 ]);
 
 assertSame(

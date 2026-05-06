@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Notifications\System\Capabilities\Channels;
 
+use Avax\Components\Operations\Mail\System\Capabilities\Address\Envelope;
 use Avax\Components\Operations\Mail\System\Capabilities\Content\MimeMessage;
 use Avax\Components\Operations\Mail\System\Capabilities\Transport\MailTransport;
 use Avax\Components\Operations\Notifications\System\Capabilities\MailNotificationContent;
@@ -43,15 +44,7 @@ final readonly class MailChannel implements NotificationChannel
             body       : $body,
             contentType: 'text/html',
         );
-
-        // Create a minimal envelope
-        $envelope = new readonly class ($this->fromAddress, $email) {
-            public function __construct(
-                public string $from,
-                public string $to,
-            ) {
-            }
-        };
+        $envelope = new Envelope(from: $this->fromAddress);
 
         $this->mailTransport->send($mimeMessage, $envelope);
     }

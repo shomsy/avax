@@ -13,27 +13,24 @@ use SensitiveParameter;
 final readonly class ArtifactMetadata
 {
     /**
-     * @param  array<string, string>  $entries
-     * @param  array<string, array{method: string, signature: string}>  $schemaVersion
-     *                                                                                  $services
-     * @param  array<string, string>  $sources
-     * @param  array<string, list<string>>  $dependencies
-     * @param  array<string, string>  $aliases
-     * @param  array<string, list<string>>  $tags
-     * @param array<string, array{name: string, shared: bool, scoped: bool, transient: bool, pooled: bool, poolSize:
-     *                                  int, poolResetBeforeReuse: bool}> $lifetimes
-     * @param  array<string, bool>  $deferred
-     * @param  array<string, int>  $decorations
-     * @param  array<string, array<string, mixed>>  $pruneMode
-     *                                                          $ownership
-     * @param  array<string, array<string, mixed>>  $diagnosticsMode
-     *                                                                $slices
-     * @param  array<string, mixed>  $pruning
-     * @param  list<string>  $changedServices
-     * @param  list<string>  $invalidatedServices
-     * @param  list<string>  $validationIssues
-     * @param  list<string>  $invalidationReasons
-     * @param  array<string, int>  $statistics
+     * @param array<string, string>                                                                                                                        $artifactPaths
+     * @param array<string, string>                                                                                                                        $entries
+     * @param array<string, array{method: string, signature: string}>                                                                                      $services
+     * @param array<string, string>                                                                                                                        $sources
+     * @param array<string, list<string>>                                                                                                                  $dependencies
+     * @param array<string, string>                                                                                                                        $aliases
+     * @param array<string, list<string>>                                                                                                                  $tags
+     * @param array<string, array{name?: string, shared: bool, scoped: bool, transient: bool, pooled?: bool, poolSize?: int, poolResetBeforeReuse?: bool}> $lifetimes
+     * @param array<string, bool>                                                                                                                          $deferred
+     * @param array<string, int>                                                                                                                           $decorations
+     * @param array<string, array<string, mixed>>                                                                                                          $ownership
+     * @param array<string, array<string, mixed>>                                                                                                          $slices
+     * @param array<string, mixed>                                                                                                                         $pruning
+     * @param list<string>                                                                                                                                 $changedServices
+     * @param list<string>                                                                                                                                 $invalidatedServices
+     * @param list<string>                                                                                                                                 $validationIssues
+     * @param list<string>                                                                                                                                 $invalidationReasons
+     * @param array<string, int>                                                                                                                           $statistics
      */
     public function __construct(
         public string $format,

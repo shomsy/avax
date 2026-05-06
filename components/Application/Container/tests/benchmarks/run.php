@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__).'/bootstrap.php';
+require_once dirname(__DIR__) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDeferredDependency;
@@ -49,6 +49,8 @@ final class BenchPooledService implements ResettableInterface
     {
         return 'pooled';
     }
+
+    public function reset() : void {}
 }
 
 final class BenchLazyService
@@ -101,6 +103,8 @@ final readonly class BenchDeferredProvider implements RegisterDeferredDependency
     {
         $this->container->singleton(abstract: BenchDeferredProviderContract::class, concrete: BenchDeferredProviderService::class);
     }
+
+    public function boot() : void {}
 }
 
 final class BenchDeep5

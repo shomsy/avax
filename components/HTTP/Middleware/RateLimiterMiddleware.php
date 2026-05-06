@@ -6,6 +6,8 @@ namespace Avax\Components\HTTP\Middleware;
 
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 
 /**
  * Rate limiting middleware.
@@ -103,9 +105,126 @@ final readonly class RateLimiterMiddleware implements MiddlewareInterface
                     return $this;
                 }
 
-                public function getBody(): mixed
+                public function getBody() : StreamInterface
                 {
-                    return json_encode(['message' => 'Too Many Requests', 'retry_after' => $this->retryAfter]);
+                    return new class (sprintf(
+                        '{"message":"Too Many Requests","retry_after":%d}',
+                        $this->retryAfter,
+                    )) implements StreamInterface {
+                        private string $content;
+                        private int    $position = 0;
+
+                        public function __construct(string $content)
+                        {
+                            $this->content = $content;
+                        }
+
+                        public function __toString() : string
+                        {
+                            return $this->content;
+                        }
+
+                        public function close() : void
+                        {
+                            $this->content  = '';
+                            $this->position = 0;
+                        }
+
+                        public function detach() : mixed
+                        {
+                            $this->close();
+
+                            return null;
+                        }
+
+                        public function getSize() : int
+                        {
+                            return strlen($this->content);
+                        }
+
+                        public function tell() : int
+                        {
+                            return $this->position;
+                        }
+
+                        public function eof() : bool
+                        {
+                            return $this->position >= strlen($this->content);
+                        }
+
+                        public function isSeekable() : bool
+                        {
+                            return true;
+                        }
+
+                        public function seek(int $offset, int $whence = SEEK_SET) : void
+                        {
+                            $target = match ($whence) {
+                                SEEK_SET => (int) $offset,
+                                SEEK_CUR => $this->position + (int) $offset,
+                                SEEK_END => strlen($this->content) + (int) $offset,
+                                default  => throw new RuntimeException('Invalid stream seek mode.'),
+                            };
+
+                            if ($target < 0) {
+                                throw new RuntimeException('Cannot seek before stream start.');
+                            }
+
+                            $this->position = $target;
+                        }
+
+                        public function rewind() : void
+                        {
+                            $this->position = 0;
+                        }
+
+                        public function isWritable() : bool
+                        {
+                            return true;
+                        }
+
+                        public function write(string $string) : int
+                        {
+                            $string = (string) $string;
+                            $before = substr($this->content, 0, $this->position);
+                            $after  = substr($this->content, $this->position + strlen($string));
+
+                            $this->content  = $before . $string . $after;
+                            $this->position += strlen($string);
+
+                            return strlen($string);
+                        }
+
+                        public function isReadable() : bool
+                        {
+                            return true;
+                        }
+
+                        public function read(int $length) : string
+                        {
+                            $chunk          = substr($this->content, $this->position, (int) $length);
+                            $this->position += strlen($chunk);
+
+                            return $chunk;
+                        }
+
+                        public function getContents() : string
+                        {
+                            $contents       = substr($this->content, $this->position);
+                            $this->position = strlen($this->content);
+
+                            return $contents;
+                        }
+
+                        public function getMetadata(string|null $key = null) : mixed
+                        {
+                            if ($key === null) {
+                                return [];
+                            }
+
+                            return null;
+                        }
+                    };
                 }
 
                 public function withBody(mixed $body): self

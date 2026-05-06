@@ -78,6 +78,7 @@ final class InvalidDisposableService
 
 final class InvalidTransientDisposableService implements DisposableInterface
 {
+    public function dispose() : void {}
 }
 
 final class JobScopedService

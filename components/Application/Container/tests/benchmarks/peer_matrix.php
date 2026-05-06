@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__).'/bootstrap.php';
+require_once dirname(__DIR__) . '/bootstrap.php';
 require_once __DIR__.'/adapters/ArtifactBenchmarkPeerAdapter.php';
 
 /**

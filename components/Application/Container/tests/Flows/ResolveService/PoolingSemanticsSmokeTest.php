@@ -91,6 +91,8 @@ final readonly class DeferredPoolingProvider implements RegisterDeferredDependen
     {
         $this->container->singleton(abstract: DeferredPoolingContract::class, concrete: DeferredPoolingService::class);
     }
+
+    public function boot() : void {}
 }
 
 $container = makeTestContainer();

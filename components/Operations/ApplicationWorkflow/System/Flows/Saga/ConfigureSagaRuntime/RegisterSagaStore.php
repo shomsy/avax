@@ -6,6 +6,9 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Confi
 
 final readonly class RegisterSagaStore
 {
+    /**
+     * @param array<string, mixed> $config
+     */
     public function register(string $type, array $config): object
     {
         return match ($type) {
@@ -21,13 +24,20 @@ final readonly class RegisterSagaStore
     private function createInMemoryStore(): object
     {
         return new class () {
+            /** @var array<string, array<string, mixed>> */
             public array $data = [];
 
-            public function get(string $key): ?array
+            /**
+             * @return array<string, mixed>|null
+             */
+            public function get(string $key) : array|null
             {
                 return $this->data[$key] ?? null;
             }
 
+            /**
+             * @param array<string, mixed> $value
+             */
             public function set(string $key, array $value): void
             {
                 $this->data[$key] = $value;
@@ -38,6 +48,9 @@ final readonly class RegisterSagaStore
                 unset($this->data[$key]);
             }
 
+            /**
+             * @return array<string, array<string, mixed>>
+             */
             public function all(): array
             {
                 return $this->data;
@@ -45,48 +58,104 @@ final readonly class RegisterSagaStore
         };
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     private function createDatabaseStore(array $config): object
     {
         return new class ($config) {
-            public function get(string $key): ?array
+            /** @var array<string, mixed> */
+            private array $config;
+
+            /** @var array<string, array<string, mixed>> */
+            private array $data = [];
+
+            /**
+             * @param array<string, mixed> $config
+             */
+            public function __construct(array $config)
             {
-                return null;
+                $this->config = $config;
             }
 
+            /**
+             * @return array<string, mixed>|null
+             */
+            public function get(string $key) : array|null
+            {
+                return $this->data[$key] ?? null;
+            }
+
+            /**
+             * @param array<string, mixed> $value
+             */
             public function set(string $key, array $value): void
             {
+                $this->data[$key] = $value;
             }
 
             public function delete(string $key): void
             {
+                unset($this->data[$key]);
             }
 
+            /**
+             * @return array<string, array<string, mixed>>
+             */
             public function all(): array
             {
-                return [];
+                return $this->data;
             }
         };
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     private function createRedisStore(array $config): object
     {
         return new class ($config) {
-            public function get(string $key): ?array
+            /** @var array<string, mixed> */
+            private array $config;
+
+            /** @var array<string, array<string, mixed>> */
+            private array $data = [];
+
+            /**
+             * @param array<string, mixed> $config
+             */
+            public function __construct(array $config)
             {
-                return null;
+                $this->config = $config;
             }
 
+            /**
+             * @return array<string, mixed>|null
+             */
+            public function get(string $key) : array|null
+            {
+                return $this->data[$key] ?? null;
+            }
+
+            /**
+             * @param array<string, mixed> $value
+             */
             public function set(string $key, array $value): void
             {
+                $this->data[$key] = $value;
             }
 
             public function delete(string $key): void
             {
+                unset($this->data[$key]);
             }
 
+            /**
+             * @return array<string, array<string, mixed>>
+             */
             public function all(): array
             {
-                return [];
+                return $this->data;
             }
         };
     }

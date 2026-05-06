@@ -6,6 +6,6 @@ namespace Avax\Components\HTTP\Middleware\System\Foundation\Failure;
 
 use RuntimeException;
 
-final class MiddlewareFailure extends RuntimeException
+class MiddlewareFailure extends RuntimeException
 {
 }

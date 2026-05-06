@@ -27,7 +27,7 @@ class BladeTemplateEngine extends BladeOne
         $this->baseAssetPath = $this->getBaseUrl().'/assets';
     }
 
-    private function getBaseUrl(): string
+    public function getBaseUrl() : string
     {
         $context = function_exists(function: 'http_context') ? http_context() : null;
         if ($context instanceof HttpContextInterface) {

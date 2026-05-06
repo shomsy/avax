@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__).'/bootstrap.php';
+require_once dirname(__DIR__) . '/bootstrap.php';
 
 $artifactDir = sys_get_temp_dir().'/container-benchmark-compare-'.uniqid();
 if (! mkdir(directory: $artifactDir, permissions: 0o775, recursive: true) && ! is_dir(filename: $artifactDir)) {

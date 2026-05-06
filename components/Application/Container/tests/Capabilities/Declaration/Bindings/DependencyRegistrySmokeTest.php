@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once dirname(path: __DIR__, 3).'/bootstrap.php';
+require_once dirname(__DIR__, 3) . '/bootstrap.php';
 
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistry;
 

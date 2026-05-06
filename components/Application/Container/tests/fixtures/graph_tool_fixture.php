@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
 
-require_once dirname(path: __DIR__).'/bootstrap.php';
+require_once dirname(__DIR__) . '/bootstrap.php';
 
 final class graph_tool_fixture
 {

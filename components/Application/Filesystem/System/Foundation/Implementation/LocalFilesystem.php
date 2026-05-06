@@ -30,9 +30,14 @@ readonly class LocalFilesystem implements FilesystemInterface
     {
     }
 
-    public function get(string $path): string
+    public function read(string $path) : string
     {
         return new ReadFile(disk: $this->disk())->execute(path: $path);
+    }
+
+    public function get(string $path) : string
+    {
+        return $this->read(path: $path);
     }
 
     public function disk(?string $name = null): Disk
@@ -40,24 +45,41 @@ readonly class LocalFilesystem implements FilesystemInterface
         return $this->resolveDisk->execute(name: $name);
     }
 
-    public function put(string $path, string $content): void
+    public function write(string $path, string $content, bool $append = false) : bool
     {
+        if ($append) {
+            new AppendToFile(disk: $this->disk())->execute(path: $path, content: $content);
+
+            return true;
+        }
+
         new WriteFile(disk: $this->disk())->execute(path: $path, content: $content);
+
+        return true;
+    }
+
+    public function put(string $path, string $content) : void
+    {
+        $this->write(path: $path, content: $content);
     }
 
     public function append(string $path, string $content): void
     {
-        new AppendToFile(disk: $this->disk())->execute(path: $path, content: $content);
+        $this->write(path: $path, content: $content, append: true);
     }
 
-    public function copy(string $source, string $destination): void
+    public function copy(string $source, string $destination) : bool
     {
         new CopyFile(disk: $this->disk())->execute(source: $source, destination: $destination);
+
+        return true;
     }
 
-    public function move(string $source, string $destination): void
+    public function move(string $source, string $destination) : bool
     {
         new MoveFile(disk: $this->disk())->execute(source: $source, destination: $destination);
+
+        return true;
     }
 
     public function exists(string $path): bool
@@ -65,9 +87,11 @@ readonly class LocalFilesystem implements FilesystemInterface
         return file_exists(filename: $path);
     }
 
-    public function delete(string $path): void
+    public function delete(string $path) : bool
     {
         new DeleteFile(disk: $this->disk())->execute(path: $path);
+
+        return true;
     }
 
     public function lastModified(string $path): ?int
@@ -85,19 +109,25 @@ readonly class LocalFilesystem implements FilesystemInterface
         return new EnsureDirectoryIsWritable(disk: $this->disk())->execute(path: $path);
     }
 
-    public function createDirectory(string $path, int $permissions = 0o755): void
+    public function createDirectory(string $path, int $permissions = 0o755) : bool
     {
         new CreateDirectory(disk: $this->disk())->execute(path: $path, permissions: $permissions);
+
+        return true;
     }
 
-    public function deleteDirectory(string $path): void
+    public function deleteDirectory(string $path) : bool
     {
         new DeleteDirectory(disk: $this->disk())->execute(path: $path);
+
+        return true;
     }
 
-    public function clearDirectory(string $path): void
+    public function clearDirectory(string $path) : bool
     {
         new ClearDirectory(disk: $this->disk())->execute(path: $path);
+
+        return true;
     }
 
     public function listFiles(string $path): array

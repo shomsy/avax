@@ -9,7 +9,7 @@ use RuntimeException;
 final readonly class AesEncrypter implements EncrypterInterface
 {
     /**
-     * @throws RuntimeException if encryption key is invalid or encryption fails
+     * @throws RuntimeException if encryption key is invalid
      */
     public function __construct(
         private string $key,
@@ -25,20 +25,41 @@ final readonly class AesEncrypter implements EncrypterInterface
      *
      * @throws RuntimeException if encryption fails
      */
-    public function encrypt(mixed $value, EncryptionKey $encryptionKey): string
+    public function encrypt(mixed $value, EncryptionKey $encryptionKey) : EncryptedPayload
     {
-        $ivLen = openssl_cipher_iv_length($this->cipher);
-        $iv = random_bytes($ivLen);
-        $value = json_encode($value, JSON_THROW_ON_ERROR);
+        $ivLength = openssl_cipher_iv_length($this->cipher);
 
-        $ciphertext = openssl_encrypt($value, $this->cipher, $this->key, OPENSSL_RAW_DATA, $iv, $tag);
+        if ($ivLength === false || $ivLength < 1) {
+            throw new RuntimeException('Unsupported encryption cipher.');
+        }
 
-        if ($ciphertext === false) {
+        /** @var int<1, max> $ivLength */
+        $iv = random_bytes($ivLength);
+
+        $plainText = is_string($value)
+            ? $value
+            : json_encode($value, JSON_THROW_ON_ERROR);
+
+        $tag = null;
+
+        $cipherText = openssl_encrypt(
+            $plainText,
+            $this->cipher,
+            $this->key,
+            OPENSSL_RAW_DATA,
+            $iv,
+            $tag,
+        );
+
+        if ($cipherText === false || $tag === null) {
             throw new RuntimeException('Encryption failed.');
         }
 
-        // IV + tag (16 bytes for GCM) + ciphertext
-        return base64_encode($iv.$tag.$ciphertext);
+        return new EncryptedPayload(
+            cipherText: $cipherText,
+            iv        : $iv,
+            tag       : $tag,
+        );
     }
 
     /**
@@ -46,30 +67,26 @@ final readonly class AesEncrypter implements EncrypterInterface
      *
      * @throws RuntimeException if decryption fails or payload is tampered
      */
-    public function decrypt(string $payload, EncryptionKey $encryptionKey): mixed
+    public function decrypt(EncryptedPayload $encryptedPayload, EncryptionKey $encryptionKey) : string
     {
-        $payload = base64_decode($payload, true);
-        if ($payload === false) {
-            throw new RuntimeException('Invalid base64 payload.');
-        }
+        $plainText = openssl_decrypt(
+            $encryptedPayload->cipherText(),
+            $this->cipher,
+            $this->key,
+            OPENSSL_RAW_DATA,
+            $encryptedPayload->iv(),
+            $encryptedPayload->tag(),
+        );
 
-        $ivLen = openssl_cipher_iv_length($this->cipher);
-        $tagLen = 16; // GCM tag length
-
-        if (strlen($payload) < $ivLen + $tagLen) {
-            throw new RuntimeException('Invalid encrypted payload.');
-        }
-
-        $iv = substr($payload, 0, $ivLen);
-        $tag = substr($payload, $ivLen, $tagLen);
-        $ciphertext = substr($payload, $ivLen + $tagLen);
-
-        $decrypted = openssl_decrypt($ciphertext, $this->cipher, $this->key, OPENSSL_RAW_DATA, $iv, $tag);
-
-        if ($decrypted === false) {
+        if ($plainText === false) {
             throw new RuntimeException('Decryption failed or payload was tampered with.');
         }
 
-        return json_decode($decrypted, true, 512, JSON_THROW_ON_ERROR);
+        return $plainText;
+    }
+
+    public function supports(string $cipher) : bool
+    {
+        return strtolower($cipher) === strtolower($this->cipher);
     }
 }

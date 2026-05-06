@@ -159,6 +159,8 @@ final readonly class CycleProviderA implements RegisterDependency
     {
         $this->container->instance(abstract: 'cycle-a', instance: new stdClass());
     }
+
+    public function boot() : void {}
 }
 
 final readonly class CycleProviderB implements RegisterDependency
@@ -176,6 +178,8 @@ final readonly class CycleProviderB implements RegisterDependency
     {
         $this->container->instance(abstract: 'cycle-b', instance: new stdClass());
     }
+
+    public function boot() : void {}
 }
 
 ProviderState::$events = [];

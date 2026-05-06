@@ -9,6 +9,6 @@ use RuntimeException;
 /**
  * Base exception for all Data component errors.
  */
-final class DataException extends RuntimeException
+class DataException extends RuntimeException
 {
 }

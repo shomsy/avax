@@ -13,11 +13,6 @@ final readonly class MarkSagaAsUnrecoverable
     ) {
     }
 
-    public function describeResponsibility(): string
-    {
-        return 'marks a saga as unrecoverable when recovery rules reject it.';
-    }
-
     public function mark(array $sagaData, array $failureReasons): SagaRecoveryResult
     {
         if ($failureReasons === []) {

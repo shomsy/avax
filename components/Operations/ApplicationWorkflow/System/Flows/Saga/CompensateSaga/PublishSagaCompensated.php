@@ -11,11 +11,6 @@ final readonly class PublishSagaCompensated
     ) {
     }
 
-    public function describeResponsibility(): string
-    {
-        return 'publishes saga compensated event to message bus.';
-    }
-
     public function publish(
         string $sagaId,
         array $compensatedSteps,

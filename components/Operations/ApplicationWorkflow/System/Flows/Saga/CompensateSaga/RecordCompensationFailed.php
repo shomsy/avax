@@ -11,11 +11,6 @@ final readonly class RecordCompensationFailed
     ) {
     }
 
-    public function describeResponsibility(): string
-    {
-        return 'records failed compensation for saga to enable recovery.';
-    }
-
     public function record(
         string $sagaId,
         string $stepName,

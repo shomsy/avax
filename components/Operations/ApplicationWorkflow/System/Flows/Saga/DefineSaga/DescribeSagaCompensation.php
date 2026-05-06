@@ -27,11 +27,6 @@ final readonly class DescribeSagaCompensation
         );
     }
 
-    public function describeResponsibility(): string
-    {
-        return 'describes saga compensation including step name, description, rollback, and idempotency.';
-    }
-
     public function toMetadata(): array
     {
         return [

@@ -21,7 +21,8 @@ final class StagePipeline
 
         foreach ($this->hooks as $hook) {
             if ($hook->name === $stage) {
-                $result = $hook->handler($result);
+                $handler = $hook->handler;
+                $result  = $handler($result);
             }
         }
 

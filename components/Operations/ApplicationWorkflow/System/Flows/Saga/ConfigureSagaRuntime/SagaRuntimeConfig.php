@@ -50,8 +50,4 @@ final readonly class SagaRuntimeConfig
         );
     }
 
-    public function describeResponsibility(): string
-    {
-        return 'records saga store, step runner, message bus, and event recorder dependencies.';
-    }
 }

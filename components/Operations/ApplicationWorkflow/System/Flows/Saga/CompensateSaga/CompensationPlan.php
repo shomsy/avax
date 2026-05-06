@@ -24,11 +24,6 @@ final readonly class CompensationPlan
         );
     }
 
-    public function describeResponsibility(): string
-    {
-        return 'plans compensation execution including steps, parallelism, and timeout.';
-    }
-
     public function orderedSteps(): array
     {
         return array_reverse($this->steps);

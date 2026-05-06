@@ -45,11 +45,6 @@ final readonly class CompensationStepResult
         );
     }
 
-    public function describeResponsibility(): string
-    {
-        return 'records compensation step result including status, error, and timing.';
-    }
-
     public function isSuccessful(): bool
     {
         return $this->status === CompensationStatus::SUCCESS;

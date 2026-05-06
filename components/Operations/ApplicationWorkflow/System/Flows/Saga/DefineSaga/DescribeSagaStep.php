@@ -29,11 +29,6 @@ final readonly class DescribeSagaStep
         );
     }
 
-    public function describeResponsibility(): string
-    {
-        return 'describes a saga step including name, description, schemas, and compensatability.';
-    }
-
     public function toMetadata(): array
     {
         return [

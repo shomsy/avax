@@ -11,11 +11,11 @@ V2 Implementation: LOCKED
 V3 Implementation: LOCKED
 
 Composer validate: GREEN
-Autoload integrity: GREEN (6519 classes)
+Autoload integrity: GREEN (6521 classes)
 PSR-4 skips: GREEN (0 skips)
-Broken refs: YELLOW (75 total classified; 0 REAL-PRODUCTION)
-PHPStan: YELLOW (V1-03 targeted areas green; full framework/components/tests analysis not proven in this pass)
-Tests: GREEN (205 tests pass)
+Broken refs: YELLOW (62 total classified; 0 REAL-PRODUCTION)
+PHPStan: GREEN (full framework/components/tests analysis current in Stage 04 evidence)
+Tests: GREEN (215 tests pass, 1707 assertions, 1 skipped)
 Component suite structure: GREEN
 Duplicate owners: GREEN
 Namespace drift: GREEN
@@ -33,7 +33,7 @@ Stage V1-01 (Backup Muscle Inventory): COMPLETE
 Stage V1-02 (Current Component Muscle Audit): COMPLETE
 Stage V1-03 (Static Integrity Closure): COMPLETE
 Stage 03 (API Classification and Evolution Rules): COMPLETE
-Stage 04 (Component Completion): NEXT / ACTIVE
+Stage 04 (Component Completion): ACTIVE / YELLOW
 
 Stage 05-23: LOCKED
 V2 implementation: LOCKED.
@@ -44,25 +44,45 @@ V3 implementation: LOCKED.
 - Physical component suites are canonical.
 - No nested System directories.
 - `composer validate --no-check-publish`: PASS (
-  `EVIDENCE/recovery-reports/v1-03-validation/43-final-composer-validate.log`).
-- `composer dump-autoload -o`: PASS, 6519 classes, 0 PSR-4 skips (`44-final-composer-dump-autoload.log`).
-- `php tooling/audit_broken_refs.php`: PASS, 75 missing refs (32 raw CRITICAL, 43 raw MINOR), all classified (
-  `45-final-audit-broken-refs.log`).
-- `php tooling/refactor/categorize-broken-refs.php`: PASS, 0 REAL-PRODUCTION refs (
-  `46-final-broken-reference-groups.md`).
-- `php tooling/refactor/check-*`: all required V1-03 checkers PASS (`47-*` through `51-*`).
-- `php avax runtime:doctor`: PASS (`52-final-runtime-doctor.log`).
-- `vendor/bin/phpunit --no-coverage`: PASS, 205 tests, 1687 assertions, 1 skipped (`53-final-phpunit-no-coverage.log`).
+  `EVIDENCE/recovery-reports/stage-04-pipeline-proof-validation/01-composer-validate.log`).
+- `composer dump-autoload -o`: PASS, 6521 classes, 0 observed PSR-4 skips (
+  `EVIDENCE/recovery-reports/stage-04-pipeline-proof-validation/02-composer-dump-autoload.log`).
+- `php tooling/audit_broken_refs.php`: PASS, 62 missing refs (25 raw CRITICAL, 37 raw MINOR), all classified (
+  `EVIDENCE/recovery-reports/stage-04-pipeline-proof-validation/05-audit-broken-refs.log` and
+  `EVIDENCE/recovery-reports/stage-04-final-validation/broken-refs-classification-report.md`).
+- Broken reference classification remains 0 REAL-PRODUCTION refs.
+- Stage 04 structural/governance checkers PASS:
+  component suite structure, duplicate owners, namespace drift, public surface, runtime leaks, governance index,
+  canonical shape, advanced-pattern folders, security naming, and performance naming
+  (`08-*` through `17-*` in the Stage 04 Pipeline proof validation folder).
+- `php avax runtime:doctor`: PASS (
+  `EVIDENCE/recovery-reports/stage-04-pipeline-proof-validation/06-runtime-doctor.log`).
+- `vendor/bin/phpunit --no-coverage`: PASS, 215 tests, 1707 assertions, 1 skipped (
+  `EVIDENCE/recovery-reports/stage-04-pipeline-proof-validation/04-phpunit-no-coverage.log`).
 - Targeted PHPStan: PASS for `framework/System`, `components/Application/Cache`,
   `components/HTTP/Request components/HTTP/Response`, and `components/DataStack/Database` (`54-*` through `57-*`).
+- Full PHPStan: PASS for `framework components tests` (
+  `EVIDENCE/recovery-reports/stage-04-pipeline-proof-validation/03-phpstan-framework-components-tests.raw`).
+- Stage 04 ApplicationWorkflow repair: PASS, no `describeResponsibility()` matches remain in
+  `components/Operations/ApplicationWorkflow/System`
+  (`EVIDENCE/recovery-reports/stage-04-applicationworkflow-repair-validation/00-describe-responsibility-scan.log`).
+- Stage 04 FeatureFlags proof: PASS, focused PHPUnit/PHPStan green; root tests now cover default disabled flags,
+  enable/disable, custom store overrides, truthy values, and variant fallback
+  (`EVIDENCE/recovery-reports/stage-04-featureflags-proof-validation/`).
+- Stage 04 Pipeline proof: PASS, focused PHPUnit/PHPStan green; root tests now cover hook order, missing-hook fallback,
+  registry state, priority execution, and stage stop behavior
+  (`EVIDENCE/recovery-reports/stage-04-pipeline-proof-validation/`).
 - Stage 03 API policy docs and classification matrix are present and validated (
   `EVIDENCE/master-plan/stage-03-api-classification-report.md`).
 - `php tooling/governance/check-stage-lock.php`: PASS and confirms V2/V3/V4 production implementation remains forbidden
   while V1 Kernel Green is not proven.
-- Stage 04 component completion matrix is current but component completion remains YELLOW/RED (
+- Stage 04 component completion proof validation is current:
+  `EVIDENCE/recovery-reports/stage-04-pipeline-proof-validation/`.
+- Stage 04 required validation is green:
+  composer validate, optimized autoload, full PHPStan, full PHPUnit, broken-ref audit, runtime doctor, and stage lock.
+- Stage 04 component completion matrix is current but component completion remains YELLOW (
   `EVIDENCE/master-plan/stage-04-component-completion-report.md`).
-- Application/Facade has a narrow accessor type repair pending post-repair PHPStan validation because command execution
-  was blocked by approval usage limit.
+- Application/Facade post-repair proof is now covered by full PHPStan and full PHPUnit in Stage 04 evidence.
 
 ## Blockers
 
@@ -71,13 +91,13 @@ No remaining blocker for Stage V1-03.
 V1 Kernel Green remains blocked by later gates that have not been completed in the active roadmap sequence:
 
 1. Stage 04 component completion is not yet proven.
-2. Full `vendor/bin/phpstan analyse framework components tests --memory-limit=1G --error-format=raw --no-progress` is
-   not current evidence.
-3. Production readiness, security, performance, observability, compatibility, and later roadmap gates remain unproven.
+2. No component is currently marked COMPLETE in the Stage 04 matrix.
+3. `CLI/Console` needs Stage 04 proof for command contract, output/failure behavior, and public console surface.
+4. Production readiness, security, performance, observability, compatibility, and later roadmap gates remain unproven.
 
 ## Next Allowed Action
 
 Stage 04: Component Completion.
 
-Rerun `vendor/bin/phpstan analyse components/Application/Facade --memory-limit=1G --error-format=raw --no-progress` and
-relevant facade tests when approval/tooling is available.
+Verify `CLI/Console` command contract, output/failure behavior, and public console surface without adding feature scope,
+then rerun focused Stage 04 validation.

@@ -11,11 +11,6 @@ final readonly class RecordCompensationCompleted
     ) {
     }
 
-    public function describeResponsibility(): string
-    {
-        return 'records completed compensation to saga store.';
-    }
-
     public function record(
         string $sagaId,
         array $completedSteps,

@@ -258,6 +258,9 @@ When these files exist, the review MUST check them explicitly:
 
 - `how-to-architecture.md`: ownership, screaming architecture, flow/capability slicing, hierarchy, boundaries, locality,
   public surface, security, refactoring, and change governance
+- `how-to-design-components.md`: component shape, filesystem law, PublicSurface, Flows, Capabilities, forbidden folders
+- `how-to-architecture-extension-with-ddd.md`: DDD application, bounded context, entities, value objects
+- `how-to-use-advanced-architecture-patterns.md`: advanced patterns, GoF application, event sourcing, CQRS
 - `how-to-clean-code.md`: correctness, readability, simplicity, naming, function design, module design, error handling,
   testing, refactoring discipline, anti-pattern rejection
 - `how-to-code-style.md`: project-specific formatting, typing, imports, constructor promotion, nullable type style,
@@ -268,8 +271,20 @@ When these files exist, the review MUST check them explicitly:
   Arrange/Act/Assert, one-act rule, assertion precision, test data clarity
 - `how-to-document.md`: docs location, filesystem-first documentation, `how-this-works.md`, mermaid diagrams, real
   triggers, debug-first guidance, documentation completeness
+- `how-to-system-security.md`: security governance, boundaries, authentication, authorization, secrets, input
+  validation,
+  output encoding, naming rules
+- `how-to-system-performance.md`: performance governance, hot paths, hidden I/O, bounding, latency budgets, memory
+  management
+- `how-to-production-readiness.md`: production gates, health checks, doctor, runtime safety, failure handling
 - `how-to-code-review.md`: this review process itself, including hard gates, findings, decision, next steps, and
   governance compliance
+
+### Governance Drift Rule
+
+If a new `how-to-*.md` document exists but is missing from this review checklist, the review checklist is stale.
+
+A stale review checklist is a governance defect.
 
 If any listed file is missing, the reviewer MUST state whether it is expected to exist for this repository.
 

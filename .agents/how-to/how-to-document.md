@@ -408,6 +408,34 @@ If something is missing:
 
 ---
 
+## Documentation Location Resolution Rule
+
+`docs/` is the canonical home for long-form documentation.
+
+Component-local `README.md` is allowed only as a short ownership summary.
+
+`Code-Review-And-ToDo/` is allowed only for temporary recovery reports, validation evidence, audits, and execution artifacts.
+
+### Rules
+
+```text
+architecture docs live in docs/
+component ownership summaries may live as components/<Area>/<Component>/README.md
+recovery and validation evidence may live in Code-Review-And-ToDo/recovery-reports/
+no random documentation may be scattered elsewhere
+if component README and docs disagree, docs are canonical unless README is explicitly newer and linked
+```
+
+### Mirror Rule
+
+```text
+A component README may summarize.
+The docs folder must explain.
+Reports may prove.
+```
+
+---
+
 ## Final Authority Clause
 
 This instruction set is **stable**, **reusable**, and **authoritative**.

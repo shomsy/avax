@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\API\Surface\System\Capabilities\JsonApi;
 
-final class ResourceObjectBuilder
+final class BuildResourceObject
 {
     private string $type;
 
@@ -48,6 +48,9 @@ final class ResourceObjectBuilder
         return $this;
     }
 
+    /**
+     * @param array<string, mixed>|null $links
+     */
     public function relationship(string $name, string $type, string|int $id, ?array $links = null) : self
     {
         $relationship = [

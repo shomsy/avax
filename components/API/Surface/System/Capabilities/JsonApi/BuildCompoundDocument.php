@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\API\Surface\System\Capabilities\JsonApi;
 
-final class CompoundDocumentBuilder
+final class BuildCompoundDocument
 {
     /**
      * @var array<int, array<string, mixed>>
@@ -33,6 +33,9 @@ final class CompoundDocumentBuilder
         return $this;
     }
 
+    /**
+     * @param array<string, mixed> $resource
+     */
     public function primary(array $resource) : self
     {
         $this->resources[] = $resource;
@@ -52,6 +55,9 @@ final class CompoundDocumentBuilder
         return $this;
     }
 
+    /**
+     * @param array<string, mixed> $resource
+     */
     public function include(array $resource) : self
     {
         $key = "{$resource['type']}:{$resource['id']}";

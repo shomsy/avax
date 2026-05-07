@@ -18,6 +18,7 @@ final class CheckComponentSuiteStructure
         'Presentation',
         'DeveloperTools',
         'Security',
+        'Integration',
     ];
 
     /** @var list<string> */

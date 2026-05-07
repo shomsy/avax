@@ -18,6 +18,9 @@ final readonly class RestResponseMeta
         return $this->lastPage ?? (int) ceil($this->total / $this->perPage);
     }
 
+    /**
+     * @return array{total: int, page: int, per_page: int, last_page: int|null}
+     */
     public function toArray() : array
     {
         return [

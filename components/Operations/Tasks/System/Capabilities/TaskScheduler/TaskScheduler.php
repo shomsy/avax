@@ -57,6 +57,9 @@ final class TaskScheduler
         return $this->tasks;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function find(string $id) : ?array
     {
         return $this->tasks[$id] ?? null;

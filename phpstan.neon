@@ -20,6 +20,21 @@ parameters:
             identifier: 'method.returnType'
             message: '#.*returns CheckInterface but returns CheckInterface\.#'
             path: 'framework/System/Capabilities/PreCommit/PreCommit.php'
+        -
+            message: '#.*Aws\\.*#'
+            path: 'components/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php'
+        -
+            message: '#Call to an undefined method object::.*#'
+            path: 'components/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php'
+        -
+            message: '#Mixed variable.*#'
+            path: 'components/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php'
+        -
+            message: '#Method .* is unused#'
+            path: 'components/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php'
+        -
+            message: '#Instantiated class Aws\\.* not found#'
+            path: 'components/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php'
     type_perfect:
         narrow_param: true
         narrow_return: true

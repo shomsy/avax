@@ -6,7 +6,7 @@ namespace Avax\Components\Operations\Realtime\System\Capabilities\Channels;
 
 use Avax\Components\Operations\Realtime\System\Capabilities\Connections\Connection;
 
-final class ChannelManager
+final class RealtimeChannels
 {
     /** @var array<string, Channel> */
     private array $channels = [];
@@ -16,7 +16,7 @@ final class ChannelManager
 
     public function create(string $name) : Channel
     {
-        $channel               = new Channel(name: $name, channelManager: $this);
+        $channel               = new Channel(name: $name, realtimeChannels: $this);
         $this->channels[$name] = $channel;
 
         return $channel;

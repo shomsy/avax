@@ -7,10 +7,13 @@ namespace Avax\Components\Operations\Resilience\System\Capabilities\Outbox;
 final class InMemoryOutboxStore implements OutboxStore
 {
     /**
-     * @var list<array{id: string, event: string, payload: array, processed: bool, createdAt: int}>
+     * @var array<int, array<string, mixed>>
      */
     private array $entries = [];
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     public function enqueue(string $event, array $payload) : void
     {
         $this->entries[] = [
@@ -22,6 +25,9 @@ final class InMemoryOutboxStore implements OutboxStore
         ];
     }
 
+    /**
+     * @return list<array<string, mixed>>
+     */
     public function dequeue(int $limit = 10) : array
     {
         $pending = array_filter($this->entries, fn (array $entry) : bool => ! $entry['processed']);

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Components\API\Surface\System\Capabilities\Rpc;
 
+use Avax\Components\API\Surface\System\Foundation\Failure\RpcMethodNotFound\RpcMethodNotFound;
 use Closure;
 
-final class RpcMethodRegistry
+final class RpcMethods
 {
     /**
      * @var array<string, Closure>

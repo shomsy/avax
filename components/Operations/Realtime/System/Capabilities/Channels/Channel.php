@@ -10,27 +10,27 @@ final readonly class Channel
 {
     public function __construct(
         public string $name,
-        private ChannelManager $channelManager,
+        private RealtimeChannels $realtimeChannels,
     ) {
     }
 
     public function subscribe(Connection $connection): void
     {
-        $this->channelManager->subscribe(connection: $connection, channel: $this->name);
+        $this->realtimeChannels->subscribe(connection: $connection, channel: $this->name);
     }
 
     public function unsubscribe(Connection $connection): void
     {
-        $this->channelManager->unsubscribe(connection: $connection, channel: $this->name);
+        $this->realtimeChannels->unsubscribe(connection: $connection, channel: $this->name);
     }
 
     public function broadcast(mixed $message): int
     {
-        return $this->channelManager->broadcast(channel: $this->name, message: $message);
+        return $this->realtimeChannels->broadcast(channel: $this->name, message: $message);
     }
 
     public function subscriberCount(): int
     {
-        return $this->channelManager->subscriberCount(channel: $this->name);
+        return $this->realtimeChannels->subscriberCount(channel: $this->name);
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\API\Surface\System\Capabilities\Webhooks;
 
-final class WebhookEventRegistry
+final class WebhookEvents
 {
     /**
      * @var array<string, string>

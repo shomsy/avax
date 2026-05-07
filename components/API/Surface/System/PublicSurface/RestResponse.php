@@ -20,6 +20,9 @@ final readonly class RestResponse
         return json_encode($this->toArray(), JSON_THROW_ON_ERROR);
     }
 
+    /**
+     * @return array{data: array<string, mixed>, meta?: array<string, mixed>}
+     */
     public function toArray() : array
     {
         $result = ['data' => $this->data];

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Operations\Realtime\System\PublicSurface;
 
 use Avax\Components\Operations\Realtime\System\Capabilities\Channels\Channel;
-use Avax\Components\Operations\Realtime\System\Capabilities\Channels\ChannelManager;
+use Avax\Components\Operations\Realtime\System\Capabilities\Channels\RealtimeChannels;
 use Avax\Components\Operations\Realtime\System\Capabilities\Connections\Connection;
 use Avax\Components\Operations\Realtime\System\Capabilities\Connections\ConnectionPool;
 use Avax\Components\Operations\Realtime\System\Capabilities\WebSocket\WebSocketServer;
@@ -15,7 +15,7 @@ final class Realtime
 {
     private static ?ConnectionPool $connectionPool = null;
 
-    private static ?ChannelManager $channelManager = null;
+    private static ?RealtimeChannels $realtimeChannels = null;
 
     public static function connect(Closure $sender): Connection
     {
@@ -45,13 +45,13 @@ final class Realtime
         return $channel;
     }
 
-    private static function channels(): ChannelManager
+    private static function channels() : RealtimeChannels
     {
-        if (! self::$channelManager instanceof ChannelManager) {
-            self::$channelManager = new ChannelManager();
+        if (! self::$realtimeChannels instanceof RealtimeChannels) {
+            self::$realtimeChannels = new RealtimeChannels();
         }
 
-        return self::$channelManager;
+        return self::$realtimeChannels;
     }
 
     public static function broadcast(string $channel, mixed $message): int

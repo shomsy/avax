@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Operations\RuntimeSupervision\System\Foundation\RuntimeSupervision;
+namespace Avax\Components\Operations\RuntimeSupervision\System\Capabilities\Health;
 
-final readonly class SupervisorReport
+final readonly class SupervisorHealthReport
 {
     /**
      * @param array<string, mixed> $processes
@@ -17,6 +17,9 @@ final readonly class SupervisorReport
         public int    $restartCount = 0,
     ) {}
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray() : array
     {
         return [

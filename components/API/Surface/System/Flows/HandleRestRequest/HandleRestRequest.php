@@ -11,6 +11,9 @@ use Avax\Components\API\Surface\System\PublicSurface\RestResponse;
 
 final readonly class HandleRestRequest
 {
+    /**
+     * @param array<string, mixed> $request
+     */
     public function handle(array $request) : RestResponse
     {
         $method = $request['method'] ?? 'GET';

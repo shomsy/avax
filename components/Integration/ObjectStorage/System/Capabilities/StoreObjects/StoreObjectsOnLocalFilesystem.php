@@ -19,6 +19,9 @@ class StoreObjectsOnLocalFilesystem implements ObjectStoragePort
         }
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function store(string $key, string $content, array $options = []) : ObjectStorageResult
     {
         $path = $this->basePath . '/' . $key;

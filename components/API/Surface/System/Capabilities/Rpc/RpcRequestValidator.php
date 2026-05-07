@@ -16,6 +16,8 @@ final readonly class RpcRequestValidator
 
     /**
      * @param array<string, mixed> $request
+     *
+     * @return list<string>
      */
     public function validate(array $request) : array
     {

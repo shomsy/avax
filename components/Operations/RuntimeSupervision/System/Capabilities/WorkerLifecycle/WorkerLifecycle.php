@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\RuntimeSupervision\System\Capabilities\WorkerLifecycle;
 
-final class WorkerManager
+final class WorkerLifecycle
 {
     /**
      * @var array<string, WorkerRecord>

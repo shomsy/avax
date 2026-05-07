@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace Avax\Components\API\Surface\System\Flows\HandleJsonApiRequest;
 
-use Avax\Components\API\Surface\System\Capabilities\JsonApi\CompoundDocumentBuilder;
-use Avax\Components\API\Surface\System\Capabilities\JsonApi\ResourceObjectBuilder;
+use Avax\Components\API\Surface\System\Capabilities\JsonApi\BuildCompoundDocument;
+use Avax\Components\API\Surface\System\Capabilities\JsonApi\BuildResourceObject;
 
 final readonly class HandleJsonApiRequest
 {
+    /**
+     * @param array<string, mixed> $request
+     *
+     * @return array<string, mixed>
+     */
     public function handle(array $request) : array
     {
         $type       = $request['type'] ?? 'resource';
@@ -22,6 +27,11 @@ final readonly class HandleJsonApiRequest
         return $this->buildSingleResponse($type, $id, $attributes);
     }
 
+    /**
+     * @param array<string, mixed> $attributes
+     *
+     * @return array<string, mixed>
+     */
     private function buildCollectionResponse(string $type, array $attributes) : array
     {
         return [
@@ -30,12 +40,17 @@ final readonly class HandleJsonApiRequest
         ];
     }
 
+    /**
+     * @param array<string, mixed> $attributes
+     *
+     * @return array<string, mixed>
+     */
     private function buildSingleResponse(string $type, string|int $id, array $attributes) : array
     {
-        $builder = new ResourceObjectBuilder($type, $id);
+        $builder = new BuildResourceObject($type, $id);
         $builder->attributes($attributes);
 
-        return (new CompoundDocumentBuilder())
+        return (new BuildCompoundDocument())
             ->primary($builder->build())
             ->build();
     }

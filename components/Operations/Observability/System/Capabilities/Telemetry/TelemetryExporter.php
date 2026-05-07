@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Operations\Observability\System\Capabilities\Drivers;
+namespace Avax\Components\Operations\Observability\System\Capabilities\Telemetry;
 
 final class TelemetryExporter
 {

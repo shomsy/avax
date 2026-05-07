@@ -39,11 +39,17 @@ final readonly class FilterHandler
         return new self($filters);
     }
 
+    /**
+     * @param list<string> $keys
+     */
     public function except(array $keys) : self
     {
         return new self(array_diff_key($this->filters, array_flip($keys)));
     }
 
+    /**
+     * @param list<string> $keys
+     */
     public function only(array $keys) : self
     {
         return new self(array_intersect_key($this->filters, array_flip($keys)));

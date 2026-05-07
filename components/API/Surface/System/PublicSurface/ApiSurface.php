@@ -29,16 +29,25 @@ final readonly class ApiSurface
         return new PaginationHandler(page: $page ?? 1, perPage: $perPage ?? 15);
     }
 
+    /**
+     * @param array<string, mixed> $filters
+     */
     public static function filter(array $filters) : FilterHandler
     {
         return new FilterHandler($filters);
     }
 
+    /**
+     * @param array<string, string> $sorts
+     */
     public static function sort(array $sorts) : SortHandler
     {
         return new SortHandler($sorts);
     }
 
+    /**
+     * @param array<string, mixed> $request
+     */
     public static function handleRequest(array $request) : RestResponse
     {
         return new HandleRestRequest()->handle($request);

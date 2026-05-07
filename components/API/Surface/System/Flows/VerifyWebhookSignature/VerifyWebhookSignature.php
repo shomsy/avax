@@ -8,6 +8,11 @@ use Avax\Components\API\Surface\System\Capabilities\Webhooks\WebhookSignature;
 
 final readonly class VerifyWebhookSignature
 {
+    /**
+     * @param array<string, mixed> $payload
+     *
+     * @return array{valid: bool, signature: string, expected: string}
+     */
     public function verify(array $payload, string $signature, string $secret) : array
     {
         $valid = WebhookSignature::verify($payload, $signature, $secret);

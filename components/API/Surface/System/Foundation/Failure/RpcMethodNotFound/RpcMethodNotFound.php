@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\API\Surface\System\Capabilities\Rpc;
+namespace Avax\Components\API\Surface\System\Foundation\Failure\RpcMethodNotFound;
 
 use RuntimeException;
 

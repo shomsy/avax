@@ -8,6 +8,9 @@ use Avax\Components\Operations\Resilience\System\Capabilities\DeadLetter\DeadLet
 
 final readonly class RecordDeadLetter
 {
+    /**
+     * @param array<string, mixed> $metadata
+     */
     public function record(DeadLetterStore $store, string $message, string $reason, array $metadata = []) : void
     {
         $store->store($message, $metadata, $reason);

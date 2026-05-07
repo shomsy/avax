@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Observability\System\Flows\ExportTelemetry;
 
-use Avax\Components\Operations\Observability\System\Capabilities\Drivers\TelemetryExporter;
+use Avax\Components\Operations\Observability\System\Capabilities\Telemetry\TelemetryExporter;
 
 final readonly class ExportTelemetry
 {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Observability\System\Flows\RedactSensitiveData;
 
-use Avax\Components\Operations\Observability\System\Capabilities\Drivers\Redactor;
+use Avax\Components\Operations\Observability\System\Capabilities\Redaction\RedactSensitiveData as Redactor;
 
 final readonly class RedactSensitiveData
 {

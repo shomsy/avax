@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Resilience\System\Capabilities\Timeout;
 
+use Avax\Components\Operations\Resilience\System\Foundation\Failure\OperationTimedOut\OperationTimedOut;
 use Closure;
 
 final readonly class Timeout
@@ -27,7 +28,7 @@ final readonly class Timeout
         $elapsedMs = (hrtime(true) - $startTime) / 1_000_000;
 
         if ($elapsedMs > $this->timeoutMs) {
-            throw new TimeoutException("Operation timed out after " . round($elapsedMs) . "ms (limit: {$this->timeoutMs}ms).");
+            throw new OperationTimedOut("Operation timed out after " . round($elapsedMs) . "ms (limit: {$this->timeoutMs}ms).");
         }
 
         return $result;

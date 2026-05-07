@@ -33,6 +33,9 @@ final class ResourceTransformer
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function transform(string $type, mixed $data) : array
     {
         $transformer = $this->transformers[$type] ?? null;

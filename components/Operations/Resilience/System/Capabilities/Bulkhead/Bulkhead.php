@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Resilience\System\Capabilities\Bulkhead;
 
+use Avax\Components\Operations\Resilience\System\Foundation\Failure\BulkheadLimitExceeded\BulkheadLimitExceeded;
+
 final class Bulkhead
 {
     private int $active = 0;
@@ -21,7 +23,7 @@ final class Bulkhead
     public function run(callable $operation) : mixed
     {
         if ($this->active >= $this->maxConcurrent) {
-            throw new BulkheadException("Bulkhead is full ({$this->maxConcurrent} concurrent).");
+            throw new BulkheadLimitExceeded("Bulkhead is full ({$this->maxConcurrent} concurrent).");
         }
 
         $this->active++;

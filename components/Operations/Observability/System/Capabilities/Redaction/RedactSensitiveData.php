@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Operations\Observability\System\Capabilities\Drivers;
+namespace Avax\Components\Operations\Observability\System\Capabilities\Redaction;
 
-final readonly class Redactor
+final readonly class RedactSensitiveData
 {
     /**
      * @param list<string> $sensitiveKeys

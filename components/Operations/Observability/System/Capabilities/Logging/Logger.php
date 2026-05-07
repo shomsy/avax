@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Operations\Observability\System\Capabilities\Drivers;
+namespace Avax\Components\Operations\Observability\System\Capabilities\Logging;
 
 use Avax\Components\Operations\Observability\System\Capabilities\Logs\StructuredLogRecord;
 
@@ -25,11 +25,17 @@ final class Logger
         return $this;
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function info(string $message, array $context = []) : StructuredLogRecord
     {
         return $this->log('info', $message, $context);
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function log(string $level, string $message, array $context = []) : StructuredLogRecord
     {
         $record          = new StructuredLogRecord($level, $message, $context);
@@ -42,16 +48,25 @@ final class Logger
         return $record;
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function warning(string $message, array $context = []) : StructuredLogRecord
     {
         return $this->log('warning', $message, $context);
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function error(string $message, array $context = []) : StructuredLogRecord
     {
         return $this->log('error', $message, $context);
     }
 
+    /**
+     * @param array<string, mixed> $context
+     */
     public function debug(string $message, array $context = []) : StructuredLogRecord
     {
         return $this->log('debug', $message, $context);

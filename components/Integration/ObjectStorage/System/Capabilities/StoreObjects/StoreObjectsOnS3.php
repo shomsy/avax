@@ -33,6 +33,9 @@ class StoreObjectsOnS3 implements ObjectStoragePort
         $this->endpoint = $endpoint;
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function store(string $key, string $content, array $options = []) : ObjectStorageResult
     {
         try {

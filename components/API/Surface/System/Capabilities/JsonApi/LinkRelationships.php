@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\API\Surface\System\Capabilities\JsonApi;
 
-final readonly class RelationshipLinker
+final readonly class LinkRelationships
 {
     public function __construct(
         private string $baseUrl = '',

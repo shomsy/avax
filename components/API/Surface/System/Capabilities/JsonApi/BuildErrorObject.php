@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\API\Surface\System\Capabilities\JsonApi;
 
-final class JsonApiErrorBuilder
+final class BuildErrorObject
 {
     private ?string $id = null;
 
@@ -16,8 +16,14 @@ final class JsonApiErrorBuilder
 
     private ?string $detail = null;
 
+    /**
+     * @var array{pointer?: string, parameter?: string}|null
+     */
     private ?array $source = null;
 
+    /**
+     * @var array<string, mixed>|null
+     */
     private ?array $meta = null;
 
     public function withId(string $id) : self

@@ -10,6 +10,10 @@ use Throwable;
 
 final readonly class RetryFailedMessage
 {
+    /**
+     * @return array{success: bool, attempts: int, result: mixed}|array{success: bool, attempts: int, error:
+     *                        string|null}
+     */
     public function retry(CommandBus $bus, Command $command, int $attempts = 3) : array
     {
         $lastException = null;

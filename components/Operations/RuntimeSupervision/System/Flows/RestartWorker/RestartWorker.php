@@ -10,6 +10,9 @@ use Avax\Components\Operations\RuntimeSupervision\System\Capabilities\WorkerRest
 
 final readonly class RestartWorker
 {
+    /**
+     * @return array{restarted: false, reason: string}|array{restarted: true, backoff: int}
+     */
     public function restart(Supervisor $supervisor, WorkerRestartPolicy $policy, string $workerId, string $name, int $restartCount, int $failures) : array
     {
         if (! $policy->shouldRestart($restartCount, $failures)) {

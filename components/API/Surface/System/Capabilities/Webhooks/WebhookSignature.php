@@ -6,6 +6,9 @@ namespace Avax\Components\API\Surface\System\Capabilities\Webhooks;
 
 final readonly class WebhookSignature
 {
+    /**
+     * @param array<string, mixed> $payload
+     */
     public static function verify(array $payload, string $signature, string $secret) : bool
     {
         $expected = self::generate($payload, $secret);
@@ -13,6 +16,9 @@ final readonly class WebhookSignature
         return hash_equals($expected, $signature);
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     public static function generate(array $payload, string $secret) : string
     {
         $body = json_encode($payload, JSON_THROW_ON_ERROR);

@@ -10,6 +10,8 @@ final readonly class HandleRealtimeMessage
 {
     /**
      * @param array<string, mixed> $message
+     *
+     * @return array{handled: false, reason: string}|array{handled: true, type: mixed, payload: mixed}
      */
     public function handle(ConnectionPool $pool, string $connectionId, array $message) : array
     {

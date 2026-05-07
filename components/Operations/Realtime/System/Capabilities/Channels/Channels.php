@@ -11,11 +11,6 @@ final class Channels
     /** @var array<string, array<string, Connection>> */
     private array $channels = [];
 
-    public function get(string $name): Channel
-    {
-        return new Channel(name: $name, channels: $this);
-    }
-
     public function subscribe(Connection $connection, string $channel): void
     {
         $this->channels[$channel][$connection->id] = $connection;

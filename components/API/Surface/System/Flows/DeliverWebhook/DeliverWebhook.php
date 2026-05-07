@@ -9,6 +9,11 @@ use Avax\Components\API\Surface\System\Capabilities\Webhooks\WebhookSignature;
 
 final readonly class DeliverWebhook
 {
+    /**
+     * @param array<string, mixed> $payload
+     *
+     * @return array{url: string, event: string, delivered: bool, attempts: int, signature: string}
+     */
     public function deliver(string $url, string $event, array $payload, string $secret, ?WebhookRetryPolicy $retryPolicy = null) : array
     {
         $retryPolicy = $retryPolicy ?? new WebhookRetryPolicy();
@@ -37,6 +42,9 @@ final readonly class DeliverWebhook
         ];
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     private function sendRequest(string $url, string $event, array $payload, string $signature) : bool
     {
         $headers = [

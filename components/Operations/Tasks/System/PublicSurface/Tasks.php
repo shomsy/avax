@@ -30,6 +30,9 @@ final readonly class Tasks
         return new TaskScheduler();
     }
 
+    /**
+     * @return array{id: string, status: string, result: mixed, error: string|null, duration: int|null}
+     */
     public static function execute(TaskRunner $runner, callable $task) : array
     {
         return (new ExecuteTask())->execute($runner, $task);
@@ -40,6 +43,11 @@ final readonly class Tasks
         (new ScheduleTask())->schedule($scheduler, $name, $task, $cronExpression);
     }
 
+    /**
+     * @return array{success: true, attempts: int<1, max>, result: array{id: string, status: 'completed', result:
+     *                        mixed, error: string|null, duration: int|null}}|array{success: false, attempts: int<0,
+     *                        max>, error: string|null}
+     */
     public static function retryTask(TaskRunner $runner, callable $task, TaskRetryPolicy $policy) : array
     {
         return (new RetryTask())->retry($runner, $task, $policy);

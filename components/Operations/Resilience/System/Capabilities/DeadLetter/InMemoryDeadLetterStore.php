@@ -7,10 +7,13 @@ namespace Avax\Components\Operations\Resilience\System\Capabilities\DeadLetter;
 final class InMemoryDeadLetterStore implements DeadLetterStore
 {
     /**
-     * @var list<array{message: string, metadata: array, reason: string, storedAt: int}>
+     * @var list<array<string, mixed>>
      */
     private array $letters = [];
 
+    /**
+     * @param array<string, mixed> $metadata
+     */
     public function store(string $message, array $metadata, string $reason) : void
     {
         $this->letters[] = [
@@ -26,6 +29,9 @@ final class InMemoryDeadLetterStore implements DeadLetterStore
         return count($this->letters);
     }
 
+    /**
+     * @return list<array<string, mixed>>
+     */
     public function all() : array
     {
         return $this->letters;

@@ -14,6 +14,9 @@ class StoreObjectsInMemory implements ObjectStoragePort
      */
     private array $storage = [];
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function store(string $key, string $content, array $options = []) : ObjectStorageResult
     {
         $this->storage[$key] = $content;

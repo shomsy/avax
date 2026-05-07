@@ -87,6 +87,9 @@ final class WebhookDispatcher
         ];
     }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     private function sendHttpRequest(string $url, string $event, array $payload, string $signature) : bool
     {
         $headers = [

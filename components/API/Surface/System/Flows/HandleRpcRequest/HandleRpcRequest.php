@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace Avax\Components\API\Surface\System\Flows\HandleRpcRequest;
 
 use Avax\Components\API\Surface\System\Capabilities\Rpc\RpcExecutor;
-use Avax\Components\API\Surface\System\Capabilities\Rpc\RpcMethodRegistry;
+use Avax\Components\API\Surface\System\Capabilities\Rpc\RpcMethods;
 use Avax\Components\API\Surface\System\Capabilities\Rpc\RpcRequestValidator;
 
 final readonly class HandleRpcRequest
 {
-    public function handle(RpcMethodRegistry $registry, array $request) : array
+    /**
+     * @param array<string, mixed> $request
+     *
+     * @return array<string, mixed>
+     */
+    public function handle(RpcMethods $methods, array $request) : array
     {
         $validator = new RpcRequestValidator();
 
@@ -25,7 +30,7 @@ final readonly class HandleRpcRequest
             ];
         }
 
-        $executor = new RpcExecutor($registry);
+        $executor = new RpcExecutor($methods);
 
         return $executor->execute(
             id    : $request['id'] ?? null,

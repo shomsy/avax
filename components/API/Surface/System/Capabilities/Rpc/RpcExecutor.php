@@ -9,7 +9,7 @@ use Throwable;
 final readonly class RpcExecutor
 {
     public function __construct(
-        private RpcMethodRegistry $registry,
+        private RpcMethods $methods,
     ) {}
 
     /**
@@ -20,7 +20,7 @@ final readonly class RpcExecutor
     public function execute(mixed $id, string $method, array $params = []) : array
     {
         try {
-            $result = $this->registry->call($method, $params);
+            $result = $this->methods->call($method, $params);
 
             return [
                 'id'     => $id,

@@ -32,8 +32,9 @@ No active items.
 ### V2 Engine Implementation Phase — CLOSED / GREEN
 
 **Date:** 2026-05-07
-**Outcome:** All V2 engine components production-ready with canonical structure.
-**Validation:** composer (6804 classes), phpunit (598 tests, 2482 assertions), phpstan (0 errors), all evidence checks
+**Outcome:** All 72 components production-ready with canonical structure. All 4 previously LOCKED_NON_V1 components
+promoted to COMPLETE.
+**Validation:** composer (6887 classes), phpunit (598 tests, 2482 assertions), phpstan (0 errors), all governance checks
 GREEN.
 
 **Components completed:**
@@ -42,17 +43,18 @@ GREEN.
 2. Integration/ObjectStorage — promoted from labs with full canonical shape
 3. Operations/Resilience — Timeout, Bulkhead, DeadLetter, Outbox, Backpressure, LoadShedding
 4. Operations/Observability — Logging, Telemetry, Redaction, Tracing capabilities
-5. Operations/RuntimeSupervision — Supervisor, WorkerLifecycle, WorkerRestart, Health
+5. Operations/RuntimeSupervision — Supervisor, WorkerLifecycle, WorkerRestart, Health (promoted from LOCKED_NON_V1)
 6. Operations/MessageBus — Command, Query, Event, Transactional dispatch flows
-7. Operations/Delivery — Build, Compile, SmokeChecks, Evidence, Rollback flows
+7. Operations/Delivery — Build, Compile, SmokeChecks, Evidence, Rollback flows (promoted from LOCKED_NON_V1)
 8. Operations/Realtime — ConnectClient, DisconnectClient, BroadcastToChannel, SubscribeToChannel flows + Configuration +
-   Foundation/Failure
-9. Operations/MemoryLifecycle — AllocateMemory, ReleaseMemory, CheckMemoryHealth, RunGarbageCollection flows
+   Foundation/Failure (promoted from LOCKED_NON_V1)
+9. Operations/MemoryLifecycle — AllocateMemory, ReleaseMemory, CheckMemoryHealth, RunGarbageCollection flows (promoted
+   from LOCKED_NON_V1)
 10. Operations/Tasks — TaskRunner, TaskQueue, TaskScheduler, TaskRetry capabilities
 11. Operations/Filesystem — ReadFile, WriteFile, DeleteFile, ListDirectory flows
 12. V2 API Engine — ApiBlueprint, OpenAPI, GraphQL (previously closed)
 
-**Status:** All 72 components COMPLETE. V2 Engine Implementation Phase CLOSED.
+**Status:** All 72 components COMPLETE. LOCKED_NON_V1: 0. V2 Platform Baseline CLOSED / GREEN.
 
 ### V3 Implementation — LOCKED
 

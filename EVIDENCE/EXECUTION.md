@@ -126,9 +126,9 @@ If any item is RED, V2/V3 implementation is forbidden.
 
 V1 Kernel Green: PROVEN
 
-V2 Implementation: CLOSED / GREEN
+V2 Platform Baseline: CLOSED / GREEN (all 72 components complete)
 
-V3 Implementation: LOCKED
+V3 Implementation: LOCKED (labs/SystemDesignKit foundation ready)
 
 This status is derived from CURRENT_TRUTH.md and the latest truth-reconciliation report.
 
@@ -511,12 +511,22 @@ It must not be marked production-ready.
 
 ## 11. V2 Implementation Lock
 
-V2 work is CLOSED / GREEN. V1 Kernel Green has been proven. All V2 engine components are production-ready.
+V2 Platform Baseline is CLOSED / GREEN. V1 Kernel Green has been proven. All 72 components are production-ready.
 
-V2 components completed:
+V2 platform components promoted from LOCKED_NON_V1 to COMPLETE:
 
 ```text
-API Engine:       ApiBlueprint, OpenAPI, GraphQL
+Realtime:          ConnectClient, DisconnectClient, BroadcastToChannel, SubscribeToChannel, HandleRealtimeMessage
+RuntimeSupervision: Supervisor, WorkerLifecycle, WorkerRestart, ProcessRegistry, Health, MonitorSupervisor
+MemoryLifecycle:   MemoryBudget, MemoryTracker, AllocateMemory, ReleaseMemory, CheckMemoryHealth, RunGarbageCollection
+Delivery:          BuildManifest, CompileApplication, CompileContainer, CompileRoutes, RunSmokeChecks, VerifyRelease
+```
+
+Full V2 inventory:
+
+```text
+API Contract:     ApiBlueprint, OpenAPI, GraphQL
+API/Surface:      REST, JSON:API, Webhooks, RPC
 Integration:      ObjectStorage
 Resilience:       Timeout, Bulkhead, DeadLetter, Outbox, Lock, Lease, Backpressure, LoadShedding
 Observability:    Logging, Telemetry, Redaction, Tracing
@@ -527,10 +537,11 @@ Realtime:         ConnectClient, DisconnectClient, BroadcastToChannel, Subscribe
 MemoryLifecycle:  AllocateMemory, ReleaseMemory, CheckMemoryHealth, RunGarbageCollection
 Tasks:            TaskRunner, TaskQueue, TaskScheduler, TaskRetry
 Filesystem:       ReadFile, WriteFile, DeleteFile, ListDirectory
-API/Surface:      REST, JSON:API, Webhooks, RPC
+DevX:             CodeGeneration, DumpDebugger, Testing, Dx
 ```
 
-Total V2 components: 72 complete (65 V1 + 7 V2)
+Total components: 72 complete (65 V1 + 7 V2 platform)
+LOCKED_NON_V1 remaining: 0
 
 ---
 

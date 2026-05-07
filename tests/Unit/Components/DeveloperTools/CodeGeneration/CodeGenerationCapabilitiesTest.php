@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\DeveloperTools\CodeGeneration;
 
-use Avax\Components\DeveloperTools\CodeGeneration\System\System\Capabilities\Generators\EntityGenerator;
+use Avax\Components\DeveloperTools\CodeGeneration\System\Capabilities\Generators\EntityGenerator;
 use PHPUnit\Framework\TestCase;
 
 final class CodeGenerationCapabilitiesTest extends TestCase

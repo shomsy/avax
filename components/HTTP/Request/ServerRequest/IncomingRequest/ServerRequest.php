@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Request\ServerRequest\IncomingRequest;
 
-use Avax\Components\HTTP\Request\System\System\PublicSurface\RequestInterface;
+use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use GuzzleHttp\Psr7\UploadedFile;
 use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Message\ServerRequestInterface;

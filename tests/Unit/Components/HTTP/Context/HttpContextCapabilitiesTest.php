@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\HTTP\Context;
 
-use Avax\Components\HTTP\Context\System\System\PublicSurface\HttpContext;
+use Avax\Components\HTTP\Context\System\PublicSurface\HttpContext;
 use PHPUnit\Framework\TestCase;
 
 final class HttpContextCapabilitiesTest extends TestCase

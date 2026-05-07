@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Response;
 
-use Avax\Components\HTTP\Response\System\System\PublicSurface\Response;
-use Avax\Components\HTTP\Response\System\System\PublicSurface\ResponseInterface;
+use Avax\Components\HTTP\Response\System\PublicSurface\Response;
+use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use GuzzleHttp\Psr7\Utils;
 
 /**

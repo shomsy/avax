@@ -1,9 +1,0 @@
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\Identity\Auth\System\System\Flows\Login;
-
-use RuntimeException;
-
-final class AuthenticationFailed extends RuntimeException {}

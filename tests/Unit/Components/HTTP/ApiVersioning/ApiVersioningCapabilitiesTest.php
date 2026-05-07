@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\HTTP\ApiVersioning;
 
-use Avax\Components\HTTP\ApiVersioning\System\System\Capabilities\Lifecycle\VersionRegistry;
+use Avax\Components\HTTP\ApiVersioning\System\Capabilities\Lifecycle\VersionRegistry;
 use PHPUnit\Framework\TestCase;
 
 final class ApiVersioningCapabilitiesTest extends TestCase

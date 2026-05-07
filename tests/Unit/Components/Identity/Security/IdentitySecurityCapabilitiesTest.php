@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Identity\Security;
 
-use Avax\Components\Identity\Security\System\System\Capabilities\Encryption\AesEncrypter;
-use Avax\Components\Identity\Security\System\System\Capabilities\Encryption\EncryptionKey;
+use Avax\Components\Identity\Security\System\Capabilities\Encryption\AesEncrypter;
+use Avax\Components\Identity\Security\System\Capabilities\Encryption\EncryptionKey;
 use PHPUnit\Framework\TestCase;
 
 final class IdentitySecurityCapabilitiesTest extends TestCase

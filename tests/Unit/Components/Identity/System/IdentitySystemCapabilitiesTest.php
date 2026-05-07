@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Identity\System;
 
-use Avax\Components\Identity\System\System\PublicSurface\Identity;
+use Avax\Components\Identity\System\PublicSurface\Identity;
 use PHPUnit\Framework\TestCase;
 
 final class IdentitySystemCapabilitiesTest extends TestCase

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\HTTP\ContentNegotiation;
 
-use Avax\Components\HTTP\ContentNegotiation\System\System\Capabilities\Negotiator\AcceptHeaderParser;
+use Avax\Components\HTTP\ContentNegotiation\System\Capabilities\Negotiator\AcceptHeaderParser;
 use PHPUnit\Framework\TestCase;
 
 final class ContentNegotiationCapabilitiesTest extends TestCase

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Identity\Tenancy;
 
-use Avax\Components\Identity\Tenancy\System\System\Capabilities\Model\Tenant;
+use Avax\Components\Identity\Tenancy\System\Capabilities\Model\Tenant;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 

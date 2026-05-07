@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\DeveloperTools\Diagnostics;
 
-use Avax\Components\DeveloperTools\Diagnostics\System\System\Capabilities\MemoryUsage;
-use Avax\Components\DeveloperTools\Diagnostics\System\System\PublicSurface\HealthReport;
+use Avax\Components\DeveloperTools\Diagnostics\System\Capabilities\MemoryUsage;
+use Avax\Components\DeveloperTools\Diagnostics\System\PublicSurface\HealthReport;
 use PHPUnit\Framework\TestCase;
 
 final class DiagnosticsCapabilitiesTest extends TestCase

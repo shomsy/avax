@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Middleware;
 
-use Avax\Components\HTTP\Request\System\System\PublicSurface\RequestInterface;
-use Avax\Components\HTTP\Response\System\System\PublicSurface\ResponseInterface;
+use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 

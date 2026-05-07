@@ -1,0 +1,37 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\User;
+
+/**
+ * Interface UserInterface within the Avax Auth System.
+ */
+interface UserInterface
+{
+    public function getId() : UserId;
+
+    public function getEmail() : UserEmail;
+
+    public function getUsername() : string;
+
+    public function getPasswordHash() : string;
+
+    /**
+     * @return list<UserRole>
+     */
+    public function getRoles() : array;
+
+    /**
+     * @return list<UserPermission>
+     */
+    public function getPermissions() : array;
+
+    public function hasRole(UserRole $userRole) : bool;
+
+    public function hasPermission(UserPermission $userPermission) : bool;
+
+    public function canAccessRole(UserRole $userRole) : bool;
+
+    public function isActive() : bool;
+}

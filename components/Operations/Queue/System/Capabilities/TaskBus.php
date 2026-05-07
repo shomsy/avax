@@ -6,17 +6,6 @@ namespace Avax\Components\Operations\Queue\System\Capabilities;
 
 use DateInterval;
 
-interface TaskHandlerInterface
-{
-    public function handle(object $task): void;
-}
-
-interface TaskDriverInterface
-{
-    public function dispatch(object $task): void;
-
-    public function dispatchlater(object $task, DateInterval $dateInterval): void;
-}
 
 final class TaskBus
 {
@@ -53,25 +42,3 @@ final class TaskBus
     }
 }
 
-final readonly class SyncDriver implements TaskDriverInterface
-{
-    public function dispatchlater(object $task, DateInterval $dateInterval): void
-    {
-        $ms = (int) (($dateInterval->i * 60 + $dateInterval->s) * 1000);
-
-        $this->schedule($task, $ms);
-    }
-
-    private function schedule(object $task, int $delayMs): void
-    {
-        usleep($delayMs * 1000);
-        $this->dispatch($task);
-    }
-
-    public function dispatch(object $task): void
-    {
-        if (method_exists($task, '__invoke')) {
-            ($task)();
-        }
-    }
-}

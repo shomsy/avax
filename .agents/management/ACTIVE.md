@@ -20,11 +20,11 @@ Recommended card format:
 ```mermaid
 flowchart LR
     subgraph Ready["Ready"]
-        R0["Stage 04+ locked"]
+        R0["Stage 05 | Production Readiness"]
     end
 
     subgraph InProgress["In Progress"]
-        P0["Stage 04 | component completion | updated 2026-05-06"]
+        P0["None"]
     end
 
     subgraph Blocked["Blocked"]
@@ -41,5 +41,4 @@ flowchart LR
     Blocked --> InProgress
 ```
 
-Stage V1-03 Static Integrity Closure and Stage 03 API Classification completed with current evidence. Stage 04 Component
-Completion is active.
+Stage 04 Component Completion is COMPLETED. V1 Kernel Green is PROVEN. Stage 05 Production Readiness is ready.

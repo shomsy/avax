@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Identity\ExternalIdentity;
 
-use Avax\Components\Identity\ExternalIdentity\System\System\Capabilities\OAuth\Elements\OAuthGrantType;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthGrantType;
 use PHPUnit\Framework\TestCase;
 
 final class ExternalIdentityCapabilitiesTest extends TestCase

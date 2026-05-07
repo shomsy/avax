@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\HTTP\System;
 
-use Avax\Components\HTTP\Middleware\System\System\Capabilities\Pipeline\MiddlewarePipeline;
-use Avax\Components\HTTP\Request\System\System\PublicSurface\RequestInterface;
-use Avax\Components\HTTP\Response\System\System\PublicSurface\ResponseInterface;
-use Avax\Components\HTTP\Router\System\System\PublicSurface\RouterInterface;
-use Avax\Components\HTTP\System\System\PublicSurface\Http;
+use Avax\Components\HTTP\Middleware\System\Capabilities\Pipeline\MiddlewarePipeline;
+use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
+use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
+use Avax\Components\HTTP\System\PublicSurface\Http;
 use PHPUnit\Framework\TestCase;
 
 final class HttpSystemCapabilitiesTest extends TestCase

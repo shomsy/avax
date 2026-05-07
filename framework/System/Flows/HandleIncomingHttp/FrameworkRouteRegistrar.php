@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Flows\HandleIncomingHttp;
 
-use Avax\Components\HTTP\Request\System\System\PublicSurface\RequestInterface;
-use Avax\Components\HTTP\Response\System\System\PublicSurface\ResponseInterface;
+use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\Registrar;

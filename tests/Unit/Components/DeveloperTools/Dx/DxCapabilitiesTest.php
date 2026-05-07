@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\DeveloperTools\Dx;
 
-use Avax\Components\DeveloperTools\Dx\System\System\Capabilities\Capabilities\Graph\DependencyGraph;
-use Avax\Components\DeveloperTools\Dx\System\System\Capabilities\Capabilities\Graph\DependencyNode;
+use Avax\Components\DeveloperTools\Dx\System\Capabilities\Capabilities\Graph\DependencyGraph;
+use Avax\Components\DeveloperTools\Dx\System\Capabilities\Capabilities\Graph\DependencyNode;
 use PHPUnit\Framework\TestCase;
 
 final class DxCapabilitiesTest extends TestCase

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\DataStack\System;
 
-use Avax\Components\DataStack\System\System\Capabilities\DataLayer\DataLayer;
+use Avax\Components\DataStack\System\Capabilities\DataLayer\DataLayer;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 

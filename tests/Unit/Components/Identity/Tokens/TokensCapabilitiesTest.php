@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Identity\Tokens;
 
-use Avax\Components\Identity\Tokens\System\System\Capabilities\JwtAuth\Tokens\AccessToken;
+use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Tokens\AccessToken;
 use PHPUnit\Framework\TestCase;
 
 final class TokensCapabilitiesTest extends TestCase

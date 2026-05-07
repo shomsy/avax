@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\HTTP\Router;
 
-use Avax\Components\HTTP\Request\System\System\PublicSurface\RequestInterface;
-use Avax\Components\HTTP\Router\System\System\Capabilities\RouteCollection\RouteCollection;
-use Avax\Components\HTTP\Router\System\System\Capabilities\RouteCollection\RouteMethod;
-use Avax\Components\HTTP\Router\System\System\Capabilities\RouteDefinition\RouteDefinition;
-use Avax\Components\HTTP\Router\System\System\Flows\MatchRoute\MatchRoute;
+use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 

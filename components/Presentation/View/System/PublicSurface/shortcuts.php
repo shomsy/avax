@@ -6,7 +6,7 @@ declare(strict_types=1);
  * View shortcuts for global access.
  */
 
-use Avax\Components\HTTP\Response\System\System\PublicSurface\Response;
+use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 use Avax\Components\Presentation\View\TemplateEngine;
 use Psr\Http\Message\ResponseInterface;
 

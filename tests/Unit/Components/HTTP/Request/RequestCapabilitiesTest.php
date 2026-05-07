@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\HTTP\Request;
 
-use Avax\Components\HTTP\Request\System\System\Capabilities\Headers\RequestHeaders;
+use Avax\Components\HTTP\Request\System\Capabilities\Headers\RequestHeaders;
 use PHPUnit\Framework\TestCase;
 
 final class RequestCapabilitiesTest extends TestCase

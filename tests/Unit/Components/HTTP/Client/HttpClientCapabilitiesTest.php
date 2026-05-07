@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\HTTP\Client;
 
-use Avax\Components\HTTP\Client\System\System\Capabilities\Testing\FakeHttpClient;
-use Avax\Components\HTTP\Client\System\System\Capabilities\Testing\RecordedHttpResponse;
+use Avax\Components\HTTP\Client\System\Capabilities\Testing\FakeHttpClient;
+use Avax\Components\HTTP\Client\System\Capabilities\Testing\RecordedHttpResponse;
 use PHPUnit\Framework\TestCase;
 
 final class HttpClientCapabilitiesTest extends TestCase

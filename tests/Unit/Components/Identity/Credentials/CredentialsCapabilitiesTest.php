@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Identity\Credentials;
 
-use Avax\Components\Identity\Credentials\System\System\Capabilities\Mfa\Runtime\Enums\MfaMethod;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Enums\MfaMethod;
 use PHPUnit\Framework\TestCase;
 
 final class CredentialsCapabilitiesTest extends TestCase

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\HTTP\Security;
 
-use Avax\Components\HTTP\Security\System\System\Capabilities\Csrf\CsrfToken;
-use Avax\Components\HTTP\Security\System\System\Capabilities\Csrf\CsrfVerifier;
+use Avax\Components\HTTP\Security\System\Capabilities\Csrf\CsrfToken;
+use Avax\Components\HTTP\Security\System\Capabilities\Csrf\CsrfVerifier;
 use PHPUnit\Framework\TestCase;
 
 final class HttpSecurityCapabilitiesTest extends TestCase

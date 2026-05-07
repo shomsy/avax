@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\HTTP\AfterResponse;
 
-use Avax\Components\HTTP\AfterResponse\System\System\Capabilities\Tasks\AfterResponseQueue;
-use Avax\Components\HTTP\AfterResponse\System\System\Capabilities\Tasks\AfterResponseTask;
+use Avax\Components\HTTP\AfterResponse\System\Capabilities\Tasks\AfterResponseQueue;
+use Avax\Components\HTTP\AfterResponse\System\Capabilities\Tasks\AfterResponseTask;
 use PHPUnit\Framework\TestCase;
 
 final class AfterResponseCapabilitiesTest extends TestCase

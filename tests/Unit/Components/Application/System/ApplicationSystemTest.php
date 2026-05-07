@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Application\System;
 
-use Avax\Components\Application\System\System\PublicSurface\Application;
+use Avax\Components\Application\System\PublicSurface\Application;
 use PHPUnit\Framework\TestCase;
 
 final class ApplicationSystemTest extends TestCase

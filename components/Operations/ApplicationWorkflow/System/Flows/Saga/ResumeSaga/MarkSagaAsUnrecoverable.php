@@ -1,0 +1,49 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\ResumeSaga;
+
+use InvalidArgumentException;
+
+final readonly class MarkSagaAsUnrecoverable
+{
+    public function __construct(
+        private SagaRecoveryAction $sagaRecoveryAction,
+    ) {}
+
+    public function mark(array $sagaData, array $failureReasons) : SagaRecoveryResult
+    {
+        if ($failureReasons === []) {
+            throw new InvalidArgumentException(message: 'Failure reasons cannot be empty.');
+        }
+
+        $shouldAbandon = $this->shouldAbandon(reasons: $failureReasons);
+
+        return new SagaRecoveryResult(
+            sagaId     : $sagaData['id'],
+            recoverable: ! $shouldAbandon,
+            action     : $shouldAbandon ? SagaRecoveryAction::ABANDON : $this->sagaRecoveryAction,
+            reason     : implode('; ', $failureReasons),
+        );
+    }
+
+    private function shouldAbandon(array $reasons) : bool
+    {
+        $maxRetries = 3;
+        $retryCount = 0;
+
+        foreach ($reasons as $reason) {
+            if (str_contains((string) $reason, 'max_retries')) {
+                $retryCount++;
+            }
+        }
+
+        return $retryCount >= $maxRetries;
+    }
+
+    public function toMetadata() : array
+    {
+        return ['recovery_action' => $this->sagaRecoveryAction->value];
+    }
+}

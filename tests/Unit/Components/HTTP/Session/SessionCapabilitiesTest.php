@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\HTTP\Session;
 
-use Avax\Components\HTTP\Session\System\System\Capabilities\Storage\ArraySessionStore;
+use Avax\Components\HTTP\Session\System\Capabilities\Storage\ArraySessionStore;
 use PHPUnit\Framework\TestCase;
 
 final class SessionCapabilitiesTest extends TestCase

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\DeveloperTools\Testing;
 
-use Avax\Components\DeveloperTools\Testing\System\System\Capabilities\Fakes\EventFake;
+use Avax\Components\DeveloperTools\Testing\System\Capabilities\Fakes\EventFake;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 

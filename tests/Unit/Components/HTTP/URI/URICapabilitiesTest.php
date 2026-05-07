@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\HTTP\URI;
 
-use Avax\Components\HTTP\URI\System\System\Capabilities\Parts\Scheme;
+use Avax\Components\HTTP\URI\System\Capabilities\Parts\Scheme;
 use PHPUnit\Framework\TestCase;
 
 final class URICapabilitiesTest extends TestCase

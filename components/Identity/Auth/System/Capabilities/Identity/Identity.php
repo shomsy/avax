@@ -1,0 +1,205 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity;
+
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners\Account;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners\Authentication;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners\Recovery;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners\Verification;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Sessions;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
+use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationFailed;
+use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationResult;
+use Avax\Components\Identity\Auth\System\Flows\Login\Credentials;
+use Avax\Components\Identity\Auth\System\Flows\Login\RateLimit\RateLimitException;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Mfa;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Passkey;
+use DateTimeImmutable;
+use InvalidArgumentException;
+use SensitiveParameter;
+
+/**
+ * Identity capability coordinator.
+ *
+ * Owns the cross-cutting identity lifecycle (issue, clear, resolve mode)
+ * and exposes sub-capability owners for domain-specific operations:
+ *
+ *   $identity->mfa()->startMfaEnrollment();
+ *   $identity->passkey()->beginPasskeyRegistration();
+ *   $identity->sessions()->readActiveSessions();
+ */
+final readonly class Identity implements IdentityInterface
+{
+    public function __construct(
+        #[SensitiveParameter]
+        private ?Authentication           $authentication = null,
+        #[SensitiveParameter]
+        private ?Sessions                 $sessions = null,
+        #[SensitiveParameter]
+        private ?Account                  $account = null,
+        private ?Recovery                 $recovery = null,
+        private ?Verification             $verification = null,
+        private ?Mfa                      $mfa = null,
+        private ?Passkey                  $passkey = null,
+        #[SensitiveParameter]
+        private ?SessionIdentityInterface $sessionIdentity = null,
+        #[SensitiveParameter]
+        private ?JwtIdentityInterface     $jwtIdentity = null,
+    )
+    {
+        if (! $this->sessionIdentity instanceof SessionIdentityInterface && ! $this->jwtIdentity instanceof JwtIdentityInterface) {
+            throw new InvalidArgumentException(message: 'Identity requires at least one backend.');
+        }
+    }
+
+    public static function fromBackends(
+        #[SensitiveParameter]
+        ?SessionIdentityInterface $sessionIdentity = null,
+        #[SensitiveParameter]
+        ?JwtIdentityInterface     $jwtIdentity = null,
+    ) : self
+    {
+        return new self(
+            sessionIdentity: $sessionIdentity,
+            jwtIdentity    : $jwtIdentity,
+        );
+    }
+
+    // ── Owned behavior (cross-cutting identity lifecycle) ──
+
+    public function issue(
+        User               $user,
+        ?DateTimeImmutable $mfaVerifiedAt = null,
+        bool               $phishingResistant = false,
+    ) : IssuedAuthentication
+    {
+        if (! $user->isActive()) {
+            throw new InvalidArgumentException(message: 'Inactive users cannot be authenticated.');
+        }
+
+        $refreshToken = $this->jwtIdentity?->issueRefreshToken(
+            user             : $user,
+            mfaVerifiedAt    : $mfaVerifiedAt,
+            phishingResistant: $phishingResistant,
+        );
+        $sessionId    = $this->sessionIdentity?->issue(
+            userId           : $user->getId()->value,
+            mfaVerifiedAt    : $mfaVerifiedAt,
+            phishingResistant: $phishingResistant,
+        );
+        $accessToken  = $this->jwtIdentity?->issue(
+            user                : $user,
+            mfaVerifiedAt       : $mfaVerifiedAt,
+            phishingResistant   : $phishingResistant,
+            refreshTokenFamilyId: $refreshToken?->familyId,
+        );
+
+        return new IssuedAuthentication(
+            mode             : $this->resolveMode(),
+            sessionId        : $sessionId,
+            accessToken      : $accessToken,
+            refreshToken     : $refreshToken,
+            mfaVerifiedAt    : $mfaVerifiedAt,
+            phishingResistant: $phishingResistant,
+        );
+    }
+
+    private function resolveMode() : AuthenticationMode
+    {
+        if ($this->sessionIdentity instanceof SessionIdentityInterface && $this->jwtIdentity instanceof JwtIdentityInterface) {
+            return AuthenticationMode::HYBRID;
+        }
+
+        if ($this->sessionIdentity instanceof SessionIdentityInterface) {
+            return AuthenticationMode::SESSION;
+        }
+
+        return AuthenticationMode::TOKEN;
+    }
+
+    public function clear(?AuthenticationContext $authenticationContext = null) : void
+    {
+        $this->sessionIdentity?->clear();
+
+        if (
+            $authenticationContext instanceof AuthenticationContext
+            && $this->jwtIdentity instanceof JwtIdentityInterface
+            && $authenticationContext->accessTokenId() !== null
+            && $authenticationContext->accessTokenExpiresAt() instanceof DateTimeImmutable
+        ) {
+            $this->jwtIdentity->revoke(
+                tokenId  : $authenticationContext->accessTokenId(),
+                expiresAt: $authenticationContext->accessTokenExpiresAt(),
+            );
+        }
+    }
+
+    public function sessionIdentity() : ?SessionIdentityInterface
+    {
+        return $this->sessionIdentity;
+    }
+
+    // ── Fast-path convenience (high-frequency auth operations) ──
+
+    public function jwtIdentity() : ?JwtIdentityInterface
+    {
+        return $this->jwtIdentity;
+    }
+
+    /**
+     * @throws AuthenticationFailed
+     * @throws RateLimitException
+     */
+    public function login(#[SensitiveParameter] Credentials $credentials) : AuthenticationResult
+    {
+        return $this->authentication()->login(credentials: $credentials);
+    }
+
+    // ── Sub-capability accessors ──
+
+    public function authentication() : Authentication
+    {
+        return $this->authentication ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'authentication');
+    }
+
+    public function logout() : void
+    {
+        $this->authentication()->logout();
+    }
+
+    public function sessions() : Sessions
+    {
+        return $this->sessions ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'sessions');
+    }
+
+    public function account() : Account
+    {
+        return $this->account ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'account');
+    }
+
+    public function recovery() : Recovery
+    {
+        return $this->recovery ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'recovery');
+    }
+
+    public function verification() : Verification
+    {
+        return $this->verification ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'verification');
+    }
+
+    public function mfa() : Mfa
+    {
+        return $this->mfa ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'mfa');
+    }
+
+    public function passkey() : Passkey
+    {
+        return $this->passkey ?? throw IdentityCapabilityUnavailable::coordinator(capability: 'passkey');
+    }
+}

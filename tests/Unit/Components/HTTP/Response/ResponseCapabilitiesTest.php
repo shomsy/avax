@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\HTTP\Response;
 
-use Avax\Components\HTTP\Response\System\System\PublicSurface\Response;
+use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 use PHPUnit\Framework\TestCase;
 
 final class ResponseCapabilitiesTest extends TestCase

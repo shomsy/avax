@@ -1,0 +1,6 @@
+scenarios:
+  - type: load
+    description: "Missing name field."
+  - name: bad-type-scenario
+    type: invalid_scenario_type
+    description: "Invalid scenario type."

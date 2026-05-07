@@ -1,0 +1,31 @@
+system: url-shortener
+traffic:
+  requests_per_second: 100000
+  reads_per_second: 99000
+  writes_per_second: 1000
+  read_write_ratio: 99
+  peak_multiplier: 3
+storage:
+  growth_per_day: 1000000
+  average_record_size_bytes: 512
+  retention_days: 3650
+cache:
+  hit_ratio_target: 0.98
+  miss_penalty_ms: 25
+  stampede_protection_required: true
+queue:
+  max_depth: 100000
+  delay_budget_ms: 5000
+  consumer_throughput_per_second: 5000
+latency:
+  p50_ms: 10
+  p95_ms: 50
+  p99_ms: 100
+availability:
+  slo: 99.99
+  sla: 99.9
+  failure_budget_minutes_per_month: 4.38
+consistency:
+  write_path: strong
+  read_path: strong
+  analytics: eventual

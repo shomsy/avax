@@ -1,0 +1,32 @@
+assertions:
+  - name: hot_path_no_sync_analytics
+    type: hot_path
+    description: "The redirect hot path must not synchronously dispatch analytics events."
+    severity: critical
+    parameters:
+      path: redirect
+      excluded: [ analytics, telemetry, logging ]
+  - name: write_idempotent
+    type: idempotency
+    description: "Write operations must be idempotent."
+    severity: critical
+    parameters:
+      expected: idempotent
+  - name: external_timeout_and_retry
+    type: external_port
+    description: "All external port calls must have timeout and retry policies."
+    severity: high
+    parameters:
+      required: [ timeout, retry ]
+  - name: cache_stampede_protection
+    type: cache
+    description: "Cache miss paths must have stampede protection."
+    severity: high
+    parameters:
+      expected: stampede_protection
+  - name: queue_dead_letter_policy
+    type: dead_letter
+    description: "All queue consumers must have a dead letter policy."
+    severity: medium
+    parameters:
+      required: [ dead_letter ]

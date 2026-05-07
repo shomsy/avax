@@ -63,7 +63,20 @@
       "Bash(php tooling/refactor/check-public-surface.php 2>&1 | tail -5)",
       "Bash(php tooling/refactor/check-runtime-leaks.php 2>&1 | tail -5)",
       "Bash(php tooling/audit_broken_refs.php 2>&1 | grep -E \"^\\(===|Defined:|Missing:|  CRITICAL:|  MINOR:\\)\")",
-      "Bash(php tooling/refactor/check-component-canonical-shape.php 2>&1 | tail -5)"
+      "Bash(php tooling/refactor/check-component-canonical-shape.php 2>&1 | tail -5)",
+      "Bash(find /home/shomsy/projects/avax/labs/SystemDesignKit -type f 2>/dev/null | sort)",
+      "Bash(find /home/shomsy/projects/avax/EVIDENCE -name \"*v3*\" -o -name \"*system*design*\" 2>/dev/null | grep -v \".qoder\" | sort)",
+      "Bash(ls /home/shomsy/projects/avax/EVIDENCE/plans/ 2>/dev/null || echo \"Directory does not exist\")",
+      "Bash(mkdir:*)",
+      "Bash(composer show symfony/yaml 2>/dev/null | head -3; echo \"---\"; php -r \"echo extension_loaded\\('yaml'\\) ? 'yaml ext: yes' : 'yaml ext: no'; echo PHP_EOL;\")",
+      "Bash(composer dump-autoload -o 2>&1 | tail -3; echo \"---\"; php -r \"require 'vendor/autoload.php'; echo class_exists\\('Avax\\\\Labs\\\\SystemDesignKit\\\\System\\\\PublicSurface\\\\SystemDesignKit'\\) ? 'YES' : 'NO'; echo PHP_EOL;\")",
+      "Bash(composer dump-autoload -o 2>&1 | tail -3)",
+      "Bash(php:*)",
+      "Bash(vendor/bin/phpunit --no-coverage --filter SystemDesignKit 2>&1)",
+      "Bash(vendor/bin/phpstan analyse labs/SystemDesignKit tests/SystemDesignKit --memory-limit=1G --error-format=raw --no-progress 2>&1)",
+      "Bash(vendor/bin/phpunit --no-coverage 2>&1 | tail -10)",
+      "Bash(php tooling/refactor/check-component-suite-structure.php 2>&1; echo \"---\"; php tooling/refactor/check-duplicate-owners.php 2>&1; echo \"---\"; php tooling/refactor/check-namespace-drift.php 2>&1; echo \"---\"; php tooling/refactor/check-public-surface.php 2>&1; echo \"---\"; php tooling/refactor/check-runtime-leaks.php 2>&1; echo \"---\"; php tooling/refactor/check-advanced-pattern-folder-violations.php 2>&1)",
+      "Bash(composer dump-autoload -o 2>&1 | tail -2)"
     ]
   }
 }

@@ -1,0 +1,32 @@
+scenarios:
+  - name: redis-outage
+    type: failure
+    description: "Redis cache becomes completely unavailable."
+    steps:
+      - action: disable_cache
+        target: redis_primary
+      - action: route_all_reads
+        target: database
+    expectations:
+      - assertion: latency_p99_under_threshold
+        threshold: 500
+      - assertion: no_data_loss
+  - name: traffic-spike
+    type: load
+    description: "Traffic spikes to 5x normal load."
+    steps:
+      - action: multiply_traffic
+        parameter: 5
+    expectations:
+      - assertion: queue_depth_under_limit
+        threshold: 100000
+      - assertion: no_request_loss
+  - name: write-replication-lag
+    type: consistency
+    description: "Read replica has 5-second replication lag."
+    steps:
+      - action: set_replication_lag
+        parameter: 5000
+    expectations:
+      - assertion: read_your_writes_maintained
+      - assertion: stale_reads_within_budget

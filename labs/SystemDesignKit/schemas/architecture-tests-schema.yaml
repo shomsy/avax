@@ -1,0 +1,39 @@
+# architecture-tests.yaml Schema — V3 Reference Architecture
+#
+# Defines executable architecture assertions that validate
+# structural and behavioral properties of a reference architecture.
+#
+# Schema format:
+#   assertions: array of architecture assertions
+#   Each assertion has: name, type, description, severity, parameters
+
+assertions:
+  type: array
+  min_items: 1
+  item_schema:
+    required:
+      - name
+      - type
+    types:
+      name: string
+      type: string
+      description: string
+      severity: string
+      parameters: object
+    constraints:
+      name: "not_empty"
+      type: "one_of:hot_path,idempotency,consistency,observability,failure_budget,cache,queue,external_port,tenant,sensitive_data,outbox,dead_letter,latency"
+      severity: "one_of:critical,high,medium,low,info"
+    optional:
+      description:
+        type: string
+        description: "Human-readable description of the assertion."
+      parameters:
+        type: object
+        description: "Assertion-specific parameters."
+        properties:
+          path: string
+          threshold: mixed
+          expected: mixed
+          excluded: array
+          required: array

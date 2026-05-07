@@ -15,18 +15,12 @@ namespace Avax\Labs\SystemDesignKit\System\Capabilities\Capacity;
 final readonly class CapacityModel
 {
     /**
-     * @param array{requests_per_second: int, reads_per_second: int, writes_per_second: int, read_write_ratio: int,
-     *                                        peak_multiplier: int} $traffic
-     * @param array{growth_per_day: int, average_record_size_bytes: int, retention_days: int}
-     *                                                     $storage
-     * @param array{hit_ratio_target: float, miss_penalty_ms: int, stampede_protection_required: bool}
-     *                                                         $cache
-     * @param array{max_depth: int, delay_budget_ms: int, consumer_throughput_per_second: int}
-     *                                                $queue
-     * @param array{p50_ms: int, p95_ms: int, p99_ms: int}
-     *                                             $latency
-     * @param array{slo: float, sla: float, failure_budget_minutes_per_month: float}
-     *                                            $availability
+     * @param array{requests_per_second: int, reads_per_second: int, writes_per_second: int, read_write_ratio: int, peak_multiplier: int} $traffic
+     * @param array{growth_per_day: int, average_record_size_bytes: int, retention_days: int}                                             $storage
+     * @param array{hit_ratio_target: float, miss_penalty_ms: int, stampede_protection_required: bool}                                    $cache
+     * @param array{max_depth: int, delay_budget_ms: int, consumer_throughput_per_second: int}                                            $queue
+     * @param array{p50_ms: int, p95_ms: int, p99_ms: int}                                                                                $latency
+     * @param array{slo: float, sla: float, failure_budget_minutes_per_month: float}                                                      $availability
      */
     public function __construct(
         public array $traffic,

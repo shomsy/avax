@@ -21,8 +21,7 @@ final readonly class CapacityYamlParser
      *
      * @param array<string, mixed> $config
      *
-     * @return array{system: string, traffic: array, storage: array, cache: array, queue: array, latency: array,
-     *                       availability: array}
+     * @return array{system: string, traffic: array<string, mixed>, storage: array<string, mixed>, cache: array<string, mixed>, queue: array<string, mixed>, latency: array<string, mixed>, availability: array<string, mixed>}
      */
     public function parse(array $config) : array
     {

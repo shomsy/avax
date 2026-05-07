@@ -1,0 +1,170 @@
+# capacity.yaml Schema — V3 Reference Architecture
+#
+# Defines the required structure, fields, types, and constraints
+# for a capacity model file.
+#
+# Schema format:
+#   sections: top-level keys that must exist
+#   required: keys that must be present within each section
+#   types: expected PHP type for each key
+#   constraints: validation rules for specific keys
+
+sections:
+  system:
+    required: [ ]
+    type: string
+    description: "Name of the system being modeled."
+
+  traffic:
+    required:
+      - requests_per_second
+      - reads_per_second
+      - writes_per_second
+      - read_write_ratio
+      - peak_multiplier
+    types:
+      requests_per_second: int
+      reads_per_second: int
+      writes_per_second: int
+      read_write_ratio: int
+      peak_multiplier: int
+    constraints:
+      requests_per_second: ">= 0"
+      reads_per_second: ">= 0"
+      writes_per_second: ">= 0"
+      read_write_ratio: ">= 0"
+      peak_multiplier: ">= 1"
+    optional:
+      burst_window:
+        type: int
+        constraint: ">= 0"
+        description: "Burst window in seconds."
+
+  storage:
+    required:
+      - growth_per_day
+      - average_record_size_bytes
+      - retention_days
+    types:
+      growth_per_day: int
+      average_record_size_bytes: int
+      retention_days: int
+    constraints:
+      growth_per_day: ">= 0"
+      average_record_size_bytes: "> 0"
+      retention_days: "> 0"
+    optional:
+      data_growth_curve:
+        type: string
+        constraint: "one_of:linear,exponential,logistic"
+        description: "Growth curve shape."
+
+  cache:
+    required:
+      - hit_ratio_target
+      - miss_penalty_ms
+      - stampede_protection_required
+    types:
+      hit_ratio_target: float
+      miss_penalty_ms: int
+      stampede_protection_required: bool
+    constraints:
+      hit_ratio_target: ">= 0 && <= 1"
+      miss_penalty_ms: "> 0"
+    optional:
+      warmup_budget_ms:
+        type: int
+        constraint: "> 0"
+        description: "Cache warmup time budget."
+
+  queue:
+    required:
+      - max_depth
+      - delay_budget_ms
+      - consumer_throughput_per_second
+    types:
+      max_depth: int
+      delay_budget_ms: int
+      consumer_throughput_per_second: int
+    constraints:
+      max_depth: "> 0"
+      delay_budget_ms: "> 0"
+      consumer_throughput_per_second: "> 0"
+    optional:
+      consumer_count:
+        type: int
+        constraint: ">= 1"
+        description: "Number of queue consumers."
+      retry_amplification_factor:
+        type: float
+        constraint: ">= 0"
+        description: "Retry traffic amplification multiplier."
+
+  latency:
+    required:
+      - p50_ms
+      - p95_ms
+      - p99_ms
+    types:
+      p50_ms: int
+      p95_ms: int
+      p99_ms: int
+    constraints:
+      p50_ms: "> 0"
+      p95_ms: ">= p50_ms"
+      p99_ms: ">= p95_ms"
+
+  availability:
+    required:
+      - slo
+      - sla
+      - failure_budget_minutes_per_month
+    types:
+      slo: float
+      sla: float
+      failure_budget_minutes_per_month: float
+    constraints:
+      slo: "> 0 && <= 100"
+      sla: "> 0 && <= slo"
+      failure_budget_minutes_per_month: "> 0"
+
+  consistency:
+    required: [ ]
+    types:
+      write_path: string
+      read_path: string
+      analytics: string
+    optional:
+      write_path:
+        type: string
+        constraint: "one_of:strong,eventual,causal,session"
+        description: "Write path consistency model."
+      read_path:
+        type: string
+        constraint: "one_of:strong,eventual,read_your_writes,monotonic"
+        description: "Read path consistency model."
+      analytics:
+        type: string
+        constraint: "one_of:eventual,none"
+        description: "Analytics path consistency model."
+
+  external_dependencies:
+    required: [ ]
+    description: "External service dependency models."
+    optional:
+      cache:
+        type: object
+        properties:
+          timeout_ms: int
+          retry: bool
+          fallback: string
+        constraints:
+          timeout_ms: "> 0"
+      database:
+        type: object
+        properties:
+          timeout_ms: int
+          retry: bool
+          circuit_breaker: bool
+        constraints:
+          timeout_ms: "> 0"

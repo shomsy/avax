@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Documentation\Api\System\PublicSurface;
+namespace Avax\Components\DeveloperTools\Documentation\Api\System\PublicSurface;
 
-use Avax\Components\Documentation\Api\System\Capabilities\OpenApi\OpenApiGenerator;
-use Avax\Components\Documentation\Api\System\Capabilities\Swagger\SwaggerUi;
+use Avax\Components\DeveloperTools\Documentation\Api\System\Capabilities\OpenApi\OpenApiGenerator;
+use Avax\Components\DeveloperTools\Documentation\Api\System\Capabilities\Swagger\SwaggerUi;
 
 final readonly class ApiDocumentation
 {

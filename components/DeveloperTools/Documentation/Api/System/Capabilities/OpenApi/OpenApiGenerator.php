@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Documentation\Api\System\Capabilities\OpenApi;
+namespace Avax\Components\DeveloperTools\Documentation\Api\System\Capabilities\OpenApi;
 
 final readonly class OpenApiGenerator
 {

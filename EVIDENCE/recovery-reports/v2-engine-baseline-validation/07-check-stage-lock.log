@@ -1,0 +1,9 @@
+V1 Kernel Green: PROVEN
+V2 Implementation: LOCKED
+V3 Implementation: LOCKED
+Active Stage: V2 Engine Implementation Phase: ACTIVE
+
+Allowed: docs/planning only until CURRENT_TRUTH.md is clarified
+FORBIDDEN: production implementation beyond the active stage
+
+Stage lock status is UNKNOWN. Clarify CURRENT_TRUTH.md.

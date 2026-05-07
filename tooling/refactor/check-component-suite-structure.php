@@ -6,8 +6,10 @@ namespace Avax\Tooling\Refactor;
 
 final class CheckComponentSuiteStructure
 {
+    /** @var list<string> */
     private array $allowedSuites = [
         'Application',
+        'API',
         'HTTP',
         'CLI',
         'DataStack',
@@ -18,11 +20,13 @@ final class CheckComponentSuiteStructure
         'Security',
     ];
 
+    /** @var list<string> */
     private array $allowedBridges = [
         'DataFoundation',
         'DataLayer',
     ];
 
+    /** @var list<string> */
     private array $allowedExperimental
         = [
             'Documentation',
@@ -31,6 +35,7 @@ final class CheckComponentSuiteStructure
             'Server',
         ];
 
+    /** @var list<string> */
     private array $helperFolders = [
         'EVIDENCE',
         'Context',
@@ -40,8 +45,12 @@ final class CheckComponentSuiteStructure
         'URI',
     ];
 
+    /** @var list<string> */
     private array $errors = [];
 
+    /**
+     * @return array{status: 'PASS'|'FAIL', errors: list<string>}
+     */
     public function check(): array
     {
         $this->checkComponentsRootContainsOnlySuites();
@@ -114,8 +123,10 @@ final class CheckComponentSuiteStructure
         $componentsPath = dirname(__DIR__, 2).'/components';
 
         // Only check actual component directories, not all folders
+        /** @var array<string, list<string>> $componentDirs */
         $componentDirs = [
             'Application' => ['Cache', 'Config', 'Container', 'DateTime', 'Filesystem', 'Text', 'Validation'],
+            'API' => ['Surface', 'OpenAPI', 'GraphQL'],
             'HTTP' => ['Request', 'Response', 'Router', 'Middleware', 'Session'],  // Security, URI, etc are separate
             'CLI' => ['Console'],
             'DataStack' => ['Data', 'Database', 'Persistence'],

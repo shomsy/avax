@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Docs\Components\PublicSurface;
 
-use Avax\Docs\Components\Api\Capabilities\OpenApi\OpenApiGenerator;
-use Avax\Docs\Components\Api\Capabilities\Swagger\SwaggerUi;
+use Avax\Docs\Components\Capabilities\OpenApi\OpenApiGenerator;
+use Avax\Docs\Components\Capabilities\Swagger\SwaggerUi;
 
 final readonly class ApiDocumentation
 {
     /**
      * @param  list<array{method:string,path:string,summary?:string,tags?:list<string>}>  $routes
+     *
+     * @return array<string, mixed>
      */
     public static function openApi(array $routes = []): array
     {

@@ -1,0 +1,22 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\API\Surface\System\Capabilities\EndpointDefinitions;
+
+enum EndpointVersion: string
+{
+    case V1 = 'v1';
+    case V2 = 'v2';
+    case V3 = 'v3';
+
+    public function label() : string
+    {
+        return $this->value;
+    }
+
+    public function isLatest() : bool
+    {
+        return $this === self::V3;
+    }
+}

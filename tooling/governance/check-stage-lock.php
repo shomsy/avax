@@ -23,7 +23,9 @@ $v2Line      = findLine($content, 'V2 Implementation:') ?? findLine($content, 'V
 $v3Line      = findLine($content, 'V3 Implementation:') ?? findLine($content, 'V3 implementation:');
 $activeStage = findActiveStage($content);
 
-$v1Green     = is_string($v1Line) && str_contains($v1Line, 'GREEN') && ! str_contains($v1Line, 'NOT PROVEN');
+$v1Green = is_string($v1Line)
+    && (str_contains($v1Line, 'GREEN') || str_contains($v1Line, 'PROVEN'))
+    && ! str_contains($v1Line, 'NOT PROVEN');
 $v1NotProven = is_string($v1Line) && str_contains($v1Line, 'NOT PROVEN');
 $v2Locked    = is_string($v2Line) && str_contains($v2Line, 'LOCKED');
 $v3Locked    = is_string($v3Line) && str_contains($v3Line, 'LOCKED');

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use Avax\Components\Documentation\Api\System\PublicSurface\ApiDocumentation;
+use Avax\Components\DeveloperTools\Diagnostics\System\PublicSurface\Diagnostics;
+use Avax\Components\DeveloperTools\Documentation\Api\System\PublicSurface\ApiDocumentation;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
-use Avax\Components\Operations\Monitoring\System\PublicSurface\Monitoring;
 
 $router = static function (RouterInterface $routes): void {
     $routes->get('/', static fn () => [
@@ -14,7 +14,7 @@ $router = static function (RouterInterface $routes): void {
         'docs' => '/api/docs',
     ]);
 
-    $routes->get('/health', static fn () => Monitoring::health()->toArray());
+    $routes->get('/health', static fn () => Diagnostics::health());
 
     $routes->get('/api/docs/openapi.json', static fn () => ApiDocumentation::openApi([
         ['method' => 'GET', 'path' => '/', 'summary' => 'Framework welcome endpoint', 'tags' => ['Framework']],

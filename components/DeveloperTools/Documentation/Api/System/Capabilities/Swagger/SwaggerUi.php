@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Documentation\Api\System\Capabilities\Swagger;
+namespace Avax\Components\DeveloperTools\Documentation\Api\System\Capabilities\Swagger;
 
 final readonly class SwaggerUi
 {

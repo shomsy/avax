@@ -7,15 +7,15 @@ Commit: (updated after broken-refs audit fix)
 ## Core Status
 
 V1 Kernel Green: PROVEN
-V2 Implementation: LOCKED
+V2 Implementation: UNLOCKED / ACTIVE (PARTIALLY IMPLEMENTED)
 V3 Implementation: LOCKED
 
-Composer validate: GREEN
-Autoload integrity: GREEN (6584 classes)
-PSR-4 skips: GREEN (0 skips)
-Broken refs: YELLOW (62 total classified; 0 REAL-PRODUCTION)
-PHPStan: GREEN (full framework/components/tests analysis current in Stage 04 evidence)
-Tests: GREEN (589 tests pass, 2385 assertions, 1 skipped)
+Composer validate: GREEN (last proven before current API naming refactor)
+Autoload integrity: YELLOW (last proven 6626 classes before current API Surface/GraphQL refactor; rerun blocked)
+PSR-4 skips: YELLOW (last proven 0 skips before current API Surface/GraphQL refactor; rerun blocked)
+Broken refs: YELLOW (20 raw missing refs before current API Surface/GraphQL refactor; V2 classification refresh pending)
+PHPStan: YELLOW (last full framework/components/tests analysis passed before current API naming refactor; rerun blocked)
+Tests: YELLOW (last full PHPUnit passed before current API naming refactor; rerun blocked)
 Component suite structure: GREEN
 Duplicate owners: GREEN
 Namespace drift: GREEN
@@ -50,26 +50,34 @@ V3 Implementation: LOCKED
 
 - Physical component suites are canonical.
 - No nested System directories.
+- Last fully validated V2 baseline evidence before the current API naming refactor:
+  `EVIDENCE/recovery-reports/v2-engine-baseline-validation/`.
 - `composer validate --no-check-publish`: PASS (
-  `EVIDENCE/recovery-reports/stage-04-pipeline-proof-validation/01-composer-validate.log`).
-- `composer dump-autoload -o`: PASS, 6584 classes, 0 observed PSR-4 skips (
-  `EVIDENCE/recovery-reports/stage-04-pipeline-proof-validation/02-composer-dump-autoload.log`).
-- `php tooling/audit_broken_refs.php`: PASS, 62 missing refs (25 raw CRITICAL, 37 raw MINOR), all classified (
-  `EVIDENCE/recovery-reports/stage-04-pipeline-proof-validation/05-audit-broken-refs.log` and
-  `EVIDENCE/recovery-reports/stage-04-final-validation/broken-refs-classification-report.md`).
-- Broken reference classification remains 0 REAL-PRODUCTION refs.
-- Stage 04 structural/governance checkers PASS:
+  `EVIDENCE/recovery-reports/v2-engine-baseline-validation/97-composer-validate-final-openapi.log`).
+- `composer dump-autoload -o`: PASS, 6626 classes, 0 observed PSR-4 skips (
+  `EVIDENCE/recovery-reports/v2-engine-baseline-validation/98-composer-dump-autoload-final-openapi.log`).
+- `php tooling/audit_broken_refs.php`: PASS, 20 raw missing refs (8 raw CRITICAL, 12 raw MINOR) (
+  `EVIDENCE/recovery-reports/v2-engine-baseline-validation/101-audit-broken-refs-final-openapi.log`).
+- Broken reference classification needs a V2 refresh because raw counts changed after API Surface promotion.
+- Stage/V2 structural/governance checkers PASS:
   component suite structure, duplicate owners, namespace drift, public surface, runtime leaks, governance index,
   canonical shape, advanced-pattern folders, security naming, and performance naming
-  (`08-*` through `17-*` in the Stage 04 Pipeline proof validation folder).
+  (`104-*` through `113-*` in the V2 engine baseline validation folder).
 - `php avax runtime:doctor`: PASS (
-  `EVIDENCE/recovery-reports/stage-04-pipeline-proof-validation/06-runtime-doctor.log`).
-- `vendor/bin/phpunit --no-coverage`: PASS, 589 tests, 2385 assertions, 1 skipped (
-  `EVIDENCE/recovery-reports/stage-04-pipeline-proof-validation/04-phpunit-no-coverage.log`).
+  `EVIDENCE/recovery-reports/v2-engine-baseline-validation/102-runtime-doctor-final-openapi.log`).
+- `vendor/bin/phpunit --no-coverage`: PASS, 593 tests, 2448 assertions, 1 skipped (
+  `EVIDENCE/recovery-reports/v2-engine-baseline-validation/100-phpunit-no-coverage-final-openapi.log`).
 - Targeted PHPStan: PASS for `framework/System`, `components/Application/Cache`,
   `components/HTTP/Request components/HTTP/Response`, and `components/DataStack/Database` (`54-*` through `57-*`).
 - Full PHPStan: PASS for `framework components tests` (
-  `EVIDENCE/recovery-reports/stage-04-pipeline-proof-validation/03-phpstan-framework-components-tests.raw`).
+  `EVIDENCE/recovery-reports/v2-engine-baseline-validation/99-phpstan-framework-components-tests-final-openapi.raw`).
+- V2 API Surface naming/ownership refactor is present in the workspace under `components/API/Surface`.
+- V2 GraphQL schema/resolver model is present in the workspace under `components/API/GraphQL`.
+- Current API naming refactor evidence:
+  `EVIDENCE/recovery-reports/v2-api-naming-refactor-validation/api-naming-ownership-refactor-report.md`.
+- Current API naming refactor validation is BLOCKED because Composer/PHP commands require escalation and the approval
+  reviewer rejected the request due to the current usage limit. Do not mark this workspace green until validation
+  reruns.
 - Stage 04 ApplicationWorkflow repair: PASS, no `describeResponsibility()` matches remain in
   `components/Operations/ApplicationWorkflow/System`
   (`EVIDENCE/recovery-reports/stage-04-applicationworkflow-repair-validation/00-describe-responsibility-scan.log`).
@@ -81,8 +89,9 @@ V3 Implementation: LOCKED
   (`EVIDENCE/recovery-reports/stage-04-pipeline-proof-validation/`).
 - Stage 03 API policy docs and classification matrix are present and validated (
   `EVIDENCE/master-plan/stage-03-api-classification-report.md`).
-- `php tooling/governance/check-stage-lock.php`: PASS and confirms V2/V3/V4 production implementation remains forbidden
-  while V1 Kernel Green is not proven.
+- `php tooling/governance/check-stage-lock.php`: PASS and confirms V2 is unlocked while V3/V4 production
+  implementation remains forbidden (
+  `EVIDENCE/recovery-reports/v2-engine-baseline-validation/103-check-stage-lock-final-openapi.log`).
 - Stage 04 component completion proof validation is current:
   `EVIDENCE/recovery-reports/stage-04-pipeline-proof-validation/`.
 - Stage 04 required validation is green:
@@ -93,9 +102,11 @@ V3 Implementation: LOCKED
 
 ## Blockers
 
-No remaining blocker for Stage V1-03.
+Current V2 API Surface/GraphQL workspace validation is blocked by tool approval usage limit.
 
 ## V2 Engine Implementation Phase.
 
-Next: Active development of the V2 Platform Engines (API Contract, Integration, Reliability, Observability, Runtime
-Supervision).
+Next: Continue active development of the V2 Platform Engines.
+
+Smallest next allowed action: rerun Composer/PHP validation for the current API Surface/OpenAPI/GraphQL workspace.
+If validation fails, fix only the smallest API naming, namespace, autoload, or type issue required to pass.

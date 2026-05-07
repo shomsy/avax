@@ -7,17 +7,17 @@ Next active stage: Engine Implementation Phase
 ## 1. Current Truth
 ```text
 V1 Kernel Green: PROVEN
-V2 Implementation: UNLOCKED
+V2 Implementation: PARTIALLY IMPLEMENTED (API Surface/OpenAPI/GraphQL slices present; current validation blocked)
 V3 Implementation: LOCKED
 
 Composer validate: GREEN
-Autoload integrity: GREEN
-Production PSR-4 skips: GREEN
+Autoload integrity: YELLOW for current workspace (last green before API Surface/GraphQL naming refactor)
+Production PSR-4 skips: YELLOW for current workspace (last green before API Surface/GraphQL naming refactor)
 Runtime doctor: GREEN
 
-Broken refs: GREEN
-PHPStan: GREEN
-Tests: GREEN
+Broken refs: YELLOW (20 raw missing refs; V2 classification refresh pending)
+PHPStan: YELLOW for current workspace (rerun blocked by approval usage limit)
+Tests: YELLOW for current workspace (rerun blocked by approval usage limit)
 Component suite structure: GREEN
 Superglobal audit: GREEN
 Component completion: PROVEN
@@ -39,13 +39,16 @@ V1 recovery is formally CLOSED. We are now executing V2.
 
 **Engines to Build (ACTIVE DEVELOPMENT):**
 
-- [x] API Contract Engine
-- Integration Engine
-- Reliability Engine
-- Observability Engine
-- Runtime Supervision Engine
-- Memory Lifecycle Engine
-- Delivery Engine
+- [ ] API Surface Engine - `components/API/Surface`, `components/API/OpenAPI`, and `components/API/GraphQL` are present;
+  current Composer/PHPUnit/PHPStan validation is blocked by approval usage limit; REST, JSON:API, Webhooks, and RPC
+  slices still pending
+- [ ] Integration Engine - ObjectStorage exists only in `labs/Integration`; production `components/Integration` missing
+- [ ] Reliability Engine - `components/Operations/Resilience` exists; V2 primitive completeness not proven
+- [ ] Observability Engine - `components/Operations/Observability` exists; V2 trace/timeline/export/redaction acceptance
+  not proven
+- [ ] Runtime Supervision Engine - `components/Operations/RuntimeSupervision` exists; V2 completion not proven
+- [ ] Memory Lifecycle Engine - `components/Operations/MemoryLifecycle` exists; V2 completion not proven
+- [ ] Delivery Engine - `components/Operations/Delivery` exists; V2 completion not proven
 
 ## 3. V3 Executable System Design Framework (PLANNING CLOSED)
 

@@ -6,6 +6,7 @@ namespace Avax\Tests\Unit\Components\Application\Cache\Flows\WarmCache;
 
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
 use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
+use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
 use Avax\Components\Application\Cache\System\Flows\Lifecycle\WarmCache\WarmCache;
@@ -34,9 +35,16 @@ final class WarmCacheTest extends TestCase
         $count = $warmCache->warm(entries: $entries);
 
         $this->assertEquals(3, $count);
-        $this->assertEquals('User One', $this->inMemoryCacheStore->read(cacheKey: CacheKey::create(key: 'user:1'), clock: $this->frozenClock)->value());
-        $this->assertEquals('User Two', $this->inMemoryCacheStore->read(cacheKey: CacheKey::create(key: 'user:2'), clock: $this->frozenClock)->value());
-        $this->assertEquals('User Three', $this->inMemoryCacheStore->read(cacheKey: CacheKey::create(key: 'user:3'), clock: $this->frozenClock)->value());
+        $result = $this->inMemoryCacheStore->read(cacheKey: CacheKey::create(key: 'user:1'), clock: $this->frozenClock);
+        $this->assertInstanceOf(CacheStoreRecordWasFound::class, $result);
+        $this->assertEquals('User One', $result->value());
+        $result2 = $this->inMemoryCacheStore->read(cacheKey: CacheKey::create(key: 'user:2'), clock: $this->frozenClock);
+        $this->assertInstanceOf(CacheStoreRecordWasFound::class, $result2);
+        $this->assertEquals('User Two', $result2->value());
+
+        $result3 = $this->inMemoryCacheStore->read(cacheKey: CacheKey::create(key: 'user:3'), clock: $this->frozenClock);
+        $this->assertInstanceOf(CacheStoreRecordWasFound::class, $result3);
+        $this->assertEquals('User Three', $result3->value());
     }
 
     public function test_warm_with_static_values() : void
@@ -51,7 +59,9 @@ final class WarmCacheTest extends TestCase
         $count = $warmCache->warm(entries: $entries);
 
         $this->assertEquals(2, $count);
-        $this->assertEquals('dark', $this->inMemoryCacheStore->read(cacheKey: CacheKey::create(key: 'config:theme'), clock: $this->frozenClock)->value());
+        $result = $this->inMemoryCacheStore->read(cacheKey: CacheKey::create(key: 'config:theme'), clock: $this->frozenClock);
+        $this->assertInstanceOf(CacheStoreRecordWasFound::class, $result);
+        $this->assertEquals('dark', $result->value());
     }
 
     public function test_warm_with_custom_ttl() : void
@@ -104,7 +114,7 @@ final class WarmCacheTest extends TestCase
         $warmCache->warm(entries: $entries);
 
         $result = $this->inMemoryCacheStore->read(cacheKey: CacheKey::create(key: 'existing'), clock: $this->frozenClock);
-
+        $this->assertInstanceOf(CacheStoreRecordWasFound::class, $result);
         $this->assertEquals('new_value', $result->value());
     }
 

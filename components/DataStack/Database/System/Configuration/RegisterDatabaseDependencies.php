@@ -16,7 +16,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Migrations\RunMigrati
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Avax\Components\DataStack\Database\System\PublicSurface\Database;
-use Avax\Components\DataStack\Database\System\PublicSurface\EntityManager;
+use Avax\Components\DataStack\Database\System\PublicSurface\Entities;
 use Avax\Components\DataStack\Database\System\PublicSurface\Migrations;
 use Avax\Components\DataStack\Database\System\PublicSurface\Query;
 use Avax\Components\DataStack\Database\System\PublicSurface\Schema;
@@ -48,7 +48,7 @@ final readonly class RegisterDatabaseDependencies implements RegisterDependency
 
         $this->container->singleton(abstract: Migrations::class, concrete: fn () => $this->container->get(id: Database::class)->migrations());
 
-        $this->container->singleton(abstract: EntityManager::class, concrete: fn () => $this->container->get(id: Database::class)->entityManager());
+        $this->container->singleton(abstract: Entities::class, concrete: fn () => $this->container->get(id: Database::class)->entities());
 
         $this->container->singleton(abstract: Schema::class, concrete: fn () => $this->container->get(id: Database::class)->schema());
 

@@ -87,14 +87,14 @@ final class MetricsBackendTest extends TestCase
 
         $percentile = $statsDBackend->getPercentile(percentile: 50);
 
-        $this->assertArrayHasKey(key: 'cache.latency', array: $percentile);
+        $this->assertArrayHasKey('cache.latency', $percentile);
         $this->assertEquals(300, $percentile['cache.latency']);
     }
 
     public function test_metrics_sink_records_hits() : void
     {
         $prometheusBackend = new PrometheusBackend();
-        $metricsSink = new MetricsSink('cache', metricsBackend: $prometheusBackend);
+        $metricsSink = new MetricsSink($prometheusBackend);
 
         $metricsSink->recordHit();
 
@@ -104,7 +104,7 @@ final class MetricsBackendTest extends TestCase
     public function test_metrics_sink_records_latency() : void
     {
         $prometheusBackend = new PrometheusBackend();
-        $metricsSink = new MetricsSink('cache', metricsBackend: $prometheusBackend);
+        $metricsSink = new MetricsSink($prometheusBackend);
 
         $metricsSink->recordLatency(microseconds: 5000);
 
@@ -114,7 +114,7 @@ final class MetricsBackendTest extends TestCase
     public function test_metrics_sink_records_all_metrics() : void
     {
         $prometheusBackend = new PrometheusBackend();
-        $metricsSink = new MetricsSink('cache', metricsBackend: $prometheusBackend);
+        $metricsSink = new MetricsSink($prometheusBackend);
 
         $metricsSink->recordHit();
         $metricsSink->recordMiss();
@@ -136,7 +136,7 @@ final class MetricsBackendTest extends TestCase
     public function test_metrics_sink_records_cache_metrics() : void
     {
         $prometheusBackend = new PrometheusBackend();
-        $metricsSink = new MetricsSink('cache', metricsBackend: $prometheusBackend);
+        $metricsSink = new MetricsSink($prometheusBackend);
 
         new FrozenClock(timestamp: Timestamp::now());
         $cacheMetrics = new CacheMetrics();
@@ -153,7 +153,7 @@ final class MetricsBackendTest extends TestCase
     public function test_metrics_sink_flush() : void
     {
         $statsDBackend = new StatsDBackend();
-        $metricsSink = new MetricsSink('cache', metricsBackend: $statsDBackend);
+        $metricsSink = new MetricsSink($statsDBackend);
 
         $metricsSink->recordHit();
         $metricsSink->recordWrite();

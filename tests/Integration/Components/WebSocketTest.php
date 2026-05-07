@@ -11,9 +11,9 @@ final class WebSocketTest extends TestCase
 {
     public function test_websocket_broadcast_reaches_channel_connections(): void
     {
-        WebSocketServer::connect('ws-one', channel: 'integration');
+        WebSocketServer::connect('ws-one', 'integration');
 
-        $sent = WebSocketServer::broadcast(channel: 'integration', 'hello');
+        $sent = WebSocketServer::broadcast('integration', 'hello');
 
         self::assertSame(1, $sent);
         self::assertSame(['hello'], WebSocketServer::messages('ws-one'));

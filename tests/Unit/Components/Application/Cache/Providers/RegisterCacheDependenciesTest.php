@@ -52,10 +52,10 @@ final class RegisterCacheDependenciesTest extends TestCase
     public function test_static_cache_can_be_swapped() : void
     {
         $mockCache1 = $this->createMock(CacheContract::class);
-        $mockCache1->method('get')->with('key')->willReturn(value: 'value1');
+        $mockCache1->method('get')->with('key')->willReturn('value1');
 
         $mockCache2 = $this->createMock(CacheContract::class);
-        $mockCache2->method('get')->with('key')->willReturn(value: 'value2');
+        $mockCache2->method('get')->with('key')->willReturn('value2');
 
         Cache::use(cache: $mockCache1);
         $this->assertSame('value1', Cache::get(key: 'key'));

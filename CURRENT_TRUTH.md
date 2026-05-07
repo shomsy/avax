@@ -36,9 +36,10 @@ Stage 03 (API Classification and Evolution Rules): COMPLETE
 Stage 04 (Component Completion): COMPLETE
 
 Stage 08 (Static Analysis Green): COMPLETE
-Stage 09 (AvaX Kernel Green): ACTIVE
+Stage 09 (AvaX Kernel Green): COMPLETE
+Stage 10 (Production Readiness Baseline): ACTIVE
 
-Stage 10-23: LOCKED
+Stage 11-23: LOCKED
 V2 implementation: LOCKED.
 V3 implementation: LOCKED.
 
@@ -91,6 +92,6 @@ V3 implementation: LOCKED.
 
 No remaining blocker for Stage V1-03.
 
-## Stage 09: AvaX Kernel Green.
+## Stage 10: Production Readiness Baseline.
 
 Next repair: Security baseline audit and hardening (Stage 16).

@@ -165,13 +165,13 @@ An agent must not combine stages unless EXECUTION.md explicitly allows it.
 The current active stage is:
 
 ```text
-Stage 08: Static Analysis Green
+Stage 10: Production Readiness Baseline
 ```
 
 Last completed stage:
 
 ```text
-Stage 07: Test Layer Repair
+Stage 09: AvaX Kernel Green
 ```
 
 Recent completed evidence:
@@ -188,12 +188,11 @@ EVIDENCE/recovery-reports/static-integrity-closure-report.md
 EVIDENCE/v1-integrity/static-integrity-closure-report.md
 EVIDENCE/master-plan/api-classification-matrix.md
 EVIDENCE/master-plan/canonical-class-map.md
-EVIDENCE/master-plan/stage-05-canonical-class-map-report.md
-EVIDENCE/master-plan/stage-06-autoload-repair-report.md
-EVIDENCE/master-plan/stage-07-test-layer-repair-report.md
+EVIDENCE/master-plan/stage-08-static-analysis-report.md
+EVIDENCE/master-plan/stage-09-kernel-green-report.md
 ```
 
-All other stages are read-only context until Stage 08 is complete.
+All other stages are read-only context until Stage 10 is complete.
 
 ### Stage 08 Goal
 
@@ -201,12 +200,23 @@ Achieve 100% green PHPStan analysis for framework, components, and tests (or hon
 
 ### Stage 08 Allowed Work
 
-[ ] Fix remaining PHPStan warnings in tests.
-[ ] Fix any remaining type-hint issues in framework/components.
-[ ] Ensure all return types are specified.
-[ ] Ensure all property types are specified.
-[ ] Resolve "mixed" variable warnings.
-[ ] Record a Stage 08 report.
+[x] Fix remaining PHPStan warnings in tests.
+[x] Fix any remaining type-hint issues in framework/components.
+[x] Ensure all return types are specified.
+[x] Ensure all property types are specified.
+[x] Resolve "mixed" variable warnings.
+[x] Record a Stage 08 report.
+
+### Stage 09 Goal
+
+Prove V1 Kernel stability through final behavioral validation and runtime doctor green.
+
+### Stage 09 Allowed Work
+
+[ ] Finalize canonical class map verification.
+[ ] Ensure all core components pass `runtime:doctor`.
+[ ] Verify "Golden Path" (boot, route, request, response) works through public API.
+[ ] Record a Stage 09 report.
 
 ### Stage 08 Forbidden Work
 

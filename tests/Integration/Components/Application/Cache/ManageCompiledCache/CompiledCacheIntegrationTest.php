@@ -36,7 +36,6 @@ final class CompiledCacheIntegrationTest extends TestCase
 
         $value = $this->compiledCacheContract->read(name: $name, build: $builder, sources: $compiledCacheSources);
 
-        $this->assertIsArray($value);
         $this->assertSame('index', $value['GET /users']['method']);
 
         $this->compiledCacheContract->clear(name: $name);
@@ -92,8 +91,11 @@ final class CompiledCacheIntegrationTest extends TestCase
             return;
         }
 
-        foreach (glob($dir . '/*') as $file) {
-            is_dir($file) ? $this->recursiveDelete(dir: $file) : unlink($file);
+        $files = glob($dir . '/*');
+        if ($files !== false) {
+            foreach ($files as $file) {
+                is_dir($file) ? $this->recursiveDelete(dir: $file) : unlink($file);
+            }
         }
 
         rmdir($dir);

@@ -6,6 +6,7 @@ namespace Avax\Components\Application\Localization\System\Configuration;
 
 readonly class LocalizationConfig
 {
+    /** @param list<string> $supportedLocales */
     public function __construct(
         public string $locale = 'en',
         public string $fallbackLocale = 'en',

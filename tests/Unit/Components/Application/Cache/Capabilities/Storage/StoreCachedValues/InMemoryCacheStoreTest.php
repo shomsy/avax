@@ -9,13 +9,9 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use PHPUnit\Framework\TestCase;
-use Psr\SimpleCache\InvalidArgumentException;
 
 final class InMemoryCacheStoreTest extends TestCase
 {
-    /**
-     * @throws InvalidArgumentException
-     */
     public function test_stores_and_retrieves_values() : void
     {
         $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
@@ -28,9 +24,6 @@ final class InMemoryCacheStoreTest extends TestCase
         $this->assertSame('value', $avaxCache->get(key: 'key'));
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     public function test_returns_default_for_missing_key() : void
     {
         $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
@@ -41,9 +34,6 @@ final class InMemoryCacheStoreTest extends TestCase
         $this->assertSame('default', $avaxCache->get(key: 'missing', default: 'default'));
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     public function test_stores_null_without_confusion() : void
     {
         $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
@@ -57,9 +47,6 @@ final class InMemoryCacheStoreTest extends TestCase
         $this->assertNull($avaxCache->get(key: 'null-key'));
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     public function test_deletes_value() : void
     {
         $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
@@ -74,9 +61,6 @@ final class InMemoryCacheStoreTest extends TestCase
         $this->assertFalse($avaxCache->has(key: 'delete-key'));
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     public function test_clears_all_values() : void
     {
         $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
@@ -93,9 +77,6 @@ final class InMemoryCacheStoreTest extends TestCase
         $this->assertFalse($avaxCache->has(key: 'key2'));
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     public function test_remembers_missing_value() : void
     {
         $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
@@ -109,9 +90,6 @@ final class InMemoryCacheStoreTest extends TestCase
         $this->assertSame('computed', $avaxCache->get(key: 'compute-key'));
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     public function test_does_not_reload_existing_value() : void
     {
         $frozenClock        = new FrozenClock(timestamp: Timestamp::now());

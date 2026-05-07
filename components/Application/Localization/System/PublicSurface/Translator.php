@@ -9,7 +9,7 @@ use Override;
 
 final class Translator implements TranslatorInterface
 {
-    /** @var array<string, array<string, array>> Cached translations */
+    /** @var array<string, array<string, array<string, string>>> Cached translations [locale][key][item] */
     private array $loaded = [];
 
     public function __construct(
@@ -18,6 +18,7 @@ final class Translator implements TranslatorInterface
         private readonly string                     $fallback = 'en',
     ) {}
 
+    /** @param array<string, mixed> $replace */
     #[Override]
     public function get(string $key, array $replace = [], ?string $locale = null) : string
     {
@@ -38,6 +39,7 @@ final class Translator implements TranslatorInterface
         return $this->makeReplacements($line, $replace);
     }
 
+    /** @return array{?string, string, string} [namespace, group, item] */
     private function parseKey(string $key) : array
     {
         $segments = explode('::', $key);
@@ -77,6 +79,7 @@ final class Translator implements TranslatorInterface
         $this->loaded[$locale][$key] = $this->loader->load($locale, $group, $namespace);
     }
 
+    /** @param array<string, mixed> $replace */
     private function makeReplacements(string $line, array $replace) : string
     {
         if (empty($replace)) {

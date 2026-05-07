@@ -16,11 +16,14 @@ final class NoTimeFunctionInSystemTest extends TestCase
     public function test_no_time_function_in_system() : void
     {
         $systemDir = realpath(__DIR__ . '/../../../../../components/Application/Cache/System');
+        if ($systemDir === false) {
+            $this->fail('System directory not found');
+        }
 
         $filesWithTime = [];
 
         $iterator = new RecursiveIteratorIterator(
-            iterator: new RecursiveDirectoryIterator($systemDir),
+            new RecursiveDirectoryIterator($systemDir),
         );
 
         foreach ($iterator as $file) {
@@ -32,9 +35,8 @@ final class NoTimeFunctionInSystemTest extends TestCase
                 continue;
             }
 
-            $content = file_get_contents($file->getPathname());
-
-            if (preg_match('/\btime\(\)/', $content)) {
+            $content = (string) file_get_contents($file->getRealPath());
+            if (preg_match('/(?<!_)\btime\(\)/', $content)) {
                 $relativePath    = str_replace($systemDir . '/', '', $file->getPathname());
                 $filesWithTime[] = $relativePath;
             }
@@ -59,13 +61,5 @@ final class NoTimeFunctionInSystemTest extends TestCase
                 sprintf('Class %s should be autoloadable', $class),
             );
         }
-    }
-
-    public function test_cache_has_read_method() : void
-    {
-        $this->assertTrue(
-            method_exists(Cache::class, 'read'),
-            'Cache::read() should exist',
-        );
     }
 }

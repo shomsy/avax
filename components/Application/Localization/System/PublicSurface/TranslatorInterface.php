@@ -8,6 +8,8 @@ interface TranslatorInterface
 {
     /**
      * Translate the given key.
+     *
+     * @param array<string, mixed> $replace
      */
     public function get(string $key, array $replace = [], ?string $locale = null) : string;
 

@@ -31,13 +31,13 @@ final class FakeCacheStore implements CacheStore
 
         $record = $this->records[$fullKey];
 
-        if ($record->lifecycle->isExpired(clock: $clock)) {
+        if ($record->isExpired(clock: $clock)) {
             unset($this->records[$fullKey]);
 
             return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
         }
 
-        return new CacheStoreRecordWasFound(cacheKey: $cacheKey, clock: $clock, record: $record);
+        return new CacheStoreRecordWasFound(cacheKey: $cacheKey, storedCacheRecord: $record, clock: $clock);
     }
 
     #[Override]
@@ -67,14 +67,16 @@ final class FakeCacheStore implements CacheStore
             return false;
         }
 
-        return ! $this->records[$fullKey]->lifecycle->isExpired(clock: $this->clock);
+        return ! $this->records[$fullKey]->isExpired(clock: $this->clock);
     }
 
+    /** @return array<string, StoredCacheRecord> */
     public function getRecords() : array
     {
         return $this->records;
     }
 
+    /** @param array<string, StoredCacheRecord> $records */
     public function setRecords(array $records) : void
     {
         $this->records = $records;
@@ -87,6 +89,12 @@ final class FakeCacheStore implements CacheStore
 
     public function containsValue(mixed $value) : bool
     {
-        return array_any($this->records, fn ($record) : bool => $record->value === $value);
+        foreach ($this->records as $record) {
+            if ($record->value === $value) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

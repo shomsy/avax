@@ -4,8 +4,20 @@ declare(strict_types=1);
 
 namespace Avax\Labs\SystemDesignKit\System\Capabilities\Capacity;
 
+use Avax\Labs\SystemDesignKit\System\Capabilities\Capacity\Availability\FailureBudget;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Capacity\Availability\Slo;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Capacity\Cache\CacheHitRatio;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Capacity\Cache\CacheStampedeRisk;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Capacity\Latency\LatencyBudget;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Capacity\Queue\ConsumerThroughput;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Capacity\Queue\QueueDepth;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Capacity\Storage\StorageGrowth;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Capacity\Traffic\FanoutSize;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Capacity\Traffic\PeakTrafficMultiplier;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Capacity\Traffic\RequestsPerSecond;
+
 /**
- * Capacity model for traffic/storage/cache/queue/latency/availability.
+ * Capacity model — aggregates all capacity value objects.
  *
  * Status: @experimental
  *
@@ -14,21 +26,19 @@ namespace Avax\Labs\SystemDesignKit\System\Capabilities\Capacity;
  */
 final readonly class CapacityModel
 {
-    /**
-     * @param array{requests_per_second: int, reads_per_second: int, writes_per_second: int, read_write_ratio: int, peak_multiplier: int} $traffic
-     * @param array{growth_per_day: int, average_record_size_bytes: int, retention_days: int}                                             $storage
-     * @param array{hit_ratio_target: float, miss_penalty_ms: int, stampede_protection_required: bool}                                    $cache
-     * @param array{max_depth: int, delay_budget_ms: int, consumer_throughput_per_second: int}                                            $queue
-     * @param array{p50_ms: int, p95_ms: int, p99_ms: int}                                                                                $latency
-     * @param array{slo: float, sla: float, failure_budget_minutes_per_month: float}                                                      $availability
-     */
     public function __construct(
-        public array $traffic,
-        public array $storage,
-        public array $cache,
-        public array $queue,
-        public array $latency,
-        public array $availability,
+        public string                $system,
+        public RequestsPerSecond     $traffic,
+        public PeakTrafficMultiplier $peakMultiplier,
+        public StorageGrowth         $storage,
+        public CacheHitRatio         $cacheHitRatio,
+        public CacheStampedeRisk     $cacheStampede,
+        public QueueDepth            $queueDepth,
+        public ConsumerThroughput    $consumerThroughput,
+        public LatencyBudget         $latencyBudget,
+        public Slo                   $slo,
+        public FailureBudget         $failureBudget,
+        public ?FanoutSize           $fanoutSize = null,
     ) {}
 
     /**
@@ -38,42 +48,137 @@ final readonly class CapacityModel
     {
         $errors = [];
 
-        if ($this->traffic['requests_per_second'] < 0) {
-            $errors[] = 'requests_per_second must be non-negative.';
+        foreach ([
+                     $this->traffic->validate(),
+                     $this->peakMultiplier->validate(),
+                     $this->storage->validate(),
+                     $this->cacheHitRatio->validate(),
+                     $this->cacheStampede->validate(),
+                     $this->queueDepth->validate(),
+                     $this->consumerThroughput->validate(),
+                     $this->latencyBudget->validate(),
+                     $this->slo->validate(),
+                     $this->failureBudget->validate(),
+                 ] as $result) {
+            $errors = array_merge($errors, $result['errors']);
         }
 
-        if ($this->cache['hit_ratio_target'] < 0 || $this->cache['hit_ratio_target'] > 1) {
-            $errors[] = 'cache.hit_ratio_target must be between 0 and 1.';
-        }
-
-        if ($this->latency['p50_ms'] > $this->latency['p95_ms']) {
-            $errors[] = 'p50 must be <= p95.';
-        }
-
-        if ($this->latency['p95_ms'] > $this->latency['p99_ms']) {
-            $errors[] = 'p95 must be <= p99.';
-        }
-
-        if ($this->availability['slo'] < 0 || $this->availability['slo'] > 100) {
-            $errors[] = 'availability.slo must be between 0 and 100.';
+        if ($this->fanoutSize !== null) {
+            $fanoutErrors = $this->fanoutSize->validate();
+            $errors       = array_merge($errors, $fanoutErrors['errors']);
         }
 
         return ['valid' => $errors === [], 'errors' => $errors];
     }
 
     /**
-     * Estimate daily storage growth in bytes.
-     */
-    public function estimatedDailyStorageGrowth() : int
-    {
-        return $this->storage['growth_per_day'] * $this->storage['average_record_size_bytes'];
-    }
-
-    /**
-     * Estimate peak requests per second.
+     * Estimated peak requests per second.
      */
     public function estimatedPeakRps() : int
     {
-        return (int) ($this->traffic['requests_per_second'] * $this->traffic['peak_multiplier']);
+        return $this->peakMultiplier->applyTo($this->traffic->total);
+    }
+
+    /**
+     * Estimated daily storage growth in bytes.
+     */
+    public function estimatedDailyStorageGrowth() : int
+    {
+        return $this->storage->dailyGrowthBytes();
+    }
+
+    /**
+     * Estimated cache hits per second.
+     */
+    public function estimatedCacheHitsPerSecond() : float
+    {
+        return $this->cacheHitRatio->cacheHitsPerSecond($this->traffic->total);
+    }
+
+    /**
+     * Estimated cache misses per second (backend load).
+     */
+    public function estimatedCacheMissesPerSecond() : float
+    {
+        return $this->cacheHitRatio->cacheMissesPerSecond($this->traffic->total);
+    }
+
+    /**
+     * Whether consumer throughput can handle write load.
+     */
+    public function canHandleWriteLoad() : bool
+    {
+        return $this->consumerThroughput->totalThroughput() >= $this->traffic->writes;
+    }
+
+    /**
+     * Required consumer count to handle write load.
+     */
+    public function requiredConsumerCount() : int
+    {
+        return $this->consumerThroughput->requiredConsumers($this->traffic->writes);
+    }
+
+    /**
+     * SLO monthly downtime in human-readable format.
+     */
+    public function sloMonthlyDowntime() : string
+    {
+        return $this->slo->monthlyDowntimeHumanReadable();
+    }
+
+    /**
+     * Create a CapacityModel from parsed config array.
+     *
+     * @param array<int|string, mixed> $config
+     */
+    public static function fromConfig(array $config) : self
+    {
+        $traffic      = $config['traffic'] ?? [];
+        $storage      = $config['storage'] ?? [];
+        $cache        = $config['cache'] ?? [];
+        $queue        = $config['queue'] ?? [];
+        $latency      = $config['latency'] ?? [];
+        $availability = $config['availability'] ?? [];
+
+        return new self(
+            system            : (string) ($config['system'] ?? 'unknown'),
+            traffic           : new RequestsPerSecond(
+                                    total : (int) ($traffic['requests_per_second'] ?? 0),
+                                    reads : (int) ($traffic['reads_per_second'] ?? 0),
+                                    writes: (int) ($traffic['writes_per_second'] ?? 0),
+                                ),
+            peakMultiplier    : new PeakTrafficMultiplier(
+                                    multiplier: (int) ($traffic['peak_multiplier'] ?? 1),
+                                ),
+            storage           : new StorageGrowth(
+                                    growthPerDay          : (int) ($storage['growth_per_day'] ?? 0),
+                                    averageRecordSizeBytes: (int) ($storage['average_record_size_bytes'] ?? 1),
+                                    retentionDays         : (int) ($storage['retention_days'] ?? 365),
+                                ),
+            cacheHitRatio     : new CacheHitRatio(
+                                    target: (float) ($cache['hit_ratio_target'] ?? 0.9),
+                                ),
+            cacheStampede     : new CacheStampedeRisk(
+                                    protectionRequired: (bool) ($cache['stampede_protection_required'] ?? false),
+                                ),
+            queueDepth        : new QueueDepth(
+                                    maxDepth: (int) ($queue['max_depth'] ?? 10000),
+                                ),
+            consumerThroughput: new ConsumerThroughput(
+                                    perSecond: (int) ($queue['consumer_throughput_per_second'] ?? 1000),
+                                ),
+            latencyBudget     : new LatencyBudget(
+                                    p50Ms: (int) ($latency['p50_ms'] ?? 100),
+                                    p95Ms: (int) ($latency['p95_ms'] ?? 500),
+                                    p99Ms: (int) ($latency['p99_ms'] ?? 1000),
+                                ),
+            slo               : new Slo(
+                                    percentage: (float) ($availability['slo'] ?? 99.9),
+                                ),
+            failureBudget     : new FailureBudget(
+                                    minutesPerMonth: (float) ($availability['failure_budget_minutes_per_month'] ?? 43.8),
+                                ),
+        );
     }
 }

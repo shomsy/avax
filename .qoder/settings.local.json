@@ -76,7 +76,18 @@
       "Bash(vendor/bin/phpstan analyse labs/SystemDesignKit tests/SystemDesignKit --memory-limit=1G --error-format=raw --no-progress 2>&1)",
       "Bash(vendor/bin/phpunit --no-coverage 2>&1 | tail -10)",
       "Bash(php tooling/refactor/check-component-suite-structure.php 2>&1; echo \"---\"; php tooling/refactor/check-duplicate-owners.php 2>&1; echo \"---\"; php tooling/refactor/check-namespace-drift.php 2>&1; echo \"---\"; php tooling/refactor/check-public-surface.php 2>&1; echo \"---\"; php tooling/refactor/check-runtime-leaks.php 2>&1; echo \"---\"; php tooling/refactor/check-advanced-pattern-folder-violations.php 2>&1)",
-      "Bash(composer dump-autoload -o 2>&1 | tail -2)"
+      "Bash(composer dump-autoload -o 2>&1 | tail -2)",
+      "Bash(mv /home/shomsy/projects/avax/labs/SystemDesignKit/SystemConfiguration/CapacityEngineConfiguration.php /home/shomsy/projects/avax/labs/SystemDesignKit/System/Configuration/CapacityEngineConfiguration.php && rmdir /home/shomsy/projects/avax/labs/SystemDesignKit/SystemConfiguration)",
+      "Bash(vendor/bin/phpstan analyse labs/SystemDesignKit --memory-limit=1G --error-format=raw --no-progress 2>&1 | head -40)",
+      "Bash(vendor/bin/phpstan analyse labs/SystemDesignKit --memory-limit=1G --error-format=raw --no-progress 2>&1 | head -20)",
+      "Bash(vendor/bin/phpunit --filter SystemDesignKit --no-coverage 2>&1 | tail -20)",
+      "Bash(find labs/SystemDesignKit/System/Capabilities -type d | sort)",
+      "Bash(find labs/SystemDesignKit/System/Flows -type d | sort)",
+      "Bash(ls labs/SystemDesignKit/schemas/ && echo \"---\" && ls labs/SystemDesignKit/examples/ 2>/dev/null || echo \"No examples dir\")",
+      "Bash(vendor/bin/phpunit --filter ConsistencyEngineTest --no-coverage 2>&1)",
+      "Bash(vendor/bin/phpstan analyse labs/SystemDesignKit --memory-limit=1G --error-format=raw --no-progress 2>&1)",
+      "Bash(vendor/bin/phpunit --filter MessagingEngineTest --no-coverage 2>&1)",
+      "Bash(vendor/bin/phpstan analyse labs/SystemDesignKit --memory-limit=1G --error-format=raw --no-progress 2>&1 && vendor/bin/phpunit --no-coverage 2>&1 | tail -5)"
     ]
   }
 }

@@ -4,6 +4,25 @@ declare(strict_types=1);
 
 namespace Avax\Labs\SystemDesignKit\System\PublicSurface;
 
+use Avax\Labs\SystemDesignKit\System\Capabilities\Capacity\CapacityModel;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\ConsistencyModel;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\MessagingModel;
+use Avax\Labs\SystemDesignKit\System\Flows\DetectConsistencyRisk\DetectConsistencyRisk;
+use Avax\Labs\SystemDesignKit\System\Flows\DetectMessagingRisk\DetectMessagingRisk;
+use Avax\Labs\SystemDesignKit\System\Flows\EstimateCacheEffectiveness\EstimateCacheEffectiveness;
+use Avax\Labs\SystemDesignKit\System\Flows\EstimateFailureBudget\EstimateFailureBudget;
+use Avax\Labs\SystemDesignKit\System\Flows\EstimateLatencyBudget\EstimateLatencyBudget;
+use Avax\Labs\SystemDesignKit\System\Flows\EstimateProjectionLag\EstimateProjectionLag;
+use Avax\Labs\SystemDesignKit\System\Flows\EstimateQueuePressure\EstimateQueuePressure;
+use Avax\Labs\SystemDesignKit\System\Flows\EstimateReplicationLag\EstimateReplicationLag;
+use Avax\Labs\SystemDesignKit\System\Flows\EstimateStorageGrowth\EstimateStorageGrowth;
+use Avax\Labs\SystemDesignKit\System\Flows\EstimateTrafficLoad\EstimateTrafficLoad;
+use Avax\Labs\SystemDesignKit\System\Flows\ExplainConsistencyTradeoff\ExplainConsistencyTradeoff;
+use Avax\Labs\SystemDesignKit\System\Flows\ResolveConflict\ResolveConflict;
+use Avax\Labs\SystemDesignKit\System\Flows\ValidateCapacityModel\ValidateCapacityModel;
+use Avax\Labs\SystemDesignKit\System\Flows\ValidateConsistencyModel\ValidateConsistencyModel;
+use Avax\Labs\SystemDesignKit\System\Flows\ValidateMessagingModel\ValidateMessagingModel;
+
 /**
  * SystemDesignKit — V3 Executable System Design Framework.
  *
@@ -19,62 +38,296 @@ namespace Avax\Labs\SystemDesignKit\System\PublicSurface;
 final class SystemDesignKit
 {
     /**
-     * @param array<string, mixed> $config
+     * Validate a capacity.yaml file (schema + model validation).
      *
-     * @return array{valid: bool, errors: list<string>}
+     * @return array{valid: bool, schema_errors: list<string>, model_errors?: list<string>, model: ?CapacityModel}
      */
-    public static function validateCapacity(array $config) : array
+    public static function validateCapacity(string $capacityPath) : array
     {
-        $errors = [];
+        $flow = new ValidateCapacityModel();
 
-        if (! isset($config['traffic'])) {
-            $errors[] = 'Missing traffic model.';
-        } else {
-            $traffic = $config['traffic'];
-            if (! isset($traffic['requests_per_second']) || ! is_int($traffic['requests_per_second'])) {
-                $errors[] = 'traffic.requests_per_second must be an integer.';
-            }
-            if (! isset($traffic['read_write_ratio']) || ! is_int($traffic['read_write_ratio'])) {
-                $errors[] = 'traffic.read_write_ratio must be an integer.';
-            }
-        }
+        return $flow->execute($capacityPath);
+    }
 
-        if (! isset($config['storage'])) {
-            $errors[] = 'Missing storage growth model.';
-        }
+    /**
+     * Build a capacity model from config array.
+     *
+     * @param array<int|string, mixed> $config
+     */
+    public static function buildCapacityModel(array $config) : CapacityModel
+    {
+        return CapacityModel::fromConfig($config);
+    }
 
-        if (! isset($config['cache'])) {
-            $errors[] = 'Missing cache strategy model.';
-        } else {
-            $cache = $config['cache'];
-            if (isset($cache['hit_ratio_target'])) {
-                $ratio = $cache['hit_ratio_target'];
-                if ($ratio < 0 || $ratio > 1) {
-                    $errors[] = 'cache.hit_ratio_target must be between 0 and 1.';
-                }
-            }
-        }
+    /**
+     * Estimate traffic load from a capacity model.
+     *
+     * @return array{
+     *     peak_rps: int,
+     *     read_rps: int,
+     *     write_rps: int,
+     *     read_ratio: float,
+     *     write_ratio: float,
+     *     cache_hits_per_second: float,
+     *     cache_misses_per_second: float,
+     *     backend_rps: float,
+     * }
+     */
+    public static function estimateTrafficLoad(CapacityModel $model) : array
+    {
+        return (new EstimateTrafficLoad())->execute($model);
+    }
 
-        if (! isset($config['queue'])) {
-            $errors[] = 'Missing queue pressure model.';
-        }
+    /**
+     * Estimate storage growth from a capacity model.
+     *
+     * @return array{
+     *     daily_growth_bytes: int,
+     *     daily_growth_human: string,
+     *     retention_bytes: int,
+     *     retention_human: string,
+     *     yearly_growth_bytes: int,
+     *     yearly_growth_human: string,
+     * }
+     */
+    public static function estimateStorageGrowth(CapacityModel $model) : array
+    {
+        return (new EstimateStorageGrowth())->execute($model);
+    }
 
-        if (! isset($config['latency'])) {
-            $errors[] = 'Missing latency budget model.';
-        }
+    /**
+     * Estimate cache effectiveness from a capacity model.
+     *
+     * @return array{
+     *     hit_ratio: float,
+     *     miss_ratio: float,
+     *     hits_per_second: float,
+     *     misses_per_second: float,
+     *     daily_hits: float,
+     *     daily_misses: float,
+     *     cache_savings_ratio: string,
+     * }
+     */
+    public static function estimateCacheEffectiveness(CapacityModel $model) : array
+    {
+        return (new EstimateCacheEffectiveness())->execute($model);
+    }
 
-        if (! isset($config['availability'])) {
-            $errors[] = 'Missing availability model.';
-        } else {
-            $avail = $config['availability'];
-            if (isset($avail['slo'])) {
-                $slo = $avail['slo'];
-                if ($slo < 0 || $slo > 100) {
-                    $errors[] = 'availability.slo must be between 0 and 100.';
-                }
-            }
-        }
+    /**
+     * Estimate queue pressure from a capacity model.
+     *
+     * @return array{
+     *     write_rps: int,
+     *     consumer_throughput: int,
+     *     consumer_count: int,
+     *     required_consumers: int,
+     *     can_handle_load: bool,
+     *     queue_utilization: float,
+     *     consumers_underprovisioned: bool,
+     * }
+     */
+    public static function estimateQueuePressure(CapacityModel $model) : array
+    {
+        return (new EstimateQueuePressure())->execute($model);
+    }
 
-        return ['valid' => $errors === [], 'errors' => $errors];
+    /**
+     * Estimate latency budget allocation from a capacity model.
+     *
+     * @return array{
+     *     p50_budget_ms: int,
+     *     p95_budget_ms: int,
+     *     p99_budget_ms: int,
+     *     allocation: array<string, array{p50_ms: float, p95_ms: float, p99_ms: float}>,
+     *     budget_valid: bool,
+     *     budget_violations: list<string>,
+     * }
+     */
+    public static function estimateLatencyBudget(CapacityModel $model) : array
+    {
+        return (new EstimateLatencyBudget())->execute($model);
+    }
+
+    /**
+     * Estimate failure budget from a capacity model.
+     *
+     * @return array{
+     *     slo_percentage: float,
+     *     monthly_downtime_minutes: float,
+     *     monthly_downtime_human: string,
+     *     yearly_downtime_minutes: float,
+     *     yearly_downtime_human: string,
+     *     failure_budget_minutes: float,
+     *     budget_exhausted_at_incidents: int,
+     * }
+     */
+    public static function estimateFailureBudget(CapacityModel $model) : array
+    {
+        return (new EstimateFailureBudget())->execute($model);
+    }
+
+    /**
+     * Build a consistency model from config array.
+     *
+     * @param array<int|string, mixed> $config
+     */
+    public static function buildConsistencyModel(array $config) : ConsistencyModel
+    {
+        return ConsistencyModel::fromConfig($config);
+    }
+
+    /**
+     * Validate a consistency model.
+     *
+     * @param array<int|string, mixed> $config
+     *
+     * @return array{valid: bool, errors: list<string>, model: ?ConsistencyModel}
+     */
+    public static function validateConsistency(array $config) : array
+    {
+        return (new ValidateConsistencyModel())->execute($config);
+    }
+
+    /**
+     * Explain consistency tradeoffs for each path.
+     *
+     * @return array{
+     *     system: string,
+     *     total_latency_overhead_ms: int,
+     *     paths: list<array{
+     *         path: string,
+     *         model: string,
+     *         overhead_ms: int,
+     *         stale_read_risk: string,
+     *         staleness_tolerance_ms: int,
+     *         tradeoff: string,
+     *     }>,
+     *     risks: array{
+     *         high_stale_read_paths: list<string>,
+     *         high_duplicate_risk_paths: list<string>,
+     *         data_loss_risk_paths: list<string>,
+     *     },
+     * }
+     */
+    public static function explainConsistencyTradeoff(ConsistencyModel $model) : array
+    {
+        return (new ExplainConsistencyTradeoff())->execute($model);
+    }
+
+    /**
+     * Detect consistency risks.
+     *
+     * @return list<array{
+     *     severity: string,
+     *     category: string,
+     *     description: string,
+     *     path: string,
+     *     recommendation: string,
+     * }>
+     */
+    public static function detectConsistencyRisk(ConsistencyModel $model) : array
+    {
+        return (new DetectConsistencyRisk())->execute($model);
+    }
+
+    /**
+     * Estimate projection lag.
+     *
+     * @return array{
+     *     projections: list<array{
+     *         name: string,
+     *         expected_ms: int,
+     *         p95_ms: int,
+     *         p99_ms: int,
+     *         within_budget: bool,
+     *     }>,
+     *     max_p99_ms: int,
+     *     projection_count: int,
+     * }
+     */
+    public static function estimateProjectionLag(ConsistencyModel $model, int $freshnessThresholdMs = 1000) : array
+    {
+        return (new EstimateProjectionLag())->execute($model, $freshnessThresholdMs);
+    }
+
+    /**
+     * Estimate replication lag.
+     *
+     * @return array{
+     *     has_replication: bool,
+     *     expected_ms: int,
+     *     p95_ms: int,
+     *     p99_ms: int,
+     *     replica_count: int,
+     *     topology: string,
+     *     worst_case_staleness_ms: int,
+     *     budgets_exceeded: list<array{
+     *         path: string,
+     *         budget_ms: int,
+     *         exceeded_by_ms: int,
+     *     }>,
+     * }
+     */
+    public static function estimateReplicationLag(ConsistencyModel $model) : array
+    {
+        return (new EstimateReplicationLag())->execute($model);
+    }
+
+    /**
+     * Analyze conflict resolution.
+     *
+     * @return array{
+     *     conflicts: list<array{
+     *         path: string,
+     *         strategy: string,
+     *         conflicts_per_1000_writes: float,
+     *         data_loss_risk: bool,
+     *         complexity: string,
+     *     }>,
+     *     total_data_loss_risk_paths: list<string>,
+     *     total_complexity_cost: string,
+     * }
+     */
+    public static function resolveConflict(ConsistencyModel $model) : array
+    {
+        return (new ResolveConflict())->execute($model);
+    }
+
+    /**
+     * Build a messaging model from config array.
+     *
+     * @param array<int|string, mixed> $config
+     */
+    public static function buildMessagingModel(array $config) : MessagingModel
+    {
+        return MessagingModel::fromConfig($config);
+    }
+
+    /**
+     * Validate a messaging model.
+     *
+     * @param array<int|string, mixed> $config
+     *
+     * @return array{valid: bool, errors: list<string>, model: ?MessagingModel}
+     */
+    public static function validateMessaging(array $config) : array
+    {
+        return (new ValidateMessagingModel())->execute($config);
+    }
+
+    /**
+     * Detect messaging risks.
+     *
+     * @return list<array{
+     *     severity: string,
+     *     category: string,
+     *     description: string,
+     *     path: string,
+     *     recommendation: string,
+     * }>
+     */
+    public static function detectMessagingRisk(MessagingModel $model) : array
+    {
+        return (new DetectMessagingRisk())->execute($model);
     }
 }

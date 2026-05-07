@@ -27,7 +27,7 @@ final readonly class StartBackgroundProcess
 
             if ($pid === 0) {
                 $command();
-                exit(status: 0)
+                exit(0);
             }
         }
 

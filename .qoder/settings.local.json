@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(find /home/shomsy/projects/avax/components/API -type d | head -50)",
+      "Bash(find:*)",
+      "Bash(find /home/shomsy/projects/avax/labs/Integration -type f -name \"*.php\" 2>/dev/null | head -30)",
+      "Bash(find /home/shomsy/projects/avax/components/Operations/RuntimeSupervision/System -type f -name \"*.php\" 2>/dev/null && echo \"---\" && find /home/shomsy/projects/avax/components/Operations/Delivery/System -type f -name \"*.php\" 2>/dev/null && echo \"---\" && find /home/shomsy/projects/avax/components/Operations/MemoryLifecycle/System -type f -name \"*.php\" 2>/dev/null && echo \"---\" && find /home/shomsy/projects/avax/components/Operations/MessageBus/System -type f -name \"*.php\" 2>/dev/null)",
+      "Bash(find /home/shomsy/projects/avax/components/API -type f -name \"*.php\" 2>/dev/null | wc -l && echo \"---REST/JSON-API/Webhooks/RPC check---\" && ls -la /home/shomsy/projects/avax/components/API/ 2>/dev/null)",
+      "Bash(find /home/shomsy/projects/avax/components/Operations/Resilience/System/Flows -type f -name \"*.php\" 2>/dev/null && echo \"---Foundation---\" && find /home/shomsy/projects/avax/components/Operations/Resilience/System/Foundation -type f -name \"*.php\" 2>/dev/null && echo \"---Configuration---\" && find /home/shomsy/projects/avax/components/Operations/Resilience/System/Configuration -type f -name \"*.php\" 2>/dev/null)",
+      "Bash(find /home/shomsy/projects/avax/components/Operations/Observability/System/Flows -type f -name \"*.php\" 2>/dev/null && echo \"---Foundation---\" && find /home/shomsy/projects/avax/components/Operations/Observability/System/Foundation -type f -name \"*.php\" 2>/dev/null)",
+      "Bash(find /home/shomsy/projects/avax/components/Operations/RuntimeSupervision/System -type d 2>/dev/null && echo \"---\" && find /home/shomsy/projects/avax/components/Operations/RuntimeSupervision/System -name \"*.php\" 2>/dev/null)",
+      "Bash(find /home/shomsy/projects/avax/labs/Integration -name \"*.php\" -type f 2>/dev/null && echo \"===\" && find /home/shomsy/projects/avax/components/Operations/Tasks -name \"*.php\" -type f 2>/dev/null && echo \"===\" && find /home/shomsy/projects/avax/components/Operations/Filesystem -name \"*.php\" -type f 2>/dev/null)",
+      "Bash(find /home/shomsy/projects/avax/components/Operations/Resilience/System -type d | sort && echo \"===FILES===\" && find /home/shomsy/projects/avax/components/Operations/Resilience/System -name \"*.php\" -type f | sort)",
+      "Bash(find /home/shomsy/projects/avax/components/Operations/Observability/System -type d | sort && echo \"===FILES===\" && find /home/shomsy/projects/avax/components/Operations/Observability/System -name \"*.php\" -type f | sort)",
+      "Bash(find /home/shomsy/projects/avax/components/Operations/Observability/System/Flows -name \"*.php\" -type f 2>/dev/null && echo \"---Resilience Config/Foundation---\" && find /home/shomsy/projects/avax/components/Operations/Resilience/System/Configuration -name \"*.php\" -type f 2>/dev/null && find /home/shomsy/projects/avax/components/Operations/Resilience/System/Foundation -name \"*.php\" -type f 2>/dev/null)",
+      "Bash(find /home/shomsy/projects/avax/components/Operations/Resilience/System -type d | sort && echo \"---Observability dirs---\" && find /home/shomsy/projects/avax/components/Operations/Observability/System -type d | sort && echo \"---Observability files in dirs---\" && ls /home/shomsy/projects/avax/components/Operations/Observability/System/Flows/RecordMetric/ 2>/dev/null && ls /home/shomsy/projects/avax/components/Operations/Observability/System/Flows/StartTrace/ 2>/dev/null)",
+      "Bash(find /home/shomsy/projects/avax/components/Operations/Observability/System/Flows -name \"*.php\" -type f 2>/dev/null && echo \"---Resilience Foundation---\" && find /home/shomsy/projects/avax/components/Operations/Resilience/System/Foundation -name \"*.php\" -type f 2>/dev/null && echo \"---Resilience Config---\" && find /home/shomsy/projects/avax/components/Operations/Resilience/System/Configuration -name \"*.php\" -type f 2>/dev/null)"
+    ]
+  }
+}

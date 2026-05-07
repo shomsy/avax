@@ -36,7 +36,13 @@ final class Realtime
 
     public static function channel(string $name): Channel
     {
-        return self::channels()->get(name: $name);
+        $channel = self::channels()->get(name: $name);
+
+        if ($channel === null) {
+            $channel = self::channels()->create(name: $name);
+        }
+
+        return $channel;
     }
 
     private static function channels(): ChannelManager

@@ -9,6 +9,7 @@ use Avax\Components\Security\Cryptography\System\Capabilities\Encryption\Encrypt
 use Avax\Components\Security\Cryptography\System\Capabilities\Encryption\EncryptionKey;
 use Avax\Components\Security\Cryptography\System\Capabilities\Encryption\KeyResolver;
 use Avax\Components\Security\Cryptography\System\Foundation\Failure\DecryptionFailed;
+use Throwable;
 use function is_string;
 
 /**
@@ -32,7 +33,7 @@ final readonly class DecryptValue
      *
      * @throws DecryptionFailed if decryption fails or payload has been tampered with
      */
-    public function execute(EncryptedPayload|string $payload) : string
+    public function execute(EncryptedPayload|string $payload) : mixed
     {
         if (is_string($payload)) {
             $payload = EncryptedPayload::deserialize($payload);
@@ -46,6 +47,24 @@ final readonly class DecryptValue
             );
         }
 
-        return $this->encrypter->decrypt($payload, $key);
+        $plaintext = $this->encrypter->decrypt($payload, $key);
+
+        // Try JSON decode first (primary format)
+        try {
+            return json_decode($plaintext, true, 512, JSON_THROW_ON_ERROR);
+        } catch (Throwable) {
+            // If JSON fails, try unserialize for backward compatibility
+            try {
+                $unserialized = unserialize($plaintext, ['allowed_classes' => false]);
+                if ($unserialized !== false) {
+                    return $unserialized;
+                }
+            } catch (Throwable) {
+                // Ignore unserialize errors, fall through to last resort
+            }
+
+            // Last resort: return as plain string
+            return $plaintext;
+        }
     }
 }

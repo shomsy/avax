@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Security\System\Configuration;
+namespace Avax\Components\Security\Cryptography\System\Configuration;
 
 use InvalidArgumentException;
 
@@ -14,10 +14,13 @@ use InvalidArgumentException;
  * @property-read string                $currentVersion The current active key version
  * @property-read string                $salt           Optional salt for key derivation
  */
-final readonly class EncryptionConfiguration
+final readonly class CryptographyConfiguration
 {
     private const string DEFAULT_CIPHER = 'aes-256-gcm';
 
+    /**
+     * @param array<string, string> $keyVersions Map of version => base64-encoded key
+     */
     public function __construct(
         private string $cipher = self::DEFAULT_CIPHER,
         private array  $keyVersions = [],

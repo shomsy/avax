@@ -124,9 +124,9 @@ If any item is RED, V2/V3 implementation is forbidden.
 
 ## Current Execution Lock
 
-V1 Kernel Green: NOT PROVEN
+V1 Kernel Green: PROVEN
 
-V2 Implementation: LOCKED
+V2 Implementation: UNLOCKED
 
 V3 Implementation: LOCKED
 
@@ -165,13 +165,13 @@ An agent must not combine stages unless EXECUTION.md explicitly allows it.
 The current active stage is:
 
 ```text
-Stage 10: Production Readiness Baseline
+Stage 11: Golden Path App
 ```
 
 Last completed stage:
 
 ```text
-Stage 09: AvaX Kernel Green
+Stage 10: Production Readiness Baseline
 ```
 
 Recent completed evidence:
@@ -482,7 +482,7 @@ It must not be marked production-ready.
 
 ## 11. V2 Implementation Lock
 
-V2 work is locked until V1 Kernel Green.
+V2 work is UNLOCKED. V1 Kernel Green has been proven.
 
 V2 planning may continue for:
 
@@ -499,7 +499,7 @@ Memory Lifecycle Engine
 Developer Experience Engine
 ```
 
-V2 production implementation is forbidden until Kernel Green.
+V2 production implementation is UNLOCKED.
 
 ---
 

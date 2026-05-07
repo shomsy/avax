@@ -9,7 +9,6 @@ use Avax\Components\Security\Cryptography\System\Capabilities\Encryption\KeyReso
 use Avax\Components\Security\Cryptography\System\Flows\DecryptValue\DecryptValue;
 use Avax\Components\Security\Cryptography\System\Flows\EncryptValue\EncryptValue;
 use Avax\Components\Security\Cryptography\System\Foundation\Failure\DecryptionFailed;
-use Throwable;
 
 /**
  * Cryptography - Public API for encryption operations.
@@ -50,25 +49,7 @@ final readonly class Cryptography
      */
     public function decrypt(string $serialized) : mixed
     {
-        $plaintext = $this->decryptValue->execute($serialized);
-
-        // Try JSON decode first (primary format)
-        try {
-            return json_decode($plaintext, true, 512, JSON_THROW_ON_ERROR);
-        } catch (Throwable) {
-            // If JSON fails, try unserialize for backward compatibility
-            try {
-                $unserialized = unserialize($plaintext, ['allowed_classes' => false]);
-                if ($unserialized !== false) {
-                    return $unserialized;
-                }
-            } catch (Throwable) {
-                // Ignore unserialize errors, fall through to last resort
-            }
-
-            // Last resort: return as plain string
-            return $plaintext;
-        }
+        return $this->decryptValue->execute($serialized);
     }
 
     /**

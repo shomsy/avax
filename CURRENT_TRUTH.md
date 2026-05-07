@@ -12,16 +12,16 @@ V3 Implementation: LOCKED
 
 ## Validation Status
 
-| Command                                                               | Result                                             |
-|-----------------------------------------------------------------------|----------------------------------------------------|
-| `composer validate --no-check-publish`                                | GREEN                                              |
-| `composer dump-autoload -o`                                           | GREEN, 6655 classes                                |
-| `vendor/bin/phpunit --no-coverage`                                    | GREEN, 599 tests, 2483 assertions, 1 skipped       |
-| `vendor/bin/phpstan analyse components/API tests/Unit/Components/API` | GREEN                                              |
-| `php tooling/audit_broken_refs.php`                                   | 20 missing (8 CRITICAL, 12 MINOR) - all classified |
-| `php tooling/refactor/check-component-suite-structure.php`            | GREEN                                              |
-| `php tooling/refactor/check-namespace-drift.php`                      | GREEN                                              |
-| `php avax runtime:doctor`                                             | GREEN                                              |
+| Command                                                               | Result                                                                  |
+|-----------------------------------------------------------------------|-------------------------------------------------------------------------|
+| `composer validate --no-check-publish`                                | GREEN                                                                   |
+| `composer dump-autoload -o`                                           | GREEN, 6655 classes                                                     |
+| `vendor/bin/phpunit --no-coverage`                                    | GREEN, 599 tests, 2483 assertions, 1 skipped                            |
+| `vendor/bin/phpstan analyse components/API tests/Unit/Components/API` | GREEN                                                                   |
+| `php tooling/audit_broken_refs.php`                                   | 19 missing (7 CRITICAL, 12 MINOR) - all classified as non-V1 production |
+| `php tooling/refactor/check-component-suite-structure.php`            | GREEN                                                                   |
+| `php tooling/refactor/check-namespace-drift.php`                      | GREEN                                                                   |
+| `php avax runtime:doctor`                                             | GREEN                                                                   |
 
 ## Stage Status
 
@@ -41,6 +41,7 @@ Stage 12 (Public API and Compatibility Governance): COMPLETE
 Stage 13 (Extension and Plugin Architecture): COMPLETE
 Stage 14-23 (Enterprise Governance and Planning): COMPLETE
 Stage V2-01 (API Naming Refactor): COMPLETE
+Stage V2-02 (API Engine Closure + Broken Refs): COMPLETE
 
 V2 Engine Implementation Phase: CLOSING
 V3 Implementation: LOCKED
@@ -77,12 +78,25 @@ Evidence: `EVIDENCE/recovery-reports/v2-api-naming-refactor-validation/`
 
 ## Blockers
 
-None.
+None for V2 API Engine closure.
+
+## Broken References Classification
+
+19 missing references (7 CRITICAL, 12 MINOR) classified as:
+
+**Non-V1 Production (Expected):**
+
+- External vendor deps: `Aws\*`, `Cron\CronExpression`, `Memcached`, `Redis`, `PhpCsFixer\*`
+- Examples/demo deps: Middleware classes in `examples/minimal-http-app`
+- Labs/Integration: `ObjectStoragePort`, `ObjectStorageResult`
+- Legacy aliases: `Avax\Config\*`, `Avax\Facade\Facades\Route`, `Avax\HTTP\Response\Response`
+
+These are NOT production blockers. Evidence: `EVIDENCE/recovery-reports/v2-api-engine-closure/`
 
 ## Next Allowed Actions
 
-1. Close V2 Engine Implementation Phase with final evidence report
+1. Close V2 Engine Implementation Phase formally (add final evidence to EXECUTION.md)
 2. Begin planning for V2 Integration Engine or other platform engines
-3. Update component-completion-matrix.md with V2 API components
+3. (Optional) Install missing vendor deps to eliminate non-blocking refs
 
-Smallest next allowed action: Update CURRENT_TRUTH.md and component-completion-matrix.md with V2 API closure evidence.
+Smallest next allowed action: Freeze V2 API Engine naming vocabulary in documentation.

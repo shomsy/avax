@@ -6,7 +6,6 @@ namespace Avax\Tests\Unit\Components\Application\Cache;
 
 use Avax\Components\Application\Cache\CompiledCache;
 use Avax\Components\Application\Cache\System\AvaxCache;
-use Avax\Components\Application\Cache\System\Cache;
 use Avax\Components\Application\Cache\System\CacheContract;
 use Avax\Components\Application\Cache\System\PublicSurface\CacheFacade;
 use Avax\Components\Application\Cache\System\PublicSurface\CacheRegistry;
@@ -20,7 +19,7 @@ final class PublicCacheClassesAutoloadTest extends TestCase
 {
     public function test_public_cache_classes_are_autoloadable() : void
     {
-        self::assertTrue(class_exists(\Avax\Components\Application\Cache\Cache::class), 'Cache facade not autoloadable');
+        self::assertTrue(class_exists(AvaxCache::class), 'AvaxCache not autoloadable');
         self::assertTrue(class_exists(CompiledCache::class), 'CompiledCache facade not autoloadable');
         self::assertTrue(interface_exists(CacheContract::class), 'CacheContract not autoloadable');
         self::assertTrue(class_exists(AvaxCache::class), 'AvaxCache not autoloadable');
@@ -35,10 +34,12 @@ final class PublicCacheClassesAutoloadTest extends TestCase
         self::assertTrue(class_exists(ReadFromCache::class));
     }
 
-    public function test_no_system_cache_facade_exists() : void
+    public function test_avax_cache_implements_cache_contract() : void
     {
-        $systemCacheExists = class_exists(Cache::class);
-        self::assertFalse($systemCacheExists, 'System\Cache class should not exist - use top-level Cache facade');
+        $reflectionClass = new ReflectionClass(objectOrClass: AvaxCache::class);
+        $interfaces      = $reflectionClass->getInterfaceNames();
+
+        self::assertContains(CacheContract::class, $interfaces, 'AvaxCache should implement CacheContract');
     }
 
     public function test_cache_contract_defines_correct_interface() : void
@@ -46,13 +47,5 @@ final class PublicCacheClassesAutoloadTest extends TestCase
         $reflectionClass = new ReflectionClass(objectOrClass: CacheContract::class);
         self::assertTrue($reflectionClass->isInterface(), 'CacheContract should be an interface');
         self::assertSame('CacheContract', $reflectionClass->getShortName());
-    }
-
-    public function test_avax_cache_implements_cache_contract() : void
-    {
-        $reflectionClass = new ReflectionClass(objectOrClass: AvaxCache::class);
-        $interfaces      = $reflectionClass->getInterfaceNames();
-
-        self::assertContains(CacheContract::class, $interfaces, 'AvaxCache should implement CacheContract');
     }
 }

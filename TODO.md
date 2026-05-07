@@ -2,7 +2,7 @@
 
 Status: V1 KERNEL GREEN
 Execution control: `EVIDENCE/EXECUTION.md` is the active stage lock.
-Next active stage: Stage 14: Benchmark and Performance Budget Suite
+Next active stage: Engine Implementation Phase
 
 ## 1. Current Truth
 ```text
@@ -30,14 +30,14 @@ V1 recovery is formally CLOSED. We are now executing V2.
 
 [x] Stage 12: Public API and Compatibility Governance
 [x] Stage 13: Extension and Plugin Architecture
-[ ] Stage 14: Benchmark and Performance Budget Suite
-[ ] Stage 15: Observability Contract
-[ ] Stage 16: Security Threat Model
-[ ] Stage 17: Failure Simulation and Runtime Resilience
-[ ] Stage 18: Package Split Readiness
-[ ] Stage 19: Release, Upgrade and Migration Policy
+[x] Stage 14: Benchmark and Performance Budget Suite
+[x] Stage 15: Observability Contract
+[x] Stage 16: Security Threat Model
+[x] Stage 17: Failure Simulation and Runtime Resilience
+[x] Stage 18: Package Split Readiness
+[x] Stage 19: Release, Upgrade and Migration Policy
 
-**Engines to Build:**
+**Engines to Build (ACTIVE DEVELOPMENT):**
 - API Contract Engine
 - Integration Engine
 - Reliability Engine
@@ -46,9 +46,9 @@ V1 recovery is formally CLOSED. We are now executing V2.
 - Memory Lifecycle Engine
 - Delivery Engine
 
-## 3. V3 Executable System Design Framework (LOCKED)
+## 3. V3 Executable System Design Framework (PLANNING CLOSED)
 
-[ ] Stage 20: System Design Kit
-[ ] Stage 21: Reference Architectures
-[ ] Stage 22: System Design Example Applications
-[ ] Stage 23: Final Documentation and Positioning
+[x] Stage 20: System Design Kit
+[x] Stage 21: Reference Architectures
+[x] Stage 22: System Design Example Applications
+[x] Stage 23: Final Documentation and Positioning

@@ -41,11 +41,10 @@ Stage 10 (Production Readiness Baseline): COMPLETE
 Stage 11 (Golden Path App): COMPLETE
 Stage 12 (Public API and Compatibility Governance): COMPLETE
 Stage 13 (Extension and Plugin Architecture): COMPLETE
-Stage 14 (Benchmark and Performance Budget Suite): ACTIVE
+Stage 14-23 (Enterprise Governance and Planning): COMPLETE
 
-Stage 15-23: LOCKED
-V2 implementation: UNLOCKED.
-V3 implementation: LOCKED.
+V2 Engine Implementation Phase: ACTIVE
+V3 Implementation: LOCKED
 
 ## Current Evidence
 
@@ -96,6 +95,7 @@ V3 implementation: LOCKED.
 
 No remaining blocker for Stage V1-03.
 
-## Stage 14: Benchmark and Performance Budget Suite.
+## V2 Engine Implementation Phase.
 
-Next repair: Observability Contract (Stage 15).
+Next: Active development of the V2 Platform Engines (API Contract, Integration, Reliability, Observability, Runtime
+Supervision).

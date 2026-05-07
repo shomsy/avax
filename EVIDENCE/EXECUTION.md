@@ -165,13 +165,13 @@ An agent must not combine stages unless EXECUTION.md explicitly allows it.
 The current active stage is:
 
 ```text
-Stage 14: Benchmark and Performance Budget Suite
+V2 Engine Implementation Phase
 ```
 
 Last completed stage:
 
 ```text
-Stage 13: Extension and Plugin Architecture
+Stage 14-23: Planning and Governance Policies
 ```
 
 Recent completed evidence:
@@ -193,6 +193,9 @@ EVIDENCE/master-plan/stage-09-kernel-green-report.md
 EVIDENCE/master-plan/stage-11-golden-path-app-report.md
 EVIDENCE/master-plan/stage-12-public-api-governance-report.md
 EVIDENCE/master-plan/stage-13-extension-plugin-architecture-report.md
+EVIDENCE/master-plan/stage-14-benchmark-performance-report.md
+EVIDENCE/master-plan/stage-15-observability-contract-report.md
+EVIDENCE/master-plan/stage-16-to-19-enterprise-governance-report.md
 ```
 
 All other stages are read-only context until Stage 10 is complete.

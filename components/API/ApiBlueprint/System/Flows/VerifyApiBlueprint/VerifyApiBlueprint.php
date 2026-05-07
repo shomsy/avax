@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\API\Surface\System\Flows\ValidateApiSurface;
+namespace Avax\Components\API\ApiBlueprint\System\Flows\VerifyApiBlueprint;
 
-use Avax\Components\API\Surface\System\PublicSurface\ApiSurfaceDefinition;
-use Avax\Components\API\Surface\System\PublicSurface\ApiSurfaceReport;
+use Avax\Components\API\ApiBlueprint\System\PublicSurface\ApiBlueprintDefinition;
+use Avax\Components\API\ApiBlueprint\System\PublicSurface\ApiBlueprintReport;
 
-final class ValidateApiSurface
+final class VerifyApiBlueprint
 {
-    public function validate(ApiSurfaceDefinition $surface) : ApiSurfaceReport
+    public function validate(ApiBlueprintDefinition $surface) : ApiBlueprintReport
     {
         $errors         = [];
         $seenOperations = [];
@@ -36,6 +36,6 @@ final class ValidateApiSurface
             }
         }
 
-        return new ApiSurfaceReport(surface: $surface, errors: $errors);
+        return new ApiBlueprintReport(surface: $surface, errors: $errors);
     }
 }

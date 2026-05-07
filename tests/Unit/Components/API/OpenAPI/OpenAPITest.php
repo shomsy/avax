@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\API\OpenAPI;
 
+use Avax\Components\API\ApiBlueprint\System\Capabilities\Authentication\RequiredAuthentication;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\EndpointDefinitions\EndpointDefinition;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\EndpointDefinitions\EndpointVersion;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\RequestSchemas\RequestSchema;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\ResponseSchemas\ErrorResponseSchema;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\ResponseSchemas\ResponseSchema;
+use Avax\Components\API\ApiBlueprint\System\PublicSurface\ApiBlueprintDefinition;
 use Avax\Components\API\OpenAPI\System\Configuration\OpenApiConfiguration;
 use Avax\Components\API\OpenAPI\System\PublicSurface\OpenAPI;
 use Avax\Components\API\OpenAPI\System\PublicSurface\OpenApiDocument;
-use Avax\Components\API\Surface\System\Capabilities\Authentication\RequiredAuthentication;
-use Avax\Components\API\Surface\System\Capabilities\EndpointDefinitions\EndpointDefinition;
-use Avax\Components\API\Surface\System\Capabilities\EndpointDefinitions\EndpointVersion;
-use Avax\Components\API\Surface\System\Capabilities\RequestSchemas\RequestSchema;
-use Avax\Components\API\Surface\System\Capabilities\ResponseSchemas\ErrorResponseSchema;
-use Avax\Components\API\Surface\System\Capabilities\ResponseSchemas\ResponseSchema;
-use Avax\Components\API\Surface\System\PublicSurface\ApiSurfaceDefinition;
 use PHPUnit\Framework\TestCase;
 
 final class OpenAPITest extends TestCase
 {
-    public function test_openapi_document_is_generated_from_api_surface() : void
+    public function test_openapi_document_is_generated_from_api_blueprint() : void
     {
         $document = OpenAPI::fromSurface(
-            surface      : new ApiSurfaceDefinition([$this->endpoint()]),
+            surface      : new ApiBlueprintDefinition([$this->endpoint()]),
             configuration: new OpenApiConfiguration(
                                title  : 'Users API',
                                version: '2.0.0',
@@ -85,7 +85,7 @@ final class OpenAPITest extends TestCase
 
     public function test_openapi_validation_reports_document_shape_errors() : void
     {
-        $valid   = OpenAPI::validate(OpenAPI::fromSurface(new ApiSurfaceDefinition([$this->endpoint()])));
+        $valid = OpenAPI::validate(OpenAPI::fromSurface(new ApiBlueprintDefinition([$this->endpoint()])));
         $invalid = OpenAPI::validate(new OpenApiDocument([
                                                              'openapi' => '3.0.0',
                                                              'info'    => ['title' => '', 'version' => ''],
@@ -104,14 +104,14 @@ final class OpenAPITest extends TestCase
 
     public function test_openapi_comparison_reports_removed_and_changed_operations() : void
     {
-        $oldDocument     = OpenAPI::fromSurface(new ApiSurfaceDefinition([$this->endpoint()]));
-        $changedDocument = OpenAPI::fromSurface(new ApiSurfaceDefinition([
-                                                                             $this->endpoint(successResponse: new ResponseSchema(
-                                                                                                                  name       : 'AcceptedUserCollection',
-                                                                                                                  description: 'Accepted user collection.',
-                                                                                                                  statusCode : 202,
-                                                                                                              )),
-                                                                         ]));
+        $oldDocument     = OpenAPI::fromSurface(new ApiBlueprintDefinition([$this->endpoint()]));
+        $changedDocument = OpenAPI::fromSurface(new ApiBlueprintDefinition([
+                                                                               $this->endpoint(successResponse: new ResponseSchema(
+                                                                                                                    name       : 'AcceptedUserCollection',
+                                                                                                                    description: 'Accepted user collection.',
+                                                                                                                    statusCode : 202,
+                                                                                                                )),
+                                                                           ]));
         $emptyDocument   = new OpenApiDocument([
                                                    'openapi' => '3.1.0',
                                                    'info'    => ['title' => 'Empty', 'version' => '1.0.0'],
@@ -128,7 +128,7 @@ final class OpenAPITest extends TestCase
 
     public function test_openapi_json_and_yaml_renderers_emit_operator_artifacts() : void
     {
-        $document = OpenAPI::fromSurface(new ApiSurfaceDefinition([$this->endpoint()]));
+        $document = OpenAPI::fromSurface(new ApiBlueprintDefinition([$this->endpoint()]));
 
         $json = OpenAPI::json(document: $document);
         $yaml = OpenAPI::yaml(document: $document);

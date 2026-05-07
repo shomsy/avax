@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\API\OpenAPI\System\Capabilities\ErrorResponseSchemaGeneration;
 
-use Avax\Components\API\Surface\System\Capabilities\ResponseSchemas\ErrorResponseSchema;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\ResponseSchemas\ErrorResponseSchema;
 
 final readonly class BuildErrorResponseSchema
 {

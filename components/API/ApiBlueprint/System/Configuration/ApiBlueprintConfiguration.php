@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\API\Surface\System\Configuration;
+namespace Avax\Components\API\ApiBlueprint\System\Configuration;
 
-interface ApiSurfaceConfiguration
+interface ApiBlueprintConfiguration
 {
     public function getVersion() : string;
 

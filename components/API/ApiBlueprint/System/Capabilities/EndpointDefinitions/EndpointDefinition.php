@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\API\Surface\System\Capabilities\EndpointDefinitions;
+namespace Avax\Components\API\ApiBlueprint\System\Capabilities\EndpointDefinitions;
 
-use Avax\Components\API\Surface\System\Capabilities\Authentication\RequiredAuthentication;
-use Avax\Components\API\Surface\System\Capabilities\Authentication\RequiredPermission;
-use Avax\Components\API\Surface\System\Capabilities\RequestSchemas\RequestSchema;
-use Avax\Components\API\Surface\System\Capabilities\ResponseSchemas\ErrorResponseSchema;
-use Avax\Components\API\Surface\System\Capabilities\ResponseSchemas\ResponseSchema;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\Authentication\RequiredAuthentication;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\Authentication\RequiredPermission;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\RequestSchemas\RequestSchema;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\ResponseSchemas\ErrorResponseSchema;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\ResponseSchemas\ResponseSchema;
 
 final class EndpointDefinition
 {

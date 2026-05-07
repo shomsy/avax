@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\API\Surface\System\Capabilities\GenerateApiDocumentation;
+namespace Avax\Components\API\ApiBlueprint\System\Capabilities\Documentation;
 
-use Avax\Components\API\Surface\System\Capabilities\EndpointDefinitions\EndpointDefinition;
-use Avax\Components\API\Surface\System\Capabilities\EndpointDefinitions\EndpointVersion;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\EndpointDefinitions\EndpointDefinition;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\EndpointDefinitions\EndpointVersion;
 
 interface ApiDocumentationSource
 {

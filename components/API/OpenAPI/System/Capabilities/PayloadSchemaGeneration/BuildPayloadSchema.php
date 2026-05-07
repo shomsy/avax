@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\API\OpenAPI\System\Capabilities\PayloadSchemaGeneration;
 
-use Avax\Components\API\Surface\System\Capabilities\RequestSchemas\RequestSchema;
-use Avax\Components\API\Surface\System\Capabilities\ResponseSchemas\ResponseSchema;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\RequestSchemas\RequestSchema;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\ResponseSchemas\ResponseSchema;
 
 final readonly class BuildPayloadSchema
 {

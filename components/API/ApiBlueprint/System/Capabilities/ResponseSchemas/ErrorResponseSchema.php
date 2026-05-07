@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\API\Surface\System\Capabilities\ResponseSchemas;
+namespace Avax\Components\API\ApiBlueprint\System\Capabilities\ResponseSchemas;
 
 final class ErrorResponseSchema
 {

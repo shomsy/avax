@@ -2,39 +2,40 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Unit\Components\API\Surface;
+namespace Avax\Tests\Unit\Components\API\ApiBlueprint;
 
-use Avax\Components\API\Surface\System\Capabilities\Authentication\RequiredAuthentication;
-use Avax\Components\API\Surface\System\Capabilities\Authentication\RequiredPermission;
-use Avax\Components\API\Surface\System\Capabilities\EndpointDefinitions\EndpointDefinition;
-use Avax\Components\API\Surface\System\Capabilities\EndpointDefinitions\EndpointDeprecation;
-use Avax\Components\API\Surface\System\Capabilities\EndpointDefinitions\EndpointVersion;
-use Avax\Components\API\Surface\System\Capabilities\RequestSchemas\RequestSchema;
-use Avax\Components\API\Surface\System\Capabilities\RequestSchemas\RequestValidationResult;
-use Avax\Components\API\Surface\System\Capabilities\ResponseSchemas\ErrorResponseSchema;
-use Avax\Components\API\Surface\System\Capabilities\ResponseSchemas\ResponseSchema;
-use Avax\Components\API\Surface\System\Foundation\Failure\ApiSurfaceInvalid;
-use Avax\Components\API\Surface\System\PublicSurface\ApiSurface;
-use Avax\Components\API\Surface\System\PublicSurface\ApiSurfaceDefinition;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\Authentication\RequiredAuthentication;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\Authentication\RequiredPermission;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\Compatibility\CompatibilityReport;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\EndpointDefinitions\EndpointDefinition;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\EndpointDefinitions\EndpointDeprecation;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\EndpointDefinitions\EndpointVersion;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\RequestSchemas\RequestSchema;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\RequestSchemas\RequestValidationResult;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\ResponseSchemas\ErrorResponseSchema;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\ResponseSchemas\ResponseSchema;
+use Avax\Components\API\ApiBlueprint\System\Foundation\Failure\ApiBlueprintInvalid;
+use Avax\Components\API\ApiBlueprint\System\PublicSurface\ApiBlueprint;
+use Avax\Components\API\ApiBlueprint\System\PublicSurface\ApiBlueprintDefinition;
 use PHPUnit\Framework\TestCase;
 
-final class ApiSurfaceTest extends TestCase
+final class ApiBlueprintTest extends TestCase
 {
-    public function test_in_memory_api_surface_registers_endpoint_and_validates_it() : void
+    public function test_in_memory_api_blueprint_registers_endpoint_and_validates_it() : void
     {
-        $surface  = ApiSurface::inMemory();
-        $endpoint = $this->endpoint();
+        $blueprint = ApiBlueprint::inMemory();
+        $endpoint  = $this->endpoint();
 
-        $surface->registerEndpoint(endpoint: $endpoint);
+        $blueprint->registerEndpoint(endpoint: $endpoint);
 
-        $definition = $surface->describe();
-        $report     = $surface->validate();
+        $definition = $blueprint->describe();
+        $report     = $blueprint->validate();
 
         self::assertSame($endpoint, $definition->findEndpoint('/users', 'GET'));
         self::assertSame([$endpoint], $definition->endpointsForVersion(EndpointVersion::V1));
         self::assertTrue($report->isValid());
         self::assertSame([], $report->errors);
-        self::assertSame(['assert GET /users returns 200 for version v1'], $surface->compatibilityCheckScenarios());
+        self::assertSame(['assert GET /users returns 200 for version v1'], $blueprint->compatibilityCheckScenarios());
         self::assertTrue($endpoint->requiresAuthentication());
         self::assertTrue($endpoint->requiresPermissions());
         self::assertTrue($endpoint->authentication?->isBearer());
@@ -104,7 +105,7 @@ final class ApiSurfaceTest extends TestCase
         );
     }
 
-    public function test_api_surface_definition_filters_versions_and_deprecated_endpoints() : void
+    public function test_api_blueprint_definition_filters_versions_and_deprecated_endpoints() : void
     {
         $deprecated = $this->endpoint(
             path       : '/legacy-users',
@@ -117,10 +118,10 @@ final class ApiSurfaceTest extends TestCase
                          ),
         );
 
-        $definition = new ApiSurfaceDefinition([
-                                                   $this->endpoint(path: '/users', version: EndpointVersion::V1),
-                                                   $deprecated,
-                                               ]);
+        $definition = new ApiBlueprintDefinition([
+                                                     $this->endpoint(path: '/users', version: EndpointVersion::V1),
+                                                     $deprecated,
+                                                 ]);
 
         self::assertSame([$deprecated], $definition->endpointsForVersion(EndpointVersion::V2));
         self::assertSame([$deprecated], $definition->deprecatedEndpoints());
@@ -134,9 +135,9 @@ final class ApiSurfaceTest extends TestCase
 
     public function test_validation_reports_missing_success_response_and_duplicate_operation_ids() : void
     {
-        $surface = ApiSurface::inMemory();
+        $blueprint = ApiBlueprint::inMemory();
 
-        $surface
+        $blueprint
             ->registerEndpoint(endpoint: $this->endpoint(
                 path                  : '/users',
                 includeSuccessResponse: false,
@@ -148,7 +149,7 @@ final class ApiSurfaceTest extends TestCase
                 operationId           : 'users.index',
             ));
 
-        $report = $surface->validate();
+        $report = $blueprint->validate();
 
         self::assertFalse($report->isValid());
         self::assertCount(3, $report->errors);
@@ -158,10 +159,10 @@ final class ApiSurfaceTest extends TestCase
 
     public function test_compatibility_detection_reports_removed_endpoint_as_critical() : void
     {
-        $oldSurface = new ApiSurfaceDefinition([$this->endpoint()]);
-        $surface    = ApiSurface::inMemory();
+        $oldSurface = new ApiBlueprintDefinition([$this->endpoint()]);
+        $blueprint  = ApiBlueprint::inMemory();
 
-        $report = $surface->detectCompatibility(oldSurface: $oldSurface);
+        $report = $blueprint->detectCompatibility(oldSurface: $oldSurface);
 
         self::assertTrue($report->hasCompatibilityIssues());
         self::assertSame(1, $report->count());
@@ -171,11 +172,11 @@ final class ApiSurfaceTest extends TestCase
 
     public function test_compatibility_detection_reports_status_and_authentication_drift() : void
     {
-        $oldSurface = new ApiSurfaceDefinition([
-                                                   $this->endpoint(authentication: new RequiredAuthentication(type: 'bearer', realm: 'api')),
-                                               ]);
-        $surface    = ApiSurface::inMemory();
-        $surface->registerEndpoint(endpoint: $this->endpoint(
+        $oldSurface = new ApiBlueprintDefinition([
+                                                     $this->endpoint(authentication: new RequiredAuthentication(type: 'bearer', realm: 'api')),
+                                                 ]);
+        $blueprint  = ApiBlueprint::inMemory();
+        $blueprint->registerEndpoint(endpoint: $this->endpoint(
             successResponse      : new ResponseSchema(
                                        name       : 'AcceptedUserCollection',
                                        description: 'Accepted user collection.',
@@ -184,7 +185,7 @@ final class ApiSurfaceTest extends TestCase
             includeAuthentication: false,
         ));
 
-        $report = $surface->detectCompatibility(oldSurface: $oldSurface);
+        $report = $blueprint->detectCompatibility(oldSurface: $oldSurface);
 
         self::assertFalse($report->hasCompatibilityIssues());
         self::assertSame(2, $report->count());
@@ -198,7 +199,7 @@ final class ApiSurfaceTest extends TestCase
 
         $exception = RequestValidationResult::invalid(['name' => 'required'])->toException();
 
-        self::assertInstanceOf(ApiSurfaceInvalid::class, $exception);
+        self::assertInstanceOf(ApiBlueprintInvalid::class, $exception);
         self::assertStringContainsString('Request validation failed', $exception->getMessage());
         self::assertStringContainsString('required', $exception->getMessage());
     }

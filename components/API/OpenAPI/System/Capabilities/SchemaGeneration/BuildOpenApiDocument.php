@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\API\OpenAPI\System\Capabilities\SchemaGeneration;
 
+use Avax\Components\API\ApiBlueprint\System\Capabilities\EndpointDefinitions\EndpointDefinition;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\ResponseSchemas\ErrorResponseSchema;
+use Avax\Components\API\ApiBlueprint\System\PublicSurface\ApiBlueprintDefinition;
 use Avax\Components\API\OpenAPI\System\Capabilities\ErrorResponseSchemaGeneration\BuildErrorResponseSchema;
 use Avax\Components\API\OpenAPI\System\Capabilities\PayloadSchemaGeneration\BuildPayloadSchema;
 use Avax\Components\API\OpenAPI\System\Configuration\OpenApiConfiguration;
-use Avax\Components\API\Surface\System\Capabilities\EndpointDefinitions\EndpointDefinition;
-use Avax\Components\API\Surface\System\Capabilities\ResponseSchemas\ErrorResponseSchema;
-use Avax\Components\API\Surface\System\PublicSurface\ApiSurfaceDefinition;
 
 final readonly class BuildOpenApiDocument
 {
@@ -22,7 +22,7 @@ final readonly class BuildOpenApiDocument
     /**
      * @return array<string, mixed>
      */
-    public function build(ApiSurfaceDefinition $surface) : array
+    public function build(ApiBlueprintDefinition $surface) : array
     {
         $paths = [];
 

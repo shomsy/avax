@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\API\Surface\System\PublicSurface;
+namespace Avax\Components\API\ApiBlueprint\System\PublicSurface;
 
-use Avax\Components\API\Surface\System\Capabilities\EndpointDefinitions\EndpointDefinition;
-use Avax\Components\API\Surface\System\Capabilities\EndpointDefinitions\EndpointVersion;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\EndpointDefinitions\EndpointDefinition;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\EndpointDefinitions\EndpointVersion;
 
-final class ApiSurfaceDefinition
+final class ApiBlueprintDefinition
 {
     /**
      * @param list<EndpointDefinition> $endpoints

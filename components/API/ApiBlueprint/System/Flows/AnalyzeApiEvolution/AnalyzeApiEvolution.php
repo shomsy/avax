@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\API\Surface\System\Flows\DetectApiCompatibilityChanges;
+namespace Avax\Components\API\ApiBlueprint\System\Flows\AnalyzeApiEvolution;
 
-use Avax\Components\API\Surface\System\Capabilities\Compatibility\CompatibilityChange;
-use Avax\Components\API\Surface\System\Capabilities\Compatibility\CompatibilityChangeDetector;
-use Avax\Components\API\Surface\System\Capabilities\Compatibility\CompatibilityChangeType;
-use Avax\Components\API\Surface\System\Capabilities\Compatibility\CompatibilityReport;
-use Avax\Components\API\Surface\System\PublicSurface\ApiSurfaceDefinition;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\Compatibility\CompatibilityChange;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\Compatibility\CompatibilityChangeDetector;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\Compatibility\CompatibilityChangeType;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\Compatibility\CompatibilityReport;
+use Avax\Components\API\ApiBlueprint\System\PublicSurface\ApiBlueprintDefinition;
 
-final class DetectApiCompatibilityChanges
+final class AnalyzeApiEvolution
 {
     public function __construct(private readonly CompatibilityChangeDetector $compatibilityChangeDetector) {}
 
-    public function detect(ApiSurfaceDefinition $oldSurface, ApiSurfaceDefinition $newSurface) : CompatibilityReport
+    public function analyze(ApiBlueprintDefinition $oldSurface, ApiBlueprintDefinition $newSurface) : CompatibilityReport
     {
         $changes = [];
 

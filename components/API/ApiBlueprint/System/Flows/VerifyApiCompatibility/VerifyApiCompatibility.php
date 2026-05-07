@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\API\Surface\System\Flows\GenerateApiCompatibilityChecks;
+namespace Avax\Components\API\ApiBlueprint\System\Flows\VerifyApiCompatibility;
 
-use Avax\Components\API\Surface\System\PublicSurface\ApiSurfaceDefinition;
+use Avax\Components\API\ApiBlueprint\System\PublicSurface\ApiBlueprintDefinition;
 
-final class GenerateApiCompatibilityChecks
+final class VerifyApiCompatibility
 {
     /**
      * @return list<string>
      */
-    public function scenariosFor(ApiSurfaceDefinition $surface) : array
+    public function scenariosFor(ApiBlueprintDefinition $surface) : array
     {
         $scenarios = [];
 

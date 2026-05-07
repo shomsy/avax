@@ -200,6 +200,26 @@ EVIDENCE/master-plan/stage-16-to-19-enterprise-governance-report.md
 
 All other stages are read-only context until Stage 10 is complete.
 
+### V2 API Engine Closure
+
+The V2 API Engine is now CLOSED with canonical naming. Evidence:
+
+```text
+EVIDENCE/recovery-reports/v2-api-engine-closure/v2-api-engine-closure-report.md
+```
+
+Key achievements:
+
+- `ApiSurface` → `ApiBlueprint` (source of truth naming)
+- `BuildApiSurface` → `DefineApiBlueprint`
+- `ValidateApiSurface` → `VerifyApiBlueprint`
+- `DetectApiCompatibilityChanges` → `AnalyzeApiEvolution`
+- `GenerateApiCompatibilityChecks` → `VerifyApiCompatibility`
+- `GenerateOpenApiDocument` → `ExportOpenApiDocument`
+- `GenerateApiDocumentation/` → `Documentation/`
+
+Validation passed: composer (6655 classes), phpunit (599 tests), phpstan, runtime doctor.
+
 ### Stage 08 Goal
 
 Achieve 100% green PHPStan analysis for framework, components, and tests (or honestly baseline intentional debt).

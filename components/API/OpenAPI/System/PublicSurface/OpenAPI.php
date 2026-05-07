@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace Avax\Components\API\OpenAPI\System\PublicSurface;
 
+use Avax\Components\API\ApiBlueprint\System\PublicSurface\ApiBlueprintDefinition;
 use Avax\Components\API\OpenAPI\System\Capabilities\RenderOpenApiJson\RenderOpenApiJson;
 use Avax\Components\API\OpenAPI\System\Capabilities\RenderOpenApiYaml\RenderOpenApiYaml;
 use Avax\Components\API\OpenAPI\System\Capabilities\SchemaGeneration\BuildOpenApiDocument;
 use Avax\Components\API\OpenAPI\System\Configuration\OpenApiConfiguration;
 use Avax\Components\API\OpenAPI\System\Flows\CompareOpenApiDocuments\CompareOpenApiDocuments;
-use Avax\Components\API\OpenAPI\System\Flows\GenerateOpenApiDocument\GenerateOpenApiDocument;
+use Avax\Components\API\OpenAPI\System\Flows\ExportOpenApiDocument\ExportOpenApiDocument;
 use Avax\Components\API\OpenAPI\System\Flows\ValidateOpenApiDocument\ValidateOpenApiDocument;
-use Avax\Components\API\Surface\System\PublicSurface\ApiSurfaceDefinition;
 
 final readonly class OpenAPI
 {
     public static function fromSurface(
-        ApiSurfaceDefinition  $surface,
-        ?OpenApiConfiguration $configuration = null,
+        ApiBlueprintDefinition $surface,
+        ?OpenApiConfiguration  $configuration = null,
     ) : OpenApiDocument
     {
-        return new GenerateOpenApiDocument(
+        return new ExportOpenApiDocument(
             buildOpenApiDocument: new BuildOpenApiDocument(
                                       configuration: $configuration ?? new OpenApiConfiguration(),
                                   ),
-        )->generate(surface: $surface);
+        )->export(surface: $surface);
     }
 
     public static function validate(OpenApiDocument $document) : OpenApiValidationReport

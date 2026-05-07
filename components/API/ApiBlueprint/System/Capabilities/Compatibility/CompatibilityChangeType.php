@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\API\Surface\System\Capabilities\Compatibility;
+namespace Avax\Components\API\ApiBlueprint\System\Capabilities\Compatibility;
 
 enum CompatibilityChangeType: string
 {

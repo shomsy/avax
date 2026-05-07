@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\API\Surface\System\Capabilities\RequestSchemas;
+namespace Avax\Components\API\ApiBlueprint\System\Capabilities\RequestSchemas;
 
-use Avax\Components\API\Surface\System\Foundation\Failure\ApiSurfaceInvalid;
+use Avax\Components\API\ApiBlueprint\System\Foundation\Failure\ApiBlueprintInvalid;
 
 final class RequestValidationResult
 {
@@ -29,13 +29,13 @@ final class RequestValidationResult
         return new self(false, $errors);
     }
 
-    public function toException() : ?ApiSurfaceInvalid
+    public function toException() : ?ApiBlueprintInvalid
     {
         if ($this->valid) {
             return null;
         }
         $reason = json_encode($this->errors);
 
-        return new ApiSurfaceInvalid('Request validation failed', $reason === false ? null : $reason);
+        return new ApiBlueprintInvalid('Request validation failed', $reason === false ? null : $reason);
     }
 }

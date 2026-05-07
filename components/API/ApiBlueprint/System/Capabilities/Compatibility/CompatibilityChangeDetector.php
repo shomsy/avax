@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\API\Surface\System\Capabilities\Compatibility;
+namespace Avax\Components\API\ApiBlueprint\System\Capabilities\Compatibility;
 
-use Avax\Components\API\Surface\System\Capabilities\EndpointDefinitions\EndpointDefinition;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\EndpointDefinitions\EndpointDefinition;
 
 final class CompatibilityChangeDetector
 {

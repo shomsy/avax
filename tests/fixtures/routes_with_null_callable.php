@@ -2,22 +2,26 @@
 
 declare(strict_types=1);
 
-use Avax\Components\HTTP\Request\System\Request;
-use Avax\Components\HTTP\Response\Response;
-use Avax\Facade\Facades\Route;
+use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+use Avax\Components\HTTP\Response\System\PublicSurface\Responses;
+use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
 
-Route::get('/null-test', static function (Request $request): ?ResponseInterface {
-    // This callable intentionally returns null to test fallback handling
-    return null;
-});
+return static function (RouterInterface $router) : void {
+    $responses = new Responses();
 
-Route::fallback(static function (Request $request): ResponseInterface {
-    $message = sprintf(
-        'Route not found for [%s] %s',
-        $request->getMethod(),
-        $request->getUri()->getPath(),
-    );
+    $router->get(path: '/null-test', action: static function (RequestInterface $request) : ?ResponseInterface {
+        // This callable intentionally returns null to test fallback handling
+        return null;
+    });
 
-    return Response::text(content: $message, status: 404);
-});
+    $router->get(path: '/fallback-test', action: static function (RequestInterface $request) use ($responses) : ResponseInterface {
+        $message = sprintf(
+            'Route not found for [%s] %s',
+            $request->getMethod(),
+            $request->getUri()->getPath(),
+        );
+
+        return $responses->send(data: $message, status: 404);
+    });
+};

@@ -43,7 +43,7 @@ final class FailingCacheStore implements CacheStore
     private function maybeFail() : void
     {
         if ($this->shouldFail || (random_int(0, 100) / 100) < $this->failureRate) {
-            throw new RuntimeException(message: 'Simulated cache store failure');
+            throw new RuntimeException('Simulated cache store failure');
         }
     }
 

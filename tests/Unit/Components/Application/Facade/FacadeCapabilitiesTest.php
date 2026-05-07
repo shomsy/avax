@@ -180,6 +180,9 @@ class TestService
     }
 }
 
+/**
+ * @method static string doSomething()
+ */
 class TestFacade extends Facade
 {
     protected static string $accessor = 'test.service';

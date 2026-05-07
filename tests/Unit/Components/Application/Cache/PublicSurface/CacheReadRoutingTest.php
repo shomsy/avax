@@ -21,7 +21,6 @@ use Avax\Components\Application\Cache\System\PublicSurface\Read\RuntimeCacheTarg
 use Avax\Tests\TestCase;
 use Override;
 use Psr\SimpleCache\InvalidArgumentException;
-use ReflectionIntersectionType;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionUnionType;
@@ -34,14 +33,6 @@ final class CacheReadRoutingTest extends TestCase
 
     private CacheContract $cacheContract;
 
-    public function test_read_method_exists() : void
-    {
-        $this->assertTrue(method_exists(Cache::class, 'read'));
-    }
-
-    /**
-     * @throws InvalidArgumentException
-     */
     public function test_read_routes_string_to_runtime_cache() : void
     {
         $this->cacheContract->set('test_key', 'test_value');
@@ -58,9 +49,6 @@ final class CacheReadRoutingTest extends TestCase
         $this->assertSame('default_value', $result);
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     public function test_read_routes_runtime_cache_target_with_own_default() : void
     {
         $this->cacheContract->set('runtime_key', 'runtime_value');
@@ -87,7 +75,9 @@ final class CacheReadRoutingTest extends TestCase
         $this->assertInstanceOf(ReflectionUnionType::class, $type);
 
         $types     = $type->getTypes();
-        $typeNames = array_map(static fn (ReflectionIntersectionType|ReflectionNamedType $t) => $t->getName(), $types);
+        $typeNames = array_map(static function ($t) {
+            return $t instanceof ReflectionNamedType ? $t->getName() : (string) $t;
+        }, $types);
 
         $this->assertContains(\Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget::class, $typeNames);
         $this->assertContains('string', $typeNames);
@@ -97,32 +87,32 @@ final class CacheReadRoutingTest extends TestCase
     {
         $params = new ReflectionMethod(objectOrMethod: CompiledCache::class, method: 'read')->getParameters();
 
-        $this->assertCount(expectedCount: 3, haystack: $params);
-        $this->assertSame(expected: 'name', actual: $params[0]->getName());
-        $this->assertSame(expected: 'build', actual: $params[1]->getName());
-        $this->assertSame(expected: 'sources', actual: $params[2]->getName());
+        $this->assertCount(3, $params);
+        $this->assertSame('name', $params[0]->getName());
+        $this->assertSame('build', $params[1]->getName());
+        $this->assertSame('sources', $params[2]->getName());
     }
 
     public function test_compiled_cache_compile_has_correct_signature() : void
     {
         $params = new ReflectionMethod(objectOrMethod: CompiledCache::class, method: 'compile')->getParameters();
 
-        $this->assertCount(expectedCount: 3, haystack: $params);
-        $this->assertSame(expected: 'name', actual: $params[0]->getName());
-        $this->assertSame(expected: 'build', actual: $params[1]->getName());
-        $this->assertSame(expected: 'sources', actual: $params[2]->getName());
+        $this->assertCount(3, $params);
+        $this->assertSame('name', $params[0]->getName());
+        $this->assertSame('build', $params[1]->getName());
+        $this->assertSame('sources', $params[2]->getName());
     }
 
     public function test_compiled_cache_throws_when_not_configured() : void
     {
-        $this->expectException(exception: CompiledNotConfigured::class);
+        $this->expectException(CompiledNotConfigured::class);
 
         CompiledCache::read(name: 'name', build: static fn () : array => [], sources: new CompiledCacheSources());
     }
 
     public function test_compiled_cache_compile_throws_when_not_configured() : void
     {
-        $this->expectException(exception: CompiledNotConfigured::class);
+        $this->expectException(CompiledNotConfigured::class);
 
         CompiledCache::compile(name: 'name', build: static fn () : array => [], sources: new CompiledCacheSources());
     }
@@ -135,7 +125,7 @@ final class CacheReadRoutingTest extends TestCase
             compiledCacheSources: new CompiledCacheSources(),
         );
 
-        $this->expectException(exception: CacheNotConfigured::class);
+        $this->expectException(CacheNotConfigured::class);
         Cache::read(target: $compiledCacheTarget);
     }
 
@@ -143,18 +133,18 @@ final class CacheReadRoutingTest extends TestCase
     {
         Cache::reset();
 
-        $this->expectException(exception: CacheNotConfigured::class);
+        $this->expectException(CacheNotConfigured::class);
         Cache::get(key: 'test');
     }
 
     public function test_cache_use_overrides_container() : void
     {
         $mockCache = $this->createMock(CacheContract::class);
-        $mockCache->method('get')->with('key')->willReturn(value: 'mocked');
+        $mockCache->method('get')->with('key')->willReturn('mocked');
 
         Cache::use(cache: $mockCache);
 
-        $this->assertSame(expected: 'mocked', actual: Cache::get(key: 'key'));
+        $this->assertSame('mocked', Cache::get(key: 'key'));
     }
 
     public function test_cache_reset_clears_instance() : void
@@ -164,7 +154,7 @@ final class CacheReadRoutingTest extends TestCase
 
         Cache::reset();
 
-        $this->expectException(exception: CacheNotConfigured::class);
+        $this->expectException(CacheNotConfigured::class);
         Cache::get(key: 'key');
     }
 
@@ -172,20 +162,20 @@ final class CacheReadRoutingTest extends TestCase
     {
         $store = Cache::store();
 
-        $this->assertNotNull(actual: $store);
+        $this->assertInstanceOf(CacheContract::class, $store);
     }
 
     public function test_store_with_name_throws_without_provider() : void
     {
-        $this->expectException(exception: CacheNotConfigured::class);
-        $this->expectExceptionMessage(message: 'Named store requires RegisterCacheDependencies');
+        $this->expectException(CacheNotConfigured::class);
+        $this->expectExceptionMessage('Named store requires RegisterCacheDependencies');
 
         Cache::store(name: 'api');
     }
 
     public function test_read_throws_for_unknown_target_without_provider() : void
     {
-        $this->expectException(exception: CacheReadTargetWasNotSupported::class);
+        $this->expectException(CacheReadTargetWasNotSupported::class);
 
         Cache::read(target: new class () implements CacheReadTarget {
             public function kind() : CacheReadKind
@@ -197,8 +187,8 @@ final class CacheReadRoutingTest extends TestCase
 
     public function test_read_routes_to_named_store_without_provider() : void
     {
-        $this->expectException(exception: CacheNotConfigured::class);
-        $this->expectExceptionMessage(message: 'Named store requires RegisterCacheDependencies');
+        $this->expectException(CacheNotConfigured::class);
+        $this->expectExceptionMessage('Named store requires RegisterCacheDependencies');
 
         $runtimeCacheTarget = RuntimeCacheTarget::key('key', null, 'redis');
         Cache::read(target: $runtimeCacheTarget);

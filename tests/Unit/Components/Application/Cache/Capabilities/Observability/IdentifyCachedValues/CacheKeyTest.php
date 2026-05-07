@@ -15,28 +15,28 @@ final class CacheKeyTest extends TestCase
     {
         $cacheKey = CacheKey::create(key: 'valid_key-123');
 
-        $this->assertSame(expected: 'valid_key-123', actual: $cacheKey->toString());
+        $this->assertSame('valid_key-123', $cacheKey->toString());
     }
 
     public function test_normalizes_key() : void
     {
         $cacheKey = CacheKey::create(key: 'UPPER_CASE');
 
-        $this->assertSame(expected: 'upper_case', actual: $cacheKey->toString());
+        $this->assertSame('upper_case', $cacheKey->toString());
     }
 
     public function test_rejects_empty_key() : void
     {
-        $this->expectException(exception: InvalidCacheKey::class);
-        $this->expectExceptionMessage(message: 'System key must be at least 1 character(s)');
+        $this->expectException(InvalidCacheKey::class);
+        $this->expectExceptionMessage('System key must be at least 1 character(s)');
 
         CacheKey::create(key: '');
     }
 
     public function test_rejects_key_with_invalid_characters() : void
     {
-        $this->expectException(exception: InvalidCacheKey::class);
-        $this->expectExceptionMessage(message: 'System key contains invalid characters');
+        $this->expectException(InvalidCacheKey::class);
+        $this->expectExceptionMessage('System key contains invalid characters');
 
         CacheKey::create(key: 'invalid key with spaces');
     }
@@ -45,8 +45,8 @@ final class CacheKeyTest extends TestCase
     {
         $longKey = str_repeat('a', 257);
 
-        $this->expectException(exception: InvalidCacheKey::class);
-        $this->expectExceptionMessage(message: 'System key must not exceed 256 characters');
+        $this->expectException(InvalidCacheKey::class);
+        $this->expectExceptionMessage('System key must not exceed 256 characters');
 
         CacheKey::create(key: $longKey);
     }
@@ -55,7 +55,7 @@ final class CacheKeyTest extends TestCase
     {
         $cacheKey = CacheKey::fromParts('user', 'profile', '123');
 
-        $this->assertSame(expected: 'user:profile:123', actual: $cacheKey->toString());
+        $this->assertSame('user:profile:123', $cacheKey->toString());
     }
 
     public function test_adds_namespace_to_key() : void
@@ -63,7 +63,7 @@ final class CacheKeyTest extends TestCase
         $cacheKey   = CacheKey::create(key: 'profile');
         $namespaced = $cacheKey->withNamespace(namespace: 'users');
 
-        $this->assertSame(expected: 'users:profile', actual: $namespaced->fullKey());
+        $this->assertSame('users:profile', $namespaced->fullKey());
     }
 
     public function test_full_key_includes_namespace_and_version() : void
@@ -74,6 +74,6 @@ final class CacheKeyTest extends TestCase
             version  : new CacheVersion(major: 1, minor: 2, patch: 3),
         );
 
-        $this->assertSame(expected: 'app:data:v1.2.3', actual: $cacheKey->fullKey());
+        $this->assertSame('app:data:v1.2.3', $cacheKey->fullKey());
     }
 }

@@ -21,7 +21,7 @@ final class RebalanceCachePartitionsTest extends TestCase
 
         $moves = $rebalanceCachePartitions->addNode(cacheNode: CacheNode::create(id: 'node_b'));
 
-        $this->assertIsArray(actual: $moves);
+        $this->assertIsArray($moves);
     }
 
     public function test_remove_node_calculates_partition_moves() : void
@@ -34,7 +34,7 @@ final class RebalanceCachePartitionsTest extends TestCase
 
         $moves = $rebalanceCachePartitions->removeNode(cacheNodeId: CacheNodeId::from(id: 'node_a'));
 
-        $this->assertIsArray(actual: $moves);
+        $this->assertIsArray($moves);
     }
 
     public function test_rebalance_returns_all_partitions() : void
@@ -47,7 +47,7 @@ final class RebalanceCachePartitionsTest extends TestCase
 
         $distribution = $rebalanceCachePartitions->rebalance();
 
-        $this->assertCount(expectedCount: 256, haystack: $distribution);
+        $this->assertCount(256, $distribution);
     }
 
     public function test_partition_moves_have_from_and_to() : void
@@ -64,7 +64,7 @@ final class RebalanceCachePartitionsTest extends TestCase
         foreach ($moves as $move) {
             $this->assertArrayHasKey(key: 'from', array: $move);
             $this->assertArrayHasKey(key: 'to', array: $move);
-            $this->assertEquals(expected: 'node_d', actual: $move['to']);
+            $this->assertEquals('node_d', $move['to']);
 
             break;
         }
@@ -78,6 +78,6 @@ final class RebalanceCachePartitionsTest extends TestCase
 
         $distribution = $rebalanceCachePartitions->rebalance();
 
-        $this->assertEmpty(actual: $distribution);
+        $this->assertEmpty($distribution);
     }
 }

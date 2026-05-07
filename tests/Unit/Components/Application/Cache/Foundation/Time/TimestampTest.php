@@ -53,9 +53,9 @@ final class TimestampTest extends TestCase
         $b         = Timestamp::fromUnixTime(timestamp: 50);
         $c         = Timestamp::fromUnixTime(timestamp: 100);
 
-        $this->assertTrue(condition: $timestamp->isAfter(other: $b));
-        $this->assertTrue(condition: $b->isBefore(other: $timestamp));
-        $this->assertFalse(condition: $timestamp->isAfter(other: $c));
-        $this->assertFalse(condition: $timestamp->isBefore(other: $c));
+        $this->assertTrue($timestamp->isAfter(other: $b));
+        $this->assertTrue($b->isBefore(other: $timestamp));
+        $this->assertFalse($timestamp->isAfter(other: $c));
+        $this->assertFalse($timestamp->isBefore(other: $c));
     }
 }

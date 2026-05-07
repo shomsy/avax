@@ -28,67 +28,67 @@ final class CacheFacadeTest extends TestCase
 
         $result = Cache::get(key: 'key', default: 'default');
 
-        $this->assertSame(expected: 'value', actual: $result);
+        $this->assertSame('value', $result);
     }
 
     public function test_it_writes_value_through_static_facade() : void
     {
         $mockCache = $this->createMock(CacheContract::class);
-        $mockCache->expects($this->once())->method('set')->with('key', 'value', null)->willReturn(value: true);
+        $mockCache->expects($this->once())->method('set')->with('key', 'value', null)->willReturn(true);
 
         Cache::use(cache: $mockCache);
 
         $result = Cache::set(key: 'key', value: 'value');
 
-        $this->assertTrue(condition: $result);
+        $this->assertTrue($result);
     }
 
     public function test_it_put_is_alias_for_set() : void
     {
         $mockCache = $this->createMock(CacheContract::class);
-        $mockCache->expects($this->once())->method('set')->with('key', 'value', 3600)->willReturn(value: true);
+        $mockCache->expects($this->once())->method('set')->with('key', 'value', 3600)->willReturn(true);
 
         Cache::use(cache: $mockCache);
 
         $result = Cache::put(key: 'key', value: 'value', ttl: 3600);
 
-        $this->assertTrue(condition: $result);
+        $this->assertTrue($result);
     }
 
     public function test_it_remembers_value_through_static_facade() : void
     {
         $mockCache = $this->createMock(CacheContract::class);
-        $mockCache->expects($this->once())->method('remember')->with('key', 3600, $this->isType(type: 'callable'))->willReturn(value: 'loaded');
+        $mockCache->expects($this->once())->method('remember')->with('key', 3600, $this->isType('callable'))->willReturn('loaded');
 
         Cache::use(cache: $mockCache);
 
         $result = Cache::remember(key: 'key', ttl: 3600, loader: static fn () : string => 'loaded');
 
-        $this->assertSame(expected: 'loaded', actual: $result);
+        $this->assertSame('loaded', $result);
     }
 
     public function test_it_forgets_value_through_static_facade() : void
     {
         $mockCache = $this->createMock(CacheContract::class);
-        $mockCache->expects($this->once())->method('delete')->with('key')->willReturn(value: true);
+        $mockCache->expects($this->once())->method('delete')->with('key')->willReturn(true);
 
         Cache::use(cache: $mockCache);
 
         $result = Cache::forget(key: 'key');
 
-        $this->assertTrue(condition: $result);
+        $this->assertTrue($result);
     }
 
     public function test_it_clears_through_static_facade() : void
     {
         $mockCache = $this->createMock(CacheContract::class);
-        $mockCache->expects($this->once())->method('clear')->willReturn(value: true);
+        $mockCache->expects($this->once())->method('clear')->willReturn(true);
 
         Cache::use(cache: $mockCache);
 
         $result = Cache::clear();
 
-        $this->assertTrue(condition: $result);
+        $this->assertTrue($result);
     }
 
     public function test_it_resolves_default_store() : void
@@ -99,35 +99,35 @@ final class CacheFacadeTest extends TestCase
 
         $store = Cache::store();
 
-        $this->assertSame(expected: $mockCache, actual: $store);
+        $this->assertSame($mockCache, $store);
     }
 
     public function test_it_allows_cache_to_be_swapped_for_tests() : void
     {
         $cache1 = $this->createMock(CacheContract::class);
-        $cache1->method('get')->with('key')->willReturn(value: 'value1');
+        $cache1->method('get')->with('key')->willReturn('value1');
 
         $cache2 = $this->createMock(CacheContract::class);
-        $cache2->method('get')->with('key')->willReturn(value: 'value2');
+        $cache2->method('get')->with('key')->willReturn('value2');
 
         Cache::use(cache: $cache1);
-        $this->assertSame(expected: 'value1', actual: Cache::get(key: 'key'));
+        $this->assertSame('value1', Cache::get(key: 'key'));
 
         Cache::use(cache: $cache2);
-        $this->assertSame(expected: 'value2', actual: Cache::get(key: 'key'));
+        $this->assertSame('value2', Cache::get(key: 'key'));
     }
 
     public function test_it_resets_static_facade_state_between_tests() : void
     {
         $mockCache = $this->createMock(CacheContract::class);
-        $mockCache->method('get')->with('key')->willReturn(value: 'value');
+        $mockCache->method('get')->with('key')->willReturn('value');
 
         Cache::use(cache: $mockCache);
         Cache::get(key: 'key');
 
         Cache::reset();
 
-        $this->expectException(exception: CacheNotConfigured::class);
+        $this->expectException(CacheNotConfigured::class);
         Cache::get(key: 'key');
     }
 

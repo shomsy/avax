@@ -24,8 +24,8 @@ final class DataStackPersistencePublicSurfaceSmokeTest extends TestCase
     public function test_public_surface_class_is_autoloadable(string $class): void
     {
         self::assertTrue(
-            condition: class_exists($class) || interface_exists($class) || trait_exists($class) || enum_exists($class),
-            message  : $class.' must be autoloadable.'
+            class_exists($class) || interface_exists($class) || trait_exists($class) || enum_exists($class),
+            $class . ' must be autoloadable.'
         );
     }
 }

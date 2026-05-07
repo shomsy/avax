@@ -38,8 +38,8 @@ final class SourceSyncCoordinatorTest extends TestCase
 
         $sourceSyncCoordinator->write(value: 'new_value', cacheKey: $this->makeKey(key: 'key_1'));
 
-        $this->assertFalse(condition: $this->inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_1')));
-        $this->assertEquals(expected: 'new_value', actual: $this->testCacheSource->get(key: 'key_1'));
+        $this->assertFalse($this->inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertEquals('new_value', $this->testCacheSource->get(key: 'key_1'));
     }
 
     private function makeKey(string $key) : CacheKey
@@ -71,8 +71,8 @@ final class SourceSyncCoordinatorTest extends TestCase
 
         $sourceSyncCoordinator->write(value: 'new_value', cacheKey: $this->makeKey(key: 'key_1'));
 
-        $this->assertFalse(condition: $this->inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_1')));
-        $this->assertEquals(expected: 'new_value', actual: $this->testCacheSource->get(key: 'key_1'));
+        $this->assertFalse($this->inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertEquals('new_value', $this->testCacheSource->get(key: 'key_1'));
     }
 
     public function test_delete_through_invalidates_cache_after_source_delete() : void
@@ -88,8 +88,8 @@ final class SourceSyncCoordinatorTest extends TestCase
 
         $sourceSyncCoordinator->delete(cacheKey: $this->makeKey(key: 'key_1'));
 
-        $this->assertFalse(condition: $this->inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_1')));
-        $this->assertFalse(condition: $this->testCacheSource->has(key: 'key_1'));
+        $this->assertFalse($this->inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertFalse($this->testCacheSource->has(key: 'key_1'));
     }
 
     public function test_delete_around_invalidates_cache_only() : void
@@ -105,8 +105,8 @@ final class SourceSyncCoordinatorTest extends TestCase
 
         $sourceSyncCoordinator->delete(cacheKey: $this->makeKey(key: 'key_1'));
 
-        $this->assertFalse(condition: $this->inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_1')));
-        $this->assertTrue(condition: $this->testCacheSource->has(key: 'key_1'));
+        $this->assertFalse($this->inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertTrue($this->testCacheSource->has(key: 'key_1'));
     }
 
     public function test_should_populate_cache_on_miss() : void
@@ -117,7 +117,7 @@ final class SourceSyncCoordinatorTest extends TestCase
             sourceSyncPolicy: SourceSyncPolicy::CACHE_ASIDE,
         );
 
-        $this->assertTrue(condition: $coordinator->shouldPopulateCacheOnMiss());
+        $this->assertTrue($coordinator->shouldPopulateCacheOnMiss());
 
         $coordinator = new SourceSyncCoordinator(
             cacheSource     : $this->testCacheSource,
@@ -125,7 +125,7 @@ final class SourceSyncCoordinatorTest extends TestCase
             sourceSyncPolicy: SourceSyncPolicy::WRITE_AROUND,
         );
 
-        $this->assertFalse(condition: $coordinator->shouldPopulateCacheOnMiss());
+        $this->assertFalse($coordinator->shouldPopulateCacheOnMiss());
     }
 
     #[Override]

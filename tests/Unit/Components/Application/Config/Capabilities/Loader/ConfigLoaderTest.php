@@ -21,7 +21,7 @@ final class ConfigLoaderTest extends TestCase
 
         $result = $this->loader->load(path: $file);
 
-        $this->assertSame(expected: ['name' => 'AvaX'], actual: $result);
+        $this->assertSame(['name' => 'AvaX'], $result);
     }
 
     public function test_load_directory_returns_namespaced_array() : void
@@ -33,16 +33,16 @@ final class ConfigLoaderTest extends TestCase
 
         $result = $this->loader->load(path: $this->tmpDir);
 
-        $this->assertArrayHasKey(key: 'app', array: $result);
-        $this->assertArrayHasKey(key: 'database', array: $result);
-        $this->assertSame(expected: 'AvaX', actual: $result['app']['name']);
-        $this->assertSame(expected: 'sqlite', actual: $result['database']['driver']);
+        $this->assertArrayHasKey('app', $result);
+        $this->assertArrayHasKey('database', $result);
+        $this->assertSame('AvaX', $result['app']['name']);
+        $this->assertSame('sqlite', $result['database']['driver']);
     }
 
     public function test_load_throws_exception_if_file_missing() : void
     {
-        $this->expectException(exception: RuntimeException::class);
-        $this->expectExceptionMessage(message: 'Config file not found');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Config file not found');
 
         $this->loader->load(path: $this->tmpDir . '/missing.php');
     }
@@ -52,8 +52,8 @@ final class ConfigLoaderTest extends TestCase
         $file = $this->tmpDir . '/invalid.php';
         file_put_contents($file, '<?php return "not an array";');
 
-        $this->expectException(exception: RuntimeException::class);
-        $this->expectExceptionMessage(message: 'Config file must return an array');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Config file must return an array');
 
         $this->loader->load(path: $file);
     }
@@ -76,7 +76,7 @@ final class ConfigLoaderTest extends TestCase
             return;
         }
 
-        foreach (glob($dir . '/*') as $file) {
+        foreach (glob($dir . '/*') ?: [] as $file) {
             is_dir($file) ? $this->recursiveDelete($file) : unlink($file);
         }
 

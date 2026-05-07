@@ -21,7 +21,7 @@ final class DispatcherCapabilitiesTest extends TestCase
         $resolver = new ArgumentResolver($container);
 
         $object     = new class {
-            public function action(string $name) {}
+            public function action(string $name) : void {}
         };
         $reflection = new ReflectionMethod($object, 'action');
 

@@ -142,9 +142,10 @@ final class EventsCapabilitiesTest extends TestCase
 
         $calls = 0;
         $this->registry->subscribe($event::class, static function (object $e) use (&$calls) : void {
-            /** @var object{stopped: bool} $e */
-            $calls++;
-            $e->stopped = true;
+            if (property_exists($e, 'stopped')) {
+                $calls++;
+                $e->stopped = true;
+            }
         });
         $this->registry->subscribe($event::class, static function () use (&$calls) : void {
             $calls++;

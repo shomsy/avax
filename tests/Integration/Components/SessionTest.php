@@ -14,8 +14,8 @@ final class SessionTest extends TestCase
     {
         SessionDriver::setStore(store: new ArraySessionStore());
 
-        SessionDriver::write(sessionId: 'session-one', data: ['user_id' => 10]);
+        SessionDriver::write('session-one', data: ['user_id' => 10]);
 
-        self::assertSame(expected: ['user_id' => 10], actual: SessionDriver::read(sessionId: 'session-one'));
+        self::assertSame(['user_id' => 10], SessionDriver::read('session-one'));
     }
 }

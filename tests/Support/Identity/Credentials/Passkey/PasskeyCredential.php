@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Credentials\System\Capabilities\Passkey\TestSupport;
+namespace Avax\Tests\Support\Identity\Credentials\Passkey;
 
 use DateTimeImmutable;
 use SensitiveParameter;

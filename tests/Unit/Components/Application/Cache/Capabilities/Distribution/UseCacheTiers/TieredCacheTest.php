@@ -34,7 +34,7 @@ final class TieredCacheTest extends TestCase
 
         $tieredCache->read(clock: $this->frozenClock, cacheKey: $this->makeKey(key: 'key_1'));
 
-        $this->assertTrue(condition: $tieredCache->getTier(cacheTierName: CacheTierName::L1_MEMORY)->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertTrue($tieredCache->getTier(cacheTierName: CacheTierName::L1_MEMORY)->exists(cacheKey: $this->makeKey(key: 'key_1')));
     }
 
     private function createTieredCache() : TieredCache
@@ -80,7 +80,7 @@ final class TieredCacheTest extends TestCase
 
         $result = $tieredCache->read(clock: $this->frozenClock, cacheKey: $this->makeKey(key: 'key_2'));
 
-        $this->assertInstanceOf(expected: CacheStoreRecordWasFound::class, actual: $result);
+        $this->assertInstanceOf(CacheStoreRecordWasFound::class, $result);
     }
 
     public function test_read_returns_missing_when_not_found_in_any_tier() : void
@@ -89,7 +89,7 @@ final class TieredCacheTest extends TestCase
 
         $result = $tieredCache->read(clock: $this->frozenClock, cacheKey: $this->makeKey(key: 'missing'));
 
-        $this->assertInstanceOf(expected: CacheStoreRecordWasMissing::class, actual: $result);
+        $this->assertInstanceOf(CacheStoreRecordWasMissing::class, $result);
     }
 
     public function test_write_stores_in_all_tiers() : void
@@ -98,8 +98,8 @@ final class TieredCacheTest extends TestCase
 
         $tieredCache->write(cacheKey: $this->makeKey(key: 'key_1'), storedCacheRecord: $this->makeRecord(value: 'value_1'));
 
-        $this->assertTrue(condition: $tieredCache->getTier(cacheTierName: CacheTierName::L1_MEMORY)->exists(cacheKey: $this->makeKey(key: 'key_1')));
-        $this->assertTrue(condition: $tieredCache->getTier(cacheTierName: CacheTierName::L2_DISTRIBUTED)->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertTrue($tieredCache->getTier(cacheTierName: CacheTierName::L1_MEMORY)->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertTrue($tieredCache->getTier(cacheTierName: CacheTierName::L2_DISTRIBUTED)->exists(cacheKey: $this->makeKey(key: 'key_1')));
     }
 
     public function test_forget_removes_from_all_tiers() : void
@@ -109,8 +109,8 @@ final class TieredCacheTest extends TestCase
         $tieredCache->write(cacheKey: $this->makeKey(key: 'key_1'), storedCacheRecord: $this->makeRecord(value: 'value_1'));
         $tieredCache->forget(cacheKey: $this->makeKey(key: 'key_1'));
 
-        $this->assertFalse(condition: $tieredCache->getTier(cacheTierName: CacheTierName::L1_MEMORY)->exists(cacheKey: $this->makeKey(key: 'key_1')));
-        $this->assertFalse(condition: $tieredCache->getTier(cacheTierName: CacheTierName::L2_DISTRIBUTED)->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertFalse($tieredCache->getTier(cacheTierName: CacheTierName::L1_MEMORY)->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertFalse($tieredCache->getTier(cacheTierName: CacheTierName::L2_DISTRIBUTED)->exists(cacheKey: $this->makeKey(key: 'key_1')));
     }
 
     public function test_clear_removes_from_all_tiers() : void
@@ -122,8 +122,8 @@ final class TieredCacheTest extends TestCase
 
         $tieredCache->clear();
 
-        $this->assertFalse(condition: $tieredCache->getTier(cacheTierName: CacheTierName::L1_MEMORY)->exists(cacheKey: $this->makeKey(key: 'key_1')));
-        $this->assertFalse(condition: $tieredCache->getTier(cacheTierName: CacheTierName::L2_DISTRIBUTED)->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertFalse($tieredCache->getTier(cacheTierName: CacheTierName::L1_MEMORY)->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertFalse($tieredCache->getTier(cacheTierName: CacheTierName::L2_DISTRIBUTED)->exists(cacheKey: $this->makeKey(key: 'key_1')));
     }
 
     public function test_exists_returns_true_if_found_in_any_tier() : void
@@ -135,7 +135,7 @@ final class TieredCacheTest extends TestCase
             storedCacheRecord: $this->makeRecord(value: 'value_1'),
         );
 
-        $this->assertTrue(condition: $tieredCache->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertTrue($tieredCache->exists(cacheKey: $this->makeKey(key: 'key_1')));
     }
 
     public function test_promotion_only_to_faster_tiers() : void
@@ -149,8 +149,8 @@ final class TieredCacheTest extends TestCase
 
         $tieredCache->read(clock: $this->frozenClock, cacheKey: $this->makeKey(key: 'key_1'));
 
-        $this->assertTrue(condition: $tieredCache->getTier(cacheTierName: CacheTierName::L1_MEMORY)->exists(cacheKey: $this->makeKey(key: 'key_1')));
-        $this->assertTrue(condition: $tieredCache->getTier(cacheTierName: CacheTierName::L2_DISTRIBUTED)->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertTrue($tieredCache->getTier(cacheTierName: CacheTierName::L1_MEMORY)->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertTrue($tieredCache->getTier(cacheTierName: CacheTierName::L2_DISTRIBUTED)->exists(cacheKey: $this->makeKey(key: 'key_1')));
     }
 
     public function test_get_tier_returns_correct_store() : void
@@ -160,10 +160,10 @@ final class TieredCacheTest extends TestCase
         $l1 = $tieredCache->getTier(cacheTierName: CacheTierName::L1_MEMORY);
         $l2 = $tieredCache->getTier(cacheTierName: CacheTierName::L2_DISTRIBUTED);
 
-        $this->assertNotNull(actual: $l1);
-        $this->assertNotNull(actual: $l2);
-        $this->assertInstanceOf(expected: InMemoryCacheStore::class, actual: $l1);
-        $this->assertInstanceOf(expected: InMemoryCacheStore::class, actual: $l2);
+        $this->assertNotNull($l1);
+        $this->assertNotNull($l2);
+        $this->assertInstanceOf(InMemoryCacheStore::class, $l1);
+        $this->assertInstanceOf(InMemoryCacheStore::class, $l2);
     }
 
     #[Override]

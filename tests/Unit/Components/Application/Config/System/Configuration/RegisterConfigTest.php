@@ -15,6 +15,6 @@ final class RegisterConfigTest extends TestCase
         $register = new RegisterConfig();
         $config   = $register->build();
 
-        $this->assertInstanceOf(expected: Config::class, actual: $config);
+        $this->assertInstanceOf(Config::class, $config);
     }
 }

@@ -1,6 +1,6 @@
 # CURRENT_TRUTH
 
-Date of Truth: 2026-05-06
+Date of Truth: 2026-05-07
 Branch: master
 Commit: (updated after broken-refs audit fix)
 
@@ -35,7 +35,10 @@ Stage V1-03 (Static Integrity Closure): COMPLETE
 Stage 03 (API Classification and Evolution Rules): COMPLETE
 Stage 04 (Component Completion): COMPLETE
 
-Stage 05-23: LOCKED
+Stage 08 (Static Analysis Green): COMPLETE
+Stage 09 (AvaX Kernel Green): ACTIVE
+
+Stage 10-23: LOCKED
 V2 implementation: LOCKED.
 V3 implementation: LOCKED.
 
@@ -88,8 +91,6 @@ V3 implementation: LOCKED.
 
 No remaining blocker for Stage V1-03.
 
-## Next Allowed Action
+## Stage 09: AvaX Kernel Green.
 
-Stage 05: Production Readiness.
-
-Next repair: Security baseline audit and hardening.
+Next repair: Security baseline audit and hardening (Stage 16).

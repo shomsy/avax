@@ -31,17 +31,17 @@ final class CompiledCacheIntegrationTest extends TestCase
 
         $compiledCacheArtifact = $this->compiledCacheContract->compile(name: $name, build: $builder, sources: $compiledCacheSources);
 
-        $this->assertSame(expected: 'routes', actual: $compiledCacheArtifact->name->toString());
-        $this->assertFileExists(filename: $compiledCacheArtifact->path->toString());
+        $this->assertSame('routes', $compiledCacheArtifact->name->toString());
+        $this->assertFileExists($compiledCacheArtifact->path->toString());
 
         $value = $this->compiledCacheContract->read(name: $name, build: $builder, sources: $compiledCacheSources);
 
-        $this->assertIsArray(actual: $value);
-        $this->assertSame(expected: 'index', actual: $value['GET /users']['method']);
+        $this->assertIsArray($value);
+        $this->assertSame('index', $value['GET /users']['method']);
 
         $this->compiledCacheContract->clear(name: $name);
 
-        $this->assertFileDoesNotExist(filename: $compiledCacheArtifact->path->toString());
+        $this->assertFileDoesNotExist($compiledCacheArtifact->path->toString());
     }
 
     public function test_it_rebuilds_when_source_file_changes() : void
@@ -65,7 +65,7 @@ final class CompiledCacheIntegrationTest extends TestCase
         $compiledCacheSourcesNew = CompiledCacheSources::fromPaths($sourceFile);
         $value                   = $this->compiledCacheContract->read(name: $name, build: $builderNew, sources: $compiledCacheSourcesNew);
 
-        $this->assertSame(expected: 2, actual: $value['version']);
+        $this->assertSame(2, $value['version']);
     }
 
     #[Override]

@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
+use SplFileInfo;
 
 final class FilesystemCapabilitiesTest extends TestCase
 {
@@ -100,6 +101,7 @@ final class FilesystemCapabilitiesTest extends TestCase
             RecursiveIteratorIterator::CHILD_FIRST,
         );
 
+        /** @var SplFileInfo $item */
         foreach ($items as $item) {
             $item->isDir() ? rmdir($item->getPathname()) : unlink($item->getPathname());
         }

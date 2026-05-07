@@ -21,8 +21,8 @@ final class MetricsBackendTest extends TestCase
         $prometheusBackend->increment(metric: 'cache.hit', value: 5);
         $prometheusBackend->increment(metric: 'cache.miss', value: 3);
 
-        $this->assertEquals(expected: 5, actual: $prometheusBackend->getCounters()['cache.hit']);
-        $this->assertEquals(expected: 3, actual: $prometheusBackend->getCounters()['cache.miss']);
+        $this->assertEquals(5, $prometheusBackend->getCounters()['cache.hit']);
+        $this->assertEquals(3, $prometheusBackend->getCounters()['cache.miss']);
     }
 
     public function test_prometheus_backend_gauges() : void
@@ -31,7 +31,7 @@ final class MetricsBackendTest extends TestCase
 
         $prometheusBackend->gauge(metric: 'cache.hit_rate', value: 0.85);
 
-        $this->assertEquals(expected: 0.85, actual: $prometheusBackend->getGauges()['cache.hit_rate']);
+        $this->assertEquals(0.85, $prometheusBackend->getGauges()['cache.hit_rate']);
     }
 
     public function test_prometheus_backend_histogram() : void
@@ -42,7 +42,7 @@ final class MetricsBackendTest extends TestCase
         $prometheusBackend->histogram(metric: 'cache.latency', value: 200.0);
         $prometheusBackend->histogram(metric: 'cache.latency', value: 100.0);
 
-        $this->assertCount(expectedCount: 3, haystack: $prometheusBackend->getHistograms()['cache.latency']);
+        $this->assertCount(3, $prometheusBackend->getHistograms()['cache.latency']);
     }
 
     public function test_prometheus_render() : void
@@ -54,10 +54,10 @@ final class MetricsBackendTest extends TestCase
 
         $rendered = $prometheusBackend->render();
 
-        $this->assertStringContainsString(needle: 'cache.hit 10', haystack: $rendered);
-        $this->assertStringContainsString(needle: 'cache.hit_rate 0.75', haystack: $rendered);
-        $this->assertStringContainsString(needle: '# TYPE cache.hit counter', haystack: $rendered);
-        $this->assertStringContainsString(needle: '# TYPE cache.hit_rate gauge', haystack: $rendered);
+        $this->assertStringContainsString('cache.hit 10', $rendered);
+        $this->assertStringContainsString('cache.hit_rate 0.75', $rendered);
+        $this->assertStringContainsString('# TYPE cache.hit counter', $rendered);
+        $this->assertStringContainsString('# TYPE cache.hit_rate gauge', $rendered);
     }
 
     public function test_statsd_backend_messages() : void
@@ -70,9 +70,9 @@ final class MetricsBackendTest extends TestCase
 
         $messages = $statsDBackend->getMessages();
 
-        $this->assertContains(needle: 'cache.hit:5|c', haystack: $messages);
-        $this->assertContains(needle: 'cache.hit_rate:0.85|g', haystack: $messages);
-        $this->assertContains(needle: 'cache.latency:150|ms', haystack: $messages);
+        $this->assertContains('cache.hit:5|c', $messages);
+        $this->assertContains('cache.hit_rate:0.85|g', $messages);
+        $this->assertContains('cache.latency:150|ms', $messages);
     }
 
     public function test_statsd_percentile() : void
@@ -88,33 +88,33 @@ final class MetricsBackendTest extends TestCase
         $percentile = $statsDBackend->getPercentile(percentile: 50);
 
         $this->assertArrayHasKey(key: 'cache.latency', array: $percentile);
-        $this->assertEquals(expected: 300, actual: $percentile['cache.latency']);
+        $this->assertEquals(300, $percentile['cache.latency']);
     }
 
     public function test_metrics_sink_records_hits() : void
     {
         $prometheusBackend = new PrometheusBackend();
-        $metricsSink       = new MetricsSink(prefix: 'cache', metricsBackend: $prometheusBackend);
+        $metricsSink = new MetricsSink('cache', metricsBackend: $prometheusBackend);
 
         $metricsSink->recordHit();
 
-        $this->assertEquals(expected: 1, actual: $prometheusBackend->getCounters()['cache.hit']);
+        $this->assertEquals(1, $prometheusBackend->getCounters()['cache.hit']);
     }
 
     public function test_metrics_sink_records_latency() : void
     {
         $prometheusBackend = new PrometheusBackend();
-        $metricsSink       = new MetricsSink(prefix: 'cache', metricsBackend: $prometheusBackend);
+        $metricsSink = new MetricsSink('cache', metricsBackend: $prometheusBackend);
 
         $metricsSink->recordLatency(microseconds: 5000);
 
-        $this->assertEquals(expected: [5], actual: $prometheusBackend->getTimings()['cache.latency'] ?? []);
+        $this->assertEquals([5], $prometheusBackend->getTimings()['cache.latency'] ?? []);
     }
 
     public function test_metrics_sink_records_all_metrics() : void
     {
         $prometheusBackend = new PrometheusBackend();
-        $metricsSink       = new MetricsSink(prefix: 'cache', metricsBackend: $prometheusBackend);
+        $metricsSink = new MetricsSink('cache', metricsBackend: $prometheusBackend);
 
         $metricsSink->recordHit();
         $metricsSink->recordMiss();
@@ -127,16 +127,16 @@ final class MetricsBackendTest extends TestCase
         $metricsSink->recordSourceFailure();
         $metricsSink->recordStoreFailure();
 
-        $this->assertEquals(expected: 1, actual: $prometheusBackend->getCounters()['cache.hit']);
-        $this->assertEquals(expected: 1, actual: $prometheusBackend->getCounters()['cache.miss']);
-        $this->assertEquals(expected: 1, actual: $prometheusBackend->getCounters()['cache.write']);
-        $this->assertEquals(expected: 1, actual: $prometheusBackend->getCounters()['cache.stale_served']);
+        $this->assertEquals(1, $prometheusBackend->getCounters()['cache.hit']);
+        $this->assertEquals(1, $prometheusBackend->getCounters()['cache.miss']);
+        $this->assertEquals(1, $prometheusBackend->getCounters()['cache.write']);
+        $this->assertEquals(1, $prometheusBackend->getCounters()['cache.stale_served']);
     }
 
     public function test_metrics_sink_records_cache_metrics() : void
     {
         $prometheusBackend = new PrometheusBackend();
-        $metricsSink       = new MetricsSink(prefix: 'cache', metricsBackend: $prometheusBackend);
+        $metricsSink = new MetricsSink('cache', metricsBackend: $prometheusBackend);
 
         new FrozenClock(timestamp: Timestamp::now());
         $cacheMetrics = new CacheMetrics();
@@ -147,21 +147,21 @@ final class MetricsBackendTest extends TestCase
 
         $metricsSink->recordMetrics(cacheMetrics: $cacheMetrics);
 
-        $this->assertEquals(expected: 0.75, actual: $prometheusBackend->getGauges()['cache.hit_rate']);
+        $this->assertEquals(0.75, $prometheusBackend->getGauges()['cache.hit_rate']);
     }
 
     public function test_metrics_sink_flush() : void
     {
         $statsDBackend = new StatsDBackend();
-        $metricsSink   = new MetricsSink(prefix: 'cache', metricsBackend: $statsDBackend);
+        $metricsSink = new MetricsSink('cache', metricsBackend: $statsDBackend);
 
         $metricsSink->recordHit();
         $metricsSink->recordWrite();
 
-        $this->assertNotEmpty(actual: $statsDBackend->getMessages());
+        $this->assertNotEmpty($statsDBackend->getMessages());
 
         $metricsSink->flush();
 
-        $this->assertEmpty(actual: $statsDBackend->getMessages());
+        $this->assertEmpty($statsDBackend->getMessages());
     }
 }

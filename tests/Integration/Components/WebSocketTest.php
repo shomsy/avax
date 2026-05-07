@@ -11,12 +11,12 @@ final class WebSocketTest extends TestCase
 {
     public function test_websocket_broadcast_reaches_channel_connections(): void
     {
-        WebSocketServer::connect(connectionId: 'ws-one', channel: 'integration');
+        WebSocketServer::connect('ws-one', channel: 'integration');
 
-        $sent = WebSocketServer::broadcast(channel: 'integration', message: 'hello');
+        $sent = WebSocketServer::broadcast(channel: 'integration', 'hello');
 
-        self::assertSame(expected: 1, actual: $sent);
-        self::assertSame(expected: ['hello'], actual: WebSocketServer::messages(connectionId: 'ws-one'));
+        self::assertSame(1, $sent);
+        self::assertSame(['hello'], WebSocketServer::messages('ws-one'));
     }
 
     protected function setUp(): void

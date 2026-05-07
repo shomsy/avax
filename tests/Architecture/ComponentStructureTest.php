@@ -174,14 +174,14 @@ final class ComponentStructureTest extends TestCase
         foreach ($components as $component) {
             $systemPath = $this->componentsPath.'/'.$component.'/System';
             $this->assertDirectoryExists(
-                directory: $systemPath,
-                message  : "System directory should exist for {$component}",
+                $systemPath,
+                "System directory should exist for {$component}",
             );
 
             $phpFiles = glob($systemPath.'/**/*.php', GLOB_NOSORT);
             $this->assertNotEmpty(
-                actual : $phpFiles,
-                message: "System directory should contain PHP files for {$component}",
+                $phpFiles,
+                "System directory should contain PHP files for {$component}",
             );
         }
     }

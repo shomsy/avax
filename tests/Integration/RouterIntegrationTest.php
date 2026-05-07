@@ -7,7 +7,7 @@ namespace Avax\Tests\Integration;
 use Avax\Components\HTTP\Request\System\Capabilities\Uri\RequestUri;
 use Avax\Components\HTTP\Request\System\Configuration\RequestBuilder;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
-use Avax\Components\HTTP\Response\ResponseFactory;
+use Avax\Components\HTTP\Response\System\PublicSurface\Responses;
 use Avax\Components\HTTP\Router\System\Foundation\Failure\RouterFailure;
 use Avax\Components\HTTP\Router\System\PublicSurface\Router;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
@@ -18,25 +18,25 @@ final class RouterIntegrationTest extends TestCase
 {
     private RouterRuntimeInterface $router;
 
-    private ResponseFactory $responses;
+    private Responses $responses;
 
     public function test_get_root_route_returns_200_with_correct_body_and_headers(): void
     {
         $response = $this->router->resolve(request: $this->createRequest(path: '/'));
 
-        self::assertSame(expected: 200, actual: $response->getStatusCode());
-        self::assertStringContainsString(needle: 'Router is Working!', haystack: (string) $response->getBody());
-        self::assertInstanceOf(expected: ResponseInterface::class, actual: $response);
-        self::assertStringContainsString(needle: 'text/plain', haystack: $response->getHeaderLine(name: 'Content-Type'));
+        self::assertSame(200, $response->getStatusCode());
+        self::assertStringContainsString('Router is Working!', (string) $response->getBody());
+        self::assertInstanceOf(ResponseInterface::class, $response);
+        self::assertStringContainsString('text/plain', $response->getHeaderLine(name: 'Content-Type'));
     }
 
     public function test_get_health_route_returns_ok_body(): void
     {
         $response = $this->router->resolve(request: $this->createRequest(path: '/health'));
 
-        self::assertSame(expected: 'ok', actual: (string) $response->getBody());
-        self::assertInstanceOf(expected: ResponseInterface::class, actual: $response);
-        self::assertStringContainsString(needle: 'text/plain', haystack: $response->getHeaderLine(name: 'Content-Type'));
+        self::assertSame('ok', (string) $response->getBody());
+        self::assertInstanceOf(ResponseInterface::class, $response);
+        self::assertStringContainsString('text/plain', $response->getHeaderLine(name: 'Content-Type'));
     }
 
     public function test_get_test_route_returns_enterprise_router_message(): void
@@ -44,25 +44,25 @@ final class RouterIntegrationTest extends TestCase
         $response = $this->router->resolve(request: $this->createRequest(path: '/test'));
 
         self::assertStringContainsString(
-            needle: 'Enterprise Router Active!',
-            haystack: (string) $response->getBody(),
+            'Enterprise Router Active!',
+            (string) $response->getBody(),
         );
-        self::assertInstanceOf(expected: ResponseInterface::class, actual: $response);
-        self::assertStringContainsString(needle: 'text/plain', haystack: $response->getHeaderLine(name: 'Content-Type'));
+        self::assertInstanceOf(ResponseInterface::class, $response);
+        self::assertStringContainsString('text/plain', $response->getHeaderLine(name: 'Content-Type'));
     }
 
     public function test_get_nonexistent_route_throws_router_failure(): void
     {
-        $this->expectException(exception: RouterFailure::class);
-        $this->expectExceptionMessage(message: 'Route not found');
+        $this->expectException(RouterFailure::class);
+        $this->expectExceptionMessage('Route not found');
 
         $this->router->resolve(request: $this->createRequest(path: '/missing'));
     }
 
     public function test_post_to_get_only_route_throws_router_failure(): void
     {
-        $this->expectException(exception: RouterFailure::class);
-        $this->expectExceptionMessage(message: 'Route not found');
+        $this->expectException(RouterFailure::class);
+        $this->expectExceptionMessage('Route not found');
 
         $this->router->resolve(request: $this->createRequest(method: 'POST', path: '/health'));
     }
@@ -71,8 +71,8 @@ final class RouterIntegrationTest extends TestCase
     {
         $response = $this->router->resolve(request: $this->createRequest(path: '/favicon.ico'));
 
-        self::assertSame(expected: 204, actual: $response->getStatusCode());
-        self::assertStringContainsString(needle: 'image/x-icon', haystack: $response->getHeaderLine(name: 'Content-Type'));
+        self::assertSame(204, $response->getStatusCode());
+        self::assertStringContainsString('image/x-icon', $response->getHeaderLine(name: 'Content-Type'));
     }
 
     public function test_all_responses_implement_response_interface(): void
@@ -81,9 +81,9 @@ final class RouterIntegrationTest extends TestCase
             $response = $this->router->resolve(request: $this->createRequest(path: $route));
 
             self::assertInstanceOf(
-                expected: ResponseInterface::class,
-                actual: $response,
-                message: "Route {$route} did not return a ResponseInterface",
+                ResponseInterface::class,
+                $response,
+                "Route {$route} did not return a ResponseInterface",
             );
         }
     }
@@ -94,9 +94,9 @@ final class RouterIntegrationTest extends TestCase
             $response = $this->router->resolve(request: $this->createRequest(path: $route));
 
             self::assertNotSame(
-                expected: '',
-                actual: $response->getHeaderLine(name: 'Content-Type'),
-                message: "Route {$route} missing Content-Type header",
+                '',
+                $response->getHeaderLine(name: 'Content-Type'),
+                "Route {$route} missing Content-Type header",
             );
         }
     }
@@ -105,7 +105,7 @@ final class RouterIntegrationTest extends TestCase
     {
         parent::setUp();
 
-        $this->responses = new ResponseFactory();
+        $this->responses = new Responses();
 
         $router = new Router();
         $router->get(path: '/', action: fn () => $this->textResponse(body: 'Router is Working!'));
@@ -113,8 +113,9 @@ final class RouterIntegrationTest extends TestCase
         $router->get(path: '/test', action: fn () => $this->textResponse(body: 'Enterprise Router Active!'));
         $router->get(
             path: '/favicon.ico',
-            action: fn () => $this->responses->create(
-                statusCode: 204,
+            action: fn () => $this->responses->createResponseWithBody(
+                content: '',
+                status : 204,
                 headers: ['content-type' => ['image/x-icon']],
             ),
         );
@@ -132,10 +133,9 @@ final class RouterIntegrationTest extends TestCase
 
     private function textResponse(string $body, int $statusCode = 200): ResponseInterface
     {
-        return $this->responses->create(
-            statusCode: $statusCode,
-            headers: ['content-type' => ['text/plain; charset=utf-8']],
-            body: $body,
+        return $this->responses->send(
+            data  : $body,
+            status: $statusCode,
         );
     }
 }

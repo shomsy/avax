@@ -22,9 +22,9 @@ final class CacheClusterTest extends TestCase
 
         $node = $cacheCluster->getNode(cacheNodeId: CacheNodeId::from(id: 'node_a'));
 
-        $this->assertNotNull(actual: $node);
-        $this->assertEquals(expected: 'node_a', actual: $node->id->toString());
-        $this->assertTrue(condition: $node->isHealthy());
+        $this->assertNotNull($node);
+        $this->assertEquals('node_a', $node->id->toString());
+        $this->assertTrue($node->isHealthy());
     }
 
     public function test_get_healthy_nodes_returns_only_healthy() : void
@@ -40,7 +40,7 @@ final class CacheClusterTest extends TestCase
 
         $healthyNodes = $cacheCluster->getHealthyNodes();
 
-        $this->assertCount(expectedCount: 1, haystack: $healthyNodes);
+        $this->assertCount(1, $healthyNodes);
     }
 
     public function test_record_failure_marks_node_unhealthy() : void
@@ -55,8 +55,8 @@ final class CacheClusterTest extends TestCase
 
         $node = $cacheCluster->getNode(cacheNodeId: CacheNodeId::from(id: 'node_a'));
 
-        $this->assertNotNull(actual: $node);
-        $this->assertEquals(expected: CacheNodeStatus::UNHEALTHY, actual: $node->status);
+        $this->assertNotNull($node);
+        $this->assertEquals(CacheNodeStatus::UNHEALTHY, $node->status);
     }
 
     public function test_record_success_recovers_node() : void
@@ -75,8 +75,8 @@ final class CacheClusterTest extends TestCase
 
         $node = $cacheCluster->getNode(cacheNodeId: CacheNodeId::from(id: 'node_a'));
 
-        $this->assertNotNull(actual: $node);
-        $this->assertEquals(expected: CacheNodeStatus::HEALTHY, actual: $node->status);
+        $this->assertNotNull($node);
+        $this->assertEquals(CacheNodeStatus::HEALTHY, $node->status);
     }
 
     public function test_unhealthy_node_not_selected_for_reads() : void
@@ -95,8 +95,8 @@ final class CacheClusterTest extends TestCase
 
         $node = $cacheCluster->getNodeForKey(cacheKey: CacheKey::create(key: 'test_key'));
 
-        $this->assertNotNull(actual: $node);
-        $this->assertEquals(expected: 'node_b', actual: $node->id->toString());
+        $this->assertNotNull($node);
+        $this->assertEquals('node_b', $node->id->toString());
     }
 
     public function test_remove_node_reduces_count() : void
@@ -106,11 +106,11 @@ final class CacheClusterTest extends TestCase
         $cacheCluster->addNode(cacheNode: CacheNode::create(id: 'node_a'));
         $cacheCluster->addNode(cacheNode: CacheNode::create(id: 'node_b'));
 
-        $this->assertEquals(expected: 2, actual: $cacheCluster->nodeCount());
+        $this->assertEquals(2, $cacheCluster->nodeCount());
 
         $cacheCluster->removeNode(cacheNodeId: CacheNodeId::from(id: 'node_a'));
 
-        $this->assertEquals(expected: 1, actual: $cacheCluster->nodeCount());
+        $this->assertEquals(1, $cacheCluster->nodeCount());
     }
 
     public function test_node_addition_affects_routing() : void
@@ -127,7 +127,7 @@ final class CacheClusterTest extends TestCase
 
         $nodeAfter = $cacheCluster->getNodeForKey(cacheKey: CacheKey::create(key: 'test_key'));
 
-        $this->assertNotNull(actual: $nodeBefore);
-        $this->assertNotNull(actual: $nodeAfter);
+        $this->assertNotNull($nodeBefore);
+        $this->assertNotNull($nodeAfter);
     }
 }

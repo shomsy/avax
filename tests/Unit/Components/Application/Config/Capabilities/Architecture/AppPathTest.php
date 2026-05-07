@@ -13,14 +13,14 @@ final class AppPathTest extends TestCase
     {
         $root = AppPath::getRoot();
 
-        $this->assertStringEndsWith(suffix: DIRECTORY_SEPARATOR, string: $root);
-        $this->assertFileExists(filename: $root . 'composer.json');
+        $this->assertStringEndsWith(DIRECTORY_SEPARATOR, $root);
+        $this->assertFileExists($root . 'composer.json');
     }
 
     public function test_get_returns_full_path() : void
     {
         $path = AppPath::AUTOLOAD_PATH->get();
 
-        $this->assertStringContainsString(needle: 'vendor/autoload.php', haystack: $path);
+        $this->assertStringContainsString('vendor/autoload.php', $path);
     }
 }

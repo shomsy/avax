@@ -37,33 +37,33 @@ final class QueryBuilderSelectTest extends TestCase
             ->get();
 
         self::assertSame(
-            expected: [
+            [
                 [
                     'id' => 123,
                     'name' => 'Milos',
                 ],
             ],
-            actual  : $rows,
+            $rows,
         );
 
-        self::assertCount(expectedCount: 1, haystack: $executor->queries);
+        self::assertCount(1, $executor->queries);
 
         $recordedQuery = $executor->queries[0];
         $sql = self::normalizeSql($recordedQuery['sql']);
 
-        self::assertSame(expected: [123], actual: $recordedQuery['bindings']);
+        self::assertSame([123], $recordedQuery['bindings']);
 
-        self::assertStringStartsWith(prefix: 'SELECT ', string: $sql);
-        self::assertMatchesRegularExpression(pattern: '/SELECT .*id.*name/i', string: $sql);
-        self::assertMatchesRegularExpression(pattern: '/FROM .*users/i', string: $sql);
-        self::assertMatchesRegularExpression(pattern: '/WHERE .*id.*= \?/i', string: $sql);
-        self::assertMatchesRegularExpression(pattern: '/ORDER BY .*name.* ASC/i', string: $sql);
-        self::assertMatchesRegularExpression(pattern: '/LIMIT 1/i', string: $sql);
+        self::assertStringStartsWith('SELECT ', $sql);
+        self::assertMatchesRegularExpression('/SELECT .*id.*name/i', $sql);
+        self::assertMatchesRegularExpression('/FROM .*users/i', $sql);
+        self::assertMatchesRegularExpression('/WHERE .*id.*= \?/i', $sql);
+        self::assertMatchesRegularExpression('/ORDER BY .*name.* ASC/i', $sql);
+        self::assertMatchesRegularExpression('/LIMIT 1/i', $sql);
     }
 
     private static function normalizeSql(string $sql): string
     {
-        return preg_replace(pattern: '/\s+/', replacement: ' ', subject: trim($sql)) ?? $sql;
+        return preg_replace('/\s+/', replacement: ' ', subject: trim($sql)) ?? $sql;
     }
 }
 

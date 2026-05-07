@@ -15,7 +15,7 @@ final class HttpContextCapabilitiesTest extends TestCase
         // but we can prove the factory and basic structure.
         $context = HttpContext::fromGlobals();
 
-        $this->assertIsArray($context->query());
-        $this->assertIsArray($context->serverParams());
+        $this->assertSame($_GET, $context->query());
+        $this->assertSame($_SERVER, $context->serverParams());
     }
 }

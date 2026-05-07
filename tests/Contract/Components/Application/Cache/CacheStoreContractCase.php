@@ -26,7 +26,7 @@ abstract class CacheStoreContractCase extends TestCase
 
         $result = $cacheStore->read(cacheKey: $cacheKey, clock: $clock);
 
-        $this->assertInstanceOf(expected: CacheStoreRecordWasMissing::class, actual: $result);
+        $this->assertInstanceOf(CacheStoreRecordWasMissing::class, $result);
     }
 
     protected function clock(): FrozenClock
@@ -55,8 +55,8 @@ abstract class CacheStoreContractCase extends TestCase
         $cacheStore->write(cacheKey: $cacheKey, storedCacheRecord: $storedCacheRecord);
         $result = $cacheStore->read(cacheKey: $cacheKey, clock: $clock);
 
-        $this->assertInstanceOf(expected: CacheStoreRecordWasFound::class, actual: $result);
-        $this->assertSame(expected: $value, actual: $result->value());
+        $this->assertInstanceOf(CacheStoreRecordWasFound::class, $result);
+        $this->assertSame($value, $result->value());
     }
 
     public function test_it_returns_stored_null_when_null_was_stored(): void
@@ -77,8 +77,8 @@ abstract class CacheStoreContractCase extends TestCase
         $cacheStore->write(cacheKey: $cacheKey, storedCacheRecord: $storedCacheRecord);
         $result = $cacheStore->read(cacheKey: $cacheKey, clock: $clock);
 
-        $this->assertInstanceOf(expected: CacheStoreRecordWasFound::class, actual: $result);
-        $this->assertNull(actual: $result->value());
+        $this->assertInstanceOf(CacheStoreRecordWasFound::class, $result);
+        $this->assertNull($result->value());
     }
 
     public function test_it_expires_value_when_ttl_has_passed(): void
@@ -101,7 +101,7 @@ abstract class CacheStoreContractCase extends TestCase
         $clock->moveForward(duration: Duration::ofSeconds(seconds: 2));
         $result = $cacheStore->read(cacheKey: $cacheKey, clock: $clock);
 
-        $this->assertInstanceOf(expected: CacheStoreRecordWasMissing::class, actual: $result);
+        $this->assertInstanceOf(CacheStoreRecordWasMissing::class, $result);
     }
 
     public function test_it_forgets_value_when_key_exists(): void
@@ -125,7 +125,7 @@ abstract class CacheStoreContractCase extends TestCase
 
         $result = $cacheStore->read(cacheKey: $cacheKey, clock: $clock);
 
-        $this->assertInstanceOf(expected: CacheStoreRecordWasMissing::class, actual: $result);
+        $this->assertInstanceOf(CacheStoreRecordWasMissing::class, $result);
     }
 
     public function test_it_clears_all_values(): void
@@ -148,9 +148,9 @@ abstract class CacheStoreContractCase extends TestCase
 
         $cacheStore->clear();
 
-        $this->assertFalse(condition: $cacheStore->exists(cacheKey: CacheKey::create(key: 'key1')));
-        $this->assertFalse(condition: $cacheStore->exists(cacheKey: CacheKey::create(key: 'key2')));
-        $this->assertFalse(condition: $cacheStore->exists(cacheKey: CacheKey::create(key: 'key3')));
+        $this->assertFalse($cacheStore->exists(cacheKey: CacheKey::create(key: 'key1')));
+        $this->assertFalse($cacheStore->exists(cacheKey: CacheKey::create(key: 'key2')));
+        $this->assertFalse($cacheStore->exists(cacheKey: CacheKey::create(key: 'key3')));
     }
 
     public function test_it_exists_returns_true_for_existing_key(): void
@@ -170,7 +170,7 @@ abstract class CacheStoreContractCase extends TestCase
 
         $cacheStore->write(cacheKey: $cacheKey, storedCacheRecord: $storedCacheRecord);
 
-        $this->assertTrue(condition: $cacheStore->exists(cacheKey: $cacheKey));
+        $this->assertTrue($cacheStore->exists(cacheKey: $cacheKey));
     }
 
     public function test_it_exists_returns_false_for_nonexistent_key(): void
@@ -179,6 +179,6 @@ abstract class CacheStoreContractCase extends TestCase
         $cacheStore = $this->createStore(clock: $clock);
         $cacheKey = CacheKey::create(key: 'nonexistent-key');
 
-        $this->assertFalse(condition: $cacheStore->exists(cacheKey: $cacheKey));
+        $this->assertFalse($cacheStore->exists(cacheKey: $cacheKey));
     }
 }

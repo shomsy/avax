@@ -165,13 +165,13 @@ An agent must not combine stages unless EXECUTION.md explicitly allows it.
 The current active stage is:
 
 ```text
-Stage 04: Component Completion
+Stage 08: Static Analysis Green
 ```
 
 Last completed stage:
 
 ```text
-Stage 03: API Classification and Evolution Rules
+Stage 07: Test Layer Repair
 ```
 
 Recent completed evidence:
@@ -187,28 +187,44 @@ EVIDENCE/muscle-recovery/component-muscle-audit.json
 EVIDENCE/recovery-reports/static-integrity-closure-report.md
 EVIDENCE/v1-integrity/static-integrity-closure-report.md
 EVIDENCE/master-plan/api-classification-matrix.md
-EVIDENCE/master-plan/stage-03-api-classification-report.md
+EVIDENCE/master-plan/canonical-class-map.md
+EVIDENCE/master-plan/stage-05-canonical-class-map-report.md
+EVIDENCE/master-plan/stage-06-autoload-repair-report.md
+EVIDENCE/master-plan/stage-07-test-layer-repair-report.md
 ```
 
-All other stages are read-only context until Stage 04 is complete.
+All other stages are read-only context until Stage 08 is complete.
 
-### Stage 04 Goal
+### Stage 08 Goal
 
-Complete components with real lanes, not placeholder folders.
+Achieve 100% green PHPStan analysis for framework, components, and tests (or honestly baseline intentional debt).
 
-### Stage 04 Allowed Work
+### Stage 08 Allowed Work
 
-```text
-[ ] Update and verify EVIDENCE/master-plan/component-completion-matrix.md.
-[ ] Classify each component as complete, partial, draft, experimental, planned, or blocked.
-[ ] Verify correct suite and canonical namespace.
-[ ] Verify meaningful PublicSurface when public API exists.
-[ ] Verify meaningful Capabilities and Flows/Configuration/Foundation where applicable.
-[ ] Identify placeholder classes and describeResponsibility-only classes.
-[ ] Verify duplicate owner and stale namespace status.
-[ ] Record tests planned or present under root tests/.
-[ ] Record a Stage 04 report.
+[ ] Fix remaining PHPStan warnings in tests.
+[ ] Fix any remaining type-hint issues in framework/components.
+[ ] Ensure all return types are specified.
+[ ] Ensure all property types are specified.
+[ ] Resolve "mixed" variable warnings.
+[ ] Record a Stage 08 report.
+
+### Stage 08 Forbidden Work
+
+[ ] No V2 implementation.
+[ ] No V3 implementation.
+[ ] No feature behavior changes that aren't required for type safety.
+
+### Stage 08 Validation
+
+```bash
+vendor/bin/phpstan analyse framework components tests --memory-limit=1G
 ```
+
+### Stage 08 Done Definition
+
+[ ] PHPStan returns 0 errors (including baseline).
+[ ] No "always true" assertions in tests.
+[ ] Final report declares GREEN.
 
 ### Stage 04 Forbidden Work
 

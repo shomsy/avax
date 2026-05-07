@@ -32,7 +32,7 @@ final class CacheTest extends TestCase
             return 'fresh';
         });
 
-        self::assertSame(expected: 'cached', actual: $value);
-        self::assertSame(expected: 1, actual: $calls);
+        self::assertSame('cached', $value);
+        self::assertSame(1, $calls);
     }
 }

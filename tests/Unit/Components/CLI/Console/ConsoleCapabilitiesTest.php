@@ -75,7 +75,7 @@ final class ConsoleCapabilitiesTest extends TestCase
     }
 
     /**
-     * @param callable(): void $operation
+     * @param callable(): mixed $operation
      */
     private function captureOutput(callable $operation) : string
     {

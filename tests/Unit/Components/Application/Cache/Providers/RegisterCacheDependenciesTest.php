@@ -26,8 +26,8 @@ final class RegisterCacheDependenciesTest extends TestCase
     {
         Cache::reset();
 
-        $this->expectException(exception: CacheNotConfigured::class);
-        $this->expectExceptionMessage(message: 'Named store requires RegisterCacheDependencies');
+        $this->expectException(CacheNotConfigured::class);
+        $this->expectExceptionMessage('Named store requires RegisterCacheDependencies');
 
         Cache::store(name: 'api');
     }
@@ -38,7 +38,7 @@ final class RegisterCacheDependenciesTest extends TestCase
 
         $store = Cache::store();
 
-        $this->assertSame(expected: $this->cacheContract, actual: $store);
+        $this->assertSame($this->cacheContract, $store);
     }
 
     public function test_cache_use_sets_default() : void
@@ -46,7 +46,7 @@ final class RegisterCacheDependenciesTest extends TestCase
         Cache::use(cache: $this->cacheContract);
 
         $result = Cache::get(default: 'default', key: 'non_existent');
-        $this->assertSame(expected: 'default', actual: $result);
+        $this->assertSame('default', $result);
     }
 
     public function test_static_cache_can_be_swapped() : void
@@ -58,10 +58,10 @@ final class RegisterCacheDependenciesTest extends TestCase
         $mockCache2->method('get')->with('key')->willReturn(value: 'value2');
 
         Cache::use(cache: $mockCache1);
-        $this->assertSame(expected: 'value1', actual: Cache::get(key: 'key'));
+        $this->assertSame('value1', Cache::get(key: 'key'));
 
         Cache::use(cache: $mockCache2);
-        $this->assertSame(expected: 'value2', actual: Cache::get(key: 'key'));
+        $this->assertSame('value2', Cache::get(key: 'key'));
     }
 
     public function test_cache_reset_clears_static_instance() : void
@@ -70,7 +70,7 @@ final class RegisterCacheDependenciesTest extends TestCase
 
         Cache::reset();
 
-        $this->expectException(exception: CacheNotConfigured::class);
+        $this->expectException(CacheNotConfigured::class);
         Cache::get(key: 'key');
     }
 

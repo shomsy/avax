@@ -25,7 +25,7 @@ final class InMemoryCacheStoreTest extends TestCase
 
         $avaxCache->set(key: 'key', value: 'value');
 
-        $this->assertSame(expected: 'value', actual: $avaxCache->get(key: 'key'));
+        $this->assertSame('value', $avaxCache->get(key: 'key'));
     }
 
     /**
@@ -38,7 +38,7 @@ final class InMemoryCacheStoreTest extends TestCase
 
         $avaxCache = new AvaxCache(clock: $frozenClock, cacheStore: $inMemoryCacheStore);
 
-        $this->assertSame(expected: 'default', actual: $avaxCache->get(key: 'missing', default: 'default'));
+        $this->assertSame('default', $avaxCache->get(key: 'missing', default: 'default'));
     }
 
     /**
@@ -53,8 +53,8 @@ final class InMemoryCacheStoreTest extends TestCase
 
         $avaxCache->set(key: 'null-key', value: null);
 
-        $this->assertTrue(condition: $avaxCache->has(key: 'null-key'));
-        $this->assertNull(actual: $avaxCache->get(key: 'null-key'));
+        $this->assertTrue($avaxCache->has(key: 'null-key'));
+        $this->assertNull($avaxCache->get(key: 'null-key'));
     }
 
     /**
@@ -68,10 +68,10 @@ final class InMemoryCacheStoreTest extends TestCase
         $avaxCache = new AvaxCache(clock: $frozenClock, cacheStore: $inMemoryCacheStore);
 
         $avaxCache->set(key: 'delete-key', value: 'value');
-        $this->assertTrue(condition: $avaxCache->has(key: 'delete-key'));
+        $this->assertTrue($avaxCache->has(key: 'delete-key'));
 
         $avaxCache->delete(key: 'delete-key');
-        $this->assertFalse(condition: $avaxCache->has(key: 'delete-key'));
+        $this->assertFalse($avaxCache->has(key: 'delete-key'));
     }
 
     /**
@@ -89,8 +89,8 @@ final class InMemoryCacheStoreTest extends TestCase
 
         $avaxCache->clear();
 
-        $this->assertFalse(condition: $avaxCache->has(key: 'key1'));
-        $this->assertFalse(condition: $avaxCache->has(key: 'key2'));
+        $this->assertFalse($avaxCache->has(key: 'key1'));
+        $this->assertFalse($avaxCache->has(key: 'key2'));
     }
 
     /**
@@ -105,8 +105,8 @@ final class InMemoryCacheStoreTest extends TestCase
 
         $result = $avaxCache->remember(key: 'compute-key', ttl: 3600, loader: static fn () : string => 'computed');
 
-        $this->assertSame(expected: 'computed', actual: $result);
-        $this->assertSame(expected: 'computed', actual: $avaxCache->get(key: 'compute-key'));
+        $this->assertSame('computed', $result);
+        $this->assertSame('computed', $avaxCache->get(key: 'compute-key'));
     }
 
     /**
@@ -127,7 +127,7 @@ final class InMemoryCacheStoreTest extends TestCase
             return 'loaded';
         });
 
-        $this->assertSame(expected: 'original', actual: $result);
-        $this->assertSame(expected: 0, actual: $loadCount);
+        $this->assertSame('original', $result);
+        $this->assertSame(0, $loadCount);
     }
 }

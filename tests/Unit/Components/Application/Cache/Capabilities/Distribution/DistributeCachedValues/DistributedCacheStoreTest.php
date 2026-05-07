@@ -38,7 +38,7 @@ final class DistributedCacheStoreTest extends TestCase
 
         $result = $distributedCacheStore->read(clock: $this->frozenClock, cacheKey: $this->makeKey(key: 'user:1'));
 
-        $this->assertInstanceOf(expected: CacheStoreRecordWasFound::class, actual: $result);
+        $this->assertInstanceOf(CacheStoreRecordWasFound::class, $result);
     }
 
     private function makeKey(string $key) : CacheKey
@@ -71,7 +71,7 @@ final class DistributedCacheStoreTest extends TestCase
 
         $result = $distributedCacheStore->read(clock: $this->frozenClock, cacheKey: $this->makeKey(key: 'user:2'));
 
-        $this->assertInstanceOf(expected: CacheStoreRecordWasMissing::class, actual: $result);
+        $this->assertInstanceOf(CacheStoreRecordWasMissing::class, $result);
     }
 
     public function test_forget_removes_from_correct_node() : void
@@ -86,11 +86,11 @@ final class DistributedCacheStoreTest extends TestCase
 
         $distributedCacheStore->write(cacheKey: $this->makeKey(key: 'key_1'), storedCacheRecord: $this->makeRecord(value: 'value_1'));
 
-        $this->assertTrue(condition: $inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertTrue($inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_1')));
 
         $distributedCacheStore->forget(cacheKey: $this->makeKey(key: 'key_1'));
 
-        $this->assertFalse(condition: $inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertFalse($inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_1')));
     }
 
     public function test_clear_removes_from_all_nodes() : void
@@ -111,8 +111,8 @@ final class DistributedCacheStoreTest extends TestCase
 
         $distributedCacheStore->clear();
 
-        $this->assertEquals(expected: 0, actual: $storeA->count());
-        $this->assertEquals(expected: 0, actual: $storeB->count());
+        $this->assertEquals(0, $storeA->count());
+        $this->assertEquals(0, $storeB->count());
     }
 
     public function test_node_count_returns_ring_count() : void
@@ -123,7 +123,7 @@ final class DistributedCacheStoreTest extends TestCase
 
         $distributedCacheStore = new DistributedCacheStore(clock: $this->frozenClock, consistentHashRing: $consistentHashRing);
 
-        $this->assertEquals(expected: 2, actual: $distributedCacheStore->nodeCount());
+        $this->assertEquals(2, $distributedCacheStore->nodeCount());
     }
 
     public function test_has_node_store_returns_true_when_registered() : void
@@ -136,8 +136,8 @@ final class DistributedCacheStoreTest extends TestCase
         $distributedCacheStore = new DistributedCacheStore(clock: $this->frozenClock, consistentHashRing: $consistentHashRing)
             ->registerNodeStore(cacheNodeId: CacheNodeId::from(id: 'node_a'), cacheStore: $inMemoryCacheStore);
 
-        $this->assertTrue(condition: $distributedCacheStore->hasNodeStore(cacheNodeId: CacheNodeId::from(id: 'node_a')));
-        $this->assertFalse(condition: $distributedCacheStore->hasNodeStore(cacheNodeId: CacheNodeId::from(id: 'node_b')));
+        $this->assertTrue($distributedCacheStore->hasNodeStore(cacheNodeId: CacheNodeId::from(id: 'node_a')));
+        $this->assertFalse($distributedCacheStore->hasNodeStore(cacheNodeId: CacheNodeId::from(id: 'node_b')));
     }
 
     #[Override]

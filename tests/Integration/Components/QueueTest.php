@@ -18,8 +18,8 @@ final class QueueTest extends TestCase
 
         $processed = Queue::process(queue: 'integration');
 
-        self::assertSame(expected: 1, actual: $processed);
-        self::assertTrue(condition: $handled);
+        self::assertSame(1, $processed);
+        self::assertTrue($handled);
     }
 
     protected function setUp(): void

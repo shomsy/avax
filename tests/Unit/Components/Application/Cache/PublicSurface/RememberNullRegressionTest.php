@@ -20,9 +20,6 @@ final class RememberNullRegressionTest extends TestCase
 
     private AvaxCache $avaxCache;
 
-    /**
-     * @throws InvalidArgumentException
-     */
     public function test_it_does_not_reload_when_cached_value_is_null() : void
     {
         $this->avaxCache->set(value: null, key: 'nullable');
@@ -35,8 +32,8 @@ final class RememberNullRegressionTest extends TestCase
             return 'loaded';
         },                                   key: 'nullable');
 
-        $this->assertNull(actual: $result);
-        $this->assertSame(expected: 0, actual: $loadCount);
+        $this->assertNull($result);
+        $this->assertSame(0, $loadCount);
     }
 
     public function test_it_does_reload_when_key_does_not_exist() : void
@@ -49,13 +46,10 @@ final class RememberNullRegressionTest extends TestCase
             return 'loaded';
         },                                   key: 'missing');
 
-        $this->assertSame(expected: 'loaded', actual: $result);
-        $this->assertSame(expected: 1, actual: $loadCount);
+        $this->assertSame('loaded', $result);
+        $this->assertSame(1, $loadCount);
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     public function test_it_reloads_when_value_is_not_null() : void
     {
         $this->avaxCache->set(value: 'not_null', key: 'exists');
@@ -68,8 +62,8 @@ final class RememberNullRegressionTest extends TestCase
             return 'loaded';
         },                                   key: 'exists');
 
-        $this->assertSame(expected: 'not_null', actual: $result);
-        $this->assertSame(expected: 0, actual: $loadCount);
+        $this->assertSame('not_null', $result);
+        $this->assertSame(0, $loadCount);
     }
 
     #[Override]

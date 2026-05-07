@@ -17,7 +17,7 @@ final class DuplicateOwnersTest extends TestCase
     {
         $result = (new CheckDuplicateOwners())->check();
 
-        self::assertSame(expected: 'PASS', actual: $result['status']);
-        self::assertSame(expected: [], actual: $result['errors']);
+        self::assertSame('PASS', $result['status']);
+        self::assertSame([], $result['errors']);
     }
 }

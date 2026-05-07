@@ -32,7 +32,7 @@ final class LeastFrequentlyUsedReplacementTest extends TestCase
 
         $chosen = $leastFrequentlyUsedReplacement->choose(entries: $entries);
 
-        $this->assertEquals(expected: 'key_3', actual: $chosen);
+        $this->assertEquals('key_3', $chosen);
     }
 
     private function makeLifecycle(int $createdOffset = 0) : CachedValueLifecycle
@@ -53,23 +53,23 @@ final class LeastFrequentlyUsedReplacementTest extends TestCase
 
         $chosen = $leastFrequentlyUsedReplacement->choose(entries: []);
 
-        $this->assertNull(actual: $chosen);
+        $this->assertNull($chosen);
     }
 
     public function test_frequency_increments_on_each_access() : void
     {
         $leastFrequentlyUsedReplacement = new LeastFrequentlyUsedReplacement(clock: $this->frozenClock);
 
-        $this->assertEquals(expected: 0, actual: $leastFrequentlyUsedReplacement->getFrequency(key: 'key_1'));
+        $this->assertEquals(0, $leastFrequentlyUsedReplacement->getFrequency(key: 'key_1'));
 
         $leastFrequentlyUsedReplacement->recordAccess(key: 'key_1');
-        $this->assertEquals(expected: 1, actual: $leastFrequentlyUsedReplacement->getFrequency(key: 'key_1'));
+        $this->assertEquals(1, $leastFrequentlyUsedReplacement->getFrequency(key: 'key_1'));
 
         $leastFrequentlyUsedReplacement->recordAccess(key: 'key_1');
-        $this->assertEquals(expected: 2, actual: $leastFrequentlyUsedReplacement->getFrequency(key: 'key_1'));
+        $this->assertEquals(2, $leastFrequentlyUsedReplacement->getFrequency(key: 'key_1'));
 
         $leastFrequentlyUsedReplacement->recordAccess(key: 'key_1');
-        $this->assertEquals(expected: 3, actual: $leastFrequentlyUsedReplacement->getFrequency(key: 'key_1'));
+        $this->assertEquals(3, $leastFrequentlyUsedReplacement->getFrequency(key: 'key_1'));
     }
 
     public function test_remove_clears_frequency() : void
@@ -78,10 +78,10 @@ final class LeastFrequentlyUsedReplacementTest extends TestCase
 
         $leastFrequentlyUsedReplacement->recordAccess(key: 'key_1');
         $leastFrequentlyUsedReplacement->recordAccess(key: 'key_1');
-        $this->assertEquals(expected: 2, actual: $leastFrequentlyUsedReplacement->getFrequency(key: 'key_1'));
+        $this->assertEquals(2, $leastFrequentlyUsedReplacement->getFrequency(key: 'key_1'));
 
         $leastFrequentlyUsedReplacement->removeKey(key: 'key_1');
-        $this->assertEquals(expected: 0, actual: $leastFrequentlyUsedReplacement->getFrequency(key: 'key_1'));
+        $this->assertEquals(0, $leastFrequentlyUsedReplacement->getFrequency(key: 'key_1'));
     }
 
     public function test_reset_clears_all_frequencies() : void
@@ -92,15 +92,15 @@ final class LeastFrequentlyUsedReplacementTest extends TestCase
         $leastFrequentlyUsedReplacement->recordAccess(key: 'key_2');
         $leastFrequentlyUsedReplacement->recordAccess(key: 'key_3');
 
-        $this->assertEquals(expected: 1, actual: $leastFrequentlyUsedReplacement->getFrequency(key: 'key_1'));
-        $this->assertEquals(expected: 1, actual: $leastFrequentlyUsedReplacement->getFrequency(key: 'key_2'));
-        $this->assertEquals(expected: 1, actual: $leastFrequentlyUsedReplacement->getFrequency(key: 'key_3'));
+        $this->assertEquals(1, $leastFrequentlyUsedReplacement->getFrequency(key: 'key_1'));
+        $this->assertEquals(1, $leastFrequentlyUsedReplacement->getFrequency(key: 'key_2'));
+        $this->assertEquals(1, $leastFrequentlyUsedReplacement->getFrequency(key: 'key_3'));
 
         $leastFrequentlyUsedReplacement->reset();
 
-        $this->assertEquals(expected: 0, actual: $leastFrequentlyUsedReplacement->getFrequency(key: 'key_1'));
-        $this->assertEquals(expected: 0, actual: $leastFrequentlyUsedReplacement->getFrequency(key: 'key_2'));
-        $this->assertEquals(expected: 0, actual: $leastFrequentlyUsedReplacement->getFrequency(key: 'key_3'));
+        $this->assertEquals(0, $leastFrequentlyUsedReplacement->getFrequency(key: 'key_1'));
+        $this->assertEquals(0, $leastFrequentlyUsedReplacement->getFrequency(key: 'key_2'));
+        $this->assertEquals(0, $leastFrequentlyUsedReplacement->getFrequency(key: 'key_3'));
     }
 
     public function test_all_same_frequency_returns_first() : void
@@ -117,7 +117,7 @@ final class LeastFrequentlyUsedReplacementTest extends TestCase
 
         $chosen = $leastFrequentlyUsedReplacement->choose(entries: $entries);
 
-        $this->assertContains(needle: $chosen, haystack: ['key_1', 'key_2']);
+        $this->assertContains($chosen, ['key_1', 'key_2']);
     }
 
     public function test_unaccessed_key_is_chosen_first() : void
@@ -135,7 +135,7 @@ final class LeastFrequentlyUsedReplacementTest extends TestCase
 
         $chosen = $leastFrequentlyUsedReplacement->choose(entries: $entries);
 
-        $this->assertEquals(expected: 'key_3', actual: $chosen);
+        $this->assertEquals('key_3', $chosen);
     }
 
     #[Override]

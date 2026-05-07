@@ -28,6 +28,7 @@ final class CodeGenerationCapabilitiesTest extends TestCase
 
         $this->assertFileExists($path);
         $content = file_get_contents($path);
+        $this->assertIsString($content);
 
         $this->assertStringContainsString('namespace Avax\Generated\Entities;', $content);
         $this->assertStringContainsString('class UserEntity', $content);

@@ -43,8 +43,8 @@ foreach ($iterator as $file) {
     // Check if the file's own namespace matches its path (PSR-4 Drift)
     if (preg_match('/namespace\s+([^;]+);/', $content, $matches)) {
         $namespace = $matches[1];
-        $expectedSubPath = str_replace('\\', '/', str_replace('Tests\\', '', $namespace));
-        if (! str_contains(str_replace('\\', '/', $path), $expectedSubPath) && ! str_contains($path, 'Integration')) {
+        $expectedSubPath = str_replace('\\', '/', preg_replace('/^Avax\\\\Tests\\\\?/', '', $namespace));
+        if (! str_contains($path, $expectedSubPath) && ! str_contains($path, 'Integration')) {
             $results['psr4_drift'][$path] = $namespace;
         }
     }

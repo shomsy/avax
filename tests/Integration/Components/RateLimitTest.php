@@ -13,7 +13,7 @@ final class RateLimitTest extends TestCase
     {
         $limiter = new RedisRateLimiter(config: ['driver' => 'array']);
 
-        self::assertTrue(condition: $limiter->attempt(key: 'integration-limit', maxAttempts: 1, decaySeconds: 60));
-        self::assertFalse(condition: $limiter->attempt(key: 'integration-limit', maxAttempts: 1, decaySeconds: 60));
+        self::assertTrue($limiter->attempt(key: 'integration-limit', maxAttempts: 1, decaySeconds: 60));
+        self::assertFalse($limiter->attempt(key: 'integration-limit', maxAttempts: 1, decaySeconds: 60));
     }
 }

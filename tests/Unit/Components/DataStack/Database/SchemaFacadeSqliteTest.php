@@ -36,23 +36,23 @@ final class SchemaFacadeSqliteTest extends TestCase
         $pdo = $connections->pdo(name: 'sqlite');
 
         self::assertSame(
-            expected: 'users',
-            actual  : $pdo
+            'users',
+            $pdo
                 ->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'")
                 ->fetchColumn(),
         );
 
         $columnNames = self::columnNames($pdo, table: 'users');
 
-        self::assertContains(needle: 'id', haystack: $columnNames);
-        self::assertContains(needle: 'name', haystack: $columnNames);
-        self::assertContains(needle: 'email', haystack: $columnNames);
-        self::assertContains(needle: 'active', haystack: $columnNames);
+        self::assertContains('id', $columnNames);
+        self::assertContains('name', $columnNames);
+        self::assertContains('email', $columnNames);
+        self::assertContains('active', $columnNames);
 
         $schema->dropIfExists(table: 'users', connectionName: 'sqlite');
 
         self::assertFalse(
-            condition: $pdo
+            $pdo
                 ->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'")
                 ->fetchColumn(),
         );
@@ -82,8 +82,8 @@ final class SchemaFacadeSqliteTest extends TestCase
         );
 
         self::assertContains(
-            needle  : 'nickname',
-            haystack: self::columnNames($connections->pdo(name: 'sqlite'), table: 'users'),
+            'nickname',
+            self::columnNames($connections->pdo(name: 'sqlite'), table: 'users'),
         );
     }
 

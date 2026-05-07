@@ -107,8 +107,8 @@ final class MessageBusCapabilitiesTest extends TestCase
         $event = new class {};
 
         // Should not throw
+        $this->expectNotToPerformAssertions();
         $bus->dispatch($event);
-        $this->assertTrue(true);
     }
 
     public function test_it_returns_handlers_for_registered_event() : void

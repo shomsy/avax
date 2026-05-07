@@ -18,6 +18,6 @@ final class TestingCapabilitiesTest extends TestCase
         $fake->dispatch($event);
 
         $this->assertTrue($fake->hasDispatched($event::class));
-        $this->assertCount(1, $fake->dispatched($event::class));
+        $this->assertSame(1, $fake->dispatchedCount($event::class));
     }
 }

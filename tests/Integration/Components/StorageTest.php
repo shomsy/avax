@@ -15,7 +15,7 @@ final class StorageTest extends TestCase
 
         $storage->put(path: 'nested/file.txt', contents: 'payload');
 
-        self::assertSame(expected: ['nested/file.txt'], actual: $storage->files(directory: 'nested'));
-        self::assertTrue(condition: $storage->deleteDirectory(directory: 'nested'));
+        self::assertSame(['nested/file.txt'], $storage->files('nested'));
+        self::assertTrue($storage->deleteDirectory('nested'));
     }
 }

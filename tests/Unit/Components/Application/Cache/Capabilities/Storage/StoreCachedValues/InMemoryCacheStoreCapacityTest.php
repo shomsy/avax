@@ -36,7 +36,7 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
             );
         }
 
-        $this->assertSame(expected: 3, actual: $inMemoryCacheStore->count());
+        $this->assertSame(3, $inMemoryCacheStore->count());
     }
 
     private function makeKey(string $key) : CacheKey
@@ -79,10 +79,10 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
         $this->frozenClock->moveForward(duration: Duration::ofSeconds(seconds: 1));
         $inMemoryCacheStore->write(cacheKey: $this->makeKey(key: 'key_4'), storedCacheRecord: $this->makeRecord(value: 'value_4', ttlSeconds: 3600));
 
-        $this->assertTrue(condition: $inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_1')));
-        $this->assertFalse(condition: $inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_2')));
-        $this->assertTrue(condition: $inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_3')));
-        $this->assertTrue(condition: $inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_4')));
+        $this->assertTrue($inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertFalse($inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_2')));
+        $this->assertTrue($inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_3')));
+        $this->assertTrue($inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_4')));
     }
 
     public function test_fifo_eviction_respects_creation_order() : void
@@ -102,10 +102,10 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
 
         $inMemoryCacheStore->write(cacheKey: $this->makeKey(key: 'key_4'), storedCacheRecord: $this->makeRecord(value: 'value_4', ttlSeconds: 3600));
 
-        $this->assertFalse(condition: $inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_1')));
-        $this->assertTrue(condition: $inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_2')));
-        $this->assertTrue(condition: $inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_3')));
-        $this->assertTrue(condition: $inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_4')));
+        $this->assertFalse($inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertTrue($inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_2')));
+        $this->assertTrue($inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_3')));
+        $this->assertTrue($inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_4')));
     }
 
     public function test_expired_entries_are_evicted_first() : void
@@ -122,14 +122,14 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
         $inMemoryCacheStore->write(cacheKey: $this->makeKey(key: 'key_2'), storedCacheRecord: $this->makeRecord(value: 'value_2', ttlSeconds: 3600));
         $inMemoryCacheStore->write(cacheKey: $this->makeKey(key: 'key_3'), storedCacheRecord: $this->makeRecord(value: 'value_3', ttlSeconds: 3600));
 
-        $this->assertSame(expected: 3, actual: $inMemoryCacheStore->count());
+        $this->assertSame(3, $inMemoryCacheStore->count());
 
         $inMemoryCacheStore->write(cacheKey: $this->makeKey(key: 'key_4'), storedCacheRecord: $this->makeRecord(value: 'value_4', ttlSeconds: 3600));
 
-        $this->assertFalse(condition: $inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_1')));
-        $this->assertTrue(condition: $inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_2')));
-        $this->assertTrue(condition: $inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_3')));
-        $this->assertTrue(condition: $inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_4')));
+        $this->assertFalse($inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_1')));
+        $this->assertTrue($inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_2')));
+        $this->assertTrue($inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_3')));
+        $this->assertTrue($inMemoryCacheStore->exists(cacheKey: $this->makeKey(key: 'key_4')));
     }
 
     public function test_no_replacement_policy_throws_when_capacity_exceeded() : void
@@ -143,7 +143,7 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
         $inMemoryCacheStore->write(cacheKey: $this->makeKey(key: 'key_1'), storedCacheRecord: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));
         $inMemoryCacheStore->write(cacheKey: $this->makeKey(key: 'key_2'), storedCacheRecord: $this->makeRecord(value: 'value_2', ttlSeconds: 3600));
 
-        $this->expectException(exception: CacheCapacityWasExceeded::class);
+        $this->expectException(CacheCapacityWasExceeded::class);
         $inMemoryCacheStore->write(cacheKey: $this->makeKey(key: 'key_3'), storedCacheRecord: $this->makeRecord(value: 'value_3', ttlSeconds: 3600));
     }
 

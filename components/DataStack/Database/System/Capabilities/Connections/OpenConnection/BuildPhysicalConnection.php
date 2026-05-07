@@ -49,13 +49,13 @@ final readonly class BuildPhysicalConnection
             );
         } catch (Throwable $throwable) {
             throw new ConnectionFailure(
-                name    : $connectionConfig->name,
-                message : sprintf(
+                name     : $connectionConfig->name,
+                message  : sprintf(
                     'Database connection [%s] failed: %s',
                     $connectionConfig->name,
                     $throwable->getMessage(),
                 ),
-                previous: $throwable,
+                throwable: $throwable,
             );
         }
     }

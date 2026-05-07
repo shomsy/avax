@@ -62,7 +62,7 @@ final class DatabaseConnectionPool implements ConnectionPoolInterface
             $item = $this->pool->dequeue();
             $connection = $item['connection'];
 
-            if ($this->validateConnection(connection: $connection)) {
+            if ($this->validateConnection(databaseConnection: $connection)) {
                 $this->poolState->recordRecycledAcquisition();
 
                 $this->eventBus?->dispatch(event: new ConnectionAcquired(
@@ -71,7 +71,7 @@ final class DatabaseConnectionPool implements ConnectionPoolInterface
                     correlationId: $this->executionScope?->correlationId ?? 'ctx_unknown',
                 ));
 
-                return new BorrowedConnection(connection: $connection, pool: $this);
+                return new BorrowedConnection(databaseConnection: $connection, connectionPool: $this);
             }
 
             // If the connection was dead, we release its slot in our counter.
@@ -90,7 +90,7 @@ final class DatabaseConnectionPool implements ConnectionPoolInterface
         $connection = new OpenConnection(
             buildPhysicalConnection: new BuildPhysicalConnection(),
             eventBus: $this->eventBus,
-            scope: $this->executionScope,
+            executionScope         : $this->executionScope,
         )->using(config: $this->config);
 
         $this->eventBus?->dispatch(event: new ConnectionAcquired(
@@ -99,7 +99,7 @@ final class DatabaseConnectionPool implements ConnectionPoolInterface
             correlationId: $this->executionScope?->correlationId ?? 'ctx_unknown',
         ));
 
-        return new BorrowedConnection(connection: $connection, pool: $this);
+        return new BorrowedConnection(databaseConnection: $connection, connectionPool: $this);
     }
 
     /**
@@ -120,7 +120,7 @@ final class DatabaseConnectionPool implements ConnectionPoolInterface
             $idleTime = $currentTime - $item['released_at'];
 
             // If it's too old or doesn't "Ping" correctly, it's gone.
-            if ($idleTime > $maxIdleTime || ! $this->validateConnection(connection: $item['connection'])) {
+            if ($idleTime > $maxIdleTime || ! $this->validateConnection(databaseConnection: $item['connection'])) {
                 $this->poolState->releaseSlot();
                 $prunedCount++;
 
@@ -184,7 +184,7 @@ final class DatabaseConnectionPool implements ConnectionPoolInterface
             $databaseConnection = $databaseConnection->getOriginalConnection();
         }
 
-        if (! $this->validateConnection(connection: $databaseConnection)) {
+        if (! $this->validateConnection(databaseConnection: $databaseConnection)) {
             $this->poolState->releaseSlot();
 
             return;

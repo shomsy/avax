@@ -22,7 +22,7 @@ final readonly class ResolveDisk
         $driver = $diskConfig['driver'] ?? $name;
 
         return match ($driver) {
-            'local' => new LocalDisk(),
+            'local' => new LocalDisk(root: $diskConfig['root'] ?? null),
             default => throw new InvalidDiskDriver(driver: $driver),
         };
     }

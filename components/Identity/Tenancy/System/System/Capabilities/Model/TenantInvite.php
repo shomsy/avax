@@ -1,0 +1,30 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Tenancy\System\System\Capabilities\Model;
+
+use DateTimeImmutable;
+use SensitiveParameter;
+
+final readonly class TenantInvite
+{
+    public function __construct(
+        public string             $inviteId,
+        public string             $tenantId,
+        #[SensitiveParameter]
+        public string             $email,
+        public TenantMemberRole   $role,
+        #[SensitiveParameter]
+        public string             $tokenHash,
+        public string             $invitedBy,
+        public DateTimeImmutable  $createdAt,
+        public ?DateTimeImmutable $acceptedAt = null,
+        public ?int               $acceptedByUserId = null,
+    ) {}
+
+    public function isAccepted() : bool
+    {
+        return $this->acceptedAt instanceof DateTimeImmutable;
+    }
+}

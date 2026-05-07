@@ -38,6 +38,10 @@ if (! function_exists('app')) {
             return $container;
         }
 
+        if ($container === null) {
+            return null;
+        }
+
         return $container->get($abstract);
     }
 }

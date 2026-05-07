@@ -1,0 +1,34 @@
+PHPUnit 10.5.63 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.5
+Configuration: /home/shomsy/projects/avax/phpunit.xml
+
+.................................pong..............................  63 / 414 ( 15%)
+..S............................................................ 126 / 414 ( 30%)
+............................................................... 189 / 414 ( 45%)
+............................................................... 252 / 414 ( 60%)
+........................................................F.F.... 315 / 414 ( 76%)
+............................................................... 378 / 414 ( 91%)
+....................................                            414 / 414 (100%)
+
+Time: 00:01.591, Memory: 20.00 MB
+
+There were 2 failures:
+
+1) Avax\Tests\Unit\Components\Application\Facade\FacadeCapabilitiesTest::test_it_throws_when_no_container_is_set
+Failed asserting that exception of type "Error" matches expected exception "RuntimeException". Message was: "Call to a member function get() on null" at
+/home/shomsy/projects/avax/components/Application/Container/System/PublicSurface/shortcuts.php:41
+/home/shomsy/projects/avax/components/Application/Facade/System/Foundation/Facade.php:87
+/home/shomsy/projects/avax/components/Application/Facade/System/Foundation/Facade.php:25
+/home/shomsy/projects/avax/tests/Unit/Components/Application/Facade/FacadeCapabilitiesTest.php:82
+.
+
+2) Avax\Tests\Unit\Components\Application\Facade\FacadeCapabilitiesTest::test_it_caches_resolved_instances
+Psr\Container\ContainerInterface::get('test.service') was not expected to be called more than once.
+
+/home/shomsy/projects/avax/components/Application/Facade/System/Foundation/Facade.php:82
+/home/shomsy/projects/avax/components/Application/Facade/System/Foundation/Facade.php:25
+/home/shomsy/projects/avax/tests/Unit/Components/Application/Facade/FacadeCapabilitiesTest.php:116
+
+FAILURES!
+Tests: 414, Assertions: 2079, Failures: 2, Skipped: 1.

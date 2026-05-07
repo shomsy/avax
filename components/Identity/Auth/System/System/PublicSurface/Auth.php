@@ -1,0 +1,65 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\System\PublicSurface;
+
+use Avax\Components\Identity\Auth\System\System\Capabilities\Identity\Identity;
+use Avax\Components\Identity\Auth\System\System\Flows\ChangePassword\ChangePasswordData;
+use Avax\Components\Identity\Auth\System\System\Flows\Login\AuthenticationResult;
+use Avax\Components\Identity\Auth\System\System\Flows\Login\Credentials;
+use Avax\Components\Identity\Auth\System\System\Flows\Register\RegistrationData;
+use Avax\Components\Identity\Auth\System\System\Flows\Register\RegistrationResult;
+
+/**
+ * Auth - Main entry point for Identity/Auth component.
+ * Orchestrates flows and capabilities.
+ */
+final readonly class Auth implements AuthInterface
+{
+    public function __construct(
+        private Identity $identity,
+    ) {}
+
+    public function login(Credentials $credentials) : AuthenticationResult
+    {
+        return $this->identity->login($credentials);
+    }
+
+    public function logout() : void
+    {
+        $this->identity->logout();
+    }
+
+    public function user() : ?User
+    {
+        $entity = $this->identity->authentication()->user();
+
+        return $entity ? User::fromEntity($entity) : null;
+    }
+
+    public function guest() : bool
+    {
+        return ! $this->check();
+    }
+
+    public function check() : bool
+    {
+        return $this->identity->authentication()->check();
+    }
+
+    public function register(RegistrationData $registrationData) : RegistrationResult
+    {
+        return $this->identity->account()->register($registrationData);
+    }
+
+    public function changePassword(ChangePasswordData $changePasswordData) : void
+    {
+        $this->identity->account()->changePassword($changePasswordData);
+    }
+
+    public function logoutAllSessions() : void
+    {
+        $this->identity->sessions()->logoutAllSessions();
+    }
+}

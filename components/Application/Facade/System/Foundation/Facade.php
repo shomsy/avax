@@ -79,12 +79,15 @@ abstract class Facade implements FacadeInterface
 
         // Resolve from container
         if (static::$container instanceof ContainerInterface) {
-            return static::$container->get($accessor);
+            return static::$resolvedInstances[$accessor] = static::$container->get($accessor);
         }
 
         // Fallback to global app() function
         if (function_exists('app')) {
-            return app($accessor);
+            $instance = app($accessor);
+            if ($instance !== null) {
+                return static::$resolvedInstances[$accessor] = $instance;
+            }
         }
 
         throw new RuntimeException(sprintf("No container available to resolve facade accessor '%s'", $accessor));

@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\HTTP\Session\System\System\Configuration;
+
+use Avax\Components\HTTP\Session\System\System\Capabilities\Storage\NativeSessionStore;
+use Avax\Components\HTTP\Session\System\System\PublicSurface\Session;
+use Avax\Components\HTTP\Session\System\System\PublicSurface\SessionScope;
+
+final class SessionBuilder
+{
+    public function build() : Session
+    {
+        $nativeSessionStore = new NativeSessionStore();
+        $sessionScope       = new SessionScope(store: $nativeSessionStore);
+
+        return new Session($sessionScope);
+    }
+}

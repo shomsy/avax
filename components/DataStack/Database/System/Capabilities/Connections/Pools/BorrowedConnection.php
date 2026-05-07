@@ -76,7 +76,7 @@ final class BorrowedConnection implements DatabaseConnection
     public function release(): void
     {
         if (! $this->released) {
-            $this->connectionPool->release(connection: $this);
+            $this->connectionPool->release(databaseConnection: $this);
             $this->released = true;
         }
     }

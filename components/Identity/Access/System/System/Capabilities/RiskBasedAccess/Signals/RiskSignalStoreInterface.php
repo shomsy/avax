@@ -1,0 +1,15 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Access\System\System\Capabilities\RiskBasedAccess\Signals;
+
+interface RiskSignalStoreInterface
+{
+    public function record(RiskSignal $riskSignal) : void;
+
+    /**
+     * @return list<RiskSignal>
+     */
+    public function forUser(int $userId) : array;
+}

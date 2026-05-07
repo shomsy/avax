@@ -1,0 +1,65 @@
+PHPUnit 10.5.63 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.5
+Configuration: /home/shomsy/projects/avax/phpunit.xml
+
+........................EEEEEEEE.pong..............................  63 / 408 ( 15%)
+..S............................................................ 126 / 408 ( 30%)
+............................................................... 189 / 408 ( 46%)
+............................................................... 252 / 408 ( 61%)
+............................................................... 315 / 408 ( 77%)
+............................................................... 378 / 408 ( 92%)
+..............................                                  408 / 408 (100%)
+
+Time: 00:01.535, Memory: 20.00 MB
+
+There was 1 PHPUnit test runner warning:
+
+1) Class Avax\Tests\Contract\Components\Application\Cache\CacheStoreContractTest declared in /home/shomsy/projects/avax/tests/Contract/Components/Application/Cache/CacheStoreContractTest.php is abstract
+
+--
+
+There were 8 errors:
+
+1) Avax\Tests\Contract\Components\Application\Cache\InMemoryCacheStoreContractTest::test_it_returns_missing_when_key_does_not_exist
+Error: Unknown named parameter $key
+
+/home/shomsy/projects/avax/tests/Contract/Components/Application/Cache/CacheStoreContractCase.php:27
+
+2) Avax\Tests\Contract\Components\Application\Cache\InMemoryCacheStoreContractTest::test_it_returns_stored_value_when_key_exists
+Error: Unknown named parameter $lifecycle
+
+/home/shomsy/projects/avax/tests/Contract/Components/Application/Cache/CacheStoreContractCase.php:49
+
+3) Avax\Tests\Contract\Components\Application\Cache\InMemoryCacheStoreContractTest::test_it_returns_stored_null_when_null_was_stored
+Error: Unknown named parameter $lifecycle
+
+/home/shomsy/projects/avax/tests/Contract/Components/Application/Cache/CacheStoreContractCase.php:71
+
+4) Avax\Tests\Contract\Components\Application\Cache\InMemoryCacheStoreContractTest::test_it_expires_value_when_ttl_has_passed
+Error: Unknown named parameter $lifecycle
+
+/home/shomsy/projects/avax/tests/Contract/Components/Application/Cache/CacheStoreContractCase.php:94
+
+5) Avax\Tests\Contract\Components\Application\Cache\InMemoryCacheStoreContractTest::test_it_forgets_value_when_key_exists
+Error: Unknown named parameter $lifecycle
+
+/home/shomsy/projects/avax/tests/Contract/Components/Application/Cache/CacheStoreContractCase.php:117
+
+6) Avax\Tests\Contract\Components\Application\Cache\InMemoryCacheStoreContractTest::test_it_clears_all_values
+Error: Unknown named parameter $lifecycle
+
+/home/shomsy/projects/avax/tests/Contract/Components/Application/Cache/CacheStoreContractCase.php:139
+
+7) Avax\Tests\Contract\Components\Application\Cache\InMemoryCacheStoreContractTest::test_it_exists_returns_true_for_existing_key
+Error: Unknown named parameter $lifecycle
+
+/home/shomsy/projects/avax/tests/Contract/Components/Application/Cache/CacheStoreContractCase.php:165
+
+8) Avax\Tests\Contract\Components\Application\Cache\InMemoryCacheStoreContractTest::test_it_exists_returns_false_for_nonexistent_key
+Error: Unknown named parameter $key
+
+/home/shomsy/projects/avax/tests/Contract/Components/Application/Cache/CacheStoreContractCase.php:182
+
+ERRORS!
+Tests: 408, Assertions: 2058, Errors: 8, PHPUnit Warnings: 1, Skipped: 1.

@@ -128,7 +128,7 @@ final class DependencyRegistry implements DependencyRegistryContract
         $registration->lifetime = $lifetime;
         $registration->deferred = $deferred;
 
-        $this->add(definition: $registration);
+        $this->add(dependencyRegistration: $registration);
 
         return $registration;
     }
@@ -195,7 +195,7 @@ final class DependencyRegistry implements DependencyRegistryContract
         $dependencyRegistration->concrete = $instance;
         $dependencyRegistration->lifetime = SingletonLifetime::NAME;
 
-        $this->add(definition: $dependencyRegistration);
+        $this->add(dependencyRegistration: $dependencyRegistration);
     }
 
     public function bootstrapInstance(string $abstract, object $instance): void

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Labs\Integration\ObjectStorage\System\Capabilities\StoreObjects;
 
-use Avax\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStoragePort;
-use Avax\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStorageResult;
+use Avax\Components\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStoragePort;
+use Avax\Components\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStorageResult;
 
 class StoreObjectsOnLocalFilesystem implements ObjectStoragePort
 {

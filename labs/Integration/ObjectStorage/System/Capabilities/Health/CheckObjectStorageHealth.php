@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Labs\Integration\ObjectStorage\System\Capabilities\Health;
 
-use Avax\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStoragePort;
+use Avax\Components\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStoragePort;
 use Throwable;
 
 class CheckObjectStorageHealth

@@ -2,15 +2,13 @@
 
 declare(strict_types=1);
 
-use Avax\Config\Architecture\DDD\AppPath;
-
 return [
     'default' => env(key: 'FILESYSTEM_DISK', default: 'local'),
 
     'disks' => [
         'local' => [
             'driver' => 'local',
-            'root' => AppPath::getRoot(),
+            'root' => dirname(__DIR__),
         ],
 
         's3' => [

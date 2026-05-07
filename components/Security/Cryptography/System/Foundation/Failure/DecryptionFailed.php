@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Security\System\Foundation\Failure;
+namespace Avax\Components\Security\Cryptography\System\Foundation\Failure;
 
 /**
  * Exception thrown when decryption operation fails.
@@ -12,4 +12,4 @@ namespace Avax\Components\Identity\Security\System\Foundation\Failure;
  * - Wrong encryption key
  * - Corrupted or invalid payload data
  */
-final class DecryptionFailed extends SecurityFailure {}
+final class DecryptionFailed extends CryptographyFailure {}

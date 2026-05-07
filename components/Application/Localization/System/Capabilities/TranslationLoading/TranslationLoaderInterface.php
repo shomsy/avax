@@ -8,6 +8,8 @@ interface TranslationLoaderInterface
 {
     /**
      * Load the messages for the given locale and group.
+     *
+     * @return array<string, string>
      */
     public function load(string $locale, string $group, ?string $namespace = null) : array;
 }

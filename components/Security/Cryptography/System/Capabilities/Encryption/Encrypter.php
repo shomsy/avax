@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Security\System\Capabilities\Encryption;
+namespace Avax\Components\Security\Cryptography\System\Capabilities\Encryption;
 
-use Avax\Components\Identity\Security\System\Foundation\Failure\DecryptionFailed;
-use Avax\Components\Identity\Security\System\Foundation\Failure\EncryptionFailed;
+use Avax\Components\Security\Cryptography\System\Foundation\Failure\DecryptionFailed;
+use Avax\Components\Security\Cryptography\System\Foundation\Failure\EncryptionFailed;
 use function is_string;
 
 /**

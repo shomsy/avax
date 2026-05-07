@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Security\System\Flows\Encrypt;
+namespace Avax\Components\Security\Cryptography\System\Flows\Encrypt;
 
-use Avax\Components\Identity\Security\System\Capabilities\Encryption\EncryptedPayload;
-use Avax\Components\Identity\Security\System\Capabilities\Encryption\EncryptionKey;
-use Avax\Components\Identity\Security\System\Flows\EncryptValue\EncryptValue;
+use Avax\Components\Security\Cryptography\System\Capabilities\Encryption\EncryptedPayload;
+use Avax\Components\Security\Cryptography\System\Capabilities\Encryption\EncryptionKey;
+use Avax\Components\Security\Cryptography\System\Flows\EncryptValue\EncryptValue;
 
 final readonly class Encrypt
 {

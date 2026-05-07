@@ -25,6 +25,7 @@ final class ConfigFlagStore implements FlagStoreInterface
         // Config is usually immutable at runtime via the config helper
     }
 
+    /** @return array<string, mixed> */
     public function all() : array
     {
         $all = config($this->configKey);

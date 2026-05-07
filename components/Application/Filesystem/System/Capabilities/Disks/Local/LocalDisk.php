@@ -18,7 +18,7 @@ final readonly class LocalDisk implements Disk
     public function __construct(?string $root = null)
     {
         // Use current working directory if no root is provided, but typically a root is expected
-        $this->root = $root ? realpath($root) ?: $root : getcwd();
+        $this->root = (string) ($root ? (realpath($root) ?: $root) : getcwd());
     }
 
     #[Override]
@@ -219,9 +219,9 @@ final readonly class LocalDisk implements Disk
         return ltrim(str_replace($this->root, '', $absolutePath), DIRECTORY_SEPARATOR);
     }
 
-    private function manualResolve(string $path) : string|false
+    private function manualResolve(string $path) : string
     {
-        $parts     = array_filter(explode(DIRECTORY_SEPARATOR, $path), strlen(...));
+        $parts = array_filter(explode(DIRECTORY_SEPARATOR, $path), fn (string $s) : bool => strlen($s) > 0);
         $absolutes = [];
         foreach ($parts as $part) {
             if ('.' === $part) continue;

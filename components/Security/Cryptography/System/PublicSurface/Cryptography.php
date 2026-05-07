@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Security\System\PublicSurface;
+namespace Avax\Components\Security\Cryptography\System\PublicSurface;
 
-use Avax\Components\Identity\Security\System\Capabilities\Encryption\EncryptionKey;
-use Avax\Components\Identity\Security\System\Capabilities\Encryption\KeyResolver;
-use Avax\Components\Identity\Security\System\Flows\DecryptValue\DecryptValue;
-use Avax\Components\Identity\Security\System\Flows\EncryptValue\EncryptValue;
-use Avax\Components\Identity\Security\System\Foundation\Failure\DecryptionFailed;
+use Avax\Components\Security\Cryptography\System\Capabilities\Encryption\EncryptionKey;
+use Avax\Components\Security\Cryptography\System\Capabilities\Encryption\KeyResolver;
+use Avax\Components\Security\Cryptography\System\Flows\DecryptValue\DecryptValue;
+use Avax\Components\Security\Cryptography\System\Flows\EncryptValue\EncryptValue;
+use Avax\Components\Security\Cryptography\System\Foundation\Failure\DecryptionFailed;
 use Throwable;
 
 /**
- * Encryption - Public API for encryption operations.
+ * Cryptography - Public API for encryption operations.
  *
  * Provides high-level encrypt/decrypt methods that handle
  * serialization, key resolution, and key rotation.
  */
-final readonly class Encryption
+final readonly class Cryptography
 {
     public function __construct(
         private EncryptValue $encryptValue,

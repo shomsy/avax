@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Unit\Components\Identity\Security;
+namespace Avax\Tests\Unit\Components\Security\Cryptography;
 
-use Avax\Components\Identity\Security\System\Capabilities\Encryption\AesEncrypter;
-use Avax\Components\Identity\Security\System\Capabilities\Encryption\EncryptionKey;
+use Avax\Components\Security\Cryptography\System\Capabilities\Encryption\AesEncrypter;
+use Avax\Components\Security\Cryptography\System\Capabilities\Encryption\EncryptionKey;
 use PHPUnit\Framework\TestCase;
 
-final class IdentitySecurityCapabilitiesTest extends TestCase
+final class CryptographyTest extends TestCase
 {
     public function test_aes_encrypter_roundtrip() : void
     {

@@ -10,5 +10,6 @@ interface FlagStoreInterface
 
     public function set(string $flag, mixed $value): void;
 
+    /** @return array<string, mixed> */
     public function all(): array;
 }

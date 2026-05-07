@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Security\System\Flows\EncryptValue;
+namespace Avax\Components\Security\Cryptography\System\Flows\EncryptValue;
 
-use Avax\Components\Identity\Security\System\Capabilities\Encryption\EncryptedPayload;
-use Avax\Components\Identity\Security\System\Capabilities\Encryption\EncrypterInterface;
-use Avax\Components\Identity\Security\System\Capabilities\Encryption\EncryptionKey;
-use Avax\Components\Identity\Security\System\Capabilities\Encryption\KeyResolver;
+use Avax\Components\Security\Cryptography\System\Capabilities\Encryption\EncryptedPayload;
+use Avax\Components\Security\Cryptography\System\Capabilities\Encryption\EncrypterInterface;
+use Avax\Components\Security\Cryptography\System\Capabilities\Encryption\EncryptionKey;
+use Avax\Components\Security\Cryptography\System\Capabilities\Encryption\KeyResolver;
 
 /**
  * Flow for encrypting a value using the current encryption key.

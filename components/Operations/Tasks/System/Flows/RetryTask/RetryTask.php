@@ -10,9 +10,7 @@ use Avax\Components\Operations\Tasks\System\Capabilities\TaskRunner\TaskRunner;
 final readonly class RetryTask
 {
     /**
-     * @return array{success: true, attempts: int<1, max>, result: array{id: string, status: 'completed', result:
-     *                        mixed, error: string|null, duration: int|null}}|array{success: false, attempts: int<0,
-     *                        max>, error: string|null}
+     * @return array{success: bool, attempts: int, result: array<string, mixed>|null, error: string|null}
      */
     public function retry(TaskRunner $runner, callable $task, TaskRetryPolicy $policy) : array
     {
@@ -29,6 +27,7 @@ final readonly class RetryTask
                     'success'  => true,
                     'attempts' => $attempts,
                     'result'   => $result,
+                    'error' => null,
                 ];
             }
 
@@ -42,6 +41,7 @@ final readonly class RetryTask
         return [
             'success'  => false,
             'attempts' => $attempts,
+            'result' => null,
             'error'    => $lastError,
         ];
     }

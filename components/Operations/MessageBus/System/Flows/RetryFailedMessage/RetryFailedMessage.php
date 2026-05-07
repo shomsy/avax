@@ -11,8 +11,7 @@ use Throwable;
 final readonly class RetryFailedMessage
 {
     /**
-     * @return array{success: bool, attempts: int, result: mixed}|array{success: bool, attempts: int, error:
-     *                        string|null}
+     * @return array{success: bool, attempts: int, result: mixed, error: string|null}
      */
     public function retry(CommandBus $bus, Command $command, int $attempts = 3) : array
     {
@@ -26,6 +25,7 @@ final readonly class RetryFailedMessage
                     'success'  => true,
                     'attempts' => $i + 1,
                     'result'   => $result,
+                    'error' => null,
                 ];
             } catch (Throwable $e) {
                 $lastException = $e;
@@ -35,6 +35,7 @@ final readonly class RetryFailedMessage
         return [
             'success'  => false,
             'attempts' => $attempts,
+            'result' => null,
             'error'    => $lastException?->getMessage(),
         ];
     }

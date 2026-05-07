@@ -126,7 +126,7 @@ If any item is RED, V2/V3 implementation is forbidden.
 
 V1 Kernel Green: PROVEN
 
-V2 Implementation: UNLOCKED
+V2 Implementation: CLOSED / GREEN
 
 V3 Implementation: LOCKED
 
@@ -165,13 +165,13 @@ An agent must not combine stages unless EXECUTION.md explicitly allows it.
 The current active stage is:
 
 ```text
-V2 Engine Implementation Phase
+None — V2 Engine Implementation Phase CLOSED
 ```
 
 Last completed stage:
 
 ```text
-Stage 14-23: Planning and Governance Policies
+Stage V2-03: V2 Engine Implementation
 ```
 
 Recent completed evidence:
@@ -196,6 +196,9 @@ EVIDENCE/master-plan/stage-13-extension-plugin-architecture-report.md
 EVIDENCE/master-plan/stage-14-benchmark-performance-report.md
 EVIDENCE/master-plan/stage-15-observability-contract-report.md
 EVIDENCE/master-plan/stage-16-to-19-enterprise-governance-report.md
+EVIDENCE/recovery-reports/v2-api-engine-closure/v2-api-engine-closure-report.md
+EVIDENCE/v2-naming-reconciliation-report.md
+EVIDENCE/v2-engine-implementation-closure/
 ```
 
 All other stages are read-only context until Stage 10 is complete.
@@ -508,24 +511,26 @@ It must not be marked production-ready.
 
 ## 11. V2 Implementation Lock
 
-V2 work is UNLOCKED. V1 Kernel Green has been proven.
+V2 work is CLOSED / GREEN. V1 Kernel Green has been proven. All V2 engine components are production-ready.
 
-V2 planning may continue for:
+V2 components completed:
 
 ```text
-API Contract Engine
-Integration Engine
-Reliability Engine
-Operations Engine
-Observability Engine
-Security / Identity / Tenancy Engine
-Delivery Engine
-Runtime Supervision Engine
-Memory Lifecycle Engine
-Developer Experience Engine
+API Engine:       ApiBlueprint, OpenAPI, GraphQL
+Integration:      ObjectStorage
+Resilience:       Timeout, Bulkhead, DeadLetter, Outbox, Lock, Lease, Backpressure, LoadShedding
+Observability:    Logging, Telemetry, Redaction, Tracing
+RuntimeSupervision: Supervisor, WorkerLifecycle, WorkerRestart, Health
+MessageBus:       Command, Query, Event, Transactional dispatch
+Delivery:         Build, Compile, SmokeChecks, Evidence, Rollback
+Realtime:         ConnectClient, DisconnectClient, BroadcastToChannel, SubscribeToChannel
+MemoryLifecycle:  AllocateMemory, ReleaseMemory, CheckMemoryHealth, RunGarbageCollection
+Tasks:            TaskRunner, TaskQueue, TaskScheduler, TaskRetry
+Filesystem:       ReadFile, WriteFile, DeleteFile, ListDirectory
+API/Surface:      REST, JSON:API, Webhooks, RPC
 ```
 
-V2 production implementation is UNLOCKED.
+Total V2 components: 72 complete (65 V1 + 7 V2)
 
 ---
 

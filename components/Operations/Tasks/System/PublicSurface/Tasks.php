@@ -44,9 +44,7 @@ final readonly class Tasks
     }
 
     /**
-     * @return array{success: true, attempts: int<1, max>, result: array{id: string, status: 'completed', result:
-     *                        mixed, error: string|null, duration: int|null}}|array{success: false, attempts: int<0,
-     *                        max>, error: string|null}
+     * @return array{success: bool, attempts: int, result: array<string, mixed>|null, error: string|null}
      */
     public static function retryTask(TaskRunner $runner, callable $task, TaskRetryPolicy $policy) : array
     {

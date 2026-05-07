@@ -1,0 +1,9 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Security\DataProtection\System\Foundation\Failure;
+
+use RuntimeException;
+
+final class DataProtectionException extends RuntimeException {}

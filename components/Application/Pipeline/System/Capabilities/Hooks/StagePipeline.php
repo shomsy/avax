@@ -23,6 +23,10 @@ final class StagePipeline
             if ($hook->name === $stage) {
                 $handler = $hook->handler;
                 $result  = $handler($result);
+
+                if ($result instanceof PipelineStage && $result->stopped) {
+                    return $result->data;
+                }
             }
         }
 

@@ -11,6 +11,7 @@ use Avax\Components\Application\Pipeline\System\PublicSurface\HookRegistry;
 use Avax\Components\Application\Pipeline\System\PublicSurface\Pipeline;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use RuntimeException;
 
 final class PipelineCapabilitiesTest extends TestCase
 {
@@ -74,6 +75,47 @@ final class PipelineCapabilitiesTest extends TestCase
 
         $this->assertTrue($stopped->stopped);
         $this->assertSame(['status' => 200], $stopped->data);
+    }
+
+    public function test_stage_pipeline_stops_execution_when_pipelinestage_is_stopped() : void
+    {
+        $pipeline = new StagePipeline();
+
+        $pipeline->register(new PipelineHook(
+                                name    : 'test',
+                                handler : static fn (string $value) : PipelineStage => new PipelineStage('test', true, $value . '-stopped'),
+                                priority: 100,
+                            ));
+        $pipeline->register(new PipelineHook(
+                                name    : 'test',
+                                handler : static fn (string $value) : string => $value . '-should-not-run',
+                                priority: 10,
+                            ));
+
+        $this->assertSame('start-stopped', $pipeline->execute('test', 'start'));
+    }
+
+    public function test_pipeline_executes_empty_hooks_safely() : void
+    {
+        $pipeline = new StagePipeline();
+        $this->assertSame('initial', $pipeline->execute('nonexistent', 'initial'));
+        $this->assertFalse($pipeline->hasHooks('nonexistent'));
+    }
+
+    public function test_pipeline_propagates_nested_exceptions() : void
+    {
+        $pipeline = new StagePipeline();
+        $pipeline->register(new PipelineHook(
+                                name   : 'test',
+                                handler: function () {
+                                    throw new RuntimeException('nested failure');
+                                }
+                            ));
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('nested failure');
+
+        $pipeline->execute('test', 'data');
     }
 
     protected function setUp() : void

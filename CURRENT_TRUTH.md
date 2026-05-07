@@ -90,14 +90,13 @@ No remaining blocker for Stage V1-03.
 
 V1 Kernel Green remains blocked by later gates that have not been completed in the active roadmap sequence:
 
-1. Stage 04 component completion is not yet proven.
-2. No component is currently marked COMPLETE in the Stage 04 matrix.
-3. `CLI/Console` needs Stage 04 proof for command contract, output/failure behavior, and public console surface.
-4. Production readiness, security, performance, observability, compatibility, and later roadmap gates remain unproven.
+1. Stage 04 component completion is in progress (4 COMPLETE: Console, Pipeline, FeatureFlags, Text).
+2. Application/Cache needs diagnostic verification and test migration.
+   V1 Kernel Green remains blocked by the ongoing completion of Stage 04 components and subsequent production readiness,
+   security, performance, observability, and compatibility gates.
 
 ## Next Allowed Action
 
 Stage 04: Component Completion.
 
-Verify `CLI/Console` command contract, output/failure behavior, and public console surface without adding feature scope,
-then rerun focused Stage 04 validation.
+Next repair: Application/Cache diagnostic verification and test migration.

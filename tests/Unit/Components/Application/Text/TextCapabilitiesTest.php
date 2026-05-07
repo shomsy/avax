@@ -167,4 +167,26 @@ final class TextCapabilitiesTest extends TestCase
         $result = Str::isUuid('not-a-uuid');
         $this->assertFalse($result);
     }
+
+    public function test_empty_string_handling() : void
+    {
+        $this->assertSame('', Str::camel(''));
+        $this->assertSame('', Str::snake(''));
+        $this->assertSame('', Str::studly(''));
+        $this->assertSame('', Str::headline(''));
+        $this->assertSame('', Str::limit('', 10));
+        $this->assertSame('', Str::excerpt('', 10));
+    }
+
+    public function test_utf8_multibyte_handling() : void
+    {
+        // Testing mb_strtoupper/mb_strtolower via Str::upper/Str::lower
+        $this->assertSame('ŠĐČĆŽ', Str::upper('šđčćž'));
+        $this->assertSame('šđčćž', Str::lower('ŠĐČĆŽ'));
+
+        // Testing mb_strlen via Str::limit
+        $multibyte = 'Привет мир'; // 10 characters
+        $this->assertSame('Привет...', Str::limit($multibyte, 6));
+        $this->assertSame(10, mb_strlen($multibyte, 'UTF-8'));
+    }
 }

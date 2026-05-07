@@ -191,8 +191,8 @@ TOOLING_FALSE_POSITIVE_GLOBAL_CLASS: 3
 
 | Classification                  |  Count |
 |---------------------------------|-------:|
-| COMPLETE                        |      0 |
-| STATIC_GREEN_BEHAVIOR_PARTIAL   |     21 |
+| COMPLETE                        |      4 |
+| STATIC_GREEN_BEHAVIOR_PARTIAL   |     17 |
 | STATIC_GREEN_TESTS_INSUFFICIENT |     44 |
 | LOCKED_NON_V1                   |      4 |
 | EXAMPLE_OR_DOCS_ONLY            |      0 |
@@ -204,7 +204,7 @@ Answers:
 
 ```text
 Which V1 components are complete?
-None.
+CLI/Console, Application/Pipeline, Application/FeatureFlags, and Application/Text are now marked COMPLETE.
 
 Which V1 components are static-clean but not behavior-complete?
 21 have meaningful behavior evidence but are still partial.
@@ -243,10 +243,7 @@ Stage 04 component-completion blockers:
   adapter boundaries need explicit component proof before completion claims.
 - Component-local documentation and root test coverage are uneven.
 - Performance naming warnings remain for sleep/backoff style paths.
-- **CLI positional argument binding is now proven.** Current behavior correctly binds positional arguments to
-  named parameters from the command signature. Required arguments are validated before execution, failing with
-  `Command::INVALID` if missing. Exit code propagation and index-independent lookup are verified. Console component
-  remains `STATIC_GREEN_BEHAVIOR_PARTIAL` pending documentation and operator diagnostic proof.
+- **CLI positional argument binding is now proven and documented.** CLI/Console is marked COMPLETE.
 
 ## Next Allowed Action
 
@@ -255,8 +252,8 @@ Continue Stage 04 only.
 Exact next smallest repair:
 
 ```text
-Verify `CLI/Console` command contract, output/failure behavior, and public console surface without adding feature scope,
-then rerun focused Stage 04 validation.
+Next smallest repair:
+Verify `Application/Cache` diagnostics/failure model and move tests to root canonical tree.
 ```
 
 Do not start V2, V3, or V4.

@@ -15,7 +15,7 @@ final class RegisterConfig
     public function build(): Config
     {
         return new Config(
-            repository: new ConfigurationRepository(),
+            configurationRepository: new ConfigurationRepository(),
         );
     }
 }

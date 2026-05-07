@@ -38,9 +38,12 @@ Stage 04 (Component Completion): COMPLETE
 Stage 08 (Static Analysis Green): COMPLETE
 Stage 09 (AvaX Kernel Green): COMPLETE
 Stage 10 (Production Readiness Baseline): COMPLETE
-Stage 11 (Golden Path App): ACTIVE
+Stage 11 (Golden Path App): COMPLETE
+Stage 12 (Public API and Compatibility Governance): COMPLETE
+Stage 13 (Extension and Plugin Architecture): COMPLETE
+Stage 14 (Benchmark and Performance Budget Suite): ACTIVE
 
-Stage 12-23: LOCKED
+Stage 15-23: LOCKED
 V2 implementation: UNLOCKED.
 V3 implementation: LOCKED.
 
@@ -93,6 +96,6 @@ V3 implementation: LOCKED.
 
 No remaining blocker for Stage V1-03.
 
-## Stage 11: Golden Path App.
+## Stage 14: Benchmark and Performance Budget Suite.
 
-Next repair: Security baseline audit and hardening (Stage 16).
+Next repair: Observability Contract (Stage 15).

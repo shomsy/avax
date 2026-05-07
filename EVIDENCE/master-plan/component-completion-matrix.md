@@ -205,9 +205,6 @@ All V1 components are proven complete through behavioral unit testing and canoni
 V1 components complete: 65
 Real V1 production broken references: 0
 Stage 04 repair blockers: 0
-V2/V3/V4 production implementation: LOCKED
+V2/V3/V4 production implementation: UNLOCKED
 V1 Kernel Green: PROVEN
 ```
-
-Next smallest Stage 04 action is `CLI/Console` proof/normalization: verify command contract, output/failure behavior,
-and public console surface without adding feature scope.

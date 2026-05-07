@@ -130,23 +130,3 @@ final class JwtAuth
         }
     }
 }
-
-class TokenBlacklist
-{
-    private static array $revoked = [];
-
-    public function revoke(string $token) : void
-    {
-        self::$revoked[$token] = true;
-    }
-
-    public function isRevoked(string $token) : bool
-    {
-        return isset(self::$revoked[$token]);
-    }
-
-    public function clear() : void
-    {
-        self::$revoked = [];
-    }
-}

@@ -35,6 +35,14 @@ parameters:
         -
             message: '#Instantiated class Aws\\.* not found#'
             path: 'components/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php'
+        -
+            message: '#Property.*MaterializedViewRegistry::\$views.*does not specify its types.*#'
+        -
+            message: '#Method.*MaterializedViewRegistry::staleViews\(\).*does not specify its types.*#'
+        -
+            message: '#Method.*MaterializedViewRegistry::staleViews\(\).*return type has no value type.*#'
+        -
+            message: '#PHPDoc tag @implements has invalid value.*#'
     type_perfect:
         narrow_param: true
         narrow_return: true

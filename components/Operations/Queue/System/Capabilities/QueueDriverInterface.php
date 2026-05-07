@@ -18,16 +18,3 @@ interface QueueDriverInterface
 
     public function bulk(array $jobs, string $queue = 'default'): void;
 }
-
-interface Job
-{
-    public function getId(): string;
-
-    public function getPayload(): array;
-
-    public function attempts(): int;
-
-    public function release(int $delay = 0): void;
-
-    public function delete(): void;
-}

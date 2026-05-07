@@ -28,7 +28,10 @@ final class EventBus
         }
     }
 
-    public function HandlersFor(string $eventClass): array
+    /**
+     * @return list<object>
+     */
+    public function handlersFor(string $eventClass) : array
     {
         return $this->handlers[$eventClass] ?? [];
     }

@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Client\System\Capabilities\Testing;
 
+use Avax\Components\HTTP\Client\System\Foundation\Failure\HttpRequestFailed;
 use Throwable;
 
-/**
- * FakeHttpClientBuilder - Fluent builder for FakeHttpClient.
- */
 final class FakeHttpClientBuilder
 {
     /**
@@ -22,9 +20,6 @@ final class FakeHttpClientBuilder
 
     private string $pendingUrl = '';
 
-    /**
-     * Set the base URL for the client.
-     */
     public function withBaseUrl(string $baseUrl) : self
     {
         $this->baseUrl = $baseUrl;
@@ -32,9 +27,6 @@ final class FakeHttpClientBuilder
         return $this;
     }
 
-    /**
-     * Start recording a response for a GET request.
-     */
     public function whenGet(string $url) : self
     {
         $this->pendingMethod = 'GET';
@@ -43,9 +35,6 @@ final class FakeHttpClientBuilder
         return $this;
     }
 
-    /**
-     * Start recording a response for a POST request.
-     */
     public function whenPost(string $url) : self
     {
         $this->pendingMethod = 'POST';
@@ -54,9 +43,6 @@ final class FakeHttpClientBuilder
         return $this;
     }
 
-    /**
-     * Start recording a response for a PUT request.
-     */
     public function whenPut(string $url) : self
     {
         $this->pendingMethod = 'PUT';
@@ -65,9 +51,6 @@ final class FakeHttpClientBuilder
         return $this;
     }
 
-    /**
-     * Start recording a response for a DELETE request.
-     */
     public function whenDelete(string $url) : self
     {
         $this->pendingMethod = 'DELETE';
@@ -76,9 +59,6 @@ final class FakeHttpClientBuilder
         return $this;
     }
 
-    /**
-     * Start recording a response for any method.
-     */
     public function whenAny(string $url) : self
     {
         $this->pendingMethod = '*';
@@ -87,12 +67,6 @@ final class FakeHttpClientBuilder
         return $this;
     }
 
-    /**
-     * Respond with a JSON response.
-     *
-     * @param mixed $data   Data to JSON encode
-     * @param int   $status HTTP status code
-     */
     public function respondWithJson(mixed $data = [], int $status = 200) : self
     {
         $key                   = sprintf('%s:%s', $this->pendingMethod, $this->pendingUrl);
@@ -101,9 +75,6 @@ final class FakeHttpClientBuilder
         return $this;
     }
 
-    /**
-     * Respond with a specific status code.
-     */
     public function respondWithStatus(int $status = 200, string $body = '') : self
     {
         $key                   = sprintf('%s:%s', $this->pendingMethod, $this->pendingUrl);
@@ -117,9 +88,6 @@ final class FakeHttpClientBuilder
         return $this;
     }
 
-    /**
-     * Respond with a custom recorded response.
-     */
     public function respondWith(RecordedHttpResponse $recordedHttpResponse) : self
     {
         $key                   = sprintf('%s:%s', $this->pendingMethod, $this->pendingUrl);
@@ -128,9 +96,6 @@ final class FakeHttpClientBuilder
         return $this;
     }
 
-    /**
-     * Respond with an exception.
-     */
     public function respondWithException(Throwable $throwable) : self
     {
         $key                   = sprintf('%s:%s', $this->pendingMethod, $this->pendingUrl);
@@ -140,8 +105,6 @@ final class FakeHttpClientBuilder
     }
 
     /**
-     * Add a raw response mapping.
-     *
      * @param array<string, RecordedHttpResponse> $responses
      */
     public function withResponses(array $responses) : self
@@ -153,9 +116,6 @@ final class FakeHttpClientBuilder
         return $this;
     }
 
-    /**
-     * Build the FakeHttpClient instance.
-     */
     public function build() : FakeHttpClient
     {
         return new FakeHttpClient(

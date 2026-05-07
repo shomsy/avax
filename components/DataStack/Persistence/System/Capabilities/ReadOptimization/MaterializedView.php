@@ -8,15 +8,28 @@ use Closure;
 use RuntimeException;
 use Throwable;
 
+/**
+ * @template T of array
+ */
 final class MaterializedView implements MaterializedViewInterface
 {
+    /**
+     * @var T|null Cached data
+     */
     private ?array $data = null;
 
     private ?float $lastRefreshedAt = null;
 
     private int $rowCount = 0;
 
+    /**
+     * @param Closure() : T $query              Closure that produces the view data
+     * @param float         $stalenessThreshold Seconds before view is considered stale
+     */
     public function __construct(
+        /**
+         * @var string Unique view name
+         */
         private readonly string $name,
         private readonly Closure $query,
         private readonly float $stalenessThreshold = 3600.0
@@ -36,15 +49,15 @@ final class MaterializedView implements MaterializedViewInterface
             $data = ($this->query)();
             $this->data = $data;
             $this->lastRefreshedAt = microtime(true);
-            $this->rowCount = is_array($data) ? count($data) : 0;
+            $this->rowCount = count($data);
 
             $durationMs = (microtime(true) - $startTime) * 1000;
 
             return new MaterializedViewStats(
-                viewName: $this->name,
+                viewName    : $this->name,
                 rowsAffected: $this->rowCount,
-                durationMs: $durationMs,
-                refreshedAt: $this->lastRefreshedAt,
+                durationMs  : $durationMs,
+                refreshedAt : $this->lastRefreshedAt,
             );
         } catch (Throwable $throwable) {
             return MaterializedViewStats::failure($this->name, $throwable->getMessage());
@@ -74,13 +87,52 @@ final class MaterializedView implements MaterializedViewInterface
         return $this->lastRefreshedAt ?? 0.0;
     }
 
-    public function isStale(): bool
+    public function stalenessThreshold() : float
     {
-        if ($this->lastRefreshedAt === null) {
-            return true;
+        return $this->stalenessThreshold;
+    }
+
+    public function rowCount() : int
+    {
+        return $this->rowCount;
+    }
+
+    public function hasData() : bool
+    {
+        return $this->data !== null;
+    }
+
+    public function clear() : void
+    {
+        $this->data            = null;
+        $this->lastRefreshedAt = null;
+        $this->rowCount        = 0;
+    }
+
+    /**
+     * @return T|null
+     */
+    public function data() : ?array
+    {
+        return $this->data;
+    }
+
+    public function summary() : string
+    {
+        if ($this->data === null) {
+            return sprintf("View '%s': not refreshed", $this->name);
         }
 
-        return (microtime(true) - $this->lastRefreshedAt) > $this->stalenessThreshold;
+        $age       = $this->age();
+        $staleness = $this->isStale() ? 'STALE' : 'FRESH';
+
+        return sprintf(
+            "View '%s': %d rows, age: %.1fs [%s]",
+            $this->name,
+            $this->rowCount,
+            $age,
+            $staleness,
+        );
     }
 
     public function age(): float
@@ -92,8 +144,12 @@ final class MaterializedView implements MaterializedViewInterface
         return microtime(true) - $this->lastRefreshedAt;
     }
 
-    public function stalenessThreshold(): float
+    public function isStale() : bool
     {
-        return $this->stalenessThreshold;
+        if ($this->lastRefreshedAt === null) {
+            return true;
+        }
+
+        return (microtime(true) - $this->lastRefreshedAt) >= $this->stalenessThreshold;
     }
 }

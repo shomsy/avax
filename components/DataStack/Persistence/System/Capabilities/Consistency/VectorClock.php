@@ -22,25 +22,16 @@ final class VectorClock implements Stringable
     ) {
     }
 
-    /**
-     * Creates an empty vector clock.
-     */
     public static function empty(): self
     {
         return new self();
     }
 
-    /**
-     * Creates a vector clock with a single node initialized to 1.
-     */
     public static function initial(string $nodeId): self
     {
         return new self([$nodeId => 1]);
     }
 
-    /**
-     * Increments the clock for the given node.
-     */
     public function increment(string $nodeId): self
     {
         $newClock = $this->clock;
@@ -49,9 +40,6 @@ final class VectorClock implements Stringable
         return new self($newClock);
     }
 
-    /**
-     * Merges this clock with another, taking the maximum of each component.
-     */
     public function merge(self $other): self
     {
         $merged = $this->clock;
@@ -63,20 +51,11 @@ final class VectorClock implements Stringable
         return new self($merged);
     }
 
-    /**
-     * Checks if this clock happened-after another clock.
-     */
     public function happenedAfter(self $other): bool
     {
         return $other->happenedBefore($this);
     }
 
-    /**
-     * Checks if this clock happened-before another clock.
-     *
-     * A < B if all components of A are <= corresponding components of B,
-     * and at least one component is strictly less.
-     */
     public function happenedBefore(self $other): bool
     {
         $allNodes = array_unique(array_merge(
@@ -105,11 +84,6 @@ final class VectorClock implements Stringable
         return $allLessOrEqual && $atLeastOneLess;
     }
 
-    /**
-     * Checks if two clocks are concurrent (neither happened-before the other).
-     *
-     * Concurrent clocks indicate a conflict that needs resolution.
-     */
     public function isConcurrent(self $other): bool
     {
         return ! $this->happenedBefore($other)
@@ -117,17 +91,12 @@ final class VectorClock implements Stringable
             && $this->clock !== $other->clock;
     }
 
-    /**
-     * Checks if two clocks are equal.
-     */
     public function equals(self $other): bool
     {
         return $this->clock === $other->clock;
     }
 
     /**
-     * Returns the raw clock array.
-     *
      * @return array<string, int>
      */
     public function toArray(): array
@@ -135,9 +104,6 @@ final class VectorClock implements Stringable
         return $this->clock;
     }
 
-    /**
-     * Returns a string representation.
-     */
     public function __toString(): string
     {
         $parts = [];

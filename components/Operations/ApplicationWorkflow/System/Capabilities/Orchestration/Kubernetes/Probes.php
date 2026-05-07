@@ -61,38 +61,3 @@ final readonly class Probes
         echo "Closing cache connections\n";
     }
 }
-
-final class ReadinessProbe
-{
-    private static bool $ready = false;
-
-    public static function markReady() : void
-    {
-        self::$ready = true;
-    }
-
-    public static function markNotReady() : void
-    {
-        self::$ready = false;
-    }
-
-    public static function isReady() : bool
-    {
-        return self::$ready;
-    }
-}
-
-final class LivenessProbe
-{
-    private static bool $alive = true;
-
-    public static function isAlive() : bool
-    {
-        return self::$alive;
-    }
-
-    public static function markDead() : void
-    {
-        self::$alive = false;
-    }
-}

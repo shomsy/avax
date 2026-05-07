@@ -59,11 +59,3 @@ final class ContractVerifier
         );
     }
 }
-
-final class BreakingChangeDetector
-{
-    public function detect() : BreakingChangesReport
-    {
-        return new BreakingChangesReport([]);
-    }
-}

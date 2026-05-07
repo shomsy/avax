@@ -8,6 +8,9 @@ use RuntimeException;
 
 final class MaterializedViewRegistry
 {
+    /**
+     * @var array<string, MaterializedView>
+     */
     private array $views = [];
 
     public function register(MaterializedView $materializedView): void
@@ -15,9 +18,13 @@ final class MaterializedViewRegistry
         $this->views[$materializedView->name()] = $materializedView;
     }
 
+    /**
+     * @return array<string, MaterializedViewStats>
+     */
     public function refreshAll(): array
     {
         $results = [];
+
         foreach ($this->views as $name => $view) {
             $results[$name] = $view->refresh();
         }
@@ -30,13 +37,35 @@ final class MaterializedViewRegistry
         return $this->get($name)->refresh();
     }
 
+    /**
+     * @throws RuntimeException If the view is not found
+     */
     public function get(string $name): MaterializedView
     {
         if (! isset($this->views[$name])) {
-            throw new RuntimeException(sprintf("Materialized view '%s' not found", $name));
+            throw new RuntimeException(sprintf("Materialized view '%s' is not registered", $name));
         }
 
         return $this->views[$name];
+    }
+
+    /**
+     * @return list<MaterializedView>
+     */
+    public function staleViews() : array
+    {
+        return array_values(array_filter(
+                                $this->views,
+                                static fn (MaterializedView $materializedView) : bool => $materializedView->isStale(),
+                            ));
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function viewNames() : array
+    {
+        return array_keys($this->views);
     }
 
     public function has(string $name): bool
@@ -44,8 +73,18 @@ final class MaterializedViewRegistry
         return isset($this->views[$name]);
     }
 
-    public function list(): array
+    public function remove(string $name) : void
     {
-        return array_keys($this->views);
+        unset($this->views[$name]);
+    }
+
+    public function count() : int
+    {
+        return count($this->views);
+    }
+
+    public function clear() : void
+    {
+        $this->views = [];
     }
 }

@@ -10,9 +10,6 @@ use RuntimeException;
 
 final class HasMany extends Relation
 {
-    /**
-     * @param  (Closure(string, string, string, string): array)|null  $loader
-     */
     public function __construct(
         string $parent,
         string $related,
@@ -27,7 +24,7 @@ final class HasMany extends Relation
     public function getResults(): array
     {
         if (! $this->loader instanceof Closure) {
-            throw new RuntimeException(message: 'HasMany relation requires a loader before results can be read.');
+            throw new RuntimeException('HasMany relation requires a loader before results can be read.');
         }
 
         return ($this->loader)(

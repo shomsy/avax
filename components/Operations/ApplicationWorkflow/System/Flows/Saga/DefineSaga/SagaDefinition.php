@@ -10,23 +10,6 @@ use InvalidArgumentException;
 use IteratorAggregate;
 use Traversable;
 
-enum SagaStatus: string
-{
-    case DRAFT      = 'draft';
-    case DEFINED    = 'defined';
-    case VALID      = 'valid';
-    case INVALID    = 'invalid';
-    case REGISTERED = 'registered';
-}
-
-enum SagaStartCondition: string
-{
-    case MANUAL   = 'manual';
-    case EVENT    = 'event';
-    case SCHEDULE = 'schedule';
-    case COMMAND  = 'command';
-}
-
 final readonly class SagaDefinition implements IteratorAggregate
 {
     public array $steps;

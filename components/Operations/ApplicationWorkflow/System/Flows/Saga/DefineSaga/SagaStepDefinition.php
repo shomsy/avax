@@ -6,22 +6,6 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Defin
 
 use InvalidArgumentException;
 
-enum SagaStepKind: string
-{
-    case ACTION       = 'action';
-    case COMPENSATION = 'compensation';
-    case APPROVAL     = 'approval';
-    case NOTIFICATION = 'notification';
-}
-
-enum SagaStepRetryPolicy: string
-{
-    case NONE        = 'none';
-    case IMMEDIATE   = 'immediate';
-    case EXPONENTIAL = 'exponential';
-    case LINEAR      = 'linear';
-}
-
 final readonly class SagaStepDefinition
 {
     public array $input;

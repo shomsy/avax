@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit\Components\DataStack\Data;
 
 use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\Required;
-use Avax\Components\DataStack\Data\System\Capabilities\Collections\Collection;
+use Avax\Components\DataStack\Data\System\Capabilities\Collection\Collection;
 use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabilities\Attributes\Optional;
 use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\DataTransfer;
 use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\DataTransferFailure;

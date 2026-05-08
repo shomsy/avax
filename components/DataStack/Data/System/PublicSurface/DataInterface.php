@@ -6,7 +6,7 @@ namespace Avax\Components\DataStack\Data\System\PublicSurface;
 
 use Avax\Components\DataStack\Data\System\Capabilities\Arrays\ArrayReader;
 use Avax\Components\DataStack\Data\System\Capabilities\Arrays\ArrayWriter;
-use Avax\Components\DataStack\Data\System\Capabilities\Collections\Collection;
+use Avax\Components\DataStack\Data\System\Capabilities\Collection\Collection;
 
 /**
  * Data PublicSurface contract.

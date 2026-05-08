@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Config\System\Capabilities\Configuration;
 
 use Avax\Components\Application\Config\Configurator\FileLoader\ConfigLoaderInterface;
-use Avax\Components\DataStack\Data\System\Capabilities\Collections\Collection;
+use Avax\Components\DataStack\Data\System\Capabilities\Collection\Collection;
 use Override;
 use RuntimeException;
 use WeakMap;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\Flows\Aggregate;
 
-use Avax\Components\DataStack\Data\System\Capabilities\Collections\Collection;
+use Avax\Components\DataStack\Data\System\Capabilities\Collection\Collection;
 
 final class MaxValue
 {

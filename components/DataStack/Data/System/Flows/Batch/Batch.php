@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Data\System\Flows\Batch;
 
 use ArrayIterator;
-use Avax\Components\DataStack\Data\System\Capabilities\Collections\Internal\Iteration\NormalizedIterable;
+use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\NormalizedIterable;
 use Avax\Components\DataStack\Data\System\Foundation\Exceptions\InvalidFlowException;
 use Countable;
 use IteratorAggregate;

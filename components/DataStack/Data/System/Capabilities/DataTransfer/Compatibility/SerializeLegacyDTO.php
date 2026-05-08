@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Compatibility;
 
-use Avax\Components\DataStack\Data\System\Capabilities\Collections\Collection;
+use Avax\Components\DataStack\Data\System\Capabilities\Collection\Collection;
 use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Configuration\DataTransferConfig;
 use Avax\Components\DataStack\Data\System\Flows\SerializeDataObject\SerializeDataObject;
 use stdClass;
@@ -37,7 +37,7 @@ final readonly class SerializeLegacyDTO
 
     public function toCollection(object $object): Collection
     {
-        // Global collect() helper should return Avax\Components\DataStack\Data\System\Capabilities\Collections\Collection
+        // Global collect() helper should return Avax\Components\DataStack\Data\System\Capabilities\Collection\Collection
         return collect(items: $this->toArray(object: $object));
     }
 

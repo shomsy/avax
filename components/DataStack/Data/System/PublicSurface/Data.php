@@ -6,7 +6,7 @@ namespace Avax\Components\DataStack\Data\System\PublicSurface;
 
 use Avax\Components\DataStack\Data\System\Capabilities\Arrays\ArrayReader;
 use Avax\Components\DataStack\Data\System\Capabilities\Arrays\ArrayWriter;
-use Avax\Components\DataStack\Data\System\Capabilities\Collections\Collection;
+use Avax\Components\DataStack\Data\System\Capabilities\Collection\Collection;
 use Avax\Components\DataStack\Data\System\Flows\Aggregate\AverageValues;
 use Avax\Components\DataStack\Data\System\Flows\Aggregate\SumValues;
 use Avax\Components\DataStack\Data\System\Flows\Read\ReadNestedValue;
@@ -63,6 +63,6 @@ final readonly class Data implements DataInterface
     #[Override]
     public function collect(array $items = []): Collection
     {
-        return Collection::from(items: $items);
+        return Collection::make(items: $items);
     }
 }

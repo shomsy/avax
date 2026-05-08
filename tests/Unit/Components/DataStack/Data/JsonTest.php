@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\DataStack\Data;
 
-use Avax\Components\DataStack\Data\System\Capabilities\Collections\Exceptions\InvalidJson;
-use Avax\Components\DataStack\Data\System\Capabilities\Collections\Exceptions\MutationException;
-use Avax\Components\DataStack\Data\System\Capabilities\Collections\Json;
+use Avax\Components\DataStack\Data\System\Foundation\Failure\InvalidJson;
+use Avax\Components\DataStack\Data\System\Foundation\Failure\MutationException;
+use Avax\Components\DataStack\Data\System\Capabilities\Json\Json;
 use PHPUnit\Framework\TestCase;
 
 final class JsonTest extends TestCase

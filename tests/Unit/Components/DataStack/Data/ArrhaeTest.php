@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit\Components\DataStack\Data;
 
 use ArrayIterator;
-use Avax\Components\DataStack\Data\System\Capabilities\Collections\Arrhae;
-use Avax\Components\DataStack\Data\System\Capabilities\Collections\Exceptions\MutationException;
+use Avax\Components\DataStack\Data\System\Capabilities\Arrhae\Arrhae;
+use Avax\Components\DataStack\Data\System\Foundation\Failure\MutationException;
 use PHPUnit\Framework\TestCase;
 
 final class ArrhaeTest extends TestCase

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\Flows\Transform;
 
-use Avax\Components\DataStack\Data\System\Capabilities\Collections\Collection;
+use Avax\Components\DataStack\Data\System\Capabilities\Collection\Collection;
 
 final class SortItems
 {
@@ -17,6 +17,6 @@ final class SortItems
             $descending ? rsort($items) : sort($items);
         }
 
-        return Collection::from($items);
+        return Collection::make($items);
     }
 }

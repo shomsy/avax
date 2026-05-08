@@ -4,14 +4,23 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Dispatcher\System\Capabilities\ArgumentResolution;
 
+use Avax\Components\HTTP\SecureRequest\System\Capabilities\ResolveSecureRequest\SecureRequestInputBuilder;
+use Avax\Components\HTTP\SecureRequest\System\PublicSurface\SecureRequest;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
 use RuntimeException;
 
 /**
  * ArgumentResolver - Resolves arguments for a controller method using reflection, DI, and Request parameters.
+ *
+ * SecureRequest handling:
+ * - Detects SecureRequest subclasses via is_a() check
+ * - Builds input from HTTP request (body, query, route params)
+ * - Hydrates and validates through DataTransfer via SecureRequest lifecycle
+ * - Throws SecureRequestValidationFailed / SecureRequestAuthorizationFailed on failure
  */
 final readonly class ArgumentResolver
 {
@@ -27,7 +36,7 @@ final readonly class ArgumentResolver
             $paramName = $reflectionParameter->getName();
             $paramType = $reflectionParameter->getType();
 
-            // 1. Resolve typed objects (ServerRequestInterface, DTOs, Services)
+            // 1. Resolve typed objects (ServerRequestInterface, SecureRequest, DTOs, Services)
             if ($paramType instanceof ReflectionNamedType && ! $paramType->isBuiltin()) {
                 $typeName = $paramType->getName();
 
@@ -37,10 +46,14 @@ final readonly class ArgumentResolver
                     continue;
                 }
 
-                // If it's a DTO (FormRequest), we should have a DTO factory.
-                // Assuming DTOs can be resolved from container or instantiated here.
-                // Since RequestDtoFactory is currently unresolved in the new architecture,
-                // we'll rely on the DI container for complex resolution.
+                // SecureRequest resolution via Container + DataTransfer lifecycle
+                if (is_a($typeName, SecureRequest::class, true)) {
+                    $instance    = $this->resolveSecureRequest($typeName, $serverRequest);
+                    $arguments[] = $instance;
+
+                    continue;
+                }
+
                 if ($this->container->has($typeName)) {
                     $arguments[] = $this->container->get($typeName);
 
@@ -74,5 +87,21 @@ final readonly class ArgumentResolver
         }
 
         return $arguments;
+    }
+
+    /**
+     * @param class-string<SecureRequest> $typeName
+     */
+    private function resolveSecureRequest(string $typeName, ServerRequestInterface $serverRequest) : SecureRequest
+    {
+        $inputBuilder = new SecureRequestInputBuilder();
+        $input        = $inputBuilder->buildInput(request: $serverRequest);
+
+        $reflectionClass = new ReflectionClass($typeName);
+        $instance        = $reflectionClass->newInstance();
+
+        $instance->runLifecycle(input: $input);
+
+        return $instance;
     }
 }

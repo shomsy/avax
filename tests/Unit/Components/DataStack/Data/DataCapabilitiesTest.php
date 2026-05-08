@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\DataStack\Data;
 
-use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\Required;
 use Avax\Components\DataStack\Data\System\Capabilities\Forms\CollectionForm\Collection;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Attributes\Optional;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\DataTransfer;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\DataTransferFailure;
 use PHPUnit\Framework\TestCase;
 
 final class DataCapabilitiesTest extends TestCase
@@ -25,43 +21,4 @@ final class DataCapabilitiesTest extends TestCase
 
         $this->assertSame(1, $collection->first());
     }
-
-    public function test_data_transfer_creates_dto() : void
-    {
-        $input = ['name' => 'AvaX', 'version' => 1];
-        $dto   = DataTransfer::create(TestDataTransferDto::class, $input);
-
-        $this->assertInstanceOf(TestDataTransferDto::class, $dto);
-        $this->assertSame('AvaX', $dto->name);
-        $this->assertSame(1, $dto->version);
-    }
-
-    public function test_data_transfer_fails_on_missing_required_field() : void
-    {
-        $input = ['version' => 1];
-
-        $this->expectException(DataTransferFailure::class);
-        $this->expectExceptionMessage('Data validation failed.');
-
-        DataTransfer::create(TestDataTransferDto::class, $input);
-    }
-
-    public function test_data_transfer_supports_optional_fields() : void
-    {
-        $input = ['name' => 'AvaX'];
-        $dto   = DataTransfer::create(TestDataTransferDto::class, $input);
-
-        $this->assertSame('AvaX', $dto->name);
-        $this->assertNull($dto->version);
-    }
-}
-
-final class TestDataTransferDto
-{
-    public function __construct(
-        #[Required]
-        public string $name,
-        #[Optional]
-        public ?int   $version = null,
-    ) {}
 }

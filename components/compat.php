@@ -5,9 +5,6 @@ declare(strict_types=1);
 use Avax\Components\Application\Config\System\PublicSurface\Config;
 use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\ValueConversion\ValueCasterInterface;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\ValueConversion\ValueConversionContext;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\AbstractDTO;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\ConnectionPool;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Design\Column\DSL\ColumnDefinition;
@@ -23,6 +20,9 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBu
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Exceptions\QueryException;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\MySQLGrammar;
 use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Exceptions\TransactionException;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\LegacyTransfer\AbstractDTO;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\ValueConversion\ValueCasterInterface;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\ValueConversion\ValueConversionContext;
 use Avax\Components\HTTP\Context\System\PublicSurface\HttpContext;
 use Avax\Components\HTTP\Router\System\PublicSurface\Router;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
@@ -34,14 +34,14 @@ use Avax\Components\HTTP\System\Flows\Routing\ResolveRouteFromHttpRequest;
 use Avax\Components\Presentation\View\System\PublicSurface\View;
 
 $classAliases = [
-    'Avax\\DataHandling\\DataTransfer\\DataTransfer' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Coercion\\DtoSystem\\DataTransfer',
-    'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\CastWith' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Coercion\\DtoSystem\\Attributes\\CastWith',
-    'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\Hidden' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Coercion\\DtoSystem\\Attributes\\Hidden',
-    'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\ListOf' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Coercion\\DtoSystem\\Attributes\\ListOf',
-    'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\MapFrom' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Coercion\\DtoSystem\\Attributes\\MapFrom',
+    'Avax\\DataHandling\\DataTransfer\\DataTransfer'                                       => 'Avax\\Components\\DataStack\\DataTransfer\\System\\PublicSurface\\DataTransfer',
+    'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\CastWith'                 => 'Avax\\Components\\DataStack\\DataTransfer\\System\\Capabilities\\AttributeReading\\CastWith',
+    'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\Hidden'                   => 'Avax\\Components\\DataStack\\DataTransfer\\System\\Capabilities\\AttributeReading\\Hidden',
+    'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\ListOf'                   => 'Avax\\Components\\DataStack\\DataTransfer\\System\\Capabilities\\AttributeReading\\ListOf',
+    'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\MapFrom'                  => 'Avax\\Components\\DataStack\\DataTransfer\\System\\Capabilities\\AttributeReading\\MapFrom',
     ValueCasterInterface::class => ValueCasterInterface::class,
     ValueConversionContext::class => ValueConversionContext::class,
-    'Avax\\DataHandling\\DataTransfer\\InspectDataShape\\DataField' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Shapes\\ClassShape\\DataField',
+    'Avax\\DataHandling\\DataTransfer\\InspectDataShape\\DataField'                        => 'Avax\\Components\\DataStack\\DataTransfer\\System\\Capabilities\\DataShapeInspection\\DataField',
     AbstractDTO::class => AbstractDTO::class,
     'Avax\\DataFoundation\\ObjectHandling\\DTO\\AbstractDTO' => AbstractDTO::class,
     'Avax\\DataFoundation\\Collection' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Forms\\CollectionForm\\Collection',
@@ -72,23 +72,23 @@ $classAliases = [
     'Avax\\DataFoundation\\Composites\\Record\\RecordField' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Structures\\Functional\\RecordField',
 
     // DataShape ecosystem
-    'Avax\\DataFoundation\\DataTransfer\\InspectDataShape\\InspectDataShape' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Shapes\\ClassShape\\InspectDataShape',
-    'Avax\\DataFoundation\\DataTransfer\\InspectDataShape\\DataField' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Shapes\\ClassShape\\DataField',
-    'Avax\\DataFoundation\\DataTransfer\\InspectDataShape\\DataFieldType' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Shapes\\ClassShape\\DataFieldType',
+    'Avax\\DataFoundation\\DataTransfer\\InspectDataShape\\InspectDataShape'               => 'Avax\\Components\\DataStack\\DataTransfer\\System\\Capabilities\\DataShapeInspection\\InspectDataShape',
+    'Avax\\DataFoundation\\DataTransfer\\InspectDataShape\\DataField'                      => 'Avax\\Components\\DataStack\\DataTransfer\\System\\Capabilities\\DataShapeInspection\\DataField',
+    'Avax\\DataFoundation\\DataTransfer\\InspectDataShape\\DataFieldType'                  => 'Avax\\Components\\DataStack\\DataTransfer\\System\\Capabilities\\DataShapeInspection\\DataFieldType',
 
     // ObjectReading ecosystem
-    'Avax\\DataFoundation\\DataTransfer\\ObjectReading\\ReadDataObject' => 'Avax\\Components\\DataStack\\Data\\System\\Flows\\ReadDataObject\\ReadDataObject',
-    'Avax\\DataFoundation\\DataTransfer\\ObjectReading\\NormalizeDataObjectValue' => 'Avax\\Components\\DataStack\\Data\\System\\Flows\\ReadDataObject\\NormalizeDataObjectValue',
+    'Avax\\DataFoundation\\DataTransfer\\ObjectReading\\ReadDataObject'                    => 'Avax\\Components\\DataStack\\DataTransfer\\System\\Flows\\ReadDataObject\\ReadDataObject',
+    'Avax\\DataFoundation\\DataTransfer\\ObjectReading\\NormalizeDataObjectValue'          => 'Avax\\Components\\DataStack\\DataTransfer\\System\\Flows\\ReadDataObject\\NormalizeDataObjectValue',
 
     // Serialization flow ecosystem
-    'Avax\\DataFoundation\\DataTransfer\\SerializeDataObject\\SerializeDataObject' => 'Avax\\Components\\DataStack\\Data\\System\\Flows\\SerializeDataObject\\SerializeDataObject',
-    'Avax\\DataFoundation\\DataTransfer\\SerializeDataObject\\ConvertDataObjectToArray' => 'Avax\\Components\\DataStack\\Data\\System\\Flows\\SerializeDataObject\\ConvertDataObjectToArray',
-    'Avax\\DataFoundation\\DataTransfer\\SerializeDataObject\\ConvertDataObjectToJson' => 'Avax\\Components\\DataStack\\Data\\System\\Flows\\SerializeDataObject\\ConvertDataObjectToJson',
-    'Avax\\DataFoundation\\DataTransfer\\SerializeDataObject\\ConvertDataObjectToStdClass' => 'Avax\\Components\\DataStack\\Data\\System\\Flows\\SerializeDataObject\\ConvertDataObjectToStdClass',
-    'Avax\\DataFoundation\\DataTransfer\\SerializeDataObject\\ConvertDataObjectToJsonApi' => 'Avax\\Components\\DataStack\\Data\\System\\Flows\\SerializeDataObject\\ConvertDataObjectToJsonApi',
+    'Avax\\DataFoundation\\DataTransfer\\SerializeDataObject\\SerializeDataObject'         => 'Avax\\Components\\DataStack\\DataTransfer\\System\\Flows\\SerializeDataObject\\SerializeDataObject',
+    'Avax\\DataFoundation\\DataTransfer\\SerializeDataObject\\ConvertDataObjectToArray'    => 'Avax\\Components\\DataStack\\DataTransfer\\System\\Flows\\SerializeDataObject\\ConvertDataObjectToArray',
+    'Avax\\DataFoundation\\DataTransfer\\SerializeDataObject\\ConvertDataObjectToJson'     => 'Avax\\Components\\DataStack\\DataTransfer\\System\\Flows\\SerializeDataObject\\ConvertDataObjectToJson',
+    'Avax\\DataFoundation\\DataTransfer\\SerializeDataObject\\ConvertDataObjectToStdClass' => 'Avax\\Components\\DataStack\\DataTransfer\\System\\Flows\\SerializeDataObject\\ConvertDataObjectToStdClass',
+    'Avax\\DataFoundation\\DataTransfer\\SerializeDataObject\\ConvertDataObjectToJsonApi'  => 'Avax\\Components\\DataStack\\DataTransfer\\System\\Flows\\SerializeDataObject\\ConvertDataObjectToJsonApi',
 
     'Avax\\Text\\Text' => 'Avax\\Components\\Application\\Text\\System\\PublicSurface\\Text',
-    'Avax\\DataHandling\\ObjectHandling\\DTO\\DTOValidationException' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Coercion\\DtoSystem\\DataTransferException',
+    'Avax\\DataHandling\\ObjectHandling\\DTO\\DTOValidationException'                      => 'Avax\\Components\\DataStack\\DataTransfer\\System\\Capabilities\\TransferValidation\\DataTransferException',
 
     // Router compat aliases - only core interfaces exist at new location
     // Other Router aliases removed: old component structure was replaced by HTTP/Router suite

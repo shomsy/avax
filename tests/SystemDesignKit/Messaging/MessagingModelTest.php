@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Tests\SystemDesignKit\Messaging;
 
-use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\BrokerModel\BrokerModel;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Acknowledgement\AcknowledgementPolicy;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Broker\Broker;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Consumers\Consumer;
-use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Core\Message;
-use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Core\MessageType;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Cqrs\CommandSide;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Cqrs\QuerySide;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\DeadLetters\DeadLetterQueue;
@@ -15,17 +14,18 @@ use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Envelope\MessageEnve
 use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Inbox\Inbox;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\MessagingModel;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Outbox\Outbox;
-use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Policies\AcknowledgementPolicy;
-use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Policies\RetryPolicy;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Retry\RetryPolicy;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Types\Message;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Types\MessageType;
 use Avax\Labs\SystemDesignKit\System\Flows\DetectMessagingRisk\DetectMessagingRisk;
 use Avax\Labs\SystemDesignKit\System\Flows\ValidateMessagingModel\ValidateMessagingModel;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
- * V3-04: Messaging and CQRS Engine tests.
+ * V3-04: Messaging and CQRS model tests.
  */
-final class MessagingEngineTest extends TestCase
+final class MessagingModelTest extends TestCase
 {
     // -- MessageType --
 
@@ -232,12 +232,12 @@ final class MessagingEngineTest extends TestCase
         self::assertSame('low', AcknowledgementPolicy::Manual->lossRisk());
     }
 
-    // -- BrokerModel --
+    // -- Broker --
 
     #[Test]
     public function validBroker() : void
     {
-        $broker = new BrokerModel('kafka', 12, 3, 'at_least_once');
+        $broker = new Broker('kafka', 12, 3, 'at_least_once');
 
         self::assertTrue($broker->validate()['valid']);
     }
@@ -245,7 +245,7 @@ final class MessagingEngineTest extends TestCase
     #[Test]
     public function brokerRejectsInvalidSemantics() : void
     {
-        $broker = new BrokerModel('kafka', 12, 3, 'invalid');
+        $broker = new Broker('kafka', 12, 3, 'invalid');
 
         self::assertFalse($broker->validate()['valid']);
     }
@@ -330,6 +330,8 @@ final class MessagingEngineTest extends TestCase
         $model = MessagingModel::fromConfig($config);
 
         self::assertTrue($model->usesCqrs());
+        self::assertNotNull($model->commandSide);
+        self::assertNotNull($model->querySide);
         self::assertSame('Order', $model->commandSide->aggregate);
         self::assertSame('Order', $model->querySide->aggregate);
     }

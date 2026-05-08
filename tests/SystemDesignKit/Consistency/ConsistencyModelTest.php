@@ -11,8 +11,8 @@ use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Delivery\DeliveryG
 use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Delivery\DeliverySemantics;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Lag\ProjectionLag;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Lag\ReplicationLag;
-use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Models\ConsistencyModel as ConsistencyModelEnum;
-use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Models\ConsistencyProfile;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Profiles\ConsistencyModel as ConsistencyModelEnum;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Profiles\ConsistencyProfile;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Staleness\StalenessBudget;
 use Avax\Labs\SystemDesignKit\System\Flows\DetectConsistencyRisk\DetectConsistencyRisk;
 use Avax\Labs\SystemDesignKit\System\Flows\EstimateProjectionLag\EstimateProjectionLag;
@@ -24,9 +24,9 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
- * V3-03: Consistency Engine tests.
+ * V3-03: Consistency model tests.
  */
-final class ConsistencyEngineTest extends TestCase
+final class ConsistencyModelTest extends TestCase
 {
     // -- ConsistencyModel enum --
 

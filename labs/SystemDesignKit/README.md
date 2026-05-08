@@ -4,7 +4,7 @@ V3 Executable System Design Framework
 
 ## Status
 
-**Experimental** — V3-01 schema validation complete.
+**Experimental** — V3-02 Capacity, V3-03 Consistency, V3-04 Messaging & CQRS complete.
 **V2 Platform Baseline:** GREEN (all 72 components complete).
 **Promotion:** Not yet promoted to `components/SystemDesign/`.
 
@@ -14,13 +14,6 @@ Model, validate, simulate, test, and explain large application architectures.
 
 V3 does not just build applications.
 V3 tests whether the architecture makes sense.
-
-## V3-00 Foundation
-
-- `System/PublicSurface/SystemDesignKit.php` — experimental public surface
-- `System/Capabilities/Capacity/CapacityModel.php` — capacity model (traffic, storage, cache, queue, latency,
-  availability)
-- `Capacity/CapacityYamlParser.php` — capacity.yaml parser spike
 
 ## V3-01 Schema Validation
 
@@ -47,20 +40,101 @@ V3 tests whether the architecture makes sense.
 - `System/Foundation/Failure/SchemaParseException.php` — YAML parse failure
 - `System/Foundation/Failure/SchemaValidationException.php` — Schema validation failure
 
-### Examples
+## V3-02 Capacity Engine
 
-Valid:
+### Aggregate Root
 
-- `examples/valid-capacity.yaml`
-- `examples/valid-scenarios.yaml`
-- `examples/valid-architecture-tests.yaml`
+- `System/Capabilities/Capacity/CapacityModel.php` — capacity model (traffic, storage, cache, queue, latency,
+  availability)
 
-Invalid (for testing):
+### Value Objects
 
-- `examples/invalid-capacity-bad-values.yaml`
-- `examples/invalid-capacity-missing-sections.yaml`
-- `examples/invalid-scenarios-bad.yaml`
-- `examples/invalid-architecture-tests-bad.yaml`
+- `System/Capabilities/Capacity/Traffic/RequestsPerSecond.php`
+- `System/Capabilities/Capacity/Traffic/PeakTrafficMultiplier.php`
+- `System/Capabilities/Capacity/Traffic/FanoutSize.php`
+- `System/Capabilities/Capacity/Cache/CacheHitRatio.php`
+- `System/Capabilities/Capacity/Cache/CacheStampedeRisk.php`
+- `System/Capabilities/Capacity/Storage/StorageGrowth.php`
+- `System/Capabilities/Capacity/Queue/QueueDepth.php`
+- `System/Capabilities/Capacity/Queue/ConsumerThroughput.php`
+- `System/Capabilities/Capacity/Latency/LatencyBudget.php`
+- `System/Capabilities/Capacity/Availability/Slo.php`
+- `System/Capabilities/Capacity/Availability/FailureBudget.php`
+
+### Flows
+
+- `System/Flows/ValidateCapacityModel/ValidateCapacityModel.php`
+- `System/Flows/EstimateTrafficLoad/EstimateTrafficLoad.php`
+- `System/Flows/EstimateStorageGrowth/EstimateStorageGrowth.php`
+- `System/Flows/EstimateCacheEffectiveness/EstimateCacheEffectiveness.php`
+- `System/Flows/EstimateQueuePressure/EstimateQueuePressure.php`
+- `System/Flows/EstimateLatencyBudget/EstimateLatencyBudget.php`
+- `System/Flows/EstimateFailureBudget/EstimateFailureBudget.php`
+
+## V3-03 Consistency Engine
+
+### Aggregate Root
+
+- `System/Capabilities/Consistency/ConsistencyModel.php` — consistency model (profiles, delivery, staleness, conflicts,
+  lag)
+
+### Enums
+
+- `System/Capabilities/Consistency/Profiles/ConsistencyModel.php` — Strong, Eventual, Causal, Session, etc.
+- `System/Capabilities/Consistency/Delivery/DeliverySemantics.php` — AtMostOnce, AtLeastOnce, ExactlyOnceIllusion
+- `System/Capabilities/Consistency/Conflicts/ConflictStrategy.php` — LastWriteWins, CRDT, VersionVector, etc.
+
+### Value Objects
+
+- `System/Capabilities/Consistency/Profiles/ConsistencyProfile.php`
+- `System/Capabilities/Consistency/Delivery/DeliveryGuarantee.php`
+- `System/Capabilities/Consistency/Staleness/StalenessBudget.php`
+- `System/Capabilities/Consistency/Conflicts/ConflictResolution.php`
+- `System/Capabilities/Consistency/Lag/ProjectionLag.php`
+- `System/Capabilities/Consistency/Lag/ReplicationLag.php`
+
+### Flows
+
+- `System/Flows/ValidateConsistencyModel/ValidateConsistencyModel.php`
+- `System/Flows/ExplainConsistencyTradeoff/ExplainConsistencyTradeoff.php`
+- `System/Flows/DetectConsistencyRisk/DetectConsistencyRisk.php`
+- `System/Flows/EstimateProjectionLag/EstimateProjectionLag.php`
+- `System/Flows/EstimateReplicationLag/EstimateReplicationLag.php`
+- `System/Flows/ResolveConflict/ResolveConflict.php`
+
+## V3-04 Messaging & CQRS
+
+### Aggregate Root
+
+- `System/Capabilities/Messaging/MessagingModel.php` — messaging model (messages, consumers, broker, outbox, inbox, DLQ,
+  retry, CQRS)
+
+### Enums
+
+- `System/Capabilities/Messaging/Types/MessageType.php` — Command, Event, Message, Job
+- `System/Capabilities/Messaging/Acknowledgement/AcknowledgementPolicy.php` — Auto, Manual, Batch
+
+### Value Objects
+
+- `System/Capabilities/Messaging/Types/Message.php`
+- `System/Capabilities/Messaging/Envelope/MessageEnvelope.php`
+- `System/Capabilities/Messaging/Broker/Broker.php`
+- `System/Capabilities/Messaging/Consumers/Consumer.php`
+- `System/Capabilities/Messaging/Outbox/Outbox.php`
+- `System/Capabilities/Messaging/Inbox/Inbox.php`
+- `System/Capabilities/Messaging/DeadLetters/DeadLetterQueue.php`
+- `System/Capabilities/Messaging/Retry/RetryPolicy.php`
+- `System/Capabilities/Messaging/Cqrs/CommandSide.php`
+- `System/Capabilities/Messaging/Cqrs/QuerySide.php`
+
+### Flows
+
+- `System/Flows/ValidateMessagingModel/ValidateMessagingModel.php`
+- `System/Flows/DetectMessagingRisk/DetectMessagingRisk.php`
+
+## Public Surface
+
+- `System/PublicSurface/SystemDesignKit.php` — static facade for all V3 operations (@experimental)
 
 ## Tree
 
@@ -72,24 +146,92 @@ labs/SystemDesignKit/
     Capabilities/
       Capacity/
         CapacityModel.php
+        Availability/
+          FailureBudget.php
+          Slo.php
+        Cache/
+          CacheHitRatio.php
+          CacheStampedeRisk.php
+        Latency/
+          LatencyBudget.php
+        Queue/
+          ConsumerThroughput.php
+          QueueDepth.php
+        Storage/
+          StorageGrowth.php
+        Traffic/
+          FanoutSize.php
+          PeakTrafficMultiplier.php
+          RequestsPerSecond.php
+      Consistency/
+        ConsistencyModel.php
+        Conflicts/
+          ConflictResolution.php
+          ConflictStrategy.php          (enum)
+        Delivery/
+          DeliveryGuarantee.php
+          DeliverySemantics.php          (enum)
+        Lag/
+          ProjectionLag.php
+          ReplicationLag.php
+        Profiles/
+          ConsistencyModel.php           (enum)
+          ConsistencyProfile.php
+        Staleness/
+          StalenessBudget.php
+      Messaging/
+        MessagingModel.php
+        Acknowledgement/
+          AcknowledgementPolicy.php      (enum)
+        Broker/
+          Broker.php
+        Consumers/
+          Consumer.php
+        Core/                           (removed — flattened to Types/)
+        Cqrs/
+          CommandSide.php
+          QuerySide.php
+        DeadLetters/
+          DeadLetterQueue.php
+        Envelope/
+          MessageEnvelope.php
+        Inbox/
+          Inbox.php
+        Outbox/
+          Outbox.php
+        Policies/                       (removed — split to Retry/ and Acknowledgement/)
+        Retry/
+          RetryPolicy.php
+        Types/
+          Message.php
+          MessageType.php                (enum)
       SchemaValidation/
         NativeYamlParser.php
         SchemaValidator.php
         SchemaValidationResult.php
     Flows/
-      ValidateCapacitySchema/
-        ValidateCapacitySchema.php
-      ValidateScenariosSchema/
-        ValidateScenariosSchema.php
+      DetectConsistencyRisk/
+      DetectMessagingRisk/
+      EstimateCacheEffectiveness/
+      EstimateFailureBudget/
+      EstimateLatencyBudget/
+      EstimateProjectionLag/
+      EstimateQueuePressure/
+      EstimateReplicationLag/
+      EstimateStorageGrowth/
+      EstimateTrafficLoad/
+      ExplainConsistencyTradeoff/
+      ResolveConflict/
       ValidateArchitectureTestsSchema/
-        ValidateArchitectureTestsSchema.php
-    Configuration/
+      ValidateCapacityModel/
+      ValidateCapacitySchema/
+      ValidateConsistencyModel/
+      ValidateMessagingModel/
+      ValidateScenariosSchema/
     Foundation/
       Failure/
         SchemaParseException.php
         SchemaValidationException.php
-  Capacity/
-    CapacityYamlParser.php
   schemas/
     capacity-schema.yaml
     scenarios-schema.yaml
@@ -102,9 +244,6 @@ labs/SystemDesignKit/
     invalid-capacity-missing-sections.yaml
     invalid-scenarios-bad.yaml
     invalid-architecture-tests-bad.yaml
-  experiments/
-  scenarios/
-  spikes/
 ```
 
 ## Usage
@@ -126,8 +265,10 @@ if ($result->valid) {
 
 ## MVP Scope
 
-- [x] Capacity modeling (traffic, storage, cache, queue, latency)
+- [x] Capacity modeling (traffic, storage, cache, queue, latency, availability)
 - [x] Schema validation for capacity.yaml, scenarios.yaml, architecture-tests.yaml
+- [x] Consistency modeling (profiles, delivery, staleness, conflicts, replication lag, projection lag)
+- [x] Messaging & CQRS modeling (messages, broker, outbox, inbox, DLQ, retry, ack, CQRS)
 - [ ] Reference architectures
 - [ ] Failure simulation
 - [ ] Architecture tests
@@ -139,11 +280,13 @@ Promotion to `components/SystemDesign/` requires:
 
 - [x] V1 Kernel Green (PROVEN)
 - [x] V2 platform baseline GREEN (PROVEN)
+- [x] Canonical naming (no Core/, Models/, Policies/, BrokerModel/ buckets)
 - [ ] At least 2 reference architectures validate
 - [ ] At least 1 runnable example passes
 - [ ] At least 3 failure scenarios catch real violations
 - [ ] Architecture tests have meaningful assertions
 - [ ] Public API classified as @experimental or @public
+- [ ] Runtime integration tests with V2 components
 
 See: `EVIDENCE/plans/v3-reference-architecture-plan.md`
 See: `EVIDENCE/avax-v3-executable-system-design-framework-plan.md`

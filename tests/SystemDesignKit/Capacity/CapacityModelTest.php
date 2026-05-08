@@ -26,7 +26,7 @@ use Avax\Labs\SystemDesignKit\System\Flows\ValidateCapacityModel\ValidateCapacit
 use Avax\Labs\SystemDesignKit\System\PublicSurface\SystemDesignKit;
 use Avax\Tests\TestCase;
 
-final class CapacityEngineTest extends TestCase
+final class CapacityModelTest extends TestCase
 {
     public function testRequestsPerSecondCalculatesRatio() : void
     {
@@ -412,7 +412,7 @@ final class CapacityEngineTest extends TestCase
         self::assertFalse($result['valid']);
         // Either schema errors or model errors (or both)
         self::assertTrue(
-            ($result['schema_errors'] !== []) || ($result['model_errors'] !== []),
+            ($result['schema_errors'] !== []) || ! empty($result['model_errors'] ?? []),
         );
     }
 }

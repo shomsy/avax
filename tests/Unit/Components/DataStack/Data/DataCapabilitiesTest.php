@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit\Components\DataStack\Data;
 
 use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\Required;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Collection;
 use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabilities\Attributes\Optional;
 use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\DataTransfer;
 use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\DataTransferFailure;
-use Avax\Components\DataStack\Data\System\PublicSurface\Collection;
 use PHPUnit\Framework\TestCase;
 
 final class DataCapabilitiesTest extends TestCase
 {
     public function test_collection_basic_operations() : void
     {
-        $collection = Collection::from([1, 2, 3, 4, 5]);
+        $collection = Collection::make([1, 2, 3, 4, 5]);
 
         $doubled = $collection->map(fn ($n) => $n * 2);
         $this->assertSame([2, 4, 6, 8, 10], $doubled->all());

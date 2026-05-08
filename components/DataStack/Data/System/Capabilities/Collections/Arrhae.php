@@ -4,13 +4,23 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\Capabilities\Collections;
 
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Convert\ConvertCollectionToJson;
 use Avax\Components\DataStack\Data\System\Capabilities\Collections\Create\MakeCollection;
 use Avax\Components\DataStack\Data\System\Capabilities\Collections\Create\WrapValue;
 use Avax\Components\DataStack\Data\System\Capabilities\Collections\Internal\Mutability\MutationGuard;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Internal\Paths\DotPath;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Read\HasValue;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Read\ReadValueByPath;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Write\AppendValue;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Write\ForgetValue;
+use Avax\Components\DataStack\Data\System\Capabilities\Collections\Write\PutValueByPath;
+use NoDiscard;
 
 /**
- * Arrhae - raw array facade for simple array manipulation.
- * Recovered from legacy DataFoundation.
+ * Arrhae — raw array facade for simple array manipulation.
+ *
+ * Shares the same method vocabulary as Collection and Json
+ * for consistent data manipulation across the AvaX data DSL.
  */
 final readonly class Arrhae
 {
@@ -52,42 +62,30 @@ final readonly class Arrhae
         }
 
         if (str_contains(haystack: $key, needle: '.')) {
-            return $this->getDotNotation(key: $key, default: $default);
+            return new ReadValueByPath(items: $this->items)->get(path: $key, default: $default);
         }
 
         return $default;
     }
 
-    private function getDotNotation(string $key, mixed $default = null): mixed
-    {
-        $array = $this->items;
-
-        foreach (explode(separator: '.', string: $key) as $segment) {
-            if (! is_array(value: $array) || ! array_key_exists(key: $segment, array: $array)) {
-                return $default;
-            }
-
-            $array = $array[$segment];
-        }
-
-        return $array;
-    }
-
     public function has(string $key): bool
     {
-        return array_key_exists(key: $key, array: $this->items)
-            || (str_contains(haystack: $key, needle: '.') && $this->getDotNotation(key: $key) !== null);
+        if (array_key_exists(key: $key, array: $this->items)) {
+            return true;
+        }
+
+        return new HasValue(items: $this->items)->check(key: $key);
     }
 
+    #[NoDiscard]
     public function set(string $key, mixed $value): static
     {
-        $this->assertNotLocked();
+        $this->mutationGuard->assertMutable();
 
         if (str_contains(haystack: $key, needle: '.')) {
-            $items = $this->items;
-            $this->setDotNotation(items: $items, key: $key, value: $value);
-
-            return new self(items: $items);
+            return new self(
+                items: new PutValueByPath(items: $this->items)->put(path: $key, value: $value),
+            );
         }
 
         $items = $this->items;
@@ -96,36 +94,14 @@ final readonly class Arrhae
         return new self(items: $items);
     }
 
-    private function assertNotLocked(): void
-    {
-        $this->mutationGuard->assertMutable();
-    }
-
-    private function setDotNotation(array &$items, string $key, mixed $value): void
-    {
-        $keys = explode(separator: '.', string: $key);
-        $current = &$items;
-
-        while (count(value: $keys) > 1) {
-            $segment = array_shift(array: $keys);
-
-            if (! isset($current[$segment]) || ! is_array(value: $current[$segment])) {
-                $current[$segment] = [];
-            }
-
-            $current = &$current[$segment];
-        }
-
-        $current[array_shift(array: $keys)] = $value;
-    }
-
+    #[NoDiscard]
     public function forget(string $key): static
     {
-        $this->assertNotLocked();
+        $this->mutationGuard->assertMutable();
 
         if (! array_key_exists(key: $key, array: $this->items) && str_contains(haystack: $key, needle: '.')) {
             $items = $this->items;
-            $this->unsetDotNotation(items: $items, key: $key);
+            new DotPath(path: $key)->unsetValue(items: $items);
 
             return new self(items: $items);
         }
@@ -136,34 +112,17 @@ final readonly class Arrhae
         return new self(items: $items);
     }
 
-    private function unsetDotNotation(array &$items, string $key): void
-    {
-        $keys = explode(separator: '.', string: $key);
-        $current = &$items;
-
-        while (count(value: $keys) > 1) {
-            $segment = array_shift(array: $keys);
-
-            if (! isset($current[$segment]) || ! is_array(value: $current[$segment])) {
-                return;
-            }
-
-            $current = &$current[$segment];
-        }
-
-        unset($current[array_shift(array: $keys)]);
-    }
-
+    #[NoDiscard]
     public function add(mixed $value): static
     {
-        $this->assertNotLocked();
+        $this->mutationGuard->assertMutable();
 
-        $items = $this->items;
-        $items[] = $value;
-
-        return new self(items: $items);
+        return new self(
+            items: new AppendValue(items: $this->items)->append(value: $value),
+        );
     }
 
+    #[NoDiscard]
     public function merge(array $items): static
     {
         return new self(items: array_merge($this->items, $items));
@@ -179,13 +138,20 @@ final readonly class Arrhae
         return $this->items === [];
     }
 
+    public function isNotEmpty() : bool
+    {
+        return $this->items !== [];
+    }
+
     public function first(mixed $default = null): mixed
     {
         if ($this->items === []) {
             return $default;
         }
 
-        return reset(array: $this->items);
+        $copy = $this->items;
+
+        return reset(array: $copy);
     }
 
     public function last(mixed $default = null): mixed
@@ -194,12 +160,76 @@ final readonly class Arrhae
             return $default;
         }
 
-        return end(array: $this->items);
+        $copy = $this->items;
+
+        return end(array: $copy);
+    }
+
+    /**
+     * @return list<string|int>
+     */
+    public function keys() : array
+    {
+        return array_keys(array: $this->items);
+    }
+
+    public function values() : static
+    {
+        return new self(items: array_values(array: $this->items));
+    }
+
+    /**
+     * @param list<string|int> $keys
+     */
+    public function only(array $keys) : static
+    {
+        $filtered = array_filter(
+            array   : $this->items,
+            callback: static fn (mixed $_, mixed $key) : bool => in_array(needle: $key, haystack: $keys, strict: true),
+            mode    : ARRAY_FILTER_USE_BOTH,
+        );
+
+        return new self(items: $filtered);
+    }
+
+    /**
+     * @param list<string|int> $keys
+     */
+    public function except(array $keys) : static
+    {
+        $filtered = array_filter(
+            array   : $this->items,
+            callback: static fn (mixed $_, mixed $key) : bool => ! in_array(needle: $key, haystack: $keys, strict: true),
+            mode    : ARRAY_FILTER_USE_BOTH,
+        );
+
+        return new self(items: $filtered);
+    }
+
+    /**
+     * @return list<mixed>
+     */
+    public function pluck(string $key) : array
+    {
+        $plucked = [];
+
+        foreach ($this->items as $item) {
+            $plucked[] = is_array(value: $item)
+                ? ($item[$key] ?? null)
+                : null;
+        }
+
+        return $plucked;
     }
 
     public function toArray(): array
     {
         return $this->items;
+    }
+
+    public function toJson(int $flags = 0) : string
+    {
+        return new ConvertCollectionToJson(items: $this->items)->toJson(flags: $flags);
     }
 
     public function isLocked(): bool

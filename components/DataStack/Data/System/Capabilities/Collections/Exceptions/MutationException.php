@@ -30,4 +30,20 @@ final class MutationException extends RuntimeException
     {
         return new self(message: 'Collection is already locked.');
     }
+
+    /**
+     * Thrown when array-style mutation is attempted on an immutable collection.
+     *
+     * @param string $hint Guidance on which fluent method to use instead.
+     */
+    public static function arrayStyleMutationNotSupported(string $hint = '') : self
+    {
+        $message = 'Array-style mutation is not supported on immutable collections.';
+
+        if ($hint !== '') {
+            $message .= ' ' . $hint;
+        }
+
+        return new self(message: $message);
+    }
 }

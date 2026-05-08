@@ -92,7 +92,9 @@ final readonly class Collection implements CollectionInterface
             return $default;
         }
 
-        return reset(array: $this->items);
+        $copy = $this->items;
+
+        return reset(array: $copy);
     }
 
     public function last(mixed $default = null): mixed
@@ -101,7 +103,9 @@ final readonly class Collection implements CollectionInterface
             return $default;
         }
 
-        return end(array: $this->items);
+        $copy = $this->items;
+
+        return end(array: $copy);
     }
 
     public function get(string $key, mixed $default = null): mixed
@@ -476,10 +480,18 @@ final readonly class Collection implements CollectionInterface
     public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->mutationGuard->assertMutable();
+
+        throw MutationException::arrayStyleMutationNotSupported(
+            hint: 'Use set(), forget(), or add() instead.',
+        );
     }
 
     public function offsetUnset(mixed $offset): void
     {
         $this->mutationGuard->assertMutable();
+
+        throw MutationException::arrayStyleMutationNotSupported(
+            hint: 'Use forget() instead.',
+        );
     }
 }

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\DataStack\System;
 
-use Avax\Components\DataStack\System\Capabilities\DataLayer\AccessPersistentData\AccessPersistentData;
-use Avax\Components\DataStack\System\Capabilities\DataLayer\CommitDataChanges\CommitDataChanges;
-use Avax\Components\DataStack\System\Capabilities\DataLayer\ConfigureDataLayer\DataLayerConfig;
-use Avax\Components\DataStack\System\Capabilities\DataLayer\DataLayer;
+use Avax\Components\DataStack\Persistence\AccessPersistentData;
+use Avax\Components\DataStack\Persistence\CommitDataChanges;
+use Avax\Components\DataStack\Persistence\DataLayer;
+use Avax\Components\DataStack\Persistence\DataLayerConfig;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 

@@ -1,0 +1,63 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Data\System\Capabilities\Codecs\XmlCodec;
+
+use Exception;
+use LogicException;
+use SimpleXMLElement;
+
+/**
+ * Converts collection to XML.
+ */
+final readonly class EncodeXml
+{
+    /** @param array<array-key, mixed> $items */
+    public function __construct(
+        private array $items = [],
+    ) {
+    }
+
+    public function __invoke(string $rootElement = 'root'): string
+    {
+        return $this->toXml(rootElement: $rootElement);
+    }
+
+    public function toXml(string $rootElement = 'root'): string
+    {
+        try {
+            $xml = new SimpleXMLElement(data: sprintf('<%s/>', $rootElement));
+            $this->arrayToXml(data: $this->items, xml: $xml);
+
+            return $xml->asXML() ?: '';
+        } catch (Exception $exception) {
+            throw new LogicException(
+                message : 'Failed to convert collection to XML: '.$exception->getMessage(),
+                code    : $exception->getCode(),
+                previous: $exception,
+            );
+        }
+    }
+
+    /** @param array<array-key, mixed> $data */
+    private function arrayToXml(array $data, SimpleXMLElement $xml): void
+    {
+        foreach ($data as $key => $value) {
+            $tagName = is_numeric(value: $key) ? 'item' : $key;
+
+            if (is_array(value: $value)) {
+                $child = $xml->addChild(qualifiedName: $tagName);
+                $this->arrayToXml(data: $value, xml: $child);
+            } else {
+                $xml->addChild(qualifiedName: $tagName, value: htmlspecialchars(string: (string) $value));
+            }
+        }
+    }
+
+    /** @return array<array-key, mixed> */
+    public function getItems(): array
+    {
+        return $this->items;
+    }
+}

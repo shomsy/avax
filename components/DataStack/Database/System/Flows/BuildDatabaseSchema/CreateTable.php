@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Flows\BuildDatabaseSchema;
 
-use Avax\Components\DataStack\Database\Schema\Blueprint;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Design\Table\Blueprint;
 
 final class CreateTable
 {

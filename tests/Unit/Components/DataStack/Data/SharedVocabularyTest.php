@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\DataStack\Data;
 
-use Avax\Components\DataStack\Data\System\Capabilities\Arrhae\Arrhae;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Collection;
-use Avax\Components\DataStack\Data\System\Capabilities\Json\Json;
+use Avax\Components\DataStack\Data\System\Capabilities\Forms\ArrayForm\Arrhae;
+use Avax\Components\DataStack\Data\System\Capabilities\Forms\CollectionForm\Collection;
+use Avax\Components\DataStack\Data\System\Capabilities\Forms\JsonForm\Json;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 

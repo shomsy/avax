@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit\Components\DataStack\Data;
 
 use ArrayIterator;
-use Avax\Components\DataStack\Data\System\Capabilities\Arrhae\Arrhae;
+use Avax\Components\DataStack\Data\System\Capabilities\Forms\ArrayForm\Arrhae;
 use Avax\Components\DataStack\Data\System\Foundation\Failure\MutationException;
 use PHPUnit\Framework\TestCase;
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\Flows\ReadDataObject;
 
-use Avax\Components\DataStack\Data\System\Capabilities\DataShape\DataField;
+use Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape\DataField;
 
 final readonly class ReadDataObjectValues
 {
@@ -17,8 +17,8 @@ final readonly class ReadDataObjectValues
         $values = [];
 
         foreach ($fields as $field) {
-            if ($field->property !== null && $field->property->isInitialized(object: $object)) {
-                $values[$field->name] = $field->property->getValue(object: $object);
+            if ($field->reflectionProperty !== null && $field->reflectionProperty->isInitialized(object: $object)) {
+                $values[$field->name] = $field->reflectionProperty->getValue(object: $object);
 
                 continue;
             }

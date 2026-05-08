@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Persistence;
 
-class RegisterDataLayerRuntime
+final class RegisterDataLayerRuntime
 {
+    public function register(object $databaseRuntime): DataLayerConfig
+    {
+        return new DataLayerConfig();
+    }
 }

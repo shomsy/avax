@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\Flows\LazySequence;
 
-use Avax\Components\DataStack\Data\System\Capabilities\Sequence\Sequence;
+use Avax\Components\DataStack\Data\System\Capabilities\Structures\Linear\Sequence;
 use Closure;
 use IteratorAggregate;
 use Override;

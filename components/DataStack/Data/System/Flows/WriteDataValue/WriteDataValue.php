@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\Flows\WriteDataValue;
 
-use Avax\Components\DataStack\Data\System\Capabilities\Arrays\ArrayWriter;
+use Avax\Components\DataStack\Data\System\Capabilities\Operators\Arrays\ArrayWriter;
 
 final readonly class WriteDataValue
 {

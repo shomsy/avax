@@ -5,9 +5,9 @@ declare(strict_types=1);
 use Avax\Components\Application\Config\System\PublicSurface\Config;
 use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
-use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabilities\ValueConversion\ValueCasterInterface;
-use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Capabilities\ValueConversion\ValueConversionContext;
-use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Foundation\AbstractDTO;
+use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\ValueConversion\ValueCasterInterface;
+use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\ValueConversion\ValueConversionContext;
+use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\AbstractDTO;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\ConnectionPool;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Design\Column\DSL\ColumnDefinition;
@@ -34,51 +34,51 @@ use Avax\Components\HTTP\System\Flows\Routing\ResolveRouteFromHttpRequest;
 use Avax\Components\Presentation\View\System\PublicSurface\View;
 
 $classAliases = [
-    'Avax\\DataHandling\\DataTransfer\\DataTransfer' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataTransfer\\DataTransfer',
-    'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\CastWith' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataTransfer\\Capabilities\\Attributes\\CastWith',
-    'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\Hidden' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataTransfer\\Capabilities\\Attributes\\Hidden',
-    'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\ListOf' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataTransfer\\Capabilities\\Attributes\\ListOf',
-    'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\MapFrom' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataTransfer\\Capabilities\\Attributes\\MapFrom',
+    'Avax\\DataHandling\\DataTransfer\\DataTransfer' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Coercion\\DtoSystem\\DataTransfer',
+    'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\CastWith' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Coercion\\DtoSystem\\Attributes\\CastWith',
+    'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\Hidden' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Coercion\\DtoSystem\\Attributes\\Hidden',
+    'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\ListOf' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Coercion\\DtoSystem\\Attributes\\ListOf',
+    'Avax\\DataHandling\\DataTransfer\\Capabilities\\Attributes\\MapFrom' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Coercion\\DtoSystem\\Attributes\\MapFrom',
     ValueCasterInterface::class => ValueCasterInterface::class,
     ValueConversionContext::class => ValueConversionContext::class,
-    'Avax\\DataHandling\\DataTransfer\\InspectDataShape\\DataField' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataShape\\DataField',
+    'Avax\\DataHandling\\DataTransfer\\InspectDataShape\\DataField' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Shapes\\ClassShape\\DataField',
     AbstractDTO::class => AbstractDTO::class,
     'Avax\\DataFoundation\\ObjectHandling\\DTO\\AbstractDTO' => AbstractDTO::class,
-    'Avax\\DataFoundation\\Collection' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Collection\\Collection',
-    'Avax\\DataFoundation\\Arrhae' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Arrhae\\Arrhae',
-    'Avax\\DataFoundation\\Collections\\Map\\Map' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Map\\Map',
-    'Avax\\DataFoundation\\Collections\\Set\\Set' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Set\\Set',
-    'Avax\\DataFoundation\\Collections\\DataList\\DataList' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataList\\DataList',
-    'Avax\\DataFoundation\\Collections\\Aggregate\\AverageValues' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Aggregate\\AverageValues',
-    'Avax\\DataFoundation\\Collections\\Aggregate\\SumValues' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Aggregate\\SumValues',
-    'Avax\\DataFoundation\\Collections\\Transform\\MapValues' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Transform\\MapValues',
-    'Avax\\DataFoundation\\Collections\\Transform\\FilterValues' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Transform\\FilterValues',
-    'Avax\\DataFoundation\\Collections\\Search\\MatchTextFuzzily' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Search\\MatchTextFuzzily',
-    'Avax\\DataFoundation\\Collections\\Search\\MatchTextPartially' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Search\\MatchTextPartially',
-    'Avax\\DataFoundation\\Collections\\Search\\ContainsValue' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Search\\ContainsValue',
-    'Avax\\DataFoundation\\Collections\\Search\\SearchValue' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Search\\SearchValue',
-    'Avax\\DataFoundation\\Values\\Option\\Option' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Collection\\Internal\\Option\\Option',
-    'Avax\\DataFoundation\\Values\\Option\\Some' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Collection\\Internal\\Option\\Some',
-    'Avax\\DataFoundation\\Values\\Option\\None' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Collection\\Internal\\Option\\None',
-    'Avax\\DataFoundation\\Values\\Result\\Result' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Collection\\Internal\\Result\\Result',
-    'Avax\\DataFoundation\\Values\\Result\\Ok' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Collection\\Internal\\Result\\Success',
-    'Avax\\DataFoundation\\Values\\Result\\Error' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Collection\\Internal\\Result\\Failure',
-    'Avax\\DataFoundation\\Composites\\MapEntry\\MapEntry' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Collection\\Internal\\MapEntry',
-    'Avax\\DataFoundation\\Composites\\Pair\\Pair' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Collection\\Internal\\Pair',
-    'Avax\\DataFoundation\\Composites\\Tuple\\Tuple2' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Collection\\Internal\\Tuple2',
-    'Avax\\DataFoundation\\Composites\\Tuple\\Tuple3' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Collection\\Internal\\Tuple3',
-    'Avax\\DataFoundation\\Composites\\Tuple\\Tuple4' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Collection\\Internal\\Tuple4',
-    'Avax\\DataFoundation\\Composites\\Record\\Record' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Collection\\Internal\\Record',
-    'Avax\\DataFoundation\\Composites\\Record\\RecordField' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Collection\\Internal\\RecordField',
+    'Avax\\DataFoundation\\Collection' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Forms\\CollectionForm\\Collection',
+    'Avax\\DataFoundation\\Arrhae' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Forms\\ArrayForm\\Arrhae',
+    'Avax\\DataFoundation\\Collections\\Map\\Map' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Structures\\Maps\\Map',
+    'Avax\\DataFoundation\\Collections\\Set\\Set' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Structures\\Sets\\Set',
+    'Avax\\DataFoundation\\Collections\\DataList\\DataList' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Structures\\Linear\\DataList',
+    'Avax\\DataFoundation\\Collections\\Aggregate\\AverageValues' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Operators\\Aggregate\\AverageValues',
+    'Avax\\DataFoundation\\Collections\\Aggregate\\SumValues' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Operators\\Aggregate\\SumValues',
+    'Avax\\DataFoundation\\Collections\\Transform\\MapValues' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Operators\\Transform\\MapValues',
+    'Avax\\DataFoundation\\Collections\\Transform\\FilterValues' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Operators\\Transform\\FilterValues',
+    'Avax\\DataFoundation\\Collections\\Search\\MatchTextFuzzily' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Operators\\Search\\MatchTextFuzzily',
+    'Avax\\DataFoundation\\Collections\\Search\\MatchTextPartially' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Operators\\Search\\MatchTextPartially',
+    'Avax\\DataFoundation\\Collections\\Search\\ContainsValue' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Operators\\Search\\ContainsValue',
+    'Avax\\DataFoundation\\Collections\\Search\\SearchValue' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Operators\\Search\\SearchValue',
+    'Avax\\DataFoundation\\Values\\Option\\Option' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Structures\\Functional\\Option\\Option',
+    'Avax\\DataFoundation\\Values\\Option\\Some' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Structures\\Functional\\Option\\Some',
+    'Avax\\DataFoundation\\Values\\Option\\None' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Structures\\Functional\\Option\\None',
+    'Avax\\DataFoundation\\Values\\Result\\Result' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Structures\\Functional\\Result\\Result',
+    'Avax\\DataFoundation\\Values\\Result\\Ok' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Structures\\Functional\\Result\\Success',
+    'Avax\\DataFoundation\\Values\\Result\\Error' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Structures\\Functional\\Result\\Failure',
+    'Avax\\DataFoundation\\Composites\\MapEntry\\MapEntry' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Structures\\Maps\\MapEntry',
+    'Avax\\DataFoundation\\Composites\\Pair\\Pair' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Structures\\Functional\\Pair',
+    'Avax\\DataFoundation\\Composites\\Tuple\\Tuple2' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Structures\\Functional\\Tuple2',
+    'Avax\\DataFoundation\\Composites\\Tuple\\Tuple3' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Structures\\Functional\\Tuple3',
+    'Avax\\DataFoundation\\Composites\\Tuple\\Tuple4' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Structures\\Functional\\Tuple4',
+    'Avax\\DataFoundation\\Composites\\Record\\Record' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Structures\\Functional\\Record',
+    'Avax\\DataFoundation\\Composites\\Record\\RecordField' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Structures\\Functional\\RecordField',
 
     // DataShape ecosystem
-    'Avax\\DataFoundation\\DataTransfer\\InspectDataShape\\InspectDataShape' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataShape\\InspectDataShape',
-    'Avax\\DataFoundation\\DataTransfer\\InspectDataShape\\DataField' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataShape\\DataField',
-    'Avax\\DataFoundation\\DataTransfer\\InspectDataShape\\DataFieldType' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\DataShape\\DataFieldType',
+    'Avax\\DataFoundation\\DataTransfer\\InspectDataShape\\InspectDataShape' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Shapes\\ClassShape\\InspectDataShape',
+    'Avax\\DataFoundation\\DataTransfer\\InspectDataShape\\DataField' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Shapes\\ClassShape\\DataField',
+    'Avax\\DataFoundation\\DataTransfer\\InspectDataShape\\DataFieldType' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Shapes\\ClassShape\\DataFieldType',
 
     // ObjectReading ecosystem
-    'Avax\\DataFoundation\\DataTransfer\\ObjectReading\\ReadDataObject' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\ObjectReading\\ReadDataObject',
-    'Avax\\DataFoundation\\DataTransfer\\ObjectReading\\NormalizeDataObjectValue' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\ObjectReading\\NormalizeDataObjectValue',
+    'Avax\\DataFoundation\\DataTransfer\\ObjectReading\\ReadDataObject' => 'Avax\\Components\\DataStack\\Data\\System\\Flows\\ReadDataObject\\ReadDataObject',
+    'Avax\\DataFoundation\\DataTransfer\\ObjectReading\\NormalizeDataObjectValue' => 'Avax\\Components\\DataStack\\Data\\System\\Flows\\ReadDataObject\\NormalizeDataObjectValue',
 
     // Serialization flow ecosystem
     'Avax\\DataFoundation\\DataTransfer\\SerializeDataObject\\SerializeDataObject' => 'Avax\\Components\\DataStack\\Data\\System\\Flows\\SerializeDataObject\\SerializeDataObject',
@@ -88,9 +88,7 @@ $classAliases = [
     'Avax\\DataFoundation\\DataTransfer\\SerializeDataObject\\ConvertDataObjectToJsonApi' => 'Avax\\Components\\DataStack\\Data\\System\\Flows\\SerializeDataObject\\ConvertDataObjectToJsonApi',
 
     'Avax\\Text\\Text' => 'Avax\\Components\\Application\\Text\\System\\PublicSurface\\Text',
-    'Avax\\DataHandling\\ObjectHandling\\DTO\\DTOValidationException' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\ObjectHandling\\DTO\\DTOValidationException',
-    'Avax\\DataHandling\\Validation\\Attributes\\Rules\\EmailRule' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Validation\\Attributes\\Rules\\EmailRule',
-    'Avax\\DataHandling\\Validation\\Attributes\\Rules\\MinLengthRule' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Validation\\Attributes\\Rules\\MinLengthRule',
+    'Avax\\DataHandling\\ObjectHandling\\DTO\\DTOValidationException' => 'Avax\\Components\\DataStack\\Data\\System\\Capabilities\\Coercion\\DtoSystem\\DataTransferException',
 
     // Router compat aliases - only core interfaces exist at new location
     // Other Router aliases removed: old component structure was replaced by HTTP/Router suite

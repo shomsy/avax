@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\Flows\ReadDataValue;
 
-use Avax\Components\DataStack\Data\System\Capabilities\Arrays\ArrayReader;
+use Avax\Components\DataStack\Data\System\Capabilities\Operators\Arrays\ArrayReader;
 
 final readonly class ReadDataValue
 {

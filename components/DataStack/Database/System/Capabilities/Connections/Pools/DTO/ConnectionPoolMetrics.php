@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\DTO;
 
 use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\IntegerRule;
-use Avax\Components\DataStack\Data\System\Capabilities\DataTransfer\Foundation\AbstractDTO;
+use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\AbstractDTO;
 
 /**
  * The "Status Report" (Snapshot) for a connection pool.

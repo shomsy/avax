@@ -6,7 +6,7 @@ namespace Avax\Tests\Unit\Components\DataStack\Data;
 
 use Avax\Components\DataStack\Data\System\Foundation\Failure\InvalidJson;
 use Avax\Components\DataStack\Data\System\Foundation\Failure\MutationException;
-use Avax\Components\DataStack\Data\System\Capabilities\Json\Json;
+use Avax\Components\DataStack\Data\System\Capabilities\Forms\JsonForm\Json;
 use PHPUnit\Framework\TestCase;
 
 final class JsonTest extends TestCase

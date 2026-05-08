@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\PublicSurface;
 
-use Avax\Components\DataStack\Data\System\Capabilities\Arrays\ArrayReader;
-use Avax\Components\DataStack\Data\System\Capabilities\Arrays\ArrayWriter;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Collection;
+use Avax\Components\DataStack\Data\System\Capabilities\Operators\Arrays\ArrayReader;
+use Avax\Components\DataStack\Data\System\Capabilities\Operators\Arrays\ArrayWriter;
+use Avax\Components\DataStack\Data\System\Capabilities\Forms\CollectionForm\Collection;
 use Avax\Components\DataStack\Data\System\Flows\Aggregate\AverageValues;
 use Avax\Components\DataStack\Data\System\Flows\Aggregate\SumValues;
 use Avax\Components\DataStack\Data\System\Flows\Read\ReadNestedValue;

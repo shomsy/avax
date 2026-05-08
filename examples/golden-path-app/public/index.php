@@ -10,8 +10,12 @@ use Avax\Framework\System\Foundation\Paths\ProjectPath;
 use Avax\Framework\System\PublicSurface\Avax;
 
 // 1. Build the Application Configuration
+$projectRealPath = realpath(__DIR__ . '/../');
+if ($projectRealPath === false) {
+    throw new RuntimeException('Could not resolve project path');
+}
 $builder = new ApplicationBuilder(
-    projectPath    : new ProjectPath(realpath(__DIR__ . '/../')),
+    projectPath    : new ProjectPath($projectRealPath),
     environmentName: new EnvironmentName('development'),
 );
 

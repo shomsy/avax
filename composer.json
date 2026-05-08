@@ -42,7 +42,8 @@
   "autoload-dev": {
     "psr-4": {
       "Avax\\Tests\\": "tests/",
-      "Avax\\Labs\\": "labs/"
+      "Avax\\Labs\\": "labs/",
+      "Avax\\Examples\\": "examples/"
     }
   },
   "minimum-stability": "stable",

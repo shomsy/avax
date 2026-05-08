@@ -9,11 +9,12 @@ const scriptName = 'merge-files.sh';
 const args = process.argv.slice(2);
 
 function usage() {
-  console.error(`Usage: ${scriptName} <target-dir> [--exclude=png,jpg] [--include=md,yaml] [--dry-run]`);
+  console.error(`Usage: ${scriptName} <target-dir> [--except=EVIDENCE,tmp] [--exclude=png,jpg] [--include=md,yaml] [--dry-run]`);
 }
 
 function parseCsv(value) {
   if (!value) return new Set();
+
   return new Set(
     value
       .split(',')
@@ -25,19 +26,23 @@ function parseCsv(value) {
 function compareStrings(left, right) {
   if (left < right) return -1;
   if (left > right) return 1;
+
   return 0;
 }
 
 function extensionKey(filePath) {
   const base = path.basename(filePath);
+
   if (base.includes('.')) {
     return path.extname(base).slice(1);
   }
+
   return base;
 }
 
 function readPackageName(rootDir) {
   const packageJsonPath = path.join(rootDir, 'package.json');
+
   if (!fs.existsSync(packageJsonPath)) {
     return '';
   }
@@ -45,6 +50,7 @@ function readPackageName(rootDir) {
   try {
     const raw = fs.readFileSync(packageJsonPath, 'utf8');
     const parsed = JSON.parse(raw);
+
     return typeof parsed.name === 'string' ? parsed.name.trim() : '';
   } catch {
     return '';
@@ -58,8 +64,11 @@ if (args.length < 1) {
 
 const targetArg = args[0];
 const optionArgs = args.slice(1);
+
 const includeExts = new Set();
 const excludeExts = new Set();
+const exceptDirs = new Set();
+
 let dryRun = false;
 
 for (const arg of optionArgs) {
@@ -67,6 +76,7 @@ for (const arg of optionArgs) {
     for (const ext of parseCsv(arg.slice('--include='.length))) {
       includeExts.add(ext);
     }
+
     continue;
   }
 
@@ -74,6 +84,15 @@ for (const arg of optionArgs) {
     for (const ext of parseCsv(arg.slice('--exclude='.length))) {
       excludeExts.add(ext);
     }
+
+    continue;
+  }
+
+  if (arg.startsWith('--except=')) {
+    for (const dir of parseCsv(arg.slice('--except='.length))) {
+      exceptDirs.add(dir);
+    }
+
     continue;
   }
 
@@ -109,7 +128,6 @@ if (!rootStat.isDirectory()) {
 
 const targetBasename = path.basename(rootDir);
 const outputFile = path.join(rootDir, `${targetBasename}.txt`);
-// The merged .txt dump is a portable repo snapshot and can serve as a working backup during refactors.
 const packageName = readPackageName(rootDir);
 
 const ignoredDirs = new Set([
@@ -125,6 +143,7 @@ const ignoredDirs = new Set([
   'storage',
   'tmp',
   'vendor',
+  ...exceptDirs,
 ]);
 
 console.log(`Scanning directory: ${rootDir}`);
@@ -146,10 +165,12 @@ function walk(currentDir) {
 
   for (const entry of entries) {
     const currentPath = path.join(currentDir, entry.name);
+
     if (entry.isDirectory()) {
       if (ignoredDirs.has(entry.name) && currentPath !== rootDir) {
         continue;
       }
+
       walk(currentPath);
       continue;
     }
@@ -163,6 +184,7 @@ files.sort(compareStrings);
 
 let merged = 0;
 let skipped = 0;
+
 const chunks = [];
 
 for (const absPath of files) {
@@ -181,18 +203,21 @@ for (const absPath of files) {
   }
 
   const ext = extensionKey(absPath);
+
   if (includeExts.size > 0 && !includeExts.has(ext)) {
     console.log(`Skipping (not in include list): ${rel}`);
     skipped += 1;
     continue;
   }
+
   if (includeExts.size === 0 && excludeExts.has(ext)) {
-    console.log(`Skipping (excluded by default or option): ${rel}`);
+    console.log(`Skipping (excluded by extension): ${rel}`);
     skipped += 1;
     continue;
   }
 
   const data = fs.readFileSync(absPath);
+
   if (data.length > 0 && data.includes(0)) {
     console.log(`Skipping (binary or non-text): ${rel}`);
     skipped += 1;
@@ -200,19 +225,24 @@ for (const absPath of files) {
   }
 
   merged += 1;
+
   if (dryRun) {
     console.log(`[DRY-RUN] Would merge: ${rel}`);
     continue;
   }
 
   console.log(`Merging: ${rel}`);
+
   const text = data.toString('utf8');
   const normalizedText = text.replace(/[^\S\r\n]+$/gm, '');
+
   chunks.push(`=== ${rel} ===\n`);
   chunks.push(normalizedText);
+
   if (!normalizedText.endsWith('\n')) {
     chunks.push('\n');
   }
+
   chunks.push('\n');
 }
 

@@ -8,35 +8,35 @@ use Avax\Components\DataStack\Data\System\Capabilities\Aggregate\AverageValues;
 use Avax\Components\DataStack\Data\System\Capabilities\Aggregate\FindMaxValue;
 use Avax\Components\DataStack\Data\System\Capabilities\Aggregate\FindMinValue;
 use Avax\Components\DataStack\Data\System\Capabilities\Aggregate\SumValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\Pair;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\ConvertCollectionToJson;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\ConvertCollectionToXml;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\MakeCollection;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\WrapValue;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\SharedCollectionBehavior;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\MutationGuard;
 use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\DotPath;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\ReverseValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\ShuffleValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\SortValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\SortValuesBy;
-use Avax\Components\DataStack\Data\System\Capabilities\Selection\HasValue;
-use Avax\Components\DataStack\Data\System\Capabilities\Selection\ReadValueByPath;
+use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\MakeCollection;
+use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\MutationGuard;
+use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\Pair;
+use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\WrapValue;
+use Avax\Components\DataStack\Data\System\Capabilities\DataPipeline\DataPipeline;
 use Avax\Components\DataStack\Data\System\Capabilities\Search\ContainsValue;
 use Avax\Components\DataStack\Data\System\Capabilities\Search\SearchValue;
+use Avax\Components\DataStack\Data\System\Capabilities\Selection\HasValue;
+use Avax\Components\DataStack\Data\System\Capabilities\Selection\ReadValueByPath;
+use Avax\Components\DataStack\Data\System\Capabilities\Transform\AppendValue;
 use Avax\Components\DataStack\Data\System\Capabilities\Transform\ChunkValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Transform\ConvertCollectionToJson;
+use Avax\Components\DataStack\Data\System\Capabilities\Transform\ConvertCollectionToXml;
 use Avax\Components\DataStack\Data\System\Capabilities\Transform\EachValues;
 use Avax\Components\DataStack\Data\System\Capabilities\Transform\FilterValues;
 use Avax\Components\DataStack\Data\System\Capabilities\Transform\FlattenValues;
 use Avax\Components\DataStack\Data\System\Capabilities\Transform\GroupValues;
 use Avax\Components\DataStack\Data\System\Capabilities\Transform\MapValues;
 use Avax\Components\DataStack\Data\System\Capabilities\Transform\PartitionValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\ReduceValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\RejectValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\UniqueValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\AppendValue;
 use Avax\Components\DataStack\Data\System\Capabilities\Transform\PullValue;
 use Avax\Components\DataStack\Data\System\Capabilities\Transform\PutValueByPath;
+use Avax\Components\DataStack\Data\System\Capabilities\Transform\ReduceValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Transform\RejectValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Transform\ReverseValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Transform\ShuffleValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Transform\SortValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Transform\SortValuesBy;
+use Avax\Components\DataStack\Data\System\Capabilities\Transform\UniqueValues;
 use NoDiscard;
 
 /**
@@ -47,7 +47,7 @@ use NoDiscard;
  */
 final readonly class Arrhae
 {
-    use SharedCollectionBehavior;
+    use DataPipeline;
 
     private MutationGuard $mutationGuard;
 

@@ -16,7 +16,7 @@ use Avax\Components\DataStack\Data\System\Capabilities\Transform\ConvertCollecti
 use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\MakeCollection;
 use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\WrapValue;
 use Avax\Components\DataStack\Data\System\Foundation\Failure\MutationException;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\SharedCollectionBehavior;
+use Avax\Components\DataStack\Data\System\Capabilities\DataPipeline\DataPipeline;
 use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\MutationGuard;
 use Avax\Components\DataStack\Data\System\Capabilities\Transform\ReverseValues;
 use Avax\Components\DataStack\Data\System\Capabilities\Transform\ShuffleValues;
@@ -48,7 +48,7 @@ use Traversable;
  */
 final readonly class Collection implements CollectionInterface
 {
-    use SharedCollectionBehavior;
+    use DataPipeline;
 
     private MutationGuard $mutationGuard;
 

@@ -12,6 +12,7 @@ final readonly class EachValues
     /**
      * @param  array<mixed>  $items
      */
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
@@ -41,6 +42,8 @@ final readonly class EachValues
     /**
      * @return array<mixed>
      */
+    /** @return array<array-key, mixed> */
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

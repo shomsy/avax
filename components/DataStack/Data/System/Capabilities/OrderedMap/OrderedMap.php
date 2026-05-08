@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Data\System\Capabilities\OrderedMap;
 
 use ArrayIterator;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\MapEntry;
+use Avax\Components\DataStack\Data\System\Capabilities\Structures\MapEntry;
 use Avax\Components\DataStack\Data\System\Capabilities\DataList\DataList;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\NormalizedIterable;
+use Avax\Components\DataStack\Data\System\Foundation\Normalization\NormalizedIterable;
 use Countable;
 use IteratorAggregate;
 use Override;
 use Traversable;
 
 /**
- * Key-value map that preserves insertion order.
+ * @implements IteratorAggregate<array-key, mixed>
  */
 final readonly class OrderedMap implements Countable, IteratorAggregate
 {

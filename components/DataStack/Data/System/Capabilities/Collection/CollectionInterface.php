@@ -5,17 +5,19 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Data\System\Capabilities\Collection;
 
 use ArrayAccess;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\Pair;
+use Avax\Components\DataStack\Data\System\Capabilities\Structures\Pair;
 use Countable;
 use IteratorAggregate;
 
 /**
- * Collection contract - defines the public surface for fluent collection API.
+ * Collection contract — defines the public surface for fluent collection API.
+ *
+ * @extends ArrayAccess<array-key, mixed>
+ * @extends IteratorAggregate<array-key, mixed>
  */
 interface CollectionInterface extends ArrayAccess, Countable, IteratorAggregate
 {
-    public function __construct(array $items = []);
-
+    /** @return array<array-key, mixed> */
     public function all(): array;
 
     public function count(): int;
@@ -56,10 +58,12 @@ interface CollectionInterface extends ArrayAccess, Countable, IteratorAggregate
 
     public function chunk(int $size): static;
 
+    /** @return array<array-key, list<mixed>> */
     public function groupBy(string|callable $key): array;
 
     public function keyBy(string|callable $key): static;
 
+    /** @return array{static, static} */
     public function partition(callable $callback): array;
 
     public function contains(mixed $value): bool;
@@ -68,8 +72,10 @@ interface CollectionInterface extends ArrayAccess, Countable, IteratorAggregate
 
     public function where(string $key, mixed $value): static;
 
+    /** @param list<mixed> $values */
     public function whereIn(string $key, array $values): static;
 
+    /** @param array{mixed, mixed} $range */
     public function whereBetween(string $key, array $range): static;
 
     public function whereNull(string $key): static;
@@ -86,30 +92,39 @@ interface CollectionInterface extends ArrayAccess, Countable, IteratorAggregate
 
     public function unique(): static;
 
+    /** @return array<array-key, mixed> */
     public function toArray(): array;
 
     public function toJson(int $flags = 0): string;
 
     public function toXml(string $rootElement = 'root'): string;
 
+    /** @param list<int|string> $keys */
     public function only(array $keys): static;
 
+    /** @param list<int|string> $keys */
     public function except(array $keys): static;
 
+    /** @return list<mixed> */
     public function pluck(string|callable $key): array;
 
+    /** @return list<array-key> */
     public function keys(): array;
 
     public function values(): static;
 
     public function flip(): static;
 
+    /** @param array<array-key, mixed> $items */
     public function merge(array $items): static;
 
+    /** @param array<array-key, mixed> $items */
     public function union(array $items): static;
 
+    /** @param array<array-key, mixed> $items */
     public function diff(array $items): static;
 
+    /** @param array<array-key, mixed> $items */
     public function intersect(array $items): static;
 
     public function tap(callable $callback): static;

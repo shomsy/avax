@@ -61,6 +61,10 @@ final readonly class Data implements DataInterface
     }
 
     #[Override]
+    /**
+     * @param array<array-key, mixed> $items
+     * @return Collection
+     */
     public function collect(array $items = []): Collection
     {
         return Collection::make(items: $items);

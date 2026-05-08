@@ -9,6 +9,7 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Transform;
  */
 final readonly class PullValue
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
@@ -33,6 +34,8 @@ final readonly class PullValue
         return [$value, $this->items];
     }
 
+    /** @return array<array-key, mixed> */
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

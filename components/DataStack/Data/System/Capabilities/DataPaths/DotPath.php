@@ -24,6 +24,7 @@ final readonly class DotPath
         return implode(separator: self::DELIMITER, array: $segments);
     }
 
+    /** @return list<string> */
     public function getSegments(): array
     {
         return explode(separator: self::DELIMITER, string: $this->path);
@@ -33,7 +34,9 @@ final readonly class DotPath
     {
         $segments = $this->getSegments();
 
-        return end(array: $segments);
+        $last = end(array: $segments);
+
+        return $last !== false ? $last : '';
     }
 
     public function isNested(): bool
@@ -41,6 +44,9 @@ final readonly class DotPath
         return count(value: $this->getSegments()) > 1;
     }
 
+    /**
+     * @param array<array-key, mixed> $items
+     */
     public function getValue(array $items, mixed $default = null): mixed
     {
         $current = $items;
@@ -56,6 +62,9 @@ final readonly class DotPath
         return $current;
     }
 
+    /**
+     * @param array<array-key, mixed> $items
+     */
     public function setValue(array &$items, mixed $value): void
     {
         $keys = $this->getSegments();
@@ -71,9 +80,15 @@ final readonly class DotPath
             $current = &$current[$segment];
         }
 
-        $current[array_shift(array: $keys)] = $value;
+        $lastKey = array_shift(array: $keys);
+        if ($lastKey !== null) {
+            $current[$lastKey] = $value;
+        }
     }
 
+    /**
+     * @param array<array-key, mixed> $items
+     */
     public function unsetValue(array &$items): bool
     {
         $keys = $this->getSegments();
@@ -89,11 +104,17 @@ final readonly class DotPath
             $current = &$current[$segment];
         }
 
-        unset($current[array_shift(array: $keys)]);
+        $lastKey = array_shift(array: $keys);
+        if ($lastKey !== null) {
+            unset($current[$lastKey]);
+        }
 
         return true;
     }
 
+    /**
+     * @param array<array-key, mixed> $items
+     */
     public function exists(array $items): bool
     {
         $current = $items;

@@ -9,16 +9,19 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Transform;
  */
 final readonly class AppendValue
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
     }
 
+    /** @return array<array-key, mixed> */
     public function __invoke(mixed $value): array
     {
         return $this->append(value: $value);
     }
 
+    /** @return array<array-key, mixed> */
     public function append(mixed $value): array
     {
         $items = $this->items;
@@ -27,6 +30,8 @@ final readonly class AppendValue
         return $items;
     }
 
+    /** @return array<array-key, mixed> */
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

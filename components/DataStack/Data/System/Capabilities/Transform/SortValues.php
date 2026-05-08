@@ -9,16 +9,19 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Transform;
  */
 final readonly class SortValues
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
     }
 
+    /** @return array<array-key, mixed> */
     public function __invoke(?callable $callback = null): array
     {
         return $this->sort(callback: $callback);
     }
 
+    /** @return array<array-key, mixed> */
     public function sort(?callable $callback = null): array
     {
         $items = $this->items;
@@ -32,6 +35,8 @@ final readonly class SortValues
         return $items;
     }
 
+    /** @return array<array-key, mixed> */
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

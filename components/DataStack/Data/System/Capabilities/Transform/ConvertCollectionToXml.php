@@ -13,6 +13,7 @@ use SimpleXMLElement;
  */
 final readonly class ConvertCollectionToXml
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
@@ -39,6 +40,7 @@ final readonly class ConvertCollectionToXml
         }
     }
 
+    /** @param array<array-key, mixed> $data */
     private function arrayToXml(array $data, SimpleXMLElement $xml): void
     {
         foreach ($data as $key => $value) {
@@ -53,6 +55,8 @@ final readonly class ConvertCollectionToXml
         }
     }
 
+    /** @return array<array-key, mixed> */
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

@@ -11,6 +11,7 @@ use InvalidArgumentException;
  */
 final readonly class ConvertCollectionToJson
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
@@ -34,6 +35,8 @@ final readonly class ConvertCollectionToJson
         return $json;
     }
 
+    /** @return array<array-key, mixed> */
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

@@ -10,13 +10,25 @@ final class MinValue
 {
     public function __invoke(Collection $collection, ?string $key = null): mixed
     {
-        if ($key === null) {
-            return $collection->isEmpty() ? null : min($collection->all());
+        if ($collection->isEmpty()) {
+            return null;
         }
 
-        $values = array_map(static fn ($item) => is_array($item) ? ($item[$key] ?? null) : ($item->{$key} ?? null), $collection->all());
-        $values = array_filter($values, static fn ($v): bool => $v !== null);
+        if ($key === null) {
+            $all = $collection->all();
+            assert($all !== []);
+            return min($all);
+        }
 
-        return $values === [] ? null : min($values);
+        $values = array_values(array_filter(array_map(
+            static fn ($item) => is_array($item) ? ($item[$key] ?? null) : ($item->{$key} ?? null),
+            $collection->all(),
+        ), static fn ($v): bool => $v !== null));
+
+        if ($values === []) {
+            return null;
+        }
+
+        return min($values);
     }
 }

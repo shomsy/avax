@@ -11,6 +11,7 @@ use Avax\Components\DataStack\Data\System\Capabilities\DataPaths\DotPath;
  */
 final readonly class HasValue
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
@@ -34,6 +35,7 @@ final readonly class HasValue
         return false;
     }
 
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

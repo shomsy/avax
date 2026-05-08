@@ -11,6 +11,7 @@ use Avax\Components\DataStack\Data\System\Capabilities\DataPaths\DotPath;
  */
 final readonly class ReadValueByPath
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
@@ -28,6 +29,7 @@ final readonly class ReadValueByPath
         return $dotPath->getValue(items: $this->items, default: $default);
     }
 
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

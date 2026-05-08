@@ -6,8 +6,8 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Set;
 
 use ArrayIterator;
 use Avax\Components\DataStack\Data\System\Capabilities\DataList\DataList;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\Comparator;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\NormalizedIterable;
+use Avax\Components\DataStack\Data\System\Capabilities\Structures\Comparator;
+use Avax\Components\DataStack\Data\System\Foundation\Normalization\NormalizedIterable;
 use Countable;
 use IteratorAggregate;
 use JsonException;
@@ -15,7 +15,7 @@ use Override;
 use Traversable;
 
 /**
- * Unordered unique value collection.
+ * @implements IteratorAggregate<int, mixed>
  */
 final readonly class Set implements Countable, IteratorAggregate
 {
@@ -95,11 +95,13 @@ final readonly class Set implements Countable, IteratorAggregate
         return new self(items: $filtered);
     }
 
+    /** @param iterable<mixed> $items */
     public function union(iterable $items): self
     {
         return new self(items: [...$this->items, ...NormalizedIterable::toArrayPreserveKeys(iterable: $items)]);
     }
 
+    /** @param iterable<mixed> $items */
     public function intersect(iterable $items): self
     {
         $other = new self(items: $items);
@@ -133,6 +135,7 @@ final readonly class Set implements Countable, IteratorAggregate
         return false;
     }
 
+    /** @param iterable<mixed> $items */
     public function diff(iterable $items): self
     {
         $other = new self(items: $items);

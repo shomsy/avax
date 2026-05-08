@@ -6,14 +6,14 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Sequence;
 
 use ArrayIterator;
 use Avax\Components\DataStack\Data\System\Capabilities\DataList\DataList;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\NormalizedIterable;
+use Avax\Components\DataStack\Data\System\Foundation\Normalization\NormalizedIterable;
 use Countable;
 use IteratorAggregate;
 use Override;
 use Traversable;
 
 /**
- * Ordered transform-oriented sequence.
+ * @implements IteratorAggregate<int, mixed>
  */
 final readonly class Sequence implements Countable, IteratorAggregate
 {
@@ -28,7 +28,7 @@ final readonly class Sequence implements Countable, IteratorAggregate
     public function __construct(
         iterable $items = [],
     ) {
-        $this->items = array_values(NormalizedIterable::toArrayPreserveKeys(iterable: $items));
+        $this->items = NormalizedIterable::toArrayPreserveKeys(iterable: $items);
     }
 
     /**

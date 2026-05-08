@@ -6,7 +6,7 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\DataList;
 
 use ArrayIterator;
 use Avax\Components\DataStack\Data\System\Capabilities\Collection\Collection;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\NormalizedIterable;
+use Avax\Components\DataStack\Data\System\Foundation\Normalization\NormalizedIterable;
 use Countable;
 use IteratorAggregate;
 use Override;
@@ -14,6 +14,8 @@ use Traversable;
 
 /**
  * Ordered list with sequential integer keys.
+ *
+ * @implements IteratorAggregate<int, mixed>
  */
 final readonly class DataList implements Countable, IteratorAggregate
 {
@@ -28,7 +30,7 @@ final readonly class DataList implements Countable, IteratorAggregate
     public function __construct(
         iterable $items = [],
     ) {
-        $this->items = array_values(NormalizedIterable::toArrayPreserveKeys(iterable: $items));
+        $this->items = NormalizedIterable::toArrayPreserveKeys(iterable: $items);
     }
 
     /**
@@ -77,7 +79,7 @@ final readonly class DataList implements Countable, IteratorAggregate
 
     public function toCollection(): Collection
     {
-        return new Collection(items: $this->items);
+        return Collection::make(items: $this->items);
     }
 
     #[Override]

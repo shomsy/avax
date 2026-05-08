@@ -9,16 +9,19 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Transform;
  */
 final readonly class TrimValues
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
     }
 
+    /** @return array<array-key, mixed> */
     public function __invoke(string $characters = " \n\r\t\v\x00"): array
     {
         return $this->trim(characters: $characters);
     }
 
+    /** @return array<array-key, mixed> */
     public function trim(string $characters = " \n\r\t\v\x00"): array
     {
         return array_map(
@@ -27,6 +30,8 @@ final readonly class TrimValues
         );
     }
 
+    /** @return array<array-key, mixed> */
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

@@ -10,13 +10,25 @@ final class MaxValue
 {
     public function __invoke(Collection $collection, ?string $key = null): mixed
     {
-        if ($key === null) {
-            return $collection->isEmpty() ? null : max($collection->all());
+        if ($collection->isEmpty()) {
+            return null;
         }
 
-        $values = array_map(static fn ($item) => is_array($item) ? ($item[$key] ?? null) : ($item->{$key} ?? null), $collection->all());
-        $values = array_filter($values, static fn ($v): bool => $v !== null);
+        if ($key === null) {
+            $all = $collection->all();
+            assert($all !== []);
+            return max($all);
+        }
 
-        return $values === [] ? null : max($values);
+        $values = array_values(array_filter(array_map(
+            static fn ($item) => is_array($item) ? ($item[$key] ?? null) : ($item->{$key} ?? null),
+            $collection->all(),
+        ), static fn ($v): bool => $v !== null));
+
+        if ($values === []) {
+            return null;
+        }
+
+        return max($values);
     }
 }

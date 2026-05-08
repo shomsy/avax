@@ -6,8 +6,8 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\OrderedSet;
 
 use ArrayIterator;
 use Avax\Components\DataStack\Data\System\Capabilities\DataList\DataList;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\Comparator;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\NormalizedIterable;
+use Avax\Components\DataStack\Data\System\Capabilities\Structures\Comparator;
+use Avax\Components\DataStack\Data\System\Foundation\Normalization\NormalizedIterable;
 use Countable;
 use IteratorAggregate;
 use JsonException;
@@ -15,7 +15,7 @@ use Override;
 use Traversable;
 
 /**
- * Unique value collection that preserves insertion order.
+ * @implements IteratorAggregate<int, mixed>
  */
 final readonly class OrderedSet implements Countable, IteratorAggregate
 {

@@ -9,14 +9,15 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Transform;
  */
 final readonly class PartitionValues
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
     }
 
     /**
-     * @param  callable  $callback  fn(mixed $item) : bool
-     * @return array{0: array, 1: array}
+     * @param callable(mixed): bool $callback
+     * @return array{array<array-key, mixed>, array<array-key, mixed>}
      */
     public function __invoke(callable $callback): array
     {
@@ -24,8 +25,8 @@ final readonly class PartitionValues
     }
 
     /**
-     * @param  callable  $callback  fn(mixed $item) : bool
-     * @return array{0: array, 1: array}
+     * @param callable(mixed): bool $callback
+     * @return array{array<array-key, mixed>, array<array-key, mixed>}
      */
     public function partition(callable $callback): array
     {
@@ -43,6 +44,7 @@ final readonly class PartitionValues
         return [$pass, $fail];
     }
 
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

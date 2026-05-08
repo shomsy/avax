@@ -10,6 +10,6 @@ final class CreateCollection
 {
     public function create(array $items = []): Collection
     {
-        return new Collection($items);
+        return Collection::make(items: $items);
     }
 }

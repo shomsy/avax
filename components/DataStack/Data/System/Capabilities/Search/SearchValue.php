@@ -9,6 +9,7 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Search;
  */
 final readonly class SearchValue
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
@@ -21,9 +22,11 @@ final readonly class SearchValue
 
     public function search(mixed $value): int|false
     {
-        return array_search(needle: $value, haystack: $this->items, strict: true);
+        $result = array_search(needle: $value, haystack: $this->items, strict: true);
+        return is_int(value: $result) ? $result : false;
     }
 
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

@@ -6,14 +6,14 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\MultiMap;
 
 use ArrayIterator;
 use Avax\Components\DataStack\Data\System\Capabilities\DataList\DataList;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\NormalizedIterable;
+use Avax\Components\DataStack\Data\System\Foundation\Normalization\NormalizedIterable;
 use Countable;
 use IteratorAggregate;
 use Override;
 use Traversable;
 
 /**
- * Key-value map that stores multiple values per key.
+ * @implements IteratorAggregate<array-key, mixed>
  */
 final readonly class MultiMap implements Countable, IteratorAggregate
 {

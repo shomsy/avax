@@ -9,6 +9,7 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Aggregate;
  */
 final readonly class AverageValues
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
@@ -28,6 +29,7 @@ final readonly class AverageValues
             : 0.0;
     }
 
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

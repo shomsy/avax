@@ -9,6 +9,7 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Transform;
  */
 final readonly class FilterValues
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
@@ -32,6 +33,8 @@ final readonly class FilterValues
         return array_filter(array: $this->items, callback: $callback, mode: ARRAY_FILTER_USE_BOTH);
     }
 
+    /** @return array<array-key, mixed> */
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

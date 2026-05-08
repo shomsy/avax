@@ -5,338 +5,393 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Data\System\Capabilities\Collection;
 
 use ArrayIterator;
-use Avax\Components\DataStack\Data\System\Capabilities\Aggregate\AverageValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Aggregate\FindMaxValue;
-use Avax\Components\DataStack\Data\System\Capabilities\Aggregate\FindMinValue;
-use Avax\Components\DataStack\Data\System\Capabilities\Aggregate\SumValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\Pair;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\ConvertCollectionToArray;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\ConvertCollectionToJson;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\ConvertCollectionToXml;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\MakeCollection;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\WrapValue;
+use Avax\Components\DataStack\Data\System\Capabilities\Arrhae\Arrhae;
 use Avax\Components\DataStack\Data\System\Foundation\Failure\MutationException;
-use Avax\Components\DataStack\Data\System\Capabilities\DataPipeline\DataPipeline;
-use Avax\Components\DataStack\Data\System\Capabilities\Collection\Internal\MutationGuard;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\ReverseValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\ShuffleValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\SortValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\SortValuesBy;
-use Avax\Components\DataStack\Data\System\Capabilities\Selection\HasValue;
-use Avax\Components\DataStack\Data\System\Capabilities\Selection\ReadValueByPath;
-use Avax\Components\DataStack\Data\System\Capabilities\Search\ContainsValue;
-use Avax\Components\DataStack\Data\System\Capabilities\Search\SearchValue;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\ChunkValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\EachValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\FilterValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\FlattenValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\GroupValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\MapValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\PartitionValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\ReduceValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\RejectValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\UniqueValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\AppendValue;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\ForgetValue;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\PullValue;
-use Avax\Components\DataStack\Data\System\Capabilities\Transform\PutValueByPath;
+use Avax\Components\DataStack\Data\System\Foundation\Mutability\MutationGuard;
+use Avax\Components\DataStack\Data\System\Foundation\Normalization\MakeCollection;
+use Avax\Components\DataStack\Data\System\Foundation\Normalization\WrapValue;
+use Avax\Components\DataStack\Data\System\Capabilities\Structures\Pair;
 use Traversable;
 
 /**
- * Collection - fluent state owner for chainable array operations.
- * Recovered from legacy DataFoundation.
+ * Collection — fluent item/object pipeline DSL.
+ *
+ * Composes Arrhae internally for all array-backed pipeline operations.
+ * Collection adds iterable/object semantics, IteratorAggregate, Countable,
+ * and read-only ArrayAccess behavior.
+ *
+ * Same fluent pipeline vocabulary as Arrhae, different input semantics.
  */
 final readonly class Collection implements CollectionInterface
 {
-    use DataPipeline;
-
     private MutationGuard $mutationGuard;
 
     public function __construct(
-        private array $items = [],
+        private Arrhae $arrhae,
     ) {
         $this->mutationGuard = new MutationGuard();
     }
 
-    /**
-     * @return array<array-key, mixed>
-     */
-    protected function data(): array
-    {
-        return $this->items;
-    }
+    // -- Factories ---------------------------------------------------------------
 
-    /**
-     * @param array<array-key, mixed> $data
-     */
-    protected function createWithData(array $data): static
-    {
-        return new self(items: $data);
-    }
-
+    /** @param iterable<array-key, mixed> $items */
     public static function make(iterable $items = []): static
     {
-        return new self(items: new MakeCollection()->from(items: $items));
+        return new self(arrhae: Arrhae::make(items: $items));
     }
 
     public static function wrap(mixed $value): static
     {
         return match (true) {
             $value instanceof static => $value,
-            default => new self(items: new WrapValue()->intoArray(value: $value)),
+            $value instanceof Arrhae => new self(arrhae: $value),
+            default => new self(arrhae: Arrhae::wrap(value: $value)),
         };
     }
 
+    // -- Access ------------------------------------------------------------------
+
+    /** @return array<array-key, mixed> */
     public function all(): array
     {
-        return $this->items;
+        return $this->arrhae->all();
     }
 
-    public function count(): int
+        public function count(): int
     {
-        return count(value: $this->items);
+        $count = $this->arrhae->count();
+        assert($count >= 0);
+
+        return $count;
     }
 
     public function isEmpty(): bool
     {
-        return $this->items === [];
+        return $this->arrhae->isEmpty();
     }
 
     public function isNotEmpty(): bool
     {
-        return $this->items !== [];
+        return $this->arrhae->isNotEmpty();
     }
 
     public function first(mixed $default = null): mixed
     {
-        if ($this->items === []) {
-            return $default;
-        }
-
-        $copy = $this->items;
-
-        return reset(array: $copy);
+        return $this->arrhae->first(default: $default);
     }
 
     public function last(mixed $default = null): mixed
     {
-        if ($this->items === []) {
-            return $default;
-        }
-
-        $copy = $this->items;
-
-        return end(array: $copy);
+        return $this->arrhae->last(default: $default);
     }
 
     public function get(string $key, mixed $default = null): mixed
     {
-        if (array_key_exists(key: $key, array: $this->items)) {
-            return $this->items[$key];
-        }
-
-        if (str_contains(haystack: $key, needle: '.')) {
-            return new ReadValueByPath(items: $this->items)->get(path: $key, default: $default);
-        }
-
-        return $default;
+        return $this->arrhae->get(key: $key, default: $default);
     }
 
     public function has(string $key): bool
     {
-        return array_key_exists(key: $key, array: $this->items)
-            || new HasValue(items: $this->items)->check(key: $key);
+        return $this->arrhae->has(key: $key);
     }
 
     public function set(string $key, mixed $value): static
     {
         $this->mutationGuard->assertMutable();
 
-        $items = $this->items;
-
-        if (str_contains(haystack: $key, needle: '.')) {
-            $items = new PutValueByPath(items: $items)->put(path: $key, value: $value);
-        } else {
-            $items[$key] = $value;
-        }
-
-        return new self(items: $items);
+        return new self(arrhae: $this->arrhae->set(key: $key, value: $value));
     }
 
     public function forget(string $key): static
     {
         $this->mutationGuard->assertMutable();
 
-        return new self(
-            items: new ForgetValue(items: $this->items)->forget(key: $key),
-        );
+        return new self(arrhae: $this->arrhae->forget(key: $key));
     }
 
     public function add(mixed $value): static
     {
         $this->mutationGuard->assertMutable();
 
-        return new self(
-            items: new AppendValue(items: $this->items)->append(value: $value),
-        );
+        return new self(arrhae: $this->arrhae->add(value: $value));
     }
 
     public function pull(string $key): Pair
     {
-        $this->mutationGuard->assertMutable();
-
-        [$value, $items] = new PullValue(items: $this->items)->pull(key: $key);
+        $pair = $this->arrhae->pull(key: $key);
 
         return new Pair(
-            first : $value,
-            second: $items === $this->items ? $this : new self(items: $items),
+            first : $pair->first(),
+            second: $pair->second() instanceof Arrhae
+                ? new self(arrhae: $pair->second())
+                : $pair->second(),
         );
     }
 
+    // -- Pipeline ----------------------------------------------------------------
+
     public function map(callable $callback): static
     {
-        return new self(
-            items: new MapValues(items: $this->items)->map(callback: $callback),
-        );
+        return new self(arrhae: $this->arrhae->map(callback: $callback));
     }
 
     public function filter(callable $callback): static
     {
-        return new self(
-            items: new FilterValues(items: $this->items)->filter(callback: $callback),
-        );
+        return new self(arrhae: $this->arrhae->filter(callback: $callback));
     }
 
     public function reduce(callable $callback, mixed $initial = null): mixed
     {
-        return new ReduceValues(items: $this->items)->reduce(callback: $callback, initial: $initial);
+        return $this->arrhae->reduce(callback: $callback, initial: $initial);
     }
 
     public function reject(callable $callback): static
     {
-        return new self(
-            items: new RejectValues(items: $this->items)->reject(callback: $callback),
-        );
+        return new self(arrhae: $this->arrhae->reject(callback: $callback));
     }
 
     public function flatten(int $depth = PHP_INT_MAX): static
     {
-        return new self(
-            items: new FlattenValues(items: $this->items)->flatten(depth: max(1, $depth)),
-        );
+        return new self(arrhae: $this->arrhae->flatten(depth: $depth));
     }
 
     public function each(callable $callback): static
     {
-        return new self(
-            items: new EachValues(items: $this->items)->each(callback: $callback),
-        );
+        return new self(arrhae: $this->arrhae->each(callback: $callback));
     }
+
+    // -- Aggregate ---------------------------------------------------------------
 
     public function sum(string|callable $key): int|float
     {
-        return new SumValues(items: $this->items)->sum(key: $key);
+        return $this->arrhae->sum(key: $key);
     }
 
     public function average(string|callable $key): float
     {
-        return new AverageValues(items: $this->items)->average(key: $key);
+        return $this->arrhae->average(key: $key);
     }
 
     public function min(string|callable $key): mixed
     {
-        return new FindMinValue(items: $this->items)->min(key: $key);
+        return $this->arrhae->min(key: $key);
     }
 
     public function max(string|callable $key): mixed
     {
-        return new FindMaxValue(items: $this->items)->max(key: $key);
+        return $this->arrhae->max(key: $key);
     }
 
-    public function chunk(int $size): static
-    {
-        return new self(
-            items: new ChunkValues(items: $this->items)->chunk(size: $size),
-        );
-    }
-
-    /**
-     * @return array<array-key, list<mixed>>
-     */
-    public function groupBy(string|callable $key): array
-    {
-        return new GroupValues(items: $this->items)->group(key: $key);
-    }
-
-    /**
-     * @return array{static, static}
-     */
-    public function partition(callable $callback): array
-    {
-        [$pass, $fail] = new PartitionValues(items: $this->items)->partition(callback: $callback);
-
-        return [new self(items: $pass), new self(items: $fail)];
-    }
-
-    public function contains(mixed $value): bool
-    {
-        return new ContainsValue(items: $this->items)->contains(value: $value);
-    }
-
-    public function search(mixed $value): int|false
-    {
-        return new SearchValue(items: $this->items)->search(value: $value);
-    }
+    // -- Order -------------------------------------------------------------------
 
     public function sort(?callable $callback = null): static
     {
-        return new self(
-            items: new SortValues(items: $this->items)->sort(callback: $callback),
-        );
+        return new self(arrhae: $this->arrhae->sort(callback: $callback));
     }
 
     public function sortBy(string|callable $key, bool $descending = false): static
     {
-        return new self(
-            items: new SortValuesBy(items: $this->items)->sortBy(key: $key, options: SORT_REGULAR, descending: $descending),
-        );
+        return new self(arrhae: $this->arrhae->sortBy(key: $key, descending: $descending));
     }
 
     public function reverse(): static
     {
-        return new self(
-            items: new ReverseValues(items: $this->items)->reverse(),
-        );
+        return new self(arrhae: $this->arrhae->reverse());
     }
 
     public function shuffle(): static
     {
-        return new self(
-            items: new ShuffleValues(items: $this->items)->shuffle(),
-        );
+        return new self(arrhae: $this->arrhae->shuffle());
     }
 
     public function unique(): static
     {
-        return new self(
-            items: new UniqueValues(items: $this->items)->unique(),
-        );
+        return new self(arrhae: $this->arrhae->unique());
     }
 
+    // -- Grouping ----------------------------------------------------------------
+
+    public function chunk(int $size): static
+    {
+        return new self(arrhae: $this->arrhae->chunk(size: $size));
+    }
+
+    /** @return array<array-key, list<mixed>> */
+    public function groupBy(string|callable $key): array
+    {
+        return $this->arrhae->groupBy(key: $key);
+    }
+
+    /** @return array{static, static} */
+    public function partition(callable $callback): array
+    {
+        [$passArrhae, $failArrhae] = $this->arrhae->partition(callback: $callback);
+
+        return [new self(arrhae: $passArrhae), new self(arrhae: $failArrhae)];
+    }
+
+    // -- Search ------------------------------------------------------------------
+
+    public function contains(mixed $value): bool
+    {
+        return $this->arrhae->contains(value: $value);
+    }
+
+    public function search(mixed $value): int|false
+    {
+        return $this->arrhae->search(value: $value);
+    }
+
+    // -- Selection ---------------------------------------------------------------
+
+    /** @param list<int|string> $keys */
+    public function only(array $keys): static
+    {
+        return new self(arrhae: $this->arrhae->only(keys: $keys));
+    }
+
+    /** @param list<int|string> $keys */
+    public function except(array $keys): static
+    {
+        return new self(arrhae: $this->arrhae->except(keys: $keys));
+    }
+
+    /** @return list<mixed> */
+    public function pluck(string|callable $key): array
+    {
+        return $this->arrhae->pluck(key: $key);
+    }
+
+    // -- Query / Filtering -------------------------------------------------------
+
+    public function where(string $key, mixed $value): static
+    {
+        return new self(arrhae: $this->arrhae->where(key: $key, value: $value));
+    }
+
+    /** @param list<mixed> $values */
+    public function whereIn(string $key, array $values): static
+    {
+        return new self(arrhae: $this->arrhae->whereIn(key: $key, values: $values));
+    }
+
+    /** @param array{mixed, mixed} $range */
+    public function whereBetween(string $key, array $range): static
+    {
+        return new self(arrhae: $this->arrhae->whereBetween(key: $key, range: $range));
+    }
+
+    public function whereNull(string $key): static
+    {
+        return new self(arrhae: $this->arrhae->whereNull(key: $key));
+    }
+
+    public function whereNotNull(string $key): static
+    {
+        return new self(arrhae: $this->arrhae->whereNotNull(key: $key));
+    }
+
+    // -- Keying ------------------------------------------------------------------
+
+    public function keyBy(string|callable $key): static
+    {
+        return new self(arrhae: $this->arrhae->keyBy(key: $key));
+    }
+
+    // -- Set Algebra -------------------------------------------------------------
+
+    public function flip(): static
+    {
+        return new self(arrhae: $this->arrhae->flip());
+    }
+
+    /** @param array<array-key, mixed> $items */
+    
+    /** @param array<array-key, mixed> $items */
+    public function merge(array $items): static
+    {
+        return new self(arrhae: $this->arrhae->merge(items: $items));
+    }
+
+    /** @param array<array-key, mixed> $items */
+    
+    /** @param array<array-key, mixed> $items */
+    public function union(array $items): static
+    {
+        return new self(arrhae: $this->arrhae->union(items: $items));
+    }
+
+    /** @param array<array-key, mixed> $items */
+    
+    /** @param array<array-key, mixed> $items */
+    public function diff(array $items): static
+    {
+        return new self(arrhae: $this->arrhae->diff(items: $items));
+    }
+
+    /** @param array<array-key, mixed> $items */
+    
+    /** @param array<array-key, mixed> $items */
+    public function intersect(array $items): static
+    {
+        return new self(arrhae: $this->arrhae->intersect(items: $items));
+    }
+
+    // -- Info --------------------------------------------------------------------
+
+    /** @return list<array-key> */
+    public function keys(): array
+    {
+        return $this->arrhae->keys();
+    }
+
+    public function values(): static
+    {
+        return new self(arrhae: $this->arrhae->values());
+    }
+
+    // -- Conditional / Pipeline Control ------------------------------------------
+
+    public function tap(callable $callback): static
+    {
+        $callback($this);
+
+        return $this;
+    }
+
+    public function when(bool $condition, callable $callback): static
+    {
+        if ($condition) {
+            return $callback($this) ?? $this;
+        }
+
+        return $this;
+    }
+
+    public function unless(bool $condition, callable $callback): static
+    {
+        return $this->when(condition: ! $condition, callback: $callback);
+    }
+
+    // -- Conversion --------------------------------------------------------------
+
+    /** @return array<array-key, mixed> */
     public function toArray(): array
     {
-        return new ConvertCollectionToArray(items: $this->items)->toArray();
+        return $this->arrhae->toArray();
     }
 
     public function toJson(int $flags = 0): string
     {
-        return new ConvertCollectionToJson(items: $this->items)->toJson(flags: $flags);
+        return $this->arrhae->toJson(flags: $flags);
     }
 
     public function toXml(string $rootElement = 'root'): string
     {
-        return new ConvertCollectionToXml(items: $this->items)->toXml(rootElement: $rootElement);
+        return $this->arrhae->toXml(rootElement: $rootElement);
     }
+
+    // -- Immutability ------------------------------------------------------------
 
     public function toImmutable(): static
     {
@@ -349,7 +404,7 @@ final readonly class Collection implements CollectionInterface
             throw MutationException::collectionIsAlreadyLocked();
         }
 
-        $clone = new self(items: $this->items);
+        $clone = new self(arrhae: $this->arrhae);
         $clone->mutationGuard->lock();
 
         return $clone;
@@ -360,19 +415,23 @@ final readonly class Collection implements CollectionInterface
         return $this->mutationGuard->isLocked();
     }
 
+    // -- IteratorAggregate -------------------------------------------------------
+
     public function getIterator(): Traversable
     {
-        return new ArrayIterator(array: $this->items);
+        return new ArrayIterator(array: $this->arrhae->all());
     }
+
+    // -- ArrayAccess (read-only) -------------------------------------------------
 
     public function offsetExists(mixed $offset): bool
     {
-        return array_key_exists(key: (string) $offset, array: $this->items);
+        return array_key_exists(key: (string) $offset, array: $this->arrhae->all());
     }
 
     public function offsetGet(mixed $offset): mixed
     {
-        return $this->items[$offset] ?? null;
+        return $this->arrhae->all()[$offset] ?? null;
     }
 
     public function offsetSet(mixed $offset, mixed $value): void

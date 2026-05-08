@@ -11,6 +11,7 @@ use InvalidArgumentException;
  */
 final readonly class SumValues
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
@@ -42,9 +43,10 @@ final readonly class SumValues
             throw new InvalidArgumentException(message: 'Non-numeric value encountered in sum.');
         }
 
-        return $value;
+        return is_int(value: $value) || is_float(value: $value) ? $value : (int) $value;
     }
 
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

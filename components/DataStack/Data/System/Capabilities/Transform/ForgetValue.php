@@ -11,16 +11,19 @@ use Avax\Components\DataStack\Data\System\Capabilities\DataPaths\DotPath;
  */
 final readonly class ForgetValue
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
     }
 
+    /** @return array<array-key, mixed> */
     public function __invoke(string $key): array
     {
         return $this->forget(key: $key);
     }
 
+    /** @return array<array-key, mixed> */
     public function forget(string $key): array
     {
         $items = $this->items;
@@ -41,6 +44,8 @@ final readonly class ForgetValue
         return $items;
     }
 
+    /** @return array<array-key, mixed> */
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

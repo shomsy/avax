@@ -11,16 +11,19 @@ use Avax\Components\DataStack\Data\System\Capabilities\DataPaths\DotPath;
  */
 final readonly class PutValueByPath
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
     }
 
+    /** @return array<array-key, mixed> */
     public function __invoke(string $path, mixed $value): array
     {
         return $this->put(path: $path, value: $value);
     }
 
+    /** @return array<array-key, mixed> */
     public function put(string $path, mixed $value): array
     {
         $items = $this->items;
@@ -29,6 +32,8 @@ final readonly class PutValueByPath
         return $items;
     }
 
+    /** @return array<array-key, mixed> */
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

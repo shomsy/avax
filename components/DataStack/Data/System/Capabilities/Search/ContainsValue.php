@@ -9,6 +9,7 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Search;
  */
 final readonly class ContainsValue
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
@@ -24,6 +25,7 @@ final readonly class ContainsValue
         return in_array(needle: $value, haystack: $this->items, strict: true);
     }
 
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

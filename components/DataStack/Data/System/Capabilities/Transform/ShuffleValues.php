@@ -9,16 +9,20 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Transform;
  */
 final readonly class ShuffleValues
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
     }
 
+    /** @return array<array-key, mixed> */
+    /** @return array<array-key, mixed> */
     public function __invoke(): array
     {
         return $this->shuffle();
     }
 
+    /** @return array<array-key, mixed> */
     public function shuffle(): array
     {
         $items = $this->items;
@@ -27,6 +31,8 @@ final readonly class ShuffleValues
         return $items;
     }
 
+    /** @return array<array-key, mixed> */
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

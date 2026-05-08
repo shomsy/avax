@@ -31,11 +31,8 @@ interface DataInterface
     /**
      * Create a new Collection from an array.
      *
-     * @template TKey of array-key
-     * @template TValue
-     *
-     * @param  array<TKey, TValue>  $items
-     * @return Collection<TKey, TValue>
+     * @param  array<array-key, mixed>  $items
+     * @return Collection
      */
     public function collect(array $items = []): Collection;
 }

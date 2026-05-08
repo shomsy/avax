@@ -11,16 +11,19 @@ use InvalidArgumentException;
  */
 final readonly class ChunkValues
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
     }
 
+    /** @return array<array-key, mixed> */
     public function __invoke(int $size): array
     {
         return $this->chunk(size: $size);
     }
 
+    /** @return array<array-key, mixed> */
     public function chunk(int $size): array
     {
         if ($size <= 0) {
@@ -30,6 +33,8 @@ final readonly class ChunkValues
         return array_chunk(array: $this->items, length: $size, preserve_keys: true);
     }
 
+    /** @return array<array-key, mixed> */
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

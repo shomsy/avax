@@ -11,6 +11,7 @@ use LogicException;
  */
 final readonly class FindMaxValue
 {
+    /** @param array<array-key, mixed> $items */
     public function __construct(
         private array $items = [],
     ) {
@@ -35,6 +36,7 @@ final readonly class FindMaxValue
         return max(value: $values);
     }
 
+    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;

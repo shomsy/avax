@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Policies;
+namespace Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Retry;
 
 /**
  * Retry policy model.

@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Avax\Labs\SystemDesignKit\System\Capabilities\Messaging;
 
-use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\BrokerModel\BrokerModel;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Acknowledgement\AcknowledgementPolicy;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Broker\Broker;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Consumers\Consumer;
-use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Core\Message;
-use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Core\MessageType;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Cqrs\CommandSide;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Cqrs\QuerySide;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\DeadLetters\DeadLetterQueue;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Inbox\Inbox;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Outbox\Outbox;
-use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Policies\AcknowledgementPolicy;
-use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Policies\RetryPolicy;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Retry\RetryPolicy;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Types\Message;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Types\MessageType;
 
 /**
  * Messaging model — aggregates all messaging value objects.
@@ -30,7 +30,7 @@ final readonly class MessagingModel
     /**
      * @param list<Message>        $messages
      * @param list<Consumer>       $consumers
-     * @param BrokerModel|null     $broker
+     * @param Broker|null $broker
      * @param Outbox|null          $outbox
      * @param Inbox|null           $inbox
      * @param DeadLetterQueue|null $deadLetterQueue
@@ -42,7 +42,7 @@ final readonly class MessagingModel
         public string                $system,
         public array                 $messages,
         public array                 $consumers,
-        public ?BrokerModel          $broker = null,
+        public ?Broker $broker = null,
         public ?Outbox               $outbox = null,
         public ?Inbox                $inbox = null,
         public ?DeadLetterQueue      $deadLetterQueue = null,
@@ -102,7 +102,7 @@ final readonly class MessagingModel
         $broker       = null;
 
         if (is_array($brokerConfig)) {
-            $broker = new BrokerModel(
+            $broker = new Broker(
                 brokerType       : (string) ($brokerConfig['broker_type'] ?? 'kafka'),
                 partitionCount   : (int) ($brokerConfig['partition_count'] ?? 12),
                 replicationFactor: (int) ($brokerConfig['replication_factor'] ?? 3),

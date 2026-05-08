@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Models;
+namespace Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Profiles;
 
 /**
  * Consistency profile for a single data path.

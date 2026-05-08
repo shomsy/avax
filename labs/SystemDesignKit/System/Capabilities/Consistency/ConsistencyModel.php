@@ -10,8 +10,8 @@ use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Delivery\DeliveryG
 use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Delivery\DeliverySemantics;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Lag\ProjectionLag;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Lag\ReplicationLag;
-use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Models\ConsistencyModel as ConsistencyModelEnum;
-use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Models\ConsistencyProfile;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Profiles\ConsistencyModel as ConsistencyModelEnum;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Profiles\ConsistencyProfile;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Staleness\StalenessBudget;
 
 /**

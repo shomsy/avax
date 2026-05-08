@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Labs\SystemDesignKit\System\Flows\ExplainConsistencyTradeoff;
 
 use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\ConsistencyModel;
-use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Models\ConsistencyProfile;
+use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\Profiles\ConsistencyProfile;
 
 /**
  * Explains consistency tradeoffs for each path.

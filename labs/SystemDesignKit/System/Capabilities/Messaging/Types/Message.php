@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Core;
+namespace Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Types;
 
 /**
  * Message value object — typed message with metadata.

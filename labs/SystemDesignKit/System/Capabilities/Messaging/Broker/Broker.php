@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\BrokerModel;
+namespace Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Broker;
 
 /**
  * Broker topology model.
@@ -12,7 +12,7 @@ namespace Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\BrokerModel;
  * Models the message broker type, partition count,
  * and replication factor at the architecture level.
  */
-final readonly class BrokerModel
+final readonly class Broker
 {
     public function __construct(
         public string $brokerType,

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Labs\SystemDesignKit\System\Flows\DetectMessagingRisk;
 
+use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Acknowledgement\AcknowledgementPolicy;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\MessagingModel;
-use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\Policies\AcknowledgementPolicy;
 
 /**
  * Detects messaging architecture risks.

@@ -58,7 +58,12 @@ V2 Platform Baseline: CLOSED / GREEN
 V2 Component Completion: CLOSED / GREEN
 V2 Canonical Shape Audit: CLOSED / GREEN (67/67 leaf components compliant)
 V3 Labs Foundation (V3-00): COMPLETE (experimental)
-V3 Implementation: LOCKED
+V3 Schema Validation (V3-01): COMPLETE (experimental)
+V3 Capacity Engine (V3-02): COMPLETE (experimental)
+V3 Consistency Engine (V3-03): COMPLETE (experimental)
+V3 Messaging & CQRS (V3-04): COMPLETE (experimental)
+V3 Runtime Integration Proof (V3-05): COMPLETE (experimental)
+V3 Implementation: LOCKED (labs only, not promoted)
 
 ## V2 Platform Baseline Closure
 

@@ -4,7 +4,7 @@ V3 Executable System Design Framework
 
 ## Status
 
-**Experimental** — V3-02 Capacity, V3-03 Consistency, V3-04 Messaging & CQRS complete.
+**Experimental** — V3-02 Capacity, V3-03 Consistency, V3-04 Messaging & CQRS, V3-05 Runtime Integration Proof complete.
 **V2 Platform Baseline:** GREEN (all 72 components complete).
 **Promotion:** Not yet promoted to `components/SystemDesign/`.
 
@@ -131,6 +131,32 @@ V3 tests whether the architecture makes sense.
 
 - `System/Flows/ValidateMessagingModel/ValidateMessagingModel.php`
 - `System/Flows/DetectMessagingRisk/DetectMessagingRisk.php`
+
+## V3-05 Runtime Integration Proof
+
+Integration tests prove V3 models can describe V2 runtime behavior without duplicating runtime ownership:
+
+- `tests/SystemDesignKit/Integration/V3MessagingModelDescribesV2MessageBusTest.php` — V3 MessagingModel describes V2
+  CommandBus, EventBus, QueryBus behavior
+- `tests/SystemDesignKit/Integration/V3RetryPolicyAlignsV2RetryTest.php` — V3 RetryPolicy aligns with V2 TaskRetryPolicy
+  and Resilience RetryOptions
+- `tests/SystemDesignKit/Integration/V3QueueDepthModelsV2TaskQueueTest.php` — V3 QueueDepth models V2 TaskQueue capacity
+- `tests/SystemDesignKit/Integration/V3OutboxDlqModelsV2ResilienceTest.php` — V3 Outbox/DLQ model V2 Resilience
+  OutboxStore/DeadLetterStore patterns
+- `tests/SystemDesignKit/Integration/V3NoRuntimeDuplicationTest.php` — Static proof V3 classes are design-time only
+
+### Ownership Boundary
+
+| Concept           | V3 (design-time)                     | V2 (runtime)                                  |
+|-------------------|--------------------------------------|-----------------------------------------------|
+| Message types     | `MessagingModel`, `MessageType`      | `CommandBus`, `EventBus`, `QueryBus`          |
+| Retry policy      | `RetryPolicy` (max retries, backoff) | `RetryBuilder`, `TaskRetryPolicy` (execution) |
+| Queue capacity    | `QueueDepth`, `ConsumerThroughput`   | `TaskQueue`, `TaskRunner` (execution)         |
+| Outbox            | `Outbox` (config VO)                 | `OutboxStore` (runtime interface)             |
+| Dead letter queue | `DeadLetterQueue` (config VO)        | `DeadLetterStore` (runtime interface)         |
+| Risk detection    | `DetectMessagingRisk` (analysis)     | `BusMiddleware` (runtime enforcement)         |
+
+See: `EVIDENCE/plans/v3-runtime-integration-proof-plan.md`
 
 ## Public Surface
 
@@ -281,12 +307,12 @@ Promotion to `components/SystemDesign/` requires:
 - [x] V1 Kernel Green (PROVEN)
 - [x] V2 platform baseline GREEN (PROVEN)
 - [x] Canonical naming (no Core/, Models/, Policies/, BrokerModel/ buckets)
+- [x] Runtime integration tests with V2 components (V3-05 PROVEN)
 - [ ] At least 2 reference architectures validate
 - [ ] At least 1 runnable example passes
 - [ ] At least 3 failure scenarios catch real violations
 - [ ] Architecture tests have meaningful assertions
 - [ ] Public API classified as @experimental or @public
-- [ ] Runtime integration tests with V2 components
 
 See: `EVIDENCE/plans/v3-reference-architecture-plan.md`
 See: `EVIDENCE/avax-v3-executable-system-design-framework-plan.md`

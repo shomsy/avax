@@ -7,7 +7,7 @@ namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\TransferVal
 final readonly class DataTransferResult
 {
     private function __construct(
-        private ?object              $object,
+        private ?object $object,
         private ?DataTransferFailure $dataTransferFailure,
     ) {}
 
@@ -31,13 +31,47 @@ final readonly class DataTransferResult
         return $this->dataTransferFailure instanceof DataTransferFailure;
     }
 
+    /**
+     * Get the hydrated object.
+     *
+     * @throws DataTransferException if failure
+     */
     public function object() : object
     {
-        return $this->object ?? throw new DataTransferException(message: 'Data transfer did not produce an object.');
+        return $this->object ?? throw new DataTransferException(
+            message: 'Data transfer did not produce an object. Call violations() to read validation errors.',
+        );
     }
 
+    /**
+     * Get validation violations directly.
+     *
+     * Returns empty violations on success.
+     * Returns collected violations on failure.
+     */
+    public function violations() : DataTransferViolations
+    {
+        return $this->dataTransferFailure?->violations ?? DataTransferViolations::empty();
+    }
+
+    /**
+     * Check if there are any validation violations.
+     */
+    public function hasViolations() : bool
+    {
+        return $this->dataTransferFailure?->violations instanceof DataTransferViolations
+            && ! $this->dataTransferFailure->violations->isEmpty();
+    }
+
+    /**
+     * Get the lower-level failure object.
+     *
+     * @throws DataTransferException if success
+     */
     public function failureReason() : DataTransferFailure
     {
-        return $this->dataTransferFailure ?? throw new DataTransferException(message: 'Data transfer completed successfully.');
+        return $this->dataTransferFailure ?? throw new DataTransferException(
+            message: 'Data transfer completed successfully.',
+        );
     }
 }

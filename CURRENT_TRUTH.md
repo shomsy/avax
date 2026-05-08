@@ -12,22 +12,22 @@ V3 Implementation: LOCKED (labs/SystemDesignKit V3-00 foundation created)
 
 ## Validation Status
 
-| Command                                                             | Result                                       |
-|---------------------------------------------------------------------|----------------------------------------------|
-| `composer validate --no-check-publish`                              | GREEN                                        |
-| `composer dump-autoload -o`                                         | GREEN, 6943 classes                          |
-| `vendor/bin/phpunit --no-coverage`                                  | GREEN, 598 tests, 2482 assertions, 1 skipped |
-| `vendor/bin/phpstan analyse framework components tests`             | GREEN, 0 errors                              |
-| `php tooling/refactor/check-component-suite-structure.php`          | GREEN                                        |
-| `php tooling/refactor/check-duplicate-owners.php`                   | GREEN                                        |
-| `php tooling/refactor/check-namespace-drift.php`                    | GREEN                                        |
-| `php tooling/refactor/check-public-surface.php`                     | GREEN                                        |
-| `php tooling/refactor/check-runtime-leaks.php`                      | GREEN                                        |
-| `php tooling/audit_broken_refs.php`                                 | GREEN (18 missing refs, 0 production)        |
-| `php tooling/governance/check-governance-index-current.php`         | GREEN                                        |
-| `php tooling/governance/check-stage-lock.php`                       | GREEN                                        |
-| `php tooling/refactor/check-component-canonical-shape.php`          | GREEN                                        |
-| `php tooling/refactor/check-advanced-pattern-folder-violations.php` | GREEN                                        |
+| Command                                                             | Result                                |
+|---------------------------------------------------------------------|---------------------------------------|
+| `composer validate --no-check-publish`                              | GREEN                                 |
+| `composer dump-autoload -o`                                         | GREEN, 6943 classes                   |
+| `vendor/bin/phpunit --no-coverage`                                  | GREEN, 643 tests, 2624 assertions     |
+| `vendor/bin/phpstan analyse framework components tests`             | GREEN, 0 errors                       |
+| `php tooling/refactor/check-component-suite-structure.php`          | GREEN                                 |
+| `php tooling/refactor/check-duplicate-owners.php`                   | GREEN                                 |
+| `php tooling/refactor/check-namespace-drift.php`                    | GREEN                                 |
+| `php tooling/refactor/check-public-surface.php`                     | GREEN                                 |
+| `php tooling/refactor/check-runtime-leaks.php`                      | GREEN                                 |
+| `php tooling/audit_broken_refs.php`                                 | GREEN (18 missing refs, 0 production) |
+| `php tooling/governance/check-governance-index-current.php`         | GREEN                                 |
+| `php tooling/governance/check-stage-lock.php`                       | GREEN                                 |
+| `php tooling/refactor/check-component-canonical-shape.php`          | GREEN                                 |
+| `php tooling/refactor/check-advanced-pattern-folder-violations.php` | GREEN                                 |
 
 ## Stage Status
 
@@ -58,6 +58,41 @@ V2 Platform Baseline: CLOSED / GREEN
 V2 Component Completion: CLOSED / GREEN
 V2 Canonical Shape Audit: CLOSED / GREEN (67/67 leaf components compliant)
 V3 Labs Foundation (V3-00): COMPLETE (experimental)
+
+## Parallelism & Concurrency Implementation (0000 ADR, 0001, 0002)
+
+Date: 2026-05-08
+
+### Components Implemented
+
+**Operations/Parallelism** — External process pool parallelism via Symfony Process:
+
+- Foundation: WorkerId, WorkerResult, ParallelFailure, ParallelResult, ParallelException
+- Capabilities: CurrentProcessParallelRuntime, SymfonyProcessParallelRuntime, SerializeWorkPayload,
+  DeserializeWorkPayload, BuildParallelRuntime, ParallelRuntimeInterface
+- Flows: RunWorkInParallel, MapItemsInParallel
+- 25 tests, 142 assertions — GREEN
+
+**Operations/Concurrency** — Same-process task coordination via Fibers:
+
+- Foundation: TaskId, TaskDeadline, ConcurrentFailure, ConcurrentResult, ConcurrentTask, ConcurrencyException
+- Capabilities: CurrentProcessTaskRuntime, FiberTaskRuntime, ChooseTaskRuntime, LimitRunningTasks, CaptureTaskFailure,
+  TrackRunningTasks
+- Flows: RunConcurrentTasks, RaceTasks, StartTask, WaitForTask, WaitForTasks
+- Configuration: ConcurrencyConfig, BuildConcurrencyRuntime, TaskRuntimeInterface
+- 20 tests, 57 assertions — GREEN
+
+### PHPStan Status
+
+- components/Operations/Concurrency: GREEN (0 errors)
+- components/Operations/Parallelism: GREEN (0 errors)
+- symfony/process added to composer.json require-dev
+
+### Key Design Decisions
+
+- Concurrency = same-process task coordination (Fibers, sync fallback)
+- Parallelism = external process pool (Symfony Process)
+- Both use structured result types (ConcurrentResult, ParallelResult)
 V3 Schema Validation (V3-01): COMPLETE (experimental)
 V3 Capacity Engine (V3-02): COMPLETE (experimental)
 V3 Consistency Engine (V3-03): COMPLETE (experimental)

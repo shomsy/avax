@@ -4,45 +4,62 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Concurrency\System\PublicSurface;
 
-use Avax\Components\Operations\Concurrency\System\Capabilities\Tasks\TaskRunner;
+use Avax\Components\Operations\Concurrency\System\Flows\RaceTasks\RaceTasks;
+use Avax\Components\Operations\Concurrency\System\Flows\RunConcurrentTasks\RunConcurrentTasks;
+use Avax\Components\Operations\Concurrency\System\Flows\StartTask\StartTask;
+use Avax\Components\Operations\Concurrency\System\Flows\WaitForTask\WaitForTask;
+use Avax\Components\Operations\Concurrency\System\Foundation\ConcurrentResult;
+use Avax\Components\Operations\Concurrency\System\Foundation\ConcurrentTask;
+use Closure;
 
 final readonly class Concurrency
 {
     /**
-     * Run multiple tasks concurrently and return the first result.
+     * Run multiple tasks concurrently with optional concurrency limit.
      *
-     * @param list<callable(): mixed> $tasks
+     * @param array<string|int, Closure(): mixed> $tasks
+     */
+    public static function run(array $tasks, int|null $maxConcurrent = null) : ConcurrentResult
+    {
+        return (new RunConcurrentTasks())->run(tasks: $tasks, maxConcurrent: $maxConcurrent);
+    }
+
+    /**
+     * Run multiple tasks concurrently and wait for all.
+     *
+     * @param array<string|int, Closure(): mixed> $tasks
+     */
+    public static function all(array $tasks) : ConcurrentResult
+    {
+        return self::run(tasks: $tasks);
+    }
+
+    /**
+     * Run multiple tasks and return the first successful result.
+     *
+     * @param list<Closure(): mixed> $tasks
      */
     public static function race(array $tasks) : mixed
     {
-        $taskRunner = new TaskRunner();
-
-        return $taskRunner->race($tasks);
+        return (new RaceTasks())->race(tasks: $tasks);
     }
 
     /**
-     * Alias for all() with maxConcurrent parameter.
+     * Start a task without waiting for result.
      *
-     * @param list<callable(): mixed> $tasks
-     *
-     * @return list<mixed>
+     * @template TResult
+     * @param Closure(): TResult $task
      */
-    public static function run(array $tasks, ?int $maxConcurrent = null) : array
+    public static function start(Closure $task) : ConcurrentTask
     {
-        return self::all(tasks: $tasks);
+        return (new StartTask())->start(task: $task);
     }
 
     /**
-     * Run multiple tasks concurrently and wait for all to complete.
-     *
-     * @param list<callable(): mixed> $tasks
-     *
-     * @return list<mixed>
+     * Await a previously started task.
      */
-    public static function all(array $tasks) : array
+    public static function await(ConcurrentTask $task) : mixed
     {
-        $taskRunner = new TaskRunner();
-
-        return $taskRunner->runAll($tasks);
+        return (new WaitForTask())->await(task: $task);
     }
 }

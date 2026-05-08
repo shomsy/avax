@@ -30993,3 +30993,51 @@ parameters:
 			identifier: class.notFound
 			count: 1
 			path: tests/fixtures/routes_with_null_callable.php
+
+		-
+			message: '#^If condition is always false\.$#'
+			identifier: alwaysFalse
+			count: 1
+			path: components/Operations/Concurrency/System/Capabilities/RunWithFibers/FiberTaskRuntime.php
+
+		-
+			message: '#^Method Avax\\Components\\Operations\\Concurrency\\System\\Capabilities\\RunWithFibers\\FiberTaskRuntime::createFibers\(\) return type with generic class Fiber does not specify its types: TStart, TResume, TReturn, TSuspend$#'
+			identifier: missingType.generics
+			count: 1
+			path: components/Operations/Concurrency/System/Capabilities/RunWithFibers/FiberTaskRuntime.php
+
+		-
+			message: '#^Method Avax\\Components\\Operations\\Concurrency\\System\\Capabilities\\RunWithFibers\\FiberTaskRuntime::collectFiberResult\(\) has parameter \$fiber with generic class Fiber but does not specify its types: TStart, TResume, TReturn, TSuspend$#'
+			identifier: missingType.generics
+			count: 1
+			path: components/Operations/Concurrency/System/Capabilities/RunWithFibers/FiberTaskRuntime.php
+
+		-
+			message: '#^Instanceof between Closure and Closure will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 3
+			path: components/Operations/Concurrency/System/Capabilities/RunWithFibers/FiberTaskRuntime.php
+
+		-
+			message: '#^Method Avax\\Components\\Operations\\Concurrency\\System\\Configuration\\ConcurrencyConfig::fromArray\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: components/Operations/Concurrency/System/Configuration/ConcurrencyConfig.php
+
+		-
+			message: '#^Method Avax\\Components\\Operations\\Parallelism\\System\\Capabilities\\RunThroughProcessPool\\ReadWorkerResult::parseOutput\(\) should return array\{value: mixed\} but returns array\<mixed, mixed\>\.$#'
+			identifier: method.returnType
+			count: 1
+			path: components/Operations/Parallelism/System/Capabilities/RunThroughProcessPool/ReadWorkerResult.php
+
+		-
+			message: '#^Method Avax\\Components\\Operations\\Parallelism\\System\\Configuration\\BuildParallelRuntime::build\(\) should return Avax\\Components\\Operations\\Parallelism\\System\\Configuration\\ParallelRuntimeInterface but returns Avax\\Components\\Operations\\Parallelism\\System\\Capabilities\\RunInCurrentProcess\\CurrentProcessParallelRuntime\|Avax\\Components\\Operations\\Parallelism\\System\\Capabilities\\RunThroughProcessPool\\SymfonyProcessParallelRuntime\.$#'
+			identifier: method.returnType
+			count: 1
+			path: components/Operations/Parallelism/System/Configuration/BuildParallelRuntime.php
+
+		-
+			message: '#^Method Avax\\Components\\Operations\\Parallelism\\System\\Configuration\\ParallelismConfig::fromArray\(\) has parameter \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: components/Operations/Parallelism/System/Configuration/ParallelismConfig.php

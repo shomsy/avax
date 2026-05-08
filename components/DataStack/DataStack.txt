@@ -17,7 +17,6 @@ final readonly class EncodeArray
     }
 
     /** @return array<array-key, mixed> */
-    /** @return array<array-key, mixed> */
     public function __invoke(): array
     {
         return $this->toArray();
@@ -41,7 +40,6 @@ final readonly class EncodeArray
         return $item;
     }
 
-    /** @return array<array-key, mixed> */
     /** @return array<array-key, mixed> */
     public function getItems(): array
     {
@@ -87,7 +85,6 @@ final readonly class EncodeJson
         return $json;
     }
 
-    /** @return array<array-key, mixed> */
     /** @return array<array-key, mixed> */
     public function getItems(): array
     {
@@ -154,938 +151,9 @@ final readonly class EncodeXml
     }
 
     /** @return array<array-key, mixed> */
-    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;
-    }
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/AbstractDTO.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\DataObject;
-use ReflectionClass;
-use ReflectionProperty;
-
-/**
- * AbstractDTO - Base class for all Data Transfer Objects.
- *
- * Migrated from DataFoundation\ObjectHandling\DTO\AbstractDTO.
- * Provides constructor-based hydration from array input and validation
- * via Validation component attributes.
- */
-abstract class AbstractDTO implements DataObject
-{
-    /**
-     * @param  array<string, mixed>  $data
-     */
-    public function __construct(array $data = [])
-    {
-        $reflectionClass = new ReflectionClass($this);
-        $properties = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
-
-        foreach ($properties as $property) {
-            $name = $property->getName();
-
-            if (array_key_exists($name, $data)) {
-                $property->setValue($this, $data[$name]);
-            }
-        }
-    }
-
-    /**
-     * Convert DTO to associative array.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(): array
-    {
-        $result = [];
-        $reflectionClass = new ReflectionClass($this);
-        $properties = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
-
-        foreach ($properties as $property) {
-            if ($property->isInitialized($this)) {
-                $result[$property->getName()] = $property->getValue($this);
-            }
-        }
-
-        return $result;
-    }
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/Attributes/CastWith.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Attributes;
-
-use Attribute;
-
-#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
-final readonly class CastWith
-{
-    /**
-     * @param  class-string  $casterClass
-     */
-    public function __construct(public string $casterClass)
-    {
-    }
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/Attributes/DefaultValue.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Attributes;
-
-use Attribute;
-
-#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
-final readonly class DefaultValue
-{
-    public function __construct(public mixed $value)
-    {
-    }
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/Attributes/Hidden.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Attributes;
-
-use Attribute;
-
-#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
-final readonly class Hidden
-{
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/Attributes/ListOf.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Attributes;
-
-use Attribute;
-
-#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
-final readonly class ListOf
-{
-    /**
-     * @param  class-string  $class
-     */
-    public function __construct(public string $class)
-    {
-    }
-
-    /**
-     * Legacy DTO list attributes used an of() method.
-     *
-     * @return class-string
-     */
-    public function of(): string
-    {
-        return $this->class;
-    }
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/Attributes/MapFrom.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Attributes;
-
-use Attribute;
-
-#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
-final readonly class MapFrom
-{
-    public function __construct(public string $name)
-    {
-    }
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/Attributes/Optional.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Attributes;
-
-use Attribute;
-
-#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
-final readonly class Optional
-{
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/Attributes/Required.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Attributes;
-
-use Attribute;
-
-#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
-final readonly class Required
-{
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/Configuration/DataTransferConfig.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Configuration;
-
-use Closure;
-
-final readonly class DataTransferConfig
-{
-    /**
-     * @param  array<string, class-string|object|callable|string>  $valueCasters
-     * @param  array<string, object|callable>  $validationRules
-     */
-    public function __construct(
-        public UnknownFieldPolicy $unknownFieldPolicy = UnknownFieldPolicy::Reject,
-        public bool $allowPublicPropertyHydration = true,
-        public bool $collectUnknownFields = false,
-        public int $maxDepth = 32,
-        private ?Closure $namingPolicy = null,
-        private array $valueCasters = [],
-        private array $validationRules = [],
-    ) {
-    }
-
-    public static function default(): self
-    {
-        return new self();
-    }
-
-    public static function legacy(): self
-    {
-        return new self(unknownFieldPolicy: UnknownFieldPolicy::Ignore);
-    }
-
-    public function inputNameFor(string $fieldName): string
-    {
-        if (! $this->namingPolicy instanceof Closure) {
-            return $fieldName;
-        }
-
-        return ($this->namingPolicy)($fieldName);
-    }
-
-    public function withUnknownFieldPolicy(UnknownFieldPolicy $unknownFieldPolicy): self
-    {
-        return new self(
-            unknownFieldPolicy          : $unknownFieldPolicy,
-            allowPublicPropertyHydration: $this->allowPublicPropertyHydration,
-            collectUnknownFields        : $this->collectUnknownFields,
-            maxDepth                    : $this->maxDepth,
-            namingPolicy                : $this->namingPolicy,
-            valueCasters                : $this->valueCasters,
-            validationRules             : $this->validationRules,
-        );
-    }
-
-    public function withNamingPolicy(Closure $policy): self
-    {
-        return new self(
-            unknownFieldPolicy          : $this->unknownFieldPolicy,
-            allowPublicPropertyHydration: $this->allowPublicPropertyHydration,
-            collectUnknownFields        : $this->collectUnknownFields,
-            maxDepth                    : $this->maxDepth,
-            namingPolicy                : $policy,
-            valueCasters                : $this->valueCasters,
-            validationRules             : $this->validationRules,
-        );
-    }
-
-    public function withValueCaster(string $class, object|callable|string $caster): self
-    {
-        $casters = $this->valueCasters;
-        $casters[$class] = $caster;
-
-        return new self(
-            unknownFieldPolicy          : $this->unknownFieldPolicy,
-            allowPublicPropertyHydration: $this->allowPublicPropertyHydration,
-            collectUnknownFields        : $this->collectUnknownFields,
-            maxDepth                    : $this->maxDepth,
-            namingPolicy                : $this->namingPolicy,
-            valueCasters                : $casters,
-            validationRules             : $this->validationRules,
-        );
-    }
-
-    public function withValidationRule(string $attributeClass, object|callable $rule): self
-    {
-        $rules = $this->validationRules;
-        $rules[$attributeClass] = $rule;
-
-        return new self(
-            unknownFieldPolicy          : $this->unknownFieldPolicy,
-            allowPublicPropertyHydration: $this->allowPublicPropertyHydration,
-            collectUnknownFields        : $this->collectUnknownFields,
-            maxDepth                    : $this->maxDepth,
-            namingPolicy                : $this->namingPolicy,
-            valueCasters                : $this->valueCasters,
-            validationRules             : $rules,
-        );
-    }
-
-    public function casterFor(string $class): object|callable|string|null
-    {
-        return $this->valueCasters[$class] ?? null;
-    }
-
-    public function validationRuleFor(string $attributeClass): object|callable|null
-    {
-        return $this->validationRules[$attributeClass] ?? null;
-    }
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/Configuration/UnknownFieldPolicy.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Configuration;
-
-enum UnknownFieldPolicy: string
-{
-    case Reject = 'reject';
-    case Ignore = 'ignore';
-    case Collect = 'collect';
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/DataObject.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem;
-
-/**
- * DataObject marker interface.
- */
-interface DataObject
-{
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/DataTransfer.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem;
-
-use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\Required;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Attributes\DefaultValue;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Attributes\Optional;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Configuration\DataTransferConfig;
-use Avax\Framework\System\Capabilities\StateReset\ResettableState;
-use InvalidArgumentException;
-use ReflectionClass;
-use ReflectionProperty;
-use Throwable;
-
-/**
- * DataTransfer - Complete DTO System with Validation Integration
- *
- * This is the enterprise-grade data transfer system that:
- * - Validates DTOs using Validation rules
- * - Serializes to/from arrays, JSON, stdClass
- * - Supports field visibility control
- * - Integrates with Collections for complex types
- */
-final class DataTransfer implements ResettableState
-{
-    private static ?DataTransferConfig $dataTransferConfig = null;
-
-    public function resetState(): void
-    {
-        self::$dataTransferConfig = null;
-    }
-
-    public static function configure(DataTransferConfig $dataTransferConfig): void
-    {
-        self::$dataTransferConfig = $dataTransferConfig;
-    }
-
-    /**
-     * Validate input data against a DTO class
-     *
-     * @template T of object
-     *
-     * @param  class-string<T>  $class
-     * @param  array<string, mixed>|object  $input
-     */
-    public static function tryCreate(string $class, array|object $input): DataTransferResult
-    {
-        try {
-            return DataTransferResult::success(object: self::create(class: $class, input: $input));
-        } catch (DataTransferFailure $failure) {
-            return DataTransferResult::failure(dataTransferFailure: $failure);
-        } catch (Throwable $exception) {
-            return DataTransferResult::failure(
-                dataTransferFailure: new DataTransferFailure(
-                    message : 'Data transfer failed.',
-                    previous: $exception,
-                ),
-            );
-        }
-    }
-
-    /**
-     * Create a DTO instance with validation
-     *
-     * @template T of object
-     *
-     * @param  class-string<T>  $class
-     * @param  array<string, mixed>|object  $input
-     * @return T
-     */
-    public static function create(string $class, array|object $input): object
-    {
-        self::$dataTransferConfig ??= DataTransferConfig::default();
-        $inputData = is_array($input) ? $input : (array) $input;
-
-        // @phpstan-ignore-next-line — $class is class-string<T> per @template annotation
-        $reflectionClass = new ReflectionClass($class);
-        $properties = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
-
-        $values = [];
-        $violations = [];
-
-        foreach ($properties as $property) {
-            $propertyName = $property->getName();
-
-            // Check for Required attribute
-            $isRequired = ! empty($property->getAttributes(Required::class));
-
-            // Check for Optional attribute
-            $isOptional = ! empty($property->getAttributes(Optional::class));
-
-            // Check if value exists in input
-            $hasValue = array_key_exists($propertyName, $inputData);
-            $value = $inputData[$propertyName] ?? null;
-
-            // Handle missing required fields
-            if ($isRequired && ! $hasValue && $value === null) {
-                $violations[] = new DataTransferViolation(
-                    field  : $propertyName,
-                    message: sprintf('Field "%s" is required.', $propertyName),
-                );
-
-                continue;
-            }
-
-            // Skip optional fields with no value
-            if ($isOptional && ! $hasValue) {
-                continue;
-            }
-
-            // Check default value
-            if (! $hasValue && ! $isRequired) {
-                $defaultAttrs = $property->getAttributes(DefaultValue::class);
-                if (! empty($defaultAttrs)) {
-                    $value = $defaultAttrs[0]->newInstance()->value;
-                }
-            }
-
-            // Validate value if present and rules exist
-            if ($value !== null) {
-                foreach ($property->getAttributes() as $attribute) {
-                    $validationResult = self::validatePropertyValue(
-                        $attribute->newInstance(),
-                        $value,
-                        $propertyName,
-                    );
-
-                    if ($validationResult instanceof DataTransferViolation) {
-                        $violations[] = $validationResult;
-                    }
-                }
-            }
-
-            $values[$propertyName] = $value;
-        }
-
-        if ($violations !== []) {
-            throw new DataTransferFailure(
-                message   : 'Data validation failed.',
-                violations: new DataTransferViolations($violations),
-            );
-        }
-
-        return new $class(...$values);
-    }
-
-    /**
-     * Validate a single property value
-     */
-    private static function validatePropertyValue(
-        object $rule,
-        mixed $value,
-        string $propertyName,
-    ): ?DataTransferViolation {
-        try {
-            if (method_exists($rule, 'validate')) {
-                $rule->validate($value, $propertyName);
-            }
-
-            return null;
-        } catch (InvalidArgumentException $invalidArgumentException) {
-            return new DataTransferViolation(
-                field  : $propertyName,
-                message: $invalidArgumentException->getMessage(),
-            );
-        }
-    }
-
-    public static function config(): DataTransferConfig
-    {
-        return self::$dataTransferConfig ??= DataTransferConfig::default();
-    }
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/DataTransferError.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem;
-
-class DataTransferError
-{
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/DataTransferException.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem;
-
-use InvalidArgumentException;
-
-final class DataTransferException extends InvalidArgumentException
-{
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/DataTransferFailure.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem;
-
-use RuntimeException;
-use Throwable;
-
-class DataTransferFailure extends RuntimeException
-{
-    public function __construct(
-        string                         $message = '',
-        public ?DataTransferViolations $violations = null,
-        int                            $code = 0,
-        ?Throwable                     $previous = null,
-    )
-    {
-        parent::__construct($message, $code, $previous);
-    }
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/DataTransferResult.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\DataTransferError;
-
-final readonly class DataTransferResult
-{
-    private function __construct(
-        private ?object $object,
-        private ?DataTransferFailure $dataTransferFailure,
-    ) {
-    }
-
-    public static function success(object $object): self
-    {
-        return new self(object: $object, dataTransferFailure: null);
-    }
-
-    public static function failure(DataTransferFailure $dataTransferFailure): self
-    {
-        return new self(object: null, dataTransferFailure: $dataTransferFailure);
-    }
-
-    public function isSuccess(): bool
-    {
-        return $this->object !== null;
-    }
-
-    public function isFailure(): bool
-    {
-        return $this->dataTransferFailure instanceof DataTransferFailure;
-    }
-
-    public function object(): object
-    {
-        return $this->object ?? throw new DataTransferException(message: 'Data transfer did not produce an object.');
-    }
-
-    public function failureReason(): DataTransferFailure
-    {
-        return $this->dataTransferFailure ?? throw new DataTransferException(message: 'Data transfer completed successfully.');
-    }
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/DataTransferViolation.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem;
-
-use JsonSerializable;
-use Override;
-
-/**
- * Single validation violation for DTO
- */
-final readonly class DataTransferViolation implements JsonSerializable
-{
-    public function __construct(
-        public string $field,
-        public string $message,
-        public ?string $code = null,
-        public mixed $invalidValue = null,
-    ) {
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    #[Override]
-    public function jsonSerialize(): array
-    {
-        return [
-            'field' => $this->field,
-            'message' => $this->message,
-            'code' => $this->code,
-            'invalidValue' => $this->invalidValue,
-        ];
-    }
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/DataTransferViolations.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem;
-
-use Countable;
-use IteratorAggregate;
-use JsonSerializable;
-use Override;
-use Traversable;
-
-/**
- * Collection of validation violations for DTO
- *
- * @implements IteratorAggregate<int, DataTransferViolation>
- */
-final readonly class DataTransferViolations implements Countable, IteratorAggregate, JsonSerializable
-{
-    /**
-     * @param  DataTransferViolation[]  $violations
-     */
-    public function __construct(
-        private array $violations = [],
-    ) {
-    }
-
-    public static function empty(): self
-    {
-        return new self([]);
-    }
-
-    /**
-     * @param  list<DataTransferViolation>  $violations
-     */
-    public static function from(array $violations): self
-    {
-        return new self($violations);
-    }
-
-    public function add(DataTransferViolation $dataTransferViolation): self
-    {
-        return new self([...$this->violations, $dataTransferViolation]);
-    }
-
-    public function isEmpty(): bool
-    {
-        return $this->violations === [];
-    }
-
-    #[Override]
-    public function count(): int
-    {
-        return count($this->violations);
-    }
-
-    /**
-     * @return Traversable<int, DataTransferViolation>
-     */
-    #[Override]
-    public function getIterator(): Traversable
-    {
-        yield from $this->violations;
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    #[Override]
-    public function jsonSerialize(): array
-    {
-        return array_map(
-            static fn (DataTransferViolation $dataTransferViolation): array => $dataTransferViolation->jsonSerialize(),
-            $this->violations,
-        );
-    }
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/FieldMapping/FieldInputName.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\FieldMapping;
-
-final readonly class FieldInputName
-{
-    public function __construct(public string $value)
-    {
-    }
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/FieldMapping/MapInputNameToField.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\FieldMapping;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape\DataField;
-use Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape\DataShape;
-
-final readonly class MapInputNameToField
-{
-    /**
-     * @return array<string, DataField>
-     */
-    public function map(DataShape $dataShape): array
-    {
-        $map = [];
-
-        foreach ($dataShape->fields() as $dataField) {
-            $map[$dataField->inputName] = $dataField;
-        }
-
-        return $map;
-    }
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/FieldMapping/ReadMappedInputName.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\FieldMapping;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Attributes\MapFrom;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Configuration\DataTransferConfig;
-
-final readonly class ReadMappedInputName
-{
-    /**
-     * @param  object[]  $attributes
-     */
-    public function read(string $fieldName, array $attributes, DataTransferConfig $dataTransferConfig): FieldInputName
-    {
-        foreach ($attributes as $attribute) {
-            if ($attribute instanceof MapFrom) {
-                return new FieldInputName(value: $attribute->name);
-            }
-        }
-
-        return new FieldInputName(value: $dataTransferConfig->inputNameFor(fieldName: $fieldName));
-    }
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/SerializeLegacyDTO.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Forms\ArrayForm\Arrhae;
-use Avax\Components\DataStack\Data\System\Capabilities\Forms\CollectionForm\Collection;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Configuration\DataTransferConfig;
-use Avax\Components\DataStack\Data\System\Flows\SerializeDataObject\SerializeDataObject;
-use stdClass;
-
-final readonly class SerializeLegacyDTO
-{
-    private SerializeDataObject $serializeDataObject;
-
-    public function __construct()
-    {
-        $this->serializeDataObject = new SerializeDataObject(dataTransferConfig: DataTransferConfig::legacy());
-    }
-
-    public function toJson(object $object, ?int $flags = null, int $depth = 512): string
-    {
-        $flags ??= 0;
-
-        return $this->serializeDataObject->toJson(object: $object, flags: $flags, depth: $depth);
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function toFlatArray(object $object): array
-    {
-        return $this->serializeDataObject->toFlatArray(object: $object);
-    }
-
-    public function toStdClass(object $object): stdClass
-    {
-        return $this->serializeDataObject->toStdClass(object: $object);
-    }
-
-    public function toCollection(object $object): Collection
-    {
-        // Global collect() helper should return Avax\Components\DataStack\Data\System\Capabilities\Forms\CollectionForm\Collection
-        return new Collection(new Arrhae($this->toArray(object: $object)));
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function toArray(object $object, ?int $depth = null, bool $excludeHidden = true): array
-    {
-        return $this->serializeDataObject->toArray(object: $object, depth: $depth, excludeHidden: $excludeHidden);
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function toJsonApi(object $object, string $type): array
-    {
-        return $this->serializeDataObject->toJsonApi(object: $object, type: $type);
-    }
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/ValueConversion/ValueCasterInterface.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\ValueConversion;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape\DataField;
-
-interface ValueCasterInterface
-{
-    public function cast(mixed $value, DataField $dataField, ValueConversionContext $valueConversionContext): mixed;
-}
-
-=== Data/System/Capabilities/Coercion/DtoSystem/ValueConversion/ValueConversionContext.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\ValueConversion;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape\DataField;
-
-final readonly class ValueConversionContext
-{
-    public function __construct(
-        public DataField $dataField,
-        public ?object $parent = null,
-        public ?string $propertyName = null,
-    ) {
-    }
-}
-
-=== Data/System/Capabilities/Coercion/ObjectMapper/DTOValidationException.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\ObjectMapper;
-
-class DTOValidationException
-{
-}
-
-=== Data/System/Capabilities/Coercion/ObjectMapper/ObjectMapper.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Coercion\ObjectMapper;
-
-/**
- * ObjectMapper - handles mapping arrays to objects and vice-versa.
- * Migrated from legacy DataFoundation.
- */
-final class ObjectMapper
-{
-    /**
-     * @param  array<string, mixed>  $data
-     */
-    public static function map(array $data, object $object): object
-    {
-        foreach ($data as $key => $value) {
-            if (property_exists($object, $key)) {
-                $object->$key = $value;
-            }
-        }
-
-        return $object;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public static function toArray(object $object): array
-    {
-        return (array) $object;
     }
 }
 
@@ -2315,6 +1383,13 @@ final readonly class Json
 
     // -- Factories ---------------------------------------------------------------
 
+    /**
+     * Decode a JSON string into a Json instance.
+     *
+     * Scalar JSON roots (string, number, bool, null) are silently wrapped
+     * as a single-element array `[0 => $scalar]` so that the internal
+     * Arrhae engine always receives array-backed data.
+     */
     public static function decode(string $json): static
     {
         try {
@@ -3359,7 +2434,6 @@ final readonly class ReverseValues
     }
 
     /** @return array<array-key, mixed> */
-    /** @return array<array-key, mixed> */
     public function __invoke(): array
     {
         return $this->reverse();
@@ -3371,7 +2445,6 @@ final readonly class ReverseValues
         return array_reverse(array: $this->items, preserve_keys: true);
     }
 
-    /** @return array<array-key, mixed> */
     /** @return array<array-key, mixed> */
     public function getItems(): array
     {
@@ -3398,7 +2471,6 @@ final readonly class ShuffleValues
     }
 
     /** @return array<array-key, mixed> */
-    /** @return array<array-key, mixed> */
     public function __invoke(): array
     {
         return $this->shuffle();
@@ -3413,7 +2485,6 @@ final readonly class ShuffleValues
         return $items;
     }
 
-    /** @return array<array-key, mixed> */
     /** @return array<array-key, mixed> */
     public function getItems(): array
     {
@@ -3459,7 +2530,6 @@ final readonly class SortValues
         return $items;
     }
 
-    /** @return array<array-key, mixed> */
     /** @return array<array-key, mixed> */
     public function getItems(): array
     {
@@ -3513,7 +2583,6 @@ final readonly class SortValuesBy
         return $items;
     }
 
-    /** @return array<array-key, mixed> */
     /** @return array<array-key, mixed> */
     public function getItems(): array
     {
@@ -3838,7 +2907,6 @@ final readonly class AppendValue
     }
 
     /** @return array<array-key, mixed> */
-    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;
@@ -3881,7 +2949,6 @@ final readonly class ChunkValues
         return array_chunk(array: $this->items, length: $size, preserve_keys: true);
     }
 
-    /** @return array<array-key, mixed> */
     /** @return array<array-key, mixed> */
     public function getItems(): array
     {
@@ -3935,7 +3002,6 @@ final readonly class EachValues
      * @return array<mixed>
      */
     /** @return array<array-key, mixed> */
-    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;
@@ -3978,7 +3044,6 @@ final readonly class FilterValues
         return array_filter(array: $this->items, callback: $callback, mode: ARRAY_FILTER_USE_BOTH);
     }
 
-    /** @return array<array-key, mixed> */
     /** @return array<array-key, mixed> */
     public function getItems(): array
     {
@@ -4065,7 +3130,6 @@ final readonly class FlipValues
     }
 
     /** @return array<array-key, mixed> */
-    /** @return array<array-key, mixed> */
     public function __invoke(): array
     {
         return $this->flip();
@@ -4077,7 +3141,6 @@ final readonly class FlipValues
         return array_flip(array: $this->items);
     }
 
-    /** @return array<array-key, mixed> */
     /** @return array<array-key, mixed> */
     public function getItems(): array
     {
@@ -4133,7 +3196,6 @@ final readonly class ForgetValue
     }
 
     /** @return array<array-key, mixed> */
-    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;
@@ -4182,7 +3244,6 @@ final readonly class GroupValues
     }
 
     /** @return array<array-key, mixed> */
-    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;
@@ -4218,7 +3279,6 @@ final readonly class JoinValues
     }
 
     /** @return array<array-key, mixed> */
-    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;
@@ -4244,7 +3304,6 @@ final readonly class LowercaseValues
     }
 
     /** @return array<array-key, mixed> */
-    /** @return array<array-key, mixed> */
     public function __invoke(): array
     {
         return $this->lowercase();
@@ -4259,7 +3318,6 @@ final readonly class LowercaseValues
         );
     }
 
-    /** @return array<array-key, mixed> */
     /** @return array<array-key, mixed> */
     public function getItems(): array
     {
@@ -4303,7 +3361,6 @@ final readonly class MapValues
         return array_map(callback: $callback, array: $this->items);
     }
 
-    /** @return array<array-key, mixed> */
     /** @return array<array-key, mixed> */
     public function getItems(): array
     {
@@ -4403,7 +3460,6 @@ final readonly class PullValue
     }
 
     /** @return array<array-key, mixed> */
-    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;
@@ -4446,7 +3502,6 @@ final readonly class PutValueByPath
     }
 
     /** @return array<array-key, mixed> */
-    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;
@@ -4487,7 +3542,6 @@ final readonly class ReduceValues
         return array_reduce(array: $this->items, callback: $callback, initial: $initial);
     }
 
-    /** @return array<array-key, mixed> */
     /** @return array<array-key, mixed> */
     public function getItems(): array
     {
@@ -4581,7 +3635,6 @@ final readonly class TrimValues
     }
 
     /** @return array<array-key, mixed> */
-    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;
@@ -4607,7 +3660,6 @@ final readonly class UniqueValues
     }
 
     /** @return array<array-key, mixed> */
-    /** @return array<array-key, mixed> */
     public function __invoke(): array
     {
         return $this->unique();
@@ -4619,7 +3671,6 @@ final readonly class UniqueValues
         return array_unique(array: $this->items, flags: SORT_REGULAR);
     }
 
-    /** @return array<array-key, mixed> */
     /** @return array<array-key, mixed> */
     public function getItems(): array
     {
@@ -4646,7 +3697,6 @@ final readonly class UppercaseValues
     }
 
     /** @return array<array-key, mixed> */
-    /** @return array<array-key, mixed> */
     public function __invoke(): array
     {
         return $this->uppercase();
@@ -4662,644 +3712,9 @@ final readonly class UppercaseValues
     }
 
     /** @return array<array-key, mixed> */
-    /** @return array<array-key, mixed> */
     public function getItems(): array
     {
         return $this->items;
-    }
-}
-
-=== Data/System/Capabilities/Shapes/ClassShape/CacheDataShape.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape;
-
-/**
- * Static cache for DataShape inspections to prevent redundant reflection work.
- */
-final class CacheDataShape
-{
-    /**
-     * @var array<string, DataShape>
-     */
-    private static array $cache = [];
-
-    public function remember(string $key, callable $builder): DataShape
-    {
-        return self::$cache[$key] ??= $builder();
-    }
-
-    public function clear(): void
-    {
-        self::$cache = [];
-    }
-}
-
-=== Data/System/Capabilities/Shapes/ClassShape/DataField.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Attributes\CastWith;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Attributes\DefaultValue;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Attributes\Hidden;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Attributes\ListOf;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Attributes\Optional;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Attributes\Required;
-use ReflectionParameter;
-use ReflectionProperty;
-
-final readonly class DataField
-{
-    /**
-     * @param  object[]  $attributes
-     */
-    public function __construct(
-        public string $name,
-        public string $inputName,
-        public DataFieldType $dataFieldType,
-        public array $attributes,
-        public bool $isConstructorField,
-        public bool $isPromotedProperty,
-        public bool $isPublicProperty,
-        public bool $hasDefaultValue,
-        public mixed $defaultValue,
-        public ?ReflectionProperty $reflectionProperty = null,
-        public ?ReflectionParameter $reflectionParameter = null,
-    ) {
-    }
-
-    public function isRequired(): bool
-    {
-        if ($this->hasAttribute(attributeClass: Required::class)) {
-            return true;
-        }
-
-        if ($this->hasAttribute(attributeClass: Optional::class)) {
-            return false;
-        }
-
-        return ! $this->hasDefaultValue && ! $this->dataFieldType->allowsNull;
-    }
-
-    public function hasAttribute(string $attributeClass): bool
-    {
-        return array_any($this->attributes, fn ($attribute): bool => $attribute instanceof $attributeClass);
-    }
-
-    public function isHidden(): bool
-    {
-        return $this->hasAttribute(attributeClass: Hidden::class);
-    }
-
-    public function listItemClass(): ?string
-    {
-        $attribute = $this->firstAttribute(attributeClass: ListOf::class);
-
-        if ($attribute instanceof ListOf) {
-            return $attribute->class;
-        }
-
-        if ($this->reflectionProperty instanceof ReflectionProperty) {
-            $doc = $this->reflectionProperty->getDocComment();
-
-            if (is_string(value: $doc) && preg_match(pattern: '/@var\s+([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)\[]/', subject: $doc, matches: $matches) === 1) {
-                $class = ltrim(string: $matches[1], characters: '\\');
-
-                if (str_contains(haystack: $class, needle: '\\')) {
-                    return $class;
-                }
-
-                $namespace = $this->reflectionProperty->getDeclaringClass()->getNamespaceName();
-
-                return $namespace === '' ? $class : $namespace.'\\'.$class;
-            }
-        }
-
-        return null;
-    }
-
-    public function firstAttribute(string $attributeClass): ?object
-    {
-        foreach ($this->attributes as $attribute) {
-            if ($attribute instanceof $attributeClass) {
-                return $attribute;
-            }
-        }
-
-        return null;
-    }
-
-    public function casterClass(): ?string
-    {
-        $attribute = $this->firstAttribute(attributeClass: CastWith::class);
-
-        return $attribute instanceof CastWith ? $attribute->casterClass : null;
-    }
-
-    public function defaultFromAttribute(): mixed
-    {
-        $attribute = $this->firstAttribute(attributeClass: DefaultValue::class);
-
-        return $attribute instanceof DefaultValue ? $attribute->value : null;
-    }
-
-    public function hasDefaultAttribute(): bool
-    {
-        return $this->firstAttribute(attributeClass: DefaultValue::class) instanceof DefaultValue;
-    }
-}
-
-=== Data/System/Capabilities/Shapes/ClassShape/DataFieldType.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape;
-
-use BackedEnum;
-use ReflectionIntersectionType;
-use ReflectionNamedType;
-use ReflectionType;
-use ReflectionUnionType;
-
-final readonly class DataFieldType
-{
-    /**
-     * @param  list<string>  $names
-     */
-    public function __construct(
-        private array $names,
-        public bool $allowsNull = true,
-    ) {
-    }
-
-    public static function fromReflectionType(?ReflectionType $type): self
-    {
-        if (! $type instanceof ReflectionType) {
-            return self::mixed();
-        }
-
-        if ($type instanceof ReflectionNamedType) {
-            return new self(
-                names     : [$type->getName()],
-                allowsNull: $type->allowsNull(),
-            );
-        }
-
-        if ($type instanceof ReflectionUnionType || $type instanceof ReflectionIntersectionType) {
-            $names = [];
-
-            foreach ($type->getTypes() as $reflectionType) {
-                if ($reflectionType instanceof ReflectionNamedType) {
-                    $name = $reflectionType->getName();
-
-                    if ($name !== 'null') {
-                        $names[] = $name;
-                    }
-                }
-            }
-
-            usort(
-                array   : $names,
-                callback: static fn (string $left, string $right): int => (int) class_exists(class: $right) <=> (int) class_exists(class: $left),
-            );
-
-            return new self(
-                names     : $names === [] ? ['mixed'] : $names,
-                allowsNull: $type->allowsNull(),
-            );
-        }
-
-        return self::mixed();
-    }
-
-    public static function mixed(): self
-    {
-        return new self(names: ['mixed'], allowsNull: true);
-    }
-
-    /**
-     * @return list<string>
-     */
-    public function names(): array
-    {
-        return $this->names;
-    }
-
-    public function isMixed(): bool
-    {
-        return $this->primaryName() === 'mixed';
-    }
-
-    public function primaryName(): ?string
-    {
-        return $this->names[0] ?? null;
-    }
-
-    public function isArray(): bool
-    {
-        return in_array(needle: 'array', haystack: $this->names, strict: true);
-    }
-
-    public function isScalar(): bool
-    {
-        return in_array(needle: $this->primaryName(), haystack: ['int', 'float', 'string', 'bool'], strict: true);
-    }
-
-    public function isClass(): bool
-    {
-        $name = $this->primaryName();
-
-        return $name !== null && class_exists(class: $name);
-    }
-
-    public function isBackedEnum(): bool
-    {
-        $name = $this->primaryName();
-
-        return $name !== null
-            && enum_exists(enum: $name)
-            && is_subclass_of(object_or_class: $name, class: BackedEnum::class);
-    }
-
-    public function displayName(): string
-    {
-        return implode(separator: '|', array: $this->names);
-    }
-}
-
-=== Data/System/Capabilities/Shapes/ClassShape/DataShape.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape;
-
-final readonly class DataShape
-{
-    /**
-     * @param  class-string  $class
-     * @param  array<string, DataField>  $fields
-     */
-    public function __construct(
-        public string $class,
-        private array $fields,
-    ) {
-    }
-
-    /**
-     * @return array<string, DataField>
-     */
-    public function fields(): array
-    {
-        return $this->fields;
-    }
-
-    /**
-     * @return array<string, DataField>
-     */
-    public function constructorFields(): array
-    {
-        return array_filter(
-            array   : $this->fields,
-            callback: static fn (DataField $dataField): bool => $dataField->isConstructorField,
-        );
-    }
-
-    /**
-     * @return array<string, DataField>
-     */
-    public function publicPropertyFields(): array
-    {
-        return array_filter(
-            array   : $this->fields,
-            callback: static fn (DataField $dataField): bool => $dataField->isPublicProperty,
-        );
-    }
-
-    public function field(string $name): ?DataField
-    {
-        return $this->fields[$name] ?? null;
-    }
-
-    /**
-     * @return list<string>
-     */
-    public function inputNames(): array
-    {
-        return array_values(
-            array: array_map(
-                callback: static fn (DataField $dataField): string => $dataField->inputName,
-                array   : $this->fields,
-            ),
-        );
-    }
-}
-
-=== Data/System/Capabilities/Shapes/ClassShape/InspectDataShape.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Configuration\DataTransferConfig;
-
-final readonly class InspectDataShape
-{
-    public function __construct(
-        private ?DataTransferConfig $dataTransferConfig = null,
-        private CacheDataShape $cacheDataShape = new CacheDataShape(),
-    ) {
-    }
-
-    /**
-     * @param  class-string  $class
-     */
-    public function inspect(string $class): DataShape
-    {
-        $config = $this->dataTransferConfig ?? DataTransferConfig::default();
-        $cacheKey = $class.':'.spl_object_id(object: $config);
-
-        return $this->cacheDataShape->remember(
-            key    : $cacheKey,
-            builder: static fn (): DataShape => new ReadClassDataShape()->read(class: $class, dataTransferConfig: $config),
-        );
-    }
-}
-
-=== Data/System/Capabilities/Shapes/ClassShape/ReadClassDataShape.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Configuration\DataTransferConfig;
-use ReflectionClass;
-
-/**
- * Orchestrates the reading of class data shape by combining constructor and public fields.
- */
-final readonly class ReadClassDataShape
-{
-    /**
-     * @param  class-string  $class
-     */
-    public function read(string $class, DataTransferConfig $dataTransferConfig): DataShape
-    {
-        $reflectionClass = new ReflectionClass(objectOrClass: $class);
-
-        $constructorFields = new ReadConstructorDataFields()->read(reflectionClass: $reflectionClass, dataTransferConfig: $dataTransferConfig);
-        $publicFields = new ReadPublicDataFields()->read(
-            existingFields: $constructorFields,
-            reflectionClass     : $reflectionClass,
-            dataTransferConfig: $dataTransferConfig,
-        );
-
-        return new DataShape(
-            class : $class,
-            fields: [...$constructorFields, ...$publicFields],
-        );
-    }
-}
-
-=== Data/System/Capabilities/Shapes/ClassShape/ReadConstructorDataFields.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\FieldMapping\ReadMappedInputName;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Configuration\DataTransferConfig;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\AbstractDTO;
-use ReflectionClass;
-use ReflectionException;
-
-/**
- * Inspects class constructor to identify DTO fields.
- */
-final readonly class ReadConstructorDataFields
-{
-    /**
-     * @param  ReflectionClass<object>  $reflectionClass
-     * @return array<string, DataField>
-     *
-     * @throws ReflectionException
-     */
-    public function read(ReflectionClass $reflectionClass, DataTransferConfig $dataTransferConfig): array
-    {
-        $constructor = $reflectionClass->getConstructor();
-
-        if ($constructor === null) {
-            return [];
-        }
-
-        // Special case for legacy DTOs that might have a base constructor we want to ignore
-        if (
-            is_a(object_or_class: $reflectionClass->getName(), class: AbstractDTO::class, allow_string: true)
-            && $constructor->getDeclaringClass()->getName() === AbstractDTO::class
-        ) {
-            return [];
-        }
-
-        $fields = [];
-
-        foreach ($constructor->getParameters() as $reflectionParameter) {
-            $property = null;
-
-            if ($reflectionParameter->isPromoted() && $reflectionClass->hasProperty(name: $reflectionParameter->getName())) {
-                $property = $reflectionClass->getProperty(name: $reflectionParameter->getName());
-            }
-
-            $attributes = new ReadDataFieldAttributes()->read(reflectionProperty: $property, reflectionParameter: $reflectionParameter);
-            $inputName = new ReadMappedInputName()->read(
-                fieldName : $reflectionParameter->getName(),
-                attributes: $attributes,
-                dataTransferConfig: $dataTransferConfig,
-            );
-
-            $fields[$reflectionParameter->getName()] = new DataField(
-                name              : $reflectionParameter->getName(),
-                inputName         : $inputName->value,
-                attributes        : $attributes,
-                isConstructorField: true,
-                isPromotedProperty: $reflectionParameter->isPromoted(),
-                isPublicProperty  : $property?->isPublic() ?? false,
-                hasDefaultValue   : $reflectionParameter->isDefaultValueAvailable(),
-                defaultValue      : $reflectionParameter->isDefaultValueAvailable() ? $reflectionParameter->getDefaultValue() : null,
-                dataFieldType     : DataFieldType::fromReflectionType(type: $reflectionParameter->getType()),
-                reflectionProperty: $property,
-                reflectionParameter: $reflectionParameter,
-            );
-        }
-
-        return $fields;
-    }
-}
-
-=== Data/System/Capabilities/Shapes/ClassShape/ReadDataFieldAttributes.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape;
-
-use ReflectionParameter;
-use ReflectionProperty;
-
-/**
- * Reads attributes from properties or parameters for DTO field metadata.
- */
-final readonly class ReadDataFieldAttributes
-{
-    /**
-     * @return object[]
-     */
-    public function read(?ReflectionProperty $reflectionProperty = null, ?ReflectionParameter $reflectionParameter = null): array
-    {
-        $instances = [];
-
-        foreach ([...($reflectionParameter?->getAttributes() ?? []), ...($reflectionProperty?->getAttributes() ?? [])] as $attribute) {
-            $instances[] = $attribute->newInstance();
-        }
-
-        return $instances;
-    }
-}
-
-=== Data/System/Capabilities/Shapes/ClassShape/ReadPublicDataFields.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\FieldMapping\ReadMappedInputName;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Configuration\DataTransferConfig;
-use ReflectionClass;
-use ReflectionProperty;
-
-/**
- * Inspects public properties to identify DTO fields.
- */
-final readonly class ReadPublicDataFields
-{
-    /**
-     * @param  ReflectionClass<object>  $reflectionClass
-     * @param  array<string, DataField>  $existingFields
-     * @return array<string, DataField>
-     */
-    public function read(ReflectionClass $reflectionClass, DataTransferConfig $dataTransferConfig, array $existingFields = []): array
-    {
-        if (! $dataTransferConfig->allowPublicPropertyHydration) {
-            return [];
-        }
-
-        $fields = [];
-
-        foreach ($reflectionClass->getProperties(filter: ReflectionProperty::IS_PUBLIC) as $reflectionProperty) {
-            if ($reflectionProperty->isStatic()) {
-                continue;
-            }
-
-            if (array_key_exists(key: $reflectionProperty->getName(), array: $existingFields)) {
-                continue;
-            }
-
-            $attributes = new ReadDataFieldAttributes()->read(reflectionProperty: $reflectionProperty);
-            $inputName = new ReadMappedInputName()->read(
-                fieldName : $reflectionProperty->getName(),
-                attributes: $attributes,
-                dataTransferConfig: $dataTransferConfig,
-            );
-
-            $fields[$reflectionProperty->getName()] = new DataField(
-                name              : $reflectionProperty->getName(),
-                inputName         : $inputName->value,
-                attributes        : $attributes,
-                isConstructorField: false,
-                isPromotedProperty: false,
-                isPublicProperty  : true,
-                hasDefaultValue   : $reflectionProperty->hasDefaultValue(),
-                defaultValue      : $reflectionProperty->hasDefaultValue() ? $reflectionProperty->getDefaultValue() : null,
-                dataFieldType     : DataFieldType::fromReflectionType(type: $reflectionProperty->getType()),
-                reflectionProperty: $reflectionProperty,
-            );
-        }
-
-        return $fields;
-    }
-}
-
-=== Data/System/Capabilities/Shapes/Visibility/HideFieldFromOutput.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Shapes\Visibility;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape\DataField;
-
-final readonly class HideFieldFromOutput
-{
-    public function shouldHide(DataField $dataField): bool
-    {
-        return $dataField->isHidden();
-    }
-}
-
-=== Data/System/Capabilities/Shapes/Visibility/ReadVisibleFields.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Shapes\Visibility;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape\DataField;
-use Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape\DataShape;
-
-final readonly class ReadVisibleFields
-{
-    /**
-     * @return array<string, DataField>
-     */
-    public function read(DataShape $dataShape, bool $excludeHidden = true): array
-    {
-        return array_filter(
-            array   : $dataShape->fields(),
-            callback: static fn (DataField $dataField): bool => new ShouldExposeField()->check(
-                excludeHidden: $excludeHidden,
-                dataField    : $dataField,
-            ),
-        );
-    }
-}
-
-=== Data/System/Capabilities/Shapes/Visibility/ShouldExposeField.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Capabilities\Shapes\Visibility;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape\DataField;
-
-final readonly class ShouldExposeField
-{
-    public function check(DataField $dataField, bool $excludeHidden = true): bool
-    {
-        if (! $excludeHidden) {
-            return true;
-        }
-
-        return ! new HideFieldFromOutput()->shouldHide(dataField: $dataField);
     }
 }
 
@@ -7558,158 +5973,6 @@ final class ReadNestedValue
     }
 }
 
-=== Data/System/Flows/ReadDataObject/NormalizeDataObjectValue.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Flows\ReadDataObject;
-
-use BackedEnum;
-use DateTimeInterface;
-use JsonSerializable;
-use Stringable;
-use Traversable;
-
-final readonly class NormalizeDataObjectValue
-{
-    public function normalize(mixed $value, int $depth, array &$seen): mixed
-    {
-        if ($depth < 0) {
-            return null;
-        }
-
-        return match (true) {
-            $value instanceof BackedEnum => $value->value,
-            $value instanceof DateTimeInterface => $value->format(format: DATE_ATOM),
-            is_array(value: $value) => $this->normalizeArray(value: $value, depth: $depth, seen: $seen),
-            $value instanceof Traversable => $this->normalizeArray(value: iterator_to_array(iterator: $value), depth: $depth, seen: $seen),
-            is_object(value: $value) => $this->normalizeObject(value: $value, depth: $depth, seen: $seen),
-            default => $value,
-        };
-    }
-
-    private function normalizeArray(array $value, int $depth, array &$seen): array
-    {
-        $normalized = [];
-
-        foreach ($value as $key => $item) {
-            $normalized[$key] = $this->normalize(value: $item, depth: $depth - 1, seen: $seen);
-        }
-
-        return $normalized;
-    }
-
-    private function normalizeObject(object $value, int $depth, array &$seen): mixed
-    {
-        $id = spl_object_id(object: $value);
-
-        if (isset($seen[$id])) {
-            return null;
-        }
-
-        $seen[$id] = true;
-
-        if ($value instanceof JsonSerializable) {
-            return $this->normalize(value: $value->jsonSerialize(), depth: $depth - 1, seen: $seen);
-        }
-
-        if ($value instanceof Stringable && $this->hasNoPublicProperties(value: $value)) {
-            return (string) $value;
-        }
-
-        return $this->normalize(value: new ReadDataObject()->values(object: $value), depth: $depth - 1, seen: $seen);
-    }
-
-    private function hasNoPublicProperties(object $value): bool
-    {
-        return get_object_vars(object: $value) === [];
-    }
-}
-
-=== Data/System/Flows/ReadDataObject/ReadDataObject.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Flows\ReadDataObject;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape\InspectDataShape;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Configuration\DataTransferConfig;
-
-final readonly class ReadDataObject
-{
-    public function __construct(private ?DataTransferConfig $dataTransferConfig = null)
-    {
-    }
-
-    public function values(object $object, bool $excludeHidden = true): array
-    {
-        $config = $this->dataTransferConfig ?? DataTransferConfig::default();
-        $dataShape = new InspectDataShape(dataTransferConfig: $config)->inspect(class: $object::class);
-        $fields = new ReadVisibleDataFields()->read(dataShape: $dataShape, excludeHidden: $excludeHidden);
-
-        return new ReadDataObjectValues()->read(object: $object, fields: $fields);
-    }
-}
-
-=== Data/System/Flows/ReadDataObject/ReadDataObjectValues.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Flows\ReadDataObject;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape\DataField;
-
-final readonly class ReadDataObjectValues
-{
-    /**
-     * @param  array<string, DataField>  $fields
-     * @return array<string, mixed>
-     */
-    public function read(object $object, array $fields): array
-    {
-        $values = [];
-
-        foreach ($fields as $field) {
-            if ($field->reflectionProperty !== null && $field->reflectionProperty->isInitialized(object: $object)) {
-                $values[$field->name] = $field->reflectionProperty->getValue(object: $object);
-
-                continue;
-            }
-
-            if (property_exists(object_or_class: $object, property: $field->name)) {
-                $values[$field->name] = $object->{$field->name};
-            }
-        }
-
-        return $values;
-    }
-}
-
-=== Data/System/Flows/ReadDataObject/ReadVisibleDataFields.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Flows\ReadDataObject;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape\DataField;
-use Avax\Components\DataStack\Data\System\Capabilities\Shapes\ClassShape\DataShape;
-use Avax\Components\DataStack\Data\System\Capabilities\Shapes\Visibility\ReadVisibleFields;
-
-final readonly class ReadVisibleDataFields
-{
-    /**
-     * @return array<string, DataField>
-     */
-    public function read(DataShape $dataShape, bool $excludeHidden = true): array
-    {
-        return new ReadVisibleFields()->read(dataShape: $dataShape, excludeHidden: $excludeHidden);
-    }
-}
-
 === Data/System/Flows/ReadDataValue/ReadDataValue.php ===
 <?php
 
@@ -7729,195 +5992,6 @@ final readonly class ReadDataValue
     public function read(array $data, string $key, mixed $default = null): mixed
     {
         return $this->arrayReader->get($data, $key, $default);
-    }
-}
-
-=== Data/System/Flows/SerializeDataObject/ConvertDataObjectToArray.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Flows\SerializeDataObject;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Configuration\DataTransferConfig;
-use Avax\Components\DataStack\Data\System\Flows\ReadDataObject\NormalizeDataObjectValue;
-use Avax\Components\DataStack\Data\System\Flows\ReadDataObject\ReadDataObject;
-
-final readonly class ConvertDataObjectToArray
-{
-    public function __construct(private ?DataTransferConfig $dataTransferConfig = null)
-    {
-    }
-
-    public function convert(object $object, ?int $depth = null, bool $excludeHidden = true): array
-    {
-        $config = $this->dataTransferConfig ?? DataTransferConfig::default();
-        $maxDepth = $depth ?? $config->maxDepth;
-        $seen = [];
-        $values = new ReadDataObject(config: $config)->values(object: $object, excludeHidden: $excludeHidden);
-
-        return new NormalizeDataObjectValue()->normalize(value: $values, depth: $maxDepth, seen: $seen);
-    }
-}
-
-=== Data/System/Flows/SerializeDataObject/ConvertDataObjectToFlatArray.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Flows\SerializeDataObject;
-
-final readonly class ConvertDataObjectToFlatArray
-{
-    public function convert(object $object): array
-    {
-        return get_object_vars(object: $object);
-    }
-}
-
-=== Data/System/Flows/SerializeDataObject/ConvertDataObjectToJson.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Flows\SerializeDataObject;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Configuration\DataTransferConfig;
-use JsonException;
-
-final readonly class ConvertDataObjectToJson
-{
-    public function __construct(private ?DataTransferConfig $dataTransferConfig = null)
-    {
-    }
-
-    /**
-     * @throws JsonException
-     */
-    public function convert(object $object, ?int $flags = null, int $depth = 512): string
-    {
-        $flags ??= 0;
-
-        return json_encode(
-            value: new ConvertDataObjectToArray(config: $this->dataTransferConfig)->convert(object: $object),
-            flags: $flags | JSON_THROW_ON_ERROR,
-            depth: $depth,
-        );
-    }
-}
-
-=== Data/System/Flows/SerializeDataObject/ConvertDataObjectToJsonApi.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Flows\SerializeDataObject;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Configuration\DataTransferConfig;
-
-final readonly class ConvertDataObjectToJsonApi
-{
-    public function __construct(private ?DataTransferConfig $dataTransferConfig = null)
-    {
-    }
-
-    public function convert(object $object, string $type): array
-    {
-        $array = new ConvertDataObjectToArray(config: $this->dataTransferConfig)->convert(object: $object);
-
-        return [
-            'data' => [
-                'type' => $type,
-                'id' => $array['id'] ?? null,
-                'attributes' => $array,
-            ],
-        ];
-    }
-}
-
-=== Data/System/Flows/SerializeDataObject/ConvertDataObjectToStdClass.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Flows\SerializeDataObject;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Configuration\DataTransferConfig;
-use JsonException;
-use stdClass;
-
-final readonly class ConvertDataObjectToStdClass
-{
-    public function __construct(private ?DataTransferConfig $dataTransferConfig = null)
-    {
-    }
-
-    /**
-     * @throws JsonException
-     */
-    public function convert(object $object): stdClass
-    {
-        return json_decode(
-            json       : new ConvertDataObjectToJson(config: $this->dataTransferConfig)->convert(object: $object),
-            associative: false,
-            depth      : 512,
-            flags      : JSON_THROW_ON_ERROR,
-        );
-    }
-}
-
-=== Data/System/Flows/SerializeDataObject/SerializeDataObject.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\DataStack\Data\System\Flows\SerializeDataObject;
-
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\Configuration\DataTransferConfig;
-use JsonException;
-use stdClass;
-
-final readonly class SerializeDataObject
-{
-    public function __construct(private ?DataTransferConfig $dataTransferConfig = null)
-    {
-    }
-
-    public function toArray(object $object, ?int $depth = null, bool $excludeHidden = true): array
-    {
-        return new ConvertDataObjectToArray(config: $this->dataTransferConfig)->convert(
-            object       : $object,
-            depth        : $depth,
-            excludeHidden: $excludeHidden,
-        );
-    }
-
-    /**
-     * @throws JsonException
-     */
-    public function toJson(object $object, ?int $flags = null, int $depth = 512): string
-    {
-        $flags ??= 0;
-
-        return new ConvertDataObjectToJson(config: $this->dataTransferConfig)->convert(object: $object, flags: $flags, depth: $depth);
-    }
-
-    public function toFlatArray(object $object): array
-    {
-        return new ConvertDataObjectToFlatArray()->convert(object: $object);
-    }
-
-    /**
-     * @throws JsonException
-     */
-    public function toStdClass(object $object): stdClass
-    {
-        return new ConvertDataObjectToStdClass(config: $this->dataTransferConfig)->convert(object: $object);
-    }
-
-    public function toJsonApi(object $object, string $type): array
-    {
-        return new ConvertDataObjectToJsonApi(config: $this->dataTransferConfig)->convert(object: $object, type: $type);
     }
 }
 
@@ -8999,6 +7073,2456 @@ method = exact action
 - `Selection/` = capability (value selection operators)
 
 No technical dumping grounds. No `Services/`, `Helpers/`, `Utils/`, `Managers/`, or `Internal/` at the capability level.
+
+=== DataTransfer/System/Capabilities/AttributeReading/AlphaNum.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+use InvalidArgumentException;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class AlphaNum
+{
+    public function validate(mixed $value, string $field) : void
+    {
+        if (! ctype_alnum((string) $value)) {
+            throw new InvalidArgumentException(
+                sprintf('Field "%s" must contain only alphanumeric characters.', $field),
+            );
+        }
+    }
+}
+
+=== DataTransfer/System/Capabilities/AttributeReading/AlphaNumOrEmail.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+use InvalidArgumentException;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class AlphaNumOrEmail
+{
+    public function validate(mixed $value, string $field) : void
+    {
+        $isAlphaNum = ctype_alnum((string) $value);
+        $isEmail    = filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
+
+        if (! $isAlphaNum && ! $isEmail) {
+            throw new InvalidArgumentException(
+                sprintf('Field "%s" must be alphanumeric or a valid email address.', $field),
+            );
+        }
+    }
+}
+
+=== DataTransfer/System/Capabilities/AttributeReading/ArrayType.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+use InvalidArgumentException;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class ArrayType
+{
+    public function validate(mixed $value, string $field) : void
+    {
+        if (! is_array($value)) {
+            throw new InvalidArgumentException(
+                sprintf('Field "%s" must be an array.', $field),
+            );
+        }
+    }
+}
+
+=== DataTransfer/System/Capabilities/AttributeReading/Between.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+use InvalidArgumentException;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class Between
+{
+    public function __construct(
+        public int|float $min,
+        public int|float $max,
+    ) {}
+
+    public function validate(mixed $value, string $field) : void
+    {
+        if (is_string($value)) {
+            $length = strlen($value);
+            if ($length < $this->min || $length > $this->max) {
+                throw new InvalidArgumentException(
+                    sprintf('Field "%s" must be between %d and %d characters.', $field, $this->min, $this->max),
+                );
+            }
+        }
+
+        if (is_numeric($value) && ($value < $this->min || $value > $this->max)) {
+            throw new InvalidArgumentException(
+                sprintf('Field "%s" must be between %s and %s.', $field, $this->min, $this->max),
+            );
+        }
+
+        if (is_array($value)) {
+            $count = count($value);
+            if ($count < $this->min || $count > $this->max) {
+                throw new InvalidArgumentException(
+                    sprintf('Field "%s" must have between %d and %d items.', $field, $this->min, $this->max),
+                );
+            }
+        }
+    }
+}
+
+=== DataTransfer/System/Capabilities/AttributeReading/BooleanType.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class BooleanType {}
+
+=== DataTransfer/System/Capabilities/AttributeReading/CastWith.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class CastWith
+{
+    /**
+     * @param class-string $casterClass
+     */
+    public function __construct(public string $casterClass) {}
+}
+
+=== DataTransfer/System/Capabilities/AttributeReading/DefaultValue.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class DefaultValue
+{
+    public function __construct(public mixed $value) {}
+}
+
+=== DataTransfer/System/Capabilities/AttributeReading/Email.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+use InvalidArgumentException;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class Email
+{
+    public function validate(mixed $value, string $field) : void
+    {
+        if (! filter_var($value, FILTER_VALIDATE_EMAIL)) {
+            throw new InvalidArgumentException(
+                sprintf('Field "%s" must be a valid email address.', $field),
+            );
+        }
+    }
+}
+
+=== DataTransfer/System/Capabilities/AttributeReading/FloatType.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class FloatType {}
+
+=== DataTransfer/System/Capabilities/AttributeReading/Hidden.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class Hidden {}
+
+=== DataTransfer/System/Capabilities/AttributeReading/IntegerType.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class IntegerType {}
+
+=== DataTransfer/System/Capabilities/AttributeReading/ListOf.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class ListOf
+{
+    /**
+     * @param class-string $class
+     */
+    public function __construct(public string $class) {}
+
+    /**
+     * Legacy DTO list attributes used an of() method.
+     *
+     * @return class-string
+     */
+    public function of() : string
+    {
+        return $this->class;
+    }
+}
+
+=== DataTransfer/System/Capabilities/AttributeReading/MapFrom.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class MapFrom
+{
+    public function __construct(public string $name) {}
+}
+
+=== DataTransfer/System/Capabilities/AttributeReading/Max.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+use InvalidArgumentException;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class Max
+{
+    public function __construct(public int|float $max) {}
+
+    public function validate(mixed $value, string $field) : void
+    {
+        if (is_string($value) && strlen($value) > $this->max) {
+            throw new InvalidArgumentException(
+                sprintf('Field "%s" must not exceed %d characters.', $field, $this->max),
+            );
+        }
+
+        if (is_numeric($value) && $value > $this->max) {
+            throw new InvalidArgumentException(
+                sprintf('Field "%s" must not exceed %s.', $field, $this->max),
+            );
+        }
+
+        if (is_array($value) && count($value) > $this->max) {
+            throw new InvalidArgumentException(
+                sprintf('Field "%s" must not have more than %d items.', $field, $this->max),
+            );
+        }
+    }
+}
+
+=== DataTransfer/System/Capabilities/AttributeReading/Min.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+use InvalidArgumentException;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class Min
+{
+    public function __construct(public int|float $min) {}
+
+    public function validate(mixed $value, string $field) : void
+    {
+        if (is_string($value) && strlen($value) < $this->min) {
+            throw new InvalidArgumentException(
+                sprintf('Field "%s" must be at least %d characters.', $field, $this->min),
+            );
+        }
+
+        if (is_numeric($value) && $value < $this->min) {
+            throw new InvalidArgumentException(
+                sprintf('Field "%s" must be at least %s.', $field, $this->min),
+            );
+        }
+
+        if (is_array($value) && count($value) < $this->min) {
+            throw new InvalidArgumentException(
+                sprintf('Field "%s" must have at least %d items.', $field, $this->min),
+            );
+        }
+    }
+}
+
+=== DataTransfer/System/Capabilities/AttributeReading/Optional.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class Optional {}
+
+=== DataTransfer/System/Capabilities/AttributeReading/RegexPattern.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+use InvalidArgumentException;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class RegexPattern
+{
+    public function __construct(public string $pattern) {}
+
+    public function validate(mixed $value, string $field) : void
+    {
+        if (! preg_match($this->pattern, (string) $value)) {
+            throw new InvalidArgumentException(
+                sprintf('Field "%s" does not match the required pattern.', $field),
+            );
+        }
+    }
+}
+
+=== DataTransfer/System/Capabilities/AttributeReading/Required.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class Required {}
+
+=== DataTransfer/System/Capabilities/AttributeReading/StringType.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
+
+use Attribute;
+
+#[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
+final readonly class StringType {}
+
+=== DataTransfer/System/Capabilities/DataShapeInspection/CacheDataShape.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection;
+
+/**
+ * Static cache for DataShape inspections to prevent redundant reflection work.
+ */
+final class CacheDataShape
+{
+    /**
+     * @var array<string, DataShape>
+     */
+    private static array $cache = [];
+
+    public function remember(string $key, callable $builder) : DataShape
+    {
+        return self::$cache[$key] ??= $builder();
+    }
+
+    public function clear() : void
+    {
+        self::$cache = [];
+    }
+}
+
+=== DataTransfer/System/Capabilities/DataShapeInspection/DataField.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection;
+
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\CastWith;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\DefaultValue;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\Hidden;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\ListOf;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\Optional;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\Required;
+use ReflectionParameter;
+use ReflectionProperty;
+
+final readonly class DataField
+{
+    /**
+     * @param object[] $attributes
+     */
+    public function __construct(
+        public string               $name,
+        public string               $inputName,
+        public DataFieldType        $dataFieldType,
+        public array                $attributes,
+        public bool                 $isConstructorField,
+        public bool                 $isPromotedProperty,
+        public bool                 $isPublicProperty,
+        public bool                 $hasDefaultValue,
+        public mixed                $defaultValue,
+        public ?ReflectionProperty  $reflectionProperty = null,
+        public ?ReflectionParameter $reflectionParameter = null,
+    ) {}
+
+    public function isRequired() : bool
+    {
+        if ($this->hasAttribute(attributeClass: Required::class)) {
+            return true;
+        }
+
+        if ($this->hasAttribute(attributeClass: Optional::class)) {
+            return false;
+        }
+
+        return ! $this->hasDefaultValue && ! $this->dataFieldType->allowsNull;
+    }
+
+    public function hasAttribute(string $attributeClass) : bool
+    {
+        return array_any($this->attributes, fn ($attribute) : bool => $attribute instanceof $attributeClass);
+    }
+
+    public function isHidden() : bool
+    {
+        return $this->hasAttribute(attributeClass: Hidden::class);
+    }
+
+    public function listItemClass() : ?string
+    {
+        $attribute = $this->firstAttribute(attributeClass: ListOf::class);
+
+        if ($attribute instanceof ListOf) {
+            return $attribute->class;
+        }
+
+        if ($this->reflectionProperty instanceof ReflectionProperty) {
+            $doc = $this->reflectionProperty->getDocComment();
+
+            if (is_string(value: $doc) && preg_match(pattern: '/@var\s+([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)\[]/', subject: $doc, matches: $matches) === 1) {
+                $class = ltrim(string: $matches[1], characters: '\\');
+
+                if (str_contains(haystack: $class, needle: '\\')) {
+                    return $class;
+                }
+
+                $namespace = $this->reflectionProperty->getDeclaringClass()->getNamespaceName();
+
+                return $namespace === '' ? $class : $namespace . '\\' . $class;
+            }
+        }
+
+        return null;
+    }
+
+    public function firstAttribute(string $attributeClass) : ?object
+    {
+        foreach ($this->attributes as $attribute) {
+            if ($attribute instanceof $attributeClass) {
+                return $attribute;
+            }
+        }
+
+        return null;
+    }
+
+    public function casterClass() : ?string
+    {
+        $attribute = $this->firstAttribute(attributeClass: CastWith::class);
+
+        return $attribute instanceof CastWith ? $attribute->casterClass : null;
+    }
+
+    public function defaultFromAttribute() : mixed
+    {
+        $attribute = $this->firstAttribute(attributeClass: DefaultValue::class);
+
+        return $attribute instanceof DefaultValue ? $attribute->value : null;
+    }
+
+    public function hasDefaultAttribute() : bool
+    {
+        return $this->firstAttribute(attributeClass: DefaultValue::class) instanceof DefaultValue;
+    }
+}
+
+=== DataTransfer/System/Capabilities/DataShapeInspection/DataFieldType.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection;
+
+use BackedEnum;
+use ReflectionIntersectionType;
+use ReflectionNamedType;
+use ReflectionType;
+use ReflectionUnionType;
+
+final readonly class DataFieldType
+{
+    /**
+     * @param list<string> $names
+     */
+    public function __construct(
+        private array $names,
+        public bool   $allowsNull = true,
+    ) {}
+
+    public static function fromReflectionType(?ReflectionType $type) : self
+    {
+        if (! $type instanceof ReflectionType) {
+            return self::mixed();
+        }
+
+        if ($type instanceof ReflectionNamedType) {
+            return new self(
+                names     : [$type->getName()],
+                allowsNull: $type->allowsNull(),
+            );
+        }
+
+        if ($type instanceof ReflectionUnionType || $type instanceof ReflectionIntersectionType) {
+            $names = [];
+
+            foreach ($type->getTypes() as $reflectionType) {
+                if ($reflectionType instanceof ReflectionNamedType) {
+                    $name = $reflectionType->getName();
+
+                    if ($name !== 'null') {
+                        $names[] = $name;
+                    }
+                }
+            }
+
+            usort(
+                array   : $names,
+                callback: static fn (string $left, string $right) : int => (int) class_exists(class: $right) <=> (int) class_exists(class: $left),
+            );
+
+            return new self(
+                names     : $names === [] ? ['mixed'] : $names,
+                allowsNull: $type->allowsNull(),
+            );
+        }
+
+        return self::mixed();
+    }
+
+    public static function mixed() : self
+    {
+        return new self(names: ['mixed'], allowsNull: true);
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function names() : array
+    {
+        return $this->names;
+    }
+
+    public function isMixed() : bool
+    {
+        return $this->primaryName() === 'mixed';
+    }
+
+    public function primaryName() : ?string
+    {
+        return $this->names[0] ?? null;
+    }
+
+    public function isArray() : bool
+    {
+        return in_array(needle: 'array', haystack: $this->names, strict: true);
+    }
+
+    public function isScalar() : bool
+    {
+        return in_array(needle: $this->primaryName(), haystack: ['int', 'float', 'string', 'bool'], strict: true);
+    }
+
+    public function isClass() : bool
+    {
+        $name = $this->primaryName();
+
+        return $name !== null && class_exists(class: $name);
+    }
+
+    public function isBackedEnum() : bool
+    {
+        $name = $this->primaryName();
+
+        return $name !== null
+            && enum_exists(enum: $name)
+            && is_subclass_of(object_or_class: $name, class: BackedEnum::class);
+    }
+
+    public function displayName() : string
+    {
+        return implode(separator: '|', array: $this->names);
+    }
+}
+
+=== DataTransfer/System/Capabilities/DataShapeInspection/DataShape.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection;
+
+final readonly class DataShape
+{
+    /**
+     * @param class-string             $class
+     * @param array<string, DataField> $fields
+     */
+    public function __construct(
+        public string $class,
+        private array $fields,
+    ) {}
+
+    /**
+     * @return array<string, DataField>
+     */
+    public function fields() : array
+    {
+        return $this->fields;
+    }
+
+    /**
+     * @return array<string, DataField>
+     */
+    public function constructorFields() : array
+    {
+        return array_filter(
+            array   : $this->fields,
+            callback: static fn (DataField $dataField) : bool => $dataField->isConstructorField,
+        );
+    }
+
+    /**
+     * @return array<string, DataField>
+     */
+    public function publicPropertyFields() : array
+    {
+        return array_filter(
+            array   : $this->fields,
+            callback: static fn (DataField $dataField) : bool => $dataField->isPublicProperty,
+        );
+    }
+
+    public function field(string $name) : ?DataField
+    {
+        return $this->fields[$name] ?? null;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function inputNames() : array
+    {
+        return array_values(
+            array: array_map(
+                       callback: static fn (DataField $dataField) : string => $dataField->inputName,
+                       array   : $this->fields,
+                   ),
+        );
+    }
+}
+
+=== DataTransfer/System/Capabilities/DataShapeInspection/HideFieldFromOutput.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection;
+
+final readonly class HideFieldFromOutput
+{
+    public function shouldHide(DataField $dataField) : bool
+    {
+        return $dataField->isHidden();
+    }
+}
+
+=== DataTransfer/System/Capabilities/DataShapeInspection/InspectDataShape.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection;
+
+use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConfig;
+
+final readonly class InspectDataShape
+{
+    public function __construct(
+        private ?DataTransferConfig $dataTransferConfig = null,
+        private CacheDataShape      $cacheDataShape = new CacheDataShape(),
+    ) {}
+
+    /**
+     * @param class-string $class
+     */
+    public function inspect(string $class) : DataShape
+    {
+        $config   = $this->dataTransferConfig ?? DataTransferConfig::default();
+        $cacheKey = $class . ':' . spl_object_id(object: $config);
+
+        return $this->cacheDataShape->remember(
+            key    : $cacheKey,
+            builder: static fn () : DataShape => new ReadClassDataShape()->read(class: $class, dataTransferConfig: $config),
+        );
+    }
+}
+
+=== DataTransfer/System/Capabilities/DataShapeInspection/ReadClassDataShape.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection;
+
+use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConfig;
+use ReflectionClass;
+
+/**
+ * Orchestrates the reading of class data shape by combining constructor and public fields.
+ */
+final readonly class ReadClassDataShape
+{
+    /**
+     * @param class-string $class
+     */
+    public function read(string $class, DataTransferConfig $dataTransferConfig) : DataShape
+    {
+        $reflectionClass = new ReflectionClass(objectOrClass: $class);
+
+        $constructorFields = new ReadConstructorDataFields()->read(reflectionClass: $reflectionClass, dataTransferConfig: $dataTransferConfig);
+        $publicFields      = new ReadPublicDataFields()->read(
+            existingFields    : $constructorFields,
+            reflectionClass   : $reflectionClass,
+            dataTransferConfig: $dataTransferConfig,
+        );
+
+        return new DataShape(
+            class : $class,
+            fields: [...$constructorFields, ...$publicFields],
+        );
+    }
+}
+
+=== DataTransfer/System/Capabilities/DataShapeInspection/ReadConstructorDataFields.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection;
+
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\FieldMapping\ReadMappedInputName;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\LegacyTransfer\AbstractDTO;
+use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConfig;
+use ReflectionClass;
+use ReflectionException;
+
+/**
+ * Inspects class constructor to identify DTO fields.
+ */
+final readonly class ReadConstructorDataFields
+{
+    /**
+     * @param ReflectionClass<object> $reflectionClass
+     *
+     * @return array<string, DataField>
+     *
+     * @throws ReflectionException
+     */
+    public function read(ReflectionClass $reflectionClass, DataTransferConfig $dataTransferConfig) : array
+    {
+        $constructor = $reflectionClass->getConstructor();
+
+        if ($constructor === null) {
+            return [];
+        }
+
+        // Special case for legacy DTOs that might have a base constructor we want to ignore
+        if (
+            is_a(object_or_class: $reflectionClass->getName(), class: AbstractDTO::class, allow_string: true)
+            && $constructor->getDeclaringClass()->getName() === AbstractDTO::class
+        ) {
+            return [];
+        }
+
+        $fields = [];
+
+        foreach ($constructor->getParameters() as $reflectionParameter) {
+            $property = null;
+
+            if ($reflectionParameter->isPromoted() && $reflectionClass->hasProperty(name: $reflectionParameter->getName())) {
+                $property = $reflectionClass->getProperty(name: $reflectionParameter->getName());
+            }
+
+            $attributes = new ReadDataFieldAttributes()->read(reflectionProperty: $property, reflectionParameter: $reflectionParameter);
+            $inputName  = new ReadMappedInputName()->read(
+                fieldName         : $reflectionParameter->getName(),
+                attributes        : $attributes,
+                dataTransferConfig: $dataTransferConfig,
+            );
+
+            $fields[$reflectionParameter->getName()] = new DataField(
+                name               : $reflectionParameter->getName(),
+                inputName          : $inputName->value,
+                attributes         : $attributes,
+                isConstructorField : true,
+                isPromotedProperty : $reflectionParameter->isPromoted(),
+                isPublicProperty   : $property?->isPublic() ?? false,
+                hasDefaultValue    : $reflectionParameter->isDefaultValueAvailable(),
+                defaultValue       : $reflectionParameter->isDefaultValueAvailable() ? $reflectionParameter->getDefaultValue() : null,
+                dataFieldType      : DataFieldType::fromReflectionType(type: $reflectionParameter->getType()),
+                reflectionProperty : $property,
+                reflectionParameter: $reflectionParameter,
+            );
+        }
+
+        return $fields;
+    }
+}
+
+=== DataTransfer/System/Capabilities/DataShapeInspection/ReadDataFieldAttributes.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection;
+
+use ReflectionParameter;
+use ReflectionProperty;
+
+/**
+ * Reads attributes from properties or parameters for DTO field metadata.
+ */
+final readonly class ReadDataFieldAttributes
+{
+    /**
+     * @return object[]
+     */
+    public function read(?ReflectionProperty $reflectionProperty = null, ?ReflectionParameter $reflectionParameter = null) : array
+    {
+        $instances = [];
+
+        foreach ([...($reflectionParameter?->getAttributes() ?? []), ...($reflectionProperty?->getAttributes() ?? [])] as $attribute) {
+            $instances[] = $attribute->newInstance();
+        }
+
+        return $instances;
+    }
+}
+
+=== DataTransfer/System/Capabilities/DataShapeInspection/ReadPublicDataFields.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection;
+
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\FieldMapping\ReadMappedInputName;
+use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConfig;
+use ReflectionClass;
+use ReflectionProperty;
+
+/**
+ * Inspects public properties to identify DTO fields.
+ */
+final readonly class ReadPublicDataFields
+{
+    /**
+     * @param ReflectionClass<object>  $reflectionClass
+     * @param array<string, DataField> $existingFields
+     *
+     * @return array<string, DataField>
+     */
+    public function read(ReflectionClass $reflectionClass, DataTransferConfig $dataTransferConfig, array $existingFields = []) : array
+    {
+        if (! $dataTransferConfig->allowPublicPropertyHydration) {
+            return [];
+        }
+
+        $fields = [];
+
+        foreach ($reflectionClass->getProperties(filter: ReflectionProperty::IS_PUBLIC) as $reflectionProperty) {
+            if ($reflectionProperty->isStatic()) {
+                continue;
+            }
+
+            if (array_key_exists(key: $reflectionProperty->getName(), array: $existingFields)) {
+                continue;
+            }
+
+            $attributes = new ReadDataFieldAttributes()->read(reflectionProperty: $reflectionProperty);
+            $inputName  = new ReadMappedInputName()->read(
+                fieldName         : $reflectionProperty->getName(),
+                attributes        : $attributes,
+                dataTransferConfig: $dataTransferConfig,
+            );
+
+            $fields[$reflectionProperty->getName()] = new DataField(
+                name              : $reflectionProperty->getName(),
+                inputName         : $inputName->value,
+                attributes        : $attributes,
+                isConstructorField: false,
+                isPromotedProperty: false,
+                isPublicProperty  : true,
+                hasDefaultValue   : $reflectionProperty->hasDefaultValue(),
+                defaultValue      : $reflectionProperty->hasDefaultValue() ? $reflectionProperty->getDefaultValue() : null,
+                dataFieldType     : DataFieldType::fromReflectionType(type: $reflectionProperty->getType()),
+                reflectionProperty: $reflectionProperty,
+            );
+        }
+
+        return $fields;
+    }
+}
+
+=== DataTransfer/System/Capabilities/DataShapeInspection/ReadVisibleFields.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection;
+
+final readonly class ReadVisibleFields
+{
+    /**
+     * @return array<string, DataField>
+     */
+    public function read(DataShape $dataShape, bool $excludeHidden = true) : array
+    {
+        return array_filter(
+            array   : $dataShape->fields(),
+            callback: static fn (DataField $dataField) : bool => new ShouldExposeField()->check(
+                excludeHidden: $excludeHidden,
+                dataField    : $dataField,
+            ),
+        );
+    }
+}
+
+=== DataTransfer/System/Capabilities/DataShapeInspection/ShouldExposeField.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection;
+
+final readonly class ShouldExposeField
+{
+    public function check(DataField $dataField, bool $excludeHidden = true) : bool
+    {
+        if (! $excludeHidden) {
+            return true;
+        }
+
+        return ! new HideFieldFromOutput()->shouldHide(dataField: $dataField);
+    }
+}
+
+=== DataTransfer/System/Capabilities/FieldMapping/FieldInputName.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\FieldMapping;
+
+final readonly class FieldInputName
+{
+    public function __construct(public string $value) {}
+}
+
+=== DataTransfer/System/Capabilities/FieldMapping/MapInputNameToField.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\FieldMapping;
+
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection\DataField;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection\DataShape;
+
+final readonly class MapInputNameToField
+{
+    /**
+     * @return array<string, DataField>
+     */
+    public function map(DataShape $dataShape) : array
+    {
+        $map = [];
+
+        foreach ($dataShape->fields() as $dataField) {
+            $map[$dataField->inputName] = $dataField;
+        }
+
+        return $map;
+    }
+}
+
+=== DataTransfer/System/Capabilities/FieldMapping/ReadMappedInputName.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\FieldMapping;
+
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\MapFrom;
+use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConfig;
+
+final readonly class ReadMappedInputName
+{
+    /**
+     * @param object[] $attributes
+     */
+    public function read(string $fieldName, array $attributes, DataTransferConfig $dataTransferConfig) : FieldInputName
+    {
+        foreach ($attributes as $attribute) {
+            if ($attribute instanceof MapFrom) {
+                return new FieldInputName(value: $attribute->name);
+            }
+        }
+
+        return new FieldInputName(value: $dataTransferConfig->inputNameFor(fieldName: $fieldName));
+    }
+}
+
+=== DataTransfer/System/Capabilities/LegacyTransfer/AbstractDTO.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\LegacyTransfer;
+
+use Avax\Components\DataStack\DataTransfer\System\PublicSurface\DataObject;
+use ReflectionClass;
+use ReflectionProperty;
+
+/**
+ * AbstractDTO - Base class for all Data Transfer Objects.
+ *
+ * Migrated from DataFoundation\ObjectHandling\DTO\AbstractDTO.
+ * Provides constructor-based hydration from array input and validation
+ * via Validation component attributes.
+ */
+abstract class AbstractDTO implements DataObject
+{
+    /**
+     * @param array<string, mixed> $data
+     */
+    public function __construct(array $data = [])
+    {
+        $reflectionClass = new ReflectionClass($this);
+        $properties      = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
+
+        foreach ($properties as $property) {
+            $name = $property->getName();
+
+            if (array_key_exists($name, $data)) {
+                $property->setValue($this, $data[$name]);
+            }
+        }
+    }
+
+    /**
+     * Convert DTO to associative array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray() : array
+    {
+        $result          = [];
+        $reflectionClass = new ReflectionClass($this);
+        $properties      = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
+
+        foreach ($properties as $property) {
+            if ($property->isInitialized($this)) {
+                $result[$property->getName()] = $property->getValue($this);
+            }
+        }
+
+        return $result;
+    }
+}
+
+=== DataTransfer/System/Capabilities/LegacyTransfer/ObjectMapper.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\LegacyTransfer;
+
+/**
+ * ObjectMapper - handles mapping arrays to objects and vice-versa.
+ * Migrated from legacy DataFoundation.
+ */
+final class ObjectMapper
+{
+    /**
+     * @param array<string, mixed> $data
+     */
+    public static function map(array $data, object $object) : object
+    {
+        foreach ($data as $key => $value) {
+            if (property_exists($object, $key)) {
+                $object->$key = $value;
+            }
+        }
+
+        return $object;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function toArray(object $object) : array
+    {
+        return (array) $object;
+    }
+}
+
+=== DataTransfer/System/Capabilities/LegacyTransfer/SerializeLegacyDTO.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\LegacyTransfer;
+
+use Avax\Components\DataStack\Data\System\Capabilities\Forms\ArrayForm\Arrhae;
+use Avax\Components\DataStack\Data\System\Capabilities\Forms\CollectionForm\Collection;
+use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConfig;
+use Avax\Components\DataStack\DataTransfer\System\Flows\SerializeDataObject\SerializeDataObject;
+use stdClass;
+
+final readonly class SerializeLegacyDTO
+{
+    private SerializeDataObject $serializeDataObject;
+
+    public function __construct()
+    {
+        $this->serializeDataObject = new SerializeDataObject(dataTransferConfig: DataTransferConfig::legacy());
+    }
+
+    public function toJson(object $object, ?int $flags = null, int $depth = 512) : string
+    {
+        $flags ??= 0;
+
+        return $this->serializeDataObject->toJson(object: $object, flags: $flags, depth: $depth);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toFlatArray(object $object) : array
+    {
+        return $this->serializeDataObject->toFlatArray(object: $object);
+    }
+
+    public function toStdClass(object $object) : stdClass
+    {
+        return $this->serializeDataObject->toStdClass(object: $object);
+    }
+
+    public function toCollection(object $object) : Collection
+    {
+        // Global collect() helper should return Avax\Components\DataStack\Data\System\Capabilities\Forms\CollectionForm\Collection
+        return new Collection(new Arrhae($this->toArray(object: $object)));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(object $object, ?int $depth = null, bool $excludeHidden = true) : array
+    {
+        return $this->serializeDataObject->toArray(object: $object, depth: $depth, excludeHidden: $excludeHidden);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toJsonApi(object $object, string $type) : array
+    {
+        return $this->serializeDataObject->toJsonApi(object: $object, type: $type);
+    }
+}
+
+=== DataTransfer/System/Capabilities/TransferValidation/DataTransferException.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\TransferValidation;
+
+use InvalidArgumentException;
+
+final class DataTransferException extends InvalidArgumentException {}
+
+=== DataTransfer/System/Capabilities/TransferValidation/DataTransferFailure.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\TransferValidation;
+
+use RuntimeException;
+use Throwable;
+
+class DataTransferFailure extends RuntimeException
+{
+    public function __construct(
+        string                         $message = '',
+        public ?DataTransferViolations $violations = null,
+        int                            $code = 0,
+        ?Throwable                     $previous = null,
+    )
+    {
+        parent::__construct($message, $code, $previous);
+    }
+}
+
+=== DataTransfer/System/Capabilities/TransferValidation/DataTransferResult.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\TransferValidation;
+
+final readonly class DataTransferResult
+{
+    private function __construct(
+        private ?object              $object,
+        private ?DataTransferFailure $dataTransferFailure,
+    ) {}
+
+    public static function success(object $object) : self
+    {
+        return new self(object: $object, dataTransferFailure: null);
+    }
+
+    public static function failure(DataTransferFailure $dataTransferFailure) : self
+    {
+        return new self(object: null, dataTransferFailure: $dataTransferFailure);
+    }
+
+    public function isSuccess() : bool
+    {
+        return $this->object !== null;
+    }
+
+    public function isFailure() : bool
+    {
+        return $this->dataTransferFailure instanceof DataTransferFailure;
+    }
+
+    public function object() : object
+    {
+        return $this->object ?? throw new DataTransferException(message: 'Data transfer did not produce an object.');
+    }
+
+    public function failureReason() : DataTransferFailure
+    {
+        return $this->dataTransferFailure ?? throw new DataTransferException(message: 'Data transfer completed successfully.');
+    }
+}
+
+=== DataTransfer/System/Capabilities/TransferValidation/DataTransferViolation.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\TransferValidation;
+
+use JsonSerializable;
+use Override;
+
+/**
+ * Single validation violation for DTO
+ */
+final readonly class DataTransferViolation implements JsonSerializable
+{
+    public function __construct(
+        public string  $field,
+        public string  $message,
+        public ?string $code = null,
+        public mixed   $invalidValue = null,
+    ) {}
+
+    /**
+     * @return array<string, mixed>
+     */
+    #[Override]
+    public function jsonSerialize() : array
+    {
+        return [
+            'field'        => $this->field,
+            'message'      => $this->message,
+            'code'         => $this->code,
+            'invalidValue' => $this->invalidValue,
+        ];
+    }
+}
+
+=== DataTransfer/System/Capabilities/TransferValidation/DataTransferViolations.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\TransferValidation;
+
+use Countable;
+use IteratorAggregate;
+use JsonSerializable;
+use Override;
+use Traversable;
+
+/**
+ * Collection of validation violations for DTO
+ *
+ * @implements IteratorAggregate<int, DataTransferViolation>
+ */
+final readonly class DataTransferViolations implements Countable, IteratorAggregate, JsonSerializable
+{
+    /**
+     * @param DataTransferViolation[] $violations
+     */
+    public function __construct(
+        private array $violations = [],
+    ) {}
+
+    public static function empty() : self
+    {
+        return new self([]);
+    }
+
+    /**
+     * @param list<DataTransferViolation> $violations
+     */
+    public static function from(array $violations) : self
+    {
+        return new self($violations);
+    }
+
+    public function add(DataTransferViolation $dataTransferViolation) : self
+    {
+        return new self([...$this->violations, $dataTransferViolation]);
+    }
+
+    public function isEmpty() : bool
+    {
+        return $this->violations === [];
+    }
+
+    #[Override]
+    public function count() : int
+    {
+        return count($this->violations);
+    }
+
+    /**
+     * @return Traversable<int, DataTransferViolation>
+     */
+    #[Override]
+    public function getIterator() : Traversable
+    {
+        yield from $this->violations;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    #[Override]
+    public function jsonSerialize() : array
+    {
+        return array_map(
+            static fn (DataTransferViolation $dataTransferViolation) : array => $dataTransferViolation->jsonSerialize(),
+            $this->violations,
+        );
+    }
+}
+
+=== DataTransfer/System/Capabilities/ValueConversion/ValueCasterInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\ValueConversion;
+
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection\DataField;
+
+interface ValueCasterInterface
+{
+    public function cast(mixed $value, DataField $dataField, ValueConversionContext $valueConversionContext) : mixed;
+}
+
+=== DataTransfer/System/Capabilities/ValueConversion/ValueConversionContext.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\ValueConversion;
+
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection\DataField;
+
+final readonly class ValueConversionContext
+{
+    public function __construct(
+        public DataField $dataField,
+        public ?object   $parent = null,
+        public ?string   $propertyName = null,
+    ) {}
+}
+
+=== DataTransfer/System/Configuration/DataTransferConfig.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Configuration;
+
+use Closure;
+
+final readonly class DataTransferConfig
+{
+    /**
+     * @param array<string, class-string|object|callable|string> $valueCasters
+     * @param array<string, object|callable>                     $validationRules
+     */
+    public function __construct(
+        public UnknownFieldPolicy $unknownFieldPolicy = UnknownFieldPolicy::Reject,
+        public bool               $allowPublicPropertyHydration = true,
+        public bool               $collectUnknownFields = false,
+        public int                $maxDepth = 32,
+        private ?Closure          $namingPolicy = null,
+        private array             $valueCasters = [],
+        private array             $validationRules = [],
+    ) {}
+
+    public static function default() : self
+    {
+        return new self();
+    }
+
+    public static function legacy() : self
+    {
+        return new self(unknownFieldPolicy: UnknownFieldPolicy::Ignore);
+    }
+
+    public function inputNameFor(string $fieldName) : string
+    {
+        if (! $this->namingPolicy instanceof Closure) {
+            return $fieldName;
+        }
+
+        return ($this->namingPolicy)($fieldName);
+    }
+
+    public function withUnknownFieldPolicy(UnknownFieldPolicy $unknownFieldPolicy) : self
+    {
+        return new self(
+            unknownFieldPolicy          : $unknownFieldPolicy,
+            allowPublicPropertyHydration: $this->allowPublicPropertyHydration,
+            collectUnknownFields        : $this->collectUnknownFields,
+            maxDepth                    : $this->maxDepth,
+            namingPolicy                : $this->namingPolicy,
+            valueCasters                : $this->valueCasters,
+            validationRules             : $this->validationRules,
+        );
+    }
+
+    public function withNamingPolicy(Closure $policy) : self
+    {
+        return new self(
+            unknownFieldPolicy          : $this->unknownFieldPolicy,
+            allowPublicPropertyHydration: $this->allowPublicPropertyHydration,
+            collectUnknownFields        : $this->collectUnknownFields,
+            maxDepth                    : $this->maxDepth,
+            namingPolicy                : $policy,
+            valueCasters                : $this->valueCasters,
+            validationRules             : $this->validationRules,
+        );
+    }
+
+    public function withValueCaster(string $class, object|callable|string $caster) : self
+    {
+        $casters         = $this->valueCasters;
+        $casters[$class] = $caster;
+
+        return new self(
+            unknownFieldPolicy          : $this->unknownFieldPolicy,
+            allowPublicPropertyHydration: $this->allowPublicPropertyHydration,
+            collectUnknownFields        : $this->collectUnknownFields,
+            maxDepth                    : $this->maxDepth,
+            namingPolicy                : $this->namingPolicy,
+            valueCasters                : $casters,
+            validationRules             : $this->validationRules,
+        );
+    }
+
+    public function withValidationRule(string $attributeClass, object|callable $rule) : self
+    {
+        $rules                  = $this->validationRules;
+        $rules[$attributeClass] = $rule;
+
+        return new self(
+            unknownFieldPolicy          : $this->unknownFieldPolicy,
+            allowPublicPropertyHydration: $this->allowPublicPropertyHydration,
+            collectUnknownFields        : $this->collectUnknownFields,
+            maxDepth                    : $this->maxDepth,
+            namingPolicy                : $this->namingPolicy,
+            valueCasters                : $this->valueCasters,
+            validationRules             : $rules,
+        );
+    }
+
+    public function casterFor(string $class) : object|callable|string|null
+    {
+        return $this->valueCasters[$class] ?? null;
+    }
+
+    public function validationRuleFor(string $attributeClass) : object|callable|null
+    {
+        return $this->validationRules[$attributeClass] ?? null;
+    }
+}
+
+=== DataTransfer/System/Configuration/UnknownFieldPolicy.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Configuration;
+
+enum UnknownFieldPolicy: string
+{
+    case Reject  = 'reject';
+    case Ignore  = 'ignore';
+    case Collect = 'collect';
+}
+
+=== DataTransfer/System/Flows/ReadDataObject/NormalizeDataObjectValue.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Flows\ReadDataObject;
+
+use BackedEnum;
+use DateTimeInterface;
+use JsonSerializable;
+use Stringable;
+use Traversable;
+
+final readonly class NormalizeDataObjectValue
+{
+    /**
+     * @param array<int, true> $seen
+     */
+    public function normalize(mixed $value, int $depth, array &$seen) : mixed
+    {
+        if ($depth < 0) {
+            return null;
+        }
+
+        return match (true) {
+            $value instanceof BackedEnum        => $value->value,
+            $value instanceof DateTimeInterface => $value->format(format: DATE_ATOM),
+            is_array(value: $value)             => $this->normalizeArray(value: $value, depth: $depth, seen: $seen),
+            $value instanceof Traversable       => $this->normalizeArray(value: iterator_to_array(iterator: $value), depth: $depth, seen: $seen),
+            is_object(value: $value)            => $this->normalizeObject(value: $value, depth: $depth, seen: $seen),
+            default                             => $value,
+        };
+    }
+
+    /**
+     * @param array<array-key, mixed> $value
+     * @param array<int, true>        $seen
+     *
+     * @return array<array-key, mixed>
+     */
+    private function normalizeArray(array $value, int $depth, array &$seen) : array
+    {
+        $normalized = [];
+
+        foreach ($value as $key => $item) {
+            $normalized[$key] = $this->normalize(value: $item, depth: $depth - 1, seen: $seen);
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * @param array<int, true> $seen
+     */
+    private function normalizeObject(object $value, int $depth, array &$seen) : mixed
+    {
+        $id = spl_object_id(object: $value);
+
+        if (isset($seen[$id])) {
+            return null;
+        }
+
+        $seen[$id] = true;
+
+        if ($value instanceof JsonSerializable) {
+            return $this->normalize(value: $value->jsonSerialize(), depth: $depth - 1, seen: $seen);
+        }
+
+        if ($value instanceof Stringable && $this->hasNoPublicProperties(value: $value)) {
+            return (string) $value;
+        }
+
+        return $this->normalize(value: new ReadDataObject()->values(object: $value), depth: $depth - 1, seen: $seen);
+    }
+
+    private function hasNoPublicProperties(object $value) : bool
+    {
+        return get_object_vars(object: $value) === [];
+    }
+}
+
+=== DataTransfer/System/Flows/ReadDataObject/ReadDataObject.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Flows\ReadDataObject;
+
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection\InspectDataShape;
+use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConfig;
+
+final readonly class ReadDataObject
+{
+    public function __construct(private ?DataTransferConfig $dataTransferConfig = null) {}
+
+    /**
+     * @return array<array-key, mixed>
+     */
+    public function values(object $object, bool $excludeHidden = true) : array
+    {
+        $config    = $this->dataTransferConfig ?? DataTransferConfig::default();
+        $dataShape = new InspectDataShape(dataTransferConfig: $config)->inspect(class: $object::class);
+        $fields    = new ReadVisibleDataFields()->read(dataShape: $dataShape, excludeHidden: $excludeHidden);
+
+        return new ReadDataObjectValues()->read(object: $object, fields: $fields);
+    }
+}
+
+=== DataTransfer/System/Flows/ReadDataObject/ReadDataObjectValues.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Flows\ReadDataObject;
+
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection\DataField;
+
+final readonly class ReadDataObjectValues
+{
+    /**
+     * @param array<string, DataField> $fields
+     *
+     * @return array<string, mixed>
+     */
+    public function read(object $object, array $fields) : array
+    {
+        $values = [];
+
+        foreach ($fields as $field) {
+            if ($field->reflectionProperty !== null && $field->reflectionProperty->isInitialized(object: $object)) {
+                $values[$field->name] = $field->reflectionProperty->getValue(object: $object);
+
+                continue;
+            }
+
+            if (property_exists(object_or_class: $object, property: $field->name)) {
+                $values[$field->name] = $object->{$field->name};
+            }
+        }
+
+        return $values;
+    }
+}
+
+=== DataTransfer/System/Flows/ReadDataObject/ReadVisibleDataFields.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Flows\ReadDataObject;
+
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection\DataField;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection\DataShape;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection\ReadVisibleFields;
+
+final readonly class ReadVisibleDataFields
+{
+    /**
+     * @return array<string, DataField>
+     */
+    public function read(DataShape $dataShape, bool $excludeHidden = true) : array
+    {
+        return new ReadVisibleFields()->read(dataShape: $dataShape, excludeHidden: $excludeHidden);
+    }
+}
+
+=== DataTransfer/System/Flows/SerializeDataObject/ConvertDataObjectToArray.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Flows\SerializeDataObject;
+
+use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConfig;
+use Avax\Components\DataStack\DataTransfer\System\Flows\ReadDataObject\NormalizeDataObjectValue;
+use Avax\Components\DataStack\DataTransfer\System\Flows\ReadDataObject\ReadDataObject;
+
+final readonly class ConvertDataObjectToArray
+{
+    public function __construct(private ?DataTransferConfig $dataTransferConfig = null) {}
+
+    /**
+     * @return array<array-key, mixed>
+     */
+    public function convert(object $object, ?int $depth = null, bool $excludeHidden = true) : array
+    {
+        $config   = $this->dataTransferConfig ?? DataTransferConfig::default();
+        $maxDepth = $depth ?? $config->maxDepth;
+        $seen     = [];
+        $values   = new ReadDataObject(dataTransferConfig: $config)->values(object: $object, excludeHidden: $excludeHidden);
+
+        return new NormalizeDataObjectValue()->normalize(value: $values, depth: $maxDepth, seen: $seen);
+    }
+}
+
+=== DataTransfer/System/Flows/SerializeDataObject/ConvertDataObjectToFlatArray.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Flows\SerializeDataObject;
+
+final readonly class ConvertDataObjectToFlatArray
+{
+    /**
+     * @return array<array-key, mixed>
+     */
+    public function convert(object $object) : array
+    {
+        return get_object_vars(object: $object);
+    }
+}
+
+=== DataTransfer/System/Flows/SerializeDataObject/ConvertDataObjectToJson.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Flows\SerializeDataObject;
+
+use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConfig;
+use JsonException;
+
+final readonly class ConvertDataObjectToJson
+{
+    public function __construct(private ?DataTransferConfig $dataTransferConfig = null) {}
+
+    /**
+     * @throws JsonException
+     */
+    public function convert(object $object, ?int $flags = null, int $depth = 512) : string
+    {
+        $flags ??= 0;
+        assert($depth >= 1);
+
+        return json_encode(
+            value: new ConvertDataObjectToArray(dataTransferConfig: $this->dataTransferConfig)->convert(object: $object),
+            flags: $flags | JSON_THROW_ON_ERROR,
+            depth: $depth,
+        );
+    }
+}
+
+=== DataTransfer/System/Flows/SerializeDataObject/ConvertDataObjectToJsonApi.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Flows\SerializeDataObject;
+
+use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConfig;
+
+final readonly class ConvertDataObjectToJsonApi
+{
+    public function __construct(private ?DataTransferConfig $dataTransferConfig = null) {}
+
+    /**
+     * @return array{data: array{type: string, id: mixed, attributes: array<array-key, mixed>}}
+     */
+    public function convert(object $object, string $type) : array
+    {
+        $array = new ConvertDataObjectToArray(dataTransferConfig: $this->dataTransferConfig)->convert(object: $object);
+
+        return [
+            'data' => [
+                'type'       => $type,
+                'id'         => $array['id'] ?? null,
+                'attributes' => $array,
+            ],
+        ];
+    }
+}
+
+=== DataTransfer/System/Flows/SerializeDataObject/ConvertDataObjectToStdClass.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Flows\SerializeDataObject;
+
+use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConfig;
+use JsonException;
+use stdClass;
+
+final readonly class ConvertDataObjectToStdClass
+{
+    public function __construct(private ?DataTransferConfig $dataTransferConfig = null) {}
+
+    /**
+     * @throws JsonException
+     */
+    public function convert(object $object) : stdClass
+    {
+        return json_decode(
+            json       : new ConvertDataObjectToJson(dataTransferConfig: $this->dataTransferConfig)->convert(object: $object),
+            associative: false,
+            depth      : 512,
+            flags      : JSON_THROW_ON_ERROR,
+        );
+    }
+}
+
+=== DataTransfer/System/Flows/SerializeDataObject/SerializeDataObject.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\Flows\SerializeDataObject;
+
+use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConfig;
+use JsonException;
+use stdClass;
+
+final readonly class SerializeDataObject
+{
+    public function __construct(private ?DataTransferConfig $dataTransferConfig = null) {}
+
+    /**
+     * @return array<array-key, mixed>
+     */
+    public function toArray(object $object, ?int $depth = null, bool $excludeHidden = true) : array
+    {
+        return new ConvertDataObjectToArray(dataTransferConfig: $this->dataTransferConfig)->convert(
+            object       : $object,
+            depth        : $depth,
+            excludeHidden: $excludeHidden,
+        );
+    }
+
+    /**
+     * @throws JsonException
+     */
+    public function toJson(object $object, ?int $flags = null, int $depth = 512) : string
+    {
+        $flags ??= 0;
+
+        return new ConvertDataObjectToJson(dataTransferConfig: $this->dataTransferConfig)->convert(object: $object, flags: $flags, depth: $depth);
+    }
+
+    /**
+     * @return array<array-key, mixed>
+     */
+    public function toFlatArray(object $object) : array
+    {
+        return new ConvertDataObjectToFlatArray()->convert(object: $object);
+    }
+
+    /**
+     * @throws JsonException
+     */
+    public function toStdClass(object $object) : stdClass
+    {
+        return new ConvertDataObjectToStdClass(dataTransferConfig: $this->dataTransferConfig)->convert(object: $object);
+    }
+
+    /**
+     * @return array{data: array{type: string, id: mixed, attributes: array<array-key, mixed>}}
+     */
+    public function toJsonApi(object $object, string $type) : array
+    {
+        return new ConvertDataObjectToJsonApi(dataTransferConfig: $this->dataTransferConfig)->convert(object: $object, type: $type);
+    }
+}
+
+=== DataTransfer/System/PublicSurface/DataObject.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\PublicSurface;
+
+/**
+ * DataObject marker interface.
+ */
+interface DataObject {}
+
+=== DataTransfer/System/PublicSurface/DataTransfer.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\DataTransfer\System\PublicSurface;
+
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\CastWith;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\DefaultValue;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\ListOf;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\MapFrom;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\Optional;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\Required;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\TransferValidation\DataTransferFailure;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\TransferValidation\DataTransferResult;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\TransferValidation\DataTransferViolation;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\TransferValidation\DataTransferViolations;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\ValueConversion\ValueCasterInterface;
+use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConfig;
+use Avax\Components\DataStack\DataTransfer\System\Flows\SerializeDataObject\SerializeDataObject;
+use Avax\Framework\System\Capabilities\StateReset\ResettableState;
+use BackedEnum;
+use InvalidArgumentException;
+use ReflectionClass;
+use ReflectionNamedType;
+use ReflectionProperty;
+use stdClass;
+use Throwable;
+
+/**
+ * DataTransfer - Complete DTO System
+ *
+ * Public API:
+ * - DataTransfer::create(ClassName::class, $input)
+ * - DataTransfer::tryCreate(ClassName::class, $input)
+ * - DataTransfer::toArray($object)
+ * - DataTransfer::toJson($object)
+ */
+final class DataTransfer implements ResettableState
+{
+    private static ?DataTransferConfig $dataTransferConfig = null;
+
+    public static function configure(DataTransferConfig $dataTransferConfig) : void
+    {
+        self::$dataTransferConfig = $dataTransferConfig;
+    }
+
+    /**
+     * @template T of object
+     * @param class-string<T>             $class
+     * @param array<string, mixed>|object $input
+     */
+    public static function tryCreate(string $class, array|object $input) : DataTransferResult
+    {
+        try {
+            return DataTransferResult::success(object: self::create(class: $class, input: $input));
+        } catch (DataTransferFailure $failure) {
+            return DataTransferResult::failure(dataTransferFailure: $failure);
+        } catch (Throwable $exception) {
+            return DataTransferResult::failure(
+                dataTransferFailure: new DataTransferFailure(
+                                         message : 'Data transfer failed.',
+                                         previous: $exception,
+                                     ),
+            );
+        }
+    }
+
+    /**
+     * @template T of object
+     * @param class-string<T>             $class
+     * @param array<string, mixed>|object $input
+     *
+     * @return T
+     */
+    public static function create(string $class, array|object $input) : object
+    {
+        self::$dataTransferConfig ??= DataTransferConfig::default();
+        $inputData                = is_array($input) ? $input : (array) $input;
+
+        $reflectionClass = new ReflectionClass($class);
+        $properties      = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED);
+
+        $values     = [];
+        $violations = [];
+
+        foreach ($properties as $property) {
+            $propertyName = $property->getName();
+            $inputName    = self::resolveInputName($property);
+            $hasValue     = array_key_exists($inputName, $inputData);
+            $value        = $inputData[$inputName] ?? null;
+
+            // Required check
+            $isRequired = $property->getAttributes(Required::class) !== [];
+            $isOptional = $property->getAttributes(Optional::class) !== [];
+
+            if ($isRequired && ! $hasValue) {
+                $violations[] = new DataTransferViolation(
+                    field  : $propertyName,
+                    message: sprintf('Field "%s" is required.', $propertyName),
+                );
+                continue;
+            }
+
+            if ($isOptional && ! $hasValue) {
+                continue;
+            }
+
+            // Default value
+            if (! $hasValue) {
+                $defaultAttrs = $property->getAttributes(DefaultValue::class);
+                if ($defaultAttrs !== []) {
+                    $value = $defaultAttrs[0]->newInstance()->value;
+                }
+            }
+
+            // Cast and hydrate value
+            if ($value !== null) {
+                $value = self::hydrateValue(
+                    property  : $property,
+                    value     : $value,
+                    violations: $violations,
+                    fieldName : $propertyName,
+                );
+            }
+
+            $values[$propertyName] = $value;
+        }
+
+        if ($violations !== []) {
+            throw new DataTransferFailure(
+                message   : 'Data validation failed.',
+                violations: new DataTransferViolations($violations),
+            );
+        }
+
+        // Constructor-promoted DTO: use named arguments
+        $constructor = $reflectionClass->getConstructor();
+        if ($constructor !== null && $constructor->getNumberOfParameters() > 0) {
+            return new $class(...$values);
+        }
+
+        // Property-based hydration (e.g. SecureRequest subclasses)
+        $instance = $reflectionClass->newInstance();
+        foreach ($values as $name => $value) {
+            if ($value !== null) {
+                $prop = $reflectionClass->getProperty($name);
+                $prop->setValue($instance, $value);
+            }
+        }
+
+        return $instance;
+    }
+
+    private static function resolveInputName(ReflectionProperty $property) : string
+    {
+        $mapFromAttrs = $property->getAttributes(MapFrom::class);
+        if ($mapFromAttrs !== []) {
+            return $mapFromAttrs[0]->newInstance()->name;
+        }
+
+        return $property->getName();
+    }
+
+    /**
+     * @param list<DataTransferViolation> $violations
+     */
+    private static function hydrateValue(
+        ReflectionProperty $property,
+        mixed              $value,
+        array              &$violations,
+        string             $fieldName,
+    ) : mixed
+    {
+        // Custom caster
+        $castAttrs = $property->getAttributes(CastWith::class);
+        if ($castAttrs !== []) {
+            $casterClass = $castAttrs[0]->newInstance()->casterClass;
+            $caster      = new $casterClass();
+            if ($caster instanceof ValueCasterInterface) {
+                // Full interface requires DataField + ValueConversionContext — skip for now
+                // Simple casters (non-interface) are handled below
+            } elseif (method_exists($caster, 'cast')) {
+                return $caster->cast($value, $fieldName);
+            }
+        }
+
+        // ListOf nested DTO casting
+        $listAttrs = $property->getAttributes(ListOf::class);
+        if ($listAttrs !== []) {
+            $itemClass = $listAttrs[0]->newInstance()->class;
+            if (! is_array($value)) {
+                $violations[] = new DataTransferViolation(
+                    field  : $fieldName,
+                    message: sprintf('Field "%s" must be an array for list casting.', $fieldName),
+                );
+
+                return $value;
+            }
+
+            $items = [];
+            foreach ($value as $index => $item) {
+                if (is_object($item) && $item instanceof $itemClass) {
+                    $items[] = $item;
+                } elseif (is_array($item)) {
+                    $items[] = self::create(class: $itemClass, input: $item);
+                } else {
+                    $violations[] = new DataTransferViolation(
+                        field  : $fieldName,
+                        message: sprintf('Field "%s[%d]" is not a valid %s.', $fieldName, $index, $itemClass),
+                    );
+                }
+            }
+
+            return $items;
+        }
+
+        // Nested DTO casting
+        $propertyType = $property->getType();
+        if ($propertyType instanceof ReflectionNamedType && ! $propertyType->isBuiltin()) {
+            $typeName = $propertyType->getName();
+
+            if (is_subclass_of($typeName, BackedEnum::class)) {
+                return $typeName::from($value);
+            }
+
+            if (class_exists($typeName) && ! enum_exists($typeName)) {
+                if (is_object($value) && $value instanceof $typeName) {
+                    return $value;
+                }
+                if (is_array($value)) {
+                    return self::create(class: $typeName, input: $value);
+                }
+            }
+        }
+
+        // Type validation
+        self::validateType($property, $value, $fieldName, $violations);
+
+        // Attribute validation
+        foreach ($property->getAttributes() as $attribute) {
+            $instance  = $attribute->newInstance();
+            $violation = self::validateAttributeValue($instance, $value, $fieldName);
+            if ($violation !== null) {
+                $violations[] = $violation;
+            }
+        }
+
+        return $value;
+    }
+
+    /**
+     * @param list<DataTransferViolation> $violations
+     */
+    private static function validateType(
+        ReflectionProperty $property,
+        mixed              $value,
+        string             $fieldName,
+        array              &$violations,
+    ) : void
+    {
+        $propertyType = $property->getType();
+        if (! $propertyType instanceof ReflectionNamedType) {
+            return;
+        }
+
+        $typeName   = $propertyType->getName();
+        $allowsNull = $propertyType->allowsNull();
+
+        $typeValid = match ($typeName) {
+            'string' => is_string($value),
+            'int'    => is_int($value),
+            'float'  => is_float($value) || is_int($value),
+            'bool'   => is_bool($value),
+            'array'  => is_array($value),
+            'mixed'  => true,
+            default  => $value instanceof $typeName,
+        };
+
+        if (! $typeValid && ! ($allowsNull && $value === null)) {
+            $violations[] = new DataTransferViolation(
+                field  : $fieldName,
+                message: sprintf('Field "%s" must be of type %s.', $fieldName, $typeName),
+            );
+        }
+    }
+
+    private static function validateAttributeValue(
+        object $attribute,
+        mixed  $value,
+        string $fieldName,
+    ) : ?DataTransferViolation
+    {
+        if (! method_exists($attribute, 'validate')) {
+            return null;
+        }
+
+        try {
+            $attribute->validate($value, $fieldName);
+
+            return null;
+        } catch (InvalidArgumentException $e) {
+            return new DataTransferViolation(
+                field  : $fieldName,
+                message: $e->getMessage(),
+            );
+        }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function toArray(object $object) : array
+    {
+        return new SerializeDataObject()->toArray(object: $object);
+    }
+
+    public static function toJson(object $object, int $flags = 0) : string
+    {
+        return new SerializeDataObject()->toJson(object: $object, flags: $flags);
+    }
+
+    public static function toStdClass(object $object) : stdClass
+    {
+        return new SerializeDataObject()->toStdClass(object: $object);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function toFlatArray(object $object) : array
+    {
+        return new SerializeDataObject()->toFlatArray(object: $object);
+    }
+
+    /**
+     * @return array{data: array{type: string, id: mixed, attributes: array<string, mixed>}}
+     */
+    public static function toJsonApi(object $object, string $type) : array
+    {
+        return new SerializeDataObject()->toJsonApi(object: $object, type: $type);
+    }
+
+    public static function config() : DataTransferConfig
+    {
+        return self::$dataTransferConfig ??= DataTransferConfig::default();
+    }
+
+    public function resetState() : void
+    {
+        self::$dataTransferConfig = null;
+    }
+}
+
+=== DataTransfer/System/how-this-works.md ===
+# DataTransfer — how this works
+
+## What DataTransfer gives AvaX
+
+DataTransfer is the typed object / DTO transfer engine. It converts raw array or object input into fully typed PHP
+objects, validates them using PHP attributes, casts values to their expected types, and serializes them back to arrays,
+JSON, or stdClass.
+
+## Canonical style
+
+DataObject classes use **public typed properties + PHP attributes**. No constructor is required.
+
+```php
+final class UserInput
+{
+    #[Required]
+    #[StringType]
+    #[Email]
+    public string $email;
+
+    #[Required]
+    #[StringType]
+    #[Min(3)]
+    #[Max(50)]
+    public string $username;
+
+    #[DefaultValue(false)]
+    public bool $isAdmin = false;
+}
+```
+
+## Public API
+
+```php
+// Create — throws DataTransferFailure on validation error
+$dto = DataTransfer::create(UserInput::class, $input);
+
+// Try — returns DataTransferResult (success/failure), never throws for validation
+$result = DataTransfer::tryCreate(UserInput::class, $input);
+if ($result->isSuccess()) { $dto = $result->object(); }
+if ($result->isFailure()) { $violations = $result->failureReason()->violations; }
+
+// Serialize
+$array   = DataTransfer::toArray($dto);
+$json    = DataTransfer::toJson($dto);
+$std     = DataTransfer::toStdClass($dto);
+$flat    = DataTransfer::toFlatArray($dto);
+$jsonApi = DataTransfer::toJsonApi($dto, 'user');
+```
+
+## Hydration
+
+DataTransfer inspects public typed properties, reads values from input by property name (or mapped name via
+`#[MapFrom]`), and sets them on the object. Constructor-promoted properties are also supported.
+
+## Attribute-first validation
+
+Validation is expressed through PHP attributes on properties. All violations are collected before throwing — you get the
+full list of errors, not just the first one.
+
+### Validation attributes
+
+| Attribute                  | Purpose                                            |
+|----------------------------|----------------------------------------------------|
+| `#[Required]`              | Field must be present in input                     |
+| `#[Optional]`              | Field may be absent                                |
+| `#[DefaultValue(value)]`   | Use this value when field is absent                |
+| `#[StringType]`            | Value must be a string                             |
+| `#[IntegerType]`           | Value must be an integer                           |
+| `#[FloatType]`             | Value must be a float                              |
+| `#[BooleanType]`           | Value must be a boolean                            |
+| `#[ArrayType]`             | Value must be an array                             |
+| `#[Email]`                 | Value must be a valid email                        |
+| `#[AlphaNum]`              | Value must be alphanumeric                         |
+| `#[AlphaNumOrEmail]`       | Value must be alphanumeric or valid email          |
+| `#[Min(n)]`                | String length, number, or array count must be >= n |
+| `#[Max(n)]`                | String length, number, or array count must be <= n |
+| `#[Between(min, max)]`     | Value must be within range                         |
+| `#[RegexPattern('/.../')]` | Value must match regex                             |
+
+### Mapping and casting attributes
+
+| Attribute                         | Purpose                                 |
+|-----------------------------------|-----------------------------------------|
+| `#[MapFrom('input_key')]`         | Read from different input key           |
+| `#[ListOf(ClassName::class)]`     | Cast array of arrays to list of objects |
+| `#[CastWith(CasterClass::class)]` | Use custom caster for value conversion  |
+| `#[Hidden]`                       | Exclude from serialization output       |
+
+## Field mapping
+
+`#[MapFrom('full_name')]` on `public string $firstName` reads input from `full_name` key instead of `firstName`.
+
+## Casting
+
+- **Nested DTO**: If a property type is a class and the input is an array, DataTransfer recursively creates the nested
+  object.
+- **ListOf**: `#[ListOf(AddressInput::class)]` on `public array $addresses` casts each array item to `AddressInput`.
+- **Backed enum**: If property type is a backed enum, the input value is cast via `EnumType::from($value)`.
+- **Custom caster**: `#[CastWith(MoneyCaster::class)]` calls `(new MoneyCaster())->cast($value, $fieldName)`.
+
+## Unknown field policy
+
+Configured via `DataTransferConfig`. Options: `Reject`, `Ignore`, `Collect`.
+
+## Why separate from DataStack/Data?
+
+DataStack/Data is the Data Engine: Collections, Maps, Sets, Sequences, Lenses, Codecs, Operators. DataTransfer is the
+DTO engine: object hydration, validation, casting, serialization. They have different responsibilities. DataTransfer
+depends on Data (for Arrhae/Collection in legacy support), but Data must not depend on DataTransfer.
+
+## Why no HTTP coupling?
+
+DataTransfer is runtime-agnostic. It works with any array or object input. HTTP-specific behavior belongs in
+HTTP/SecureRequest, which uses DataTransfer for validation and hydration.
 
 === Database/System/Capabilities/Advanced/BloomFilter.php ===
 <?php
@@ -10430,7 +10954,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\DTO;
 
 use Avax\Components\Application\Validation\System\Capabilities\Metadata\Attributes\IntegerRule;
-use Avax\Components\DataStack\Data\System\Capabilities\Coercion\DtoSystem\AbstractDTO;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\LegacyTransfer\AbstractDTO;
 
 /**
  * The "Status Report" (Snapshot) for a connection pool.

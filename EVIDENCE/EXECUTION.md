@@ -673,6 +673,21 @@ V4_PRODUCT_RUNTIME_AND_ENTERPRISE_MUSCLE.md is the canonical V4 plan.
 v4-intelligence-governance-observability-plan.md is source material only (merged as section 29).
 No parallel V4 plans. All future V4 changes update the canonical file.
 
+Route Cache Planning Note (V4-02 / V4-04):
+
+```text
+Route caching is NOT implemented in V4-02 or V4-04.
+Route caching is planned for a future stage (likely V4-04 Developer Experience).
+When implemented, route cache must:
+  - Support warm worker safety (cache invalidation between deployments)
+  - Work with ReactPHP, RoadRunner, Swoole, FrankenPHP runtimes
+  - Not bypass existing MatchHttpRoute component
+  - Include cache:warm, cache:clear, cache:status commands
+  - Prove performance improvement with benchmarks
+  - Not introduce stale route matching in long-lived workers
+Current serve commands use live route matching only.
+```
+
 ---
 
 ## 17. V4 Branch Policy

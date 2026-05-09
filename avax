@@ -360,9 +360,11 @@ function handleStandaloneCommand(string $command, string|null $arg1, string|null
 function runServe(array $commandArguments) : int
 {
     $options = [
-        'host'   => '0.0.0.0',
-        'port'   => 8000,
-        'router' => 'auto',
+        'host'    => '0.0.0.0',
+        'port'    => 8000,
+        'router'  => 'auto',
+        'runtime' => 'built-in',
+        'smoke'   => false,
     ];
 
     foreach ($commandArguments as $argument) {
@@ -377,8 +379,66 @@ function runServe(array $commandArguments) : int
         if (str_starts_with(haystack: $argument, needle: '--router=')) {
             $options['router'] = substr(string: $argument, offset: 9);
         }
+
+        if (str_starts_with(haystack: $argument, needle: '--runtime=')) {
+            $options['runtime'] = substr(string: $argument, offset: 10);
+        }
+
+        if ($argument === '--smoke') {
+            $options['smoke'] = true;
+        }
     }
 
+    // ReactPHP runtime
+    if ($options['runtime'] === 'reactphp') {
+        if (! class_exists(\React\Http\HttpServer::class)) {
+            echo "Error: ReactPHP is not installed. Run: composer require react/http\n";
+            return 1;
+        }
+
+        $mode = $options['smoke'] ? 'smoke' : 'server';
+        echo "Starting ReactPHP {$mode} on {$options['host']}:{$options['port']}...\n";
+
+        $runtime = new \Avax\Framework\System\Runtime\ReactPhp\RunReactHttpServer(
+            host: $options['host'],
+            port: $options['port'],
+        );
+
+        if ($options['smoke']) {
+            // Smoke mode: handle one request and exit
+            $result = $runtime->startSmoke(fn () =>
+                (new \GuzzleHttp\Psr7\Response(200, [], 'ReactPHP smoke test OK'))
+            );
+            echo "Smoke test response: " . $result->getBody() . "\n";
+            return 0;
+        }
+
+        // Full server mode — delegate to framework App
+        $app = \Avax\Framework\System\PublicSurface\Avax::create();
+        $kernel = $app->asHttpKernel();
+
+        $converter = new \Avax\Framework\System\Runtime\ReactPhp\ConvertReactRequestToAvaxRequest();
+        $responseConverter = new \Avax\Framework\System\Runtime\ReactPhp\ConvertAvaxResponseToReactResponse();
+
+        $runtime->start(function ($request) use ($app, $kernel, $converter, $responseConverter) {
+            try {
+                $runtimeRequest = $converter->convert($request);
+                $runtimeResponse = $kernel->handle($runtimeRequest);
+
+                return new \GuzzleHttp\Psr7\Response(
+                    $runtimeResponse->statusCode(),
+                    $runtimeResponse->headers() ?: [],
+                    $runtimeResponse->body() ?? '',
+                );
+            } catch (\Throwable $e) {
+                return new \GuzzleHttp\Psr7\Response(500, [], 'Internal server error: ' . $e->getMessage());
+            }
+        });
+
+        return 0;
+    }
+
+    // Built-in PHP server (default)
     PhpBuiltInServer::startWithOptions(options: $options);
 
     return 0;

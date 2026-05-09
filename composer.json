@@ -16,7 +16,9 @@
     "erusev/parsedown": "^1.7",
     "firebase/php-jwt": "^6.10",
     "guzzlehttp/psr7": "^2.9",
-    "laravel/serializable-closure": "^2.0"
+    "laravel/serializable-closure": "^2.0",
+    "react/event-loop": "^1.5",
+    "react/http": "^1.10"
   },
   "require-dev": {
     "aws/aws-sdk-php": "^3.0",

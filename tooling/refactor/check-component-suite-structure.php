@@ -19,6 +19,8 @@ final class CheckComponentSuiteStructure
         'DeveloperTools',
         'Security',
         'Integration',
+        'SystemDesign',
+        'Foundation',
     ];
 
     /** @var list<string> */
@@ -135,6 +137,7 @@ final class CheckComponentSuiteStructure
             'Operations' => ['Events', 'Logging', 'Mail', 'Queue', 'Notifications', 'ApplicationWorkflow'],
             'Presentation' => ['View'],
             'DeveloperTools' => ['Diagnostics', 'DumpDebugger'],
+            'SystemDesign' => [],
         ];
 
         foreach ($componentDirs as $suite => $components) {

@@ -214,6 +214,49 @@ final class CoreStructuresTest extends TestCase
         self::assertSame(1, $filter->count());
     }
 
+    public function test_bloom_filter_hash_is_deterministic_and_php85_compatible() : void
+    {
+        $filter = BloomFilter::empty(bits: 256, hashCount: 5);
+
+        $values = ['alpha', 'beta', 'gamma', 'delta', 'epsilon'];
+        $built  = $filter;
+        foreach ($values as $value) {
+            $built = $built->add(value: $value);
+        }
+
+        foreach ($values as $value) {
+            self::assertTrue(
+                $built->mightContain(value: $value),
+                "Bloom filter must always find inserted value: {$value}",
+            );
+        }
+
+        self::assertFalse($built->mightContain(value: 'not-inserted-xyz'));
+        self::assertSame(5, $built->count());
+
+        $rebuilt = BloomFilter::empty(bits: 256, hashCount: 5);
+        foreach ($values as $value) {
+            $rebuilt = $rebuilt->add(value: $value);
+        }
+
+        self::assertSame($built->bitString(), $rebuilt->bitString());
+    }
+
+    public function test_bloom_filter_accepts_various_scalar_types() : void
+    {
+        $filter = BloomFilter::empty(bits: 128, hashCount: 3);
+        $filter = $filter
+            ->add(value: 'string')
+            ->add(value: 42)
+            ->add(value: 3.14)
+            ->add(value: null);
+
+        self::assertTrue($filter->mightContain(value: 'string'));
+        self::assertTrue($filter->mightContain(value: 42));
+        self::assertTrue($filter->mightContain(value: 3.14));
+        self::assertTrue($filter->mightContain(value: null));
+    }
+
     public function test_public_surface_exposes_stable_core_structures() : void
     {
         self::assertInstanceOf(Stack::class, StackSurface::make(values: ['A']));

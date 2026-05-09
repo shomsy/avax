@@ -1,0 +1,57 @@
+# scenarios.yaml Schema — V3 Reference Architecture
+#
+# Defines named scenarios that can be run against a reference
+# architecture to validate its behavior under specific conditions.
+#
+# Schema format:
+#   scenarios: array of scenario definitions
+#   Each scenario has: name, type, description, steps, expectations
+
+scenarios:
+  type: array
+  min_items: 1
+  item_schema:
+    required:
+      - name
+      - type
+    types:
+      name: string
+      type: string
+      description: string
+      steps: array
+      expectations: array
+    constraints:
+      name: "not_empty"
+      type: "one_of:load,failure,consistency,messaging,cache,partitioning,degradation"
+    optional:
+      description:
+        type: string
+        description: "Human-readable description of the scenario."
+      steps:
+        type: array
+        description: "Ordered steps to execute in the scenario."
+        item_schema:
+          required:
+            - action
+          types:
+            action: string
+            target: string
+            parameter: mixed
+          description: "A single step in the scenario."
+      expectations:
+        type: array
+        description: "Expected outcomes that must hold."
+        item_schema:
+          required:
+            - assertion
+          types:
+            assertion: string
+            threshold: mixed
+          description: "An assertion about the scenario outcome."
+      metadata:
+        type: object
+        description: "Additional scenario metadata."
+        properties:
+          severity: string
+          category: string
+          tags: array

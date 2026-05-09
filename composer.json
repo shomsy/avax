@@ -15,15 +15,23 @@
     "eftec/bladeone": "^4.16",
     "erusev/parsedown": "^1.7",
     "firebase/php-jwt": "^6.10",
-    "guzzlehttp/psr7": "^2.9"
+    "guzzlehttp/psr7": "^2.9",
+    "laravel/serializable-closure": "^2.0"
   },
   "require-dev": {
+    "aws/aws-sdk-php": "^3.0",
+    "dragonmantank/cron-expression": "^3.4",
     "laravel/pint": "^1.29",
     "phpstan/phpstan": "^2.1",
+    "phpstan/phpstan-phpunit": "^2.0",
     "phpunit/phpunit": "^10.5",
     "rector/type-perfect": "^2.1",
     "symfony/process": "^7.0",
     "vimeo/psalm": "^6.16"
+  },
+  "suggest": {
+    "ext-redis": "Required for Redis cache/queue/session/rate-limit adapters",
+    "ext-memcached": "Required for Memcached cache store adapter"
   },
     "autoload": {
       "psr-4": {
@@ -31,7 +39,8 @@
         "Avax\\Components\\": "components/"
       },
       "files": [
-        "components/Application/Container/System/PublicSurface/shortcuts.php"
+        "components/Application/Container/System/PublicSurface/shortcuts.php",
+        "components/Operations/Concurrency/System/PublicSurface/shortcuts.php"
       ],
       "exclude-from-classmap": [
         "components/compat.php",
@@ -45,7 +54,21 @@
       "Avax\\Tests\\": "tests/",
       "Avax\\Labs\\": "labs/",
       "Avax\\Examples\\": "examples/"
-    }
+    },
+    "classmap": [
+      "tooling/"
+    ],
+    "exclude-from-classmap": [
+      "tooling/refactor/",
+      "tooling/Refactor_tmp/",
+      "tooling/recovery/",
+      "tooling/PreCommit/",
+      "tooling/Quality/",
+      "tooling/Components/",
+      "tooling/Docs/",
+      "tooling/DependencyMap/",
+      "tooling/Architecture/"
+    ]
   },
   "minimum-stability": "stable",
   "prefer-stable": true,
@@ -54,5 +77,24 @@
     "audit": {
       "block-insecure": false
     }
-    }
+    },
+  "scripts": {
+    "test": "vendor/bin/phpunit --no-coverage --testsuite Unit",
+    "test:unit": "vendor/bin/phpunit --no-coverage --testsuite Unit",
+    "test:integration": "vendor/bin/phpunit --no-coverage --testsuite Integration",
+    "test:runtime": "vendor/bin/phpunit --no-coverage --testsuite Runtime",
+    "test:slow": "vendor/bin/phpunit --no-coverage --testsuite GoldenPath",
+    "test:full": "vendor/bin/phpunit --no-coverage --testsuite Full",
+    "test:parallel": "@php tooling/testing/run-tests-in-parallel.php",
+    "test:timing": "@php tooling/testing/measure-test-runtime.php",
+    "test:shard": "@php tooling/testing/split-tests-by-runtime.php",
+    "test:security": "vendor/bin/phpunit --no-coverage --testsuite Security",
+    "test:architecture": "vendor/bin/phpunit --no-coverage --testsuite Architecture",
+    "test:feature": "vendor/bin/phpunit --no-coverage --testsuite Feature",
+    "validate": [
+      "@composer validate --no-check-publish",
+      "@composer dump-autoload -o"
+    ],
+    "phpstan": "vendor/bin/phpstan analyse framework components tests --memory-limit=1G"
+  }
 }

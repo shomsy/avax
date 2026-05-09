@@ -13,7 +13,7 @@ use Override;
 final readonly class DenseMatrix implements Countable, MatrixStructure
 {
     /**
-     * @param list<list<mixed>> $rows
+     * @param array<int, array<int, mixed>> $rows
      */
     public function __construct(private array $rows)
     {
@@ -80,7 +80,7 @@ final readonly class DenseMatrix implements Countable, MatrixStructure
     }
 
     /**
-     * @return list<list<mixed>>
+     * @return array<int, array<int, mixed>>
      */
     public function toArray() : array
     {
@@ -96,6 +96,6 @@ final readonly class DenseMatrix implements Countable, MatrixStructure
     #[Override]
     public function count() : int
     {
-        return $this->rows() * $this->columns();
+        return max(0, $this->rows() * $this->columns());
     }
 }

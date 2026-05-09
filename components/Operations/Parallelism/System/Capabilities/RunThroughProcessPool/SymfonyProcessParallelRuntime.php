@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Parallelism\System\Capabilities\RunThroughProcessPool;
 
-use Avax\Components\Operations\Parallelism\System\Capabilities\SerializeWorkPayload\RejectUnserializableWork;
-use Avax\Components\Operations\Parallelism\System\Capabilities\SerializeWorkPayload\SerializeWorkPayload;
+use Avax\Components\Foundation\CallableSerialization\System\PublicSurface\CallableSerialization;
 use Avax\Components\Operations\Parallelism\System\Configuration\ParallelRuntimeInterface;
 use Avax\Components\Operations\Parallelism\System\Foundation\ParallelFailure;
 use Avax\Components\Operations\Parallelism\System\Foundation\ParallelResult;
@@ -18,11 +17,10 @@ use Throwable;
 final readonly class SymfonyProcessParallelRuntime implements ParallelRuntimeInterface
 {
     public function __construct(
-        private SerializeWorkPayload     $serializer = new SerializeWorkPayload(),
-        private StartWorkerProcess       $starter = new StartWorkerProcess(),
-        private ReadWorkerResult         $reader = new ReadWorkerResult(),
-        private StopWorkerProcess        $stopper = new StopWorkerProcess(),
-        private RejectUnserializableWork $rejector = new RejectUnserializableWork(),
+        private StartWorkerProcess $starter = new StartWorkerProcess(),
+        private ReadWorkerResult   $reader = new ReadWorkerResult(),
+        private StopWorkerProcess  $stopper = new StopWorkerProcess(),
+        private ?string            $signingKey = null,
     ) {}
 
     /**
@@ -40,8 +38,7 @@ final readonly class SymfonyProcessParallelRuntime implements ParallelRuntimeInt
             );
         }
 
-        $validatedWork = $this->rejector->filter($work);
-        $maxWorkers    = $maxWorkers ?? count($validatedWork);
+        $maxWorkers    = $maxWorkers ?? count($work);
 
         $values          = [];
         $failures        = [];
@@ -50,14 +47,18 @@ final readonly class SymfonyProcessParallelRuntime implements ParallelRuntimeInt
         $failedWorkers   = 0;
 
         $batch     = [];
-        $batchSize = min($maxWorkers, count($validatedWork));
+        $batchSize = min($maxWorkers, count($work));
 
-        foreach ($validatedWork as $name => $action) {
+        foreach ($work as $name => $action) {
             $workerId   = WorkerId::generate()->toString();
-            $serialized = $this->serializer->serialize((string) $name, $action);
 
             try {
-                $process          = $this->starter->start($serialized, $workerScript);
+                $payload = CallableSerialization::encode(
+                    closure   : $action,
+                    signingKey: $this->signingKey,
+                );
+
+                $process          = $this->starter->start($payload, $workerScript);
                 $batch[$workerId] = [
                     'name'    => $name,
                     'process' => $process,

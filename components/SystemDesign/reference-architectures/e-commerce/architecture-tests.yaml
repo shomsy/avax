@@ -1,0 +1,61 @@
+assertions:
+  - name: payment_idempotency
+    type: idempotency
+    description: "Payment processing must be idempotent to prevent double charges."
+    severity: critical
+    parameters:
+      expected: idempotent
+  - name: order_atomic_creation
+    type: reliability
+    description: "Order creation must be atomic with inventory reservation or fully rollback."
+    severity: critical
+    parameters:
+      required: [ outbox, saga_or_transaction ]
+  - name: external_service_timeout_retry
+    type: external_port
+    description: "All external service calls (payment, shipping, email) must have timeout and retry."
+    severity: high
+    parameters:
+      required: [ timeout, retry ]
+  - name: inventory_no_negative
+    type: consistency
+    description: "Inventory count must never go negative under concurrent access."
+    severity: critical
+    parameters:
+      expected: strong_consistency_for_writes
+  - name: dlq_alerting_enabled
+    type: observability
+    description: "Dead letter queue must have alerting for ecommerce-ops channel."
+    severity: high
+    parameters:
+      required: [ alert_channel ]
+  - name: cqrs_read_eventual
+    type: architecture
+    description: "Query side of CQRS must use eventual consistency, not strong."
+    severity: medium
+    parameters:
+      expected: eventual_consistency_reads
+  - name: outbox_for_order_events
+    type: reliability
+    description: "All order domain events must use outbox pattern for reliable delivery."
+    severity: critical
+    parameters:
+      required: [ outbox ]
+  - name: cache_stampede_protection
+    type: cache
+    description: "Product catalog cache miss paths must have stampede protection."
+    severity: high
+    parameters:
+      expected: stampede_protection
+  - name: queue_consumer_ordered_for_inventory
+    type: messaging
+    description: "Inventory management consumers must process messages in order."
+    severity: critical
+    parameters:
+      expected: ordered_consumers
+  - name: load_shedding_under_peak
+    type: resilience
+    description: "System must shed non-critical load under 10x peak traffic."
+    severity: high
+    parameters:
+      expected: load_shedding_policy

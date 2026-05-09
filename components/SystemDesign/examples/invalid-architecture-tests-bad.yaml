@@ -1,0 +1,6 @@
+assertions:
+  - type: hot_path
+    description: "Missing name field."
+  - name: bad-type-assertion
+    type: invalid_assertion_type
+    severity: extreme

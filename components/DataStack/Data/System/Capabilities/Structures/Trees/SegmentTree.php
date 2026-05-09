@@ -10,7 +10,7 @@ use Override;
 
 final readonly class SegmentTree implements Countable
 {
-    /** @var list<int|float> */
+    /** @var array<int, int|float> */
     private array $tree;
 
     /**
@@ -19,11 +19,7 @@ final readonly class SegmentTree implements Countable
     public function __construct(private array $values)
     {
         $size     = count(value: $values);
-        $treeSize = $size * 4;
-
-        if ($treeSize < 1) {
-            $treeSize = 1;
-        }
+        $treeSize = max(1, $size * 4);
 
         $tree = array_fill(start_index: 0, count: $treeSize, value: 0);
 
@@ -35,7 +31,7 @@ final readonly class SegmentTree implements Countable
     }
 
     /**
-     * @param list<int|float> $tree
+     * @param array<int, int|float> $tree
      */
     private function build(array &$tree, int $node, int $left, int $right) : void
     {

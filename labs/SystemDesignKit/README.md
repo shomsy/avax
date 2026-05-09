@@ -4,9 +4,9 @@ V3 Executable System Design Framework
 
 ## Status
 
-**Experimental** — V3-02 Capacity, V3-03 Consistency, V3-04 Messaging & CQRS, V3-05 Runtime Integration Proof complete.
+**V3 CLOSED / GREEN** — All V3 stages complete.
 **V2 Platform Baseline:** GREEN (all 72 components complete).
-**Promotion:** Not yet promoted to `components/SystemDesign/`.
+**Promotion:** Ready for promotion to `components/SystemDesign/` when V4 planning begins.
 
 ## Purpose
 
@@ -295,10 +295,10 @@ if ($result->valid) {
 - [x] Schema validation for capacity.yaml, scenarios.yaml, architecture-tests.yaml
 - [x] Consistency modeling (profiles, delivery, staleness, conflicts, replication lag, projection lag)
 - [x] Messaging & CQRS modeling (messages, broker, outbox, inbox, DLQ, retry, ack, CQRS)
-- [ ] Reference architectures
-- [ ] Failure simulation
-- [ ] Architecture tests
-- [ ] Scenario runner
+- [x] Reference architectures (URL shortener, e-commerce)
+- [x] Failure simulation (6 failure modes)
+- [x] Architecture tests (13 assertion types)
+- [x] Scenario runner (27 scenario assertions)
 
 ## Promotion Criteria
 
@@ -308,11 +308,11 @@ Promotion to `components/SystemDesign/` requires:
 - [x] V2 platform baseline GREEN (PROVEN)
 - [x] Canonical naming (no Core/, Models/, Policies/, BrokerModel/ buckets)
 - [x] Runtime integration tests with V2 components (V3-05 PROVEN)
-- [ ] At least 2 reference architectures validate
-- [ ] At least 1 runnable example passes
-- [ ] At least 3 failure scenarios catch real violations
-- [ ] Architecture tests have meaningful assertions
-- [ ] Public API classified as @experimental or @public
+- [x] At least 2 reference architectures validate (URL shortener, e-commerce — both pass)
+- [x] At least 1 runnable example passes (ReferenceArchitectureTest — 227 tests pass)
+- [x] At least 3 failure scenarios catch real violations (6 failure modes, violations detected)
+- [x] Architecture tests have meaningful assertions (13 assertion types)
+- [x] Public API classified as @public (SystemDesignKit facade)
 
 See: `EVIDENCE/plans/v3-reference-architecture-plan.md`
 See: `EVIDENCE/avax-v3-executable-system-design-framework-plan.md`

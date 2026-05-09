@@ -119,38 +119,44 @@ function runServeCommand(array $config) : RuntimeResult
 function runWorkerPayload(string $base64Payload) : int
 {
     try {
-        $decoded = base64_decode($base64Payload, true);
-        $data    = json_decode($decoded, true, 512, JSON_THROW_ON_ERROR);
+        $jsonPayload = base64_decode($base64Payload, true);
 
-        if (! is_array($data) || ! isset($data['action'], $data['payload'])) {
-            fwrite(STDERR, "Error: Invalid payload structure\n");
-
-            return 1;
-        }
-
-        $closure = @unserialize($data['payload'], ['allowed_classes' => true]);
-
-        if (! $closure instanceof Closure) {
-            fwrite(STDERR, "Error: Payload did not deserialize to a closure\n");
+        if ($jsonPayload === false) {
+            fwrite(STDERR, "Error: Invalid base64 payload\n");
 
             return 1;
         }
 
-        $result = $closure();
+        $signingKey = $_ENV['AVAX_WORKER_SIGNING_KEY'] ?? null;
+
+        $result = \Avax\Components\Foundation\CallableSerialization\System\PublicSurface\CallableSerialization::decode(
+            jsonPayload: $jsonPayload,
+            signingKey : $signingKey,
+        );
+
+        if (isset($result['failure'])) {
+            $failure = $result['failure'];
+            fwrite(STDERR, "Error: Payload rejected — {$failure->reason}: {$failure->message}\n");
+
+            return 1;
+        }
+
+        $closure = $result['closure'];
+        $closureResult = $closure();
         $output = json_encode([
-                                  'name' => $data['action'],
-                                                                                                 'value' => $result,
-                                                                                                                               'success' => true,
+                                  'name'    => 'worker',
+                                  'value'   => $closureResult,
+                                  'success' => true,
                               ], JSON_THROW_ON_ERROR);
         echo $output . "\n";
 
         return 0;
     } catch (Throwable $e) {
         $output = json_encode([
-                                  'name' => 'worker',
-                                                                                                 'error' => $e->getMessage(),
-                                                                                                                               'success' => false,
-                                  'code' => $e->getCode(),
+                                  'name'    => 'worker',
+                                  'error'   => $e->getMessage(),
+                                  'success' => false,
+                                  'code'    => $e->getCode(),
                               ], JSON_THROW_ON_ERROR);
         echo $output . "\n";
 

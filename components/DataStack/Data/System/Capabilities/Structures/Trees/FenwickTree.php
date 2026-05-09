@@ -10,11 +10,11 @@ use Override;
 
 final readonly class FenwickTree implements Countable
 {
-    /** @var list<int|float> */
+    /** @var array<int, int|float> */
     private array $tree;
 
     /**
-     * @param list<int|float> $tree
+     * @param array<int, int|float> $tree
      */
     private function __construct(private int $size, array $tree)
     {
@@ -82,6 +82,6 @@ final readonly class FenwickTree implements Countable
     #[Override]
     public function count() : int
     {
-        return $this->size;
+        return max(0, $this->size);
     }
 }

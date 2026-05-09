@@ -1,0 +1,131 @@
+system: e-commerce
+traffic:
+  requests_per_second: 50000
+  reads_per_second: 45000
+  writes_per_second: 5000
+  read_write_ratio: 9
+  peak_multiplier: 5
+storage:
+  growth_per_day: 5000000
+  average_record_size_bytes: 2048
+  retention_days: 2555
+cache:
+  hit_ratio_target: 0.90
+  miss_penalty_ms: 50
+  stampede_protection_required: true
+queue:
+  max_depth: 500000
+  delay_budget_ms: 10000
+  consumer_throughput_per_second: 5000
+latency:
+  p50_ms: 100
+  p95_ms: 500
+  p99_ms: 1500
+availability:
+  slo: 99.95
+  sla: 99.9
+  failure_budget_minutes_per_month: 21.9
+consistency:
+  write_path: strong
+  read_path: eventual
+  analytics: eventual
+messaging:
+  messages:
+    - name: OrderPlaced
+      type: command
+      idempotent: true
+      max_retries: 5
+      timeout_ms: 10000
+    - name: OrderConfirmed
+      type: event
+      idempotent: true
+      max_retries: 3
+      timeout_ms: 5000
+    - name: PaymentProcessed
+      type: event
+      idempotent: true
+      max_retries: 5
+      timeout_ms: 15000
+    - name: InventoryReserved
+      type: command
+      idempotent: true
+      max_retries: 3
+      timeout_ms: 5000
+    - name: InventoryReleased
+      type: command
+      idempotent: true
+      max_retries: 3
+      timeout_ms: 5000
+    - name: ShipmentCreated
+      type: event
+      idempotent: false
+      max_retries: 3
+      timeout_ms: 5000
+    - name: EmailNotification
+      type: message
+      idempotent: true
+      max_retries: 5
+      timeout_ms: 10000
+    - name: OrderCancelled
+      type: command
+      idempotent: true
+      max_retries: 5
+      timeout_ms: 10000
+  consumers:
+    order_processor:
+      throughput_per_second: 500
+      partition_count: 4
+      ordered: true
+    payment_processor:
+      throughput_per_second: 200
+      partition_count: 2
+      ordered: true
+    inventory_manager:
+      throughput_per_second: 1000
+      partition_count: 6
+      ordered: true
+    email_sender:
+      throughput_per_second: 500
+      partition_count: 2
+      ordered: false
+    analytics_consumer:
+      throughput_per_second: 2000
+      partition_count: 8
+      ordered: false
+  broker:
+    broker_type: kafka
+    partition_count: 24
+    replication_factor: 3
+    delivery_semantics: at_least_once
+  outbox:
+    enabled: true
+    poll_interval_ms: 50
+    max_batch_size: 50
+    retention_hours: 48
+  inbox:
+    enabled: true
+    dedup_window_hours: 48
+    dedup_key_strategy: message_id
+  dead_letter_queue:
+    enabled: true
+    max_retries: 7
+    reprocessing_window_hours: 168
+    alert_channel: ecommerce-ops
+  retry_policy:
+    max_retries: 5
+    backoff_strategy: exponential
+    initial_delay_ms: 200
+    max_delay_ms: 60000
+  ack_policy: manual
+  cqrs:
+    command:
+      aggregate: Order
+      uses_outbox: true
+      consistency_model: strong
+      command_timeout_ms: 10000
+    query:
+      aggregate: Order
+      read_consistency_model: eventual
+      query_timeout_ms: 2000
+      uses_caching: true
+      cache_ttl_seconds: 60

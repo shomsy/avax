@@ -13,6 +13,9 @@ final readonly class StoredObjectMetadata
         public ?string $visibility = null,
     ) {}
 
+    /**
+     * @return array{size: int, last_modified: ?int, mime_type: ?string, visibility: ?string}
+     */
     public function toArray() : array
     {
         return [

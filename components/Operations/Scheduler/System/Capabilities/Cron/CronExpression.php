@@ -20,7 +20,7 @@ final readonly class CronExpression
     {
         $cronExpression = new CronLib($expression);
 
-        return $cronExpression->getNextRunDate();
+        return DateTimeImmutable::createFromInterface($cronExpression->getNextRunDate());
     }
 
     public static function isValid(string $expression): bool

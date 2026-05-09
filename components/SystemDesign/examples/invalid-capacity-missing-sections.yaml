@@ -1,0 +1,7 @@
+system: missing-sections
+traffic:
+  requests_per_second: 1000
+cache:
+  hit_ratio_target: 0.9
+  miss_penalty_ms: 10
+  stampede_protection_required: false

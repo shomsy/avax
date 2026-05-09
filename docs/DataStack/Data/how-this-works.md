@@ -1,102 +1,91 @@
----
-title: DataStack-Data-how-this-works
-owner: DataStack/Data
-last_reviewed: 2026-05-09
-classification: internal
----
+# DataStack Data — How This Works
 
-# DataStack Data How This Works
+DataStack/Data is the AvaX data morphology engine.
 
-## What this folder is
+A structure is: **data + invariant + behavior**.
 
-`DataStack/Data` owns in-memory data shape, traversal, transformation, serialization, and data structure behavior for
-AvaX. It is the place where reusable data structures are implemented once and then exposed through a small public
-surface only after their invariants are proven.
+If the invariant is missing, it is not a data structure.
+If storage is implicit, the design is incomplete.
+If PHP cannot truthfully provide the runtime property, the implementation is a model, simulation, or runtime bridge with explicit boundaries.
 
-It does not own persistence, SQL execution, database connections, queue runtimes, process parallelism, or real CPU
-memory control.
+## What It Owns
 
-## Real commands or triggers that reach this folder
-
-- PHPUnit tests under `tests/Unit/Components/DataStack/Data`
-- Framework or component code that imports `Avax\Components\DataStack\Data\System\PublicSurface\*`
-- Internal DataStack/Data flows such as collection creation, nested value reading, transformation, aggregation, and
-  serialization
-
-## Exact upstream handoffs
-
-- `System/PublicSurface/Data.php` receives broad user-facing data operations.
-- `System/PublicSurface/Sequence.php`, `Map.php`, `Set.php`, and related public surface files receive stable structure
-  usage.
-- Public surface units delegate into `System/Flows`, `System/Capabilities`, or `System/Configuration`.
-- Structure implementations live under `System/Capabilities/Structures`.
-
-## The simplest story
-
-- A caller asks the public surface for a stable data behavior.
-- The public surface delegates to a flow or capability that owns the behavior.
-- The capability protects the invariant, chooses storage, handles failure, and returns a stable result.
-- The caller receives a value or a clear failure, not leaked internal storage.
-
-## The first important path
-
-When a caller creates a sequence through the public surface:
-
-```php
-$sequence = Sequence::of([1, 2, 3]);
+```text
+Data structures with explicit invariants.
+Storage strategies that are visible and documented.
+Failure behavior that is testable and named.
+Complexity profiles that are evidence-based.
 ```
 
-the public surface must remain thin. The actual ordered-value invariant belongs to the linear structure capability, and
-the implementation must prove traversal, mutation policy, serialization behavior, and edge cases through tests.
+## What It Does Not Own
 
-## Ownership map
+```text
+Database engine behavior (that is DataStack/Database).
+Runtime-level concurrency guarantees (that is Operations/Concurrency).
+CPU cache line or memory pool ownership (those are simulations).
+```
 
-| Folder                     | Owns                                                                      | Does not own                          |
-|----------------------------|---------------------------------------------------------------------------|---------------------------------------|
-| `PublicSurface/`           | Stable user-facing entrypoints                                            | Storage internals or heavy algorithms |
-| `Flows/`                   | Complete data actions                                                     | Reusable storage mechanics            |
-| `Capabilities/Structures/` | Reusable structure behavior                                               | Public API expansion by default       |
-| `Configuration/`           | Data component assembly                                                   | Structure algorithms                  |
-| `Foundation/`              | Tiny neutral values, failures, comparison, hashing, iteration, mutability | Large reusable behavior               |
+## Quick Start
 
-## Structure universe boundary
+### Through PublicSurface (recommended)
 
-The structure universe is executed in waves:
+```php
+use Avax\Components\DataStack\Data\System\PublicSurface\Stack;
+use Avax\Components\DataStack\Data\System\PublicSurface\Queue;
+use Avax\Components\DataStack\Data\System\PublicSurface\Map;
+use Avax\Components\DataStack\Data\System\PublicSurface\Set;
+use Avax\Components\DataStack\Data\System\PublicSurface\BloomFilter;
 
-1. Wave 0 documents the atlas, implementation matrix, storage strategy, public surface policy, complexity profile, and
-   simulation boundaries.
-2. Wave 1 builds the Structure Kernel.
-3. Later waves add production structures only when each structure has tests, docs, invariant proof, failure behavior,
-   and complexity evidence.
+$stack = Stack::make(values: ['A', 'B']);
+$queue = Queue::make(values: ['A', 'B']);
+$filter = BloomFilter::empty(bits: 256, hashCount: 5)->add(value: 'user:1');
+```
 
-## Failure behavior
+### Direct capability access
 
-Data structures must fail explicitly. Examples:
+```php
+use Avax\Components\DataStack\Data\System\Capabilities\Structures\Trees\FenwickTree;
+use Avax\Components\DataStack\Data\System\Capabilities\Structures\Matrix\DenseMatrix;
 
-- empty stack pop
-- missing map key when no default is allowed
-- invalid matrix dimensions
-- duplicate key where uniqueness is required
-- invalid capacity
-- broken invariant after attempted mutation
+$tree = FenwickTree::withSize(size: 100)->add(index: 0, delta: 5);
+$matrix = DenseMatrix::filled(rows: 3, columns: 3, value: 0);
+```
 
-Silent mutation, broad catch-and-ignore behavior, and hidden I/O are not allowed.
+## Structure Categories
 
-## Where to debug first
+| Category | Purpose | Example Structures |
+|---|---|---|
+| Linear | Ordered sequences | Stack, Queue, Deque, RingBuffer |
+| Maps | Key-value associations | Map, OrderedMap, MultiMap |
+| Sets | Unique value membership | Set, OrderedSet |
+| Priority | Priority-ordered extraction | BinaryHeap, PriorityQueue |
+| Trees | Hierarchical data | BinaryTree, BinarySearchTree, Trie, FenwickTree, SegmentTree |
+| Graphs | Node-edge relationships | Graph, UnionFind, WeightedGraph |
+| Matrix | Two-dimensional numeric data | DenseMatrix, SparseMatrix |
+| Probabilistic | Approximate membership | BloomFilter |
+| Text | String and pattern structures | Trie, SuffixArray |
+| Spatial | Geometric and spatial data | Point, KDTree, QuadTree |
 
-- Public API behavior: start in `System/PublicSurface`.
-- End-to-end data actions: start in `System/Flows`.
-- Structure invariants: start in `System/Capabilities/Structures`.
-- Shared failure or value behavior: start in `System/Foundation`.
-- Test proof: start in `tests/Unit/Components/DataStack/Data`.
+## Implementation Modes
 
-## Terms easy to confuse
+| Mode | Meaning |
+|---|---|
+| **Native (N)** | PHP implements truthfully |
+| **Model (M)** | Correct algorithm, no low-level claim |
+| **Runtime Bridge (R)** | Backend-backed boundary |
+| **Simulation (S)** | PHP cannot own the guarantee |
 
-| Term           | Meaning here                                                                     |
-|----------------|----------------------------------------------------------------------------------|
-| Structure      | Data plus invariant plus behavior                                                |
-| Storage        | The internal representation used by a structure                                  |
-| Public surface | Stable user-facing entrypoint                                                    |
-| Model          | Correct algorithmic representation without low-level runtime claim               |
-| Runtime bridge | Behavior provided by a named runtime backend                                     |
-| Simulation     | Educational or validation model for behavior PHP cannot own at CPU/runtime level |
+See `STRUCTURE_ATLAS.md` for the complete registry.
+See `STRUCTURE_SIMULATION_BOUNDARIES.md` for what PHP cannot own.
+
+## Governance
+
+- Folder = flow or capability
+- File = responsibility
+- Function = exact action
+- No production behavior without tests
+- No performance claim without evidence
+- PublicSurface stays thin — factory only
+
+See `STRUCTURE_PUBLIC_SURFACE.md` for facade rules.
+See `STRUCTURE_IMPLEMENTATION_MATRIX.md` for done status.

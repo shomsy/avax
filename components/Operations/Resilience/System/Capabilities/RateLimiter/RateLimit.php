@@ -10,7 +10,7 @@ final class RateLimit
 
     public static function setLimiter(RedisRateLimiter $redisRateLimiter): void
     {
-        self::useLimiter(limiter: $redisRateLimiter);
+        self::useLimiter($redisRateLimiter);
     }
 
     public static function useLimiter(RedisRateLimiter $redisRateLimiter): void

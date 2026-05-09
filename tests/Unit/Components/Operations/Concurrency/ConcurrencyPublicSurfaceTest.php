@@ -6,6 +6,7 @@ namespace Avax\Tests\Unit\Components\Operations\Concurrency;
 
 use Avax\Components\Operations\Concurrency\System\Foundation\ConcurrentFailure;
 use Avax\Components\Operations\Concurrency\System\Foundation\ConcurrentResult;
+use Avax\Components\Operations\Concurrency\System\Foundation\ConcurrentTask;
 use Avax\Components\Operations\Concurrency\System\Foundation\Failure\ConcurrencyException;
 use Avax\Components\Operations\Concurrency\System\PublicSurface\Concurrency;
 use InvalidArgumentException;
@@ -134,7 +135,7 @@ final class ConcurrencyPublicSurfaceTest extends TestCase
                                    ]);
 
         $result->throwIfFailed();
-        $this->assertTrue(true);
+        $this->assertTrue($result->successful());
     }
 
     public function test_all_is_alias_for_run() : void
@@ -181,7 +182,7 @@ final class ConcurrencyPublicSurfaceTest extends TestCase
     {
         $task = Concurrency::start(static fn () => 'delayed');
 
-        $this->assertNotNull($task);
+        $this->assertInstanceOf(ConcurrentTask::class, $task);
         $this->assertFalse($task->isStarted());
         $this->assertFalse($task->isFinished());
     }

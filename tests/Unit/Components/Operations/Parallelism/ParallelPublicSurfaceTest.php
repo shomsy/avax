@@ -147,7 +147,7 @@ final class ParallelPublicSurfaceTest extends TestCase
                                 ]);
 
         $result->throwIfFailed();
-        $this->assertTrue(true);
+        $this->assertTrue($result->successful());
     }
 
     public function test_map_returns_ordered_results() : void
@@ -260,6 +260,15 @@ final class ParallelPublicSurfaceTest extends TestCase
 
     public function test_run_handles_fatal_errors() : void
     {
+        // Reset error handler to avoid order-dependent pollution from earlier tests.
+        // @phpstan-ignore booleanNot.alwaysFalse (restore_error_handler() always returns true in PHP 8+, but we need the loop for safety)
+        for ($i = 0; $i < 10; $i++) {
+            $restored = restore_error_handler();
+            if (!$restored) {
+                break;
+            }
+        }
+
         $result = Parallel::run([
                                     'notice' => static fn () : mixed => trigger_error('Notice test', E_USER_NOTICE),
                                 ]);

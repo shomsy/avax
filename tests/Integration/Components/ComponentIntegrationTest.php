@@ -9,6 +9,7 @@ use Avax\Components\Operations\Mail\System\Capabilities\Queue\Mail;
 use Avax\Components\Operations\Mail\System\Capabilities\Queue\Mailable;
 use Avax\Components\Operations\Realtime\System\Capabilities\WebSocket\WebSocketServer;
 use Avax\Components\Operations\Resilience\System\Capabilities\RateLimiter\RateLimit;
+use Avax\Components\Operations\Resilience\System\Capabilities\RateLimiter\RedisRateLimiter;
 use Avax\Framework\System\Capabilities\Runtime\Capabilities\RunApplicationOnPhpBuiltInServer as PhpBuiltInServer;
 use Avax\Tests\TestCase;
 
@@ -30,11 +31,13 @@ class ComponentIntegrationTest extends TestCase
 
     public function test_rate_limit_remaining(): void
     {
+        // Use array driver (in-memory) — works without ext-redis.
+        $limiter = new RedisRateLimiter(config: ['driver' => 'array']);
+        RateLimit::setLimiter($limiter);
+
         $key = 'test_rate_limit_'.uniqid();
 
-        RateLimit::clear($key);
-
-        $remaining = RateLimit::remaining($key, 10);
+        $remaining = $limiter->remaining($key, 10);
 
         $this->assertEquals(10, $remaining);
     }

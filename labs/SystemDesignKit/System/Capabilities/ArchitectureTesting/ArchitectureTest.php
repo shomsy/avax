@@ -183,7 +183,7 @@ final readonly class ArchitectureTest
         return match ($this->parameters['expected'] ?? null) {
             'ordered_consumers' => array_reduce(
                 $messaging->consumers,
-                static fn (bool $carry, $c) : bool => $carry || ($c->ordered ?? false),
+                static fn (bool $carry, $c) : bool => $carry || $c->ordered,
                 false,
             ),
             default             => true,
@@ -280,7 +280,7 @@ final readonly class ArchitectureTest
             return 'No messaging model; observability cannot be verified.';
         }
 
-        $alertChannel = $messaging->deadLetterQueue?->alertChannel ?? 'none';
+        $alertChannel = $messaging->deadLetterQueue->alertChannel ?? 'none';
 
         return "Alert channel: {$alertChannel}";
     }
@@ -314,7 +314,7 @@ final readonly class ArchitectureTest
             return 'No messaging model configured.';
         }
 
-        $orderedConsumers = array_filter($messaging->consumers, static fn ($c) : bool => $c->ordered ?? false);
+        $orderedConsumers = array_filter($messaging->consumers, static fn ($c) : bool => $c->ordered);
 
         return count($orderedConsumers) > 0
             ? count($orderedConsumers) . ' ordered consumer(s) configured'

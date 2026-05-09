@@ -1,5 +1,6 @@
 includes:
     - vendor/rector/type-perfect/config/extension.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
     - phpstan-baseline.neon
 
 parameters:

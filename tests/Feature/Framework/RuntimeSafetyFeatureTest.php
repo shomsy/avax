@@ -133,8 +133,10 @@ final class RuntimeSafetyFeatureTest extends TestCase
         );
 
         self::assertNotNull($runtimeContext->lastResult());
-        self::assertSame('POST', $runtimeContext->currentRequest()->method());
-        self::assertSame('/api/login', $runtimeContext->currentRequest()->uri());
+        $request = $runtimeContext->currentRequest();
+        self::assertNotNull($request);
+        self::assertSame('POST', $request->method());
+        self::assertSame('/api/login', $request->uri());
 
         // Reset
         $stateResetRegistry->resetAll();

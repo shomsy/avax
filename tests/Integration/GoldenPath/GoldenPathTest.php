@@ -125,6 +125,6 @@ class GoldenPathTest extends TestCase
             maxConcurrent: 3,
         );
 
-        $this->assertCount(3, $results);
+        $this->assertCount(3, $results->values());
     }
 }

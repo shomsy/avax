@@ -1,88 +1,83 @@
-# DataStack/Data Structure Public Surface
+# Structure Public Surface
 
-Status: Wave 0 canonical design document
-Owner: DataStack/Data
-Last reviewed: 2026-05-09
+PublicSurface/ must stay thin. It receives and delegates. It does not contain behavior.
 
-## Purpose
+> **Rule: Do not expose all 236 atlas structures.**
+> Only stable, useful, tested structures get public facades.
+> The atlas is a knowledge map, not a public API catalog.
 
-PublicSurface receives. It does not own heavy algorithms, storage mechanics, runtime bridges, or structure internals.
+## Existing Public Facades
 
-The structure universe may contain many internal capabilities. Only stable, useful, tested structures become public
-surface entries.
+| Facade | Delegates To | Classification | Status |
+|---|---|---|---|
+| Data | ArrayReader, ArrayWriter, ReadNestedValue, WriteNestedValue, SumValues, AverageValues | CORE_PUBLIC | Stable |
+| Sequence | Linear\Sequence | CORE_PUBLIC | Stable |
+| Stack | Linear\Stack | CORE_PUBLIC | Stable |
+| Queue | Linear\Queue | CORE_PUBLIC | Stable |
+| Deque | Linear\Deque | CORE_PUBLIC | Stable |
+| Map | Maps\Map | CORE_PUBLIC | Stable |
+| Set | Sets\Set | CORE_PUBLIC | Stable |
+| OrderedMap | Maps\OrderedMap | CORE_PUBLIC | Stable |
+| OrderedSet | Sets\OrderedSet | CORE_PUBLIC | Stable |
+| MultiMap | Maps\MultiMap | CORE_PUBLIC | Stable |
+| Heap | Priority\BinaryHeap | CORE_PUBLIC | Stable |
+| PriorityQueue | Priority\PriorityQueue | CORE_PUBLIC | Stable |
+| Graph | Graphs\Graph | CORE_PUBLIC | Stable |
+| Matrix | Matrix\DenseMatrix + SparseMatrix | CORE_PUBLIC | Stable |
+| BloomFilter | Probabilistic\BloomFilter | LABS_ONLY | Stable facade, LABS classification |
+| Json | JsonForm\Json | CORE_INTERNAL | Stable |
+| Collection | CollectionForm\Collection | CORE_INTERNAL | Stable |
+| Arrhae | ArrayForm\Arrhae | CORE_INTERNAL | Stable |
 
-## Initial allowed public structures
+## Facades Intentionally Not Added
 
-| Public surface | Promotion condition                                                     |
-|----------------|-------------------------------------------------------------------------|
-| Sequence       | ordered finite values, traversal, serialization, mutation policy proven |
-| Stack          | LIFO invariant and empty failure proven                                 |
-| Queue          | FIFO invariant and empty failure proven                                 |
-| Deque          | both-end operation invariant proven                                     |
-| Map            | key-to-one-current-value invariant proven                               |
-| Set            | unique membership invariant proven                                      |
-| OrderedMap     | insertion order invariant proven                                        |
-| OrderedSet     | insertion order membership invariant proven                             |
-| MultiMap       | key-to-many-values invariant proven                                     |
-| Heap           | heap invariant proven                                                   |
-| PriorityQueue  | priority extraction invariant proven                                    |
-| Tree           | tree ownership and traversal proven                                     |
-| Graph          | node-edge consistency proven                                            |
-| Matrix         | dimensions and cell access proven                                       |
-| BloomFilter    | no false-negative behavior proven for inserted values                   |
+These structures exist but deliberately have no public facade:
 
-## Not public by default
+| Structure | Reason |
+|---|---|
+| RingBuffer | Specialist — use through Sequence/Deque when needed |
+| SparseArray | Specialist — internal use |
+| DataList | Legacy vocabulary — use Sequence |
+| BinaryHeap | Exposed via Heap facade |
+| MinHeap / MaxHeap | Advanced — use via Heap facade or directly if needed |
+| BinaryTree / BinarySearchTree | Advanced — specialist tree operations |
+| Trie | Advanced — specialist text operations |
+| FenwickTree / SegmentTree | Advanced — specialist range query operations |
+| UnionFind | Advanced — specialist graph operations |
+| WeightedGraph | Incomplete tests — RED status |
+| Bag | Advanced — multiset with duplicate counts |
+| LinkedList / DoublyLinkedList | Advanced — specialist linear structures |
+| DynamicArray | Advanced — internal capacity growth behavior |
+| CountMinSketch | LABS — probabilistic frequency estimation |
+| HyperLogLog | LABS — probabilistic cardinality estimation |
+| All functional types (Option, Result, Tuple, etc.) | Used internally, not framework public API |
+| All foundation values | Internal kernel — used by structures |
+| All storage primitives | Internal kernel — used by structures |
+| All failure types | Internal kernel — thrown by structures |
 
-These categories remain internal until a real user-facing need is proven:
+## Public Surface Rules
 
-```text
-research-grade structures
-simulated runtime structures
-storage model structures
-runtime bridge structures
-compressed structures
-specialist spatial structures
-advanced probabilistic sketches
-```
+1. One facade per stable structure family.
+2. Facade is a factory only — static methods returning capability instances.
+3. No public facade before invariant tests are green.
+4. No public facade before failure tests are green.
+5. No public facade before serialization tests are green.
+6. No public facade before documentation exists.
+7. No facade that exposes internal storage details.
+8. No facade per exotic structure — group by family where appropriate.
+9. **Probabilistic structures require error rate documentation, merge support, and benchmark evidence before CORE promotion.** BloomFilter has a facade for historical reasons but is classified LABS_ONLY until these are met.
+10. **Advanced structures require "when not to use" documentation before public facade.**
+11. **No new probabilistic facades will be added until the above gate is satisfied.**
 
-## Public surface promotion checklist
+## Decision: 236 Structures Are Not a Public API Goal
 
-Before a structure gets a public facade:
+The atlas lists ~236 conceptual structures. The public surface will never expose all of them.
 
-```text
-[ ] internal implementation exists
-[ ] invariant tests pass
-[ ] edge-case tests pass
-[ ] failure behavior is explicit
-[ ] serialization behavior is stable
-[ ] mutation policy is stable
-[ ] docs include example usage
-[ ] public surface delegates rather than doing heavy work
-[ ] public surface checker passes
-```
+The public surface is intentionally small:
 
-## Public surface anti-patterns
+- **15 stable facades** for core framework use
+- **3 internal facades** for framework-internal use
+- **0 probabilistic facades** until error rates and benchmarks are documented
+- **0 advanced facades** until "when not to use" documentation exists
 
-Forbidden:
-
-```text
-public class for every exotic structure
-public API before invariant tests
-public API that exposes storage internals
-public API that hides I/O
-public API that claims performance without evidence
-public API for a simulation that sounds like a real runtime guarantee
-```
-
-## Example shape
-
-Expected user-facing style:
-
-```php
-$stack = Stack::empty()
-    ->push('A')
-    ->push('B');
-```
-
-The fluent API is allowed only when it keeps mutation policy obvious. If an operation returns a new structure, docs and
-types must make that clear.
+This is by design. AvaX is not a data structure library. DataStack/Data is a data morphology engine for the AvaX framework. It exposes only what the framework and its applications need.

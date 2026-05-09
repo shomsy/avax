@@ -14,6 +14,9 @@ final readonly class StorageConfiguration
         public array  $disks = [],
     ) {}
 
+    /**
+     * @param array<string, mixed> $config
+     */
     public static function fromArray(array $config) : self
     {
         return new self(
@@ -33,6 +36,9 @@ final readonly class StorageConfiguration
         ];
     }
 
+    /**
+     * @return array{driver: string, root?: string}|null
+     */
     public function getDiskConfig(string $name) : ?array
     {
         return $this->disks[$name] ?? null;

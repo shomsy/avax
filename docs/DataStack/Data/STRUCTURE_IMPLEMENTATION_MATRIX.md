@@ -1,270 +1,95 @@
-# DataStack/Data Structure Implementation Matrix
+# Structure Implementation Matrix
 
-Status: Wave 0 canonical design document
-Owner: DataStack/Data
-Last reviewed: 2026-05-09
+Tracks the 17-item definition of done for every structure (master plan §9).
 
-## Purpose
+## Legend
 
-This matrix converts the structure universe into implementation work. It records category, mode, canonical home, first
-allowed wave, and promotion requirement.
+✅ = done  ⚠️ = partial  ❌ = not started  N/A = not meaningful
 
-Mode key:
+## Wave 2 — Stable Production Structures
 
-```text
-N = Native
-M = Model
-R = Runtime bridge
-S = Simulation
-```
+| # | Structure | Class | Storage | Invariants | Core Ops | Traversal | toArray | toJson | Failure | Edge Tests | Invariant Tests | Serialization | Mutation Tests | Complexity | Docs | Example | Status |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | Sequence | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 2 | Stack | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 3 | Queue | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 4 | Deque | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 5 | RingBuffer | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 6 | DataList | ✅ | ✅ | ⚠️ | ✅ | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ❌ | ❌ | YELLOW |
+| 7 | Map | ✅ | ✅ | ⚠️ | ✅ | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ❌ | ❌ | YELLOW |
+| 8 | Set | ✅ | ✅ | ⚠️ | ✅ | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ❌ | ❌ | YELLOW |
+| 9 | OrderedMap | ✅ | ✅ | ⚠️ | ✅ | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ❌ | ❌ | YELLOW |
+| 10 | OrderedSet | ✅ | ✅ | ⚠️ | ✅ | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ❌ | ❌ | YELLOW |
+| 11 | MultiMap | ✅ | ✅ | ⚠️ | ✅ | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ❌ | ❌ | YELLOW |
+| 12 | BinaryHeap | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 13 | PriorityQueue | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 14 | BinaryTree | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 15 | BinarySearchTree | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 16 | Trie | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 17 | FenwickTree | ✅ | ✅ | ✅ | ✅ | N/A | ✅ | N/A | ✅ | ✅ | ✅ | N/A | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 18 | SegmentTree | ✅ | ✅ | ✅ | ✅ | N/A | ✅ | N/A | ✅ | ✅ | ✅ | N/A | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 19 | Graph | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 20 | UnionFind | ✅ | ✅ | ✅ | ✅ | N/A | ✅ | N/A | ✅ | ✅ | ✅ | N/A | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 21 | WeightedGraph | ✅ | ✅ | ⚠️ | ⚠️ | ✅ | ⚠️ | N/A | ⚠️ | ✅ | ✅ | ❌ | ✅ | ⚠️ | ❌ | ❌ | YELLOW |
+| 22 | DenseMatrix | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 23 | SparseMatrix | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 24 | BloomFilter | ✅ | ✅ | ✅ | ✅ | N/A | ✅ | N/A | ✅ | ✅ | ✅ | N/A | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 25 | SparseArray | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 26 | Bag | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | N/A | ✅ | ✅ | N/A | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 27 | MinHeap | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | N/A | ✅ | ✅ | N/A | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 28 | MaxHeap | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | N/A | ✅ | ✅ | N/A | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 29 | LinkedList | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | N/A | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 30 | DoublyLinkedList | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | N/A | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 31 | DynamicArray | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | N/A | ✅ | ✅ | ❌ | ❌ | GREEN |
+| 32 | CountMinSketch | ✅ | ✅ | ✅ | ✅ | N/A | ✅ | N/A | ✅ | ✅ | ✅ | N/A | ✅ | ✅ | ⚠️ | ❌ | YELLOW |
+| 33 | HyperLogLog | ✅ | ✅ | ✅ | ✅ | N/A | N/A | N/A | ✅ | ✅ | ✅ | N/A | ✅ | ✅ | ⚠️ | ❌ | YELLOW |
 
-## Linear
+## WeightedGraph — Remaining Requirements for GREEN
 
-| Structure          | Mode | Wave                 | Canonical home |
-|--------------------|------|----------------------|----------------|
-| Sequence           | N    | 2                    | Linear         |
-| DynamicArray       | N    | 2                    | Linear         |
-| DataList           | N    | existing, revalidate | Linear         |
-| LinkedList         | N    | 2                    | Linear         |
-| SinglyLinkedList   | N    | 2                    | Linear         |
-| DoublyLinkedList   | N    | 2                    | Linear         |
-| CircularLinkedList | M    | 2                    | Linear         |
-| Stack              | N    | 2                    | Linear         |
-| Queue              | N    | 2                    | Linear         |
-| Deque              | N    | 2                    | Linear         |
-| RingBuffer         | N    | 2                    | Linear         |
-| CircularBuffer     | N    | 2                    | Linear         |
-| SparseArray        | N    | 2                    | Linear         |
-| Buffer             | N    | 5                    | Linear         |
-| DoubleBuffer       | N    | 5                    | Linear         |
+Current status: YELLOW. WeightedGraph has minimum vocabulary and 7 tests but needs:
 
-## Maps, sets, and hashing
+| Requirement | Effort | Priority |
+|---|---|---|
+| `removeNode(node)` — remove node and all incident edges | Small | High |
+| `removeEdge(from, to)` — remove single edge | Small | High |
+| `edges()` — list all edges with weights | Small | Medium |
+| Per-structure documentation (when to use / not use) | Small | Medium |
+| Edge case tests: self-loops, duplicate edges, weight overwrite | Small | Medium |
 
-| Structure     | Mode | Wave                 | Canonical home |
-|---------------|------|----------------------|----------------|
-| Map           | N    | existing, revalidate | Maps           |
-| OrderedMap    | N    | existing, revalidate | Maps           |
-| SortedMap     | N    | 2                    | Maps           |
-| LinkedHashMap | N    | 2                    | Maps           |
-| MultiMap      | N    | existing, revalidate | Maps           |
-| BiMap         | N    | 2                    | Maps           |
-| EnumMap       | N    | 3                    | Maps           |
-| IdentityMap   | N    | 3                    | Maps           |
-| WeakMap       | N    | 3                    | Maps           |
-| PersistentMap | M    | 3                    | Persistent     |
-| Set           | N    | existing, revalidate | Sets           |
-| OrderedSet    | N    | existing, revalidate | Sets           |
-| SortedSet     | N    | 2                    | Sets           |
-| LinkedHashSet | N    | 2                    | Sets           |
-| MultiSet      | N    | 2                    | Sets           |
-| Bag           | N    | 2                    | Sets           |
-| HashSet       | N    | 2                    | Sets           |
-| WeakSet       | N    | 3                    | Sets           |
-| PersistentSet | M    | 3                    | Persistent     |
-| HashTable     | N    | 2                    | Hashing        |
-| HashMap       | N    | 2                    | Hashing        |
-| HashMultimap  | N    | 2                    | Hashing        |
-| HashMultiset  | N    | 2                    | Hashing        |
+Do not promote to GREEN until removeNode, removeEdge, and documentation exist.
 
-## Priority
+## Wave 2 — Still Missing (Roadmap Only)
 
-| Structure     | Mode | Wave | Canonical home |
-|---------------|------|------|----------------|
-| Heap          | N    | 2    | Priority       |
-| BinaryHeap    | N    | 2    | Priority       |
-| MinHeap       | N    | 2    | Priority       |
-| MaxHeap       | N    | 2    | Priority       |
-| DaryHeap      | N    | 2    | Priority       |
-| PriorityQueue | N    | 2    | Priority       |
-| RadixHeap     | N    | 3    | Priority       |
-| LeftistHeap   | M    | 3    | Priority       |
-| SkewHeap      | M    | 3    | Priority       |
-| BinomialHeap  | M    | 3    | Priority       |
-| PairingHeap   | M    | 3    | Priority       |
-| FibonacciHeap | M    | 3    | Priority       |
-| SoftHeap      | M    | 5    | Priority       |
-| BrodalQueue   | M    | 5    | Priority       |
+These structures are listed in the atlas but not yet implemented. They are **not delivery obligations** — each will be evaluated individually before implementation.
 
-## Trees and graph-shaped structures
+| Structure | Category | Priority | Reason to Implement |
+|---|---|---|---|
+| MultiSet | Sets | Medium | If Bag doesn't cover the use case |
+| SortedMap | Maps | Low | If OrderedMap comparator control is insufficient |
+| LinkedHashMap | Maps | Low | If insertion-order stability after lookup is needed |
+| BiMap | Maps | Low | If bidirectional key-value mapping is needed |
+| SortedSet | Sets | Low | If OrderedSet comparator control is insufficient |
+| IntervalTree | Trees | Low | If interval overlap search is needed |
+| MerkleTree | Trees | Low | If hash-based data integrity verification is needed |
+| DirectedGraph | Graphs | Low | If explicit direction enforcement is needed |
+| UndirectedGraph | Graphs | Low | If reciprocal adjacency enforcement is needed |
+| MultiGraph | Graphs | Low | If parallel edges are needed |
+| FlowNetwork | Graphs | Low | If capacity/flow constraints are needed |
+| TopologicalOrdering | Graphs | Low | If DAG ordering is needed |
+| CsrMatrix | Matrix | Low | If compressed sparse row format is needed |
+| SuffixArray | Text | Low | If suffix-based text search is needed |
+| AhoCorasickAutomaton | Text | Low | If multi-pattern text search is needed |
+| SkipList | Probabilistic | Low | Already attempted — needs proper rewrite |
 
-| Structure        | Mode | Wave | Canonical home |
-|------------------|------|------|----------------|
-| Tree             | N    | 2    | Trees          |
-| BinaryTree       | N    | 2    | Trees          |
-| BinarySearchTree | N    | 2    | Trees          |
-| Trie             | N    | 2    | Text           |
-| SegmentTree      | N    | 2    | Trees          |
-| LazySegmentTree  | N    | 3    | Trees          |
-| FenwickTree      | N    | 2    | Trees          |
-| IntervalTree     | N    | 3    | Trees          |
-| AVLTree          | N    | 3    | Trees          |
-| RedBlackTree     | N    | 3    | Trees          |
-| SplayTree        | N    | 3    | Trees          |
-| Treap            | N    | 3    | Trees          |
-| BTree            | M    | 3    | Trees          |
-| BPlusTree        | M    | 3    | Trees          |
-| KDTree           | N    | 3    | Spatial        |
-| QuadTree         | N    | 3    | Spatial        |
-| RTree            | M    | 3    | Spatial        |
-| MerkleTree       | N    | 4    | Trees          |
-| SuffixArray      | N    | 3    | Text           |
-| SuffixTree       | M    | 4    | Text           |
-| LinkCutTree      | M    | 5    | Trees          |
-| EulerTourTree    | M    | 5    | Trees          |
-| VanEmdeBoasTree  | M    | 5    | Trees          |
-| FusionTree       | M    | 5    | Trees          |
+## Wave 3+ — Advanced and Specialist (Roadmap Only)
 
-## Graphs
+All Wave 3, 4, and 5 structures from the master plan remain roadmap-only. Notable examples:
 
-| Structure              | Mode | Wave | Canonical home |
-|------------------------|------|------|----------------|
-| Graph                  | N    | 2    | Graphs         |
-| DirectedGraph          | N    | 2    | Graphs         |
-| UndirectedGraph        | N    | 2    | Graphs         |
-| WeightedGraph          | N    | 2    | Graphs         |
-| MultiGraph             | N    | 3    | Graphs         |
-| HyperGraph             | M    | 3    | Graphs         |
-| AdjacencyList          | N    | 2    | Graphs         |
-| AdjacencyMatrix        | N    | 2    | Graphs         |
-| IncidenceMatrix        | N    | 3    | Graphs         |
-| EdgeList               | N    | 2    | Graphs         |
-| CompressedSparseRow    | N    | 3    | Graphs         |
-| CompressedSparseColumn | N    | 3    | Graphs         |
-| UnionFind              | N    | 2    | Graphs         |
-| DisjointSetUnion       | N    | 2    | Graphs         |
-| DynamicConnectivity    | M    | 5    | Graphs         |
-| FlowNetwork            | N    | 3    | Graphs         |
-| TopologicalOrdering    | N    | 3    | Graphs         |
-| DominatorTree          | M    | 4    | Graphs         |
-| BlockCutTree           | M    | 4    | Graphs         |
-| SPQRTree               | M    | 5    | Graphs         |
+- **Trees**: AVLTree, RedBlackTree, SplayTree, BTree, BPlusTree
+- **Text**: SuffixTree, SuffixAutomaton, WaveletTree
+- **Compressed**: RoaringBitmap, EliasFano, FMIndex
+- **Spatial**: KDTree, QuadTree, RTree
+- **Persistent**: PersistentList, PersistentMap, HashArrayMappedTrie
+- **Research**: VanEmdeBoasTree, FusionTree, LinkCutTree
 
-## Text, numeric, matrix, and spatial
-
-| Structure                  | Mode | Wave | Canonical home |
-|----------------------------|------|------|----------------|
-| StringBuffer               | N    | 2    | Text           |
-| CharacterArray             | N    | 2    | Text           |
-| Rope                       | M    | 3    | Text           |
-| Cord                       | M    | 3    | Text           |
-| GapBuffer                  | M    | 3    | Text           |
-| PieceTable                 | M    | 3    | Text           |
-| RadixTree                  | N    | 3    | Text           |
-| PatriciaTrie               | N    | 3    | Text           |
-| CompressedTrie             | N    | 4    | Text           |
-| SuffixAutomaton            | M    | 4    | Text           |
-| DirectedAcyclicWordGraph   | M    | 4    | Text           |
-| AhoCorasickAutomaton       | N    | 3    | Text           |
-| FiniteAutomaton            | N    | 3    | Text           |
-| RegularExpressionAutomaton | M    | 4    | Text           |
-| WaveletTree                | M    | 4    | Text           |
-| WaveletMatrix              | M    | 4    | Text           |
-| Vector                     | N    | 2    | Numeric        |
-| Tensor                     | M    | 4    | Numeric        |
-| BitVector                  | N    | 2    | Numeric        |
-| BitSet                     | N    | 2    | Numeric        |
-| Bitmap                     | N    | 3    | Numeric        |
-| BitMatrix                  | N    | 3    | Numeric        |
-| Matrix                     | N    | 2    | Matrix         |
-| DenseMatrix                | N    | 2    | Matrix         |
-| SparseMatrix               | N    | 2    | Matrix         |
-| CsrMatrix                  | N    | 3    | Matrix         |
-| CscMatrix                  | N    | 3    | Matrix         |
-| CooMatrix                  | N    | 3    | Matrix         |
-| DiagonalMatrix             | N    | 3    | Matrix         |
-| TriangularMatrix           | N    | 3    | Matrix         |
-| BandedMatrix               | N    | 3    | Matrix         |
-| SpatialHash                | N    | 4    | Spatial        |
-| Geohash                    | N    | 4    | Spatial        |
-| ZOrderCurve                | N    | 4    | Spatial        |
-| HilbertCurve               | M    | 4    | Spatial        |
-| VoronoiDiagram             | M    | 4    | Spatial        |
-| DelaunayTriangulation      | M    | 4    | Spatial        |
-
-## Persistent, probabilistic, compressed, and storage models
-
-| Structure                | Mode | Wave | Canonical home |
-|--------------------------|------|------|----------------|
-| PersistentList           | N    | 3    | Persistent     |
-| PersistentStack          | N    | 3    | Persistent     |
-| PersistentQueue          | M    | 3    | Persistent     |
-| PersistentVector         | M    | 3    | Persistent     |
-| PersistentSegmentTree    | M    | 3    | Persistent     |
-| FingerTree               | M    | 4    | Functional     |
-| Zipper                   | N    | 3    | Functional     |
-| OkasakiQueue             | N    | 3    | Functional     |
-| FunctionalRedBlackTree   | M    | 3    | Functional     |
-| HashArrayMappedTrie      | M    | 3    | Functional     |
-| RelaxedRadixBalancedTree | M    | 4    | Functional     |
-| ClojurePersistentVector  | M    | 4    | Functional     |
-| ImmutableVector          | M    | 3    | Functional     |
-| BloomFilter              | N    | 2    | Probabilistic  |
-| CountingBloomFilter      | N    | 3    | Probabilistic  |
-| StableBloomFilter        | M    | 3    | Probabilistic  |
-| CuckooFilter             | M    | 4    | Probabilistic  |
-| QuotientFilter           | M    | 4    | Probabilistic  |
-| SkipList                 | N    | 3    | Probabilistic  |
-| CountMinSketch           | N    | 3    | Probabilistic  |
-| HyperLogLog              | N    | 3    | Probabilistic  |
-| MinHash                  | N    | 3    | Probabilistic  |
-| SimHash                  | N    | 3    | Probabilistic  |
-| TDigest                  | M    | 4    | Probabilistic  |
-| KllSketch                | M    | 4    | Probabilistic  |
-| ReservoirSampling        | N    | 3    | Probabilistic  |
-| BitPackedArray           | N    | 4    | Compressed     |
-| RunLengthEncodedArray    | N    | 4    | Compressed     |
-| EliasFano                | M    | 4    | Compressed     |
-| RoaringBitmap            | M    | 4    | Compressed     |
-| SuccinctTree             | M    | 4    | Compressed     |
-| SuccinctGraph            | M    | 4    | Compressed     |
-| CompressedSuffixArray    | M    | 4    | Compressed     |
-| FMIndex                  | M    | 4    | Compressed     |
-| LsmTree                  | M    | 4    | StorageModels  |
-| SStable                  | M    | 4    | StorageModels  |
-| Memtable                 | N    | 4    | StorageModels  |
-| HashIndex                | N    | 4    | StorageModels  |
-| BitmapIndex              | N    | 4    | StorageModels  |
-| InvertedIndex            | N    | 4    | StorageModels  |
-| ColumnStore              | M    | 4    | StorageModels  |
-| RowStore                 | M    | 4    | StorageModels  |
-| LogStructuredStorage     | M    | 4    | StorageModels  |
-
-## Algorithmic, concurrent, and simulated runtime
-
-| Structure                  | Mode | Wave | Canonical home   |
-|----------------------------|------|------|------------------|
-| SparseTable                | N    | 3    | Algorithms       |
-| MonotonicQueue             | N    | 3    | Algorithms       |
-| MonotonicStack             | N    | 3    | Algorithms       |
-| CentroidDecomposition      | M    | 4    | Algorithms       |
-| SquareRootDecomposition    | N    | 3    | Algorithms       |
-| MosAlgorithm               | M    | 4    | Algorithms       |
-| DancingLinks               | N    | 4    | Algorithms       |
-| ConcurrentQueue            | R    | 5    | ConcurrentModels |
-| ConcurrentStack            | R    | 5    | ConcurrentModels |
-| ConcurrentHashMap          | R    | 5    | ConcurrentModels |
-| ConcurrentSkipList         | M    | 5    | ConcurrentModels |
-| BlockingQueue              | R    | 5    | ConcurrentModels |
-| WorkStealingDeque          | M    | 5    | ConcurrentModels |
-| CopyOnWriteArray           | N    | 5    | ConcurrentModels |
-| CopyOnWriteList            | N    | 5    | ConcurrentModels |
-| ReadCopyUpdate             | S    | 5    | ConcurrentModels |
-| LockFreeQueue              | S    | 5    | ConcurrentModels |
-| LockFreeStack              | S    | 5    | ConcurrentModels |
-| WaitFreeQueue              | S    | 5    | ConcurrentModels |
-| StackFrame                 | S    | 5    | SimulatedRuntime |
-| CallStack                  | S    | 5    | SimulatedRuntime |
-| HeapMemory                 | S    | 5    | SimulatedRuntime |
-| FreeList                   | S    | 5    | SimulatedRuntime |
-| MemoryPool                 | M    | 5    | SimulatedRuntime |
-| SlabAllocator              | S    | 5    | SimulatedRuntime |
-| BuddyAllocator             | S    | 5    | SimulatedRuntime |
-| PageTable                  | S    | 5    | SimulatedRuntime |
-| TranslationLookasideBuffer | S    | 5    | SimulatedRuntime |
-| CacheLine                  | S    | 5    | SimulatedRuntime |
-| ObjectPool                 | M    | 5    | SimulatedRuntime |
-
-## Promotion rule
-
-Every `existing, revalidate` item needs the same proof as a new structure before it can be marked complete under this
-matrix.
+None of these are delivery obligations. Each will be evaluated when there is a real use case.

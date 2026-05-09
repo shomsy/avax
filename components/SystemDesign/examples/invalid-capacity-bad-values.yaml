@@ -1,0 +1,23 @@
+system: broken-capacity
+traffic:
+  requests_per_second: not_a_number
+  read_write_ratio: 99
+storage:
+  growth_per_day: -100
+  retention_days: 0
+cache:
+  hit_ratio_target: 1.5
+  miss_penalty_ms: 0
+  stampede_protection_required: true
+queue:
+  max_depth: 100000
+  delay_budget_ms: 5000
+  consumer_throughput_per_second: 5000
+latency:
+  p50_ms: 100
+  p95_ms: 50
+  p99_ms: 10
+availability:
+  slo: 99.99
+  sla: 99.9
+  failure_budget_minutes_per_month: 4.38

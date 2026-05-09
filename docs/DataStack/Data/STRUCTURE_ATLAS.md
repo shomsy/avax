@@ -1,123 +1,155 @@
-# DataStack/Data Structure Atlas
+# Structure Atlas
 
-Status: Wave 0 canonical design document
-Owner: DataStack/Data
-Last reviewed: 2026-05-09
+Knowledge map of every data structure planned for DataStack/Data.
 
-## Purpose
+Source of truth: `EVIDENCE/.PLANS/datastack-data-structure-universe-master-plan.md` §8 (Complete Registry).
 
-This atlas names the complete data structure universe planned for `DataStack/Data`. It is the source a reader uses to
-find the canonical home, implementation mode, and proof expectation for each structure family.
+> **This is a knowledge map, not a delivery obligation.**
+> The atlas explains what structures exist conceptually. It does not mean every structure must be implemented.
+> Structures are implemented only when there is a real use case, not because the atlas lists them.
 
-The governing evidence plan is:
+## Mode Key
 
-```text
-EVIDENCE/.PLANS/datastack-data-structure-universe-master-plan.md
-```
+| Mode | Meaning |
+|---|---|
+| N | Native — PHP implements truthfully |
+| M | Model — correct algorithm, no low-level claim |
+| R | Runtime Bridge — backend-backed boundary |
+| S | Simulation — PHP cannot own the guarantee |
 
-## Core law
+## Summary by Category
 
-```text
-Structure = data + invariant + behavior
-```
+| Category | Total | N | M | R | S | Implemented |
+|---|---|---|---|---|---|---|
+| Linear | 16 | 13 | 3 | 0 | 0 | 10 |
+| Map | 10 | 8 | 2 | 0 | 0 | 4 |
+| Set | 8 | 7 | 1 | 0 | 0 | 3 |
+| Priority | 12 | 5 | 7 | 0 | 0 | 4 |
+| Trees | 33 | 17 | 16 | 0 | 0 | 5 |
+| Graphs | 20 | 11 | 9 | 0 | 0 | 3 |
+| Text/Automata | 16 | 7 | 9 | 0 | 0 | 1 |
+| Numeric/Matrix | 15 | 14 | 1 | 0 | 0 | 3 |
+| Spatial | 20 | 5 | 15 | 0 | 0 | 1 |
+| Probabilistic | 13 | 8 | 5 | 0 | 0 | 3 |
+| Persistent/Functional | 15 | 3 | 12 | 0 | 0 | 0 |
+| Compressed/Succinct | 8 | 2 | 6 | 0 | 0 | 0 |
+| Storage Models | 16 | 4 | 12 | 0 | 0 | 0 |
+| Algorithmic | 7 | 5 | 2 | 0 | 0 | 0 |
+| Concurrent Models | 12 | 2 | 3 | 4 | 3 | 0 |
+| Simulated Runtime | 13 | 3 | 2 | 0 | 8 | 0 |
+| Hashing | 4 | 4 | 0 | 0 | 0 | 0 |
+| **Total** | **238** | **118** | **109** | **4** | **11** | **38** |
 
-If an implementation does not protect an invariant, it is not complete. If it does not declare storage, it is not ready
-for public use. If PHP cannot truthfully own the runtime property, the structure is a model, runtime bridge, or
-simulation.
+## Classification
 
-## Implementation modes
+Each implemented structure is classified by its role in the public API surface.
 
-| Mode           | Meaning                                                                                     |
-|----------------|---------------------------------------------------------------------------------------------|
-| Native         | Plain PHP can implement the behavior truthfully.                                            |
-| Model          | PHP can model the algorithm, but not the same low-level runtime form as a systems language. |
-| Runtime bridge | The behavior depends on a named runtime backend.                                            |
-| Simulation     | PHP can explain and simulate the concept, but cannot own the runtime guarantee.             |
+### CORE_PUBLIC — Stable public API
 
-## Canonical families
+Structures that form the primary DataStack/Data surface. Tested, documented, safe for general use.
 
-| Family            | Canonical home                             | Purpose                                                              |
-|-------------------|--------------------------------------------|----------------------------------------------------------------------|
-| Linear            | `Capabilities/Structures/Linear`           | Ordered values, stacks, queues, buffers, sparse arrays               |
-| Hashing           | `Capabilities/Structures/Hashing`          | Hash tables, hash maps, hash multisets                               |
-| Maps              | `Capabilities/Structures/Maps`             | Key-value structures and uniqueness variants                         |
-| Sets              | `Capabilities/Structures/Sets`             | Membership structures and counted membership                         |
-| Priority          | `Capabilities/Structures/Priority`         | Heap and priority queue behavior                                     |
-| Trees             | `Capabilities/Structures/Trees`            | Hierarchical, ordered, range, text, dynamic, and cryptographic trees |
-| Graphs            | `Capabilities/Structures/Graphs`           | Node-edge structures, graph storage, connectivity, flow, ordering    |
-| Text              | `Capabilities/Structures/Text`             | Text buffers, tries, suffix structures, automata, wavelet structures |
-| Numeric           | `Capabilities/Structures/Numeric`          | Vectors, tensors, bit vectors, bit sets, bitmaps                     |
-| Matrix            | `Capabilities/Structures/Matrix`           | Dense, sparse, coordinate, banded, and bit matrix forms              |
-| Spatial           | `Capabilities/Structures/Spatial`          | Spatial indexes, spatial hashes, grids, curves, geometry models      |
-| Persistent        | `Capabilities/Structures/Persistent`       | Version-preserving immutable structures                              |
-| Functional        | `Capabilities/Structures/Functional`       | Functional cursors, trees, queues, and persistent vector models      |
-| Probabilistic     | `Capabilities/Structures/Probabilistic`    | Filters, sketches, sampling, approximate counting                    |
-| Compressed        | `Capabilities/Structures/Compressed`       | Succinct, packed, run-length, suffix, bitmap compression structures  |
-| Storage models    | `Capabilities/Structures/StorageModels`    | Database-like structure models that do not own SQL execution         |
-| Algorithms        | `Capabilities/Structures/Algorithms`       | Algorithm-shaped structures and decomposition helpers                |
-| Concurrent models | `Capabilities/Structures/ConcurrentModels` | Runtime bridges and concurrency models                               |
-| Simulated runtime | `Capabilities/Structures/SimulatedRuntime` | Memory and CPU concept simulations                                   |
+| Structure | Category | Public Facade |
+|---|---|---|
+| Sequence | Linear | `PublicSurface/Sequence.php` |
+| Stack | Linear | `PublicSurface/Stack.php` |
+| Queue | Linear | `PublicSurface/Queue.php` |
+| Deque | Linear | `PublicSurface/Deque.php` |
+| RingBuffer | Linear | — |
+| SparseArray | Linear | — |
+| DataList | Linear | — |
+| Map | Maps | `PublicSurface/Map.php` |
+| OrderedMap | Maps | `PublicSurface/OrderedMap.php` |
+| MultiMap | Maps | `PublicSurface/MultiMap.php` |
+| Set | Sets | `PublicSurface/Set.php` |
+| OrderedSet | Sets | `PublicSurface/OrderedSet.php` |
+| BinaryHeap | Priority | `PublicSurface/Heap.php` |
+| PriorityQueue | Priority | `PublicSurface/PriorityQueue.php` |
+| BinaryTree | Trees | — |
+| BinarySearchTree | Trees | — |
+| Trie | Trees | — |
+| Graph | Graphs | `PublicSurface/Graph.php` |
+| UnionFind | Graphs | — |
+| DenseMatrix | Matrix | `PublicSurface/Matrix.php` |
+| SparseMatrix | Matrix | `PublicSurface/Matrix.php` |
+| Point | Spatial (Foundation value) | — |
 
-## First production wave
+### CORE_INTERNAL — Used internally by DataStack/Data
 
-Wave 2 is the first broad production structure wave. It may start only after Wave 1 Structure Kernel is proven.
+Kernel structures, foundation values, storage primitives, and failure types that support other structures.
 
-Planned structures:
+| Structure | Owner |
+|---|---|
+| DataStructure (family promise) | Foundation |
+| LinearStructure | Foundation |
+| AssociativeStructure | Foundation |
+| SetStructure | Foundation |
+| MapStructure | Foundation |
+| TreeStructure | Foundation |
+| GraphStructure | Foundation |
+| HeapStructure | Foundation |
+| MatrixStructure | Foundation |
+| ProbabilisticStructure | Foundation |
+| PersistentStructure | Foundation |
+| ConcurrentStructure | Foundation |
+| SimulatedStructure | Foundation |
+| ArrayStorage | StructureStorage |
+| AssociativeArrayStorage | StructureStorage |
+| RingBufferStorage | StructureStorage |
+| LinkedNodeStorage | StructureStorage |
+| BinaryNodeStorage | StructureStorage |
+| TreeNodeStorage | StructureStorage |
+| GraphAdjacencyStorage | StructureStorage |
+| MatrixDenseStorage | StructureStorage |
+| MatrixSparseStorage | StructureStorage |
+| BitStringStorage | StructureStorage |
+| StructureStorage (interface) | StructureStorage |
+| RequiredDataShape | Foundation |
+| EmptyStructure, DuplicateKey, MissingKey, etc. | Failure |
+| Comparator, Equality, Ordering | Comparison |
+| HashFunction, StableHash, StringHash, ObjectHash | Hashing |
+| Pair, Tuple, Entry, Range, Interval, Edge, WeightedEdge, Priority | Values |
 
-```text
-Sequence
-Stack
-Queue
-Deque
-RingBuffer
-Map
-Set
-OrderedMap
-OrderedSet
-MultiMap
-Bag
-BinaryHeap
-PriorityQueue
-Tree
-BinaryTree
-Trie
-Graph
-UnionFind
-FenwickTree
-SegmentTree
-BloomFilter
-Matrix
-SparseMatrix
-```
+### ADVANCED_PUBLIC — Useful but not beginner/core API
 
-## Existing implemented baseline
+Advanced structures that are tested and documented but not part of the minimal public surface.
 
-Existing DataStack/Data already has early structure behavior for:
+| Structure | Category | Notes |
+|---|---|---|
+| FenwickTree | Trees | Binary indexed tree — specialist use |
+| SegmentTree | Trees | Range queries — specialist use |
+| WeightedGraph | Graphs | Basic vocabulary (hasNode, nodes, neighborsOf, isEmpty) — no removeNode/removeEdge |
+| Bag | Sets | Multiset with duplicate counts |
+| MinHeap | Priority | Extract-min binary heap |
+| MaxHeap | Priority | Extract-max binary heap |
+| LinkedList | Linear | Immutable singly-linked list |
+| DoublyLinkedList | Linear | Immutable doubly-linked list (array-backed) |
+| DynamicArray | Linear | Indexed sequence with capacity growth |
+| CountMinSketch | Probabilistic | Frequency estimation — LABS boundary |
+| HyperLogLog | Probabilistic | Cardinality estimation — LABS boundary |
+| MapEntry | Maps | Value object for map entries |
+| Trie | Text/Trees | Prefix tree |
+| Option/Some/None | Functional | Optional value pattern |
+| Result/Success/Failure | Functional | Error handling pattern |
+| Collection/Arrhae | Forms | Collection abstraction |
 
-```text
-Sequence
-DataList
-Map
-MultiMap
-OrderedMap
-Set
-OrderedSet
-Pair
-Tuple2
-Tuple3
-Tuple4
-Record
-OperationResult
-Option
-Result
-```
+### LABS_ONLY — Probabilistic, research, simulation, specialist
 
-These existing files are useful baseline evidence. They are not automatically considered complete for the universe
-standard until they have explicit storage, invariant, failure, serialization, mutation, documentation, and complexity
-proof.
+Structures that are experimental, probabilistic, or not yet production-grade.
 
-## Atlas rule
+| Structure | Category | Reason |
+|---|---|---|
+| BloomFilter | Probabilistic | Probabilistic — false positive rate depends on bit count and hash count. No deletion support. No merge support. Has public facade but classified LABS because probabilistic structures require error rate documentation and benchmark evidence before CORE promotion. |
+| CountMinSketch | Probabilistic | Probabilistic — never undercounts but may overcount. No merge support. 32-bit hash limit. No benchmark evidence. |
+| HyperLogLog | Probabilistic | Probabilistic — cardinality estimate with configurable error. No membership queries. No merge support. 32-bit hash limit. |
 
-Each future implementation must update this atlas and the implementation matrix in the same change as the code. A
-structure that exists in code but not in the atlas is undocumented. A structure listed as complete without validation
-evidence is not complete.
+### ROADMAP_ONLY — Listed in atlas but not implemented
+
+All remaining structures from the atlas (≈200 structures) are roadmap-only. They are not delivery obligations.
+Each will be evaluated individually before implementation based on:
+
+- Real use case in AvaX framework or application code
+- PHP can truthfully provide the behavior
+- Tests, documentation, and evidence can be produced
+- Public surface value justifies the facade
+
+See `STRUCTURE_IMPLEMENTATION_MATRIX.md` for detailed per-structure status.

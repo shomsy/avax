@@ -88,6 +88,6 @@ final readonly class SparseMatrix implements Countable, MatrixStructure
     #[Override]
     public function count() : int
     {
-        return $this->rows * $this->columns;
+        return max(0, $this->rows * $this->columns);
     }
 }

@@ -35,12 +35,13 @@ final class SchemaFacadeSqliteTest extends TestCase
 
         $pdo = $connections->pdo(name: 'sqlite');
 
+        // @phpstan-ignore method.nonObject (PDO::query returns PDOStatement|false, but will succeed here)
+        $stmt = $pdo->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'");
         self::assertSame(
             'users',
-            $pdo
-                ->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'")
-                ->fetchColumn(),
+            $stmt->fetchColumn(),
         );
+        $stmt->closeCursor();
 
         $columnNames = self::columnNames($pdo, table: 'users');
 
@@ -54,7 +55,7 @@ final class SchemaFacadeSqliteTest extends TestCase
         self::assertFalse(
             $pdo
                 ->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'")
-                ->fetchColumn(),
+                ?->fetchColumn(),
         );
     }
 
@@ -125,6 +126,7 @@ final class SchemaFacadeSqliteTest extends TestCase
      */
     private static function columnNames(PDO $pdo, string $table): array
     {
+        // @phpstan-ignore method.nonObject (PDO::query returns PDOStatement|false, but will succeed here)
         $columns = $pdo->query(sprintf('PRAGMA table_info(%s)', $table))->fetchAll(PDO::FETCH_ASSOC);
 
         return array_values(array_map(

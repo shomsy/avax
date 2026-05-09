@@ -11,20 +11,20 @@ final readonly class StartWorkerProcess
     private const PHP_BINARY = 'php';
 
     /**
-     * @param array{action: string, payload: string} $serializedWork
+     * Start a worker process with a signed callable payload.
      *
-     * @return Process
+     * @param string $signedPayload JSON-encoded signed callable payload from CallableSerialization
      */
-    public function start(array $serializedWork, ?string $workerScript = null) : Process
+    public function start(string $signedPayload, ?string $workerScript = null) : Process
     {
         $script  = $workerScript ?? $this->getDefaultWorkerScript();
-        $payload = base64_encode(json_encode($serializedWork, JSON_THROW_ON_ERROR));
+        $encoded = base64_encode($signedPayload);
 
         $process = new Process([
                                    self::PHP_BINARY,
                                    $script,
                                    '--payload',
-                                   $payload,
+                                   $encoded,
                                ]);
 
         $process->setTimeout(300.0);
@@ -35,7 +35,8 @@ final readonly class StartWorkerProcess
 
     private function getDefaultWorkerScript() : string
     {
-        return dirname(__DIR__, 4) . '/bin/avax';
+        // RunThroughProcessPool/ -> Capabilities/ -> System/ -> Parallelism/ -> Operations/ -> components/ -> project root
+        return dirname(__DIR__, 6) . '/bin/avax';
     }
 
     public function getPhpBinary() : string

@@ -16,81 +16,72 @@ use Avax\Components\Application\Filesystem\System\Flows\MoveFile\MoveFile;
 use Avax\Components\Application\Filesystem\System\Flows\ReadFile\ReadFile;
 use Avax\Components\Application\Filesystem\System\Flows\WriteFile\WriteFile;
 
-final readonly class Filesystem
+/**
+ * Filesystem public surface — thin facade that delegates to flows.
+ *
+ * No private state. Each method instantiates its flow on demand.
+ */
+final class Filesystem
 {
-    public function __construct(
-        private ReadFile        $readFile = new ReadFile(),
-        private WriteFile       $writeFile = new WriteFile(),
-        private AppendToFile    $appendToFile = new AppendToFile(),
-        private CopyFile        $copyFile = new CopyFile(),
-        private MoveFile        $moveFile = new MoveFile(),
-        private DeleteFile      $deleteFile = new DeleteFile(),
-        private CreateDirectory $createDirectory = new CreateDirectory(),
-        private DeleteDirectory $deleteDirectory = new DeleteDirectory(),
-        private ClearDirectory  $clearDirectory = new ClearDirectory(),
-        private ListDirectory   $listDirectory = new ListDirectory(),
-        private CheckPathExists $checkPathExists = new CheckPathExists(),
-    ) {}
-
     public function read(string $path): string
     {
-        return $this->readFile->execute($path);
+        return (new ReadFile())->execute($path);
     }
 
-    public function write(string $path, string $content) : bool
+    public function write(string $path, string $content): bool
     {
-        return $this->writeFile->execute($path, $content);
+        return (new WriteFile())->execute($path, $content);
     }
 
-    public function append(string $path, string $content) : bool
+    public function append(string $path, string $content): bool
     {
-        return $this->appendToFile->execute($path, $content);
+        return (new AppendToFile())->execute($path, $content);
     }
 
     public function copy(string $source, string $destination): bool
     {
-        return $this->copyFile->execute($source, $destination);
+        return (new CopyFile())->execute($source, $destination);
     }
 
     public function move(string $source, string $destination): bool
     {
-        return $this->moveFile->execute($source, $destination);
+        return (new MoveFile())->execute($source, $destination);
     }
 
     public function delete(string $path): bool
     {
-        return $this->deleteFile->execute($path);
+        return (new DeleteFile())->execute($path);
     }
 
     public function exists(string $path): bool
     {
-        return $this->checkPathExists->execute($path);
+        return (new CheckPathExists())->execute($path);
     }
 
     public function createDirectory(string $path, int $permissions = 0o755): bool
     {
-        return $this->createDirectory->execute($path, $permissions);
+        return (new CreateDirectory())->execute($path, $permissions);
     }
 
     public function deleteDirectory(string $path): bool
     {
-        return $this->deleteDirectory->execute($path);
+        return (new DeleteDirectory())->execute($path);
     }
 
     public function clearDirectory(string $path): bool
     {
-        return $this->clearDirectory->execute($path);
+        return (new ClearDirectory())->execute($path);
     }
 
     /**
      * @return list<string>
      */
-    public function listDirectory(string $path) : array
+    public function listDirectory(string $path): array
     {
-        return $this->listDirectory->execute($path);
+        return (new ListDirectory())->execute($path);
     }
 
-    public function isReadable(string $path) : bool
+    public function isReadable(string $path): bool
     {
         return file_exists($path) && is_readable($path);
     }
@@ -104,18 +95,18 @@ final readonly class Filesystem
         return is_writable(dirname($path));
     }
 
-    public function permissions(string $path) : ?int
+    public function permissions(string $path): ?int
     {
-        if (! file_exists($path)) {
+        if (!file_exists($path)) {
             return null;
         }
 
         return fileperms($path) & 0o777;
     }
 
-    public function changePermissions(string $path, int $permissions) : bool
+    public function changePermissions(string $path, int $permissions): bool
     {
-        if (! file_exists($path)) {
+        if (!file_exists($path)) {
             return false;
         }
 

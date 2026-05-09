@@ -38,6 +38,32 @@ final readonly class WeightedGraph implements Countable
         return array_key_exists(key: $to, array: $this->adjacency[$from] ?? []);
     }
 
+    public function hasNode(int|string $node) : bool
+    {
+        return array_key_exists(key: $node, array: $this->adjacency);
+    }
+
+    /**
+     * @return list<int|string>
+     */
+    public function nodes() : array
+    {
+        return array_keys(array: $this->adjacency);
+    }
+
+    /**
+     * @return list<int|string>
+     */
+    public function neighborsOf(int|string $node) : array
+    {
+        return array_keys(array: $this->adjacency[$node] ?? []);
+    }
+
+    public function isEmpty() : bool
+    {
+        return $this->adjacency === [];
+    }
+
     #[Override]
     public function count() : int
     {

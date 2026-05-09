@@ -26,7 +26,7 @@ final readonly class BloomFilter implements Countable, ProbabilisticStructure
     #[Override]
     public function count() : int
     {
-        return $this->insertions;
+        return max(0, $this->insertions);
     }
 
     public static function empty(int $bits = 128, int $hashCount = 3) : self
@@ -55,7 +55,8 @@ final readonly class BloomFilter implements Countable, ProbabilisticStructure
         $indexes    = [];
 
         for ($i = 0; $i < $this->hashCount; $i++) {
-            $indexes[] = (int) (hexdec(string: substr(string: hash(algo: 'xxh3', data: $i . ':' . $serialized), offset: 0, length: 12)) % $this->bits->count());
+            $hash      = crc32(string: $i . ':' . $serialized);
+            $indexes[] = (($hash & 0x7FFFFFFF) % $this->bits->count());
         }
 
         return $indexes;

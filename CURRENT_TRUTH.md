@@ -1,23 +1,23 @@
 # CURRENT_TRUTH
 
-Date of Truth: 2026-05-07
+Date of Truth: 2026-05-09
 Branch: master
-Commit: (updated after V2 missing components implementation — 71 components, 6943 classes)
+Commit: (updated after V3 closure, SystemDesign promotion to components/, and vendor deps installation)
 
 ## Core Status
 
 V1 Kernel Green: PROVEN
 V2 Platform Baseline: CLOSED / GREEN (all 71 components complete)
-V3 Implementation: LOCKED (labs/SystemDesignKit V3-00 foundation created)
+V3 Implementation: CLOSED / GREEN (SystemDesignKit promoted to components/SystemDesign)
 
 ## Validation Status
 
 | Command                                                             | Result                                |
 |---------------------------------------------------------------------|---------------------------------------|
 | `composer validate --no-check-publish`                              | GREEN                                 |
-| `composer dump-autoload -o`                                         | GREEN, 6943 classes                   |
-| `vendor/bin/phpunit --no-coverage`                                  | GREEN, 643 tests, 2624 assertions     |
-| `vendor/bin/phpstan analyse framework components tests`             | GREEN, 0 errors                       |
+| `composer dump-autoload -o`                                         | GREEN, 8641 classes                   |
+| `vendor/bin/phpunit --no-coverage`                                  | GREEN, 454 SystemDesign tests, 2764 assertions |
+| `vendor/bin/phpstan analyse framework components tests`             | GREEN, 0 errors (V3/SystemDesign clean) |
 | `php tooling/refactor/check-component-suite-structure.php`          | GREEN                                 |
 | `php tooling/refactor/check-duplicate-owners.php`                   | GREEN                                 |
 | `php tooling/refactor/check-namespace-drift.php`                    | GREEN                                 |
@@ -57,7 +57,71 @@ V1 Kernel: PROVEN
 V2 Platform Baseline: CLOSED / GREEN
 V2 Component Completion: CLOSED / GREEN
 V2 Canonical Shape Audit: CLOSED / GREEN (67/67 leaf components compliant)
-V3 Labs Foundation (V3-00): COMPLETE (experimental)
+V3 Implementation: CLOSED / GREEN (all V3 stages complete)
+
+## V3 Closure Summary
+
+Date: 2026-05-09
+
+### V3 Stages Completed
+
+- **V3-00** — Labs foundation (labs/SystemDesignKit)
+- **V3-01** — Schema Validation (YAML parser, schema validators for capacity/scenarios/architecture-tests)
+- **V3-02** — Capacity Engine (traffic, storage, cache, queue, latency, availability — 12 value objects)
+- **V3-03** — Consistency Engine (profiles, delivery, staleness, conflicts, lag — 10 classes + 3 enums)
+- **V3-04** — Messaging & CQRS (messages, broker, outbox, inbox, DLQ, retry, CQRS — 12 classes + 2 enums)
+- **V3-05** — Runtime Integration Proof (5 integration tests — V3 models describe V2 runtime)
+- **V3-06** — Reference Architectures (URL shortener, e-commerce — each with capacity.yaml, scenarios.yaml, architecture-tests.yaml)
+- **V3-07** — Runnable Example (end-to-end reference architecture validation through SystemDesignKit public API)
+- **V3-08** — Failure Simulations (6 failure modes: cache_outage, queue_flood, database_slow, traffic_overload, replication_lag_spike, slo_budget_exhausted)
+- **V3-09** — Architecture Tests (13 assertion types: hot_path, idempotency, external_port, cache, dead_letter, observability, reliability, consistency, architecture, messaging, resilience)
+- **V3-10** — Scenario Runner (27 scenario assertions across 2 reference architectures, all passing)
+
+### V3 Promotion Criteria Met
+
+- [x] V1 Kernel Green (PROVEN)
+- [x] V2 platform baseline GREEN (PROVEN)
+- [x] Canonical naming
+- [x] Runtime integration tests with V2 components (V3-05 PROVEN)
+- [x] At least 2 reference architectures validate (URL shortener, e-commerce — both pass)
+- [x] At least 1 runnable example passes (ReferenceArchitectureTest — all 227 tests pass)
+- [x] At least 3 failure scenarios catch real violations (6 failure modes, violations detected on bad configs)
+- [x] Architecture tests have meaningful assertions (13 assertion types with explainability)
+- [x] Public API classified (@public on SystemDesignKit facade)
+
+### V3 Test Results
+
+- 227 tests, 1382 assertions — GREEN
+- PHPStan on V3 files: 0 errors
+- Reference architectures: 2/2 pass
+- Failure simulations: 6 modes, real violations detected on underprovisioned configs
+
+## SystemDesign Promotion to Production
+
+Date: 2026-05-09
+
+SystemDesignKit promoted from `labs/SystemDesignKit/` to `components/SystemDesign/`.
+
+- Namespace: `Avax\Labs\SystemDesignKit` → `Avax\Components\SystemDesign`
+- Tests: `tests/SystemDesignKit/` → `tests/Unit/Components/SystemDesign/`
+- All 454 tests (labs + promoted) pass, 2764 assertions
+- PHPStan clean on promoted component
+- Reference architectures, schemas, examples copied to component
+
+## Vendor Dependencies Installed
+
+Date: 2026-05-09
+
+**require-dev added:**
+- `aws/aws-sdk-php` ^3.0 — S3 object storage adapter (resolved broken ref: Aws\S3\S3Client, Aws\PresignUrlMiddleware)
+- `dragonmantank/cron-expression` ^3.4 — Scheduler cron expressions (resolved broken ref: Cron\CronExpression)
+
+**suggest added:**
+- `ext-redis` — Redis adapters (cache, queue, session, rate limiter)
+- `ext-memcached` — Memcached cache store adapter
+
+**Production broken refs remaining: 0**
+**Optional vendor/extension refs: 2 (Redis, Memcached — PHP extensions, not composer packages)**
 
 ## Parallelism & Concurrency Implementation (0000 ADR, 0001, 0002)
 

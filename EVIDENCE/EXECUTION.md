@@ -128,7 +128,7 @@ V1 Kernel Green: PROVEN
 
 V2 Platform Baseline: CLOSED / GREEN (all 72 components complete)
 
-V3 Implementation: LOCKED (labs/SystemDesignKit foundation ready)
+V3 Implementation: CLOSED / GREEN (SystemDesignKit complete — reference architectures, scenarios, failure simulations, architecture tests)
 
 This status is derived from CURRENT_TRUTH.md and the latest truth-reconciliation report.
 

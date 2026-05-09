@@ -12,6 +12,9 @@ final readonly class FilesystemConfiguration
         public SystemFilesystemConfiguration $system,
     ) {}
 
+    /**
+     * @param array<string, mixed> $config
+     */
     public static function fromArray(array $config) : self
     {
         return new self(

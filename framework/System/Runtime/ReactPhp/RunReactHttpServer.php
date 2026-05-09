@@ -6,6 +6,9 @@ namespace Avax\Framework\System\Runtime\ReactPhp;
 
 use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
+use Avax\Framework\System\Runtime\MemoryGuard\MonitorWorkerMemory;
+use Avax\Framework\System\Runtime\WarmApplication\HandleWarmRequest;
+use Avax\Framework\System\Runtime\WarmApplication\ResetWarmRequestState;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use GuzzleHttp\Psr7\ServerRequest as GuzzleServerRequest;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
@@ -21,17 +24,42 @@ use Throwable;
  *
  * ReactPHP-specific classes stay behind Runtime/ReactPhp.
  * No ReactPHP type appears in App public API.
+ *
+ * Supports warm worker safety through integration with HandleWarmRequest lifecycle.
  */
 final class RunReactHttpServer
 {
     private LoopInterface $loop;
     private ?HttpServer $server = null;
 
+    private ?HandleWarmRequest $warmHandler = null;
+    private ?MonitorWorkerMemory $memoryGuard = null;
+
     public function __construct(
         private string $host = '127.0.0.1',
         private int $port = 8080,
     ) {
         $this->loop = Loop::get();
+    }
+
+    /**
+     * Attach a warm request handler for lifecycle integration.
+     */
+    public function setWarmHandler(HandleWarmRequest $handler): self
+    {
+        $this->warmHandler = $handler;
+
+        return $this;
+    }
+
+    /**
+     * Attach a memory guard for memory monitoring.
+     */
+    public function setMemoryGuard(MonitorWorkerMemory $guard): self
+    {
+        $this->memoryGuard = $guard;
+
+        return $this;
     }
 
     /**
@@ -71,6 +99,56 @@ final class RunReactHttpServer
     }
 
     /**
+     * Start in warm smoke mode — exercises the full warm request lifecycle:
+     * 1. Memory capture before
+     * 2. Handler execution
+     * 3. Reset lifecycle runs (even on exception)
+     * 4. Memory capture after
+     *
+     * @param callable(ServerRequestInterface): PsrResponseInterface $handler
+     */
+    public function startWarmSmoke(callable $handler): GuzzleResponse
+    {
+        $testRequest = new GuzzleServerRequest('GET', 'http://localhost/');
+
+        // Capture memory before
+        if ($this->memoryGuard !== null) {
+            $this->memoryGuard->captureBefore();
+        }
+
+        $psrResponse = null;
+        $thrown = null;
+
+        try {
+            $psrResponse = $handler($testRequest);
+        } catch (Throwable $thrown) {
+            // Captured so reset still runs
+        }
+
+        // Always run warm reset lifecycle
+        if ($this->warmHandler !== null) {
+            $this->warmHandler->resetter()->reset();
+        }
+
+        // Capture memory after
+        if ($this->memoryGuard !== null) {
+            $this->memoryGuard->captureAfter();
+        }
+
+        // Re-throw if handler failed
+        if ($thrown !== null) {
+            throw $thrown;
+        }
+
+        // @phpstan-ignore-next-line $psrResponse is always set via try/catch or exception re-thrown
+        return new GuzzleResponse(
+            $psrResponse->getStatusCode(),
+            $psrResponse->getHeaders(),
+            (string) $psrResponse->getBody(),
+        );
+    }
+
+    /**
      * Graceful shutdown.
      */
     public function stop(): void
@@ -81,5 +159,15 @@ final class RunReactHttpServer
     public function loop(): LoopInterface
     {
         return $this->loop;
+    }
+
+    public function warmHandler(): ?HandleWarmRequest
+    {
+        return $this->warmHandler;
+    }
+
+    public function memoryGuard(): ?MonitorWorkerMemory
+    {
+        return $this->memoryGuard;
     }
 }

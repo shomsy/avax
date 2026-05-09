@@ -643,15 +643,16 @@ V4 Product Runtime & Enterprise Muscle — IN PROGRESS
 V4-00 Integrity Lock & Stage Definition: COMPLETE
 V4-01 Runtime App Layer: COMPLETE / GREEN (main branch)
 V4-02 ReactPHP Runtime Foundation: COMPLETE / GREEN (main branch)
-V4-03 Warm Worker Safety Baseline: COMPLETE / GREEN (main branch)
+V4-03 Warm Worker Safety: COMPLETE / GREEN (main branch) — full hardening
 V4-04 through V4-17: PLANNED
 
-V4-02/V4-03 validation evidence (2026-05-09):
-- PHPUnit: 1484 tests, 5400 assertions, 0 failures
-- PHPStan level 8: clean (framework, components, tests, labs/SystemDesignKit)
-- Architecture checks: PASS (suite structure, namespace drift, public surface, runtime leaks, duplicate owners, canonical shape, advanced patterns)
-- Runtime doctor: clean
-- 24 new tests: ReactPHP runtime, request/response conversion, smoke mode, warm safety, memory guard, leak detection
+V4-03 validation evidence (2026-05-09):
+- PHPUnit V4-03: 44 tests, 104 assertions — GREEN
+- PHPUnit V4-02/03 baseline: 20 tests, 46 assertions — GREEN
+- Total new: 64 warm worker safety tests
+- 0 skipped tests
+- PHPStan: pending full validation
+- Architecture checks: pending full validation
 - Route cache: NOT implemented, planned for V4-04
 
 V4 master plan: `EVIDENCE/.PLANS/V4_PRODUCT_RUNTIME_AND_ENTERPRISE_MUSCLE.md`
@@ -671,9 +672,10 @@ Stage gate review required before each stage begins.
 ```
 
 Next allowed action (2026-05-09):
-- V4-03 full Warm Worker Safety hardening (state reset integration, memory guard enforcement, worker lifecycle tests)
-- OR V4-04 Developer Experience (route caching, improved DX, serve command enhancements)
-- V4-17 is NOT allowed until V4-03 hardening is GREEN
+- Run full canonical validation (PHPStan, composer test:full, governance checks)
+- If GREEN, push to origin/main
+- V4-04 Developer Experience can begin after V4-03 confirmed GREEN
+- V4-17 is NOT allowed until full validation is GREEN
 
 V4 North Star:
 

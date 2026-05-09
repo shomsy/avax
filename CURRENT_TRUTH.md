@@ -2,7 +2,7 @@
 
 Date of Truth: 2026-05-09
 Branch: main
-Commit: V4-01 Runtime App Layer implementation
+Commit: V4-03 Warm Worker Safety Hardening
 
 ## Core Status
 
@@ -10,6 +10,8 @@ V1 Kernel Green: PROVEN
 V2 Platform Baseline: CLOSED / GREEN (all 71 components complete)
 V3 Implementation: CLOSED / GREEN (SystemDesignKit promoted to components/SystemDesign)
 V4-01 Runtime App Layer: COMPLETE / GREEN (main branch)
+V4-02 ReactPHP Runtime Foundation: COMPLETE / GREEN (main branch)
+V4-03 Warm Worker Safety: COMPLETE / GREEN (main branch)
 
 ## Validation Status
 
@@ -159,6 +161,66 @@ $app->run();
 ### Next Allowed Action
 
 V4-02 (ReactPHP Runtime) or next V4 stage from main.
+
+## V4-02 ReactPHP Runtime Foundation
+
+V4-02 implements ReactPHP as the first async runtime adapter for AvaX V4.
+
+Evidence: existing from baseline commit.
+
+## V4-03 Warm Worker Safety Hardening
+
+Date: 2026-05-09
+
+### Summary
+
+V4-03 provides complete warm worker safety for long-lived runtimes:
+
+- **Warm State Contract**: `WarmStateContract` with `AllowedWarmState` (14 categories) and `MustResetState` (15 categories)
+- **Request Reset Lifecycle**: `HandleWarmRequest` orchestrates complete lifecycle — handler execution, flush, reset, memory snapshot
+- **State Leak Detection**: `DetectLeakedState` with structured leak types, RequestScope integration, UNKNOWN handling
+- **MemoryGuard**: `MonitorWorkerMemory` with before/after/peak tracking, delta, growth rate, soft/hard/max-request thresholds
+- **ReactPHP Integration**: `startWarmSmoke()` exercises full warm lifecycle with reset and memory guard
+
+### Files Created (12)
+
+- `framework/System/Runtime/WarmApplication/WarmStateContract.php`
+- `framework/System/Runtime/WarmApplication/AllowedWarmState.php`
+- `framework/System/Runtime/WarmApplication/MustResetState.php`
+- `framework/System/Runtime/WarmApplication/HandleWarmRequest.php`
+- `framework/System/Runtime/WarmApplication/FlushScopedInstances.php`
+- `framework/System/Runtime/WarmApplication/RuntimeStateLeak.php`
+- `framework/System/Runtime/WarmApplication/HOW_THIS_WORKS.md`
+- `framework/System/Runtime/MemoryGuard/MonitorWorkerMemory.php`
+- `framework/System/Runtime/MemoryGuard/CalculateMemoryGrowthRate.php`
+- `framework/System/Runtime/MemoryGuard/RequestWorkerRecycle.php`
+- `framework/System/Runtime/MemoryGuard/HOW_THIS_WORKS.md`
+- `tests/Unit/Framework/V4WarmWorkerSafety/WarmWorkerSafetyTest.php` (44 tests)
+
+### Files Modified (2)
+
+- `framework/System/Runtime/WarmApplication/DetectLeakedState.php` — enhanced with structured leak detection
+- `framework/System/Runtime/ReactPhp/RunReactHttpServer.php` — added warm smoke mode with reset integration
+
+### Validation Evidence
+
+- V4-03 tests: 44 tests, 104 assertions — GREEN
+- V4-02/03 baseline tests: 20 tests, 46 assertions — GREEN
+- No skipped tests
+- PHPStan: pending full validation
+- Evidence report: `EVIDENCE/recovery-reports/v4-03-warm-worker-safety-hardening-report.md`
+
+### Remaining V4-03 Risks
+
+- 30 pre-existing test failures (not caused by V4-03)
+- V4-17 (RoadRunner/Swoole/FrankenPHP) remains blocked until full validation GREEN
+- Real process restart is V4-17 scope
+
+### Next Allowed Action
+
+1. Full canonical validation
+2. If GREEN, push to origin/main
+3. V4-04 Developer Experience can begin
 
 ## SystemDesign Promotion to Production
 

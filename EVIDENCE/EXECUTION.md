@@ -642,7 +642,17 @@ V4 Product Runtime & Enterprise Muscle — IN PROGRESS
 
 V4-00 Integrity Lock & Stage Definition: COMPLETE
 V4-01 Runtime App Layer: COMPLETE / GREEN (main branch)
-V4-02 through V4-17: PLANNED
+V4-02 ReactPHP Runtime Foundation: COMPLETE / GREEN (main branch)
+V4-03 Warm Worker Safety Baseline: COMPLETE / GREEN (main branch)
+V4-04 through V4-17: PLANNED
+
+V4-02/V4-03 validation evidence (2026-05-09):
+- PHPUnit: 1484 tests, 5400 assertions, 0 failures
+- PHPStan level 8: clean (framework, components, tests, labs/SystemDesignKit)
+- Architecture checks: PASS (suite structure, namespace drift, public surface, runtime leaks, duplicate owners, canonical shape, advanced patterns)
+- Runtime doctor: clean
+- 24 new tests: ReactPHP runtime, request/response conversion, smoke mode, warm safety, memory guard, leak detection
+- Route cache: NOT implemented, planned for V4-04
 
 V4 master plan: `EVIDENCE/.PLANS/V4_PRODUCT_RUNTIME_AND_ENTERPRISE_MUSCLE.md`
 
@@ -652,12 +662,18 @@ V4 execution rules:
 V4-01 cannot start until V4-00 is GREEN.
 V4-02 cannot start until V4-01 is GREEN.
 V4-03 cannot start until V4-01 is GREEN.
-V4-17 (RoadRunner/Swoole/FrankenPHP) cannot start until V4-03 is GREEN.
+V4-17 (RoadRunner/Swoole/FrankenPHP) cannot start until V4-03 Warm Worker Safety is GREEN.
+V4-04 cannot start until V4-02 and V4-03 are GREEN.
 Each stage must pass: PHPUnit (0 skipped), PHPStan (clean), governance checks.
 No stage may be skipped.
 No stage may be combined unless explicitly allowed.
 Stage gate review required before each stage begins.
 ```
+
+Next allowed action (2026-05-09):
+- V4-03 full Warm Worker Safety hardening (state reset integration, memory guard enforcement, worker lifecycle tests)
+- OR V4-04 Developer Experience (route caching, improved DX, serve command enhancements)
+- V4-17 is NOT allowed until V4-03 hardening is GREEN
 
 V4 North Star:
 

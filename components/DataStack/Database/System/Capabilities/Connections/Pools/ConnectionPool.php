@@ -25,7 +25,7 @@ abstract class ConnectionPool implements ConnectionPoolInterface
     public function get(): PooledConnection
     {
         while ($connection = array_shift(array: $this->connections)) {
-            if ($this->validateConnection(connection: $connection)) {
+            if ($this->validateConnection(pooledConnection: $connection)) {
                 return $connection;
             }
 
@@ -67,14 +67,14 @@ abstract class ConnectionPool implements ConnectionPoolInterface
     public function warmup(int $count): void
     {
         for ($i = 0; $i < min($count, $this->minConnections); $i++) {
-            $this->release(connection: $this->createConnection());
+            $this->release(pooledConnection: $this->createConnection());
         }
     }
 
     #[Override]
     public function release(PooledConnection $pooledConnection): void
     {
-        if (! $this->validateConnection(connection: $pooledConnection)) {
+        if (! $this->validateConnection(pooledConnection: $pooledConnection)) {
             $this->createdCount--;
 
             return;

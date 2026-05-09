@@ -644,7 +644,8 @@ V4-00 Integrity Lock & Stage Definition: COMPLETE
 V4-01 Runtime App Layer: COMPLETE / GREEN (main branch)
 V4-02 ReactPHP Runtime Foundation: COMPLETE / GREEN (main branch)
 V4-03 Warm Worker Safety: COMPLETE / GREEN (main branch) — full hardening
-V4-04 through V4-17: PLANNED
+V4-04 Developer Experience: COMPLETE / GREEN (main branch) — config as code, doctor, route cache plan
+V4-05 through V4-17: PLANNED
 
 V4-03 validation evidence (2026-05-09):
 - PHPUnit V4-03: 44 tests, 104 assertions — GREEN
@@ -655,6 +656,14 @@ V4-03 validation evidence (2026-05-09):
 - PHPStan: 0 errors (framework, components, tests, labs/SystemDesignKit)
 - Architecture checks: 7/7 PASS
 - Route cache: NOT implemented, planned for V4-04
+
+V4-04 validation evidence (2026-05-09):
+- PHPUnit V4-04 unit: 13 tests, 28 assertions — GREEN
+- PHPUnit V4-04 composition: 9 tests, 342 assertions — GREEN
+- PHPStan: 0 errors (framework, components, tests)
+- Architecture checks: GREEN
+- Route cache plan: EVIDENCE/route-cache-plan.md
+- Route cache proof slice: CacheRouteTable, LoadCachedRoutes, route:cache, route:clear commands
 
 V4 master plan: `EVIDENCE/.PLANS/V4_PRODUCT_RUNTIME_AND_ENTERPRISE_MUSCLE.md`
 
@@ -675,8 +684,8 @@ Stage gate review required before each stage begins.
 Next allowed action (2026-05-09):
 - Run full canonical validation (PHPStan, composer test:full, governance checks)
 - If GREEN, push to origin/main
-- V4-04 Developer Experience can begin after V4-03 confirmed GREEN
-- V4-17 is NOT allowed until full validation is GREEN
+- V4-05 Data Platform Productization can begin after V4-04 confirmed GREEN
+- V4-17 is NOT allowed until V4-03 Warm Worker Safety is fully validated
 
 V4 North Star:
 
@@ -695,16 +704,26 @@ No parallel V4 plans. All future V4 changes update the canonical file.
 Route Cache Planning Note (V4-02 / V4-04):
 
 ```text
-Route caching is NOT implemented in V4-02 or V4-04.
-Route caching is planned for a future stage (likely V4-04 Developer Experience).
-When implemented, route cache must:
+Route cache proof slice IS implemented in V4-04:
+  - CacheRouteTable capability — compiles and writes route cache
+  - LoadCachedRoutes capability — loads and validates cached routes
+  - route:cache CLI command — generates cache with sample routes
+  - route:clear CLI command — clears cached route files
+  - Route cache plan: EVIDENCE/route-cache-plan.md
+
+Full route cache integration requires V4-05+:
+  - ApplicationBuilder detects and uses cached routes when available
+  - Route cache invalidation on file change detection
+  - Route cache warm-up hook for worker boot
+  - Performance benchmarks proving cache benefit
+
+When fully implemented, route cache must:
   - Support warm worker safety (cache invalidation between deployments)
   - Work with ReactPHP, RoadRunner, Swoole, FrankenPHP runtimes
   - Not bypass existing MatchHttpRoute component
   - Include cache:warm, cache:clear, cache:status commands
   - Prove performance improvement with benchmarks
   - Not introduce stale route matching in long-lived workers
-Current serve commands use live route matching only.
 ```
 
 ---

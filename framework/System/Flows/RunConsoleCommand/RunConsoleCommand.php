@@ -116,11 +116,27 @@ final readonly class RunConsoleCommand
             Usage: php avax <command> [options]
 
             Commands:
-              pre-commit     Run pre-commit discipline check
-              help          Show this help
+              pre-commit        Run pre-commit discipline check
+              doctor            Run runtime doctor checks
+              validate          Run focused or full validation
+              inspect           Inspect application and runtime state
+              config:inspect    Show loaded configuration values
+              config:validate   Validate configuration files
+              config:publish    Publish default configuration files
+              route:cache       Compile and cache route table
+              route:clear       Clear cached route table
+              serve             Start development server
+              help              Show this help
 
             Examples:
               php avax pre-commit
+              php avax doctor
+              php avax doctor --worker
+              php avax validate --full
+              php avax config:inspect
+              php avax config:validate
+              php avax config:publish
+              php avax serve --port=9000
               php avax help
             HELP;
     }

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Configuration\BuildApplication;
 
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentProviderInterface;
+use Avax\Framework\System\Capabilities\Configuration\RegisterConfigCommands;
+use Avax\Framework\System\Capabilities\Doctor\RegisterDoctorCommands;
+use Avax\Framework\System\Capabilities\Routing\RegisterRouteCommands;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
@@ -46,6 +49,32 @@ final class ApplicationBuilder
                 return $exitCode === 0 ? "Runtime doctor passed\n" : "Runtime doctor failed\n";
             },
         );
+
+        $this->registerV4DxCommands();
+    }
+
+    /**
+     * Register V4-04 developer experience commands (doctor, validate, inspect, config:*).
+     */
+    private function registerV4DxCommands(): void
+    {
+        $doctorCommands = (new RegisterDoctorCommands())();
+
+        foreach ($doctorCommands as $name => $command) {
+            $this->registerConsoleCommand(name: $name, command: $command);
+        }
+
+        $configCommands = (new RegisterConfigCommands())();
+
+        foreach ($configCommands as $name => $command) {
+            $this->registerConsoleCommand(name: $name, command: $command);
+        }
+
+        $routeCommands = (new RegisterRouteCommands())();
+
+        foreach ($routeCommands as $name => $command) {
+            $this->registerConsoleCommand(name: $name, command: $command);
+        }
     }
 
     public function projectPath(): ProjectPath

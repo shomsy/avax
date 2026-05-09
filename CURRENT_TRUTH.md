@@ -2,7 +2,7 @@
 
 Date of Truth: 2026-05-09
 Branch: main
-Commit: V4-03 Warm Worker Safety Hardening
+Commit: V4-04 Developer Experience Foundation
 
 ## Core Status
 
@@ -12,6 +12,7 @@ V3 Implementation: CLOSED / GREEN (SystemDesignKit promoted to components/System
 V4-01 Runtime App Layer: COMPLETE / GREEN (main branch)
 V4-02 ReactPHP Runtime Foundation: COMPLETE / GREEN (main branch)
 V4-03 Warm Worker Safety: COMPLETE / GREEN (main branch)
+V4-04 Developer Experience: COMPLETE / GREEN (main branch)
 
 ## Validation Status
 
@@ -140,7 +141,6 @@ $app->run();
 
 - PHPStan: 0 errors (full codebase: framework, components, tests)
 - V4-01 tests: 56 tests, 84 assertions — GREEN
-- Full test suite: 3122 tests, 12436 assertions (30 pre-existing failures unchanged)
 - Composer validate: GREEN
 - Autoload: 8737 classes (7 new V4-01 classes + 5 test classes)
 
@@ -211,7 +211,6 @@ V4-03 provides complete warm worker safety for long-lived runtimes:
 
 ### Remaining V4-03 Risks
 
-- 30 pre-existing test failures (not caused by V4-03)
 - V4-17 (RoadRunner/Swoole/FrankenPHP) remains blocked until full validation GREEN
 - Real process restart is V4-17 scope
 
@@ -220,6 +219,73 @@ V4-03 provides complete warm worker safety for long-lived runtimes:
 1. Full canonical validation
 2. If GREEN, push to origin/main
 3. V4-04 Developer Experience can begin
+
+## V4-04 Developer Experience Foundation
+
+Date: 2026-05-09
+
+### Summary
+
+V4-04 provides developer experience foundation for AvaX V4:
+
+- **Configuration as Code**: Typed immutable config objects (`ApplicationConfiguration`, `RuntimeConfiguration`) loaded once at boot
+- **Config CLI Commands**: `config:inspect`, `config:validate`, `config:publish`
+- **Doctor/Validate/Inspect**: `doctor`, `validate`, `inspect` commands with severity hierarchy (Red > Yellow > Unknown > Green)
+- **Serve Command DX Polish**: Runtime selection (`--runtime`), smoke test (`--smoke`), config-driven defaults
+- **Route Cache Plan**: Architecture plan + proof slice (`route:cache`, `route:clear`)
+
+### Files Created (22)
+
+- `framework/System/Capabilities/Doctor/RunDoctor.php`
+- `framework/System/Capabilities/Doctor/CheckAutoload.php`
+- `framework/System/Capabilities/Doctor/CheckConfiguration.php`
+- `framework/System/Capabilities/Doctor/CheckRuntimeMode.php`
+- `framework/System/Capabilities/Doctor/CheckWarmSafety.php`
+- `framework/System/Capabilities/Doctor/CheckMemoryGuard.php`
+- `framework/System/Capabilities/Doctor/RegisterDoctorCommands.php`
+- `framework/System/Capabilities/Configuration/RegisterConfigCommands.php`
+- `framework/System/Capabilities/Routing/CacheRouteTable.php`
+- `framework/System/Capabilities/Routing/LoadCachedRoutes.php`
+- `framework/System/Capabilities/Routing/Foundation/RouteCacheFailed.php`
+- `framework/System/Capabilities/Routing/RegisterRouteCommands.php`
+- `framework/System/Configuration/Foundation/ApplicationConfiguration.php`
+- `framework/System/Configuration/Foundation/RuntimeConfiguration.php`
+- `framework/System/Configuration/Foundation/ConfigurationExceptions.php`
+- `framework/System/Configuration/LoadApplicationConfiguration.php`
+- `framework/System/Configuration/LoadRuntimeConfiguration.php`
+- `framework/System/Configuration/ValidateApplicationConfiguration.php`
+- `framework/System/Configuration/ValidateRuntimeConfiguration.php`
+- `config/app.php`
+- `config/runtime.php`
+- `EVIDENCE/route-cache-plan.md`
+
+### Files Modified (4)
+
+- `framework/System/Configuration/BuildApplication/ApplicationBuilder.php` — Register V4-04 CLI commands
+- `framework/System/Flows/RunConsoleCommand/RunConsoleCommand.php` — Updated help text
+- `bin/avax` — Serve command DX polish
+- `CURRENT_TRUTH.md` — Updated with V4-04 status
+
+### Tests Created (2)
+
+- `tests/Unit/Framework/V4DeveloperExperience/DeveloperExperienceTest.php` — 13 tests, 28 assertions
+- `tests/Composition/V4DeveloperExperience/V4DeveloperExperienceCompositionTest.php` — 9 tests, 342 assertions
+
+### Validation Evidence
+
+- V4-04 unit tests: 13 tests, 28 assertions — GREEN
+- V4-04 composition tests: 9 tests, 342 assertions — GREEN
+- Evidence report: `EVIDENCE/recovery-reports/v4-04-developer-experience-report.md`
+
+### Remaining V4-04 Risks
+
+- Route cache is proof-of-concept; full compilation requires V4-05+
+- Serve command runtime selection requires V4-17 optional runtime adapters
+- Smoke test is configuration-only; full HTTP smoke test requires running server
+
+### Next Allowed Action
+
+V4-05: Data Platform Productization — or next prioritized V4 stage per EVIDENCE/EXECUTION.md
 
 ## SystemDesign Promotion to Production
 

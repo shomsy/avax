@@ -855,6 +855,14 @@ No V3 implementation before V1 Kernel Green and V2 platform baseline are proven.
 
 No V4 implementation before V1, V2, and V3 have sufficient proof according to current roadmap governance.
 
+V4-01 cannot start until V4-00 stage lock is GREEN.
+
+V4-02 cannot start until V4-01 is GREEN.
+
+V4-03 cannot start until V4-01 is GREEN.
+
+V4-17 (RoadRunner/Swoole/FrankenPHP) cannot start until V4-03 Warm Worker Safety is GREEN.
+
 Planning may continue.
 
 Architecture notes may continue.
@@ -1430,3 +1438,83 @@ Old code is evidence.
 Current governance is the target.
 
 Validation is the judge.
+
+---
+
+## 34. V4 Branch Policy
+
+V4 development follows a strict branch strategy to keep the stable baseline clean while V4 work proceeds.
+
+### 34.1 Branch Roles
+
+```text
+master = stable protected branch.
+         Holds the current clean baseline, including the official V4 plan.
+         Receives V4 only when V4 is production-ready.
+         No direct feature work.
+         No V4 implementation directly on master.
+
+main   = active V4 development / integration branch.
+         Must be updated by merging master.
+         V4 development happens on main through stage branches.
+```
+
+### 34.2 Branch Rules
+
+```text
+- master keeps the current clean baseline, including the official V4 plan.
+- main must be updated by merging master.
+- V4 development happens on main through stage branches.
+- No direct feature work on master.
+- No V4 implementation directly on master.
+- master receives V4 only when V4 is production-ready.
+- Every V4 stage branch starts from main.
+- Every merge into main must pass full validation.
+- Every merge into master must be a release-grade merge.
+```
+
+### 34.3 Feature Branch Naming
+
+```text
+v4/01-runtime-app-layer
+v4/02-reactphp-runtime
+v4/03-warm-worker-safety
+v4/04-developer-experience
+v4/05-data-platform-productization
+v4/06-storage-platform
+v4/07-database-muscle
+v4/08-queue-worker-runtime
+v4/09-reliability-engine
+v4/10-messaging-consistency
+v4/11-observability-telemetry
+v4/12-security-policy-runtime
+v4/13-system-design-runtime-kit
+v4/14-runtime-doctor-control-plane
+v4/15-reference-applications
+v4/16-benchmarks-production-proof
+v4/17-optional-runtime-adapters
+```
+
+### 34.4 Required Validation Before Merging Any V4 Branch into main
+
+```bash
+composer validate --no-check-publish
+composer dump-autoload -o
+composer test:full
+vendor/bin/phpstan analyse framework components tests labs/SystemDesignKit --memory-limit=1G
+php tooling/refactor/check-component-suite-structure.php
+php tooling/refactor/check-duplicate-owners.php
+php tooling/refactor/check-namespace-drift.php
+php tooling/refactor/check-public-surface.php
+php tooling/refactor/check-runtime-leaks.php
+php tooling/refactor/check-component-canonical-shape.php
+php tooling/refactor/check-advanced-pattern-folder-violations.php
+```
+
+### 34.5 Merge Rules
+
+```text
+V4 stage branch -> main: requires full validation GREEN.
+main -> master: release-grade merge only, after V4 production-ready proof.
+master -> main: merge master into main before starting any new V4 stage branch.
+```

@@ -350,9 +350,82 @@ extension or composer package is installed. PHPStan already ignores these (see `
 
 ## Next Allowed Actions
 
-1. V3 Implementation may begin (V3-01: Reference architecture schema, V3-02: Capacity engine)
-2. (Optional) Install missing vendor deps to eliminate optional runtime refs
-3. (Optional) Write V2 formal evidence report
+1. V4-01 Runtime App Layer implementation (after V4-00 stage lock GREEN)
+2. (Optional) Pokio evaluation for test acceleration
+3. (Optional) V4-02 ReactPHP dependency research
 
-Smallest next allowed action: V3-01 — Define capacity.yaml schema, scenarios.yaml schema, and architecture-tests.yaml
-schema with validators.
+Smallest next allowed action: V4-01 — Implement Runtime App Layer (Avax::create(), App API, route registration,
+controller invocation, response normalization).
+
+## V4 Stage Lock
+
+Date: 2026-05-09
+
+V4 Product Runtime & Enterprise Muscle — STAGE LOCKED
+
+V4-00 Integrity Lock & Stage Definition: COMPLETE (master plan written)
+V4-01 Runtime App Layer: PLANNED
+V4-02 Reactive HTTP Runtime (ReactPHP): PLANNED
+V4-03 Warm Worker Safety: PLANNED
+V4-04 Developer Experience: PLANNED
+V4-05 Data Platform Productization: PLANNED
+V4-06 Storage Platform: PLANNED
+V4-07 Database Muscle: PLANNED
+V4-08 Queue & Worker Runtime: PLANNED
+V4-09 Reliability Engine: PLANNED
+V4-10 Messaging & Consistency: PLANNED
+V4-11 Observability & Telemetry: PLANNED
+V4-12 Security & Policy Runtime: PLANNED
+V4-13 System Design Runtime Kit: PLANNED
+V4-14 Runtime Doctor & Control Plane: PLANNED
+V4-15 Reference Applications: PLANNED
+V4-16 Benchmarks & Production Proof: PLANNED
+V4-17 Optional Runtime Adapters: PLANNED (roadmap only, after V4-03)
+
+V4 master plan: `EVIDENCE/.PLANS/V4_PRODUCT_RUNTIME_AND_ENTERPRISE_MUSCLE.md`
+
+Implementation waits for stage gate review. Planning may continue.
+
+## Branch Policy
+
+Date: 2026-05-09
+
+```text
+master = stable protected branch (current clean baseline + official V4 plan).
+main   = active V4 development / integration branch.
+
+Rules:
+- master keeps the current clean baseline, including the official V4 plan.
+- main must be updated by merging master.
+- V4 development happens on main through stage branches.
+- No direct feature work on master.
+- No V4 implementation directly on master.
+- master receives V4 only when V4 is production-ready.
+- Every V4 stage branch starts from main.
+- Every merge into main must pass full validation.
+- Every merge into master must be a release-grade merge.
+
+Feature branch format:
+- v4/01-runtime-app-layer
+- v4/02-reactphp-runtime
+- v4/03-warm-worker-safety
+- etc.
+
+Required validation before merging any V4 branch into main:
+- composer validate --no-check-publish
+- composer dump-autoload -o
+- composer test:full
+- vendor/bin/phpstan analyse framework components tests labs/SystemDesignKit --memory-limit=1G
+- php tooling/refactor/check-component-suite-structure.php
+- php tooling/refactor/check-duplicate-owners.php
+- php tooling/refactor/check-namespace-drift.php
+- php tooling/refactor/check-public-surface.php
+- php tooling/refactor/check-runtime-leaks.php
+- php tooling/refactor/check-component-canonical-shape.php
+- php tooling/refactor/check-advanced-pattern-folder-violations.php
+```
+
+## Next Allowed Actions
+
+1. Merge master into main.
+2. Start V4-01 Runtime App Layer from main only after validation passes.

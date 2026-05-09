@@ -58,6 +58,8 @@ Implementation chaos is forbidden.
 
 V1 must be green before V2 or V3 implementation.
 
+V4 implementation must not begin before V1 Kernel Green, V2 platform baseline, and V3 SystemDesignKit are all GREEN.
+
 Do not implement GraphQL, integration ports, SystemDesign suite, background supervisor, transcoding gateway,
 recommendation gateway, or system-design simulations while any of these are RED:
 
@@ -631,3 +633,124 @@ Planning can be broad.
 Implementation must be narrow.
 
 No proof, no progress.
+
+---
+
+## 16. V4 Implementation Lock
+
+V4 Product Runtime & Enterprise Muscle — STAGE LOCKED
+
+V4-00 Integrity Lock & Stage Definition: COMPLETE
+V4-01 through V4-17: PLANNED
+
+V4 master plan: `EVIDENCE/.PLANS/V4_PRODUCT_RUNTIME_AND_ENTERPRISE_MUSCLE.md`
+
+V4 execution rules:
+
+```text
+V4-01 cannot start until V4-00 is GREEN.
+V4-02 cannot start until V4-01 is GREEN.
+V4-03 cannot start until V4-01 is GREEN.
+V4-17 (RoadRunner/Swoole/FrankenPHP) cannot start until V4-03 is GREEN.
+Each stage must pass: PHPUnit (0 skipped), PHPStan (clean), governance checks.
+No stage may be skipped.
+No stage may be combined unless explicitly allowed.
+Stage gate review required before each stage begins.
+```
+
+V4 North Star:
+
+```text
+Make AvaX usable as a real framework for building production-grade, system-design-grade applications.
+```
+
+V4 global acceptance: 30 criteria (see V4 master plan, section 24) + 8 composition proof requirements (section 28.8) +
+14 framework maturity gates (sections 27 + 28 + 29).
+
+Canonical source rule:
+V4_PRODUCT_RUNTIME_AND_ENTERPRISE_MUSCLE.md is the canonical V4 plan.
+v4-intelligence-governance-observability-plan.md is source material only (merged as section 29).
+No parallel V4 plans. All future V4 changes update the canonical file.
+
+---
+
+## 17. V4 Branch Policy
+
+V4 development follows a strict branch strategy.
+
+### 17.1 Branch Roles
+
+```text
+master = stable protected branch.
+         Holds the current clean baseline, including the official V4 plan.
+         Receives V4 only when V4 is production-ready.
+
+main   = active V4 development / integration branch.
+         Must be updated by merging master.
+         V4 development happens on main through stage branches.
+```
+
+### 17.2 Branch Rules
+
+```text
+- master keeps the current clean baseline, including the official V4 plan.
+- main must be updated by merging master.
+- V4 development happens on main through stage branches.
+- No direct feature work on master.
+- No V4 implementation directly on master.
+- master receives V4 only when V4 is production-ready.
+- Every V4 stage branch starts from main.
+- Every merge into main must pass full validation.
+- Every merge into master must be a release-grade merge.
+```
+
+### 17.3 Feature Branch Naming
+
+```text
+v4/01-runtime-app-layer
+v4/02-reactphp-runtime
+v4/03-warm-worker-safety
+v4/04-developer-experience
+v4/05-data-platform-productization
+v4/06-storage-platform
+v4/07-database-muscle
+v4/08-queue-worker-runtime
+v4/09-reliability-engine
+v4/10-messaging-consistency
+v4/11-observability-telemetry
+v4/12-security-policy-runtime
+v4/13-system-design-runtime-kit
+v4/14-runtime-doctor-control-plane
+v4/15-reference-applications
+v4/16-benchmarks-production-proof
+v4/17-optional-runtime-adapters
+```
+
+### 17.4 Required Validation Before Merging Any V4 Branch into main
+
+```bash
+composer validate --no-check-publish
+composer dump-autoload -o
+composer test:full
+vendor/bin/phpstan analyse framework components tests labs/SystemDesignKit --memory-limit=1G
+php tooling/refactor/check-component-suite-structure.php
+php tooling/refactor/check-duplicate-owners.php
+php tooling/refactor/check-namespace-drift.php
+php tooling/refactor/check-public-surface.php
+php tooling/refactor/check-runtime-leaks.php
+php tooling/refactor/check-component-canonical-shape.php
+php tooling/refactor/check-advanced-pattern-folder-violations.php
+```
+
+### 17.5 Merge Rules
+
+```text
+V4 stage branch -> main: requires full validation GREEN.
+main -> master: release-grade merge only, after V4 production-ready proof.
+master -> main: merge master into main before starting any new V4 stage branch.
+```
+
+### 17.6 Next Allowed Git Actions
+
+1. Merge master into main.
+2. Start V4-01 Runtime App Layer from main only after validation passes.

@@ -4,15 +4,24 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Concurrency\System\Flows\RunConcurrentTasks;
 
-use Avax\Components\Operations\Concurrency\System\Capabilities\RunInCurrentProcess\CurrentProcessTaskRuntime;
+use Avax\Components\Operations\Concurrency\System\Configuration\BuildConcurrencyRuntime;
+use Avax\Components\Operations\Concurrency\System\Configuration\ConcurrencyConfig;
+use Avax\Components\Operations\Concurrency\System\Configuration\TaskRuntimeInterface;
 use Avax\Components\Operations\Concurrency\System\Foundation\ConcurrentResult;
 use Closure;
 
 final readonly class RunConcurrentTasks
 {
+    private TaskRuntimeInterface $runtime;
+
     public function __construct(
-        private CurrentProcessTaskRuntime $runtime = new CurrentProcessTaskRuntime(),
-    ) {}
+        private BuildConcurrencyRuntime $builder = new BuildConcurrencyRuntime(),
+    )
+    {
+        $this->runtime = $this->builder->build(
+            config: ConcurrencyConfig::fromArray([]),
+        );
+    }
 
     /**
      * @param array<string|int, Closure(): mixed> $tasks

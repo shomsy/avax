@@ -1,0 +1,68 @@
+scenarios:
+  - name: redis-outage
+    type: failure
+    description: "Redis cache becomes completely unavailable during peak traffic."
+    steps:
+      - action: disable_cache
+        target: redis_primary
+      - action: route_all_reads
+        target: database
+    expectations:
+      - assertion: latency_p99_under_threshold
+        threshold: 500
+      - assertion: no_data_loss
+  - name: traffic-spike-5x
+    type: load
+    description: "Traffic spikes to 5x normal load due to viral content."
+    steps:
+      - action: multiply_traffic
+        parameter: 5
+    expectations:
+      - assertion: queue_depth_under_limit
+        threshold: 100000
+      - assertion: no_request_loss
+  - name: write-replication-lag
+    type: consistency
+    description: "Read replica has 5-second replication lag after write."
+    steps:
+      - action: set_replication_lag
+        parameter: 5000
+    expectations:
+      - assertion: read_your_writes_maintained
+      - assertion: stale_reads_within_budget
+  - name: kafka-broker-down
+    type: failure
+    description: "One Kafka broker goes down, partitions rebalance."
+    steps:
+      - action: disable_broker
+        target: kafka_broker_2
+    expectations:
+      - assertion: no_message_loss
+      - assertion: consumer_rebalance_under_30s
+  - name: cache-stampede
+    type: cache
+    description: "Cache keys expire simultaneously causing stampede."
+    steps:
+      - action: expire_cache_keys
+        parameter: all_hot_keys
+    expectations:
+      - assertion: stampede_protection_active
+      - assertion: database_connections_not_exhausted
+  - name: database-connection-exhaustion
+    type: degradation
+    description: "Database connection pool reaches 90% capacity."
+    steps:
+      - action: increase_concurrent_connections
+        parameter: 0.9
+    expectations:
+      - assertion: load_shedding_active
+      - assertion: circuit_breaker_opens_under_timeout
+  - name: partition-network-split
+    type: partitioning
+    description: "Network partition between app and cache layer."
+    steps:
+      - action: simulate_network_partition
+        target: app_to_cache
+    expectations:
+      - assertion: failover_to_database
+      - assertion: error_rate_under_slo_budget

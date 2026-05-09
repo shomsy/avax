@@ -61,6 +61,8 @@ final readonly class BuildConcurrencyRuntime
 
     public function getDefaultRuntime() : string
     {
-        return 'current_process';
+        return class_exists(Fiber::class)
+            ? 'fiber'
+            : 'current_process';
     }
 }

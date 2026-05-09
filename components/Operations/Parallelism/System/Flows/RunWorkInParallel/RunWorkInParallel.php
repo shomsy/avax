@@ -4,15 +4,21 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Parallelism\System\Flows\RunWorkInParallel;
 
-use Avax\Components\Operations\Parallelism\System\Capabilities\RunInCurrentProcess\CurrentProcessParallelRuntime;
+use Avax\Components\Operations\Parallelism\System\Configuration\BuildParallelRuntime;
+use Avax\Components\Operations\Parallelism\System\Configuration\ParallelRuntimeInterface;
 use Avax\Components\Operations\Parallelism\System\Foundation\ParallelResult;
 use Closure;
 
 final readonly class RunWorkInParallel
 {
+    private ParallelRuntimeInterface $runtime;
+
     public function __construct(
-        private CurrentProcessParallelRuntime $runtime = new CurrentProcessParallelRuntime(),
-    ) {}
+        private BuildParallelRuntime $builder = new BuildParallelRuntime(),
+    )
+    {
+        $this->runtime = $this->builder->build();
+    }
 
     /**
      * @param array<string|int, Closure(): mixed> $work

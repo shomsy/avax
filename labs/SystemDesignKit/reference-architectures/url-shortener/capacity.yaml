@@ -1,0 +1,94 @@
+system: url-shortener
+traffic:
+  requests_per_second: 100000
+  reads_per_second: 99000
+  writes_per_second: 1000
+  read_write_ratio: 99
+  peak_multiplier: 3
+storage:
+  growth_per_day: 1000000
+  average_record_size_bytes: 512
+  retention_days: 3650
+cache:
+  hit_ratio_target: 0.98
+  miss_penalty_ms: 25
+  stampede_protection_required: true
+queue:
+  max_depth: 100000
+  delay_budget_ms: 5000
+  consumer_throughput_per_second: 5000
+latency:
+  p50_ms: 10
+  p95_ms: 50
+  p99_ms: 100
+availability:
+  slo: 99.99
+  sla: 99.9
+  failure_budget_minutes_per_month: 4.38
+consistency:
+  write_path: strong
+  read_path: strong
+  analytics: eventual
+messaging:
+  messages:
+    - name: LinkCreated
+      type: event
+      idempotent: true
+      max_retries: 3
+      timeout_ms: 5000
+    - name: LinkClicked
+      type: event
+      idempotent: true
+      max_retries: 3
+      timeout_ms: 3000
+    - name: LinkDeleted
+      type: command
+      idempotent: true
+      max_retries: 5
+      timeout_ms: 5000
+  consumers:
+    analytics_consumer:
+      throughput_per_second: 10000
+      partition_count: 6
+      ordered: false
+    click_counter_consumer:
+      throughput_per_second: 5000
+      partition_count: 3
+      ordered: true
+  broker:
+    broker_type: kafka
+    partition_count: 12
+    replication_factor: 3
+    delivery_semantics: at_least_once
+  outbox:
+    enabled: true
+    poll_interval_ms: 100
+    max_batch_size: 100
+    retention_hours: 24
+  inbox:
+    enabled: true
+    dedup_window_hours: 24
+    dedup_key_strategy: message_id
+  dead_letter_queue:
+    enabled: true
+    max_retries: 5
+    reprocessing_window_hours: 72
+    alert_channel: ops-alerts
+  retry_policy:
+    max_retries: 3
+    backoff_strategy: exponential
+    initial_delay_ms: 100
+    max_delay_ms: 30000
+  ack_policy: manual
+  cqrs:
+    command:
+      aggregate: Link
+      uses_outbox: true
+      consistency_model: strong
+      command_timeout_ms: 5000
+    query:
+      aggregate: Link
+      read_consistency_model: strong
+      query_timeout_ms: 1000
+      uses_caching: true
+      cache_ttl_seconds: 300

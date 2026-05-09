@@ -7,6 +7,7 @@ namespace Avax\Labs\SystemDesignKit\System\PublicSurface;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Capacity\CapacityModel;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Consistency\ConsistencyModel;
 use Avax\Labs\SystemDesignKit\System\Capabilities\Messaging\MessagingModel;
+use Avax\Labs\SystemDesignKit\System\Capabilities\SchemaValidation\NativeYamlParser;
 use Avax\Labs\SystemDesignKit\System\Flows\DetectConsistencyRisk\DetectConsistencyRisk;
 use Avax\Labs\SystemDesignKit\System\Flows\DetectMessagingRisk\DetectMessagingRisk;
 use Avax\Labs\SystemDesignKit\System\Flows\EstimateCacheEffectiveness\EstimateCacheEffectiveness;
@@ -19,6 +20,9 @@ use Avax\Labs\SystemDesignKit\System\Flows\EstimateStorageGrowth\EstimateStorage
 use Avax\Labs\SystemDesignKit\System\Flows\EstimateTrafficLoad\EstimateTrafficLoad;
 use Avax\Labs\SystemDesignKit\System\Flows\ExplainConsistencyTradeoff\ExplainConsistencyTradeoff;
 use Avax\Labs\SystemDesignKit\System\Flows\ResolveConflict\ResolveConflict;
+use Avax\Labs\SystemDesignKit\System\Flows\RunArchitectureTests\RunArchitectureTests;
+use Avax\Labs\SystemDesignKit\System\Flows\RunFailureSimulations\RunFailureSimulations;
+use Avax\Labs\SystemDesignKit\System\Flows\RunScenarios\RunScenarios;
 use Avax\Labs\SystemDesignKit\System\Flows\ValidateCapacityModel\ValidateCapacityModel;
 use Avax\Labs\SystemDesignKit\System\Flows\ValidateConsistencyModel\ValidateConsistencyModel;
 use Avax\Labs\SystemDesignKit\System\Flows\ValidateMessagingModel\ValidateMessagingModel;
@@ -26,8 +30,8 @@ use Avax\Labs\SystemDesignKit\System\Flows\ValidateMessagingModel\ValidateMessag
 /**
  * SystemDesignKit — V3 Executable System Design Framework.
  *
- * Status: @experimental
- * Placement: labs/ (not promoted to components/ yet)
+ * Status: @public
+ * Placement: labs/ (V3 experimental promoted to public API)
  *
  * Purpose: model, validate, simulate, test, and explain
  * large application architectures.
@@ -329,5 +333,163 @@ final class SystemDesignKit
     public static function detectMessagingRisk(MessagingModel $model) : array
     {
         return (new DetectMessagingRisk())->execute($model);
+    }
+
+    /**
+     * Run scenarios from a scenarios.yaml file against a capacity model.
+     *
+     * @return array{
+     *     file: string,
+     *     total: int,
+     *     passed: int,
+     *     failed: int,
+     *     scenarios: list<array{
+     *         scenario: string,
+     *         type: string,
+     *         passed: bool,
+     *         results: list<array{assertion: string, passed: bool, detail: string}>,
+     *     }>,
+     * }
+     */
+    public static function runScenarios(string $scenariosPath, CapacityModel $model) : array
+    {
+        return (new RunScenarios())->execute($scenariosPath, $model);
+    }
+
+    /**
+     * Run architecture tests against capacity and messaging models.
+     *
+     * @return array{
+     *     file: string,
+     *     total: int,
+     *     passed: int,
+     *     failed: int,
+     *     critical_failures: int,
+     *     tests: list<array{
+     *         test: string,
+     *         severity: string,
+     *         passed: bool,
+     *         detail: string,
+     *     }>,
+     * }
+     */
+    public static function runArchitectureTests(
+        string          $testsPath,
+        CapacityModel   $capacity,
+        ?MessagingModel $messaging = null,
+    ) : array
+    {
+        return (new RunArchitectureTests())->execute($testsPath, $capacity, $messaging);
+    }
+
+    /**
+     * Run failure simulations against a capacity model.
+     *
+     * @param list<array{name: string, failure_mode: string, description: string, parameters: array<int|string,
+     *                                 mixed>}>|null $customFailures
+     *
+     * @return array{
+     *     total: int,
+     *     violations_detected: int,
+     *     clean: int,
+     *     simulations: list<array{
+     *         simulation: string,
+     *         failure_mode: string,
+     *         violation_detected: bool,
+     *         violation: ?array{
+     *             type: string,
+     *             severity: string,
+     *             description: string,
+     *             impact: string,
+     *             mitigation: string,
+     *         },
+     *     }>,
+     * }
+     */
+    public static function runFailureSimulations(CapacityModel $model, ?array $customFailures = null) : array
+    {
+        return (new RunFailureSimulations())->execute($model, $customFailures);
+    }
+
+    /**
+     * Validate a complete reference architecture.
+     *
+     * @param string $referenceArchDir Path to reference architecture directory containing capacity.yaml,
+     *                                 scenarios.yaml, architecture-tests.yaml
+     *
+     * @return array{
+     *     reference_architecture: string,
+     *     capacity_valid: bool,
+     *     scenarios_total: int,
+     *     scenarios_passed: int,
+     *     scenarios_failed: int,
+     *     arch_tests_total: int,
+     *     arch_tests_passed: int,
+     *     arch_tests_failed: int,
+     *     arch_tests_critical_failures: int,
+     *     failure_simulations_total: int,
+     *     failure_simulations_violations: int,
+     *     failure_simulations_clean: int,
+     *     overall_pass: bool,
+     * }
+     */
+    public static function validateReferenceArchitecture(string $referenceArchDir) : array
+    {
+        $capacityPath     = $referenceArchDir . '/capacity.yaml';
+        $scenariosPath    = $referenceArchDir . '/scenarios.yaml';
+        $architecturePath = $referenceArchDir . '/architecture-tests.yaml';
+
+        // Validate capacity
+        $capacityResult = self::validateCapacity($capacityPath);
+        $capacityValid  = $capacityResult['valid'];
+        $capacityModel  = $capacityResult['model'];
+
+        // Parse messaging if available
+        $yamlParser     = new NativeYamlParser();
+        $capacityConfig = $yamlParser->parseFile($capacityPath);
+        $messagingModel = isset($capacityConfig['messaging'])
+            ? MessagingModel::fromConfig($capacityConfig)
+            : null;
+
+        // Run scenarios
+        $scenariosResult = ['total' => 0, 'passed' => 0, 'failed' => 0, 'scenarios' => []];
+
+        if ($capacityModel !== null && file_exists($scenariosPath)) {
+            $scenariosResult = self::runScenarios($scenariosPath, $capacityModel);
+        }
+
+        // Run architecture tests
+        $archTestsResult = ['total' => 0, 'passed' => 0, 'failed' => 0, 'critical_failures' => 0, 'tests' => []];
+
+        if ($capacityModel !== null && file_exists($architecturePath)) {
+            $archTestsResult = self::runArchitectureTests($architecturePath, $capacityModel, $messagingModel);
+        }
+
+        // Run failure simulations
+        $failureResult = ['total' => 0, 'violations_detected' => 0, 'clean' => 0, 'simulations' => []];
+
+        if ($capacityModel !== null) {
+            $failureResult = self::runFailureSimulations($capacityModel);
+        }
+
+        $overallPass = $capacityValid
+            && $scenariosResult['failed'] === 0
+            && $archTestsResult['critical_failures'] === 0;
+
+        return [
+            'reference_architecture'         => $referenceArchDir,
+            'capacity_valid'                 => $capacityValid,
+            'scenarios_total'                => $scenariosResult['total'],
+            'scenarios_passed'               => $scenariosResult['passed'],
+            'scenarios_failed'               => $scenariosResult['failed'],
+            'arch_tests_total'               => $archTestsResult['total'],
+            'arch_tests_passed'              => $archTestsResult['passed'],
+            'arch_tests_failed'              => $archTestsResult['failed'],
+            'arch_tests_critical_failures'   => $archTestsResult['critical_failures'],
+            'failure_simulations_total'      => $failureResult['total'],
+            'failure_simulations_violations' => $failureResult['violations_detected'],
+            'failure_simulations_clean'      => $failureResult['clean'],
+            'overall_pass'                   => $overallPass,
+        ];
     }
 }

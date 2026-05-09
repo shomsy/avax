@@ -14,6 +14,17 @@ require_once dirname(path: __DIR__) . '/vendor/autoload.php';
 try {
     $command = $argv[1] ?? null;
 
+    if ($command === '--payload') {
+        $payload = $argv[2] ?? null;
+
+        if ($payload === null) {
+            fwrite(STDERR, "Error: --payload requires a base64-encoded argument\n");
+            exit(1);
+        }
+
+        exit(runWorkerPayload($payload));
+    }
+
     if ($command === 'serve') {
         $options = array_slice($argv, 2);
         $config  = parseServeOptions($options);
@@ -103,6 +114,48 @@ function runServeCommand(array $config) : RuntimeResult
     }
 
     return RuntimeResult::fromConsoleOutput("Server stopped", 0);
+}
+
+function runWorkerPayload(string $base64Payload) : int
+{
+    try {
+        $decoded = base64_decode($base64Payload, true);
+        $data    = json_decode($decoded, true, 512, JSON_THROW_ON_ERROR);
+
+        if (! is_array($data) || ! isset($data['action'], $data['payload'])) {
+            fwrite(STDERR, "Error: Invalid payload structure\n");
+
+            return 1;
+        }
+
+        $closure = @unserialize($data['payload'], ['allowed_classes' => true]);
+
+        if (! $closure instanceof Closure) {
+            fwrite(STDERR, "Error: Payload did not deserialize to a closure\n");
+
+            return 1;
+        }
+
+        $result = $closure();
+        $output = json_encode([
+                                  'name' => $data['action'],
+                                                                                                 'value' => $result,
+                                                                                                                               'success' => true,
+                              ], JSON_THROW_ON_ERROR);
+        echo $output . "\n";
+
+        return 0;
+    } catch (Throwable $e) {
+        $output = json_encode([
+                                  'name' => 'worker',
+                                                                                                 'error' => $e->getMessage(),
+                                                                                                                               'success' => false,
+                                  'code' => $e->getCode(),
+                              ], JSON_THROW_ON_ERROR);
+        echo $output . "\n";
+
+        return 1;
+    }
 }
 
 function showServeHelp() : void

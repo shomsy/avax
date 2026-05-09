@@ -1,0 +1,86 @@
+scenarios:
+  - name: payment-gateway-timeout
+    type: failure
+    description: "External payment gateway becomes unreachable during checkout."
+    steps:
+      - action: disable_external_service
+        target: payment_gateway
+      - action: set_timeout_ms
+        parameter: 15000
+    expectations:
+      - assertion: order_not_duplicated
+      - assertion: inventory_not_reserved_for_failed_payment
+      - assertion: user_receives_clear_error
+  - name: black-friday-traffic
+    type: load
+    description: "Black Friday traffic spike to 10x normal load."
+    steps:
+      - action: multiply_traffic
+        parameter: 10
+    expectations:
+      - assertion: queue_depth_under_limit
+        threshold: 500000
+      - assertion: checkout_latency_within_sla
+      - assertion: no_inventory_over_reservation
+  - name: inventory-race-condition
+    type: consistency
+    description: "Two customers attempt to purchase last item simultaneously."
+    steps:
+      - action: concurrent_write
+        parameter: 2
+        target: last_inventory_item
+    expectations:
+      - assertion: only_one_order_succeeds
+      - assertion: no_negative_inventory
+      - assertion: consistent_read_after_write
+  - name: message-ordering-violation
+    type: messaging
+    description: "OrderConfirmed arrives before OrderPlaced due to partition rebalance."
+    steps:
+      - action: reorder_messages
+        target: OrderPlaced,OrderConfirmed
+    expectations:
+      - assertion: outbox_preserves_order
+      - assertion: idempotency_handles_duplicate
+  - name: database-primary-failover
+    type: failure
+    description: "Primary database node fails, automatic failover to replica."
+    steps:
+      - action: disable_database_primary
+      - action: trigger_failover
+    expectations:
+      - assertion: failover_under_30s
+      - assertion: no_committed_data_loss
+      - assertion: replication_lag_within_budget
+  - name: cache-warm-after-deploy
+    type: cache
+    description: "Cache cold after deployment, all reads hit database."
+    steps:
+      - action: clear_all_cache
+      - action: sustain_traffic_for_seconds
+        parameter: 60
+    expectations:
+      - assertion: database_connections_not_exhausted
+      - assertion: p99_latency_within_sla
+  - name: dead-letter-queue-flood
+    type: degradation
+    description: "DLQ fills up due to persistent payment processing bug."
+    steps:
+      - action: inject_permanent_failure
+        target: payment_processing
+      - action: wait_for_dlq_threshold
+        parameter: 0.8
+    expectations:
+      - assertion: dlq_alert_triggered
+      - assertion: circuit_breaker_opens
+      - assertion: graceful_degradation_enabled
+  - name: partition-between-services
+    type: partitioning
+    description: "Network partition between order service and inventory service."
+    steps:
+      - action: simulate_network_partition
+        target: order_to_inventory
+    expectations:
+      - assertion: orders_queue_locally
+      - assertion: inventory_not_over_committed
+      - assertion: partition_resolves_or_circuit_opens

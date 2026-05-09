@@ -103,10 +103,9 @@ tests/Unit/Framework/V4Runtime/ReactRuntimeAndWarmSafetyTest.php: 20 tests, 46 a
 
 ## Remaining Risks
 
-1. 30 pre-existing test failures in full suite (not caused by V4-03)
-2. V4-17 (RoadRunner/Swoole/FrankenPHP adapters) remains blocked until full V4-03 GREEN
-3. Real process restart based on RequestWorkerRecycle decisions is V4-17 scope
-4. MemoryGuard soft/hard thresholds use defaults — production tuning needed per deployment
+1. V4-17 (RoadRunner/Swoole/FrankenPHP adapters) remains blocked until full V4-03 GREEN
+2. Real process restart based on RequestWorkerRecycle decisions is V4-17 scope
+3. MemoryGuard soft/hard thresholds use defaults — production tuning needed per deployment
 
 ## Next Allowed Action
 

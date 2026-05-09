@@ -649,10 +649,11 @@ V4-04 through V4-17: PLANNED
 V4-03 validation evidence (2026-05-09):
 - PHPUnit V4-03: 44 tests, 104 assertions — GREEN
 - PHPUnit V4-02/03 baseline: 20 tests, 46 assertions — GREEN
+- Full suite: 1528 tests, 5504 assertions, 0 failures, 0 errors, 0 skipped
 - Total new: 64 warm worker safety tests
 - 0 skipped tests
-- PHPStan: pending full validation
-- Architecture checks: pending full validation
+- PHPStan: 0 errors (framework, components, tests, labs/SystemDesignKit)
+- Architecture checks: 7/7 PASS
 - Route cache: NOT implemented, planned for V4-04
 
 V4 master plan: `EVIDENCE/.PLANS/V4_PRODUCT_RUNTIME_AND_ENTERPRISE_MUSCLE.md`

@@ -153,7 +153,6 @@ $app->run();
 
 ### Remaining V4-01 Risks
 
-- 30 pre-existing test failures (golden path, integration, parallelism) — not caused by V4-01
 - Full DI Container integration deferred to later V4 stages
 - SecureRequest autowiring not yet tested through V4 App API (existing SecureRequest component tests cover it)
 - No middleware pipeline yet (App::use() registers closures but middleware execution not implemented)

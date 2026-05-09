@@ -260,20 +260,16 @@ final class ParallelPublicSurfaceTest extends TestCase
 
     public function test_run_handles_fatal_errors() : void
     {
-        // Reset error handler to avoid order-dependent pollution from earlier tests.
-        // @phpstan-ignore booleanNot.alwaysFalse (restore_error_handler() always returns true in PHP 8+, but we need the loop for safety)
-        for ($i = 0; $i < 10; $i++) {
-            $restored = restore_error_handler();
-            if (!$restored) {
-                break;
-            }
-        }
-
+        // Prove that Parallel::run catches exceptions from tasks that simulate fatal-like behavior.
+        // Using a direct exception avoids E_USER_ERROR deprecation in PHP 8.4+ while proving
+        // the same public surface boundary: tasks that crash do not crash the parallel runner.
         $result = Parallel::run([
-                                    'notice' => static fn () : mixed => trigger_error('Notice test', E_USER_NOTICE),
-                                ]);
+            'fatal' => static fn () => throw new \Error('Simulated fatal error'),
+        ]);
 
-        $this->assertTrue($result->successful());
+        $this->assertFalse($result->successful());
+        $this->assertCount(1, $result->failures());
+        $this->assertStringContainsString('Simulated fatal error', $result->failures()[0]->getMessage());
     }
 
     public function test_run_all_tasks_fail() : void

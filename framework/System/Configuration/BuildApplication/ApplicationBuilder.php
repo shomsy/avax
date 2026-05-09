@@ -39,7 +39,7 @@ final class ApplicationBuilder
         private Clock $clock = new SystemClock(),
         private string $runtimeName = 'avax',
     ) {
-        $this->registerConsoleCommand(
+        $this->registerConsoleCommandDirectly(
             name   : 'runtime:doctor',
             command: static function (array $args): string {
                 $workerMode = in_array('--worker', $args, true);
@@ -50,30 +50,38 @@ final class ApplicationBuilder
             },
         );
 
-        $this->registerV4DxCommands();
+        $this->registerV4DxCommandsDirectly();
     }
 
     /**
-     * Register V4-04 developer experience commands (doctor, validate, inspect, config:*).
+     * Register a console command directly on this instance (constructor-only).
      */
-    private function registerV4DxCommands(): void
+    private function registerConsoleCommandDirectly(string $name, callable $command): void
+    {
+        $this->consoleCommands[$name] = Closure::fromCallable($command);
+    }
+
+    /**
+     * Register V4-04 developer experience commands directly on this instance (constructor-only).
+     */
+    private function registerV4DxCommandsDirectly(): void
     {
         $doctorCommands = (new RegisterDoctorCommands())();
 
         foreach ($doctorCommands as $name => $command) {
-            $this->registerConsoleCommand(name: $name, command: $command);
+            $this->registerConsoleCommandDirectly(name: $name, command: $command);
         }
 
         $configCommands = (new RegisterConfigCommands())();
 
         foreach ($configCommands as $name => $command) {
-            $this->registerConsoleCommand(name: $name, command: $command);
+            $this->registerConsoleCommandDirectly(name: $name, command: $command);
         }
 
         $routeCommands = (new RegisterRouteCommands())();
 
         foreach ($routeCommands as $name => $command) {
-            $this->registerConsoleCommand(name: $name, command: $command);
+            $this->registerConsoleCommandDirectly(name: $name, command: $command);
         }
     }
 

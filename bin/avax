@@ -44,7 +44,7 @@ try {
     $cliRuntime = new CliRuntime(consoleKernel: $application->console());
     $result     = $cliRuntime->run(argv: $argv);
 
-    fwrite(stream: STDOUT, data: $cliRuntime->render(result: $result));
+    fwrite(stream: STDOUT, data: $cliRuntime->render(runtimeResult: $result));
 
     exit($result->exitCode());
 } catch (Throwable $e) {

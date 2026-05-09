@@ -638,10 +638,11 @@ No proof, no progress.
 
 ## 16. V4 Implementation Lock
 
-V4 Product Runtime & Enterprise Muscle — STAGE LOCKED
+V4 Product Runtime & Enterprise Muscle — IN PROGRESS
 
 V4-00 Integrity Lock & Stage Definition: COMPLETE
-V4-01 through V4-17: PLANNED
+V4-01 Runtime App Layer: COMPLETE / GREEN (main branch)
+V4-02 through V4-17: PLANNED
 
 V4 master plan: `EVIDENCE/.PLANS/V4_PRODUCT_RUNTIME_AND_ENTERPRISE_MUSCLE.md`
 
@@ -752,5 +753,5 @@ master -> main: merge master into main before starting any new V4 stage branch.
 
 ### 17.6 Next Allowed Git Actions
 
-1. Merge master into main.
-2. Start V4-01 Runtime App Layer from main only after validation passes.
+1. Commit V4-01 implementation on main.
+2. Start V4-02 from main after V4-01 is committed.

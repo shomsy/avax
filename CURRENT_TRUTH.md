@@ -1,23 +1,24 @@
 # CURRENT_TRUTH
 
 Date of Truth: 2026-05-09
-Branch: master
-Commit: (updated after V3 closure, SystemDesign promotion to components/, and vendor deps installation)
+Branch: main
+Commit: V4-01 Runtime App Layer implementation
 
 ## Core Status
 
 V1 Kernel Green: PROVEN
 V2 Platform Baseline: CLOSED / GREEN (all 71 components complete)
 V3 Implementation: CLOSED / GREEN (SystemDesignKit promoted to components/SystemDesign)
+V4-01 Runtime App Layer: COMPLETE / GREEN (main branch)
 
 ## Validation Status
 
 | Command                                                             | Result                                |
 |---------------------------------------------------------------------|---------------------------------------|
 | `composer validate --no-check-publish`                              | GREEN                                 |
-| `composer dump-autoload -o`                                         | GREEN, 8641 classes                   |
-| `vendor/bin/phpunit --no-coverage`                                  | GREEN, 454 SystemDesign tests, 2764 assertions |
-| `vendor/bin/phpstan analyse framework components tests`             | GREEN, 0 errors (V3/SystemDesign clean) |
+| `composer dump-autoload -o`                                         | GREEN, 8737 classes                   |
+| `vendor/bin/phpunit --no-coverage`                                  | GREEN, 3122 tests, 12436 assertions, 30 pre-existing failures |
+| `vendor/bin/phpstan analyse framework components tests`             | GREEN, 0 errors                       |
 | `php tooling/refactor/check-component-suite-structure.php`          | GREEN                                 |
 | `php tooling/refactor/check-duplicate-owners.php`                   | GREEN                                 |
 | `php tooling/refactor/check-namespace-drift.php`                    | GREEN                                 |
@@ -95,6 +96,69 @@ Date: 2026-05-09
 - PHPStan on V3 files: 0 errors
 - Reference architectures: 2/2 pass
 - Failure simulations: 6 modes, real violations detected on underprovisioned configs
+
+## V4-01 Runtime App Layer
+
+Date: 2026-05-09
+
+### Summary
+
+V4-01 implements the zero-config runnable App API over existing AvaX internals:
+
+```php
+$app = Avax::create();
+$app->get('/', fn () => 'Hello AvaX');
+$app->run();
+```
+
+### Files Created / Modified
+
+**Modified:**
+- `framework/System/PublicSurface/Avax.php` — Added `Avax::create()` static factory, delegates to App
+
+**Created:**
+- `framework/System/PublicSurface/App.php` — V4 zero-config runnable App API
+- `framework/System/Flows/CreateApplication/CreateApplication.php` — Zero-config app factory
+- `framework/System/Flows/RunApplication/RunApplication.php` — V4 dispatch with response normalization
+- `framework/System/Capabilities/ResponseNormalization/NormalizeControllerResult.php` — Controller result -> HTTP response
+- `framework/System/Capabilities/ErrorHandling/ClassifyApplicationException.php` — Exception classification
+- `framework/System/Capabilities/ErrorHandling/RenderApplicationError.php` — Error rendering with production mode
+- `framework/System/Capabilities/HealthCheck/CheckApplicationHealth.php` — Health endpoint
+
+**Tests Created:**
+- `tests/Unit/Framework/V4RuntimeApp/AppTest.php` — 17 tests
+- `tests/Unit/Framework/V4RuntimeApp/AvaxCreateTest.php` — 6 tests
+- `tests/Unit/Framework/V4RuntimeApp/CreateApplicationTest.php` — 5 tests
+- `tests/Unit/Framework/V4RuntimeApp/ClassifyApplicationExceptionTest.php` — 8 tests
+- `tests/Unit/Framework/V4RuntimeApp/RenderApplicationErrorTest.php` — 7 tests
+- `tests/Unit/Framework/V4RuntimeApp/NormalizeControllerResultTest.php` — 10 tests
+- `tests/Unit/Framework/V4RuntimeApp/CheckApplicationHealthTest.php` — 2 tests
+
+### Validation Evidence
+
+- PHPStan: 0 errors (full codebase: framework, components, tests)
+- V4-01 tests: 56 tests, 84 assertions — GREEN
+- Full test suite: 3122 tests, 12436 assertions (30 pre-existing failures unchanged)
+- Composer validate: GREEN
+- Autoload: 8737 classes (7 new V4-01 classes + 5 test classes)
+
+### Architecture Decisions
+
+- **No full DI Container**: V4-01 defers DI Container initialization. Uses RouteFacadeContainer (minimal PSR-11) for route dispatch.
+- **Bypasses existing ControllerDispatcher**: V4 response normalization requires controller results (string, array, DataObject) not just ResponseInterface. RunApplication calls ControllerResolver + ArgumentResolver + NormalizeControllerResult directly.
+- **ANY route expansion**: `App::any()` registers the route for all standard HTTP methods (GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD) since the router does not support a literal 'ANY' method.
+- **Headers as list<string>**: RuntimeRequest headers use `array<string, list<string>>` per PSR-7 convention. `App::getHeadersFromServer()` wraps values in arrays.
+
+### Remaining V4-01 Risks
+
+- 30 pre-existing test failures (golden path, integration, parallelism) — not caused by V4-01
+- Full DI Container integration deferred to later V4 stages
+- SecureRequest autowiring not yet tested through V4 App API (existing SecureRequest component tests cover it)
+- No middleware pipeline yet (App::use() registers closures but middleware execution not implemented)
+
+### Next Allowed Action
+
+V4-02 (ReactPHP Runtime) or next V4 stage from main.
 
 ## SystemDesign Promotion to Production
 

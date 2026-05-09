@@ -85,7 +85,7 @@ final class ArchitectureTest extends TestCase
         self::assertDirectoryDoesNotExist($this->basePath . '/Foundation/Foundation', 'No duplicate Foundation directory.');
     }
 
-    // ── No placeholder structures ───────────────────────────────────────
+    // ── No placeholder structure directories ────────────────────────────
 
     /**
      * @dataProvider placeholderStructureProvider
@@ -101,7 +101,7 @@ final class ArchitectureTest extends TestCase
 
         foreach ($directories as $dir) {
             $path = $this->basePath . '/' . $dir . '/' . $structureName;
-            self::assertDirectoryDoesNotExist($path, "Placeholder {$structureName} must not exist.");
+            self::assertDirectoryDoesNotExist($path, "Placeholder directory {$structureName} must not exist.");
         }
     }
 
@@ -161,21 +161,20 @@ final class ArchitectureTest extends TestCase
     public function test_public_surface_has_structure_facades(): void
     {
         $ps = $this->basePath . '/../PublicSurface';
+        self::assertFileExists($ps . '/BloomFilter.php');
+        self::assertFileExists($ps . '/Deque.php');
+        self::assertFileExists($ps . '/Graph.php');
+        self::assertFileExists($ps . '/Heap.php');
         self::assertFileExists($ps . '/Map.php');
+        self::assertFileExists($ps . '/Matrix.php');
         self::assertFileExists($ps . '/Set.php');
         self::assertFileExists($ps . '/Sequence.php');
+        self::assertFileExists($ps . '/Stack.php');
+        self::assertFileExists($ps . '/Queue.php');
+        self::assertFileExists($ps . '/PriorityQueue.php');
         self::assertFileExists($ps . '/OrderedMap.php');
         self::assertFileExists($ps . '/OrderedSet.php');
         self::assertFileExists($ps . '/MultiMap.php');
-    }
-
-    public function test_public_surface_has_no_unimplemented_facades(): void
-    {
-        $ps = $this->basePath . '/../PublicSurface';
-        self::assertFileDoesNotExist($ps . '/Queue.php');
-        self::assertFileDoesNotExist($ps . '/Stack.php');
-        self::assertFileDoesNotExist($ps . '/Deque.php');
-        self::assertFileDoesNotExist($ps . '/PriorityQueue.php');
     }
 
     // ── Semantic folder naming ──────────────────────────────────────────

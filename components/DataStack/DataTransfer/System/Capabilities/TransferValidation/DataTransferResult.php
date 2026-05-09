@@ -51,7 +51,7 @@ final readonly class DataTransferResult
      */
     public function violations() : DataTransferViolations
     {
-        return $this->dataTransferFailure?->violations ?? DataTransferViolations::empty();
+        return $this->dataTransferFailure->violations ?? DataTransferViolations::empty();
     }
 
     /**

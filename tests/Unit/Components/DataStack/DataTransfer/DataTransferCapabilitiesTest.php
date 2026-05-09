@@ -20,7 +20,9 @@ use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\
 use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\RegexPattern;
 use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\Required;
 use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\StringType;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\TransferValidation\DataTransferException;
 use Avax\Components\DataStack\DataTransfer\System\Capabilities\TransferValidation\DataTransferFailure;
+use Avax\Components\DataStack\DataTransfer\System\PublicSurface\DataObject;
 use Avax\Components\DataStack\DataTransfer\System\PublicSurface\DataTransfer;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -322,6 +324,135 @@ final class DataTransferCapabilitiesTest extends TestCase
         $dto = DataTransfer::create(BetweenDto::class, ['length' => 'hello']);
         $this->assertSame('hello', $dto->length);
     }
+
+    // -- No-constructor DataObject style tests --
+
+    public function test_no_constructor_data_object_hydrates() : void
+    {
+        $dto = DataTransfer::create(NoConstructorDto::class, ['name' => 'AvaX', 'count' => 42]);
+
+        $this->assertSame('AvaX', $dto->name);
+        $this->assertSame(42, $dto->count);
+    }
+
+    public function test_no_constructor_required_missing_creates_violation() : void
+    {
+        $this->expectException(DataTransferFailure::class);
+        DataTransfer::create(NoConstructorDto::class, ['count' => 1]);
+    }
+
+    public function test_no_constructor_invalid_type_creates_violation() : void
+    {
+        try {
+            DataTransfer::create(NoConstructorDto::class, ['name' => 12345, 'count' => 1]);
+            $this->fail('Expected DataTransferFailure');
+        } catch (DataTransferFailure $e) {
+            $this->assertNotNull($e->violations);
+            $this->assertGreaterThanOrEqual(1, $e->violations->count());
+        }
+    }
+
+    // -- DataTransferResult DX tests --
+
+    public function test_try_create_success_has_object() : void
+    {
+        $result = DataTransfer::tryCreate(SimpleDto::class, ['name' => 'AvaX', 'version' => 1]);
+
+        $this->assertTrue($result->isSuccess());
+        $this->assertFalse($result->isFailure());
+        $this->assertFalse($result->hasViolations());
+        $this->assertInstanceOf(SimpleDto::class, $result->object());
+        $this->assertSame('AvaX', $result->object()->name);
+    }
+
+    public function test_try_create_failure_has_violations() : void
+    {
+        $result = DataTransfer::tryCreate(SimpleDto::class, []);
+
+        $this->assertFalse($result->isSuccess());
+        $this->assertTrue($result->isFailure());
+        $this->assertTrue($result->hasViolations());
+        $this->assertGreaterThan(0, $result->violations()->count());
+    }
+
+    public function test_violations_returns_typed_violations() : void
+    {
+        $result = DataTransfer::tryCreate(EmailDto::class, ['email' => 'not-email']);
+
+        $this->assertTrue($result->hasViolations());
+        $violations = iterator_to_array($result->violations());
+        $this->assertNotEmpty($violations);
+        $this->assertSame('email', $violations[0]->field);
+    }
+
+    public function test_object_on_failure_throws() : void
+    {
+        $result = DataTransfer::tryCreate(SimpleDto::class, []);
+
+        $this->expectException(DataTransferException::class);
+        $result->object();
+    }
+
+    public function test_failure_reason_works() : void
+    {
+        $result = DataTransfer::tryCreate(SimpleDto::class, []);
+
+        $reason = $result->failureReason();
+        $this->assertInstanceOf(DataTransferFailure::class, $reason);
+    }
+
+    // -- FloatType / BooleanType / ArrayType tests --
+
+    public function test_float_type_validates() : void
+    {
+        $dto = DataTransfer::create(FloatDto::class, ['price' => 3.14]);
+        $this->assertSame(3.14, $dto->price);
+    }
+
+    public function test_boolean_type_validates() : void
+    {
+        $dto = DataTransfer::create(BooleanDto::class, ['active' => true]);
+        $this->assertTrue($dto->active);
+    }
+
+    public function test_array_type_validates() : void
+    {
+        $dto = DataTransfer::create(ArrayDto::class, ['tags' => ['a', 'b']]);
+        $this->assertSame(['a', 'b'], $dto->tags);
+    }
+
+    // -- Create from stdClass test --
+
+    public function test_create_from_stdclass() : void
+    {
+        $input       = new stdClass();
+        $input->name = 'AvaX';
+        $input->data = ['v' => 1];
+
+        $dto = DataTransfer::create(StdClassInputDto::class, $input);
+        $this->assertSame('AvaX', $dto->name);
+    }
+
+    // -- Serialize with Hidden fields --
+
+    public function test_hidden_field_excluded_from_json() : void
+    {
+        $dto  = DataTransfer::create(HiddenDto::class, ['name' => 'public', 'secret' => 'hidden']);
+        $json = DataTransfer::toJson($dto);
+        $data = json_decode($json, true);
+
+        $this->assertArrayNotHasKey('secret', $data);
+        $this->assertArrayHasKey('name', $data);
+    }
+
+    public function test_hidden_field_excluded_from_stdclass() : void
+    {
+        $dto = DataTransfer::create(HiddenDto::class, ['name' => 'public', 'secret' => 'hidden']);
+        $std = DataTransfer::toStdClass($dto);
+
+        $this->assertObjectNotHasProperty('secret', $std);
+        $this->assertObjectHasProperty('name', $std);
+    }
 }
 
 // -- Test DTOs --
@@ -486,5 +617,57 @@ final class BetweenDto
         #[StringType]
         #[Between(3, 10)]
         public string $length,
+    ) {}
+}
+
+// -- No-constructor DTO (primary AvaX style) --
+
+final class NoConstructorDto extends DataObject
+{
+    #[Required]
+    #[StringType]
+    public string $name;
+
+    #[Required]
+    #[IntegerType]
+    public int $count;
+}
+
+// -- FloatType / BooleanType / ArrayType --
+
+final class FloatDto
+{
+    public function __construct(
+        #[Required]
+        public float $price,
+    ) {}
+}
+
+final class BooleanDto
+{
+    public function __construct(
+        #[Required]
+        public bool $active,
+    ) {}
+}
+
+final class ArrayDto
+{
+    /**
+     * @param list<string> $tags
+     */
+    public function __construct(
+        #[Required]
+        public array $tags,
+    ) {}
+}
+
+// -- stdClass input test --
+
+final class StdClassInputDto
+{
+    public function __construct(
+        #[Required]
+        public string $name,
     ) {}
 }

@@ -7,6 +7,9 @@ namespace Avax\Components\HTTP\System\Flows\HandleRequest;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\Flows\CreateJsonResponse\CreateJsonResponse;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
+use Avax\Components\HTTP\SecureRequest\System\Foundation\Failure\SecureRequestAuthorizationFailed;
+use Avax\Components\HTTP\SecureRequest\System\Foundation\Failure\SecureRequestResolutionFailed;
+use Avax\Components\HTTP\SecureRequest\System\Foundation\Failure\SecureRequestValidationFailed;
 use Exception;
 
 final readonly class CatchUnhandledExceptions
@@ -18,11 +21,44 @@ final readonly class CatchUnhandledExceptions
 
     public function handle(Exception $exception, RequestInterface $request) : ResponseInterface
     {
+        // SecureRequest validation failure -> 422 with field errors
+        if ($exception instanceof SecureRequestValidationFailed) {
+            $errors = [];
+            if ($exception->violations !== null) {
+                foreach ($exception->violations as $violation) {
+                    $errors[$violation->field][] = $violation->message;
+                }
+            }
+
+            return $this->createJsonResponse->execute([
+                                                          'message' => 'The given data was invalid.',
+                                                          'errors'  => $errors,
+                                                      ], 422);
+        }
+
+        // SecureRequest authorization failure -> 403
+        if ($exception instanceof SecureRequestAuthorizationFailed) {
+            return $this->createJsonResponse->execute([
+                                                          'message' => 'This action is not authorized.',
+                                                      ], 403);
+        }
+
+        // SecureRequest resolution failure -> 500
+        if ($exception instanceof SecureRequestResolutionFailed) {
+            $this->reportExceptionToLogger->report($exception, $request);
+
+            return $this->createJsonResponse->execute([
+                                                          'error' => 'Internal Server Error',
+                                                                                                                      'message' => $exception->getMessage(),
+                                                      ], 500);
+        }
+
+        // Generic unhandled exception -> 500
         $this->reportExceptionToLogger->report($exception, $request);
 
         return $this->createJsonResponse->execute([
-                                                      'error' => 'Internal Server Error',
-                                                                                 'message' => $exception->getMessage(),
+                                                      'error'   => 'Internal Server Error',
+                                                      'message' => $exception->getMessage(),
                                                   ], 500);
     }
 }

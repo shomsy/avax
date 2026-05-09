@@ -4,18 +4,29 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Filesystem\System\Flows\CreateDirectory;
 
-use Avax\Components\Application\Filesystem\System\Flows\Directories\DirectoryCreateFailed;
-use Avax\Components\Application\Filesystem\System\PublicSurface\Storage;
-use Throwable;
+use Avax\Components\Application\Filesystem\System\Foundation\Failure\FilesystemOperationFailed;
 
-final class CreateDirectory
+final readonly class CreateDirectory
 {
-    public static function execute(string $path, int $permissions = 0o755): bool
+    public function execute(string $path, int $permissions = 0o755) : bool
     {
-        try {
-            return Storage::makeDirectory($path, $permissions);
-        } catch (Throwable $throwable) {
-            throw new DirectoryCreateFailed(path: $path, code: $throwable->getCode(), previous: $throwable);
+        $cleanPath = $this->sanitizePath($path);
+
+        if (is_dir($cleanPath)) {
+            return true;
         }
+
+        $result = mkdir($cleanPath, $permissions, false);
+
+        if (! $result && ! is_dir($cleanPath)) {
+            throw new FilesystemOperationFailed('create directory', $path);
+        }
+
+        return true;
+    }
+
+    private function sanitizePath(string $path) : string
+    {
+        return str_replace(["\0", "\n", "\r"], '', $path);
     }
 }

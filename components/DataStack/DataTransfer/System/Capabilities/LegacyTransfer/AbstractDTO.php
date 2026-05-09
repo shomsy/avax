@@ -9,13 +9,15 @@ use ReflectionClass;
 use ReflectionProperty;
 
 /**
- * AbstractDTO - Base class for all Data Transfer Objects.
+ * AbstractDTO — legacy base class for constructor-hydrated DTOs.
+ *
+ * Compatibility-only. New code should extend DataObject directly
+ * and use public typed properties + PHP attributes + no constructor.
  *
  * Migrated from DataFoundation\ObjectHandling\DTO\AbstractDTO.
- * Provides constructor-based hydration from array input and validation
- * via Validation component attributes.
+ * Provides constructor-based hydration from array input.
  */
-abstract class AbstractDTO implements DataObject
+abstract class AbstractDTO extends DataObject
 {
     /**
      * @param array<string, mixed> $data
@@ -36,6 +38,9 @@ abstract class AbstractDTO implements DataObject
 
     /**
      * Convert DTO to associative array.
+     *
+     * Overrides DataObject::toArray() with legacy simple reflection behavior.
+     * New code should use DataObject::toArray() which delegates to DataTransfer.
      *
      * @return array<string, mixed>
      */

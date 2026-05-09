@@ -4,18 +4,29 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Filesystem\System\Flows\DeleteFile;
 
-use Avax\Components\Application\Filesystem\System\Flows\Files\FileDeleteFailed;
-use Avax\Components\Application\Filesystem\System\PublicSurface\Storage;
-use Throwable;
+use RuntimeException;
 
-final class DeleteFile
+final readonly class DeleteFile
 {
-    public static function execute(string $path): bool
+    public function execute(string $path) : bool
     {
-        try {
-            return Storage::delete($path);
-        } catch (Throwable $throwable) {
-            throw new FileDeleteFailed(path: $path, code: $throwable->getCode(), previous: $throwable);
+        $cleanPath = $this->sanitizePath($path);
+
+        if (! file_exists($cleanPath)) {
+            return true;
         }
+
+        if (! is_file($cleanPath)) {
+            throw new RuntimeException("Not a file: {$path}");
+        }
+
+        unlink($cleanPath);
+
+        return true;
+    }
+
+    private function sanitizePath(string $path) : string
+    {
+        return str_replace(["\0", "\n", "\r"], '', $path);
     }
 }

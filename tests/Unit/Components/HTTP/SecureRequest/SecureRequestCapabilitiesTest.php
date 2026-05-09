@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\HTTP\SecureRequest;
 
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\Email;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\IntegerType;
 use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\MapFrom;
 use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\Max;
 use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\Min;
@@ -148,6 +150,76 @@ final class SecureRequestCapabilitiesTest extends TestCase
         }
 
         $this->assertNotContains('afterValidation', $request->hookOrder);
+    }
+
+    // -- No-constructor SecureRequest style tests --
+
+    public function test_no_constructor_secure_request_hydrates() : void
+    {
+        $request = new TestNoConstructorRequest();
+        $request->runLifecycle([
+                                   'email' => 'user@example.com',
+                                   'age'   => 25,
+                               ]);
+
+        $this->assertSame('user@example.com', $request->email);
+        $this->assertSame(25, $request->age);
+    }
+
+    public function test_no_constructor_property_attributes_validated() : void
+    {
+        $this->expectException(SecureRequestValidationFailed::class);
+
+        $request = new TestNoConstructorRequest();
+        $request->runLifecycle([
+                                   'email' => 'not-email',
+                                   'age'   => 25,
+                               ]);
+    }
+
+    public function test_no_constructor_missing_required_creates_violation() : void
+    {
+        $this->expectException(SecureRequestValidationFailed::class);
+
+        $request = new TestNoConstructorRequest();
+        $request->runLifecycle(['age' => 25]);
+    }
+
+    // -- DataTransfer delegation proof --
+
+    public function test_data_transfer_hydrates_public_properties() : void
+    {
+        // If DataTransfer is used for hydration, MapFrom should work
+        $request = new TestMappedRequest();
+        $request->runLifecycle(['full_name' => 'AvaX']);
+
+        $this->assertSame('AvaX', $request->name);
+    }
+
+    public function test_data_transfer_validates_attributes() : void
+    {
+        // If DataTransfer is used for validation, Min/Max/RegexPattern should work
+        $this->expectException(SecureRequestValidationFailed::class);
+
+        $request = new TestRegisterRequest();
+        $request->runLifecycle([
+                                   'email'    => 'user@example.com',
+                                   'username' => 'ab',   // too short for Min(3)
+                                   'password' => 'Secure1!',
+                               ]);
+    }
+
+    public function test_data_transfer_casts_nested_dto() : void
+    {
+        $request = new TestNestedRequest();
+        $request->runLifecycle([
+                                   'meta' => ['role' => 'admin', 'level' => 5],
+                                   'note' => 'test',
+                               ]);
+
+        $this->assertInstanceOf(TestMetaDto::class, $request->meta);
+        $this->assertSame('admin', $request->meta->role);
+        $this->assertSame(5, $request->meta->level);
     }
 }
 
@@ -304,6 +376,51 @@ final class TestMappedRequest extends SecureRequest
     #[Required]
     #[MapFrom('full_name')]
     public string $name;
+
+    public function authorize() : bool
+    {
+        return true;
+    }
+}
+
+// -- No-constructor SecureRequest (primary AvaX style) --
+
+final class TestNoConstructorRequest extends SecureRequest
+{
+    #[Required]
+    #[StringType]
+    #[Email]
+    public string $email;
+
+    #[Required]
+    #[IntegerType]
+    public int $age;
+
+    public function authorize() : bool
+    {
+        return true;
+    }
+}
+
+// -- Nested DTO in SecureRequest --
+
+final class TestMetaDto
+{
+    public function __construct(
+        #[Required]
+        public string $role,
+        #[Required]
+        public int    $level,
+    ) {}
+}
+
+final class TestNestedRequest extends SecureRequest
+{
+    #[Required]
+    public TestMetaDto $meta;
+
+    #[Required]
+    public string $note;
 
     public function authorize() : bool
     {

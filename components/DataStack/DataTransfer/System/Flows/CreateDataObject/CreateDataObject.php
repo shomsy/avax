@@ -38,7 +38,7 @@ final readonly class CreateDataObject
      * @param class-string<T>             $class
      * @param array<string, mixed>|object $input
      *
-     * @return T
+     * @phpstan-return T
      * @throws DataTransferFailure
      */
     public function create(string $class, array|object $input) : object
@@ -46,6 +46,7 @@ final readonly class CreateDataObject
         $config    = $this->dataTransferConfig ?? DataTransferConfig::default();
         $inputData = is_array($input) ? $input : (array) $input;
 
+        /** @var ReflectionClass<T> $reflectionClass */
         $reflectionClass = new ReflectionClass($class);
         $properties      = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED);
 
@@ -100,6 +101,98 @@ final readonly class CreateDataObject
         }
 
         return $this->instantiate($reflectionClass, $values);
+    }
+
+    /**
+     * Hydrate an existing object's public properties from input and validate.
+     *
+     * Returns violations instead of throwing. Caller decides whether to throw.
+     * This enables SecureRequest to delegate hydration/validation to DataTransfer.
+     *
+     * Only hydrates properties that are either in the input or have Required/Optional/DefaultValue attributes.
+     * Other public properties are left untouched.
+     *
+     * @param array<string, mixed> $input
+     *
+     * @return list<DataTransferViolation>
+     */
+    public function hydrateInto(object $object, array $input) : array
+    {
+        $reflectionClass = new ReflectionClass($object);
+        $properties      = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
+
+        $violations = [];
+
+        foreach ($properties as $property) {
+            if ($property->isStatic()) {
+                continue;
+            }
+
+            $propertyName = $property->getName();
+            $inputName    = $this->resolveInputName($property);
+            $hasValue     = array_key_exists($inputName, $input);
+            $value        = $input[$inputName] ?? null;
+
+            $isRequired = $property->getAttributes(Required::class) !== [];
+            $isOptional = $property->getAttributes(Optional::class) !== [];
+            $hasDefault = $property->getAttributes(DefaultValue::class) !== [];
+
+            // Skip properties not in input and without DTO attributes.
+            // This prevents overwriting internal state like lifecycle tracking arrays.
+            if (! $hasValue && ! $isRequired && ! $isOptional && ! $hasDefault) {
+                continue;
+            }
+
+            if ($isRequired && ! $hasValue) {
+                $violations[] = new DataTransferViolation(
+                    field  : $propertyName,
+                    message: sprintf('Field "%s" is required.', $propertyName),
+                );
+                continue;
+            }
+
+            if ($isOptional && ! $hasValue) {
+                continue;
+            }
+
+            if (! $hasValue) {
+                $defaultAttrs = $property->getAttributes(DefaultValue::class);
+                if ($defaultAttrs !== []) {
+                    $value = $defaultAttrs[0]->newInstance()->value;
+                }
+            }
+
+            if ($value !== null) {
+                $value = $this->hydrateValue(
+                    property  : $property,
+                    value     : $value,
+                    violations: $violations,
+                    fieldName : $propertyName,
+                );
+            }
+
+            if ($violations === [] || ! $this->hasFieldViolation($violations, $propertyName)) {
+                $property->setValue($object, $value);
+            }
+        }
+
+        return $violations;
+    }
+
+    /**
+     * Check if violations already contain an error for the given field.
+     *
+     * @param list<DataTransferViolation> $violations
+     */
+    private function hasFieldViolation(array $violations, string $field) : bool
+    {
+        foreach ($violations as $violation) {
+            if ($violation->field === $field) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function resolveInputName(ReflectionProperty $property) : string
@@ -185,7 +278,11 @@ final readonly class CreateDataObject
     }
 
     /**
+     * @param array<int, mixed>           $value
+     * @param class-string                $itemClass
      * @param list<DataTransferViolation> $violations
+     *
+     * @return list<object>
      */
     private function castObjectList(
         array  $value,
@@ -199,6 +296,7 @@ final readonly class CreateDataObject
             if (is_object($item) && $item instanceof $itemClass) {
                 $items[] = $item;
             } elseif (is_array($item)) {
+                /** @phpstan-ignore-next-line */
                 $items[] = $this->create(class: $itemClass, input: $item);
             } else {
                 $violations[] = new DataTransferViolation(
@@ -271,7 +369,11 @@ final readonly class CreateDataObject
     /**
      * Instantiate object — constructor-promoted or property-based hydration.
      *
+     * @template T of object
+     * @param ReflectionClass<T>   $reflectionClass
      * @param array<string, mixed> $values
+     *
+     * @phpstan-return T
      */
     private function instantiate(ReflectionClass $reflectionClass, array $values) : object
     {

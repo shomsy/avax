@@ -25,7 +25,19 @@ Canonical active implementation queue.
 
 ## Current Items
 
-No active items.
+- `id`: DATA-STRUCTURES-WAVE-0
+- `created_at`: 2026-05-09
+- `updated_at`: 2026-05-09
+- `status`: blocked
+- `estimate`: 1 session
+- `actual`: partial execution complete; governance validators blocked by Docker socket access in sandbox
+- `outcome`: Wave 0 docs and initial Structure Kernel implemented with focused DataStack/Data PHPUnit and PHPStan green.
+  Remaining project governance validators could not run in this environment.
+- `acceptance`: docs exist under `docs/DataStack/Data`; changed docs pass whitespace and forbidden-name checks; no
+  production scaffolding is created; focused PHPUnit/PHPStan pass; blocked governance commands are reported honestly.
+- `links`: `EVIDENCE/.PLANS/datastack-data-structure-universe-master-plan.md`,
+  `docs/DataStack/Data/STRUCTURE_ATLAS.md`,
+  `EVIDENCE/datastack-data-structure-universe-wave-0-kernel-report.md`
 
 ## Completed
 

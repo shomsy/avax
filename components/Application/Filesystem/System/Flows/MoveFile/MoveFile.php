@@ -4,18 +4,38 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Filesystem\System\Flows\MoveFile;
 
-use Avax\Components\Application\Filesystem\System\Flows\Files\FileMoveFailed;
-use Avax\Components\Application\Filesystem\System\PublicSurface\Storage;
-use Throwable;
+use Avax\Components\Application\Filesystem\System\Foundation\Failure\FileNotFound;
+use Avax\Components\Application\Filesystem\System\Foundation\Failure\FilesystemOperationFailed;
 
-final class MoveFile
+final readonly class MoveFile
 {
-    public static function execute(string $source, string $destination): bool
+    public function execute(string $source, string $destination) : bool
     {
-        try {
-            return Storage::move($source, $destination);
-        } catch (Throwable $throwable) {
-            throw new FileMoveFailed(path: $destination, code: $throwable->getCode(), previous: $throwable);
+        $cleanSource = $this->sanitizePath($source);
+        $cleanDest   = $this->sanitizePath($destination);
+
+        if (! file_exists($cleanSource)) {
+            throw new FileNotFound($source);
         }
+
+        $destDir = dirname($cleanDest);
+        if (! is_dir($destDir)) {
+            if (! mkdir($destDir, 0o755, true) && ! is_dir($destDir)) {
+                throw new FilesystemOperationFailed('create directory', $destDir);
+            }
+        }
+
+        $result = rename($cleanSource, $cleanDest);
+
+        if (! $result) {
+            throw new FilesystemOperationFailed('move', "{$source} -> {$destination}");
+        }
+
+        return true;
+    }
+
+    private function sanitizePath(string $path) : string
+    {
+        return str_replace(["\0", "\n", "\r"], '', $path);
     }
 }

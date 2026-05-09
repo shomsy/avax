@@ -28,7 +28,7 @@ flowchart LR
     end
 
     subgraph Blocked["Blocked"]
-        B0["No active cards"]
+        B0["DATA-STRUCTURES-WAVE-0 | governance validators blocked | updated 2026-05-09"]
     end
 
     subgraph Verify["Verify / Review"]

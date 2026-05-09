@@ -4,91 +4,121 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Filesystem\System\PublicSurface;
 
-use Avax\Components\Application\Filesystem\System\Capabilities\Disks\Disk;
-use Override;
+use Avax\Components\Application\Filesystem\System\Flows\AppendToFile\AppendToFile;
+use Avax\Components\Application\Filesystem\System\Flows\CheckPathExists\CheckPathExists;
+use Avax\Components\Application\Filesystem\System\Flows\ClearDirectory\ClearDirectory;
+use Avax\Components\Application\Filesystem\System\Flows\CopyFile\CopyFile;
+use Avax\Components\Application\Filesystem\System\Flows\CreateDirectory\CreateDirectory;
+use Avax\Components\Application\Filesystem\System\Flows\DeleteDirectory\DeleteDirectory;
+use Avax\Components\Application\Filesystem\System\Flows\DeleteFile\DeleteFile;
+use Avax\Components\Application\Filesystem\System\Flows\ListDirectory\ListDirectory;
+use Avax\Components\Application\Filesystem\System\Flows\MoveFile\MoveFile;
+use Avax\Components\Application\Filesystem\System\Flows\ReadFile\ReadFile;
+use Avax\Components\Application\Filesystem\System\Flows\WriteFile\WriteFile;
 
-final readonly class Filesystem implements FilesystemInterface
+final readonly class Filesystem
 {
     public function __construct(
-        private Disk $disk,
-    ) {
-    }
+        private ReadFile        $readFile = new ReadFile(),
+        private WriteFile       $writeFile = new WriteFile(),
+        private AppendToFile    $appendToFile = new AppendToFile(),
+        private CopyFile        $copyFile = new CopyFile(),
+        private MoveFile        $moveFile = new MoveFile(),
+        private DeleteFile      $deleteFile = new DeleteFile(),
+        private CreateDirectory $createDirectory = new CreateDirectory(),
+        private DeleteDirectory $deleteDirectory = new DeleteDirectory(),
+        private ClearDirectory  $clearDirectory = new ClearDirectory(),
+        private ListDirectory   $listDirectory = new ListDirectory(),
+        private CheckPathExists $checkPathExists = new CheckPathExists(),
+    ) {}
 
-    #[Override]
     public function read(string $path): string
     {
-        return $this->disk->read($path);
+        return $this->readFile->execute($path);
     }
 
-    #[Override]
-    public function write(string $path, string $content, bool $append = false): bool
+    public function write(string $path, string $content) : bool
     {
-        return $this->disk->write($path, $content, $append);
+        return $this->writeFile->execute($path, $content);
     }
 
-    #[Override]
+    public function append(string $path, string $content) : bool
+    {
+        return $this->appendToFile->execute($path, $content);
+    }
+
     public function copy(string $source, string $destination): bool
     {
-        return $this->disk->copy($source, $destination);
+        return $this->copyFile->execute($source, $destination);
     }
 
-    #[Override]
     public function move(string $source, string $destination): bool
     {
-        return $this->disk->move($source, $destination);
+        return $this->moveFile->execute($source, $destination);
     }
 
-    #[Override]
     public function delete(string $path): bool
     {
-        return $this->disk->delete($path);
+        return $this->deleteFile->execute($path);
     }
 
-    #[Override]
     public function exists(string $path): bool
     {
-        return $this->disk->exists($path);
+        return $this->checkPathExists->execute($path);
     }
 
-    #[Override]
-    public function lastModified(string $path): ?int
-    {
-        return $this->disk->lastModified($path);
-    }
-
-    #[Override]
     public function createDirectory(string $path, int $permissions = 0o755): bool
     {
-        return $this->disk->createDirectory($path, $permissions);
+        return $this->createDirectory->execute($path, $permissions);
     }
 
-    #[Override]
     public function deleteDirectory(string $path): bool
     {
-        return $this->disk->deleteDirectory($path);
+        return $this->deleteDirectory->execute($path);
     }
 
-    #[Override]
     public function clearDirectory(string $path): bool
     {
-        return $this->disk->clear($path);
+        return $this->clearDirectory->execute($path);
     }
 
-    #[Override]
-    public function listFiles(string $path): array
+    /**
+     * @return list<string>
+     */
+    public function listDirectory(string $path) : array
     {
-        return $this->disk->listFiles($path);
+        return $this->listDirectory->execute($path);
     }
 
-    #[Override]
+    public function isReadable(string $path) : bool
+    {
+        return file_exists($path) && is_readable($path);
+    }
+
     public function isWritable(string $path): bool
     {
-        return $this->disk->isWritable($path);
+        if (file_exists($path)) {
+            return is_writable($path);
+        }
+
+        return is_writable(dirname($path));
     }
 
-    #[Override]
-    public function setPermissions(string $path, int $permissions): bool
+    public function permissions(string $path) : ?int
     {
-        return $this->disk->setPermissions($path, $permissions);
+        if (! file_exists($path)) {
+            return null;
+        }
+
+        return fileperms($path) & 0o777;
+    }
+
+    public function changePermissions(string $path, int $permissions) : bool
+    {
+        if (! file_exists($path)) {
+            return false;
+        }
+
+        return chmod($path, $permissions);
     }
 }

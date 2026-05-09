@@ -4,19 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\SecureRequest\System\PublicSurface;
 
-use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\DefaultValue;
-use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\MapFrom;
-use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\Optional;
-use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\Required;
 use Avax\Components\DataStack\DataTransfer\System\Capabilities\TransferValidation\DataTransferViolation;
 use Avax\Components\DataStack\DataTransfer\System\Capabilities\TransferValidation\DataTransferViolations;
+use Avax\Components\DataStack\DataTransfer\System\Flows\CreateDataObject\CreateDataObject;
 use Avax\Components\HTTP\SecureRequest\System\Capabilities\SecureRequestValidation\ValidationContext;
 use Avax\Components\HTTP\SecureRequest\System\Foundation\Failure\SecureRequestAuthorizationFailed;
 use Avax\Components\HTTP\SecureRequest\System\Foundation\Failure\SecureRequestValidationFailed;
-use InvalidArgumentException;
-use ReflectionClass;
-use ReflectionNamedType;
-use ReflectionProperty;
 
 /**
  * SecureRequest — HTTP request-as-DTO.
@@ -24,12 +17,16 @@ use ReflectionProperty;
  * Canonical style: public typed properties + PHP attributes.
  * No constructor required. No rules() method.
  *
+ * SecureRequest delegates hydration, casting, and attribute validation
+ * to DataTransfer. It owns only HTTP input lifecycle, authorization,
+ * and request-specific hooks.
+ *
  * Lifecycle order:
  * 1. beforeHydration
- * 2. hydrate public typed properties from input
+ * 2. DataTransfer hydrates public typed properties from input
  * 3. afterHydration
  * 4. beforeValidation
- * 5. attribute validation (Required, StringType, Min, Max, etc.)
+ * 5. DataTransfer validates attributes (Required, StringType, Min, Max, etc.)
  * 6. withValidation (custom hook)
  * 7. afterValidation
  * 8. if violations: failedValidation + throw
@@ -67,6 +64,9 @@ abstract class SecureRequest
     /**
      * Run the full SecureRequest lifecycle.
      *
+     * Hydration and attribute validation are delegated to DataTransfer.
+     * SecureRequest owns lifecycle hooks, authorization, and custom validation.
+     *
      * @param array<string, mixed> $input
      *
      * @internal
@@ -76,15 +76,13 @@ abstract class SecureRequest
         $this->beforeHydration();
         $this->setInput($input);
 
-        // Step 2: Hydrate public typed properties
-        $this->hydrateProperties($input);
+        // Step 2: Delegate hydration + attribute validation to DataTransfer
+        $violations = (new CreateDataObject())->hydrateInto(object: $this, input: $input);
 
         $this->afterHydration();
         $this->beforeValidation();
 
-        // Step 5: Attribute validation
-        $violations = $this->validateAttributes($input);
-
+        // Step 8: If DataTransfer found violations, fail
         if ($violations !== []) {
             $collection = new DataTransferViolations($violations);
             $this->failedValidation($collection);
@@ -128,50 +126,6 @@ abstract class SecureRequest
     protected function beforeHydration() : void {}
 
     /**
-     * Hydrate public typed properties from input.
-     *
-     * @param array<string, mixed> $input
-     */
-    private function hydrateProperties(array $input) : void
-    {
-        $reflectionClass = new ReflectionClass($this);
-        $properties      = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
-
-        foreach ($properties as $property) {
-            $name      = $property->getName();
-            $inputName = $this->resolveInputName($property);
-
-            if (! array_key_exists($inputName, $input)) {
-                continue;
-            }
-
-            $value = $input[$inputName];
-
-            // Apply default if value is null and property has DefaultValue
-            if ($value === null) {
-                $defaultAttrs = $property->getAttributes(DefaultValue::class);
-                if ($defaultAttrs !== []) {
-                    $value = $defaultAttrs[0]->newInstance()->value;
-                }
-            }
-
-            if ($value !== null) {
-                $property->setValue($this, $value);
-            }
-        }
-    }
-
-    private function resolveInputName(ReflectionProperty $property) : string
-    {
-        $mapFromAttrs = $property->getAttributes(MapFrom::class);
-        if ($mapFromAttrs !== []) {
-            return $mapFromAttrs[0]->newInstance()->name;
-        }
-
-        return $property->getName();
-    }
-
-    /**
      * Lifecycle: after hydration completes.
      */
     protected function afterHydration() : void {}
@@ -180,85 +134,6 @@ abstract class SecureRequest
      * Lifecycle: before attribute validation.
      */
     protected function beforeValidation() : void {}
-
-    /**
-     * Validate public typed properties against attributes.
-     *
-     * @param array<string, mixed> $input
-     *
-     * @return list<DataTransferViolation>
-     */
-    private function validateAttributes(array $input) : array
-    {
-        $reflectionClass = new ReflectionClass($this);
-        $properties      = $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC);
-
-        $violations = [];
-
-        foreach ($properties as $property) {
-            $name      = $property->getName();
-            $inputName = $this->resolveInputName($property);
-            $hasValue  = array_key_exists($inputName, $input);
-            $value     = $hasValue ? $input[$inputName] : null;
-
-            // Required check
-            $isRequired = $property->getAttributes(Required::class) !== [];
-            $isOptional = $property->getAttributes(Optional::class) !== [];
-
-            if ($isRequired && ! $hasValue) {
-                $violations[] = new DataTransferViolation(
-                    field  : $name,
-                    message: sprintf('Field "%s" is required.', $name),
-                );
-                continue;
-            }
-
-            if ($isOptional && ! $hasValue) {
-                continue;
-            }
-
-            // Type validation
-            if ($value !== null) {
-                $propertyType = $property->getType();
-                if ($propertyType instanceof ReflectionNamedType) {
-                    $typeName  = $propertyType->getName();
-                    $typeValid = match ($typeName) {
-                        'string' => is_string($value),
-                        'int'    => is_int($value),
-                        'float'  => is_float($value) || is_int($value),
-                        'bool'   => is_bool($value),
-                        'array'  => is_array($value),
-                        'mixed'  => true,
-                        default  => $value instanceof $typeName,
-                    };
-                    if (! $typeValid) {
-                        $violations[] = new DataTransferViolation(
-                            field  : $name,
-                            message: sprintf('Field "%s" must be of type %s.', $name, $typeName),
-                        );
-                        continue;
-                    }
-                }
-
-                // Attribute validation
-                foreach ($property->getAttributes() as $attribute) {
-                    $instance = $attribute->newInstance();
-                    if (method_exists($instance, 'validate')) {
-                        try {
-                            $instance->validate($value, $name);
-                        } catch (InvalidArgumentException $e) {
-                            $violations[] = new DataTransferViolation(
-                                field  : $name,
-                                message: $e->getMessage(),
-                            );
-                        }
-                    }
-                }
-            }
-        }
-
-        return $violations;
-    }
 
     /**
      * Lifecycle: when validation fails.

@@ -4,14 +4,32 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Filesystem\System\Flows\WriteFile;
 
-use Avax\Components\Application\Filesystem\System\Capabilities\Disks\Disk;
+use Avax\Components\Application\Filesystem\System\Foundation\Failure\FilesystemOperationFailed;
 
-final class WriteFile
+final readonly class WriteFile
 {
-    public function write(Disk $disk, string $path, string $contents): void
+    public function execute(string $path, string $content) : bool
     {
-        $fullPath = $disk->path($path);
+        $cleanPath = $this->sanitizePath($path);
+        $directory = dirname($cleanPath);
 
-        file_put_contents($fullPath, $contents);
+        if (! is_dir($directory)) {
+            if (! mkdir($directory, 0o755, true) && ! is_dir($directory)) {
+                throw new FilesystemOperationFailed('create directory', $directory);
+            }
+        }
+
+        $result = file_put_contents($cleanPath, $content, LOCK_EX);
+
+        if ($result === false) {
+            throw new FilesystemOperationFailed('write', $path);
+        }
+
+        return true;
+    }
+
+    private function sanitizePath(string $path) : string
+    {
+        return str_replace(["\0", "\n", "\r"], '', $path);
     }
 }

@@ -5,6 +5,9 @@
 SecureRequest is HTTP request-as-DTO. It gives you a fully typed, validated, authorized request object in your
 controller — no manual input parsing, no `rules()` method, no string-rule arrays.
 
+SecureRequest delegates hydration, casting, and attribute validation to DataTransfer.
+It owns only HTTP input lifecycle, authorization, and request-specific hooks.
+
 ## Canonical style
 
 ```php
@@ -45,6 +48,8 @@ final class RegisterRequest extends SecureRequest
 }
 ```
 
+No constructor. No `rules()` method. Public typed properties + PHP attributes.
+
 ## Controller usage
 
 ```php
@@ -59,15 +64,17 @@ final readonly class RegisterController
 }
 ```
 
-The Container automatically detects `SecureRequest` subclasses and resolves them through the full lifecycle.
+The Container's ArgumentResolver automatically detects `SecureRequest` subclasses,
+builds input from the HTTP request, and resolves them through the full lifecycle
+using DataTransfer for hydration and validation.
 
 ## Lifecycle order
 
 1. `beforeHydration()` — before any processing
-2. **Hydrate** public typed properties from input
+2. **DataTransfer hydrates** public typed properties from input
 3. `afterHydration()` — after properties are set
 4. `beforeValidation()` — before attribute validation
-5. **Attribute validation** — `#[Required]`, `#[StringType]`, `#[Min]`, etc.
+5. **DataTransfer validates** attributes — `#[Required]`, `#[StringType]`, `#[Min]`, etc.
 6. `withValidation(ValidationContext $context)` — custom cross-field validation
 7. `afterValidation()` — after all validation
 8. If violations exist: `failedValidation($violations)` + throw `SecureRequestValidationFailed` (422)
@@ -113,7 +120,7 @@ protected function withValidation(ValidationContext $context): void
 }
 ```
 
-## Exceptions
+## Exceptions and HTTP rendering
 
 | Exception                          | HTTP Status | When                                     |
 |------------------------------------|-------------|------------------------------------------|
@@ -121,9 +128,34 @@ protected function withValidation(ValidationContext $context): void
 | `SecureRequestAuthorizationFailed` | 403         | `authorize()` returns false              |
 | `SecureRequestResolutionFailed`    | 500         | Cannot resolve from current HTTP request |
 
+The HTTP exception handler (`CatchUnhandledExceptions`) maps these to proper responses:
+
+**Validation failure (422):**
+
+```json
+{
+  "message": "The given data was invalid.",
+  "errors": {
+    "email": ["Email is required."],
+    "password": ["Password must include a number."]
+  }
+}
+```
+
+**Authorization failure (403):**
+
+```json
+{
+  "message": "This action is not authorized."
+}
+```
+
 ## Input source priority
 
-Route params > body (parsed) > query params
+Route params > uploaded files > body (parsed) / JSON body > query params
+
+Higher-priority sources override lower ones. JSON body is parsed from the request
+stream when Content-Type indicates `application/json` and `getParsedBody()` returns null.
 
 ## What SecureRequest is NOT
 
@@ -131,6 +163,23 @@ Route params > body (parsed) > query params
 - Not a place for manual input parsing (`$request->input()`, `json_decode()`)
 - Not a Laravel FormRequest clone (no `rules()` method)
 - Not a DTO for non-HTTP contexts (use DataTransfer directly for that)
+
+## DataTransfer delegation
+
+SecureRequest does NOT contain:
+
+- Duplicated reflection hydration engine
+- Duplicated attribute validation engine
+- Duplicated casting engine
+- Duplicated field mapping engine
+
+All DTO behavior is owned by DataTransfer. SecureRequest owns:
+
+- HTTP input lifecycle
+- Input building from PSR-7 ServerRequest
+- Authorization
+- Custom validation hook (`withValidation`)
+- Lifecycle hook methods
 
 ## Rules
 
@@ -141,3 +190,16 @@ Route params > body (parsed) > query params
 - Do not use `rules()`.
 - Do not put HTTP behavior into DataTransfer.
 - Do not put DTO behavior into DataStack/Data.
+
+## Component structure
+
+```
+components/HTTP/SecureRequest/System/
+  PublicSurface/
+    SecureRequest.php          — Abstract base with lifecycle
+  Capabilities/
+    ResolveSecureRequest/      — Input builder from PSR-7 request
+    SecureRequestValidation/   — ValidationContext for custom rules
+  Foundation/
+    Failure/                   — Exception classes with HTTP status codes
+```

@@ -44,6 +44,12 @@ parameters:
             message: '#Method.*MaterializedViewRegistry::staleViews\(\).*return type has no value type.*#'
         -
             message: '#PHPDoc tag @implements has invalid value.*#'
+        -
+            message: '#Call to static method PHPUnit.*will always evaluate to (true|false)#'
+            path: 'tests/Unit/Framework/V4Runtime/ReactRuntimeAndWarmSafetyTest.php'
+        -
+            message: '#Call to static method PHPUnit.*assertArrayHasKey.*will always evaluate to true#'
+            path: 'tests/Unit/Framework/V4Runtime/ReactRuntimeAndWarmSafetyTest.php'
     type_perfect:
         narrow_param: true
         narrow_return: true

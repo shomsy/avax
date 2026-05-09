@@ -19,9 +19,9 @@ final class V4AppDoesNotDuplicateComponentsTest extends TestCase
     {
         parent::setUp();
         $basePath = dirname(__DIR__, 3);
-        $this->appCode = file_get_contents($basePath . '/framework/System/PublicSurface/App.php');
-        $this->runCode = file_get_contents($basePath . '/framework/System/Flows/RunApplication/RunApplication.php');
-        $this->secureRequestCode = file_get_contents($basePath . '/components/HTTP/SecureRequest/System/PublicSurface/SecureRequest.php');
+        $this->appCode = (string) file_get_contents($basePath . '/framework/System/PublicSurface/App.php');
+        $this->runCode = (string) file_get_contents($basePath . '/framework/System/Flows/RunApplication/RunApplication.php');
+        $this->secureRequestCode = (string) file_get_contents($basePath . '/components/HTTP/SecureRequest/System/PublicSurface/SecureRequest.php');
     }
 
     public function testAppDoesNotImplementRouter(): void

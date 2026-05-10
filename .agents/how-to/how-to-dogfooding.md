@@ -630,6 +630,12 @@ Dogfooding must not become slow composition.
 
 Correct composition should be both clearer and faster.
 
+For compiled metadata, attribute compilation, and hot-path reflection discipline, see:
+
+```text
+how-to-modern-php-attributes-di.md
+```
+
 ---
 
 ## 20. Legacy And Duplicate Ownership Rule

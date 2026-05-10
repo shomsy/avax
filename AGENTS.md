@@ -1287,6 +1287,7 @@ PHP code must follow:
 .agents/how-to/how-to-coding-standards.md
 .agents/how-to/how-to-code-style.md
 .agents/how-to/how-to-clean-code.md
+.agents/how-to/how-to-modern-php-attributes-di.md
 ```
 
 Project-specific PHP preferences include:

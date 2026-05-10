@@ -43,6 +43,7 @@ The `.agents/` folder is the project-local agent workspace.
 | Architecture/refactor      | how-to-architecture, how-to-design-components, DDD extension, advanced patterns |
 | Component design           | how-to-design-components, security, performance, production readiness           |
 | PHP code                   | coding standards, code style, clean code                                        |
+| Modern PHP / attributes / DI | how-to-modern-php-attributes-di                                               |
 | Unit tests                 | how-to-unit-test                                                                |
 | Documentation              | how-to-document                                                                 |
 | Security-sensitive code    | how-to-system-security                                                          |
@@ -121,6 +122,7 @@ If a claim is important, it must point to:
 | how-to-document.md                           | Documentation                            |
 | how-to-production-readiness.md               | Production gates                         |
 | how-to-code-review.md                        | Review process                           |
+| how-to-modern-php-attributes-di.md           | Modern PHP 8.x, attributes, DI, compiled metadata |
 
 ## Conflict Resolution
 

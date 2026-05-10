@@ -1111,7 +1111,7 @@ Strict PSR-12 + php-hammer formatting.
 Modern syntax is not a goal by itself.
 Use newer syntax only when it improves correctness, locality, maintainability, readability, or domain expressiveness.
 
-For full modern PHP 8.0-8.5 adoption, attribute runtime, compiled metadata, DI/autowiring, and hot-path reflection discipline, see:
+For full modern PHP 8.0-8.5 adoption, attribute runtime, compiled metadata, DI/autowiring, and hot-path reflection discipline, this is MANDATORY, see:
 
 ```text
 how-to-modern-php-attributes-di.md

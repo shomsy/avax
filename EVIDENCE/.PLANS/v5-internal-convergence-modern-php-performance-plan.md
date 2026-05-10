@@ -243,6 +243,28 @@ V5.5-12  Final World-Class Readiness Report
 
 ---
 
+# V5.6 Stage Map
+
+```txt
+V5.6-00  Review Governance Lock
+V5.6-01  Whole-System As-Built Execution Flow Review
+V5.6-02  Whole-System Governance Compliance Review
+V5.6-03  Runtime / Framework Core Review
+V5.6-04  Component-by-Component Review
+V5.6-05  PublicSurface Review
+V5.6-06  Dogfooding Review
+V5.6-07  Modern PHP / Attributes / DI Review
+V5.6-08  Security Review
+V5.6-09  Performance Review
+V5.6-10  Testing Review
+V5.6-11  Documentation Review
+V5.6-12  Production Readiness Review
+V5.6-13  Rewrite / Redesign / Keep Decision Report
+V5.6-14  Final Review Closure Report
+```
+
+---
+
 # Stage Definitions
 
 ## V5-00 Final V4 Truth Lock
@@ -1951,6 +1973,657 @@ EVIDENCE/v5.5/optimization-results.md
 
 ---
 
+# V5.6 Stage Definitions
+
+## V5.6 Name
+
+```txt
+V5.6 — System & Component Governance Code Review
+```
+
+Short name:
+
+```txt
+V5.6 — AvaX Judges AvaX
+```
+
+## Purpose
+
+Review the whole AvaX system and every major component separately against every mandatory how-to governance document.
+
+The review must tell us exactly:
+
+```txt
+- what is compliant
+- what is partially compliant
+- what is not compliant
+- where it fails
+- why it matters
+- what must be fixed
+- whether the system/component should be kept, redesigned, or rewritten
+```
+
+V5.6 is not a refactor phase.
+
+V5.6 is review only.
+
+```text
+Do not fix during V5.6.
+Do not start from individual files.
+Do not optimize before reconstructing architecture.
+Do not propose broad rewrites without evidence.
+Do not call system sound without governance compliance.
+```
+
+The result of V5.6 is a decision and action map.
+
+Fixes happen after V5.6, in a separate phase.
+
+---
+
+## V5.6-00 Review Governance Lock
+
+### Goal
+
+Make sure the review process itself is current.
+
+### Required
+
+```txt
+- discover all how-to-*.md files
+- compare discovered files with how-to-code-review.md checklist
+- update stale checklist
+- confirm AGENTS.md precedence
+- confirm V5/V5.5 plan status
+- confirm CURRENT_TRUTH.md state
+- confirm all review output folders exist
+```
+
+### Deliverables
+
+```txt
+EVIDENCE/v5.6/review-governance-lock.md
+EVIDENCE/v5.6/governance-inventory.md
+```
+
+GREEN only if review governance knows every mandatory how-to document.
+
+---
+
+## V5.6-01 Whole-System As-Built Execution Flow Review
+
+### Required
+
+```txt
+- reconstruct real execution flow from public API to final effect
+- identify primary axis (central abstraction)
+- identify secondary axis if present
+- build responsibility and boundary map
+- perform mutability audit
+- define system invariants (at least 5)
+- performance-by-design sanity check
+- failure mode sanity check
+- security boundary sanity check
+- dogfooding/composition map
+```
+
+### Deliverables
+
+```txt
+EVIDENCE/v5.6/whole-system-review.md
+```
+
+Final decision must be exactly one:
+
+```txt
+Keep and Improve
+Redesign
+Rewrite Candidate
+```
+
+No vague result.
+
+---
+
+## V5.6-02 Whole-System Governance Compliance Review
+
+### Required
+
+```txt
+- check whole system against every mandatory how-to document
+- produce governance compliance matrix
+- record every Partial/Fail/Blocked with required action
+- use mandatory governance finding template
+```
+
+### Deliverables
+
+```txt
+EVIDENCE/v5.6/system-governance-compliance-report.md
+EVIDENCE/v5.6/system-findings.md
+```
+
+---
+
+## V5.6-03 Runtime / Framework Core Review
+
+### Scope
+
+```txt
+framework/System/
+framework/System/PublicSurface/
+framework/System/Flows/
+framework/System/Capabilities/
+framework/System/Configuration/
+```
+
+### Required
+
+```txt
+- runtime entry points
+- request lifecycle
+- response normalization
+- error handling path
+- middleware pipeline
+- container wiring
+- route compilation and matching
+- warm worker safety
+- memory guard behavior
+```
+
+### Deliverables
+
+```txt
+EVIDENCE/v5.6/runtime-core-review.md
+```
+
+---
+
+## V5.6-04 Component-by-Component Review
+
+Every major component must get its own review file.
+
+### Output Location
+
+```txt
+EVIDENCE/v5.6/components/<component-name>-review.md
+```
+
+### Each Review Must Include
+
+```txt
+- component name
+- component owner path
+- current status
+- public API
+- as-built flow
+- primary responsibility
+- component invariants
+- PublicSurface status
+- Flows status
+- Capabilities status
+- Configuration status
+- Foundation status
+- dogfooding relationships
+- security review
+- performance review
+- test review
+- documentation review
+- governance compliance matrix
+- findings
+- required actions
+- final decision: Keep and Improve / Redesign / Rewrite Candidate
+```
+
+### Minimum Components to Review
+
+```txt
+Runtime
+Container
+Router
+Request
+Response
+SecureRequest
+DataTransfer
+SchemaGeneration
+Filesystem
+Storage
+Cache
+Database
+Queue
+Messaging
+Reliability
+Observability
+Security / Policy
+SystemDesignKit
+Benchmarks
+CLI / Console
+Serialization / CallableSerialization
+Concurrency
+Parallelism
+```
+
+### Deliverables
+
+```txt
+EVIDENCE/v5.6/components/<component-name>-review.md (one per component)
+EVIDENCE/v5.6/component-review-index.md
+```
+
+---
+
+## V5.6-05 PublicSurface Review
+
+### Required
+
+```txt
+- every PublicSurface class must be thin
+- no runtime behavior in PublicSurface
+- no mutable state in PublicSurface
+- delegation to flows/capabilities only
+- no raw file/serialization/retry logic
+```
+
+### Deliverables
+
+```txt
+Included in EVIDENCE/v5.6/whole-system-review.md
+and per-component reviews
+```
+
+---
+
+## V5.6-06 Dogfooding Review
+
+### Required
+
+```txt
+- verify every consumer uses the correct owner
+- detect duplicate capability owners
+- check dependency direction (no cycles, no reverse depends)
+- verify PublicSurface thinness across all components
+- check no raw file/process/serialization/retry logic outside owners
+- verify dogfooding matrix from V5-04 is accurate
+```
+
+### Mandatory Governance
+
+```txt
+how-to-dogfooding.md
+```
+
+### Deliverables
+
+```txt
+Included in EVIDENCE/v5.6/system-governance-compliance-report.md
+```
+
+---
+
+## V5.6-07 Modern PHP / Attributes / DI Review
+
+### Required
+
+```txt
+- verify PHP 8.0-8.5 feature adoption
+- verify attributes are compiled, not scanned per request
+- verify compiled metadata exists and is cached
+- verify no reflection in hot paths
+- verify constructor dependencies are 0-4 (or justified 5-7)
+- verify no Container::get() in business logic
+- verify method injection used for runtime context only
+- verify pipe operator used for pure transformations only
+- verify superglobals isolated behind AvaX Request
+- verify enums used for closed domain/state values
+- verify readonly used for honestly immutable objects
+- verify final by default unless extension point
+- verify property hooks without side-effect lifecycle logic
+- verify asymmetric visibility for public-read/private-write
+- verify NoDiscard on important return values
+- verify WeakMap for per-object cache, not persistent cache
+```
+
+### Mandatory Governance
+
+```txt
+how-to-modern-php-attributes-di.md
+```
+
+### Deliverables
+
+```txt
+Included in EVIDENCE/v5.6/system-governance-compliance-report.md
+and per-component reviews
+```
+
+---
+
+## V5.6-08 Security Review
+
+### Required
+
+```txt
+- review all security-sensitive boundaries
+- verify session ID not logged
+- verify callable serialization is signed/encrypted
+- verify no service locator in business logic
+- verify no raw SQL interpolation
+- verify no unserialize on untrusted data
+- verify no secret exposure in logs/telemetry
+- verify input validation at all boundaries
+- verify output encoding
+- verify authorization protects the object, not only the route
+```
+
+### Mandatory Governance
+
+```txt
+how-to-system-security.md
+```
+
+### Deliverables
+
+```txt
+EVIDENCE/v5.6/security-review.md
+```
+
+---
+
+## V5.6-09 Performance Review
+
+### Required
+
+```txt
+- identify hot paths
+- verify no hidden I/O in hot paths
+- verify no unbounded public operation
+- verify no retry without limit
+- verify no external call without timeout
+- verify compiled metadata used in hot paths
+- verify connection pooling where applicable
+- verify no memory leak in long-lived workers
+- verify V5.5 benchmark claims are consistent with code review
+```
+
+### Mandatory Governance
+
+```txt
+how-to-system-performance.md
+```
+
+### Deliverables
+
+```txt
+EVIDENCE/v5.6/performance-review.md
+```
+
+---
+
+## V5.6-10 Testing Review
+
+### Required
+
+```txt
+- verify tests prove behavior, not implementation trivia
+- verify security/performance-sensitive behavior has negative/boundary tests
+- verify no over-mocked tests that freeze internals
+- verify test naming clarity
+- verify Arrange/Act/Assert discipline
+- verify one-act rule
+- verify assertion precision
+- verify test data clarity
+```
+
+### Mandatory Governance
+
+```txt
+how-to-unit-test.md
+```
+
+### Deliverables
+
+```txt
+EVIDENCE/v5.6/testing-review.md
+```
+
+---
+
+## V5.6-11 Documentation Review
+
+### Required
+
+```txt
+- verify docs explain why, not restate code
+- verify component READMEs are ownership summaries only
+- verify canonical docs explain architecture
+- verify how-this-works.md files exist where needed
+- verify mermaid diagrams are real (not generic placeholders)
+- verify debug-first guidance exists
+- verify documentation completeness for public APIs
+```
+
+### Mandatory Governance
+
+```txt
+how-to-document.md
+```
+
+### Deliverables
+
+```txt
+EVIDENCE/v5.6/documentation-review.md
+```
+
+---
+
+## V5.6-12 Production Readiness Review
+
+### Required
+
+```txt
+- verify architecture matches design
+- verify taxonomy is canonical
+- verify autoload is clean
+- verify namespaces match ownership
+- verify tests target canonical classes
+- verify static analysis is clean
+- verify runtime safety is proven
+- verify public surface does not leak internals
+- verify security baseline is documented and tested
+- verify performance baseline is documented and measured
+- verify observability baseline exists
+- verify golden path app works through public APIs
+- verify production-readiness report agrees with validation
+```
+
+### Mandatory Governance
+
+```txt
+how-to-production-readiness.md
+```
+
+### Deliverables
+
+```txt
+EVIDENCE/v5.6/production-readiness-review.md
+```
+
+---
+
+## V5.6-13 Rewrite / Redesign / Keep Decision Report
+
+### Required
+
+For the whole system and every reviewed component, the report must state exactly one:
+
+```txt
+Keep and Improve — system/component is sound, proceed with incremental evolution
+Redesign — core assumptions are stressed, targeted redesign required
+Rewrite Candidate — foundational design is flawed, rewrite is rational
+```
+
+### Each Decision Must Include
+
+```txt
+- decision for whole system
+- decision for every reviewed component
+- justification referencing findings
+- constraints (API stability, performance budget, security boundaries)
+- kill criteria
+- first 3 concrete actions
+- migration strategy if Rewrite Candidate
+```
+
+### Deliverables
+
+```txt
+EVIDENCE/v5.6/final-review-decision.md
+```
+
+---
+
+## V5.6-14 Final Review Closure Report
+
+### Required
+
+```txt
+- all how-to documents discovered
+- how-to-code-review.md checklist is current
+- whole-system review exists
+- every major component review exists
+- every review includes governance compliance matrix
+- every Partial/Fail/Blocked item has exact required action
+- final decision exists for whole system
+- final decision exists for every reviewed component
+- no governance blocker remains unresolved or undocumented
+- review output points to evidence
+- final report tells exactly what next phase must fix
+```
+
+### Deliverables
+
+```txt
+EVIDENCE/v5.6/next-actions-after-review.md
+EVIDENCE/v5.6/final-review-closure.md
+```
+
+---
+
+## V5.6 Governance Compliance Matrix
+
+Every system and component review must include this matrix:
+
+```text
+| Governance Document | Applies? | Status | Evidence | Missing / Weak Area | Required Action | Severity |
+```
+
+Status values:
+
+```text
+Pass
+Partial
+Fail
+Not Applicable
+Blocked
+```
+
+Severity:
+
+```text
+Low
+Medium
+High
+Blocker
+```
+
+For every Partial, Fail, or Blocked: write a governance finding using the mandatory template.
+
+---
+
+## V5.6 Mandatory Finding Template
+
+Every finding must include:
+
+```md
+### Governance Finding: <short title>
+
+- **Governance Source:** `<how-to-file.md>` -> `<section/rule>`
+- **Required Rule:** ...
+- **Observed Gap:** ...
+- **Where It Fails:** file/folder/class/method/test/doc path
+- **Why It Matters:** ...
+- **Required Action:** add / remove / rename / move / split / merge / simplify / document / test / harden / rewrite / deprecate
+- **Suggested Fix:** concrete proposed change, rewrite, or replacement shape
+- **Severity:** Low / Medium / High / Blocker
+- **Evidence:** concrete pointers
+```
+
+---
+
+## V5.6 Acceptance Criteria
+
+V5.6 is GREEN only if:
+
+```txt
+- all how-to documents are discovered
+- how-to-code-review.md checklist is current
+- whole-system review exists
+- every major component review exists
+- every review includes governance compliance matrix
+- every Partial/Fail/Blocked item has exact required action
+- final decision exists for whole system
+- final decision exists for every reviewed component
+- no governance blocker remains unresolved or undocumented
+- review output points to evidence
+- final report tells exactly what V5.7 or next phase must fix
+```
+
+V5.6 is YELLOW if:
+
+```txt
+- reviews are complete but non-blocking gaps remain
+- some components are Keep and Improve, some need Redesign
+- no Rewrite Candidate exists
+```
+
+V5.6 is RED if:
+
+```txt
+- governance checklist is stale
+- review skipped mandatory how-to documents
+- as-built execution flow cannot be produced
+- primary axis cannot be identified
+- component boundaries cannot be mapped
+- review findings lack evidence
+```
+
+---
+
+## V5.6 Deliverables
+
+```txt
+EVIDENCE/v5.6/review-governance-lock.md
+EVIDENCE/v5.6/governance-inventory.md
+EVIDENCE/v5.6/whole-system-review.md
+EVIDENCE/v5.6/system-governance-compliance-report.md
+EVIDENCE/v5.6/system-findings.md
+EVIDENCE/v5.6/component-review-index.md
+EVIDENCE/v5.6/components/<component-name>-review.md
+EVIDENCE/v5.6/final-review-decision.md
+EVIDENCE/v5.6/next-actions-after-review.md
+```
+
+Updates required:
+
+```txt
+CURRENT_TRUTH.md
+TODO.md
+EVIDENCE/EXECUTION.md
+V5/V5.5/V5.6 master plan
+```
+
+---
+
 # What Goes Where
 
 ## V5
@@ -2199,6 +2872,8 @@ V5-02 cannot start until V5-01 is GREEN.
 Each subsequent stage depends on previous stage GREEN.
 V5.5-00 cannot start until V5-23 is GREEN.
 Each V5.5 stage depends on previous V5.5 stage GREEN.
+V5.6-00 cannot start until V5-23 is GREEN and V5.5-12 is GREEN.
+Each V5.6 stage depends on previous V5.6 stage GREEN.
 ```
 
 ---
@@ -2206,8 +2881,9 @@ Each V5.5 stage depends on previous V5.5 stage GREEN.
 # Next Planned Major Phase
 
 ```txt
-V5 — AvaX Eats AvaX (this plan)
+V5   — AvaX Eats AvaX (self-hardening, modern PHP, attributes, DI, compiled metadata)
 V5.5 — AvaX Proves AvaX (benchmark/proof phase)
+V5.6 — AvaX Judges AvaX (system & component governance code review)
 ```
 
 V5 starts after V4 truth lock is confirmed GREEN.
@@ -2269,6 +2945,48 @@ EVIDENCE/v5.5/framework-comparison-results.md
 EVIDENCE/v5.5/optimization-results.md
 EVIDENCE/v5.5/final-world-class-readiness-report.md
 EVIDENCE/v5.5/performance-regression-baseline.md
+```
+
+## Evidence Files (V5.6)
+
+```txt
+EVIDENCE/v5.6/review-governance-lock.md
+EVIDENCE/v5.6/governance-inventory.md
+EVIDENCE/v5.6/whole-system-review.md
+EVIDENCE/v5.6/system-governance-compliance-report.md
+EVIDENCE/v5.6/system-findings.md
+EVIDENCE/v5.6/component-review-index.md
+EVIDENCE/v5.6/components/runtime-review.md
+EVIDENCE/v5.6/components/container-review.md
+EVIDENCE/v5.6/components/router-review.md
+EVIDENCE/v5.6/components/request-review.md
+EVIDENCE/v5.6/components/response-review.md
+EVIDENCE/v5.6/components/secure-request-review.md
+EVIDENCE/v5.6/components/data-transfer-review.md
+EVIDENCE/v5.6/components/schema-generation-review.md
+EVIDENCE/v5.6/components/filesystem-review.md
+EVIDENCE/v5.6/components/storage-review.md
+EVIDENCE/v5.6/components/cache-review.md
+EVIDENCE/v5.6/components/database-review.md
+EVIDENCE/v5.6/components/queue-review.md
+EVIDENCE/v5.6/components/messaging-review.md
+EVIDENCE/v5.6/components/reliability-review.md
+EVIDENCE/v5.6/components/observability-review.md
+EVIDENCE/v5.6/components/security-policy-review.md
+EVIDENCE/v5.6/components/system-design-kit-review.md
+EVIDENCE/v5.6/components/benchmarks-review.md
+EVIDENCE/v5.6/components/cli-console-review.md
+EVIDENCE/v5.6/components/serialization-review.md
+EVIDENCE/v5.6/components/concurrency-review.md
+EVIDENCE/v5.6/components/parallelism-review.md
+EVIDENCE/v5.6/security-review.md
+EVIDENCE/v5.6/performance-review.md
+EVIDENCE/v5.6/testing-review.md
+EVIDENCE/v5.6/documentation-review.md
+EVIDENCE/v5.6/production-readiness-review.md
+EVIDENCE/v5.6/final-review-decision.md
+EVIDENCE/v5.6/next-actions-after-review.md
+EVIDENCE/v5.6/final-review-closure.md
 ```
 
 ## Tooling Scripts

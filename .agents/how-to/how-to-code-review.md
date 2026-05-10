@@ -267,18 +267,32 @@ When these files exist, the review MUST check them explicitly:
   named arguments, static closures, pipe usage when applicable
 - `how-to-coding-standards.md`: PHP version expectations, security, DevSecOps gates, modern language features, output
   expectations, privacy/legal notes where relevant
+- `how-to-dogfooding.md`: internal component reuse, one capability one owner, dependency direction, PublicSurface thinness,
+  hot-path efficiency, Filesystem/Storage/Queue/Messaging/Reliability/Observability/CallableSerialization adoption matrix,
+  no raw file/process/serialization/retry logic outside owners
+- `how-to-modern-php-attributes-di.md`: PHP 8.0-8.5 feature adoption, attribute compilation (not reflection-per-request),
+  DI/autowiring discipline, constructor bloat rules (0-4 normal, 5-7 check, 8+ warning), compiled metadata vs hot-path reflection,
+  WeakMap cache policy, property hooks, asymmetric visibility, NoDiscard, pipe operator for pure transformations only,
+  superglobal isolation behind AvaX Request, tooling gates
 - `how-to-unit-test.md`: behavior-first tests, happy/failure/edge/regression/security scenarios, naming,
   Arrange/Act/Assert, one-act rule, assertion precision, test data clarity
 - `how-to-document.md`: docs location, filesystem-first documentation, `how-this-works.md`, mermaid diagrams, real
   triggers, debug-first guidance, documentation completeness
 - `how-to-system-security.md`: security governance, boundaries, authentication, authorization, secrets, input
-  validation,
-  output encoding, naming rules
+  validation, output encoding, naming rules
 - `how-to-system-performance.md`: performance governance, hot paths, hidden I/O, bounding, latency budgets, memory
   management
 - `how-to-production-readiness.md`: production gates, health checks, doctor, runtime safety, failure handling
 - `how-to-code-review.md`: this review process itself, including hard gates, findings, decision, next steps, and
   governance compliance
+
+Hard rule:
+
+A code review that does not explicitly check `how-to-dogfooding.md` and `how-to-modern-php-attributes-di.md` when they exist is incomplete.
+
+These two documents are central to AvaX V5 governance.
+
+If either is missing from the checklist, the checklist is stale and the review is invalid.
 
 ### Governance Drift Rule
 

@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Operations\Resilience;
+namespace Avax\Tests\Unit\Operations\Resilience;
 
 use Avax\Components\Operations\Resilience\System\Flows\ExecuteWithReliability\ExecuteWithReliability;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use Throwable;
 
 final class ReliabilityEngineTest extends TestCase
 {
@@ -28,7 +30,7 @@ final class ReliabilityEngineTest extends TestCase
         $result = $engine->execute(static function () use (&$attempts) {
             $attempts++;
             if ($attempts < 3) {
-                throw new \RuntimeException('transient failure');
+                throw new RuntimeException('transient failure');
             }
 
             return 'recovered';
@@ -44,10 +46,10 @@ final class ReliabilityEngineTest extends TestCase
         $engine->withMaxAttempts(2);
         $engine->withBackoffMs(1);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('always fails');
 
-        $engine->execute(static fn () => throw new \RuntimeException('always fails'));
+        $engine->execute(static fn () => throw new RuntimeException('always fails'));
     }
 
     public function test_execute_uses_fallback_on_failure() : void
@@ -57,7 +59,7 @@ final class ReliabilityEngineTest extends TestCase
         $engine->withBackoffMs(1);
         $engine->withFallback(static fn () => 'fallback value');
 
-        $result = $engine->execute(static fn () => throw new \RuntimeException('boom'));
+        $result = $engine->execute(static fn () => throw new RuntimeException('boom'));
 
         self::assertSame('fallback value', $result);
     }
@@ -66,11 +68,11 @@ final class ReliabilityEngineTest extends TestCase
     {
         $engine = new ExecuteWithReliability();
         $engine->withMaxAttempts(1);
-        $engine->withFallback(static function (\Throwable $e) {
+        $engine->withFallback(static function (Throwable $e) {
             return 'failed: ' . $e->getMessage();
         });
 
-        $result = $engine->execute(static fn () => throw new \RuntimeException('boom'));
+        $result = $engine->execute(static fn () => throw new RuntimeException('boom'));
 
         self::assertSame('failed: boom', $result);
     }
@@ -84,11 +86,11 @@ final class ReliabilityEngineTest extends TestCase
         $engine->withFallback(static fn () => 'cb-fallback');
 
         // First failure — CB still closed
-        $result1 = $engine->execute(static fn () => throw new \RuntimeException('fail'));
+        $result1 = $engine->execute(static fn () => throw new RuntimeException('fail'));
         self::assertSame('cb-fallback', $result1);
 
         // Second failure — CB opens
-        $result2 = $engine->execute(static fn () => throw new \RuntimeException('fail'));
+        $result2 = $engine->execute(static fn () => throw new RuntimeException('fail'));
         self::assertSame('cb-fallback', $result2);
     }
 
@@ -98,7 +100,7 @@ final class ReliabilityEngineTest extends TestCase
         $engine->withMaxAttempts(1);
         $engine->withTimeoutMs(50);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Operation timed out');
 
         $engine->execute(static function () {
@@ -123,7 +125,7 @@ final class ReliabilityEngineTest extends TestCase
         $engine = new ExecuteWithReliability();
         $engine->withMaxAttempts(1);
         $engine->withTimeoutMs(50);
-        $engine->withFallback(static function (\Throwable $e) {
+        $engine->withFallback(static function (Throwable $e) {
             return 'timeout fallback';
         });
 
@@ -146,7 +148,7 @@ final class ReliabilityEngineTest extends TestCase
         // Fails 3 times, then fallback kicks in
         $result = $engine->execute(static function () use (&$attempts) {
             $attempts++;
-            throw new \RuntimeException('fail #' . $attempts);
+            throw new RuntimeException('fail #' . $attempts);
         });
 
         self::assertSame('final fallback', $result);

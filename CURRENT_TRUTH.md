@@ -1,8 +1,8 @@
 # CURRENT_TRUTH
 
-Date of Truth: 2026-05-09
+Date of Truth: 2026-05-10
 Branch: main
-Commit: V4-04 Developer Experience Foundation
+Commit: V4-05–V4-11 Enterprise Closure Pass
 
 ## Core Status
 
@@ -13,6 +13,11 @@ V4-01 Runtime App Layer: COMPLETE / GREEN (main branch)
 V4-02 ReactPHP Runtime Foundation: COMPLETE / GREEN (main branch)
 V4-03 Warm Worker Safety: COMPLETE / GREEN (main branch)
 V4-04 Developer Experience: COMPLETE / GREEN (main branch)
+V4-05 through V4-11: BASELINE VALIDATED, ENTERPRISE CLOSURE IN PROGRESS
+V4-12: BLOCKED (depends on V4-05–V4-11 GREEN)
+V4-13: BLOCKED
+V4-14: BLOCKED
+V4-17: BLOCKED (depends on V4-03 Warm Worker Safety full GREEN)
 
 ## Validation Status
 

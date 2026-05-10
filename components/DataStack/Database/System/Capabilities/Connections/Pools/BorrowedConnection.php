@@ -63,6 +63,42 @@ final class BorrowedConnection implements DatabaseConnection
     }
 
     /**
+     * Start a new database transaction.
+     */
+    #[Override]
+    public function beginTransaction() : bool
+    {
+        return $this->databaseConnection->beginTransaction();
+    }
+
+    /**
+     * Commit the current transaction.
+     */
+    #[Override]
+    public function commit() : bool
+    {
+        return $this->databaseConnection->commit();
+    }
+
+    /**
+     * Roll back the current transaction.
+     */
+    #[Override]
+    public function rollBack() : bool
+    {
+        return $this->databaseConnection->rollBack();
+    }
+
+    /**
+     * Execute a raw SQL statement (no result set).
+     */
+    #[Override]
+    public function exec(string $sql) : int|false
+    {
+        return $this->databaseConnection->exec($sql);
+    }
+
+    /**
      * Auto-release the connection when this wrapper is destroyed.
      */
     public function __destruct()

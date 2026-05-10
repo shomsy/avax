@@ -52,7 +52,9 @@ trait HasConditions
             return $this->whereNested(callback: $column, boolean: $boolean);
         }
 
-        if (func_num_args() === 2) {
+        // Detect if operator is actually a value (when called with 2 args: column, value)
+        $validOperators = ['=', '<', '>', '<=', '>=', '<>', '!=', '<=>', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT'];
+        if ($operator !== null && ! in_array(needle: strtoupper(string: (string) $operator), haystack: $validOperators, strict: true)) {
             $value = $operator;
             $operator = '=';
         }
@@ -60,12 +62,12 @@ trait HasConditions
         $clone = clone $this;
         $clone->state = $clone->state->addWhere(where: new WhereNode(
             column  : $column,
-            operator: (string) $operator,
+            operator: strtoupper(string: (string) $operator),
             value   : $value,
             boolean : $boolean,
         ));
 
-        if (! in_array(needle: $operator, haystack: ['IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN'])) {
+        if (! in_array(needle: strtoupper(string: (string) $operator), haystack: ['IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN'])) {
             $clone->state = $clone->state->addBinding(value: $value);
         }
 

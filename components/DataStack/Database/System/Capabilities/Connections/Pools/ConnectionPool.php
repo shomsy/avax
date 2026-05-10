@@ -67,6 +67,7 @@ abstract class ConnectionPool implements ConnectionPoolInterface
     public function warmup(int $count): void
     {
         for ($i = 0; $i < min($count, $this->minConnections); $i++) {
+            $this->createdCount++;
             $this->release(pooledConnection: $this->createConnection());
         }
     }

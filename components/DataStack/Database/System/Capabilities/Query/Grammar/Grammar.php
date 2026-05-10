@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar;
 
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\State\AST\WhereNode;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\State\QueryState;
@@ -84,7 +85,11 @@ abstract class Grammar implements GrammarInterface
 
         foreach ($queryState->ctes as $cte) {
             $name = $this->wrap($cte['name']);
-            $query = $cte['query'] instanceof QueryState ? $this->compileSelect($cte['query']) : (string) $cte['query'];
+            $query = match (true) {
+                $cte['query'] instanceof QueryState   => $this->compileSelect($cte['query']),
+                $cte['query'] instanceof QueryBuilder => $this->compileSelect($cte['query']->state),
+                default                               => (string) $cte['query'],
+            };
             $ctes[] = sprintf('%s AS (%s)', $name, $query);
             if ($cte['recursive']) {
                 $recursive = true;

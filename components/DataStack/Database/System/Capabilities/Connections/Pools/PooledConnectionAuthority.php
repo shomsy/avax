@@ -115,12 +115,48 @@ final class PooledConnectionAuthority implements ConnectionPoolInterface, Databa
     }
 
     /**
+     * Start a new database transaction.
+     */
+    #[Override]
+    public function beginTransaction() : bool
+    {
+        return $this->resolveBorrowed()->beginTransaction();
+    }
+
+    /**
+     * Commit the current transaction.
+     */
+    #[Override]
+    public function commit() : bool
+    {
+        return $this->resolveBorrowed()->commit();
+    }
+
+    /**
+     * Roll back the current transaction.
+     */
+    #[Override]
+    public function rollBack() : bool
+    {
+        return $this->resolveBorrowed()->rollBack();
+    }
+
+    /**
+     * Execute a raw SQL statement (no result set).
+     */
+    #[Override]
+    public function exec(string $sql) : int|false
+    {
+        return $this->resolveBorrowed()->exec($sql);
+    }
+
+    /**
      * Hand a connection back to the shared library.
      */
     #[Override]
     public function release(DatabaseConnection $databaseConnection): void
     {
-        $this->connectionPool->release(connection: $databaseConnection);
+        $this->connectionPool->release(databaseConnection: $databaseConnection);
     }
 
     /**

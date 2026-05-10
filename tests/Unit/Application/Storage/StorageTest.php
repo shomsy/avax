@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Application\Storage;
+namespace Avax\Tests\Unit\Application\Storage;
 
 use Avax\Components\Application\Storage\System\Capabilities\Disks\LocalDisk\LocalDisk;
 use Avax\Components\Application\Storage\System\Capabilities\Disks\MemoryDisk\MemoryDisk;
@@ -11,6 +11,7 @@ use Avax\Components\Application\Storage\System\Foundation\Failure\StoredObjectNo
 use Avax\Components\Application\Storage\System\Foundation\Failure\TemporaryUrlNotSupported;
 use Avax\Components\Application\Storage\System\Foundation\Values\StoragePath;
 use Avax\Components\Application\Storage\System\PublicSurface\Storage;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 final class StorageTest extends TestCase
@@ -90,7 +91,7 @@ final class StorageTest extends TestCase
         $disk = new MemoryDisk();
 
         $this->expectException(TemporaryUrlNotSupported::class);
-        $disk->temporaryUrl(new StoragePath('hello.txt'), new \DateTimeImmutable('+1 hour'));
+        $disk->temporaryUrl(new StoragePath('hello.txt'), new DateTimeImmutable('+1 hour'));
     }
 
     public function test_memory_disk_supports_temporary_url_is_false() : void

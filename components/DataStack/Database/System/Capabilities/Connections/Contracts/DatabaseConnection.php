@@ -62,4 +62,26 @@ interface DatabaseConnection
      * @return string The technical label (name) of the connection.
      */
     public function getName(): string;
+
+    /**
+     * Start a new database transaction.
+     */
+    public function beginTransaction() : bool;
+
+    /**
+     * Commit the current transaction.
+     */
+    public function commit() : bool;
+
+    /**
+     * Roll back the current transaction.
+     */
+    public function rollBack() : bool;
+
+    /**
+     * Execute a raw SQL statement (no result set).
+     *
+     * @return int|false Number of affected rows or false on failure
+     */
+    public function exec(string $sql) : int|false;
 }

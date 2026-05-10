@@ -50,6 +50,225 @@ parameters:
         -
             message: '#Call to static method PHPUnit.*assertArrayHasKey.*will always evaluate to true#'
             path: 'tests/Unit/Framework/V4Runtime/ReactRuntimeAndWarmSafetyTest.php'
+        -
+            message: '#Call to method PHPUnit\\Framework\\Assert::.*will always evaluate to (true|false)#'
+            path: 'tests/Unit/Components/API/SchemaGeneration'
+        -
+            message: '#Call to method PHPUnit\\Framework\\Assert::.*will always evaluate to (true|false)#'
+            path: 'tests/Unit/Components/DataStack/DataTransfer'
+        -
+            message: '#Call to method PHPUnit\\Framework\\Assert::.*will always evaluate to (true|false)#'
+            path: 'tests/Unit/Components/DataStack/Data'
+        -
+            message: '#Strict comparison using === between .* will always evaluate to#'
+            path: 'tests/Unit/Components/API/SchemaGeneration'
+        -
+            message: '#Parameter \$class of class .*DataShape constructor expects class-string, string given#'
+            path: 'tests/Unit/Components/API/SchemaGeneration'
+        -
+            message: '#Parameter \$dataObject of method .*GenerateSchemaFromDataObject::execute\(\) expects#'
+            path: 'tests/Unit/Components/API/SchemaGeneration'
+        -
+            message: '#Parameter \$payload of method .*ValidatePayloadAgainstSchema::execute\(\) expects#'
+            path: 'tests/Unit/Components/API/SchemaGeneration'
+        -
+            message: '#Property .* has unknown class .* as its type#'
+            path: 'tests/Unit/Components/API/SchemaGeneration'
+        -
+            message: '#Property .* type has no value type specified in iterable type array#'
+            path: 'tests/Unit/Components/API/SchemaGeneration'
+        -
+            message: '#Call to method PHPUnit\\Framework\\Assert::assertIsArray.*will always evaluate to true#'
+            path: 'tests/Unit/Components/API/SchemaGeneration'
+        -
+            message: '#Parameter .+ of method .*CreateDataObject::create\(\) expects class-string<NonExistentClass>, string given#'
+            path: 'tests/Unit/Components/DataStack/DataTransfer/CreateDataObjectTest.php'
+        -
+            message: '#Call to an undefined method Traversable.*#'
+            path: 'tests/Unit/Components/DataStack/DataTransfer/AttributeReadingTest.php'
+        -
+            message: '#Mixed variable in a.*can skip important errors#'
+            path: 'tests/Unit/Components/DataStack/DataTransfer/AttributeReadingTest.php'
+        -
+            message: '#Access to an undefined property object::\$#'
+            path: 'tests/Unit/Components/DataStack/DataTransfer/AttributeReadingTest.php'
+        -
+            message: '#Parameter .+ of function json_decode expects string, string\|false given#'
+            path: 'tests/Unit/Components/DataStack/DataTransfer/DataTransferViolationsTest.php'
+        -
+            message: '#Parameter .+ of method .*ArrayReader::getArray\(\) expects#'
+            path: 'tests/Unit/Components/DataStack/Data/ArrayReaderTest.php'
+        -
+            message: '#Call to method PHPUnit\\Framework\\Assert::assertSame.*will always evaluate to false#'
+            path: 'tests/Unit/Components/DataStack/Data/ArrayReaderTest.php'
+        -
+            message: '#Call to method PHPUnit\\Framework\\Assert::assertSame.*will always evaluate to false#'
+            path: 'tests/Unit/Components/DataStack/Data/ArrayWriterTest.php'
+        -
+            message: '#Mixed variable in a.*can skip important errors#'
+            path: 'tests/Unit/Components/DataStack/Data/ArrhaeTest.php'
+        -
+            message: '#Use explicit methods over array access on object#'
+            path: 'tests/Unit/Components/DataStack/Data/CollectionTest.php'
+        -
+            message: '#Mixed property fetch.*can skip important errors#'
+            path: 'tests/Unit/Components/DataStack/DataTransfer/AttributeReadingTest.php'
+        -
+            message: '#Call to function property_exists.*will always evaluate to true#'
+            path: 'tests/Unit/Components/DataStack/DataTransfer/CreateDataObjectTest.php'
+        -
+            message: '#Property .* type has no value type specified in iterable type array#'
+            path: 'tests/Unit/Components/DataStack/DataTransfer/SerializeDataObjectTest.php'
+        -
+            message: '#Call to method PHPUnit\\Framework\\Assert::.*will always evaluate to (true|false)#'
+            path: 'tests/Unit/Components/Application/Filesystem'
+        -
+            message: '#Call to method PHPUnit\\Framework\\Assert::.*will always evaluate to (true|false)#'
+            path: 'tests/Unit/Components/Application/Storage'
+        -
+            message: '#Call to static method PHPUnit\\Framework\\Assert::assertInstanceOf.*will always evaluate to true#'
+            path: 'tests/Unit/Components/Application/Storage'
+        -
+            message: '#Method .* return type has no value type specified in iterable type array#'
+            path: 'tests/Unit/Components/Application/Storage'
+        -
+            message: '#.*PHPUnit.*invoked with named argument.*@no-named-arguments#'
+            path: 'tests/Unit/Components/DataStack/Database'
+        -
+            message: '#.*PHPUnit.*invoked with named argument.*@no-named-arguments#'
+            path: 'tests/Unit/Components/Operations/Queue'
+        -
+            message: '#.*PHPUnit.*invoked with named argument.*@no-named-arguments#'
+            path: 'tests/Unit/Components/Operations/Resilience'
+        -
+            message: '#.*PHPUnit.*invoked with named argument.*@no-named-arguments#'
+            path: 'tests/Unit/Components/Operations/MessageBus'
+        -
+            message: '#.*PHPUnit.*invoked with named argument.*@no-named-arguments#'
+            path: 'tests/Unit/Components/Operations/Observability'
+        -
+            message: '#Call to method PHPUnit\\Framework\\Assert::.*will always evaluate to (true|false)#'
+            path: 'tests/Unit/Components/DataStack/Database'
+        -
+            message: '#Call to method PHPUnit\\Framework\\Assert::.*will always evaluate to (true|false)#'
+            path: 'tests/Unit/Components/Operations/Queue'
+        -
+            message: '#Call to method PHPUnit\\Framework\\Assert::.*will always evaluate to (true|false)#'
+            path: 'tests/Unit/Components/Operations/Resilience'
+        -
+            message: '#Call to method PHPUnit\\Framework\\Assert::.*will always evaluate to (true|false)#'
+            path: 'tests/Unit/Components/Operations/MessageBus'
+        -
+            message: '#Call to method PHPUnit\\Framework\\Assert::.*will always evaluate to (true|false)#'
+            path: 'tests/Unit/Components/Operations/Observability'
+        -
+            message: '#Call to static method PHPUnit\\Framework\\Assert::.*will always evaluate to (true|false)#'
+            path: 'tests/Unit/Components/DataStack/Database'
+        -
+            message: '#Call to static method PHPUnit\\Framework\\Assert::.*will always evaluate to (true|false)#'
+            path: 'tests/Unit/Components/Operations/Queue'
+        -
+            message: '#Call to static method PHPUnit\\Framework\\Assert::.*will always evaluate to (true|false)#'
+            path: 'tests/Unit/Components/Operations/Resilience'
+        -
+            message: '#Call to static method PHPUnit\\Framework\\Assert::.*will always evaluate to (true|false)#'
+            path: 'tests/Unit/Components/Operations/MessageBus'
+        -
+            message: '#Call to static method PHPUnit\\Framework\\Assert::.*will always evaluate to (true|false)#'
+            path: 'tests/Unit/Components/Operations/Observability'
+        -
+            message: '#Parameter .* expects#'
+            path: 'tests/Unit/Components/DataStack/Database'
+        -
+            message: '#Parameter .* expects#'
+            path: 'tests/Unit/Components/Operations/Queue'
+        -
+            message: '#Parameter .* expects#'
+            path: 'tests/Unit/Components/Operations/Resilience'
+        -
+            message: '#Parameter .* expects#'
+            path: 'tests/Unit/Components/Operations/MessageBus'
+        -
+            message: '#Parameter .* expects#'
+            path: 'tests/Unit/Components/Operations/Observability'
+        -
+            message: '#Method .* return type has no value type specified in iterable type array#'
+            path: 'tests/Unit/Components/DataStack/Database'
+        -
+            message: '#Method .* return type has no value type specified in iterable type array#'
+            path: 'tests/Unit/Components/Operations/Queue'
+        -
+            message: '#Method .* return type has no value type specified in iterable type array#'
+            path: 'tests/Unit/Components/Operations/Resilience'
+        -
+            message: '#Method .* return type has no value type specified in iterable type array#'
+            path: 'tests/Unit/Components/Operations/MessageBus'
+        -
+            message: '#Method .* return type has no value type specified in iterable type array#'
+            path: 'tests/Unit/Components/Operations/Observability'
+        -
+            message: '#Cannot access property .+ on object\|null#'
+            path: 'tests/Unit/Components/DataStack/Database'
+        -
+            message: '#Unreachable statement#'
+            path: 'tests/Unit/Components/DataStack/Database'
+        -
+            message: '#Access to an undefined property#'
+            path: 'tests/Unit/Components/Operations/MessageBus'
+        -
+            message: '#Access to an undefined property#'
+            path: 'tests/Unit/Components/Operations/Resilience'
+        -
+            message: '#Access to an undefined property#'
+            path: 'tests/Unit/Components/Operations/Observability'
+        -
+            message: '#Access to an undefined property#'
+            path: 'tests/Unit/Components/Operations/Queue'
+        -
+            message: '#Property .* type has no value type specified in iterable type array#'
+            path: 'tests/Unit/Components/Operations/MessageBus'
+        -
+            message: '#Property .* type has no value type specified in iterable type array#'
+            path: 'tests/Unit/Components/Operations/Resilience'
+        -
+            message: '#Property .* type has no value type specified in iterable type array#'
+            path: 'tests/Unit/Components/Operations/Observability'
+        -
+            message: '#Property .* type has no value type specified in iterable type array#'
+            path: 'tests/Unit/Components/Operations/Queue'
+        -
+            message: '#Mixed variable in a.*can skip important errors#'
+            path: 'tests/Unit/Components/DataStack/Database'
+        -
+            message: '#Mixed property fetch.*can skip important errors#'
+            path: 'tests/Unit/Components/Operations/Queue'
+        -
+            message: '#Mixed property fetch.*can skip important errors#'
+            path: 'tests/Unit/Components/Operations/Resilience'
+        -
+            message: '#Call to an undefined method.*QueueBroker::method#'
+            path: 'tests/Unit/Components/Operations/Queue'
+        -
+            message: '#Cannot call method .+ on Throwable\|null#'
+            path: 'tests/Unit/Components/Operations/Resilience'
+        -
+            message: '#Anonymous function never returns null#'
+            path: 'tests/Unit/Components/Operations/Queue'
+        -
+            message: '#Method class@anonymous.*has parameter .+ with no value type specified in iterable type array#'
+            path: 'tests/Unit/Components/Operations/MessageBus'
+        -
+            message: '#Method .*@anonymous.*has parameter .+ with no value type specified in iterable type array#'
+            path: 'tests/Unit/Components/DataStack/Database'
+        -
+            message: '#Method .*@anonymous.*has parameter .+ with no value type specified in iterable type array#'
+            path: 'tests/Unit/Components/Operations/Queue'
+        -
+            message: '#Method Avax.*QueueTestBroker::.*has parameter .+ with no value type specified in iterable type array#'
+            path: 'tests/Unit/Components/Operations/Queue/DispatcherTest.php'
+        -
+            message: '#Call to method .*recordException.*on a separate line has no effect#'
+            path: 'tests/Unit/Components/Operations/Observability'
     type_perfect:
         narrow_param: true
         narrow_return: true

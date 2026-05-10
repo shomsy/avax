@@ -56,4 +56,40 @@ final readonly class PdoConnection implements DatabaseConnection
     {
         return $this->name;
     }
+
+    /**
+     * Start a new database transaction.
+     */
+    #[Override]
+    public function beginTransaction() : bool
+    {
+        return $this->pdo->beginTransaction();
+    }
+
+    /**
+     * Commit the current transaction.
+     */
+    #[Override]
+    public function commit() : bool
+    {
+        return $this->pdo->commit();
+    }
+
+    /**
+     * Roll back the current transaction.
+     */
+    #[Override]
+    public function rollBack() : bool
+    {
+        return $this->pdo->rollBack();
+    }
+
+    /**
+     * Execute a raw SQL statement (no result set).
+     */
+    #[Override]
+    public function exec(string $sql) : int|false
+    {
+        return $this->pdo->exec($sql);
+    }
 }

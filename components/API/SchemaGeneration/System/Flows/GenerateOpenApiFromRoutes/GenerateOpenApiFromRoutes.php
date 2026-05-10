@@ -75,7 +75,7 @@ final readonly class GenerateOpenApiFromRoutes
         $spec = $this->emptySpec();
 
         foreach ($routes as $route) {
-            $method = strtolower($route->method()->toString());
+            $method = strtolower($route->method()->value);
             $uri = $route->uri();
 
             // Convert {param} to OpenAPI {param} path style

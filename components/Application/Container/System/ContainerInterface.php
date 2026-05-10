@@ -182,7 +182,7 @@ interface ContainerInterface extends DependencyRegistryContract, PsrContainerInt
      *
      * @throws ContainerException
      */
-    public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = ''): void;
+    public function openScope(string $kind = ScopeKind::Operation->value, string $scopeId = ''): void;
 
     /**
      * Closes the current scope frame.

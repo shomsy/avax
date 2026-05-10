@@ -16,6 +16,7 @@ use Avax\Components\Application\Storage\System\Flows\MoveStoredObject\MoveStored
 use Avax\Components\Application\Storage\System\Flows\ReadStoredObject\ReadStoredObject;
 use Avax\Components\Application\Storage\System\Flows\WriteStoredObject\WriteStoredObject;
 use Avax\Components\Application\Storage\System\Foundation\Failure\DiskNotFound;
+use Avax\Components\Application\Storage\System\Foundation\Values\DiskKind;
 use Avax\Components\Application\Storage\System\Foundation\Values\DiskName;
 use Avax\Components\Application\Storage\System\Foundation\Values\StoragePath;
 use DateTimeInterface;
@@ -68,7 +69,7 @@ final class Storage
 
     public static function defaultDisk() : Disk
     {
-        $name = self::$defaultDisk ?? 'local';
+        $name = self::$defaultDisk ?? DiskKind::Local->value;
 
         return self::disk($name);
     }

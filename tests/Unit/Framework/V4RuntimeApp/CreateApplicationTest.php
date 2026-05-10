@@ -17,14 +17,14 @@ final class CreateApplicationTest extends TestCase
     {
         $factory = new CreateApplication();
         $app = $factory->make(environment: 'testing');
-        self::assertSame('testing', $app->runtime()->environment()->toString());
+        self::assertSame('testing', $app->runtime()->environment()->value);
     }
 
     public function testMakeInitializesRuntime(): void
     {
         $factory = new CreateApplication();
         $app = $factory->make(environment: 'testing');
-        self::assertSame('testing', $app->runtime()->environment()->toString());
+        self::assertSame('testing', $app->runtime()->environment()->value);
     }
 
     public function testMakeSetsUpStateReset(): void
@@ -42,7 +42,7 @@ final class CreateApplicationTest extends TestCase
 
         foreach (['testing', 'production', 'development', 'staging'] as $env) {
             $app = $factory->make(environment: $env);
-            self::assertSame($env, $app->runtime()->environment()->toString(), "Failed for environment: $env");
+            self::assertSame($env, $app->runtime()->environment()->value, "Failed for environment: $env");
         }
     }
 

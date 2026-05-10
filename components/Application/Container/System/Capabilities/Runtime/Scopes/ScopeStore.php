@@ -30,7 +30,7 @@ final class ScopeStore
         return $this->hasFor(abstract: $abstract);
     }
 
-    public function hasFor(string $abstract, string $kind = ScopeKind::ANY): bool
+    public function hasFor(string $abstract, string $kind = ScopeKind::Any->value): bool
     {
         $index = $this->frameIndex(kind: $kind);
         if ($index === null) {
@@ -46,9 +46,9 @@ final class ScopeStore
             return null;
         }
 
-        $normalized = ScopeKind::normalize(kind: $kind);
+        $normalized = ScopeKind::normalize(kind: $kind)->value;
 
-        if ($normalized === ScopeKind::ANY) {
+        if ($normalized === ScopeKind::Any->value) {
             return array_key_last(array: $this->scopes);
         }
 
@@ -69,7 +69,7 @@ final class ScopeStore
         return $this->getFor(abstract: $abstract);
     }
 
-    public function getFor(string $abstract, string $kind = ScopeKind::ANY): mixed
+    public function getFor(string $abstract, string $kind = ScopeKind::Any->value): mixed
     {
         $index = $this->frameIndex(kind: $kind);
         if ($index === null) {
@@ -98,11 +98,11 @@ final class ScopeStore
         ?string $kind = null,
         bool $disposable = false,
     ): void {
-        $kind ??= ScopeKind::ANY;
+        $kind ??= ScopeKind::Any->value;
         $index = $this->frameIndex(kind: $kind);
         if ($index === null) {
-            $required = ScopeKind::normalize(kind: $kind);
-            $hint = $required === ScopeKind::ANY
+            $required = ScopeKind::normalize(kind: $kind)->value;
+            $hint = $required === ScopeKind::Any->value
                 ? 'open a scope before resolving this service'
                 : sprintf('open a [%s] scope before resolving this service', $required);
 
@@ -121,9 +121,9 @@ final class ScopeStore
      */
     public function open(?string $kind = null, string $scopeId = ''): void
     {
-        $kind ??= ScopeKind::OPERATION;
+        $kind ??= ScopeKind::Operation->value;
         $this->scopes[] = [
-            'kind' => ScopeKind::normalize(kind: $kind),
+            'kind' => ScopeKind::normalize(kind: $kind)->value,
             'id' => trim(string: $scopeId),
             'items' => [],
             'disposable' => [],
@@ -151,7 +151,7 @@ final class ScopeStore
         }
 
         $frame = $this->scopes[array_key_last(array: $this->scopes)];
-        if ($kind !== null && ScopeKind::normalize(kind: $kind) !== $frame['kind']) {
+        if ($kind !== null && ScopeKind::normalize(kind: $kind)->value !== $frame['kind']) {
             throw new ContainerException(
                 message: sprintf('Cannot close scope kind [%s] while active scope kind [%s] is on top of the stack.', $kind, $frame['kind']),
             );
@@ -173,7 +173,7 @@ final class ScopeStore
         return $frames;
     }
 
-    public function hasActive(string $kind = ScopeKind::ANY): bool
+    public function hasActive(string $kind = ScopeKind::Any->value): bool
     {
         return $this->frameIndex(kind: $kind) !== null;
     }
@@ -192,7 +192,7 @@ final class ScopeStore
         $resetBeforeReuse ??= true;
         $index = $this->frameIndex(kind: $kind);
         if ($index === null) {
-            $required = ScopeKind::normalize(kind: $kind);
+            $required = ScopeKind::normalize(kind: $kind)->value;
 
             throw new ContainerException(
                 message: sprintf('Cannot checkout pooled instance [%s] without an active [%s] scope.', $abstract, $required),
@@ -208,7 +208,7 @@ final class ScopeStore
         ];
     }
 
-    public function hasPooledFor(string $abstract, string $kind = ScopeKind::ANY): bool
+    public function hasPooledFor(string $abstract, string $kind = ScopeKind::Any->value): bool
     {
         $index = $this->frameIndex(kind: $kind);
         if ($index === null) {

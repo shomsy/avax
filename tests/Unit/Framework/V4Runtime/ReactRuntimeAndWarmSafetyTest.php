@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Framework\V4Runtime;
 
-use Avax\Framework\System\Capabilities\ServeModes\SelectServeMode;
+use Avax\Framework\System\Capabilities\ServeModes\ServeMode;
 use Avax\Framework\System\Runtime\MemoryGuard\CheckMemoryThreshold;
 use Avax\Framework\System\Runtime\MemoryGuard\RecordMemorySnapshot;
 use Avax\Framework\System\Runtime\ReactPhp\ConvertAvaxResponseToReactResponse;
@@ -139,11 +139,10 @@ final class ReactRuntimeAndWarmSafetyTest extends TestCase
 
     public function testInvalidRuntimeReturnsError(): void
     {
-        $selector = new SelectServeMode();
-        $mode = $selector->select(['runtime' => 'nonexistent']);
+        $mode = ServeMode::tryFromString('nonexistent');
 
-        // Falls back to built-in
-        self::assertSame(SelectServeMode::BUILT_IN, $mode);
+        // Falls back to null for unknown
+        self::assertNull($mode);
     }
 
     public function testNoReactPhpClassesLeakIntoAppPublicApi(): void
@@ -262,15 +261,14 @@ final class ReactRuntimeAndWarmSafetyTest extends TestCase
         self::assertTrue($resetCalled); // @phpstan-ignore trueUsedInAssert
     }
 
-    public function testSelectServeModeDetectsReactPhp(): void
+    public function testServeModeEnumWorks(): void
     {
-        $selector = new SelectServeMode();
-        self::assertTrue($selector->isReactPhpAvailable());
+        // Verify enum cases work correctly
+        self::assertSame('reactphp', ServeMode::ReactPhp->value);
+        self::assertSame('built-in', ServeMode::BuiltIn->value);
 
-        $mode = $selector->select(['runtime' => 'reactphp']);
-        self::assertSame(SelectServeMode::REACT_PHP, $mode);
-
-        $mode = $selector->select(['runtime' => 'built-in']);
-        self::assertSame(SelectServeMode::BUILT_IN, $mode);
+        // Verify fromString works
+        self::assertSame(ServeMode::ReactPhp, ServeMode::fromString('reactphp'));
+        self::assertSame(ServeMode::BuiltIn, ServeMode::fromString('built-in'));
     }
 }

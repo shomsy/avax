@@ -58,7 +58,7 @@ final readonly class LifetimePlan
         $name = $dependencyRegistration?->lifetime ?? TransientLifetime::NAME;
         $storage = self::storageFor(name: $name);
         $scopeKind = $name === PooledLifetime::NAME
-            ? $dependencyRegistration?->poolScopeKind ?? ScopeKind::OPERATION
+            ? $dependencyRegistration?->poolScopeKind ?? ScopeKind::Operation->value
             : self::scopeKindFor(name: $name);
 
         return new self(
@@ -91,11 +91,11 @@ final readonly class LifetimePlan
     private static function scopeKindFor(string $name): string
     {
         return match ($name) {
-            OperationLifetime::NAME, PooledLifetime::NAME => ScopeKind::OPERATION,
-            RequestLifetime::NAME => ScopeKind::REQUEST,
-            JobLifetime::NAME => ScopeKind::JOB,
-            TenantLifetime::NAME => ScopeKind::TENANT,
-            ScopedLifetime::NAME => ScopeKind::ANY,
+            OperationLifetime::NAME, PooledLifetime::NAME => ScopeKind::Operation->value,
+            RequestLifetime::NAME => ScopeKind::Request->value,
+            JobLifetime::NAME => ScopeKind::Job->value,
+            TenantLifetime::NAME => ScopeKind::Tenant->value,
+            ScopedLifetime::NAME => ScopeKind::Any->value,
             default => '',
         };
     }
@@ -176,7 +176,7 @@ final readonly class LifetimePlan
 
     public function scopeKind(): string
     {
-        return $this->scopeKind !== '' ? $this->scopeKind : ScopeKind::ANY;
+        return $this->scopeKind !== '' ? $this->scopeKind : ScopeKind::Any->value;
     }
 
     public function isShared(): bool

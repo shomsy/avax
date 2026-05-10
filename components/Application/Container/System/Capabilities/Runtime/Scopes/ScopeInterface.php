@@ -17,9 +17,9 @@ interface ScopeInterface
 
     public function instance(string $abstract, mixed $instance): void;
 
-    public function withinScope(callable $callback, string $kind = ScopeKind::OPERATION, string $scopeId = ''): mixed;
+    public function withinScope(callable $callback, string $kind = ScopeKind::Operation->value, string $scopeId = ''): mixed;
 
-    public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = ''): void;
+    public function openScope(string $kind = ScopeKind::Operation->value, string $scopeId = ''): void;
 
     public function closeScope(?string $kind = null): void;
 

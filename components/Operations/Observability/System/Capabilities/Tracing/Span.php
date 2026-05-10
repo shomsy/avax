@@ -24,7 +24,7 @@ class Span
      */
     private array $events = [];
 
-    private string $status = 'ok';
+    private SpanStatus $status = SpanStatus::Ok;
 
     public function __construct(
         public readonly string $name,
@@ -44,7 +44,7 @@ class Span
 
     public function recordException(Throwable $throwable): self
     {
-        $this->status = 'error';
+        $this->status = SpanStatus::Error;
         $this->events[] = [
             'type' => $throwable::class,
             'message' => $throwable->getMessage(),
@@ -89,7 +89,7 @@ class Span
         return $this->events;
     }
 
-    public function status(): string
+    public function status(): SpanStatus
     {
         return $this->status;
     }
@@ -108,7 +108,7 @@ class Span
             'name' => $this->name,
             'start' => $this->startTime,
             'end' => $this->endTime,
-            'status' => $this->status,
+            'status' => $this->status->value,
             'attributes' => $this->attributes,
             'events' => $this->events,
         ];

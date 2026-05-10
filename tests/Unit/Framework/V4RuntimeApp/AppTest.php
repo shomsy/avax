@@ -167,7 +167,7 @@ final class AppTest extends TestCase
     public function testRuntimeAccess(): void
     {
         $runtime = $this->app->runtime();
-        self::assertSame('testing', $runtime->environment()->toString());
+        self::assertSame('testing', $runtime->environment()->value);
     }
 
     public function testResetState(): void

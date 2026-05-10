@@ -16,6 +16,7 @@ use Avax\Framework\System\Flows\HandleIncomingHttp\OpenHttpRequestScope;
 use Avax\Framework\System\Flows\HandleIncomingHttp\RegisteredHttpRoutes;
 use Avax\Framework\System\Flows\ResetApplicationState\ResetApplicationState;
 use Avax\Framework\System\Flows\RunApplication\RunApplication;
+use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\PublicSurface\Console\ConsoleKernel;
 use Avax\Framework\System\PublicSurface\Console\ConsoleKernelInterface;
 use Avax\Framework\System\PublicSurface\Http\HttpKernelInterface;
@@ -81,7 +82,7 @@ final class App
      */
     public function get(string $path, mixed $action): self
     {
-        $this->registerRoute(method: 'GET', path: $path, action: $action);
+        $this->registerRoute(method: RouteMethod::GET, path: $path, action: $action);
 
         return $this;
     }
@@ -91,7 +92,7 @@ final class App
      */
     public function post(string $path, mixed $action): self
     {
-        $this->registerRoute(method: 'POST', path: $path, action: $action);
+        $this->registerRoute(method: RouteMethod::POST, path: $path, action: $action);
 
         return $this;
     }
@@ -101,7 +102,7 @@ final class App
      */
     public function put(string $path, mixed $action): self
     {
-        $this->registerRoute(method: 'PUT', path: $path, action: $action);
+        $this->registerRoute(method: RouteMethod::PUT, path: $path, action: $action);
 
         return $this;
     }
@@ -111,7 +112,7 @@ final class App
      */
     public function patch(string $path, mixed $action): self
     {
-        $this->registerRoute(method: 'PATCH', path: $path, action: $action);
+        $this->registerRoute(method: RouteMethod::PATCH, path: $path, action: $action);
 
         return $this;
     }
@@ -121,7 +122,7 @@ final class App
      */
     public function delete(string $path, mixed $action): self
     {
-        $this->registerRoute(method: 'DELETE', path: $path, action: $action);
+        $this->registerRoute(method: RouteMethod::DELETE, path: $path, action: $action);
 
         return $this;
     }
@@ -131,7 +132,7 @@ final class App
      */
     public function any(string $path, mixed $action): self
     {
-        foreach (['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'] as $method) {
+        foreach (RouteMethod::cases() as $method) {
             $this->registerRoute(method: $method, path: $path, action: $action);
         }
 
@@ -268,10 +269,10 @@ final class App
         return new RuntimeKernel(runtime: $this->runtime);
     }
 
-    private function registerRoute(string $method, string $path, mixed $action): void
+    private function registerRoute(RouteMethod $method, string $path, mixed $action): void
     {
         $definition = new RouteDefinition(
-            method: new RouteMethod($method),
+            method: $method,
             uri: $path,
             action: $action,
         );
@@ -292,7 +293,7 @@ final class App
         $routesByMethod = [];
 
         foreach ($this->routeDefinitions as $definition) {
-            $method = strtoupper($definition->method()->toString());
+            $method = strtoupper($definition->method()->value);
             $routesByMethod[$method] ??= [];
             $routesByMethod[$method][] = $definition;
         }
@@ -307,13 +308,13 @@ final class App
     {
         $this->ensureInitialized();
 
-        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $method = RouteMethod::fromString($_SERVER['REQUEST_METHOD'] ?? 'GET');
         $uri = $_SERVER['REQUEST_URI'] ?? '/';
         $headers = $this->getHeadersFromServer();
         $body = file_get_contents('php://input') ?: '';
 
         $request = new RuntimeRequest(
-            method: $method,
+            method: $method->value,
             uri: $uri,
             headers: $headers,
             body: $body,
@@ -336,7 +337,7 @@ final class App
             responseFactory: $this->responseFactory ?? new ResponseFactory(),
         );
 
-        $isProduction = $this->runtime->environment()->toString() === 'production';
+        $isProduction = $this->runtime->environment()->isProduction();
 
         return $renderer->render(e: $e, isProduction: $isProduction);
     }

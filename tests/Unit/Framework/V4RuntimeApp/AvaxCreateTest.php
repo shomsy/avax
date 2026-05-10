@@ -16,13 +16,13 @@ final class AvaxCreateTest extends TestCase
     public function testCreateReturnsAppInstance(): void
     {
         $app = Avax::create(environment: 'testing');
-        self::assertSame('testing', $app->runtime()->environment()->toString());
+        self::assertSame('testing', $app->runtime()->environment()->value);
     }
 
     public function testCreateWithDefaultEnvironment(): void
     {
         $app = Avax::create();
-        self::assertSame('production', $app->runtime()->environment()->toString());
+        self::assertSame('production', $app->runtime()->environment()->value);
     }
 
     public function testCreateAppCanRegisterRoutes(): void
@@ -45,20 +45,20 @@ final class AvaxCreateTest extends TestCase
     {
         $app = Avax::create(environment: 'testing');
 
-        self::assertSame('testing', $app->runtime()->environment()->toString());
+        self::assertSame('testing', $app->runtime()->environment()->value);
     }
 
     public function testCreateInProductionEnvironment(): void
     {
         $app = Avax::create(environment: 'production');
 
-        self::assertSame('production', $app->runtime()->environment()->toString());
+        self::assertSame('production', $app->runtime()->environment()->value);
     }
 
     public function testCreateInDevelopmentEnvironment(): void
     {
         $app = Avax::create(environment: 'development');
 
-        self::assertSame('development', $app->runtime()->environment()->toString());
+        self::assertSame('development', $app->runtime()->environment()->value);
     }
 }

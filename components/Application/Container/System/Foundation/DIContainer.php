@@ -273,7 +273,7 @@ final readonly class DIContainer implements ContainerInterface
         return $this->resolveDependency->env(key: $key, default: $default);
     }
 
-    public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = ''): void
+    public function openScope(string $kind = ScopeKind::Operation->value, string $scopeId = ''): void
     {
         $this->openScopeFlow()->open(kind: $kind, scopeId: $scopeId);
     }

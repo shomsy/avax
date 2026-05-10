@@ -39,7 +39,7 @@ final readonly class ManageScopes implements ScopeInterface
      * Runs one callback inside a temporary active scope.
      */
     #[Override]
-    public function withinScope(callable $callback, string $kind = ScopeKind::OPERATION, string $scopeId = ''): mixed
+    public function withinScope(callable $callback, string $kind = ScopeKind::Operation->value, string $scopeId = ''): mixed
     {
         $this->openScope(kind: $kind, scopeId: $scopeId);
 
@@ -54,7 +54,7 @@ final readonly class ManageScopes implements ScopeInterface
      * Opens one new scope layer.
      */
     #[Override]
-    public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = ''): void
+    public function openScope(string $kind = ScopeKind::Operation->value, string $scopeId = ''): void
     {
         $this->scopeStore->open(kind: $kind, scopeId: $scopeId);
         $this->resolutionMetrics?->increment(name: 'container_scope_open_total');
@@ -198,12 +198,12 @@ final readonly class ManageScopes implements ScopeInterface
         return $this->dependencyPool->get(abstract: $abstract);
     }
 
-    public function hasScoped(string $abstract, string $kind = ScopeKind::ANY): bool
+    public function hasScoped(string $abstract, string $kind = ScopeKind::Any->value): bool
     {
         return $this->scopeStore->hasFor(abstract: $abstract, kind: $kind);
     }
 
-    public function getScoped(string $abstract, string $kind = ScopeKind::ANY): mixed
+    public function getScoped(string $abstract, string $kind = ScopeKind::Any->value): mixed
     {
         return $this->scopeStore->getFor(abstract: $abstract, kind: $kind);
     }
@@ -214,7 +214,7 @@ final readonly class ManageScopes implements ScopeInterface
         ?string $kind = null,
         bool $disposable = false,
     ): void {
-        $kind ??= ScopeKind::ANY;
+        $kind ??= ScopeKind::Any->value;
         $this->scopeStore->setFor(
             abstract  : $abstract,
             instance  : $instance,
@@ -292,7 +292,7 @@ final readonly class ManageScopes implements ScopeInterface
         );
     }
 
-    public function hasActiveScope(string $kind = ScopeKind::ANY): bool
+    public function hasActiveScope(string $kind = ScopeKind::Any->value): bool
     {
         return $this->scopeStore->hasActive(kind: $kind);
     }

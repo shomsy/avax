@@ -7,6 +7,7 @@ namespace Avax\Tests\Unit\Components\Operations\Observability\System\Capabilitie
 use Avax\Components\Operations\Observability\System\Capabilities\Correlation\SpanId;
 use Avax\Components\Operations\Observability\System\Capabilities\Correlation\TraceId;
 use Avax\Components\Operations\Observability\System\Capabilities\Tracing\Span;
+use Avax\Components\Operations\Observability\System\Capabilities\Tracing\SpanStatus;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -199,11 +200,11 @@ final class SpanTest extends TestCase
     public function it_sets_status_to_error_on_exception() : void
     {
         $span = new Span('test', 'op');
-        self::assertSame('ok', $span->status());
+        self::assertSame(SpanStatus::Ok, $span->status());
 
         $span->recordException(new RuntimeException('fail'));
 
-        self::assertSame('error', $span->status());
+        self::assertSame(SpanStatus::Error, $span->status());
     }
 
     #[Test]

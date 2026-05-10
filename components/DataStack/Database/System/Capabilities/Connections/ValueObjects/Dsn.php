@@ -23,24 +23,26 @@ final readonly class Dsn
     /**
      * Build a technical address from simple settings.
      *
-     * @param  string  $driver  The type of database (e.g., 'mysql', 'sqlite').
+     * @param  DatabaseDriver|string  $driver  The type of database (e.g., DatabaseDriver::MySQL, 'sqlite').
      * @param  string  $host  The computer's address (e.g., '127.0.0.1').
      * @param  string  $database  The name of the specific database (e.g., 'users_db').
      * @param  string  $charset  The "Language" (Encoding) to use (e.g., 'utf8').
      * @return self An immutable object holding the perfectly formatted address.
      */
     public static function for(
-        string $driver,
+        DatabaseDriver|string $driver,
         string $host,
         string $database,
         string $charset,
     ): self {
+        $driver = is_string($driver) ? DatabaseDriver::fromString($driver) : $driver;
+
         // Different drivers have different "Address Formats".
         // SQLite:   "sqlite:/path/to/db.sqlite"
         // MySQL:    "mysql:host=127.0.0.1;dbname=test;charset=utf8"
         $dsn = match ($driver) {
-            'sqlite' => sprintf('sqlite:%s', $database),
-            default => sprintf('%s:host=%s;dbname=%s;charset=%s', $driver, $host, $database, $charset),
+            DatabaseDriver::SQLite => sprintf('sqlite:%s', $database),
+            default => sprintf('%s:host=%s;dbname=%s;charset=%s', $driver->value, $host, $database, $charset),
         };
 
         return new self(dsn: $dsn);

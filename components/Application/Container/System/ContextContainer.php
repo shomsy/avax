@@ -273,7 +273,7 @@ readonly class ContextContainer implements ContainerInterface
         return $this->foundationContainer->env(key: $key, default: $default);
     }
 
-    public function openScope(string $kind = ScopeKind::OPERATION, string $scopeId = ''): void
+    public function openScope(string $kind = ScopeKind::Operation->value, string $scopeId = ''): void
     {
         $this->foundationContainer->openScope(kind: $kind, scopeId: $scopeId);
     }

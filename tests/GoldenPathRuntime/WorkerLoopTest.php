@@ -43,7 +43,7 @@ final class WorkerLoopTest extends TestCase
     private function bootAvax() : Avax
     {
         $projectPath = new ProjectPath('/home/shomsy/projects/avax');
-        $environment = new EnvironmentName('testing');
+        $environment = EnvironmentName::Testing;
 
         return Avax::boot(WebhookIngestionApp::createBuilder($projectPath, $environment));
     }

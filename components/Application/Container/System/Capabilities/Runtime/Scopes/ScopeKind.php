@@ -6,39 +6,38 @@ namespace Avax\Components\Application\Container\System\Capabilities\Runtime\Scop
 
 /**
  * Canonical scope kind names used by runtime lifetimes.
+ *
+ * Converted from class constants to a PHP 8.1 backed enum
+ * for type safety and better IDE support.
  */
-final class ScopeKind
+enum ScopeKind: string
 {
-    public const string ANY = 'scoped';
+    case Any = 'scoped';
+    case Operation = 'operation';
+    case Request = 'request';
+    case Job = 'job';
+    case Tenant = 'tenant';
 
-    public const string OPERATION = 'operation';
-
-    public const string REQUEST = 'request';
-
-    public const string JOB = 'job';
-
-    public const string TENANT = 'tenant';
-
-    public static function rank(string $kind): int
+    public static function rank(self $kind): int
     {
-        return match (self::normalize(kind: $kind)) {
-            self::OPERATION => 1,
-            self::REQUEST => 2,
-            self::JOB => 3,
-            self::TENANT => 4,
+        return match ($kind) {
+            self::Operation => 1,
+            self::Request => 2,
+            self::Job => 3,
+            self::Tenant => 4,
             default => 0,
         };
     }
 
-    public static function normalize(string $kind): string
+    public static function normalize(string $kind): self
     {
         return match (trim(string: $kind)) {
-            self::ANY,
-            self::OPERATION,
-            self::REQUEST,
-            self::JOB,
-            self::TENANT => trim(string: $kind),
-            default => self::OPERATION,
+            self::Any->value,
+            self::Operation->value,
+            self::Request->value,
+            self::Job->value,
+            self::Tenant->value => self::from(trim(string: $kind)),
+            default => self::Operation,
         };
     }
 }

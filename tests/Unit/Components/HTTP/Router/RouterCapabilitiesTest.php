@@ -17,7 +17,7 @@ final class RouterCapabilitiesTest extends TestCase
     public function test_match_route_finds_static_route() : void
     {
         $collection = new RouteCollection();
-        $route      = new RouteDefinition(method: new RouteMethod('GET'), uri: '/hello', action: 'HelloAction');
+        $route      = new RouteDefinition(method: RouteMethod::GET, uri: '/hello', action: 'HelloAction');
         $collection->add($route);
 
         $request = $this->createMock(RequestInterface::class);

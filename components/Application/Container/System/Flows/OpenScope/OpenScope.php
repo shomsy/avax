@@ -21,7 +21,7 @@ final readonly class OpenScope
      */
     public function open(?string $kind = null, string $scopeId = ''): void
     {
-        $kind ??= ScopeKind::OPERATION;
+        $kind ??= ScopeKind::Operation->value;
         $this->resolveDependency->openScope(kind: $kind, scopeId: $scopeId);
     }
 }

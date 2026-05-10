@@ -60,7 +60,7 @@ final readonly class MatchHttpRoute
 
         foreach ($routeCollection->all() as $routeDefinition) {
             if ($routeDefinition->uri() === $path) {
-                $allowedMethods[] = $routeDefinition->method()->toString();
+                $allowedMethods[] = $routeDefinition->method()->value;
             }
         }
 

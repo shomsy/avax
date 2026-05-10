@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Response\System\PublicSurface;
 
+use Avax\Components\HTTP\Response\System\Capabilities\ContentType;
 use Avax\Components\HTTP\Response\System\Capabilities\ResponseData\ResponseData;
 use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Message\StreamInterface;
@@ -29,17 +30,17 @@ final class Response implements ResponseInterface
 
     public static function text(string $content, int $status = 200) : self
     {
-        return new self($status, ['Content-Type' => ['text/plain; charset=utf-8']], Utils::streamFor($content));
+        return new self($status, ['Content-Type' => [ContentType::Plain->withCharset()]], Utils::streamFor($content));
     }
 
     public static function json(mixed $data, int $status = 200) : self
     {
-        return new self($status, ['Content-Type' => ['application/json']], Utils::streamFor(json_encode($data, JSON_THROW_ON_ERROR)));
+        return new self($status, ['Content-Type' => [ContentType::Json->value]], Utils::streamFor(json_encode($data, JSON_THROW_ON_ERROR)));
     }
 
     public static function html(string $content, int $status = 200) : self
     {
-        return new self($status, ['Content-Type' => ['text/html; charset=utf-8']], Utils::streamFor($content));
+        return new self($status, ['Content-Type' => [ContentType::Html->withCharset()]], Utils::streamFor($content));
     }
 
     public static function redirect(string $url, int $status = 302) : self

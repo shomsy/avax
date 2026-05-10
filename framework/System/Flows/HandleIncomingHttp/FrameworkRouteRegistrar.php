@@ -27,42 +27,42 @@ final class FrameworkRouteRegistrar implements RouterInterface
 
     public function get(string $path, mixed $action): Registrar
     {
-        return $this->register(method: 'GET', path: $path, action: $action);
+        return $this->register(method: RouteMethod::GET, path: $path, action: $action);
     }
 
     public function post(string $path, mixed $action): Registrar
     {
-        return $this->register(method: 'POST', path: $path, action: $action);
+        return $this->register(method: RouteMethod::POST, path: $path, action: $action);
     }
 
     public function put(string $path, mixed $action): Registrar
     {
-        return $this->register(method: 'PUT', path: $path, action: $action);
+        return $this->register(method: RouteMethod::PUT, path: $path, action: $action);
     }
 
     public function patch(string $path, mixed $action): Registrar
     {
-        return $this->register(method: 'PATCH', path: $path, action: $action);
+        return $this->register(method: RouteMethod::PATCH, path: $path, action: $action);
     }
 
     public function delete(string $path, mixed $action): Registrar
     {
-        return $this->register(method: 'DELETE', path: $path, action: $action);
+        return $this->register(method: RouteMethod::DELETE, path: $path, action: $action);
     }
 
     public function options(string $path, mixed $action): Registrar
     {
-        return $this->register(method: 'OPTIONS', path: $path, action: $action);
+        return $this->register(method: RouteMethod::OPTIONS, path: $path, action: $action);
     }
 
     public function head(string $path, mixed $action): Registrar
     {
-        return $this->register(method: 'HEAD', path: $path, action: $action);
+        return $this->register(method: RouteMethod::HEAD, path: $path, action: $action);
     }
 
     public function any(string $path, mixed $action): Registrar
     {
-        return $this->register(method: 'ANY', path: $path, action: $action);
+        return $this->register(method: RouteMethod::GET, path: $path, action: $action);
     }
 
     /**
@@ -70,10 +70,9 @@ final class FrameworkRouteRegistrar implements RouterInterface
      */
     public function anyExpanded(string $path, mixed $action): array
     {
-        $methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
         $proxies = [];
 
-        foreach ($methods as $method) {
+        foreach (RouteMethod::cases() as $method) {
             $proxies[] = $this->register(method: $method, path: $path, action: $action);
         }
 
@@ -92,7 +91,7 @@ final class FrameworkRouteRegistrar implements RouterInterface
         $routesByMethod = [];
 
         foreach ($this->routes as $definition) {
-            $method = strtoupper(string: $definition->method()->toString());
+            $method = $definition->method()->value;
 
             $routesByMethod[$method] ??= [];
             $routesByMethod[$method][] = $definition;
@@ -104,9 +103,9 @@ final class FrameworkRouteRegistrar implements RouterInterface
         );
     }
 
-    private function register(string $method, string $path, mixed $action): Registrar
+    private function register(RouteMethod $method, string $path, mixed $action): Registrar
     {
-        $definition = new RouteDefinition(method: new RouteMethod($method), uri: $path, action: $action);
+        $definition = new RouteDefinition(method: $method, uri: $path, action: $action);
 
         $this->routes[] = $definition;
 

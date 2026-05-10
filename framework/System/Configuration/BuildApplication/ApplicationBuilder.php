@@ -117,7 +117,7 @@ final class ApplicationBuilder
         $clone = clone $this;
         $clone->environmentName = $environment instanceof EnvironmentName
             ? $environment
-            : new EnvironmentName(value: $environment);
+            : EnvironmentName::fromString($environment);
 
         return $clone;
     }

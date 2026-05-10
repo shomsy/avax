@@ -54,7 +54,7 @@ final class DependencyRegistration
 
     public bool $poolResetBeforeReuse = true;
 
-    public string $poolScopeKind = ScopeKind::OPERATION;
+    public string $poolScopeKind = ScopeKind::Operation->value;
 
     public ?string $group = null;
 
@@ -89,8 +89,8 @@ final class DependencyRegistration
         $registration->poolSize = max(1, (int) ($array['poolSize'] ?? 8));
         $registration->poolResetBeforeReuse = (bool) ($array['poolResetBeforeReuse'] ?? true);
         $registration->poolScopeKind = ScopeKind::normalize(
-            kind: (string) ($array['poolScopeKind'] ?? ScopeKind::OPERATION),
-        );
+            kind: (string) ($array['poolScopeKind'] ?? ScopeKind::Operation->value),
+        )->value;
         $registration->group = is_string(value: $array['group'] ?? null) ? $array['group'] : null;
         $registration->groupOrder = (int) ($array['groupOrder'] ?? 0);
         $registration->tags = $array['tags'] ?? [];
@@ -397,10 +397,10 @@ final class DependencyRegistration
         bool $resetBeforeReuse = true,
     ): self {
         $maxSize ??= 8;
-        $scopeKind ??= ScopeKind::OPERATION;
+        $scopeKind ??= ScopeKind::Operation->value;
         $this->lifetime = PooledLifetime::NAME;
         $this->poolSize = max(1, $maxSize);
-        $this->poolScopeKind = ScopeKind::normalize(kind: $scopeKind);
+        $this->poolScopeKind = ScopeKind::normalize(kind: $scopeKind)->value;
         $this->poolResetBeforeReuse = $resetBeforeReuse;
         $this->warm = false;
 

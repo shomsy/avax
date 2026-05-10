@@ -26,7 +26,7 @@ final class AvaxKernelTest extends TestCase
         // 1. Setup Application Builder with routes
         $builder = (new ApplicationBuilder(
             new ProjectPath(__DIR__ . '/../../'),
-            new EnvironmentName('testing')
+            EnvironmentName::Testing
         ))->withHttpRouteDefinitions(function (RouterInterface $router) use ($responses) {
             $router->get('/', fn () => $responses->send('Hello from Avax Kernel!'));
         });
@@ -53,7 +53,7 @@ final class AvaxKernelTest extends TestCase
     {
         $builder = new ApplicationBuilder(
             new ProjectPath(__DIR__ . '/../../'),
-            new EnvironmentName('testing')
+            EnvironmentName::Testing
         );
         $avax    = Avax::boot($builder);
 

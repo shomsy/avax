@@ -17,9 +17,9 @@ final class OpenApiGenerationTest extends TestCase
     public function testGeneratesValidOpenApiSpec() : void
     {
         $collection = new RouteCollection();
-        $collection->add(new RouteDefinition(new RouteMethod('GET'), '/users', fn() => null));
-        $collection->add(new RouteDefinition(new RouteMethod('POST'), '/users', fn() => null));
-        $collection->add(new RouteDefinition(new RouteMethod('GET'), '/users/{id}', fn() => null));
+        $collection->add(new RouteDefinition(method: RouteMethod::GET, uri: '/users', action: fn() => null));
+        $collection->add(new RouteDefinition(method: RouteMethod::POST, uri: '/users', action: fn() => null));
+        $collection->add(new RouteDefinition(method: RouteMethod::GET, uri: '/users/{id}', action: fn() => null));
 
         $generator = new GenerateOpenApiFromRoutes(title: 'Test API', version: '2.0.0');
         $spec = $generator->fromCollection($collection);
@@ -37,7 +37,7 @@ final class OpenApiGenerationTest extends TestCase
     public function testExtractsPathParameters() : void
     {
         $collection = new RouteCollection();
-        $collection->add(new RouteDefinition(new RouteMethod('GET'), '/users/{id}/posts/{postId}', fn() => null));
+        $collection->add(new RouteDefinition(method: RouteMethod::GET, uri: '/users/{id}/posts/{postId}', action: fn() => null));
 
         $generator = new GenerateOpenApiFromRoutes();
         $spec = $generator->fromCollection($collection);
@@ -53,7 +53,7 @@ final class OpenApiGenerationTest extends TestCase
     public function testGeneratesOperationId() : void
     {
         $collection = new RouteCollection();
-        $collection->add(new RouteDefinition(new RouteMethod('GET'), '/users/{id}', fn() => null));
+        $collection->add(new RouteDefinition(method: RouteMethod::GET, uri: '/users/{id}', action: fn() => null));
 
         $generator = new GenerateOpenApiFromRoutes();
         $spec = $generator->fromCollection($collection);
@@ -64,7 +64,7 @@ final class OpenApiGenerationTest extends TestCase
     public function testGeneratesSummary() : void
     {
         $collection = new RouteCollection();
-        $collection->add(new RouteDefinition(new RouteMethod('POST'), '/users', fn() => null));
+        $collection->add(new RouteDefinition(method: RouteMethod::POST, uri: '/users', action: fn() => null));
 
         $generator = new GenerateOpenApiFromRoutes();
         $spec = $generator->fromCollection($collection);
@@ -86,8 +86,8 @@ final class OpenApiGenerationTest extends TestCase
     public function testAllHttpMethodsAreRepresented() : void
     {
         $collection = new RouteCollection();
-        foreach (['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as $method) {
-            $collection->add(new RouteDefinition(new RouteMethod($method), '/resource', fn() => null));
+        foreach ([RouteMethod::GET, RouteMethod::POST, RouteMethod::PUT, RouteMethod::PATCH, RouteMethod::DELETE] as $method) {
+            $collection->add(new RouteDefinition(method: $method, uri: '/resource', action: fn() => null));
         }
 
         $generator = new GenerateOpenApiFromRoutes();
@@ -103,7 +103,7 @@ final class OpenApiGenerationTest extends TestCase
     public function testResponsesAreIncluded() : void
     {
         $collection = new RouteCollection();
-        $collection->add(new RouteDefinition(new RouteMethod('GET'), '/health', fn() => null));
+        $collection->add(new RouteDefinition(method: RouteMethod::GET, uri: '/health', action: fn() => null));
 
         $generator = new GenerateOpenApiFromRoutes();
         $spec = $generator->fromCollection($collection);

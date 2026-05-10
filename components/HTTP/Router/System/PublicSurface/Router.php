@@ -29,12 +29,12 @@ final readonly class Router implements RouterInterface, RouterRuntimeInterface
     #[Override]
     public function get(string $path, mixed $action) : Registrar
     {
-        return $this->addRoute('GET', $path, $action);
+        return $this->addRoute(RouteMethod::GET, $path, $action);
     }
 
-    private function addRoute(string $method, string $path, mixed $action) : Registrar
+    private function addRoute(RouteMethod $method, string $path, mixed $action) : Registrar
     {
-        $route = new RouteDefinition(new RouteMethod($method), $path, $action);
+        $route = new RouteDefinition($method, $path, $action);
         $this->routeCollection->add($route);
 
         return new Registrar($route);
@@ -43,37 +43,37 @@ final readonly class Router implements RouterInterface, RouterRuntimeInterface
     #[Override]
     public function post(string $path, mixed $action) : Registrar
     {
-        return $this->addRoute('POST', $path, $action);
+        return $this->addRoute(RouteMethod::POST, $path, $action);
     }
 
     #[Override]
     public function put(string $path, mixed $action) : Registrar
     {
-        return $this->addRoute('PUT', $path, $action);
+        return $this->addRoute(RouteMethod::PUT, $path, $action);
     }
 
     #[Override]
     public function patch(string $path, mixed $action) : Registrar
     {
-        return $this->addRoute('PATCH', $path, $action);
+        return $this->addRoute(RouteMethod::PATCH, $path, $action);
     }
 
     #[Override]
     public function delete(string $path, mixed $action) : Registrar
     {
-        return $this->addRoute('DELETE', $path, $action);
+        return $this->addRoute(RouteMethod::DELETE, $path, $action);
     }
 
     #[Override]
     public function options(string $path, mixed $action) : Registrar
     {
-        return $this->addRoute('OPTIONS', $path, $action);
+        return $this->addRoute(RouteMethod::OPTIONS, $path, $action);
     }
 
     #[Override]
     public function head(string $path, mixed $action) : Registrar
     {
-        return $this->addRoute('HEAD', $path, $action);
+        return $this->addRoute(RouteMethod::HEAD, $path, $action);
     }
 
     #[Override]

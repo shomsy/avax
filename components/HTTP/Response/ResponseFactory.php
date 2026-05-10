@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Response;
 
+use Avax\Components\HTTP\Response\System\Capabilities\ContentType;
 use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use GuzzleHttp\Psr7\Utils;
@@ -26,7 +27,7 @@ final class ResponseFactory
      */
     public function html(string $html, int $statusCode = 200, array $headers = []): ResponseInterface
     {
-        $headers = array_change_key_case($headers) + ['content-type' => ['text/html; charset=utf-8']];
+        $headers = array_change_key_case($headers) + ['content-type' => [ContentType::Html->withCharset()]];
 
         return new Response($statusCode, $headers, Utils::streamFor($html));
     }
@@ -57,7 +58,7 @@ final class ResponseFactory
     public function json(mixed $data, int $statusCode = 200, array $headers = []): ResponseInterface
     {
         $body = json_encode($data, JSON_THROW_ON_ERROR);
-        $headers = array_change_key_case($headers) + ['content-type' => ['application/json']];
+        $headers = array_change_key_case($headers) + ['content-type' => [ContentType::Json->value]];
 
         return new Response($statusCode, $headers, Utils::streamFor($body));
     }

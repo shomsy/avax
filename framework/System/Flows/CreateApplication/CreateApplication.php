@@ -38,7 +38,7 @@ final readonly class CreateApplication
     {
         // Build runtime state
         $projectPath = new ProjectPath(value: getcwd() ?: __DIR__ . '/../../../..');
-        $envName = new EnvironmentName(value: $environment);
+        $envName = EnvironmentName::fromString($environment);
         $clock = new SystemClock();
 
         $componentRegistry = new ComponentRegistry();

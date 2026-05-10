@@ -13,7 +13,7 @@ final class MatchRoute
     public function execute(RouteCollection $routeCollection, RequestInterface $request) : ?RouteDefinition
     {
         foreach ($routeCollection->all() as $route) {
-            if ($route->method()->toString() !== $request->getMethod()) {
+            if ($route->method()->value !== $request->getMethod()) {
                 continue;
             }
 

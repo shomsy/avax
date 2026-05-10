@@ -23,10 +23,10 @@ final readonly class ConnectionConfig
 
     public string $host;
 
-    public string $driver;
+    public DatabaseDriver $driver;
 
     /**
-     * @param  string  $driver  The type of engine (e.g., 'mysql' or 'sqlite').
+     * @param  DatabaseDriver|string  $driver  The type of engine (e.g., DatabaseDriver::MySQL or 'mysql').
      * @param  string  $host  The "Home Address" (IP or hostname) of the server.
      * @param  string  $database  The specific name of the database file or schema.
      * @param  string  $username  The "User Identity" used to log in.
@@ -35,7 +35,7 @@ final readonly class ConnectionConfig
      * @param  string  $name  A simple nickname to identify this specific config.
      */
     public function __construct(
-        ?string $driver = null,
+        DatabaseDriver|string|null $driver = null,
         ?string $host = null,
         ?string $database = null,
         ?string $username = null,
@@ -44,7 +44,7 @@ final readonly class ConnectionConfig
         ?string $charset = null,
         public string $name = 'default',
     ) {
-        $driver ??= 'mysql';
+        $driver = is_string($driver) ? DatabaseDriver::fromString($driver) : ($driver ?? DatabaseDriver::MySQL);
         $host ??= '127.0.0.1';
         $database ??= '';
         $username ??= 'root';
@@ -62,7 +62,7 @@ final readonly class ConnectionConfig
      * Build an ID Card from a raw list of setttings.
      *
      * @param array{
-     *     driver?: string,
+     *     driver?: DatabaseDriver|string,
      *     host?: string,
      *     database?: string,
      *     username?: string,
@@ -74,8 +74,10 @@ final readonly class ConnectionConfig
      */
     public static function from(array $config): self
     {
+        $driver = $config['driver'] ?? DatabaseDriver::MySQL;
+
         return new self(
-            driver  : $config['driver'] ?? 'mysql',
+            driver  : $driver,
             host    : $config['host'] ?? '127.0.0.1',
             database: $config['database'] ?? '',
             username: $config['username'] ?? 'root',

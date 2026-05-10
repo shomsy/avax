@@ -4,18 +4,22 @@ declare(strict_types=1);
 
 namespace Avax\Components\Integration\ObjectStorage\System\Capabilities\StoreObjects;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStoragePort;
 use Avax\Components\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStorageResult;
 
 class StoreObjectsOnLocalFilesystem implements ObjectStoragePort
 {
+    private Filesystem $filesystem;
+
     private string $basePath;
 
-    public function __construct(string $basePath = '/tmp/avax-object-storage')
+    public function __construct(string $basePath = '/tmp/avax-object-storage', ?Filesystem $filesystem = null)
     {
+        $this->filesystem = $filesystem ?? new Filesystem();
         $this->basePath = $basePath;
-        if (! is_dir($this->basePath)) {
-            mkdir($this->basePath, 0755, true);
+        if (! $this->filesystem->exists($this->basePath)) {
+            $this->filesystem->createDirectory($this->basePath, 0o755);
         }
     }
 
@@ -27,13 +31,13 @@ class StoreObjectsOnLocalFilesystem implements ObjectStoragePort
         $path = $this->basePath . '/' . $key;
         $dir  = dirname($path);
 
-        if (! is_dir($dir)) {
-            mkdir($dir, 0755, true);
+        if (! $this->filesystem->exists($dir)) {
+            $this->filesystem->createDirectory($dir, 0o755);
         }
 
-        $result = file_put_contents($path, $content);
+        $result = $this->filesystem->write($path, $content);
 
-        if ($result === false) {
+        if (! $result) {
             return ObjectStorageResult::failure('Failed to write object');
         }
 
@@ -44,27 +48,27 @@ class StoreObjectsOnLocalFilesystem implements ObjectStoragePort
     {
         $path = $this->basePath . '/' . $key;
 
-        if (! file_exists($path)) {
+        if (! $this->filesystem->exists($path)) {
             return null;
         }
 
-        return file_get_contents($path) ?: null;
+        return $this->filesystem->read($path) ?: null;
     }
 
     public function delete(string $key) : bool
     {
         $path = $this->basePath . '/' . $key;
 
-        if (! file_exists($path)) {
+        if (! $this->filesystem->exists($path)) {
             return false;
         }
 
-        return unlink($path);
+        return $this->filesystem->delete($path);
     }
 
     public function exists(string $key) : bool
     {
-        return file_exists($this->basePath . '/' . $key);
+        return $this->filesystem->exists($this->basePath . '/' . $key);
     }
 
     public function generatePresignedUrl(string $key, int $expiresInSeconds) : string

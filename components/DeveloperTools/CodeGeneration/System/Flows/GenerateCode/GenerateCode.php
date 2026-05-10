@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Components\DeveloperTools\CodeGeneration\System\Flows\GenerateCode;
 
-final readonly class GenerateCode
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
+
+final class GenerateCode
 {
     /**
      * @param array<string, string> $variables
      */
-    public function generate(string $template, array $variables, string $outputPath) : bool
+    public function generate(string $template, array $variables, string $outputPath, ?Filesystem $filesystem = null) : bool
     {
         $code = str_replace(
             array_map(fn ($k) => '{{' . $k . '}}', array_keys($variables)),
@@ -17,6 +19,8 @@ final readonly class GenerateCode
             $template,
         );
 
-        return file_put_contents($outputPath, $code) !== false;
+        $fs = $filesystem ?? new Filesystem();
+
+        return $fs->write($outputPath, $code);
     }
 }

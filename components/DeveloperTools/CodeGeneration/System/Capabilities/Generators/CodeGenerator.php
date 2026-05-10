@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DeveloperTools\CodeGeneration\System\Capabilities\Generators;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\Application\Text\System\Capabilities\CaseConversion\Str;
 use RuntimeException;
 
@@ -24,6 +25,7 @@ abstract class CodeGenerator
     public function __construct(
         ?string $baseDirectory = null,
         ?string $defaultNamespace = null,
+        private ?Filesystem $filesystem = null,
     )
     {
         $this->baseDirectory    = $baseDirectory ?? $this->detectBaseDirectory();
@@ -35,15 +37,17 @@ abstract class CodeGenerator
      */
     protected function detectBaseDirectory() : string
     {
+        $fs = $this->filesystem ?? new Filesystem();
         // Try common project root indicators
+        $cwd        = getcwd() ?: '/tmp';
         $candidates = [
-            getcwd() . '/src',
-            getcwd() . '/app',
-            getcwd(),
+            $cwd . '/src',
+            $cwd . '/app',
+            $cwd,
         ];
 
         foreach ($candidates as $candidate) {
-            if (is_dir($candidate)) {
+            if ($fs->exists($candidate)) {
                 return $candidate;
             }
         }
@@ -81,13 +85,14 @@ abstract class CodeGenerator
      */
     protected function writeFile(string $path, string $content) : void
     {
-        $dir = dirname($path);
+        $fs  = $this->filesystem ?? new Filesystem();
+        $dir = dirname($path) ?: '';
 
-        if (! is_dir($dir)) {
-            mkdir($dir, 0o755, true);
+        if (! $fs->exists($dir)) {
+            $fs->createDirectory($dir, 0o755);
         }
 
-        $result = file_put_contents($path, $content);
+        $result = $fs->write($path, $content);
 
         if ($result === false) {
             throw new RuntimeException('Failed to write file: ' . $path);
@@ -101,7 +106,9 @@ abstract class CodeGenerator
     {
         $path = $this->getFilePath($name, $subDir);
 
-        return file_exists($path);
+        $fs = $this->filesystem ?? new Filesystem();
+
+        return $fs->exists($path);
     }
 
     /**
@@ -112,10 +119,11 @@ abstract class CodeGenerator
      */
     protected function getFilePath(string $name, string $subDir) : string
     {
+        $fs = $this->filesystem ?? new Filesystem();
         $dir = rtrim($this->baseDirectory, '/') . '/' . ltrim($subDir, '/');
 
-        if (! is_dir($dir)) {
-            mkdir($dir, 0o755, true);
+        if (! $fs->exists($dir)) {
+            $fs->createDirectory($dir, 0o755);
         }
 
         return rtrim($dir, '/') . '/' . $name . '.php';

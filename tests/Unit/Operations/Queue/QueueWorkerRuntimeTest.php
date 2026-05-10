@@ -21,7 +21,7 @@ final class QueueWorkerRuntimeTest extends TestCase
 
         $job = $queue->pop('default');
 
-        self::assertNotNull($job);
+        self::assertIsArray($job);
         self::assertSame('send_email', $job['job']['action']);
     }
 
@@ -53,6 +53,7 @@ final class QueueWorkerRuntimeTest extends TestCase
 
         self::assertSame(1, $queue->size('default'));
         $job = $queue->pop('default');
+        self::assertIsArray($job);
         self::assertSame('job-2', $job['job']['id']);
     }
 
@@ -87,11 +88,13 @@ final class QueueWorkerRuntimeTest extends TestCase
         $queue->push('default', ['id' => 'failing-job', 'max_attempts' => 2]);
 
         $job = $queue->pop('default');
+        self::assertIsArray($job);
         $queue->retry('default', $job, 'first failure');
 
         self::assertSame(1, $queue->size('default'));
 
         $job = $queue->pop('default');
+        self::assertIsArray($job);
         $queue->retry('default', $job, 'second failure');
 
         self::assertSame(0, $queue->size('default'));
@@ -107,12 +110,14 @@ final class QueueWorkerRuntimeTest extends TestCase
         $queue->push('default', ['id' => 'retry-job', 'max_attempts' => 3]);
 
         $job = $queue->pop('default');
+        self::assertIsArray($job);
         $queue->retry('default', $job, 'first failure');
 
         self::assertSame(1, $queue->size('default'));
         self::assertSame(0, $queue->deadLetterCount('default'));
 
         $job = $queue->pop('default');
+        self::assertIsArray($job);
         self::assertSame(1, $job['attempts']);
     }
 
@@ -123,9 +128,11 @@ final class QueueWorkerRuntimeTest extends TestCase
         $queue->push('q2', ['id' => '2', 'max_attempts' => 1]);
 
         $job = $queue->pop('q1');
+        self::assertIsArray($job);
         $queue->retry('q1', $job, 'fail');
 
         $job = $queue->pop('q2');
+        self::assertIsArray($job);
         $queue->retry('q2', $job, 'fail');
 
         self::assertSame(2, $queue->deadLetterCount());
@@ -137,6 +144,7 @@ final class QueueWorkerRuntimeTest extends TestCase
         $queue->push('default', ['id' => '1', 'max_attempts' => 1]);
 
         $job = $queue->pop('default');
+        self::assertIsArray($job);
         $queue->retry('default', $job, 'fail');
 
         self::assertSame(1, $queue->deadLetterCount());

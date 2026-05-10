@@ -68,7 +68,8 @@ final class RecordObservability
 
             return $result;
         } catch (\Throwable $e) {
-            $span->recordException($e);
+            $span->setAttribute('exception', $e::class);
+            $span->setAttribute('exception.message', $e->getMessage());
             $span->end();
 
             $this->metrics->incrementCounter(name: 'operations.errors');

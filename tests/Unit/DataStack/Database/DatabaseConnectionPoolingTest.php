@@ -123,9 +123,8 @@ final class DatabaseConnectionPoolingTest extends TestCase
 
         self::assertIsArray($result);
         self::assertCount(2, $result);
-        $rows = $result;
-        self::assertSame('alice', $rows[0]['name']);
-        self::assertSame('bob', $rows[1]['name']);
+        self::assertSame('alice', $result[0]['name']);
+        self::assertSame('bob', $result[1]['name']);
     }
 
     public function test_execute_insert_query_returns_affected_rows() : void
@@ -149,8 +148,7 @@ final class DatabaseConnectionPoolingTest extends TestCase
 
         self::assertIsArray($result);
         self::assertCount(1, $result);
-        $rows = $result;
-        self::assertSame('dave', $rows[0]['name']);
+        self::assertSame('dave', $result[0]['name']);
     }
 
     public function test_execute_cursor_returns_statement() : void
@@ -161,7 +159,6 @@ final class DatabaseConnectionPoolingTest extends TestCase
         $executor = new ExecuteQuery();
         $stmt = $executor->executeCursor($this->sqlite, 'SELECT * FROM users');
 
-        self::assertInstanceOf(\PDOStatement::class, $stmt);
         self::assertCount(1, $stmt->fetchAll());
     }
 

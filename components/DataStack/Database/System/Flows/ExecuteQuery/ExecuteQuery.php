@@ -16,6 +16,7 @@ final readonly class ExecuteQuery
 {
     /**
      * @param list<mixed>|array<string, mixed> $params
+     * @phpstan-return list<array<string, mixed>>|int
      * @return array<string, mixed>|int  Rows for SELECT, affected count for write queries
      */
     public function execute(PDO $connection, string $sql, array $params = []) : array|int
@@ -24,7 +25,10 @@ final readonly class ExecuteQuery
         $stmt->execute($params);
 
         if ($this->isReadQuery($sql)) {
-            return $stmt->fetchAll();
+            /** @var list<array<string, mixed>> $rows */
+            $rows = $stmt->fetchAll();
+
+            return $rows;
         }
 
         return $stmt->rowCount();

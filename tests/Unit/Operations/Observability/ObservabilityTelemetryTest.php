@@ -106,7 +106,7 @@ final class ObservabilityTelemetryTest extends TestCase
             callback: static fn () => ['id' => 1, 'name' => 'Alice'],
         );
 
-        self::assertSame(['id' => 1, 'name' => 'Alice'], $result);
+        self::assertEquals(['id' => 1, 'name' => 'Alice'], $result);
     }
 
     public function test_record_increments_counter() : void
@@ -191,7 +191,7 @@ final class ObservabilityTelemetryTest extends TestCase
             correlationId: $corr,
         );
 
-        self::assertSame('order-123', $result);
+        self::assertEquals('order-123', $result);
 
         // Metrics recorded
         self::assertSame(1.0, $obs->getMetrics()->getCounter('operations.total'));

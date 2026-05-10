@@ -66,6 +66,10 @@ final class AuthorizationEngine
             return $resource::class;
         }
 
-        return md5(serialize(value: $resource));
+        // Arrays and other non-scalar values: use JSON + hash instead of unsafe serialize()
+        // md5 is acceptable here since this is a cache key, not a security hash
+        $json = json_encode(value: $resource, flags: JSON_THROW_ON_ERROR);
+
+        return hash(algo: 'sha256', data: $json);
     }
 }

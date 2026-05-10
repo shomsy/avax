@@ -25,7 +25,7 @@ final class SecurityConfigurationStore
     {
         $requestId = hash(
             algo: 'sha256',
-            data: $tenantId . '|' . serialize(value: $data) . '|' . count(value: $this->changes),
+            data: $tenantId . '|' . json_encode($data, JSON_THROW_ON_ERROR) . '|' . count(value: $this->changes),
         );
 
         $this->changes[$requestId] = [

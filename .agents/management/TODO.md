@@ -28,10 +28,11 @@ Canonical active implementation queue.
 - `id`: V5-PHASE
 - `created_at`: 2026-05-10
 - `updated_at`: 2026-05-10
-- `status`: todo
-- `estimate`: TBD
-- `outcome`: V5 dogfooding / performance convergence — next planned major phase
-- `acceptance`: V4 production-ready, V5 scope defined
+- `status`: in_progress
+- `estimate`: multi-session
+- `outcome`: V5 AvaX Eats AvaX + V5.5 AvaX Proves AvaX — full master plan created
+- `acceptance`: V5+V5.5 master plan written to EVIDENCE/.PLANS/v5-internal-convergence-modern-php-performance-plan.md. 24 V5 stages + 12 V5.5 stages defined with deliverables, acceptance criteria, stage lock, tooling gates, and evidence requirements.
+- `links`: `EVIDENCE/.PLANS/v5-internal-convergence-modern-php-performance-plan.md`
 
 ## Completed
 

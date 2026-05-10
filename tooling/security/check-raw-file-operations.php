@@ -73,12 +73,14 @@ $allowedPathRules = [
     ['path' => 'framework/System/Capabilities/Runtime/Capabilities/RunApplicationOnPhpBuiltInServer.php', 'category' => 'ALLOWED_BOOTSTRAP', 'reason' => 'Built-in dev server bootstrap'],
     ['path' => 'framework/System/Capabilities/Runtime/PublicSurface/Server.php', 'category' => 'ALLOWED_BOOTSTRAP', 'reason' => 'Built-in dev server bootstrap facade'],
 
-    // FileLogWriter fopen/fwrite/fclose — documented performance tradeoff for batch write with open file handle
+    // FileLogWriter fopen/fwrite — documented performance tradeoff for batch write with open file handle
     // Uses Filesystem for directory creation, keeps native handle for write performance
-    ['path' => 'components/Operations/Observability/System/Capabilities/Logging/FileLogWriter.php', 'category' => 'ALLOWED_BOOTSTRAP', 'reason' => 'Documented performance tradeoff: open file handle for batch write'],
+    // Classified as NEEDS_DESIGN_DECISION: file-stream boundary not yet in Filesystem API
+    ['path' => 'components/Operations/Observability/System/Capabilities/Logging/FileLogWriter.php', 'category' => 'NEEDS_DESIGN_DECISION', 'reason' => 'Documented performance tradeoff: open file handle for batch write; needs Filesystem stream boundary'],
 
     // CompiledCacheDirectory is_file — type metadata check to distinguish file from directory
-    ['path' => 'components/Application/Cache/System/Capabilities/CompiledCache/ManageCompiledCache/CompiledCacheDirectory.php', 'category' => 'ALLOWED_BOOTSTRAP', 'reason' => 'Type metadata check: file vs directory distinction not in Filesystem API'],
+    // Filesystem API does not expose isFile()/isDirectory() type distinction
+    ['path' => 'components/Application/Cache/System/Capabilities/CompiledCache/ManageCompiledCache/CompiledCacheDirectory.php', 'category' => 'NEEDS_DESIGN_DECISION', 'reason' => 'Type metadata check: Filesystem API lacks isFile()/isDirectory() distinction'],
 ];
 
 // Explicit function-level exclusions (method names that happen to match)

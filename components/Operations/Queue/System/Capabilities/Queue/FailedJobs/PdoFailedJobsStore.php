@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs;
 
+use InvalidArgumentException;
 use Override;
 use PDO;
 
@@ -12,10 +13,29 @@ use PDO;
  */
 final readonly class PdoFailedJobsStore implements FailedJobsStore
 {
+    private string $table;
+
     public function __construct(
-        private PDO    $pdo,
-        private string $table = 'avax_queue_failed_jobs',
-    ) {}
+        private PDO $pdo,
+        string      $table = 'avax_queue_failed_jobs',
+    )
+    {
+        $this->table = $this->validateTableName($table);
+    }
+
+    /**
+     * Validate table name to prevent SQL injection via identifier.
+     */
+    private function validateTableName(string $table) : string
+    {
+        if (! preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $table)) {
+            throw new InvalidArgumentException(
+                "Invalid table name: '{$table}'. Must match /^[A-Za-z_][A-Za-z0-9_]*$/."
+            );
+        }
+
+        return $table;
+    }
 
     #[Override]
     public function record(string $queue, array $payload, string $reason, string $failedAt) : void

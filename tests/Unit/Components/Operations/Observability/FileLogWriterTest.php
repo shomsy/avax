@@ -8,7 +8,10 @@ use Avax\Components\Operations\Observability\System\Capabilities\Logging\FileLog
 use Avax\Components\Operations\Observability\System\Capabilities\Logs\StructuredLogRecord;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use RuntimeException;
+use SplFileInfo;
 
 final class FileLogWriterTest extends TestCase
 {
@@ -23,11 +26,11 @@ final class FileLogWriterTest extends TestCase
     protected function tearDown() : void
     {
         if (is_dir($this->tmpDir)) {
-            $iterator = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($this->tmpDir, \RecursiveDirectoryIterator::SKIP_DOTS),
-                \RecursiveIteratorIterator::CHILD_FIRST,
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($this->tmpDir, RecursiveDirectoryIterator::SKIP_DOTS),
+                RecursiveIteratorIterator::CHILD_FIRST,
             );
-            /** @var \SplFileInfo $item */
+            /** @var SplFileInfo $item */
             foreach ($iterator as $item) {
                 if ($item->isDir()) {
                     rmdir($item->getPathname());
@@ -76,7 +79,7 @@ final class FileLogWriterTest extends TestCase
 
         $data = json_decode(trim($content), true);
 
-        self::assertSame('***REDACTED***', $data['context']['password']);
+        self::assertSame('***', $data['context']['password']);
     }
 
     #[Test]

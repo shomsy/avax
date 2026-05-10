@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Avax\Components\Operations\Observability\System\Capabilities\Logging;
 
 use Avax\Components\Operations\Observability\System\Capabilities\Logs\StructuredLogRecord;
-use Avax\Components\Operations\Observability\System\Capabilities\Redaction\RedactSensitiveData;
+use Avax\Components\Security\Redaction\System\PublicSurface\Redaction;
 use RuntimeException;
+use function assert;
 
 /**
  * Writes structured log records to a file as newline-delimited JSON.
@@ -17,6 +18,13 @@ use RuntimeException;
  */
 final class FileLogWriter
 {
+    /** @var list<string> */
+    private static array $defaultSensitiveKeys
+        = [
+            'password', 'secret', 'token', 'api_key', 'authorization',
+            'access_token', 'refresh_token', 'private_key', 'secret_key',
+        ];
+
     /** @var resource|null */
     private $handle;
 
@@ -24,7 +32,6 @@ final class FileLogWriter
 
     public function __construct(
         private readonly string $path,
-        private readonly RedactSensitiveData $redactor = new RedactSensitiveData(),
     ) {}
 
     public function write(StructuredLogRecord $record) : void
@@ -38,12 +45,15 @@ final class FileLogWriter
         }
 
         $data = $record->toArray();
-        $data = $this->redactor->redact($data);
+        $data = Redaction::redactLog(
+            logData      : $data,
+            sensitiveKeys: self::$defaultSensitiveKeys,
+        );
 
         $line = json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
         // Handle is guaranteed non-null here: closed check at top + open() above ensures it.
-        \assert($this->handle !== null);
+        assert($this->handle !== null);
         $written = @fwrite($this->handle, $line . PHP_EOL);
 
         if ($written === false) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Presentation\View\System\Capabilities\Engines;
 
+use Avax\Components\Operations\Filesystem\System\PublicSurface\Filesystem;
 use eftec\bladeone\BladeOne;
 use Override;
 
@@ -41,7 +42,7 @@ class BladeTemplateEngine extends BladeOne implements TemplateEngineInterface
     public function clearCompiledViews(): void
     {
         foreach (glob(pattern: rtrim(string: $this->compiledPath, characters: '/').'/*.php') ?: [] as $compiledView) {
-            unlink(filename: $compiledView);
+            Filesystem::delete(path: $compiledView);
         }
     }
 }

@@ -4,8 +4,18 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Observability\System\Capabilities\Logs;
 
+use Avax\Components\Security\Redaction\System\PublicSurface\Redaction;
+
 class StructuredLogRecord
 {
+    /** @var list<string> */
+    private static array $defaultSensitiveKeys
+        = [
+            'password', 'secret', 'token', 'key', 'authorization',
+            'api_key', 'apikey', 'access_token', 'refresh_token',
+            'session_id', 'PHPSESSID', 'cookie',
+        ];
+
     public function __construct(
         public readonly string $level,
         public readonly string $message,
@@ -42,7 +52,10 @@ class StructuredLogRecord
         return [
             'level' => $this->level,
             'message' => $this->message,
-            'context' => $this->context,
+            'context' => Redaction::redactLog(
+                logData      : $this->context,
+                sensitiveKeys: self::$defaultSensitiveKeys,
+            ),
             'timestamp' => $this->timestamp ?? date('c'),
             'request_id' => $this->requestId,
         ];

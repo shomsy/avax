@@ -4,14 +4,24 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Logging\System\Capabilities\Writers;
 
+use Avax\Components\Security\Redaction\System\PublicSurface\Redaction;
 use DateTime;
 use DateTimeZone;
 
 /**
  * Capability to write logs to rotating files with retention management.
+ * Uses Security/Redaction to redact sensitive data before writing.
  */
-final readonly class RotatingFileWriter
+final class RotatingFileWriter
 {
+    /** @var list<string> */
+    private static array $defaultSensitiveKeys
+        = [
+            'password', 'secret', 'token', 'key', 'authorization',
+            'api_key', 'apikey', 'access_token', 'refresh_token',
+            'session_id', 'PHPSESSID', 'cookie',
+        ];
+
     public function __construct(
         private string $baseLogPath,
         private string $timezone = 'UTC',
@@ -31,8 +41,14 @@ final readonly class RotatingFileWriter
             mkdir($directory, 0o755, true);
         }
 
+        // Redact sensitive data before writing to log file
+        $redactedContext = Redaction::redactLog(
+            logData      : $context,
+            sensitiveKeys: self::$defaultSensitiveKeys,
+        );
+
         $timestamp = new DateTime('now', new DateTimeZone($this->timezone))->format('Y-m-d H:i:s');
-        $formatted = sprintf("[%s] %s: %s %s\n", $timestamp, strtoupper($level), $message, json_encode($context));
+        $formatted       = sprintf("[%s] %s: %s %s\n", $timestamp, strtoupper($level), $message, json_encode($redactedContext));
 
         file_put_contents($filePath, $formatted, FILE_APPEND | LOCK_EX);
 

@@ -188,8 +188,8 @@ directories that should not appear in component inventory.
 | **Health**      | Cache, ObjectStorage, Delivery, MemoryLifecycle, Observability, RuntimeSupervision (6 owners) | **LEGITIMATE** — each component checks its own health. This is a per-component capability, not a shared one.                                                                                                                                      |
 | **Storage**     | Cache, Session (2 owners)                                                                     | **LEGITIMATE** — Cache storage vs Session storage are different domains.                                                                                                                                                                          |
 | **Audit**       | Session, Observability, Security/System (3 owners)                                            | **NEEDS REVIEW** — Session audit vs Observability audit vs Security audit may overlap. Session audit is session-specific, Observability audit is general telemetry, Security audit is security-specific. Likely legitimate but need verification. |
-| **Redaction**   | Logging, Observability (2 owners)                                                             | **NEEDS REVIEW** — Both may use Security/Redaction component. If they implement local redaction, this violates dogfooding.                                                                                                                        |
-| **DeadLetter**  | Queue, Resilience (2 owners)                                                                  | **NEEDS REVIEW** — Resilience defines the DeadLetter pattern; Queue implements it. Queue should use Resilience's DeadLetter capability, not reimplement.                                                                                          |
+| **Redaction**   | Security/Redaction (canonical)                                                                | **RESOLVED V5-01** — Logging and Observability migrated to use Security/Redaction::redactLog(). Duplicate implementations deleted.                                                                                                                |
+| **DeadLetter**  | Resilience/DeadLetter (pattern), Queue/MemoryQueue (inline)                                   | **RESOLVED V5-01** — Empty Queue/DeadLetter directory removed. Queue's inline dead letter tracking is legitimate queue-specific behavior.                                                                                                         |
 | **Encryption**  | Cryptography, Secrets (2 owners)                                                              | **NEEDS REVIEW** — Cryptography owns general encryption; Secrets owns secret encryption. May be legitimate if Secrets delegates to Cryptography.                                                                                                  |
 
 ### 3.2 Forbidden Folder Names in Capabilities
@@ -245,28 +245,25 @@ capabilities where applicable.
 correlation. Observability should use Logging for log emission. Redaction should be owned by Security/Redaction and used
 by both.
 
-### 4.4 Redaction (Security vs Operations)
+### 4.4 Redaction (Security vs Operations) — **RESOLVED V5-01**
 
-| Aspect       | Security/Redaction                                            | Operations/Logging | Operations/Observability |
-|--------------|---------------------------------------------------------------|--------------------|--------------------------|
-| Capabilities | DataClassifier, PatternMatcher, PolicyEngine, RedactionEngine | Redaction          | Redaction                |
+| Aspect       | Security/Redaction                                            | Operations/Logging      | Operations/Observability |
+|--------------|---------------------------------------------------------------|-------------------------|--------------------------|
+| Capabilities | DataClassifier, PatternMatcher, PolicyEngine, RedactionEngine | ~~Redaction~~ (deleted) | ~~Redaction~~ (deleted)  |
 
-**Finding:** Security/Redaction owns the redaction engine. Operations/Logging and Operations/Observability both have
-local `Redaction` capabilities. This violates dogfooding.
+**Resolution:** Logging and Observability migrated to use `Security/Redaction::redactLog()`. Duplicate implementations (
+SecretRedactor.php, RedactSensitiveData.php) deleted. Empty directories removed. See
+`EVIDENCE/v5/redaction-ownership-closure.md`.
 
-**Action Required:** Logging and Observability should use Security/Redaction's redaction engine, not reimplement
-locally.
+### 4.5 DeadLetter (Resilience vs Queue) — **RESOLVED V5-01**
 
-### 4.5 DeadLetter (Resilience vs Queue)
+| Aspect       | Operations/Resilience           | Operations/Queue      |
+|--------------|---------------------------------|-----------------------|
+| Capabilities | DeadLetter (pattern definition) | Inline in MemoryQueue |
 
-| Aspect       | Operations/Resilience           | Operations/Queue            |
-|--------------|---------------------------------|-----------------------------|
-| Capabilities | DeadLetter (pattern definition) | DeadLetter (queue-specific) |
-
-**Finding:** Resilience owns the DeadLetter pattern. Queue should use Resilience's DeadLetter capability with
-queue-specific configuration.
-
-**Action Required:** Queue should delegate to Resilience for DeadLetter behavior.
+**Resolution:** Empty `Queue/System/Capabilities/DeadLetter/` directory removed. Queue's inline dead letter tracking in
+MemoryQueue is legitimate queue-specific behavior, not a duplicate capability. See
+`EVIDENCE/v5/deadletter-ownership-closure.md`.
 
 ### 4.6 Encryption (Cryptography vs Secrets)
 
@@ -328,21 +325,21 @@ governance artifacts.
 | Duplicate capability names (exact)          |                                                           6 |
 | Duplicate names needing review              |                                                           4 |
 | Forbidden concept words in capability names |                                                           3 |
-| Confirmed dogfooding violations             |                     2 (Logging/Redaction, Queue/DeadLetter) |
+| Confirmed dogfooding violations             |              0 (Redaction and DeadLetter resolved in V5-01) |
 | Potential dogfooding violations             |                    3 (Filesystem naming, Encryption, Audit) |
 
 ---
 
 ## 7. Dogfooding Risk Assessment
 
-| Risk                       | Severity | Description                                                                       |
-|----------------------------|----------|-----------------------------------------------------------------------------------|
-| Redaction duplication      | High     | Security/Redaction owns the engine; Logging and Observability reimplement locally |
-| DeadLetter duplication     | Medium   | Resilience owns the pattern; Queue reimplements locally                           |
-| Forbidden capability names | Medium   | Operations/Filesystem uses "Adapters" and "Drivers"; Observability uses "Drivers" |
-| Encryption overlap         | Low      | Both in Security area; may delegate correctly                                     |
-| Audit overlap              | Low      | Different audit domains; may share infrastructure                                 |
-| Empty component shells     | Low      | Governance artifacts, not production risk                                         |
+| Risk                       | Severity           | Description                                                                                         |
+|----------------------------|--------------------|-----------------------------------------------------------------------------------------------------|
+| Redaction duplication      | **Resolved V5-01** | Security/Redaction is canonical. Logging and Observability now use Security/Redaction::redactLog(). |
+| DeadLetter duplication     | **Resolved V5-01** | Empty Queue/DeadLetter dir removed. Queue inline tracking is legitimate.                            |
+| Forbidden capability names | Medium             | Operations/Filesystem uses "Adapters" and "Drivers"; Observability uses "Drivers"                   |
+| Encryption overlap         | Low                | Both in Security area; may delegate correctly                                                       |
+| Audit overlap              | Low                | Different audit domains; may share infrastructure                                                   |
+| Empty component shells     | Low                | Governance artifacts, not production risk                                                           |
 
 ---
 

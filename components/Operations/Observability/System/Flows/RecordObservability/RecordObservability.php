@@ -8,10 +8,11 @@ use Avax\Components\Operations\Observability\System\Capabilities\Correlation\Cor
 use Avax\Components\Operations\Observability\System\Capabilities\Correlation\SpanId;
 use Avax\Components\Operations\Observability\System\Capabilities\Correlation\TraceId;
 use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;
-use Avax\Components\Operations\Observability\System\Capabilities\Redaction\RedactSensitiveData;
 use Avax\Components\Operations\Observability\System\Capabilities\Tracing\Span;
 use Avax\Components\Operations\Observability\System\Capabilities\Tracing\TraceTimeline;
+use Avax\Components\Security\Redaction\System\PublicSurface\Redaction;
 use Closure;
+use Throwable;
 
 /**
  * Unified observability recorder composing correlation, tracing, metrics, and redaction.
@@ -20,16 +21,20 @@ final class RecordObservability
 {
     private MetricsCollector $metrics;
     private TraceTimeline $timeline;
-    private RedactSensitiveData $redactor;
+
+    /** @var list<string> */
+    private static array $defaultSensitiveKeys
+        = [
+            'password', 'secret', 'token', 'api_key', 'authorization',
+            'access_token', 'refresh_token', 'private_key', 'secret_key',
+        ];
 
     public function __construct(
         ?MetricsCollector $metrics = null,
         ?TraceTimeline $timeline = null,
-        ?RedactSensitiveData $redactor = null,
     ) {
         $this->metrics = $metrics ?? new MetricsCollector();
         $this->timeline = $timeline ?? new TraceTimeline();
-        $this->redactor = $redactor ?? new RedactSensitiveData();
     }
 
     /**
@@ -67,7 +72,7 @@ final class RecordObservability
             $this->metrics->observeHistogram(name: 'operations.duration', value: $duration * 1000);
 
             return $result;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $span->setAttribute('exception', $e::class);
             $span->setAttribute('exception.message', $e->getMessage());
             $span->end();
@@ -88,7 +93,10 @@ final class RecordObservability
      */
     public function log(string $level, string $message, array $context = []) : array
     {
-        $redacted = $this->redactor->redact($context);
+        $redacted = Redaction::redactLog(
+            logData      : $context,
+            sensitiveKeys: self::$defaultSensitiveKeys,
+        );
 
         $this->metrics->incrementCounter(name: 'logs.' . $level);
 

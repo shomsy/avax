@@ -8,6 +8,7 @@ use Avax\Components\Operations\Observability\System\Capabilities\Correlation\Cor
 use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;
 use Avax\Components\Operations\Observability\System\Flows\RecordObservability\RecordObservability;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 final class ObservabilityTelemetryTest extends TestCase
 {
@@ -129,9 +130,9 @@ final class ObservabilityTelemetryTest extends TestCase
         try {
             $obs->record(
                 operation: 'failingOp',
-                callback: static fn () => throw new \RuntimeException('boom'),
+                callback: static fn () => throw new RuntimeException('boom'),
             );
-        } catch (\RuntimeException) {
+        } catch (RuntimeException) {
             // Expected
         }
 
@@ -165,7 +166,7 @@ final class ObservabilityTelemetryTest extends TestCase
 
         self::assertSame('info', $log['level']);
         self::assertSame('secret123' !== $log['context']['password'], true);
-        self::assertSame('***REDACTED***', $log['context']['password']);
+        self::assertSame('***', $log['context']['password']);
         self::assertSame('123', $log['context']['userId']);
     }
 
@@ -210,7 +211,7 @@ final class ObservabilityTelemetryTest extends TestCase
             context: ['orderId' => 'order-123', 'token' => 'abc123'],
         );
 
-        self::assertSame('***REDACTED***', $log['context']['token']);
+        self::assertSame('***', $log['context']['token']);
         self::assertSame(1.0, $obs->getMetrics()->getCounter('logs.info'));
     }
 }

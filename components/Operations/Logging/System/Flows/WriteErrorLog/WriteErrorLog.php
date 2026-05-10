@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Logging\System\Flows\WriteErrorLog;
 
-use Avax\Components\Operations\Logging\System\Capabilities\Redaction\SecretRedactor;
 use Avax\Components\Operations\Logging\System\PublicSurface\Logging;
+use Avax\Components\Security\Redaction\System\PublicSurface\Redaction;
 use DateTimeImmutable;
 use DateTimeZone;
 use Throwable;
@@ -16,11 +16,23 @@ use Throwable;
  * Produces JSON-structured error log entries with full context including
  * correlation IDs, request information, and redacted sensitive data.
  */
-final readonly class WriteErrorLog
+final class WriteErrorLog
 {
+    /** @var list<string> */
+    private static array $defaultSensitiveKeys
+        = [
+            'password', 'passwd', 'pass', 'pwd', 'secret', 'secret_key',
+            'api_key', 'apikey', 'api-key', 'access_token', 'access-token',
+            'refresh_token', 'refresh-token', 'auth_token', 'auth-token',
+            'authorization', 'token', 'bearer', 'jwt', 'private_key', 'private-key',
+            'credit_card', 'creditcard', 'card_number', 'cardnumber', 'cvv', 'cvc',
+            'card_cvv', 'ssn', 'social_security', 'social-security-number',
+            'database_url', 'database-password', 'db_password', 'db-pass',
+            'encryption_key', 'encryption-key',
+        ];
+
     public function __construct(
         private Logging $logging,
-        private SecretRedactor $secretRedactor = new SecretRedactor(),
         private ?string $correlationId = null,
         private ?string $traceId = null,
     ) {
@@ -226,8 +238,10 @@ final readonly class WriteErrorLog
      */
     private function redactRecord(array $record): array
     {
-        $record['context'] = $this->secretRedactor->redactArray($record['context']);
-        $record['message'] = $this->secretRedactor->redactString($record['message']);
+        $record['context'] = Redaction::redactLog(
+            logData      : $record['context'],
+            sensitiveKeys: self::$defaultSensitiveKeys,
+        );
 
         return $record;
     }

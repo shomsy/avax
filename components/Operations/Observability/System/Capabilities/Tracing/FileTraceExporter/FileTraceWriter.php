@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Observability\System\Capabilities\Tracing\FileTraceExporter;
 
-use Avax\Components\Operations\Observability\System\Capabilities\Redaction\RedactSensitiveData;
+use Avax\Components\Security\Redaction\System\PublicSurface\Redaction;
 
 /**
  * NDJSON file trace/span writer with redaction.
  */
-final readonly class FileTraceWriter
+final class FileTraceWriter
 {
+    /** @var list<string> */
+    private static array $defaultSensitiveKeys
+        = [
+            'password', 'secret', 'token', 'api_key', 'authorization',
+        ];
+
     public function __construct(
         private string $filePath,
-        private RedactSensitiveData $redactor = new RedactSensitiveData(),
     ) {}
 
     /**
@@ -21,7 +26,10 @@ final readonly class FileTraceWriter
      */
     public function write(array $span): void
     {
-        $redacted = $this->redactor->redact($span);
+        $redacted = Redaction::redactLog(
+            logData      : $span,
+            sensitiveKeys: self::$defaultSensitiveKeys,
+        );
         $line = json_encode($redacted, JSON_THROW_ON_ERROR);
         file_put_contents($this->filePath, $line.PHP_EOL, FILE_APPEND | LOCK_EX);
     }
@@ -33,7 +41,10 @@ final readonly class FileTraceWriter
     {
         $lines = [];
         foreach ($spans as $span) {
-            $redacted = $this->redactor->redact($span);
+            $redacted = Redaction::redactLog(
+                logData      : $span,
+                sensitiveKeys: self::$defaultSensitiveKeys,
+            );
             $lines[] = json_encode($redacted, JSON_THROW_ON_ERROR);
         }
         file_put_contents($this->filePath, implode(PHP_EOL, $lines).PHP_EOL, LOCK_EX);

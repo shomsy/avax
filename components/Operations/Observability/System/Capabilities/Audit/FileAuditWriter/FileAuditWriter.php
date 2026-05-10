@@ -4,16 +4,22 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Observability\System\Capabilities\Audit\FileAuditWriter;
 
-use Avax\Components\Operations\Observability\System\Capabilities\Redaction\RedactSensitiveData;
+use Avax\Components\Security\Redaction\System\PublicSurface\Redaction;
 
 /**
  * NDJSON file audit writer with redaction.
  */
-final readonly class FileAuditWriter
+final class FileAuditWriter
 {
+    /** @var list<string> */
+    private static array $defaultSensitiveKeys
+        = [
+            'password', 'secret', 'token', 'api_key', 'authorization',
+            'access_token', 'refresh_token', 'private_key', 'secret_key',
+        ];
+
     public function __construct(
         private string $filePath,
-        private RedactSensitiveData $redactor = new RedactSensitiveData(),
     ) {}
 
     /**
@@ -21,7 +27,10 @@ final readonly class FileAuditWriter
      */
     public function write(array $audit): void
     {
-        $redacted = $this->redactor->redact($audit);
+        $redacted = Redaction::redactLog(
+            logData      : $audit,
+            sensitiveKeys: self::$defaultSensitiveKeys,
+        );
         $line = json_encode($redacted, JSON_THROW_ON_ERROR);
         file_put_contents($this->filePath, $line.PHP_EOL, FILE_APPEND | LOCK_EX);
     }
@@ -33,7 +42,10 @@ final readonly class FileAuditWriter
     {
         $lines = [];
         foreach ($audits as $audit) {
-            $redacted = $this->redactor->redact($audit);
+            $redacted = Redaction::redactLog(
+                logData      : $audit,
+                sensitiveKeys: self::$defaultSensitiveKeys,
+            );
             $lines[] = json_encode($redacted, JSON_THROW_ON_ERROR);
         }
         file_put_contents($this->filePath, implode(PHP_EOL, $lines).PHP_EOL, LOCK_EX);

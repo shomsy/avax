@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Logging\System\Capabilities\ErrorHandling;
 
-use Avax\Components\Operations\Logging\System\Capabilities\Redaction\SecretRedactor;
 use Avax\Components\Operations\Logging\System\PublicSurface\Logging;
+use Avax\Components\Security\Redaction\System\PublicSurface\Redaction;
 use DateTimeImmutable;
 use DateTimeZone;
 use Psr\Log\LoggerInterface;
@@ -19,17 +19,28 @@ use Throwable;
  * Provides PSR-3 compatible logging with automatic redaction of sensitive data
  * and correlation ID propagation.
  */
-final readonly class ErrorLogger implements LoggerInterface
+final class ErrorLogger implements LoggerInterface
 {
+    /** @var list<string> */
+    private static array $defaultSensitiveKeys
+        = [
+            'password', 'passwd', 'pass', 'pwd', 'secret', 'secret_key',
+            'api_key', 'apikey', 'api-key', 'access_token', 'access-token',
+            'refresh_token', 'refresh-token', 'auth_token', 'auth-token',
+            'authorization', 'token', 'bearer', 'jwt', 'private_key', 'private-key',
+            'credit_card', 'creditcard', 'card_number', 'cardnumber', 'cvv', 'cvc',
+            'card_cvv', 'ssn', 'social_security', 'social-security-number',
+            'database_url', 'database-password', 'db_password', 'db-pass',
+            'encryption_key', 'encryption-key',
+        ];
+
     /**
      * @param  Logging  $logging  The underlying logging facade
-     * @param  SecretRedactor  $secretRedactor  Redactor for sensitive data in context
      * @param  string|null  $correlationId  Current correlation ID for request tracking
      * @param  string|null  $traceId  Current trace ID for distributed tracing
      */
     public function __construct(
         private Logging $logging,
-        private SecretRedactor $secretRedactor = new SecretRedactor(),
         private ?string $correlationId = null,
         private ?string $traceId = null,
     ) {
@@ -80,7 +91,10 @@ final readonly class ErrorLogger implements LoggerInterface
      */
     private function redactContext(array $context): array
     {
-        return $this->secretRedactor->redactArray($context);
+        return Redaction::redactLog(
+            logData      : $context,
+            sensitiveKeys: self::$defaultSensitiveKeys,
+        );
     }
 
     public function alert(Stringable|string $message, array $context = []): void
@@ -216,12 +230,19 @@ final readonly class ErrorLogger implements LoggerInterface
 
         if (is_string($arg)) {
             $truncated = mb_strlen($arg) > 100 ? mb_substr($arg, 0, 100).'...' : $arg;
+            $redacted = Redaction::redactLog(
+                logData      : ['value' => $truncated],
+                sensitiveKeys: self::$defaultSensitiveKeys,
+            );
 
-            return $this->secretRedactor->redactString($truncated);
+            return $redacted['value'];
         }
 
         if (is_array($arg)) {
-            $redacted = $this->secretRedactor->redactArray($arg);
+            $redacted = Redaction::redactLog(
+                logData      : $arg,
+                sensitiveKeys: self::$defaultSensitiveKeys,
+            );
 
             $encoded = json_encode($redacted, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 

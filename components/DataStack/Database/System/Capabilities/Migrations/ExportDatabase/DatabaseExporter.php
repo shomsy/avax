@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Migrations\ExportDatabase;
 
+use Avax\Components\Operations\Filesystem\System\PublicSurface\Filesystem;
 use PDO;
 use Throwable;
 
@@ -33,10 +34,6 @@ final readonly class DatabaseExporter
     {
         $filename = (in_array($table, [null, '', '0'], true) ? 'full_db' : $table).'_export_'.date(format: 'Y_m_d_His').'.sql';
         $fullPath = rtrim(string: $path, characters: DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$filename;
-
-        if (! is_dir(filename: $path)) {
-            mkdir(directory: $path, permissions: 0o755, recursive: true);
-        }
 
         $output = "-- Avax Database Export\n";
         $output .= '-- Generated: '.date(format: 'Y-m-d H:i:s')."\n";
@@ -74,7 +71,7 @@ final readonly class DatabaseExporter
             }
         }
 
-        file_put_contents(filename: $fullPath, data: $output);
+        Filesystem::write(path: $fullPath, content: $output);
 
         return $fullPath;
     }

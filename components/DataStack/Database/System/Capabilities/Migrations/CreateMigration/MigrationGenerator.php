@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Migrations\CreateMigration;
 
+use Avax\Components\Operations\Filesystem\System\PublicSurface\Filesystem;
 use DateTime;
-use RuntimeException;
 
 /**
  * Migration file generator using external stubs.
@@ -33,11 +33,7 @@ final class MigrationGenerator
         $stub = $this->getStubContent(table: $table, create: $create);
         $content = $this->populateStub(stub: $stub, className: $className, table: $table);
 
-        if (! is_dir(filename: $path)) {
-            mkdir(directory: $path, permissions: 0o755, recursive: true);
-        }
-
-        file_put_contents(filename: $filepath, data: $content);
+        Filesystem::write(path: $filepath, content: $content);
 
         return $filepath;
     }
@@ -64,11 +60,7 @@ final class MigrationGenerator
 
         $stubPath = __DIR__.DIRECTORY_SEPARATOR.'Stubs'.DIRECTORY_SEPARATOR.$stubName;
 
-        if (! file_exists(filename: $stubPath)) {
-            throw new RuntimeException(message: 'Migration stub not found: '.$stubPath);
-        }
-
-        return file_get_contents(filename: $stubPath);
+        return Filesystem::read(path: $stubPath);
     }
 
     private function populateStub(string $stub, string $className, ?string $table): string

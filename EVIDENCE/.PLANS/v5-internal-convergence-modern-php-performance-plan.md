@@ -41,6 +41,134 @@ V5.5 is **not** marketing. V5.5 is **proof**.
 
 ---
 
+# Mandatory Governance Set
+
+Every V5 and V5.5 stage must obey all local AvaX how-to governance documents.
+
+The mandatory governance set includes:
+
+- `.agents/how-to/how-to-use-advanced-architecture-patterns.md`
+- `.agents/how-to/how-to-architecture.md`
+- `.agents/how-to/how-to-architecture-extension-with-ddd.md`
+- `.agents/how-to/how-to-clean-code.md`
+- `.agents/how-to/how-to-code-review.md`
+- `.agents/how-to/how-to-code-style.md`
+- `.agents/how-to/how-to-coding-standards.md`
+- `.agents/how-to/how-to-design-components.md`
+- `.agents/how-to/how-to-document.md`
+- `.agents/how-to/how-to-dogfooding.md`
+- `.agents/how-to/how-to-modern-php-attributes-di.md`
+- `.agents/how-to/how-to-production-readiness.md`
+- `.agents/how-to/how-to-system-performance.md`
+- `.agents/how-to/how-to-system-security.md`
+- `.agents/how-to/how-to-unit-test.md`
+
+## Governance Rules
+
+1. No V5 or V5.5 stage may be marked GREEN unless applicable rules from every how-to document have been checked.
+
+2. Every stage report must include a governance compliance matrix:
+
+```text
+| Governance Document | Applies? | Rules Applied | Violations Found | Fixes Made | Remaining Risk | Status |
+```
+
+3. If a how-to document does not apply to a specific stage, the report must say why.
+
+4. If a how-to document cannot be read, the stage is BLOCKED.
+
+5. No agent may cherry-pick only convenient rules.
+
+6. The local `AGENTS.md` root contract wins for precedence, stage lock, filesystem shape, naming, PublicSurface rules, Flow/Capability rules, and AvaX-specific architecture.
+
+## Mandatory Stage-to-Document Mapping
+
+### how-to-modern-php-attributes-di.md is mandatory for:
+
+- V5-07 Modern PHP 8.x Language Adoption
+- V5-08 Attribute / Annotation Runtime
+- V5-09 Dependency Injection & Autowiring Clean Code
+- V5-13 AvaX Request Object & Superglobal Isolation
+- V5-20 Hot Path Cache & Compiled Metadata
+- V5-21 Tooling Gates & Custom Rector Rules
+
+### how-to-dogfooding.md is mandatory for:
+
+- V5-03 Capability Ownership Scan
+- V5-04 Dogfooding Adoption Matrix
+- V5-05 Filesystem / Storage / Cache Adoption
+- V5-10 Data Structures Adoption
+- V5-18 Async / Concurrency / Parallelism Adoption
+- V5-19 Pooling & Resource Lifecycle Optimization
+- V5-20 Hot Path Cache & Compiled Metadata
+
+### how-to-system-security.md is mandatory for:
+
+- V5-02 Critical Security Blocker Cleanup
+- V5-13 AvaX Request Object & Superglobal Isolation
+- V5-17 Serialization & Payload Safety
+- V5-22 E2E Tests / Reference Runtime Proof
+- All work touching HTTP, sessions, tokens, secrets, queues, messages, filesystem, database, config, logs, telemetry, or runtime state
+
+### how-to-system-performance.md is mandatory for:
+
+- V5-06 Metadata Compilation
+- V5-18 Async / Concurrency / Parallelism Adoption
+- V5-19 Pooling & Resource Lifecycle Optimization
+- V5-20 Hot Path Cache & Compiled Metadata
+- All V5.5 benchmark/proof stages
+
+### how-to-design-components.md is mandatory for:
+
+- Every new or changed component
+
+### how-to-unit-test.md is mandatory for:
+
+- Every test added or changed
+
+### how-to-document.md is mandatory for:
+
+- Every documentation file added or changed
+
+### how-to-code-review.md is mandatory for:
+
+- Every final review and stage closure
+
+### how-to-architecture.md, how-to-architecture-extension-with-ddd.md, how-to-use-advanced-architecture-patterns.md are mandatory for:
+
+- Structure, naming, DDD concepts, CQRS/Event/Outbox/Inbox/Saga/Projection usage, and advanced architecture decisions
+
+## Stage Report Contract
+
+Every V5 and V5.5 stage final report must include:
+
+```text
+Stage:
+Status:
+Governance documents read:
+Governance compliance matrix:
+how-to rules applied:
+how-to rules intentionally not applicable:
+Violations found:
+Fixes made:
+Validation commands:
+Evidence written:
+Remaining risks:
+Next allowed action:
+```
+
+## Final Governance Law
+
+V5 is not complete because the code works.
+
+V5 is complete only when the code, tests, documentation, evidence, tooling gates, and every mandatory how-to governance document agree.
+
+If validation is green but governance compliance is missing, status is YELLOW.
+
+If a how-to document is ignored, status is RED/BLOCKED.
+
+---
+
 # V5 Hard Rules
 
 ```txt
@@ -2007,6 +2135,24 @@ V5 is GREEN if:
 - custom Rector rules exist or are planned with examples
 - E2E suite proves runtime scenarios
 - full validation green: tests, PHPStan, governance
+- every mandatory how-to document was checked
+- every applicable how-to rule was applied
+- every non-applicable how-to rule has a documented reason
+- governance compliance matrix exists for every stage
+- no unresolved governance blocker remains
+- all V5 tooling gates pass
+```
+
+V5 may be GREEN only if:
+
+```txt
+- every mandatory how-to document was checked
+- every applicable how-to rule was applied
+- every non-applicable how-to rule has a reason
+- governance compliance matrix exists for every stage
+- no unresolved governance blocker remains
+- full validation passes
+- all V5 tooling gates pass
 ```
 
 # V5.5 Acceptance Criteria
@@ -2026,6 +2172,20 @@ V5.5 is GREEN if:
 - comparison suite exists
 - optimization pass done
 - final report says honestly where AvaX stands
+```
+
+V5.5 may be GREEN only if:
+
+```txt
+- benchmark methodology follows how-to-system-performance.md
+- benchmark claims are backed by evidence
+- comparison claims are not marketing
+- production readiness follows how-to-production-readiness.md
+- security-sensitive benchmark paths follow how-to-system-security.md
+- final review follows how-to-code-review.md
+- every mandatory how-to document was checked for V5.5 stages
+- governance compliance matrix exists for every V5.5 stage
+- no unresolved governance blocker remains
 ```
 
 ---

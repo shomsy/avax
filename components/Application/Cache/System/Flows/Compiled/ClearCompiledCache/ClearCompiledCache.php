@@ -70,9 +70,9 @@ final class ClearCompiledCache
             return;
         }
 
-        $files = glob($dir.'/*.php');
+        $files = $fs->listFilesByPattern($dir . '/*.php');
 
-        if ($files === false) {
+        if ($files === []) {
             return;
         }
 

@@ -6,10 +6,11 @@ namespace Avax\Components\Operations\Scheduler\System\PublicSurface;
 
 use Avax\Components\Operations\Scheduler\System\Capabilities\TaskHistory\SchedulerHistory;
 use Closure;
+use RuntimeException;
 
 final class Scheduler
 {
-    private static TaskRunner $taskRunner;
+    private static ?TaskRunner $taskRunner = null;
 
     private static array $scheduledTasks = [];
 
@@ -44,7 +45,7 @@ final class Scheduler
             self::$taskRunner = new TaskRunner();
         }
 
-        return self::$taskRunner;
+        return self::$taskRunner ?? throw new RuntimeException('TaskRunner not initialized');
     }
 
     public static function history(int $limit = 100): array
@@ -56,5 +57,15 @@ final class Scheduler
     {
         self::$scheduledTasks = [];
         SchedulerHistory::clear();
+    }
+
+    /**
+     * Reset static state for long-lived worker safety.
+     */
+    public static function reset() : void
+    {
+        self::$scheduledTasks = [];
+        self::$taskRunner     = null;
+        SchedulerHistory::reset();
     }
 }

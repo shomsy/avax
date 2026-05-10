@@ -161,7 +161,7 @@ final class CompiledCacheManifest
         $hashParts = [];
 
         foreach ($sourceFiles as $sourceFile) {
-            $hashParts[] = file_exists($sourceFile) ? $sourceFile.':'.filemtime($sourceFile) : $sourceFile.':missing';
+            $hashParts[] = $this->filesystem->exists($sourceFile) ? $sourceFile . ':' . filemtime($sourceFile) : $sourceFile . ':missing';
         }
 
         return hash('sha256', implode('|', $hashParts));

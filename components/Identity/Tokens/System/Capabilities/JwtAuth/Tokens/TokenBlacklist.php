@@ -23,4 +23,12 @@ final class TokenBlacklist
     {
         self::$revoked = [];
     }
+
+    /**
+     * Reset static state for long-lived worker safety.
+     */
+    public static function reset(): void
+    {
+        self::$revoked = [];
+    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\SystemDesign\System\Capabilities\SchemaValidation;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\SystemDesign\System\Foundation\Failure\SchemaParseException;
 
 /**
@@ -24,6 +25,10 @@ use Avax\Components\SystemDesign\System\Foundation\Failure\SchemaParseException;
  */
 final class NativeYamlParser
 {
+    public function __construct(
+        private readonly ?Filesystem $filesystem = null,
+    ) {}
+
     /**
      * Parse a YAML file from disk.
      *
@@ -34,10 +39,13 @@ final class NativeYamlParser
      */
     public function parseFile(string $path) : array
     {
-        $content = file_get_contents($path);
-        if ($content === false) {
+        $fs = $this->filesystem ?? new Filesystem();
+
+        if (! $fs->isReadable($path)) {
             throw new SchemaParseException("Cannot read YAML file: {$path}");
         }
+
+        $content = $fs->read($path);
 
         return $this->parse($content);
     }

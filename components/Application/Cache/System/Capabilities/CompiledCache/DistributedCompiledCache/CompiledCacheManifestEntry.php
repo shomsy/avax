@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\DistributedCompiledCache;
 
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
 /**
  * Value object representing a single compiled cache manifest entry.
@@ -130,6 +131,6 @@ final readonly class CompiledCacheManifestEntry
      */
     public function compiledFileExists(): bool
     {
-        return file_exists($this->compiledPath);
+        return (new Filesystem())->exists($this->compiledPath);
     }
 }

@@ -23,4 +23,14 @@ final class CacheDataShape
     {
         self::$cache = [];
     }
+
+    /**
+     * Reset static cache for long-lived worker safety.
+     *
+     * Must be called during worker warmup or between isolated test runs.
+     */
+    public static function reset() : void
+    {
+        self::$cache = [];
+    }
 }

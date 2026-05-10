@@ -53,7 +53,13 @@ final readonly class MigrateCommand
             return [];
         }
 
-        return glob($this->path.'/*_*.php');
+        $path    = $this->path;
+        $entries = $fs->listDirectory($path);
+
+        return array_map(
+            static fn (string $entry) => $path . '/' . $entry,
+            array_values(array_filter($entries, static fn (string $entry) => preg_match('/^\d+_.*\.php$/', $entry) === 1)),
+        );
     }
 
     private function getConnection(): PDO

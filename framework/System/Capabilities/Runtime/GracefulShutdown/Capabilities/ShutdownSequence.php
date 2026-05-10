@@ -119,4 +119,14 @@ final class ShutdownSequence
     {
         return self::$draining;
     }
+
+    /**
+     * Reset static state for long-lived worker safety.
+     */
+    public static function reset() : void
+    {
+        self::$callbacks = [];
+        self::$draining  = false;
+        self::$executed  = false;
+    }
 }

@@ -1,11 +1,22 @@
 # DeadLetter Explicit Store Closure — V5 Self-Healing Mega Pass 02
 
 **Date:** 2026-05-10
-**Status:** GREEN
+**Status:** YELLOW
 
 ## Decision
 
 Queue failed-job/dead-letter behavior is now explicit and reset-safe via a dedicated `FailedJobsStore` interface.
+
+**Why YELLOW (not GREEN):**
+
+- Dead-letter state is now backed by an explicit `FailedJobsStore` interface — GOOD
+- `InMemoryFailedJobsStore` and `PdoFailedJobsStore` implementations exist — GOOD
+- `Queue::reset()` clears static state — GOOD
+- BUT: the `Queue` static facade still owns canonical in-memory runtime state (`$queues`)
+- In long-lived workers, if `reset()` is not called between requests, queue state will leak
+- Risk is documented and mitigated by `reset()` method, but static canonical state remains
+
+## Next Action
 
 ## Changes Made
 
@@ -71,13 +82,16 @@ Tests:
 | `vendor/bin/phpunit --filter "Queue"`                                   | 114 tests, 287 assertions — PASS |
 | `vendor/bin/phpstan analyse Queue/FailedJobs Queue.php MemoryQueue.php` | 0 errors                         |
 
-## Why GREEN
+## Why YELLOW
 
-- Dead-letter state is no longer inline private/static array
-- Explicit `FailedJobsStore` interface defines the contract
-- `InMemoryFailedJobsStore` provides reset-safe in-memory behavior
-- Both `Queue` static facade and `MemoryQueue` instance delegate to the store
-- Store is instance-scoped — no leak between tests
-- `reset()` / `clearAll()` clear the store explicitly
-- Custom stores (e.g., PDO-backed `FailedJobsStore` for CLI) can be injected
-- All existing tests pass, new tests prove explicit store behavior
+- Dead-letter state is no longer inline private/static array — FIXED
+- Explicit `FailedJobsStore` interface defines the contract — GOOD
+- `InMemoryFailedJobsStore` provides reset-safe in-memory behavior — GOOD
+- `PdoFailedJobsStore` provides SQL-backed persistent behavior — GOOD
+- Both `Queue` static facade and `MemoryQueue` instance delegate to the store — GOOD
+- Store is instance-scoped — no leak between tests — GOOD
+- `reset()` / `clearAll()` clear the store explicitly — GOOD
+- SQL identifier validation prevents table name injection — GOOD
+- Custom stores can be injected — GOOD
+- **YELLOW because:** `Queue::$queues` static array still owns canonical in-memory queue state; `reset()` exists but
+  must be called by worker runtime; risk is documented and mitigated

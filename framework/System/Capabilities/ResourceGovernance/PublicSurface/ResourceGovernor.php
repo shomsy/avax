@@ -116,4 +116,15 @@ final class ResourceGovernor
 
         return $total / count($recent);
     }
+
+    /**
+     * Reset static state for long-lived worker safety.
+     */
+    public static function reset() : void
+    {
+        self::$memoryBudget     = null;
+        self::$snapshots        = [];
+        self::$requestCount     = 0;
+        self::$totalMemoryStart = 0;
+    }
 }

@@ -52,7 +52,7 @@ final readonly class RotatingFileWriter
         $filename = basename($this->baseLogPath);
         $pattern = sprintf('%s/*-%s.log', $directory, $filename);
 
-        $files = glob($pattern) ?: [];
+        $files = $this->filesystem->listFilesByPattern($pattern);
 
         if (count($files) <= $this->maxLogFiles) {
             return;

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Migrations;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
+
 final readonly class MigrationEngine
 {
     public function __construct(
@@ -16,7 +18,7 @@ final readonly class MigrationEngine
     {
         $this->migrationRepository->ensureTableExists();
         $ran = $this->migrationRepository->getRan();
-        $files = glob($this->migrationsPath.'/*.php');
+        $files = (new Filesystem())->listFilesByPattern($this->migrationsPath . '/*.php');
         $batch = $this->migrationRepository->getLastBatchNumber() + 1;
 
         foreach ($files as $file) {

@@ -6,6 +6,7 @@ namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\Di
 
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
 /**
  * Checks freshness of compiled cache entries.
@@ -20,15 +21,16 @@ final class CompiledCacheFreshness
 
     public function __construct(
         private readonly Clock $clock = new SystemClock(),
+        private Filesystem $filesystem = new Filesystem(),
     ) {
     }
 
     /**
      * Create a new freshness checker.
      */
-    public static function create(?Clock $clock = null): self
+    public static function create(?Clock $clock = null, ?Filesystem $filesystem = null) : self
     {
-        return new self(clock: $clock ?? new SystemClock());
+        return new self(clock: $clock ?? new SystemClock(), filesystem: $filesystem ?? new Filesystem());
     }
 
     /**
@@ -163,7 +165,7 @@ final class CompiledCacheFreshness
         $maxMtime = 0;
 
         foreach ($sourceFiles as $sourceFile) {
-            if (file_exists($sourceFile)) {
+            if ($this->filesystem->exists($sourceFile)) {
                 $mtime = filemtime($sourceFile);
 
                 if ($mtime !== false && $mtime > $maxMtime) {
@@ -186,7 +188,7 @@ final class CompiledCacheFreshness
         $missing = [];
 
         foreach ($sourceFiles as $sourceFile) {
-            if (! file_exists($sourceFile)) {
+            if (! $this->filesystem->exists($sourceFile)) {
                 $missing[] = $sourceFile;
             }
         }
@@ -204,7 +206,7 @@ final class CompiledCacheFreshness
         $hashParts = [];
 
         foreach ($sourceFiles as $sourceFile) {
-            $hashParts[] = file_exists($sourceFile) ? $sourceFile.':'.filemtime($sourceFile) : $sourceFile.':missing';
+            $hashParts[] = $this->filesystem->exists($sourceFile) ? $sourceFile . ':' . filemtime($sourceFile) : $sourceFile . ':missing';
         }
 
         return hash('sha256', implode('|', $hashParts));

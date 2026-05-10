@@ -74,7 +74,7 @@ final class RotatingFileWriter
         $files = array_values(array_filter($entries, static function (string $entry) use ($directory, $suffix) : bool {
             $fullPath = $directory . '/' . $entry;
 
-            return is_file($fullPath) && str_ends_with($entry, $suffix);
+            return (new Filesystem())->isFile($fullPath) && str_ends_with($entry, $suffix);
         }));
 
         if (count($files) <= $this->maxLogFiles) {

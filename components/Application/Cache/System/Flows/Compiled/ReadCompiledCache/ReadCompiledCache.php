@@ -16,6 +16,7 @@ use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCo
 use Avax\Components\Application\Cache\System\Flows\Compiled\CompileCache\CompileCache;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
 final readonly class ReadCompiledCache
 {
@@ -61,7 +62,7 @@ final readonly class ReadCompiledCache
         $resolveCompiledCachePath = new ResolveCompiledCachePath(compiledCacheDirectory: $this->compiledCacheDirectory);
         $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(compiledCacheName: $compiledCacheName);
 
-        if (! file_exists($compiledCachePath->toString())) {
+        if (! (new Filesystem())->exists($compiledCachePath->toString())) {
             throw new CompiledCacheCouldNotBeRead(name: $compiledCacheName->toString());
         }
 

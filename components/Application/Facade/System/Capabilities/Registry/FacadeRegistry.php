@@ -30,4 +30,12 @@ final class FacadeRegistry
     {
         self::$registry = [];
     }
+
+    /**
+     * Reset static state for long-lived worker safety.
+     */
+    public static function reset() : void
+    {
+        self::$registry = [];
+    }
 }

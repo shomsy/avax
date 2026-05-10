@@ -59,4 +59,13 @@ final class MiddlewareRegistry
         self::$aliases = [];
         self::$factories = [];
     }
+
+    /**
+     * Reset static state for long-lived worker safety.
+     */
+    public static function reset() : void
+    {
+        self::$aliases   = [];
+        self::$factories = [];
+    }
 }

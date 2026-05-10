@@ -7,6 +7,7 @@ namespace Avax\Components\Application\Container\System\Capabilities\Declaration\
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Attributes\Inject;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependencies;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\Lifetimes\Attributes\Singleton;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -113,7 +114,7 @@ final readonly class CreateDependencyBlueprint
         $parts = [];
 
         foreach ($files as $file) {
-            $timestamp = is_file(filename: $file) ? (string) filemtime(filename: $file) : 'missing';
+            $timestamp = (new Filesystem())->isFile(path: $file) ? (string) filemtime(filename: $file) : 'missing';
             $parts[] = $file.':'.$timestamp;
         }
 

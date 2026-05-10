@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Migrations\LoadMigrations;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Design\BaseMigration;
 use DirectoryIterator;
 
@@ -21,7 +22,7 @@ final class MigrationLoader
     {
         $file = rtrim(string: $path, characters: DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$name.'.php';
 
-        if (! file_exists(filename: $file)) {
+        if (! (new Filesystem())->exists(path: $file)) {
             return '';
         }
 
@@ -43,7 +44,7 @@ final class MigrationLoader
 
     public function load(string $path): array
     {
-        if (! is_dir(filename: $path)) {
+        if (! (new Filesystem())->isDirectory(path: $path)) {
             return [];
         }
 

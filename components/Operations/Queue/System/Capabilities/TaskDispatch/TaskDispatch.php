@@ -59,6 +59,17 @@ final class TaskDispatch
         self::later($task, new DateInterval('PT0S'));
     }
 
+    /**
+     * Reset static resolver state for long-lived worker safety.
+     *
+     * Clears cached resolver so subsequent requests re-resolve strategy.
+     * Must be called during worker warmup or between isolated test runs.
+     */
+    public static function reset() : void
+    {
+        unset(self::$dispatchStrategyResolver);
+    }
+
     public static function batch(array $tasks): TaskBatch
     {
         return new TaskBatch($tasks);

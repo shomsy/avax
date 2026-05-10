@@ -86,7 +86,7 @@ final readonly class FileSessionStore implements SessionStoreInterface
 
         foreach ($this->filesystem->listDirectory($this->path) as $subDir) {
             $fullSubDir = $this->path . '/' . $subDir;
-            if (! is_dir($fullSubDir)) {
+            if (! $this->filesystem->isDirectory($fullSubDir)) {
                 continue;
             }
 

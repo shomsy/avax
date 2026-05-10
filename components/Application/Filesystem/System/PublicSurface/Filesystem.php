@@ -4,14 +4,21 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Filesystem\System\PublicSurface;
 
+use Avax\Components\Application\Filesystem\System\Capabilities\LocalPermissions\ChangePathPermissions;
+use Avax\Components\Application\Filesystem\System\Capabilities\LocalPermissions\CheckPathIsReadable;
+use Avax\Components\Application\Filesystem\System\Capabilities\LocalPermissions\CheckPathIsWritable;
+use Avax\Components\Application\Filesystem\System\Capabilities\LocalPermissions\CheckPathPermissions;
 use Avax\Components\Application\Filesystem\System\Flows\AppendToFile\AppendToFile;
 use Avax\Components\Application\Filesystem\System\Flows\CheckPathExists\CheckPathExists;
+use Avax\Components\Application\Filesystem\System\Flows\CheckPathIsDirectory\CheckPathIsDirectory;
+use Avax\Components\Application\Filesystem\System\Flows\CheckPathIsFile\CheckPathIsFile;
 use Avax\Components\Application\Filesystem\System\Flows\ClearDirectory\ClearDirectory;
 use Avax\Components\Application\Filesystem\System\Flows\CopyFile\CopyFile;
 use Avax\Components\Application\Filesystem\System\Flows\CreateDirectory\CreateDirectory;
 use Avax\Components\Application\Filesystem\System\Flows\DeleteDirectory\DeleteDirectory;
 use Avax\Components\Application\Filesystem\System\Flows\DeleteFile\DeleteFile;
 use Avax\Components\Application\Filesystem\System\Flows\ListDirectory\ListDirectory;
+use Avax\Components\Application\Filesystem\System\Flows\ListFilesByPattern\ListFilesByPattern;
 use Avax\Components\Application\Filesystem\System\Flows\MoveFile\MoveFile;
 use Avax\Components\Application\Filesystem\System\Flows\ReadFile\ReadFile;
 use Avax\Components\Application\Filesystem\System\Flows\WriteFile\WriteFile;
@@ -81,35 +88,41 @@ final class Filesystem
         return (new ListDirectory())->execute($path);
     }
 
+    /**
+     * @return list<string>
+     */
+    public function listFilesByPattern(string $pattern) : array
+    {
+        return (new ListFilesByPattern())->execute($pattern);
+    }
+
+    public function isFile(string $path) : bool
+    {
+        return (new CheckPathIsFile())->execute($path);
+    }
+
+    public function isDirectory(string $path) : bool
+    {
+        return (new CheckPathIsDirectory())->execute($path);
+    }
+
     public function isReadable(string $path): bool
     {
-        return file_exists($path) && is_readable($path);
+        return (new CheckPathIsReadable())->execute($path);
     }
 
     public function isWritable(string $path): bool
     {
-        if (file_exists($path)) {
-            return is_writable($path);
-        }
-
-        return is_writable(dirname($path));
+        return (new CheckPathIsWritable())->execute($path);
     }
 
     public function permissions(string $path): ?int
     {
-        if (!file_exists($path)) {
-            return null;
-        }
-
-        return fileperms($path) & 0o777;
+        return (new CheckPathPermissions())->execute($path);
     }
 
     public function changePermissions(string $path, int $permissions): bool
     {
-        if (!file_exists($path)) {
-            return false;
-        }
-
-        return chmod($path, $permissions);
+        return (new ChangePathPermissions())->execute($path, $permissions);
     }
 }

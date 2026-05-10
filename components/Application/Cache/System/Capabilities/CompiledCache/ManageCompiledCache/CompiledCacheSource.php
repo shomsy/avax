@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use InvalidArgumentException;
 
 final readonly class CompiledCacheSource
@@ -22,7 +23,7 @@ final readonly class CompiledCacheSource
             throw new InvalidArgumentException(message: 'Source path cannot be empty');
         }
 
-        if (! file_exists($this->path)) {
+        if (! (new Filesystem())->exists($this->path)) {
             throw new InvalidArgumentException(message: sprintf('Source file does not exist: %s', $this->path));
         }
 
@@ -33,7 +34,7 @@ final readonly class CompiledCacheSource
 
     public static function fromPath(string $path): self
     {
-        if (! file_exists($path)) {
+        if (! (new Filesystem())->exists($path)) {
             throw new InvalidArgumentException(message: sprintf('Source file does not exist: %s', $path));
         }
 

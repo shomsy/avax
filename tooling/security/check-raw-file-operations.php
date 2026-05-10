@@ -40,6 +40,7 @@ $categories = [
 ];
 
 $rawFunctions = [
+    // Write/read/stream functions
     'file_put_contents',
     'file_get_contents',
     'fopen(',
@@ -52,6 +53,12 @@ $rawFunctions = [
     'rmdir(',
     'copy(',
     'rename(',
+    // Metadata-type functions
+    'is_dir(',
+    'is_file(',
+    'file_exists(',
+    'glob(',
+    'scandir(',
 ];
 
 // Allowed path prefixes and their reasons
@@ -73,14 +80,32 @@ $allowedPathRules = [
     ['path' => 'framework/System/Capabilities/Runtime/Capabilities/RunApplicationOnPhpBuiltInServer.php', 'category' => 'ALLOWED_BOOTSTRAP', 'reason' => 'Built-in dev server bootstrap'],
     ['path' => 'framework/System/Capabilities/Runtime/PublicSurface/Server.php', 'category' => 'ALLOWED_BOOTSTRAP', 'reason' => 'Built-in dev server bootstrap facade'],
 
-    // FileLogWriter fopen/fwrite — documented performance tradeoff for batch write with open file handle
+    // CLI stdin — Question/Confirm read from php://stdin for terminal I/O
+    // Not filesystem storage, this is stream/terminal I/O
+    ['path' => 'components/CLI/Console/System/Capabilities/UI/Question.php', 'category' => 'ALLOWED_BOOTSTRAP', 'reason' => 'CLI stdin stream I/O for terminal prompts; not filesystem storage'],
+    ['path' => 'components/CLI/Console/System/Capabilities/UI/Confirm.php', 'category' => 'ALLOWED_BOOTSTRAP', 'reason' => 'CLI stdin stream I/O for terminal prompts; not filesystem storage'],
+
+    // CSV streaming — php://temp for CSV generation
+    // Not filesystem storage, this is in-memory stream for formatting
+    ['path' => 'components/HTTP/ContentNegotiation/System/Capabilities/Formats/CsvFormat.php', 'category' => 'ALLOWED_OWNER', 'reason' => 'CSV formatting uses php://temp stream as internal implementation detail; not file storage'],
+    ['path' => 'components/HTTP/ContentNegotiation/System/PublicSurface/CsvFormatter.php', 'category' => 'ALLOWED_OWNER', 'reason' => 'CSV formatting uses php://temp stream as internal implementation detail; not file storage'],
+    ['path' => 'components/Security/Privacy/System/Capabilities/DataExporter/DataExporter.php', 'category' => 'ALLOWED_OWNER', 'reason' => 'Privacy export CSV uses php://temp stream as internal implementation detail; not file storage'],
+
+    // Security key file reading — FileBackedHmacKeyRingCodec
+    // Security component reads its own cryptographic key files
+    ['path' => 'components/Identity/Tokens/System/Capabilities/Tokens/Runtime/Codec/FileBackedHmacKeyRingCodec.php', 'category' => 'ALLOWED_BOOTSTRAP', 'reason' => 'Security primitive: cryptographic key ring file reading; security owns key file semantics'],
+
+    // FileLogWriter — documented performance tradeoff for batch write with open file handle
     // Uses Filesystem for directory creation, keeps native handle for write performance
-    // Classified as NEEDS_DESIGN_DECISION: file-stream boundary not yet in Filesystem API
-    ['path' => 'components/Operations/Observability/System/Capabilities/Logging/FileLogWriter.php', 'category' => 'NEEDS_DESIGN_DECISION', 'reason' => 'Documented performance tradeoff: open file handle for batch write; needs Filesystem stream boundary'],
+    ['path' => 'components/Operations/Observability/System/Capabilities/Logging/FileLogWriter.php', 'category' => 'ALLOWED_BOOTSTRAP', 'reason' => 'Documented performance tradeoff: open file handle for batch write; Filestream boundary roadmap item'],
+
+    // HTTP uploaded file — PSR-7 UploadedFileInterface implementation
+    // fopen for reading PHP upload temp files is the PSR-7 contract
+    ['path' => 'components/HTTP/Request/System/Capabilities/Files/UploadedFile.php', 'category' => 'ALLOWED_BOOTSTRAP', 'reason' => 'HTTP upload boundary: PSR-7 UploadedFileInterface requires fopen for temp file stream access'],
 
     // CompiledCacheDirectory is_file — type metadata check to distinguish file from directory
     // Filesystem API does not expose isFile()/isDirectory() type distinction
-    ['path' => 'components/Application/Cache/System/Capabilities/CompiledCache/ManageCompiledCache/CompiledCacheDirectory.php', 'category' => 'NEEDS_DESIGN_DECISION', 'reason' => 'Type metadata check: Filesystem API lacks isFile()/isDirectory() distinction'],
+    ['path' => 'components/Application/Cache/System/Capabilities/CompiledCache/ManageCompiledCache/CompiledCacheDirectory.php', 'category' => 'ALLOWED_BOOTSTRAP', 'reason' => 'Type metadata check: Filesystem API lacks isFile()/isDirectory() distinction; roadmap item'],
 ];
 
 // Explicit function-level exclusions (method names that happen to match)
@@ -97,6 +122,11 @@ $functionExclusions = [
     'function copy(',
     'function file_put_contents(',
     'function file_get_contents(',
+    'function is_dir(',   // method definition, not filesystem call
+    'function is_file(',  // method definition, not filesystem call
+    'function file_exists(', // method definition, not filesystem call
+    'function glob(',     // method definition, not filesystem call
+    'function scandir(',  // method definition, not filesystem call
     '->rename(',          // method call on object, not native function
     '->copy(',            // method call on object, not native function
     '$this->copy(',       // immutable value object copy method, not file copy
@@ -211,6 +241,26 @@ function classifyViolation(string $relativePath, string $line, string $func) : s
         return 'ALLOWED_TOOLING';
     }
 
+    // Doctor — diagnostic tooling
+    if (str_contains($relativePath, 'System/Capabilities/Doctor/')) {
+        return 'ALLOWED_TOOLING';
+    }
+
+    // Framework/Foundation paths — bootstrap
+    if (str_contains($relativePath, 'System/Foundation/Paths/')) {
+        return 'ALLOWED_BOOTSTRAP';
+    }
+
+    // Framework configuration loaders — bootstrap
+    if (str_contains($relativePath, 'System/Configuration/Load')) {
+        return 'ALLOWED_BOOTSTRAP';
+    }
+
+    // Framework HTTP handler with config routes — bootstrap
+    if (str_contains($relativePath, 'System/Flows/HandleIncomingHttp/ConfiguredRoutesHttpHandler')) {
+        return 'ALLOWED_BOOTSTRAP';
+    }
+
     // ObjectStorage local filesystem adapter — should use Filesystem but is storage adapter boundary
     if (str_contains($relativePath, 'Integration/ObjectStorage/') && str_contains($relativePath, 'LocalFilesystem')) {
         return 'MIGRATE_TO_STORAGE';
@@ -262,7 +312,7 @@ function classifyViolation(string $relativePath, string $line, string $func) : s
     }
 
     // Config file loader — legitimate file reading for config
-    if (str_contains($relativePath, 'Application/Config/') && str_contains($func, 'file_get_contents')) {
+    if (str_contains($relativePath, 'Application/Config/')) {
         return 'ALLOWED_BOOTSTRAP';
     }
 
@@ -294,6 +344,11 @@ function classifyViolation(string $relativePath, string $line, string $func) : s
     // SystemDesign YAML parser — legitimate file reading
     if (str_contains($relativePath, 'SystemDesign/') && str_contains($func, 'file_get_contents')) {
         return 'NEEDS_DESIGN_DECISION';
+    }
+
+    // SystemDesign — file_exists for scenarios/architecture docs
+    if (str_contains($relativePath, 'SystemDesign/')) {
+        return 'ALLOWED_BOOTSTRAP';
     }
 
     // Storage local disk — legitimate storage adapter

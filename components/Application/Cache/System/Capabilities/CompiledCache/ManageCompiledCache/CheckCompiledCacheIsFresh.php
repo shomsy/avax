@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
+
 final readonly class CheckCompiledCacheIsFresh
 {
     public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private CompiledCacheManifest $compiledCacheManifest)
@@ -20,7 +22,7 @@ final readonly class CheckCompiledCacheIsFresh
         $resolveCompiledCachePath = new ResolveCompiledCachePath(compiledCacheDirectory: $this->compiledCacheDirectory);
         $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(compiledCacheName: $compiledCacheName);
 
-        if (! file_exists($compiledCachePath->toString())) {
+        if (! (new Filesystem())->exists($compiledCachePath->toString())) {
             return CompiledCacheFreshness::MISSING;
         }
 

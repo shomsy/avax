@@ -34,4 +34,12 @@ final class SchedulerHistory
     {
         self::$history = [];
     }
+
+    /**
+     * Reset static state for long-lived worker safety.
+     */
+    public static function reset() : void
+    {
+        self::$history = [];
+    }
 }

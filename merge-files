@@ -9,18 +9,16 @@ const scriptName = 'merge-files.sh';
 const args = process.argv.slice(2);
 
 function usage() {
-  console.error(`Usage: ${scriptName} <target-dir> [--except=EVIDENCE,tmp] [--exclude=png,jpg] [--include=md,yaml] [--dry-run]`);
+  console.error(`Usage: ${scriptName} <target-dir> [--except=.qoder,EVIDENCE/archive] [--exclude=png,jpg] [--include=md,yaml] [--dry-run]`);
 }
 
 function parseCsv(value) {
-  if (!value) return new Set();
+  if (!value) return [];
 
-  return new Set(
-    value
-      .split(',')
-      .map((part) => part.trim())
-      .filter(Boolean),
-  );
+  return value
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean);
 }
 
 function compareStrings(left, right) {
@@ -57,6 +55,18 @@ function readPackageName(rootDir) {
   }
 }
 
+function normalizeRule(rule) {
+  return rule
+    .trim()
+    .replaceAll('\\', '/')
+    .replace(/^\.\/+/, '')
+    .replace(/\/+$/g, '');
+}
+
+function relativePath(rootDir, absPath) {
+  return path.relative(rootDir, absPath).split(path.sep).join('/');
+}
+
 if (args.length < 1) {
   usage();
   process.exit(1);
@@ -67,7 +77,7 @@ const optionArgs = args.slice(1);
 
 const includeExts = new Set();
 const excludeExts = new Set();
-const exceptDirs = new Set();
+const exceptRules = new Set();
 
 let dryRun = false;
 
@@ -89,8 +99,12 @@ for (const arg of optionArgs) {
   }
 
   if (arg.startsWith('--except=')) {
-    for (const dir of parseCsv(arg.slice('--except='.length))) {
-      exceptDirs.add(dir);
+    for (const rule of parseCsv(arg.slice('--except='.length))) {
+      const normalized = normalizeRule(rule);
+
+      if (normalized !== '') {
+        exceptRules.add(normalized);
+      }
     }
 
     continue;
@@ -130,7 +144,7 @@ const targetBasename = path.basename(rootDir);
 const outputFile = path.join(rootDir, `${targetBasename}.txt`);
 const packageName = readPackageName(rootDir);
 
-const ignoredDirs = new Set([
+const defaultIgnoredDirNames = new Set([
   '.cache',
   '.git',
   '.idea',
@@ -143,15 +157,42 @@ const ignoredDirs = new Set([
   'storage',
   'tmp',
   'vendor',
-  ...exceptDirs,
 ]);
+
+function shouldIgnoreDirectory(dirName, relDir) {
+  if (defaultIgnoredDirNames.has(dirName)) {
+    return true;
+  }
+
+  for (const rule of exceptRules) {
+    const isPathRule = rule.includes('/');
+
+    if (!isPathRule && dirName === rule) {
+      return true;
+    }
+
+    if (isPathRule && (relDir === rule || relDir.startsWith(`${rule}/`))) {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 console.log(`Scanning directory: ${rootDir}`);
 console.log(`Output file: ${outputFile}`);
-console.log('Ignoring directories:');
+console.log('Ignoring directory names:');
 
-for (const dir of [...ignoredDirs].sort(compareStrings)) {
+for (const dir of [...defaultIgnoredDirNames].sort(compareStrings)) {
   console.log(`- ${dir}`);
+}
+
+if (exceptRules.size > 0) {
+  console.log('Ignoring --except rules:');
+
+  for (const rule of [...exceptRules].sort(compareStrings)) {
+    console.log(`- ${rule}`);
+  }
 }
 
 console.log('----------------------------------------');
@@ -167,7 +208,9 @@ function walk(currentDir) {
     const currentPath = path.join(currentDir, entry.name);
 
     if (entry.isDirectory()) {
-      if (ignoredDirs.has(entry.name) && currentPath !== rootDir) {
+      const relDir = relativePath(rootDir, currentPath);
+
+      if (shouldIgnoreDirectory(entry.name, relDir)) {
         continue;
       }
 
@@ -188,7 +231,7 @@ let skipped = 0;
 const chunks = [];
 
 for (const absPath of files) {
-  const rel = path.relative(rootDir, absPath).split(path.sep).join('/');
+  const rel = relativePath(rootDir, absPath);
 
   if (absPath === outputFile) {
     console.log(`Skipping (generated output file): ${rel}`);

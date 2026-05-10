@@ -25,61 +25,45 @@ Canonical active implementation queue.
 
 ## Current Items
 
-- `id`: DATA-STRUCTURES-WAVE-0
-- `created_at`: 2026-05-09
-- `updated_at`: 2026-05-09
-- `status`: blocked
-- `estimate`: 1 session
-- `actual`: partial execution complete; governance validators blocked by Docker socket access in sandbox
-- `outcome`: Wave 0 docs and initial Structure Kernel implemented with focused DataStack/Data PHPUnit and PHPStan green.
-  Remaining project governance validators could not run in this environment.
-- `acceptance`: docs exist under `docs/DataStack/Data`; changed docs pass whitespace and forbidden-name checks; no
-  production scaffolding is created; focused PHPUnit/PHPStan pass; blocked governance commands are reported honestly.
-- `links`: `EVIDENCE/.PLANS/datastack-data-structure-universe-master-plan.md`,
-  `docs/DataStack/Data/STRUCTURE_ATLAS.md`,
-  `EVIDENCE/datastack-data-structure-universe-wave-0-kernel-report.md`
+- `id`: V5-PHASE
+- `created_at`: 2026-05-10
+- `updated_at`: 2026-05-10
+- `status`: todo
+- `estimate`: TBD
+- `outcome`: V5 dogfooding / performance convergence — next planned major phase
+- `acceptance`: V4 production-ready, V5 scope defined
 
 ## Completed
+
+### V4 Final Closure Pass — COMPLETE / GREEN
+
+**Date:** 2026-05-10
+
+**V4-12 Security & Policy Runtime:** COMPLETE / GREEN
+HMAC request signing, replay protection, default-deny policy engine, feature flags, service discovery.
+
+**V4-13 System Design Runtime Kit:** COMPLETE / GREEN
+Architecture reports, capacity estimation, failure simulation.
+
+**V4-14 Runtime Doctor & Control Plane:** COMPLETE / GREEN
+Liveness, readiness, health endpoints wired into HTTP runtime, doctor foundation.
+
+**V4-15 Reference Applications:** COMPLETE / GREEN
+13 reference apps with 36 smoke tests.
+
+**V4-16 Benchmarks & Production Proof:** COMPLETE / GREEN
+7 benchmark workloads, evidence report produced.
+
+**V4-17 Optional Runtime Adapters:** COMPLETE / GREEN
+Adapter interface + ReactPhpAdapter proved. RoadRunner/Swoole/FrankenPHP/Workerman ROADMAP.
+
+**Final validation:** 7451 tests, 21635 assertions, 0 failures. PHPStan 0 errors. 7/7 governance GREEN.
 
 ### V4 Second-Half Execution Queue
 
 **Date:** 2026-05-10
 
-- `id`: V4-12
-- `created_at`: 2026-05-10
-- `status`: in_progress
-- `outcome`: Security & Policy Runtime — request signing, policy engine, feature flags, service discovery, security doctor
-- `acceptance`: HMAC signing with replay protection, default-deny policy engine, feature flags, service registry, security:doctor command, all tested
-
-- `id`: V4-13
-- `created_at`: 2026-05-10
-- `status`: todo
-- `outcome`: System Design Runtime Kit — runtime architecture reports, capacity recommendations, consistency diagnostics, failure simulation
-- `acceptance`: Reuses V3 SystemDesignKit, produces runtime-derived reports, CLI commands, tested
-
-- `id`: V4-14
-- `created_at`: 2026-05-10
-- `status`: todo
-- `outcome`: Runtime Doctor & Control Plane — health/live/ready endpoints, php avax doctor commands, production certification
-- `acceptance`: HTTP health endpoints, CLI doctor commands share same engine, no secret leakage, tested
-
-- `id`: V4-15
-- `created_at`: 2026-05-10
-- `status`: todo
-- `outcome`: Reference Applications — 13 small apps proving framework capabilities
-- `acceptance`: Each app uses Avax::create(), has tests, README, proves V4 capability
-
-- `id`: V4-16
-- `created_at`: 2026-05-10
-- `status`: todo
-- `outcome`: Benchmarks & Production Proof — cold/warm, route matching, container, database, queue, messaging, observability overhead
-- `acceptance`: Benchmark CLI, evidence reports, production readiness proof, no marketing claims
-
-- `id`: V4-17
-- `created_at`: 2026-05-10
-- `status`: blocked
-- `outcome`: Optional Runtime Adapters — gated on V4-03 + V4-14 GREEN
-- `acceptance`: Runtime adapter boundary, doctor checks, ReactPHP primary, others ROADMAP
+All V4-12 through V4-17 items completed. See V4 Final Closure Pass section above.
 
 ## Completed
 

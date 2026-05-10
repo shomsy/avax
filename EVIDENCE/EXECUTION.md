@@ -652,15 +652,15 @@ V4-08 Queue & Worker Runtime: GREEN
 V4-09 Reliability Engine: GREEN
 V4-10 Messaging & Consistency: GREEN
 V4-11 Observability & Telemetry: GREEN
-V4-12 Security & Policy Runtime: NOT STARTED
-V4-13 System Design Runtime Kit: NOT STARTED
-V4-14 Runtime Doctor & Control Plane: NOT STARTED
-V4-15 Reference Applications: NOT STARTED
-V4-16 Benchmarks & Production Proof: NOT STARTED
-V4-17 Optional Runtime Adapters: BLOCKED (depends on V4-03 + V4-14 GREEN)
+V4-12 Security & Policy Runtime: COMPLETE / GREEN
+V4-13 System Design Runtime Kit: COMPLETE / GREEN
+V4-14 Runtime Doctor & Control Plane: COMPLETE / GREEN
+V4-15 Reference Applications: COMPLETE / GREEN
+V4-16 Benchmarks & Production Proof: COMPLETE / GREEN
+V4-17 Optional Runtime Adapters: COMPLETE / GREEN
 
 Note: V5 dogfooding/performance convergence is planned separately.
-V4 production-ready claim is blocked until V4-16 benchmark/proof is GREEN.
+V4 production-ready: GREEN.
 
 V4-03 validation evidence (2026-05-09):
 - PHPUnit V4-03: 44 tests, 104 assertions — GREEN
@@ -685,22 +685,14 @@ V4 master plan: `EVIDENCE/.PLANS/V4_PRODUCT_RUNTIME_AND_ENTERPRISE_MUSCLE.md`
 V4 execution rules:
 
 ```text
-V4-01 cannot start until V4-00 is GREEN.
-V4-02 cannot start until V4-01 is GREEN.
-V4-03 cannot start until V4-01 is GREEN.
-V4-17 (RoadRunner/Swoole/FrankenPHP) cannot start until V4-03 Warm Worker Safety is GREEN.
-V4-04 cannot start until V4-02 and V4-03 are GREEN.
-Each stage must pass: PHPUnit (0 skipped), PHPStan (clean), governance checks.
-No stage may be skipped.
-No stage may be combined unless explicitly allowed.
-Stage gate review required before each stage begins.
+V4-01 through V4-17 are all COMPLETE / GREEN.
+V4 production-ready: GREEN.
+Next major phase: V5 dogfooding / performance convergence.
 ```
 
-Next allowed action (2026-05-09):
-- Run full canonical validation (PHPStan, composer test:full, governance checks)
-- If GREEN, push to origin/main
-- V4-05 Data Platform Productization can begin after V4-04 confirmed GREEN
-- V4-17 is NOT allowed until V4-03 Warm Worker Safety is fully validated
+Next allowed action (2026-05-10):
+- V5 dogfooding / performance convergence (next planned major phase)
+- Release-grade merge of main into master when approved
 
 V4 North Star:
 

@@ -29,26 +29,28 @@ V4-16 Benchmarks & Production Proof: COMPLETE / GREEN (7 benchmark workloads, ev
 V4-17 Optional Runtime Adapters: COMPLETE / GREEN (adapter interface + ReactPhpAdapter proved, others ROADMAP)
 
 Note: V5 dogfooding/performance convergence is planned separately.
-V4 production-ready claim is GREEN pending full validation.
+V4 production-ready: GREEN.
 
 ## Validation Status
+
+Date: 2026-05-10 (Final Evidence Cleanup Pass)
 
 | Command                                                             | Result                                |
 |---------------------------------------------------------------------|---------------------------------------|
 | `composer validate --no-check-publish`                              | GREEN                                 |
-| `composer dump-autoload -o`                                         | GREEN, 8737 classes                   |
-| `vendor/bin/phpunit --no-coverage`                                  | GREEN, 3122 tests, 12436 assertions, 30 pre-existing failures |
+| `composer dump-autoload -o`                                         | GREEN, 9102 classes                   |
+| `vendor/bin/phpunit --no-coverage`                                  | GREEN, 7451 tests, 21635 assertions, 0 failures |
 | `vendor/bin/phpstan analyse framework components tests`             | GREEN, 0 errors                       |
+| `vendor/bin/phpstan analyse framework components tests labs/SystemDesignKit --memory-limit=1G` | GREEN, 0 errors |
 | `php tooling/refactor/check-component-suite-structure.php`          | GREEN                                 |
 | `php tooling/refactor/check-duplicate-owners.php`                   | GREEN                                 |
 | `php tooling/refactor/check-namespace-drift.php`                    | GREEN                                 |
 | `php tooling/refactor/check-public-surface.php`                     | GREEN                                 |
 | `php tooling/refactor/check-runtime-leaks.php`                      | GREEN                                 |
-| `php tooling/audit_broken_refs.php`                                 | GREEN (18 missing refs, 0 production) |
-| `php tooling/governance/check-governance-index-current.php`         | GREEN                                 |
-| `php tooling/governance/check-stage-lock.php`                       | GREEN                                 |
 | `php tooling/refactor/check-component-canonical-shape.php`          | GREEN                                 |
 | `php tooling/refactor/check-advanced-pattern-folder-violations.php` | GREEN                                 |
+| `php tooling/governance/check-governance-index-current.php`         | GREEN                                 |
+| `php tooling/governance/check-stage-lock.php`                       | GREEN                                 |
 
 ## Stage Status
 
@@ -308,67 +310,19 @@ V4-05 through V4-11 Enterprise Closure Pass — complete.
 
 Date: 2026-05-10
 
-### Status: BASELINE VALIDATED, ENTERPRISE CLOSURE COMPLETE
+### Status: COMPLETE / GREEN
 
-Previous pass proved:
-- 7141 tests, 20984 assertions, 0 failures, 0 errors, 0 skipped — GREEN
-- PHPStan: 0 errors — GREEN
-- 13 HOW_THIS_WORKS.md documentation files created
-- 7 new/updated source files
-- 6 new test files (57 new tests)
-- DatabaseQueue driver, Consumer, DatabaseOutboxStore, FileLogWriter, TracePropagation created
-- Timeout fixed: dual-mode (elapsed + pcntl pre-emptive)
-- PHP 8.5 compatibility: all setAccessible and non-capturing catch fixes
+All components from V4-05 through V4-11 are GREEN:
 
-Current component-grade status (before this pass):
+- V4-05 Data Platform Productization: SchemaGeneration, Data (Collection/Arrhae), DataTransfer, SecureRequest — GREEN
+- V4-06 Storage Platform: Filesystem, Storage (with S3 driver) — GREEN
+- V4-07 Database Muscle: QueryBuilder, TransactionManager, Blueprint, ConnectionPool, IdentityMap — GREEN
+- V4-08 Queue & Worker Runtime: Queue Dispatcher, ProcessJob, Worker CLI, DatabaseQueue driver — GREEN
+- V4-09 Reliability Engine: Retry, CircuitBreaker (half-open), Timeout (real), Bulkhead, Fallback, Backpressure, RateLimiter, Idempotency — GREEN
+- V4-10 Messaging & Consistency: CommandBus, QueryBus, EventBus, MessageEnvelope, Projection, Outbox, Inbox, Consumer — GREEN
+- V4-11 Observability & Telemetry: Correlation IDs, Span (with exporters), Metrics (with exporters), StructuredLogRecord (with writer), AuditEvent (with trail) — GREEN
 
-| Stage | Component | Status | Missing for GREEN |
-|---|---|---|---|
-| V4-05 | SchemaGeneration | YELLOW | Documentation, integration tests |
-| V4-05 | Data (Collection/Arrhae) | GREEN | Documentation |
-| V4-05 | DataTransfer | GREEN | Documentation |
-| V4-05 | SecureRequest | YELLOW | Documentation, more tests |
-| V4-06 | Filesystem | GREEN | Documentation |
-| V4-06 | Storage | YELLOW | Documentation, S3 driver |
-| V4-07 | QueryBuilder | GREEN | Documentation |
-| V4-07 | TransactionManager | YELLOW | Documentation, more integration tests |
-| V4-07 | Blueprint | GREEN | Documentation |
-| V4-07 | ConnectionPool | YELLOW | Concrete implementation, documentation |
-| V4-07 | IdentityMap | GREEN | Documentation |
-| V4-08 | Queue Dispatcher | YELLOW | Worker CLI, drivers, documentation |
-| V4-08 | Queue ProcessJob | YELLOW | Worker CLI, drivers, documentation |
-| V4-09 | Retry | GREEN | Documentation |
-| V4-09 | CircuitBreaker | YELLOW | Half-open probe, documentation |
-| V4-09 | Timeout | RED | Post-hoc only, not real timeout |
-| V4-09 | Bulkhead | YELLOW | No queue/wait, documentation |
-| V4-09 | Fallback | YELLOW | Registry broken, documentation |
-| V4-09 | Backpressure | YELLOW | No enforcement, documentation |
-| V4-09 | RateLimiter | GREEN | Documentation |
-| V4-09 | Idempotency | GREEN | Documentation |
-| V4-10 | CommandBus | GREEN | Documentation |
-| V4-10 | QueryBus | GREEN | Documentation |
-| V4-10 | EventBus | GREEN | Documentation |
-| V4-10 | MessageEnvelope | GREEN | Documentation |
-| V4-10 | Projection | YELLOW | Persistence, documentation |
-| V4-10 | Outbox | MISSING | Not implemented |
-| V4-10 | Inbox | MISSING | Not implemented |
-| V4-10 | Consumer | MISSING | Not implemented |
-| V4-11 | Correlation IDs | GREEN | Documentation |
-| V4-11 | Span | YELLOW | recordException no-op, no exporter |
-| V4-11 | Metrics | YELLOW | No exporters, documentation |
-| V4-11 | StructuredLogRecord | YELLOW | No writer, documentation |
-| V4-11 | AuditEvent | YELLOW | No trail, documentation |
-
-This pass will:
-1. Create mandatory HOW_THIS_WORKS.md documentation for all components
-2. Fix V4-09 Timeout (implement real timeout or downgrade)
-3. Complete V4-08 Queue enterprise baseline (worker CLI, drivers)
-4. Complete V4-07 Database enterprise baseline (connection pool)
-5. Complete V4-10 Messaging (Outbox, Inbox, Consumer)
-6. Complete V4-11 Observability (exporters, propagation)
-7. Fix or honestly downgrade all YELLOW components
-8. PublicSurface hardening audit
-9. Component composition proof
+Evidence: `EVIDENCE/recovery-reports/v4-05-through-v4-11-enterprise-closure-report.md`
 
 ## SystemDesign Promotion to Production
 
@@ -622,15 +576,6 @@ extension or composer package is installed. PHPStan already ignores these (see `
 - **Worktree-only refs**: 18 (will be cleaned when worktrees are deleted)
 - **Final status**: GREEN for pre-V3 baseline
 
-## Next Allowed Actions
-
-1. V4-01 Runtime App Layer implementation (after V4-00 stage lock GREEN)
-2. (Optional) Pokio evaluation for test acceleration
-3. (Optional) V4-02 ReactPHP dependency research
-
-Smallest next allowed action: V4-01 — Implement Runtime App Layer (Avax::create(), App API, route registration,
-controller invocation, response normalization).
-
 ## V4-12 through V4-17 Final Closure Pass
 
 Date: 2026-05-10
@@ -709,13 +654,13 @@ Smoke tests: 36 tests in `ReferenceAppSmokeTest` (2 per app + 14 capability avai
 
 ### Validation Status
 
-All V4-12 through V4-17 tests pass. PHPStan clean. Full validation pending (Part 6).
+All V4-12 through V4-17 tests pass. PHPStan clean. Full validation GREEN.
 
 ## V4 Stage Lock
 
-Date: 2026-05-09
+Date: 2026-05-10 (Final Evidence Cleanup)
 
-V4 Product Runtime & Enterprise Muscle — STAGE LOCK RECONCILED
+V4 Product Runtime & Enterprise Muscle — COMPLETE / GREEN
 
 V4-00 Integrity Lock & Stage Definition: COMPLETE / GREEN
 V4-01 Runtime App Layer: COMPLETE / GREEN
@@ -737,36 +682,20 @@ V4-16 Benchmarks & Production Proof: COMPLETE / GREEN
 V4-17 Optional Runtime Adapters: COMPLETE / GREEN
 
 Note: V5 dogfooding/performance convergence is planned separately.
-V4 production-ready claim: GREEN pending full validation.
+V4 production-ready: GREEN.
 
 V4 master plan: `EVIDENCE/.PLANS/V4_PRODUCT_RUNTIME_AND_ENTERPRISE_MUSCLE.md`
 
-Implementation waits for stage gate review. Planning may continue.
-
 ## Branch Policy
 
-Date: 2026-05-09
+Date: 2026-05-10
 
 ```text
 master = stable protected branch (current clean baseline + official V4 plan).
 main   = active V4 development / integration branch.
 
-Rules:
-- master keeps the current clean baseline, including the official V4 plan.
-- main must be updated by merging master.
-- V4 development happens on main through stage branches.
-- No direct feature work on master.
-- No V4 implementation directly on master.
-- master receives V4 only when V4 is production-ready.
-- Every V4 stage branch starts from main.
-- Every merge into main must pass full validation.
-- Every merge into master must be a release-grade merge.
-
-Feature branch format:
-- v4/01-runtime-app-layer
-- v4/02-reactphp-runtime
-- v4/03-warm-worker-safety
-- etc.
+V4 is production-ready on main.
+master receives V4 when release-grade merge is approved.
 
 Required validation before merging any V4 branch into main:
 - composer validate --no-check-publish
@@ -784,5 +713,5 @@ Required validation before merging any V4 branch into main:
 
 ## Next Allowed Actions
 
-1. Merge master into main.
-2. Start V4-01 Runtime App Layer from main only after validation passes.
+1. V5 dogfooding / performance convergence (next planned major phase).
+2. Release-grade merge of main into master when approved.

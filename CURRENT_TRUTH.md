@@ -14,10 +14,23 @@ V4-02 ReactPHP Runtime Foundation: COMPLETE / GREEN (main branch)
 V4-03 Warm Worker Safety: COMPLETE / GREEN (main branch)
 V4-04 Developer Experience: COMPLETE / GREEN (main branch)
 V4-05 through V4-11: BASELINE VALIDATED, ENTERPRISE CLOSURE COMPLETE
-V4-12: BLOCKED (depends on V4-05–V4-11 GREEN)
-V4-13: BLOCKED
-V4-14: BLOCKED
-V4-17: BLOCKED (depends on V4-03 Warm Worker Safety full GREEN)
+V4-05 Data Platform Productization: GREEN
+V4-06 Storage Platform: GREEN
+V4-07 Database Muscle: GREEN
+V4-08 Queue & Worker Runtime: GREEN
+V4-09 Reliability Engine: GREEN
+V4-10 Messaging & Consistency: GREEN
+V4-11 Observability & Telemetry: GREEN
+V4-12 Security & Policy Runtime: NOT STARTED
+V4-13 System Design Runtime Kit: NOT STARTED
+V4-14 Runtime Doctor & Control Plane: NOT STARTED
+V4-15 Reference Applications: NOT STARTED
+V4-16 Benchmarks & Production Proof: NOT STARTED
+V4-17 Optional Runtime Adapters: BLOCKED (depends on V4-03 + V4-14 GREEN)
+
+Note: V5 dogfooding/performance convergence is planned separately.
+V4 dogfooding hard gates still apply stage-by-stage.
+V4 production-ready claim is blocked until V4-16 benchmark/proof is GREEN.
 
 ## Validation Status
 
@@ -623,26 +636,29 @@ controller invocation, response normalization).
 
 Date: 2026-05-09
 
-V4 Product Runtime & Enterprise Muscle — STAGE LOCKED
+V4 Product Runtime & Enterprise Muscle — STAGE LOCK RECONCILED
 
-V4-00 Integrity Lock & Stage Definition: COMPLETE (master plan written)
-V4-01 Runtime App Layer: PLANNED
-V4-02 Reactive HTTP Runtime (ReactPHP): PLANNED
-V4-03 Warm Worker Safety: PLANNED
-V4-04 Developer Experience: PLANNED
-V4-05 Data Platform Productization: PLANNED
-V4-06 Storage Platform: PLANNED
-V4-07 Database Muscle: PLANNED
-V4-08 Queue & Worker Runtime: PLANNED
-V4-09 Reliability Engine: PLANNED
-V4-10 Messaging & Consistency: PLANNED
-V4-11 Observability & Telemetry: PLANNED
-V4-12 Security & Policy Runtime: PLANNED
-V4-13 System Design Runtime Kit: PLANNED
-V4-14 Runtime Doctor & Control Plane: PLANNED
-V4-15 Reference Applications: PLANNED
-V4-16 Benchmarks & Production Proof: PLANNED
-V4-17 Optional Runtime Adapters: PLANNED (roadmap only, after V4-03)
+V4-00 Integrity Lock & Stage Definition: COMPLETE / GREEN
+V4-01 Runtime App Layer: COMPLETE / GREEN
+V4-02 Reactive HTTP Runtime (ReactPHP): COMPLETE / GREEN
+V4-03 Warm Worker Safety: COMPLETE / GREEN
+V4-04 Developer Experience: COMPLETE / GREEN
+V4-05 Data Platform Productization: GREEN
+V4-06 Storage Platform: GREEN
+V4-07 Database Muscle: GREEN
+V4-08 Queue & Worker Runtime: GREEN
+V4-09 Reliability Engine: GREEN
+V4-10 Messaging & Consistency: GREEN
+V4-11 Observability & Telemetry: GREEN
+V4-12 Security & Policy Runtime: NOT STARTED
+V4-13 System Design Runtime Kit: NOT STARTED
+V4-14 Runtime Doctor & Control Plane: NOT STARTED
+V4-15 Reference Applications: NOT STARTED
+V4-16 Benchmarks & Production Proof: NOT STARTED
+V4-17 Optional Runtime Adapters: BLOCKED (depends on V4-03 + V4-14 GREEN)
+
+Note: V5 dogfooding/performance convergence is planned separately.
+V4 production-ready claim is blocked until V4-16 benchmark/proof is GREEN.
 
 V4 master plan: `EVIDENCE/.PLANS/V4_PRODUCT_RUNTIME_AND_ENTERPRISE_MUSCLE.md`
 

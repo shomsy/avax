@@ -638,14 +638,29 @@ No proof, no progress.
 
 ## 16. V4 Implementation Lock
 
-V4 Product Runtime & Enterprise Muscle — IN PROGRESS
+V4 Product Runtime & Enterprise Muscle — IN PROGRESS (RECONCILED)
 
 V4-00 Integrity Lock & Stage Definition: COMPLETE
 V4-01 Runtime App Layer: COMPLETE / GREEN (main branch)
 V4-02 ReactPHP Runtime Foundation: COMPLETE / GREEN (main branch)
 V4-03 Warm Worker Safety: COMPLETE / GREEN (main branch) — full hardening
 V4-04 Developer Experience: COMPLETE / GREEN (main branch) — config as code, doctor, route cache plan
-V4-05 through V4-17: PLANNED
+V4-05 Data Platform Productization: GREEN
+V4-06 Storage Platform: GREEN
+V4-07 Database Muscle: GREEN
+V4-08 Queue & Worker Runtime: GREEN
+V4-09 Reliability Engine: GREEN
+V4-10 Messaging & Consistency: GREEN
+V4-11 Observability & Telemetry: GREEN
+V4-12 Security & Policy Runtime: NOT STARTED
+V4-13 System Design Runtime Kit: NOT STARTED
+V4-14 Runtime Doctor & Control Plane: NOT STARTED
+V4-15 Reference Applications: NOT STARTED
+V4-16 Benchmarks & Production Proof: NOT STARTED
+V4-17 Optional Runtime Adapters: BLOCKED (depends on V4-03 + V4-14 GREEN)
+
+Note: V5 dogfooding/performance convergence is planned separately.
+V4 production-ready claim is blocked until V4-16 benchmark/proof is GREEN.
 
 V4-03 validation evidence (2026-05-09):
 - PHPUnit V4-03: 44 tests, 104 assertions — GREEN

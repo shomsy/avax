@@ -41,6 +41,48 @@ Canonical active implementation queue.
 
 ## Completed
 
+### V4 Second-Half Execution Queue
+
+**Date:** 2026-05-10
+
+- `id`: V4-12
+- `created_at`: 2026-05-10
+- `status`: in_progress
+- `outcome`: Security & Policy Runtime — request signing, policy engine, feature flags, service discovery, security doctor
+- `acceptance`: HMAC signing with replay protection, default-deny policy engine, feature flags, service registry, security:doctor command, all tested
+
+- `id`: V4-13
+- `created_at`: 2026-05-10
+- `status`: todo
+- `outcome`: System Design Runtime Kit — runtime architecture reports, capacity recommendations, consistency diagnostics, failure simulation
+- `acceptance`: Reuses V3 SystemDesignKit, produces runtime-derived reports, CLI commands, tested
+
+- `id`: V4-14
+- `created_at`: 2026-05-10
+- `status`: todo
+- `outcome`: Runtime Doctor & Control Plane — health/live/ready endpoints, php avax doctor commands, production certification
+- `acceptance`: HTTP health endpoints, CLI doctor commands share same engine, no secret leakage, tested
+
+- `id`: V4-15
+- `created_at`: 2026-05-10
+- `status`: todo
+- `outcome`: Reference Applications — 13 small apps proving framework capabilities
+- `acceptance`: Each app uses Avax::create(), has tests, README, proves V4 capability
+
+- `id`: V4-16
+- `created_at`: 2026-05-10
+- `status`: todo
+- `outcome`: Benchmarks & Production Proof — cold/warm, route matching, container, database, queue, messaging, observability overhead
+- `acceptance`: Benchmark CLI, evidence reports, production readiness proof, no marketing claims
+
+- `id`: V4-17
+- `created_at`: 2026-05-10
+- `status`: blocked
+- `outcome`: Optional Runtime Adapters — gated on V4-03 + V4-14 GREEN
+- `acceptance`: Runtime adapter boundary, doctor checks, ReactPHP primary, others ROADMAP
+
+## Completed
+
 ### DataStack/Data Structure Universe Plan — CLOSED / PLANNED
 
 **Date:** 2026-05-09

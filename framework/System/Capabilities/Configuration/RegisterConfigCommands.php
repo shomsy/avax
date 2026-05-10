@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\Configuration;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Framework\System\Configuration\Foundation\ApplicationConfiguration;
 use Avax\Framework\System\Configuration\Foundation\RuntimeConfiguration;
 use Avax\Framework\System\Configuration\LoadApplicationConfiguration;
@@ -96,30 +97,31 @@ final readonly class RegisterConfigCommands
     private function configPublishCommand(): Closure
     {
         return static function (array $args): string {
+            $filesystem = new Filesystem();
             $output = "\033[33mConfiguration Publish\033[0m\n\n";
 
             $projectRoot = dirname(__DIR__, 4);
             $configDir = $projectRoot.'/config';
 
-            if (!is_dir($configDir)) {
-                mkdir($configDir, 0755, true);
+            if (! $filesystem->exists($configDir)) {
+                $filesystem->createDirectory($configDir, 0o755);
                 $output .= "Created config/ directory\n";
             }
 
             $appConfigPath = $configDir.'/app.php';
             $runtimeConfigPath = $configDir.'/runtime.php';
 
-            if (!is_file($appConfigPath)) {
+            if (! $filesystem->isReadable($appConfigPath)) {
                 $defaultConfig = self::defaultAppConfig();
-                file_put_contents($appConfigPath, $defaultConfig);
+                $filesystem->write($appConfigPath, $defaultConfig);
                 $output .= "Published config/app.php\n";
             } else {
                 $output .= "config/app.php already exists, skipping\n";
             }
 
-            if (!is_file($runtimeConfigPath)) {
+            if (! $filesystem->isReadable($runtimeConfigPath)) {
                 $defaultConfig = self::defaultRuntimeConfig();
-                file_put_contents($runtimeConfigPath, $defaultConfig);
+                $filesystem->write($runtimeConfigPath, $defaultConfig);
                 $output .= "Published config/runtime.php\n";
             } else {
                 $output .= "config/runtime.php already exists, skipping\n";

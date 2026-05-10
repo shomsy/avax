@@ -4,10 +4,18 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Random\RandomException;
 
 final class WriteCompiledCacheManifest
 {
+    private Filesystem $filesystem;
+
+    public function __construct()
+    {
+        $this->filesystem = new Filesystem();
+    }
+
     /**
      * @throws RandomException
      */
@@ -16,8 +24,8 @@ final class WriteCompiledCacheManifest
         $tempPath = $compiledCachePath->toString().'.tmp.'.bin2hex(random_bytes(8));
 
         $manifestDir = dirname($compiledCachePath->toString());
-        if (! is_dir($manifestDir)) {
-            mkdir($manifestDir, 0o755, true);
+        if (! $this->filesystem->exists($manifestDir)) {
+            $this->filesystem->createDirectory($manifestDir, 0o755);
         }
 
         $entries = [];
@@ -27,14 +35,14 @@ final class WriteCompiledCacheManifest
 
         $content = "<?php\n\ndeclare(strict_types=1);\n\nreturn ".var_export($entries, true).";\n";
 
-        $written = file_put_contents($tempPath, $content, LOCK_EX);
+        $written = $this->filesystem->write($tempPath, $content);
 
-        if ($written === false) {
+        if (! $written) {
             throw new CompiledCacheManifestWasInvalid('Failed to write manifest to temporary file');
         }
 
-        if (! rename($tempPath, $compiledCachePath->toString())) {
-            @unlink($tempPath);
+        if (! $this->filesystem->move($tempPath, $compiledCachePath->toString())) {
+            $this->filesystem->delete($tempPath);
 
             throw new CompiledCacheManifestWasInvalid('Failed to rename manifest temporary file');
         }

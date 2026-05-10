@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\Routing;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Framework\System\Capabilities\Routing\Foundation\RouteCacheFailed;
 
 /**
@@ -14,9 +15,13 @@ use Avax\Framework\System\Capabilities\Routing\Foundation\RouteCacheFailed;
  */
 final readonly class CacheRouteTable
 {
+    private Filesystem $filesystem;
+
     public function __construct(
         private string $cacheDirectory = '',
+        ?Filesystem $filesystem = null,
     ) {
+        $this->filesystem = $filesystem ?? new Filesystem();
     }
 
     /**
@@ -26,15 +31,15 @@ final readonly class CacheRouteTable
     {
         $dir = $this->resolveCacheDirectory();
 
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
+        if (! $this->filesystem->exists($dir)) {
+            $this->filesystem->createDirectory($dir, 0o755);
         }
 
         $cacheFile = $dir.'/routes.php';
         $metaFile = $dir.'/routes.php.meta';
 
         $phpCode = $this->generateCacheFile($routeTable);
-        file_put_contents($cacheFile, $phpCode, LOCK_EX);
+        $this->filesystem->write($cacheFile, $phpCode);
 
         $meta = json_encode([
             'timestamp' => time(),
@@ -42,7 +47,7 @@ final readonly class CacheRouteTable
             'php_version' => PHP_VERSION,
         ], JSON_THROW_ON_ERROR);
 
-        file_put_contents($metaFile, $meta, LOCK_EX);
+        $this->filesystem->write($metaFile, $meta);
 
         return $cacheFile;
     }

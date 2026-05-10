@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use InvalidArgumentException;
 
 final readonly class CompiledCacheDirectory
@@ -11,11 +12,12 @@ final readonly class CompiledCacheDirectory
     public function __construct(
         public string $path,
     ) {
-        $this->validate();
-        $this->ensureExists();
+        $filesystem = new Filesystem();
+        $this->validate($filesystem);
+        $this->ensureExists($filesystem);
     }
 
-    private function validate(): void
+    private function validate(Filesystem $filesystem) : void
     {
         if ($this->path === '') {
             throw new InvalidArgumentException(message: 'Compiled cache directory cannot be empty');
@@ -29,10 +31,10 @@ final readonly class CompiledCacheDirectory
         }
     }
 
-    private function ensureExists(): void
+    private function ensureExists(Filesystem $filesystem) : void
     {
-        if (! is_dir($this->path)) {
-            mkdir($this->path, 0o755, true);
+        if (! $filesystem->exists($this->path)) {
+            $filesystem->createDirectory($this->path, 0o755);
         }
     }
 

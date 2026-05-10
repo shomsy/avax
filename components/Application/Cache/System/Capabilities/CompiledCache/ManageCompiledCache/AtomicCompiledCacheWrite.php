@@ -6,11 +6,18 @@ namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\Ma
 
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
-final readonly class AtomicCompiledCacheWrite
+final class AtomicCompiledCacheWrite
 {
-    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private Clock $clock = new SystemClock())
+    private Filesystem $filesystem;
+
+    public function __construct(
+        private CompiledCacheDirectory $compiledCacheDirectory,
+        private Clock                  $clock = new SystemClock(),
+    )
     {
+        $this->filesystem = new Filesystem();
     }
 
     public function write(
@@ -24,10 +31,10 @@ final readonly class AtomicCompiledCacheWrite
 
         $this->ensureDirectoryExists(directory: $compiledCachePath->directory());
 
-        $written = file_put_contents($temporaryPath, $payload, LOCK_EX);
+        $written = $this->filesystem->write($temporaryPath, $payload);
 
-        if ($written === false) {
-            @unlink($temporaryPath);
+        if (! $written) {
+            $this->filesystem->delete($temporaryPath);
 
             throw new CompiledCacheCouldNotBeWritten(name: $compiledCacheName->toString());
         }
@@ -35,13 +42,13 @@ final readonly class AtomicCompiledCacheWrite
         $syntaxValid = $this->validatePhpSyntax(path: $temporaryPath);
 
         if (! $syntaxValid) {
-            @unlink($temporaryPath);
+            $this->filesystem->delete($temporaryPath);
 
             throw new CompiledCacheCouldNotBeWritten(name: $compiledCacheName->toString());
         }
 
-        if (! rename($temporaryPath, $compiledCachePath->toString())) {
-            @unlink($temporaryPath);
+        if (! $this->filesystem->move($temporaryPath, $compiledCachePath->toString())) {
+            $this->filesystem->delete($temporaryPath);
 
             throw new CompiledCacheCouldNotBeWritten(name: $compiledCacheName->toString());
         }
@@ -58,8 +65,8 @@ final readonly class AtomicCompiledCacheWrite
 
     private function ensureDirectoryExists(string $directory): void
     {
-        if (! is_dir($directory)) {
-            mkdir($directory, 0o755, true);
+        if (! $this->filesystem->exists($directory)) {
+            $this->filesystem->createDirectory($directory, 0o755);
         }
     }
 

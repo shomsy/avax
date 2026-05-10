@@ -46,7 +46,7 @@ final class AssembleRuntime
                 cacheDir    : $createContainerConfig->cacheDir,
                 cacheVersion: $createContainerConfig->cacheVersion,
                 debug       : $createContainerConfig->debug,
-                metrics     : $observabilityAssembly->metrics,
+                resolutionMetrics: $observabilityAssembly->metrics,
             ),
             dependencies: $resolveDependencies,
         );

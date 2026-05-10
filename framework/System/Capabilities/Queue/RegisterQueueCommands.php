@@ -8,11 +8,11 @@ use Avax\Components\Operations\Queue\System\Capabilities\Queue\DatabaseQueue\Dat
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\DatabaseQueue\DatabaseQueueSchema;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsSchema;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsStore;
+use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\PdoFailedJobsStore;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\MemoryQueue\MemoryQueue;
 use Avax\Components\Operations\Queue\System\Flows\RunWorkerLoop\RunWorkerLoop;
 use Closure;
 use PDO;
-use SQLite3;
 
 /**
  * RegisterQueueCommands — provides CLI command closures for queue:work, queue:failed, queue:retry, queue:flush-failed.
@@ -99,7 +99,7 @@ final readonly class RegisterQueueCommands
                 return $output;
             }
 
-            $store = new FailedJobsStore($pdo);
+            $store = new PdoFailedJobsStore($pdo);
             $failed = $store->list();
 
             if (empty($failed)) {
@@ -150,7 +150,7 @@ final readonly class RegisterQueueCommands
                 return $output;
             }
 
-            $failedStore = new FailedJobsStore($pdo);
+            $failedStore = new PdoFailedJobsStore($pdo);
             $failed = $failedStore->find($id);
 
             if ($failed === null) {
@@ -182,7 +182,7 @@ final readonly class RegisterQueueCommands
                 return $output;
             }
 
-            $store = new FailedJobsStore($pdo);
+            $store = new PdoFailedJobsStore($pdo);
             $count = $store->count();
             $store->clear();
 

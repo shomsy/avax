@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Observability\System\Capabilities\Tracing\FileTraceExporter;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\Security\Redaction\System\PublicSurface\Redaction;
 
 /**
  * NDJSON file trace/span writer with redaction.
+ * Uses Application/Filesystem for all file I/O.
  */
 final class FileTraceWriter
 {
@@ -17,9 +19,15 @@ final class FileTraceWriter
             'password', 'secret', 'token', 'api_key', 'authorization',
         ];
 
+    private Filesystem $filesystem;
+
     public function __construct(
         private string $filePath,
-    ) {}
+        ?Filesystem $filesystem = null,
+    )
+    {
+        $this->filesystem = $filesystem ?? new Filesystem();
+    }
 
     /**
      * @param array{trace_id: string, span_id: string, parent_id: string|null, name: string, start: float, end: float|null, status: string, attributes: array<string, mixed>} $span
@@ -31,7 +39,7 @@ final class FileTraceWriter
             sensitiveKeys: self::$defaultSensitiveKeys,
         );
         $line = json_encode($redacted, JSON_THROW_ON_ERROR);
-        file_put_contents($this->filePath, $line.PHP_EOL, FILE_APPEND | LOCK_EX);
+        $this->filesystem->append($this->filePath, $line . PHP_EOL);
     }
 
     /**
@@ -47,7 +55,7 @@ final class FileTraceWriter
             );
             $lines[] = json_encode($redacted, JSON_THROW_ON_ERROR);
         }
-        file_put_contents($this->filePath, implode(PHP_EOL, $lines).PHP_EOL, LOCK_EX);
+        $this->filesystem->append($this->filePath, implode(PHP_EOL, $lines) . PHP_EOL);
     }
 
     /**
@@ -55,12 +63,12 @@ final class FileTraceWriter
      */
     public function read(): array
     {
-        if (!file_exists($this->filePath)) {
+        if (! $this->filesystem->exists($this->filePath)) {
             return [];
         }
 
-        $content = file_get_contents($this->filePath);
-        if ($content === '' || $content === false) {
+        $content = $this->filesystem->read($this->filePath);
+        if ($content === '') {
             return [];
         }
 
@@ -78,8 +86,8 @@ final class FileTraceWriter
 
     public function clear(): void
     {
-        if (file_exists($this->filePath)) {
-            file_put_contents($this->filePath, '', LOCK_EX);
+        if ($this->filesystem->exists($this->filePath)) {
+            $this->filesystem->write($this->filePath, '');
         }
     }
 }

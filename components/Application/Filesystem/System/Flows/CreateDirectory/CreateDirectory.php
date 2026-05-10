@@ -16,7 +16,7 @@ final readonly class CreateDirectory
             return true;
         }
 
-        $result = mkdir($cleanPath, $permissions, false);
+        $result = mkdir($cleanPath, $permissions, recursive: true);
 
         if (! $result && ! is_dir($cleanPath)) {
             throw new FilesystemOperationFailed('create directory', $path);

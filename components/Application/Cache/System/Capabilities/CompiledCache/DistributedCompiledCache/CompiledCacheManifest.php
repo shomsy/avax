@@ -7,6 +7,7 @@ namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\Di
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use RuntimeException;
 
 /**
@@ -25,6 +26,7 @@ final class CompiledCacheManifest
 
     public function __construct(
         private readonly Clock $clock = new SystemClock(),
+        private Filesystem $filesystem = new Filesystem(),
     ) {
     }
 
@@ -43,20 +45,15 @@ final class CompiledCacheManifest
      */
     public static function load(string $path, ?Clock $clock = null): self
     {
+        $filesystem = new Filesystem();
         $manifest = new self(clock: $clock ?? new SystemClock());
         $manifest->manifestPath = $path;
 
-        if (! file_exists($path)) {
+        if (! $filesystem->exists($path)) {
             return $manifest;
         }
 
-        $content = file_get_contents($path);
-
-        if ($content === false) {
-            throw new RuntimeException(
-                sprintf('Failed to read manifest file: %s', $path),
-            );
-        }
+        $content = $filesystem->read($path);
 
         $data = json_decode($content, associative: true, flags: JSON_THROW_ON_ERROR);
 
@@ -89,10 +86,8 @@ final class CompiledCacheManifest
 
         $directory = dirname($savePath);
 
-        if (! is_dir($directory) && ! mkdir($directory, 0o755, true)) {
-            throw new RuntimeException(
-                sprintf('Failed to create manifest directory: %s', $directory),
-            );
+        if (! $this->filesystem->exists($directory)) {
+            $this->filesystem->createDirectory($directory, 0o755);
         }
 
         $data = [
@@ -110,9 +105,9 @@ final class CompiledCacheManifest
             throw new RuntimeException('Failed to encode manifest data as JSON');
         }
 
-        $result = file_put_contents($savePath, $content, LOCK_EX);
+        $result = $this->filesystem->write($savePath, $content);
 
-        if ($result === false) {
+        if (! $result) {
             throw new RuntimeException(
                 sprintf('Failed to write manifest file: %s', $savePath),
             );

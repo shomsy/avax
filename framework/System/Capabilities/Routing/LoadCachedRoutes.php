@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\Routing;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Framework\System\Capabilities\Routing\Foundation\RouteCacheFailed;
 
 /**
@@ -11,9 +12,13 @@ use Avax\Framework\System\Capabilities\Routing\Foundation\RouteCacheFailed;
  */
 final readonly class LoadCachedRoutes
 {
+    private Filesystem $filesystem;
+
     public function __construct(
         private string $cacheDirectory = '',
+        ?Filesystem $filesystem = null,
     ) {
+        $this->filesystem = $filesystem ?? new Filesystem();
     }
 
     /**
@@ -23,7 +28,7 @@ final readonly class LoadCachedRoutes
     {
         $cacheFile = $this->resolveCacheFile();
 
-        if (!is_file($cacheFile)) {
+        if (! $this->filesystem->isReadable($cacheFile)) {
             throw new RouteCacheFailed('Route cache file not found. Run: php avax route:cache');
         }
 
@@ -43,7 +48,7 @@ final readonly class LoadCachedRoutes
 
     public function exists(): bool
     {
-        return is_file($this->resolveCacheFile());
+        return $this->filesystem->isReadable($this->resolveCacheFile());
     }
 
     public function clear(): bool
@@ -53,12 +58,12 @@ final readonly class LoadCachedRoutes
 
         $deleted = true;
 
-        if (is_file($cacheFile)) {
-            $deleted = unlink($cacheFile);
+        if ($this->filesystem->isReadable($cacheFile)) {
+            $deleted = $this->filesystem->delete($cacheFile);
         }
 
-        if (is_file($metaFile)) {
-            $deleted = $deleted && unlink($metaFile);
+        if ($this->filesystem->isReadable($metaFile)) {
+            $deleted = $deleted && $this->filesystem->delete($metaFile);
         }
 
         return $deleted;

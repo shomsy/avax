@@ -11,6 +11,7 @@ use Avax\Components\Application\Cache\System\Foundation\Serialization\Serialized
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use JsonException;
 use Override;
 use RecursiveDirectoryIterator;
@@ -26,20 +27,24 @@ final readonly class FileCacheStore implements CacheStore
 
     private JsonCacheSerializer $jsonCacheSerializer;
 
+    private Filesystem $filesystem;
+
     public function __construct(
         private string $basePath,
         private Clock $clock = new SystemClock(),
         ?JsonCacheSerializer $jsonCacheSerializer = null,
+        ?Filesystem $filesystem = null,
     ) {
         $this->jsonCacheSerializer = $jsonCacheSerializer ?? new JsonCacheSerializer(clock: $this->clock);
+        $this->filesystem = $filesystem ?? new Filesystem();
 
         $this->ensureDirectoryExists();
     }
 
     private function ensureDirectoryExists(): void
     {
-        if (! is_dir($this->basePath)) {
-            mkdir($this->basePath, 0o755, recursive: true);
+        if (! $this->filesystem->exists($this->basePath)) {
+            $this->filesystem->createDirectory($this->basePath, 0o755);
         }
     }
 
@@ -65,15 +70,35 @@ final readonly class FileCacheStore implements CacheStore
 
         $tempPath = $filePath.'.tmp.'.uniqid(more_entropy: true);
 
-        $result = file_put_contents(
-            filename: $tempPath,
-            data    : $content,
-            flags   : LOCK_EX,
-        );
+        try {
+            $result = $this->filesystem->write($tempPath, $content);
 
-        if ($result === false) {
-            if (file_exists($tempPath)) {
-                @unlink($tempPath);
+            if (! $result) {
+                if ($this->filesystem->isReadable($tempPath)) {
+                    $this->filesystem->delete($tempPath);
+                }
+
+                throw new StoreCachedValueFailed(
+                    message: sprintf('Failed to write cache file for key "%s"', $cacheKey->fullKey()),
+                    key    : $cacheKey->fullKey(),
+                );
+            }
+
+            if (! $this->filesystem->move($tempPath, $filePath)) {
+                if ($this->filesystem->isReadable($tempPath)) {
+                    $this->filesystem->delete($tempPath);
+                }
+
+                throw new StoreCachedValueFailed(
+                    message: sprintf('Failed to finalize cache file for key "%s"', $cacheKey->fullKey()),
+                    key    : $cacheKey->fullKey(),
+                );
+            }
+
+            $this->filesystem->changePermissions($filePath, self::WRITE_MODE);
+        } catch (Throwable) {
+            if ($this->filesystem->isReadable($tempPath)) {
+                $this->filesystem->delete($tempPath);
             }
 
             throw new StoreCachedValueFailed(
@@ -81,17 +106,6 @@ final readonly class FileCacheStore implements CacheStore
                 key    : $cacheKey->fullKey(),
             );
         }
-
-        if (! rename($tempPath, $filePath)) {
-            @unlink($tempPath);
-
-            throw new StoreCachedValueFailed(
-                message: sprintf('Failed to finalize cache file for key "%s"', $cacheKey->fullKey()),
-                key    : $cacheKey->fullKey(),
-            );
-        }
-
-        chmod($filePath, self::WRITE_MODE);
     }
 
     private function getFilePath(CacheKey $cacheKey): string
@@ -106,8 +120,8 @@ final readonly class FileCacheStore implements CacheStore
     {
         $dir = dirname($filePath);
 
-        if (! is_dir($dir)) {
-            mkdir($dir, 0o755, recursive: true);
+        if (! $this->filesystem->exists($dir)) {
+            $this->filesystem->createDirectory($dir, 0o755);
         }
     }
 
@@ -142,7 +156,7 @@ final readonly class FileCacheStore implements CacheStore
 
     private function recursiveDelete(string $directory): void
     {
-        if (! is_dir($directory)) {
+        if (! $this->filesystem->exists($directory)) {
             return;
         }
 
@@ -163,9 +177,9 @@ final readonly class FileCacheStore implements CacheStore
             }
 
             if ($item->isDir()) {
-                @rmdir($path);
+                $this->filesystem->deleteDirectory($path);
             } else {
-                @unlink($path);
+                $this->filesystem->delete($path);
             }
         }
     }
@@ -175,7 +189,7 @@ final readonly class FileCacheStore implements CacheStore
     {
         $filePath = $this->getFilePath(cacheKey: $cacheKey);
 
-        if (! file_exists($filePath)) {
+        if (! $this->filesystem->exists($filePath)) {
             return false;
         }
 
@@ -189,13 +203,13 @@ final readonly class FileCacheStore implements CacheStore
     {
         $filePath = $this->getFilePath(cacheKey: $cacheKey);
 
-        if (! file_exists($filePath)) {
+        if (! $this->filesystem->exists($filePath)) {
             return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
         }
 
-        $content = file_get_contents($filePath);
+        $content = $this->filesystem->read($filePath);
 
-        if ($content === false || $content === '') {
+        if ($content === '') {
             $this->forget(cacheKey: $cacheKey);
 
             return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
@@ -264,8 +278,8 @@ final readonly class FileCacheStore implements CacheStore
     {
         $filePath = $this->getFilePath(cacheKey: $cacheKey);
 
-        if (file_exists($filePath)) {
-            @unlink($filePath);
+        if ($this->filesystem->exists($filePath)) {
+            $this->filesystem->delete($filePath);
         }
     }
 

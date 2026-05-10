@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Observability\System\Capabilities\Audit\FileAuditWriter;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\Security\Redaction\System\PublicSurface\Redaction;
 
 /**
  * NDJSON file audit writer with redaction.
+ * Uses Application/Filesystem for all file I/O.
  */
 final class FileAuditWriter
 {
@@ -18,9 +20,15 @@ final class FileAuditWriter
             'access_token', 'refresh_token', 'private_key', 'secret_key',
         ];
 
+    private Filesystem $filesystem;
+
     public function __construct(
         private string $filePath,
-    ) {}
+        ?Filesystem $filesystem = null,
+    )
+    {
+        $this->filesystem = $filesystem ?? new Filesystem();
+    }
 
     /**
      * @param array{event: string, actor: string, action: string, target: string, timestamp: string, details: array<string, mixed>} $audit
@@ -32,7 +40,7 @@ final class FileAuditWriter
             sensitiveKeys: self::$defaultSensitiveKeys,
         );
         $line = json_encode($redacted, JSON_THROW_ON_ERROR);
-        file_put_contents($this->filePath, $line.PHP_EOL, FILE_APPEND | LOCK_EX);
+        $this->filesystem->append($this->filePath, $line . PHP_EOL);
     }
 
     /**
@@ -48,7 +56,7 @@ final class FileAuditWriter
             );
             $lines[] = json_encode($redacted, JSON_THROW_ON_ERROR);
         }
-        file_put_contents($this->filePath, implode(PHP_EOL, $lines).PHP_EOL, LOCK_EX);
+        $this->filesystem->append($this->filePath, implode(PHP_EOL, $lines) . PHP_EOL);
     }
 
     /**
@@ -56,12 +64,12 @@ final class FileAuditWriter
      */
     public function read(): array
     {
-        if (!file_exists($this->filePath)) {
+        if (! $this->filesystem->exists($this->filePath)) {
             return [];
         }
 
-        $content = file_get_contents($this->filePath);
-        if ($content === '' || $content === false) {
+        $content = $this->filesystem->read($this->filePath);
+        if ($content === '') {
             return [];
         }
 
@@ -79,8 +87,8 @@ final class FileAuditWriter
 
     public function clear(): void
     {
-        if (file_exists($this->filePath)) {
-            file_put_contents($this->filePath, '', LOCK_EX);
+        if ($this->filesystem->exists($this->filePath)) {
+            $this->filesystem->write($this->filePath, '');
         }
     }
 }

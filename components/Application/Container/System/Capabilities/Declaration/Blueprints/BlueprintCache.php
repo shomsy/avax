@@ -6,6 +6,8 @@ namespace Avax\Components\Application\Container\System\Capabilities\Declaration\
 
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionMetrics;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
+use Throwable;
 
 /**
  * Caches service blueprints in memory and optional disk artifacts.
@@ -22,6 +24,7 @@ final class BlueprintCache
     private readonly string $cacheDir;
 
     public function __construct(
+        private Filesystem $filesystem = new Filesystem(),
         ?string $cacheDir = null,
         ?string $cacheVersion = null,
         ?bool $debug = null,
@@ -66,7 +69,7 @@ final class BlueprintCache
         }
 
         $path = $this->pathFor(class: $class);
-        if (! is_file(filename: $path)) {
+        if (! $this->filesystem->exists(path: $path)) {
             $this->resolutionMetrics?->increment(name: 'container_blueprint_cache_misses_total');
 
             return null;
@@ -115,8 +118,8 @@ final class BlueprintCache
         unset($this->items[$class]);
 
         $path = $this->pathFor(class: $class);
-        if (is_file(filename: $path)) {
-            unlink(filename: $path);
+        if ($this->filesystem->exists(path: $path)) {
+            $this->filesystem->delete(path: $path);
         }
     }
 
@@ -135,20 +138,22 @@ final class BlueprintCache
         }
 
         $directory = dirname(path: $this->pathFor(class: $dependencyBlueprint->class));
-        if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0o777, recursive: true) && ! is_dir(filename: $directory)) {
-            throw new ContainerException(message: sprintf('Cannot create blueprint cache directory [%s].', $directory));
+        if (! $this->filesystem->exists(path: $directory)) {
+            if (! $this->filesystem->createDirectory(path: $directory, permissions: 0o777)) {
+                throw new ContainerException(message: sprintf('Cannot create blueprint cache directory [%s].', $directory));
+            }
         }
 
         $path = $this->pathFor(class: $dependencyBlueprint->class);
         $temp = $path.'.'.uniqid(prefix: 'tmp', more_entropy: true);
         $body = '<?php'.PHP_EOL.PHP_EOL.'return '.var_export(value: $dependencyBlueprint, return: true).';'.PHP_EOL;
 
-        if (file_put_contents(filename: $temp, data: $body, flags: LOCK_EX) === false) {
+        if (! $this->filesystem->write(path: $temp, content: $body)) {
             throw new ContainerException(message: sprintf('Cannot write blueprint cache file [%s].', $temp));
         }
 
-        if (! rename(from: $temp, to: $path)) {
-            unlink(filename: $temp);
+        if (! $this->filesystem->move(source: $temp, destination: $path)) {
+            $this->filesystem->delete(path: $temp);
 
             throw new ContainerException(message: sprintf('Cannot publish blueprint cache file [%s].', $path));
         }
@@ -164,61 +169,37 @@ final class BlueprintCache
         $this->items = [];
 
         $directory = $this->directory();
-        if (! is_dir(filename: $directory)) {
+        if (! $this->filesystem->exists(path: $directory)) {
             return;
         }
 
-        $files = scandir(directory: $directory);
-        if ($files === false) {
-            return;
-        }
+        $entries = $this->filesystem->listDirectory(path: $directory);
 
-        foreach ($files as $file) {
-            if ($file === '.') {
-                continue;
-            }
-
-            if ($file === '..') {
-                continue;
-            }
-
-            $path = $directory.'/'.$file;
-            if (is_dir(filename: $path)) {
-                $this->deleteDirectory(directory: $path);
+        foreach ($entries as $entry) {
+            $path = $directory . '/' . $entry;
+            if ($this->isDirectory(path: $path)) {
+                $this->filesystem->deleteDirectory(path: $path);
 
                 continue;
             }
 
-            unlink(filename: $path);
+            $this->filesystem->delete(path: $path);
         }
     }
 
-    private function deleteDirectory(string $directory): void
+    private function isDirectory(string $path) : bool
     {
-        $files = scandir(directory: $directory);
-        if ($files === false) {
-            return;
+        if (! $this->filesystem->exists(path: $path)) {
+            return false;
         }
 
-        foreach ($files as $file) {
-            if ($file === '.') {
-                continue;
-            }
+        try {
+            $this->filesystem->listDirectory(path: $path);
 
-            if ($file === '..') {
-                continue;
-            }
-
-            $path = $directory.'/'.$file;
-            if (is_dir(filename: $path)) {
-                $this->deleteDirectory(directory: $path);
-
-                continue;
-            }
-
-            unlink(filename: $path);
+            return true;
+        } catch (Throwable) {
+            return false;
         }
-
-        rmdir(directory: $directory);
     }
+
 }

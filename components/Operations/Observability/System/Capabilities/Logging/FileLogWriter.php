@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Observability\System\Capabilities\Logging;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\Operations\Observability\System\Capabilities\Logs\StructuredLogRecord;
 use Avax\Components\Security\Redaction\System\PublicSurface\Redaction;
 use RuntimeException;
@@ -15,6 +16,9 @@ use function assert;
  * Each log record is written as a single JSON line (NDJSON format).
  * Suitable for development, testing, and environments where a log
  * aggregator reads from a file (e.g. fluentd, filebeat).
+ *
+ * Uses Application/Filesystem for directory creation.
+ * Uses native fopen/fwrite for batch write performance (file handle stays open).
  */
 final class FileLogWriter
 {
@@ -25,6 +29,8 @@ final class FileLogWriter
             'access_token', 'refresh_token', 'private_key', 'secret_key',
         ];
 
+    private Filesystem $filesystem;
+
     /** @var resource|null */
     private $handle;
 
@@ -32,7 +38,11 @@ final class FileLogWriter
 
     public function __construct(
         private readonly string $path,
-    ) {}
+        ?Filesystem $filesystem = null,
+    )
+    {
+        $this->filesystem = $filesystem ?? new Filesystem();
+    }
 
     public function write(StructuredLogRecord $record) : void
     {
@@ -52,7 +62,6 @@ final class FileLogWriter
 
         $line = json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-        // Handle is guaranteed non-null here: closed check at top + open() above ensures it.
         assert($this->handle !== null);
         $written = @fwrite($this->handle, $line . PHP_EOL);
 
@@ -107,8 +116,8 @@ final class FileLogWriter
     {
         $dir = dirname($this->path);
 
-        if (!is_dir($dir)) {
-            mkdir($dir, 0o755, true);
+        if (! $this->filesystem->exists($dir)) {
+            $this->filesystem->createDirectory($dir, 0o755);
         }
 
         $handle = fopen($this->path, 'a');

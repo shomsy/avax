@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Queue\System\Capabilities\Queue;
 
+use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsStore;
+use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\InMemoryFailedJobsStore;
 use Avax\Components\Operations\Queue\System\Foundation\JobInterface;
 use Throwable;
 
@@ -12,10 +14,26 @@ final class Queue
     /** @var array<string, array<string, array<string, mixed>>> */
     private static array $queues = [];
 
-    /** @var array<string, list<array<string, mixed>>> */
-    private static array $deadLetters = [];
+    private static ?FailedJobsStore $failedJobsStore = null;
 
     private const int DEFAULT_MAX_ATTEMPTS = 3;
+
+    /**
+     * Set the explicit failed-jobs store.
+     * If not set, Queue uses an in-memory store.
+     */
+    public static function useFailedJobsStore(FailedJobsStore $store) : void
+    {
+        self::$failedJobsStore = $store;
+    }
+
+    /**
+     * Get the active failed-jobs store.
+     */
+    private static function failedJobsStore() : FailedJobsStore
+    {
+        return self::$failedJobsStore ??= new InMemoryFailedJobsStore();
+    }
 
     public static function push(callable|JobInterface|string $job, array $data = [], string $queue = 'default', int $maxAttempts = self::DEFAULT_MAX_ATTEMPTS): string
     {
@@ -80,15 +98,18 @@ final class Queue
         $maxAttempts = $job['max_attempts'] ?? self::DEFAULT_MAX_ATTEMPTS;
 
         if ($job['attempts'] >= $maxAttempts) {
-            // Move to dead letter queue
-            self::$deadLetters[$queue][] = [
-                'job' => $job['job'] ?? null,
-                'id' => $jobId,
-                'data' => $job['data'] ?? [],
-                'attempts' => $job['attempts'],
-                'reason' => 'Max attempts exceeded',
-                'failed_at' => date('Y-m-d H:i:s'),
-            ];
+            // Move to dead letter store
+            self::failedJobsStore()->record(
+                queue   : $queue,
+                payload : [
+                              'job'      => $job['job'] ?? null,
+                              'id'       => $jobId,
+                              'data'     => $job['data'] ?? [],
+                              'attempts' => $job['attempts'],
+                          ],
+                reason  : 'Max attempts exceeded',
+                failedAt: date('Y-m-d H:i:s'),
+            );
 
             return;
         }
@@ -102,25 +123,17 @@ final class Queue
      */
     public static function deadLetters(string $queue = ''): array
     {
-        if ($queue !== '') {
-            return self::$deadLetters[$queue] ?? [];
-        }
-
-        return array_merge(...array_values(self::$deadLetters));
+        return self::failedJobsStore()->list($queue);
     }
 
     public static function deadLetterCount(string $queue = ''): int
     {
-        return count(self::deadLetters($queue));
+        return self::failedJobsStore()->count($queue);
     }
 
     public static function clearDeadLetters(string $queue = ''): void
     {
-        if ($queue !== '') {
-            unset(self::$deadLetters[$queue]);
-        } else {
-            self::$deadLetters = [];
-        }
+        self::failedJobsStore()->clear($queue);
     }
 
     public static function size(string $queue = 'default'): int
@@ -142,7 +155,8 @@ final class Queue
     public static function reset(): void
     {
         self::$queues = [];
-        self::$deadLetters = [];
+        self::failedJobsStore()->clear();
+        self::$failedJobsStore = null;
     }
 
     public static function bulk(array $jobs, string $queue = 'default'): array

@@ -6,6 +6,7 @@ namespace Tests\Unit\Components\Operations\Queue;
 
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsSchema;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsStore;
+use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\PdoFailedJobsStore;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\MemoryQueue\MemoryQueue;
 use Avax\Components\Operations\Queue\System\Flows\RunWorkerLoop\RunWorkerLoop;
 use Avax\Framework\System\Capabilities\Queue\RegisterQueueCommands;
@@ -60,11 +61,11 @@ final class QueueCommandsTest extends TestCase
 
     public function test_failed_job_is_recorded_and_listed(): void
     {
-        $store = new FailedJobsStore($this->pdo);
+        $store = new PdoFailedJobsStore($this->pdo);
         $store->record(
             queue: 'default',
             payload: ['handler' => 'TestJob', 'data' => ['key' => 'value']],
-            exception: 'RuntimeException: Test failure',
+            reason: 'RuntimeException: Test failure',
             failedAt: '2026-05-10 12:00:00',
         );
 
@@ -78,11 +79,11 @@ final class QueueCommandsTest extends TestCase
 
     public function test_queue_retries_failed_job(): void
     {
-        $store = new FailedJobsStore($this->pdo);
+        $store = new PdoFailedJobsStore($this->pdo);
         $store->record(
             queue: 'default',
             payload: ['handler' => 'TestJob', 'payload' => []],
-            exception: 'RuntimeException: Test failure',
+            reason: 'RuntimeException: Test failure',
             failedAt: '2026-05-10 12:00:00',
         );
 
@@ -105,7 +106,7 @@ final class QueueCommandsTest extends TestCase
 
     public function test_queue_flush_failed_clears_all(): void
     {
-        $store = new FailedJobsStore($this->pdo);
+        $store = new PdoFailedJobsStore($this->pdo);
         $store->record('default', ['handler' => 'Job1'], 'Exception 1', '2026-05-10 12:00:00');
         $store->record('default', ['handler' => 'Job2'], 'Exception 2', '2026-05-10 12:01:00');
 

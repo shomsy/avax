@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Queue\System\Capabilities\Queue\MemoryQueue;
 
+use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsStore;
+use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\InMemoryFailedJobsStore;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\QueueBroker;
 
 /**
@@ -11,18 +13,22 @@ use Avax\Components\Operations\Queue\System\Capabilities\Queue\QueueBroker;
  *
  * Stores jobs in a plain array. No persistence, no external dependencies.
  * Supports dead letter routing when max attempts are exceeded.
+ * Dead-letter state uses an explicit FailedJobsStore for reset-safe behavior.
  */
 final class MemoryQueue implements QueueBroker
 {
     /** @var array<string, list<array<string, mixed>>> */
     private array $queues = [];
 
-    /** @var array<string, list<array<string, mixed>>> */
-    private array $deadLetters = [];
+    private FailedJobsStore $failedJobsStore;
 
     public function __construct(
         private readonly int $defaultMaxAttempts = 3,
-    ) {}
+        ?FailedJobsStore $failedJobsStore = null,
+    )
+    {
+        $this->failedJobsStore = $failedJobsStore ?? new InMemoryFailedJobsStore();
+    }
 
     /**
      * @param array<string, mixed> $job
@@ -84,12 +90,16 @@ final class MemoryQueue implements QueueBroker
         $maxAttempts = $jobEntry['max_attempts'] ?? $this->defaultMaxAttempts;
 
         if ($attempts >= $maxAttempts) {
-            $this->deadLetters[$queue][] = [
-                'job' => $jobEntry['job'] ?? $jobEntry,
-                'id' => $jobEntry['id'] ?? uniqid('dlq_', true),
-                'attempts' => $attempts,
-                'reason' => $reason,
-            ];
+            $this->failedJobsStore->record(
+                queue   : $queue,
+                payload : [
+                              'job'      => $jobEntry['job'] ?? $jobEntry,
+                              'id'       => $jobEntry['id'] ?? uniqid('dlq_', true),
+                              'attempts' => $attempts,
+                          ],
+                reason  : $reason,
+                failedAt: date('Y-m-d H:i:s'),
+            );
 
             return;
         }
@@ -103,30 +113,22 @@ final class MemoryQueue implements QueueBroker
      */
     public function deadLetters(string $queue = '') : array
     {
-        if ($queue !== '') {
-            return $this->deadLetters[$queue] ?? [];
-        }
-
-        return array_merge(...array_values($this->deadLetters));
+        return $this->failedJobsStore->list($queue);
     }
 
     public function deadLetterCount(string $queue = '') : int
     {
-        return count($this->deadLetters($queue));
+        return $this->failedJobsStore->count($queue);
     }
 
     public function clearDeadLetters(string $queue = '') : void
     {
-        if ($queue !== '') {
-            unset($this->deadLetters[$queue]);
-        } else {
-            $this->deadLetters = [];
-        }
+        $this->failedJobsStore->clear($queue);
     }
 
     public function clearAll() : void
     {
         $this->queues = [];
-        $this->deadLetters = [];
+        $this->failedJobsStore->clear();
     }
 }

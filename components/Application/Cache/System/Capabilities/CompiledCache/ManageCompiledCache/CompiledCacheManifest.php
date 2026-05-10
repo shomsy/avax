@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use RuntimeException;
 
 final class CompiledCacheManifest
@@ -13,6 +14,7 @@ final class CompiledCacheManifest
 
     public function __construct(
         ?CompiledCacheManifestEntry $compiledCacheManifestEntry = null,
+        private Filesystem $filesystem = new Filesystem(),
     ) {
         if ($compiledCacheManifestEntry instanceof CompiledCacheManifestEntry) {
             $this->entries[$compiledCacheManifestEntry->compiledCacheName->toString()] = $compiledCacheManifestEntry;
@@ -21,7 +23,9 @@ final class CompiledCacheManifest
 
     public static function load(string $path): self
     {
-        if (! file_exists($path)) {
+        $filesystem = new Filesystem();
+
+        if (! $filesystem->exists($path)) {
             return new self();
         }
 
@@ -104,6 +108,6 @@ final class CompiledCacheManifest
 
         $content = "<?php\n\ndeclare(strict_types=1);\n\nreturn ".var_export($entries, true).";\n";
 
-        file_put_contents($path, $content, LOCK_EX);
+        $this->filesystem->write($path, $content);
     }
 }

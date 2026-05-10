@@ -11,6 +11,7 @@ use Avax\Components\Application\Container\System\Capabilities\Declaration\Bluepr
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
 use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionMetrics;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\LifetimePlan;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Closure;
 use JsonException;
 use ReflectionException;
@@ -59,6 +60,8 @@ final class CompileContainer
 
     private readonly string $cacheDir;
 
+    private Filesystem $filesystem;
+
     public function __construct(
         private readonly DependencyRegistry $dependencyRegistry,
         private readonly CreateDependencyBlueprint $createDependencyBlueprint,
@@ -79,6 +82,7 @@ final class CompileContainer
         ?bool $validateBeforeCompile = null,
         private readonly ?ResolutionMetrics $resolutionMetrics = null,
         ?DependencyCompiler $dependencyCompiler = null,
+        ?Filesystem $filesystem = null,
     ) {
         $cacheDir ??= '';
         $cacheVersion ??= 'container-v1';
@@ -112,6 +116,7 @@ final class CompileContainer
             registrations: $this->dependencyRegistry,
             blueprints   : $this->createDependencyBlueprint,
         );
+        $this->filesystem = $filesystem ?? new Filesystem();
     }
 
     /**
@@ -334,12 +339,12 @@ final class CompileContainer
         }
 
         $path = $this->metadataPath();
-        if (! is_file(filename: $path)) {
+        if (! $this->filesystem->isReadable(path: $path)) {
             return null;
         }
 
-        $json = file_get_contents(filename: $path);
-        if (! is_string(value: $json) || $json === '') {
+        $json = $this->filesystem->read(path: $path);
+        if ($json === '') {
             if ($quarantineOnFailure) {
                 $this->handleCorruption(reason: 'Compiled container metadata could not be read.');
             }
@@ -398,7 +403,11 @@ final class CompileContainer
         $compiledPath = $this->path();
         $metadataPath = $this->metadataPath();
         $quarantineDirectory = $this->quarantineDirectory();
-        if (! is_dir(filename: $quarantineDirectory) && ! mkdir(directory: $quarantineDirectory, permissions: 0o775, recursive: true) && ! is_dir(filename: $quarantineDirectory)) {
+        if (! $this->filesystem->exists(path: $quarantineDirectory)) {
+            $this->filesystem->createDirectory(path: $quarantineDirectory, permissions: 0o775);
+        }
+
+        if (! $this->filesystem->exists(path: $quarantineDirectory)) {
             return;
         }
 
@@ -406,12 +415,12 @@ final class CompileContainer
                 |> sha1(...)
                 |> (static fn ($x): string => substr(string: (string) $x, offset: 0, length: 8));
 
-        if (is_file(filename: $compiledPath)) {
-            rename(from: $compiledPath, to: $quarantineDirectory.'/'.$suffix.'.php');
+        if ($this->filesystem->isReadable(path: $compiledPath)) {
+            $this->filesystem->move(source: $compiledPath, destination: $quarantineDirectory . '/' . $suffix . '.php');
         }
 
-        if (is_file(filename: $metadataPath)) {
-            rename(from: $metadataPath, to: $quarantineDirectory.'/'.$suffix.'.json');
+        if ($this->filesystem->isReadable(path: $metadataPath)) {
+            $this->filesystem->move(source: $metadataPath, destination: $quarantineDirectory . '/' . $suffix . '.json');
         }
 
         $this->resolutionMetrics?->increment(name: 'container_compiled_container_quarantines_total');
@@ -864,13 +873,13 @@ final class CompileContainer
 
     private function sourceMatchesChecksum(string $path, string $checksum): bool
     {
-        if ($checksum === '' || ! is_file(filename: $path)) {
+        if ($checksum === '' || ! $this->filesystem->isReadable(path: $path)) {
             return false;
         }
 
-        $body = file_get_contents(filename: $path);
+        $body = $this->filesystem->read(path: $path);
 
-        return is_string(value: $body) && sha1(string: $body) === $checksum;
+        return sha1(string: $body) === $checksum;
     }
 
     private function loadCompiledFromPath(string $path): CompiledContainer
@@ -894,22 +903,26 @@ final class CompileContainer
             ? $this->compiledDirectory()
             : sys_get_temp_dir().'/avax-container-runtime';
 
-        if (! is_dir(filename: $directory) && ! mkdir(directory: $directory, permissions: 0o775, recursive: true) && ! is_dir(filename: $directory)) {
+        if (! $this->filesystem->exists(path: $directory)) {
+            $this->filesystem->createDirectory(path: $directory, permissions: 0o775);
+        }
+
+        if (! $this->filesystem->exists(path: $directory)) {
             throw new RuntimeException(message: sprintf('Cannot create temporary compiled container directory [%s].', $directory));
         }
 
         $path = $directory.'/runtime-'.uniqid(prefix: '', more_entropy: true).'.php';
         $body = '<?php'.PHP_EOL.PHP_EOL.$source.PHP_EOL;
 
-        if (file_put_contents(filename: $path, data: $body, flags: LOCK_EX) === false) {
+        if (! $this->filesystem->write(path: $path, content: $body)) {
             throw new RuntimeException(message: sprintf('Cannot materialize compiled container source [%s].', $path));
         }
 
         try {
             return $this->loadCompiledFromPath(path: $path);
         } finally {
-            if (is_file(filename: $path)) {
-                unlink(filename: $path);
+            if ($this->filesystem->isReadable(path: $path)) {
+                $this->filesystem->delete(path: $path);
             }
         }
     }
@@ -920,7 +933,11 @@ final class CompileContainer
     private function write(string $source, ArtifactMetadata $artifactMetadata): void
     {
         $compiledDirectory = $this->compiledDirectory();
-        if (! is_dir(filename: $compiledDirectory) && ! mkdir(directory: $compiledDirectory, permissions: 0o775, recursive: true) && ! is_dir(filename: $compiledDirectory)) {
+        if (! $this->filesystem->exists(path: $compiledDirectory)) {
+            $this->filesystem->createDirectory(path: $compiledDirectory, permissions: 0o775);
+        }
+
+        if (! $this->filesystem->exists(path: $compiledDirectory)) {
             throw new RuntimeException(message: sprintf('Cannot create compiled container directory [%s].', $compiledDirectory));
         }
 
@@ -939,12 +956,12 @@ final class CompileContainer
     {
         $temp = $path.'.'.uniqid(prefix: 'tmp', more_entropy: true);
 
-        if (file_put_contents(filename: $temp, data: $body, flags: LOCK_EX) === false) {
+        if (! $this->filesystem->write(path: $temp, content: $body)) {
             throw new RuntimeException(message: sprintf('Cannot write compiled container artifact [%s].', $temp));
         }
 
-        if (! rename(from: $temp, to: $path)) {
-            unlink(filename: $temp);
+        if (! $this->filesystem->move(source: $temp, destination: $path)) {
+            $this->filesystem->delete(path: $temp);
 
             throw new RuntimeException(message: sprintf('Cannot publish compiled container artifact [%s].', $path));
         }
@@ -1078,7 +1095,7 @@ final class CompileContainer
         $this->artifactMetadata = null;
 
         $directory = $this->directory();
-        if (! is_dir(filename: $directory)) {
+        if (! $this->filesystem->exists(path: $directory)) {
             return;
         }
 
@@ -1087,8 +1104,10 @@ final class CompileContainer
 
     private function deleteDirectory(string $directory): void
     {
-        $files = scandir(directory: $directory);
-        if ($files === false) {
+        $files = $this->filesystem->listDirectory(path: $directory);
+        if ($files === []) {
+            $this->filesystem->deleteDirectory(path: $directory);
+
             return;
         }
 
@@ -1102,16 +1121,16 @@ final class CompileContainer
             }
 
             $path = $directory.'/'.$file;
-            if (is_dir(filename: $path)) {
+            if ($this->filesystem->exists(path: $path)) {
                 $this->deleteDirectory(directory: $path);
 
                 continue;
             }
 
-            unlink(filename: $path);
+            $this->filesystem->delete(path: $path);
         }
 
-        rmdir(directory: $directory);
+        $this->filesystem->deleteDirectory(path: $directory);
     }
 
     /**
@@ -1141,7 +1160,7 @@ final class CompileContainer
             && ($this->cacheDir === '' || $this->sourceMatchesChecksum(path: $this->path(), checksum: $metadata->checksum));
         $available = $compatible
             && $freshnessState === 'fresh'
-            && ($this->cacheDir === '' || is_file(filename: $this->path()))
+            && ($this->cacheDir === '' || $this->filesystem->isReadable(path: $this->path()))
             && $checksumValid;
         $warnings = $this->warningsFor(
             freshnessState     : $freshnessState,

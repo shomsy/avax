@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Migrations\CLI;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Schema\SchemaBuilder;
 use PDO;
 
@@ -11,7 +12,9 @@ final readonly class MigrateCommand
 {
     private string $path;
 
-    public function __construct()
+    public function __construct(
+        private ?Filesystem $filesystem = null,
+    )
     {
         $this->path = dirname(__DIR__, 6).'/database/migrations';
     }
@@ -45,7 +48,8 @@ final readonly class MigrateCommand
 
     private function getMigrations(): array
     {
-        if (! is_dir($this->path)) {
+        $fs = $this->filesystem ?? new Filesystem();
+        if (! $fs->exists($this->path)) {
             return [];
         }
 
@@ -59,7 +63,8 @@ final readonly class MigrateCommand
 
     private function getMigrationClass(string $file): string
     {
-        $content = file_get_contents($file);
+        $fs      = $this->filesystem ?? new Filesystem();
+        $content = $fs->read($file);
         preg_match('/class (\w+) extends/', $content, $match);
 
         return $match[1] ?? 'Migration';

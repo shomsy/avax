@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Logging\System\Capabilities\Writers;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\Security\Redaction\System\PublicSurface\Redaction;
 use DateTime;
 use DateTimeZone;
@@ -11,6 +12,8 @@ use DateTimeZone;
 /**
  * Capability to write logs to rotating files with retention management.
  * Uses Security/Redaction to redact sensitive data before writing.
+ * Uses Application/Filesystem for all file I/O.
+ * Rotation uses Filesystem::listDirectory() + filemtime() for age sorting.
  */
 final class RotatingFileWriter
 {
@@ -22,11 +25,15 @@ final class RotatingFileWriter
             'session_id', 'PHPSESSID', 'cookie',
         ];
 
+    private Filesystem $filesystem;
+
     public function __construct(
         private string $baseLogPath,
         private string $timezone = 'UTC',
         private int $maxLogFiles = 30,
+        ?Filesystem $filesystem = null,
     ) {
+        $this->filesystem = $filesystem ?? new Filesystem();
     }
 
     public function write(string $message, string $level = 'info', array $context = []): void
@@ -37,8 +44,8 @@ final class RotatingFileWriter
 
         $filePath = sprintf('%s/%s-%s.log', $directory, $date, $filename);
 
-        if (! is_dir($directory)) {
-            mkdir($directory, 0o755, true);
+        if (! $this->filesystem->exists($directory)) {
+            $this->filesystem->createDirectory($directory, 0o755);
         }
 
         // Redact sensitive data before writing to log file
@@ -48,9 +55,9 @@ final class RotatingFileWriter
         );
 
         $timestamp = new DateTime('now', new DateTimeZone($this->timezone))->format('Y-m-d H:i:s');
-        $formatted       = sprintf("[%s] %s: %s %s\n", $timestamp, strtoupper($level), $message, json_encode($redactedContext));
+        $formatted = sprintf("[%s] %s: %s %s\n", $timestamp, strtoupper($level), $message, json_encode($redactedContext));
 
-        file_put_contents($filePath, $formatted, FILE_APPEND | LOCK_EX);
+        $this->filesystem->append($filePath, $formatted);
 
         $this->rotate();
     }
@@ -59,16 +66,27 @@ final class RotatingFileWriter
     {
         $directory = dirname($this->baseLogPath);
         $filename = basename($this->baseLogPath);
-        $files = glob(sprintf('%s/*-%s.log', $directory, $filename));
+        $suffix = "-{$filename}.log";
+
+        // Use Filesystem to list directory, then filter and sort by age
+        $entries = $this->filesystem->listDirectory($directory);
+
+        $files = array_values(array_filter($entries, static function (string $entry) use ($directory, $suffix) : bool {
+            $fullPath = $directory . '/' . $entry;
+
+            return is_file($fullPath) && str_ends_with($entry, $suffix);
+        }));
 
         if (count($files) <= $this->maxLogFiles) {
             return;
         }
 
-        usort($files, static fn ($a, $b): int => filemtime($a) - filemtime($b));
+        // Sort by modification time (oldest first)
+        usort($files, static fn (string $a, string $b) : int => filemtime($directory . '/' . $a) - filemtime($directory . '/' . $b));
 
         while (count($files) > $this->maxLogFiles) {
-            unlink((string) array_shift($files));
+            $oldest = array_shift($files);
+            $this->filesystem->delete($directory . '/' . $oldest);
         }
     }
 }

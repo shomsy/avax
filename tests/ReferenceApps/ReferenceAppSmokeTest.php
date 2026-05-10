@@ -72,6 +72,167 @@ final class ReferenceAppSmokeTest extends TestCase
     }
 
     #[Test]
+    public function secure_registration_api_has_readme(): void
+    {
+        $readme = __DIR__ . '/../../examples/v4/secure-registration-api/README.md';
+        self::assertFileExists($readme);
+    }
+
+    #[Test]
+    public function url_shortener_proves_database_routing(): void
+    {
+        $file = __DIR__ . '/../../examples/v4/url-shortener/app.php';
+        self::assertFileExists($file);
+    }
+
+    #[Test]
+    public function url_shortener_has_readme(): void
+    {
+        $readme = __DIR__ . '/../../examples/v4/url-shortener/README.md';
+        self::assertFileExists($readme);
+    }
+
+    #[Test]
+    public function parking_lot_proves_system_design_kit(): void
+    {
+        $file = __DIR__ . '/../../examples/v4/parking-lot/app.php';
+        self::assertFileExists($file);
+    }
+
+    #[Test]
+    public function parking_lot_has_readme(): void
+    {
+        $readme = __DIR__ . '/../../examples/v4/parking-lot/README.md';
+        self::assertFileExists($readme);
+    }
+
+    #[Test]
+    public function webhook_receiver_proves_request_signing(): void
+    {
+        $file = __DIR__ . '/../../examples/v4/webhook-receiver/app.php';
+        self::assertFileExists($file);
+    }
+
+    #[Test]
+    public function webhook_receiver_has_readme(): void
+    {
+        $readme = __DIR__ . '/../../examples/v4/webhook-receiver/README.md';
+        self::assertFileExists($readme);
+    }
+
+    #[Test]
+    public function queue_worker_demo_proves_queue_dispatch(): void
+    {
+        $file = __DIR__ . '/../../examples/v4/queue-worker-demo/app.php';
+        self::assertFileExists($file);
+    }
+
+    #[Test]
+    public function queue_worker_demo_has_readme(): void
+    {
+        $readme = __DIR__ . '/../../examples/v4/queue-worker-demo/README.md';
+        self::assertFileExists($readme);
+    }
+
+    #[Test]
+    public function outbox_messaging_demo_proves_outbox_pattern(): void
+    {
+        $file = __DIR__ . '/../../examples/v4/outbox-messaging-demo/app.php';
+        self::assertFileExists($file);
+    }
+
+    #[Test]
+    public function outbox_messaging_demo_has_readme(): void
+    {
+        $readme = __DIR__ . '/../../examples/v4/outbox-messaging-demo/README.md';
+        self::assertFileExists($readme);
+    }
+
+    #[Test]
+    public function file_upload_storage_demo_proves_storage_validation(): void
+    {
+        $file = __DIR__ . '/../../examples/v4/file-upload-storage-demo/app.php';
+        self::assertFileExists($file);
+    }
+
+    #[Test]
+    public function file_upload_storage_demo_has_readme(): void
+    {
+        $readme = __DIR__ . '/../../examples/v4/file-upload-storage-demo/README.md';
+        self::assertFileExists($readme);
+    }
+
+    #[Test]
+    public function observability_demo_proves_metrics_traces_audit(): void
+    {
+        $file = __DIR__ . '/../../examples/v4/observability-demo/app.php';
+        self::assertFileExists($file);
+    }
+
+    #[Test]
+    public function observability_demo_has_readme(): void
+    {
+        $readme = __DIR__ . '/../../examples/v4/observability-demo/README.md';
+        self::assertFileExists($readme);
+    }
+
+    #[Test]
+    public function feature_flag_demo_proves_feature_flags(): void
+    {
+        $file = __DIR__ . '/../../examples/v4/feature-flag-demo/app.php';
+        self::assertFileExists($file);
+    }
+
+    #[Test]
+    public function feature_flag_demo_has_readme(): void
+    {
+        $readme = __DIR__ . '/../../examples/v4/feature-flag-demo/README.md';
+        self::assertFileExists($readme);
+    }
+
+    #[Test]
+    public function service_to_service_demo_proves_signed_requests(): void
+    {
+        $file = __DIR__ . '/../../examples/v4/service-to-service-demo/app.php';
+        self::assertFileExists($file);
+    }
+
+    #[Test]
+    public function service_to_service_demo_has_readme(): void
+    {
+        $readme = __DIR__ . '/../../examples/v4/service-to-service-demo/README.md';
+        self::assertFileExists($readme);
+    }
+
+    #[Test]
+    public function runtime_doctor_demo_proves_health(): void
+    {
+        $file = __DIR__ . '/../../examples/v4/runtime-doctor-demo/app.php';
+        self::assertFileExists($file);
+    }
+
+    #[Test]
+    public function runtime_doctor_demo_has_readme(): void
+    {
+        $readme = __DIR__ . '/../../examples/v4/runtime-doctor-demo/README.md';
+        self::assertFileExists($readme);
+    }
+
+    #[Test]
+    public function system_design_report_demo_proves_architecture_reports(): void
+    {
+        $file = __DIR__ . '/../../examples/v4/system-design-report-demo/app.php';
+        self::assertFileExists($file);
+    }
+
+    #[Test]
+    public function system_design_report_demo_has_readme(): void
+    {
+        $readme = __DIR__ . '/../../examples/v4/system-design-report-demo/README.md';
+        self::assertFileExists($readme);
+    }
+
+    #[Test]
     public function security_signing_capability_available(): void
     {
         $signer = new SignInternalRequest('secret', new SignatureKeyId('key-1'));

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Capabilities\ExternalState\System\Capabilities\Drivers;
 
 use Avax\Framework\System\Capabilities\ExternalState\System\PublicSurface\State;
+use InvalidArgumentException;
 use Redis as PhpRedis;
 
 /**
@@ -32,12 +33,31 @@ final readonly class Redis implements State
     {
         $value = $this->redis->get($this->prefix.$key);
 
-        return $value !== false ? unserialize((string) $value) : null;
+        if ($value === false) {
+            return null;
+        }
+
+        // Try JSON decode first (safe path), fall back to unserialize for legacy data
+        $decoded = json_decode($value, associative: true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return $decoded;
+        }
+
+        // Legacy fallback: unserialize with allowed_classes=false for security
+        return @unserialize((string) $value, ['allowed_classes' => false]);
     }
 
     public function set(string $key, mixed $value, int $ttl = 0): void
     {
-        $serialized = serialize($value);
+        // Use JSON encoding instead of serialize() for security
+        // Callables should go through CallableSerialization component
+        if (is_callable($value) && ! is_string($value)) {
+            throw new InvalidArgumentException(
+                'Callable values must be serialized through CallableSerialization component, not stored directly.'
+            );
+        }
+
+        $serialized = json_encode($value, JSON_THROW_ON_ERROR);
 
         if ($ttl > 0) {
             $this->redis->setex($this->prefix.$key, $ttl, $serialized);

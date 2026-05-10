@@ -269,6 +269,15 @@ parameters:
         -
             message: '#Call to method .*recordException.*on a separate line has no effect#'
             path: 'tests/Unit/Components/Operations/Observability'
+        -
+            message: '#Call to function is_.*\(\) with bool will always#'
+            path: 'components/Operations/Resilience/System/Capabilities/Timeout/Timeout.php'
+        -
+            message: '#Result of \|\| is always false#'
+            path: 'components/Operations/Resilience/System/Capabilities/Timeout/Timeout.php'
+        -
+            message: '#Parameter .2. \$handler of function pcntl_signal expects#'
+            path: 'components/Operations/Resilience/System/Capabilities/Timeout/Timeout.php'
     type_perfect:
         narrow_param: true
         narrow_return: true

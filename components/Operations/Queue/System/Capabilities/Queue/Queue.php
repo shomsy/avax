@@ -12,7 +12,12 @@ final class Queue
     /** @var array<string, array<string, array<string, mixed>>> */
     private static array $queues = [];
 
-    public static function push(callable|JobInterface|string $job, array $data = [], string $queue = 'default'): string
+    /** @var array<string, list<array<string, mixed>>> */
+    private static array $deadLetters = [];
+
+    private const int DEFAULT_MAX_ATTEMPTS = 3;
+
+    public static function push(callable|JobInterface|string $job, array $data = [], string $queue = 'default', int $maxAttempts = self::DEFAULT_MAX_ATTEMPTS): string
     {
         $jobId = uniqid(prefix: 'job_', more_entropy: true);
 
@@ -21,6 +26,7 @@ final class Queue
             'job' => $job,
             'data' => $data,
             'attempts' => 0,
+            'max_attempts' => $maxAttempts,
             'run_at' => time(),
             'created_at' => time(),
         ];
@@ -71,8 +77,50 @@ final class Queue
     {
         $jobId = $job['id'] ?? uniqid(prefix: 'job_', more_entropy: true);
         $job['attempts'] = ($job['attempts'] ?? 0) + 1;
+        $maxAttempts = $job['max_attempts'] ?? self::DEFAULT_MAX_ATTEMPTS;
+
+        if ($job['attempts'] >= $maxAttempts) {
+            // Move to dead letter queue
+            self::$deadLetters[$queue][] = [
+                'job' => $job['job'] ?? null,
+                'id' => $jobId,
+                'data' => $job['data'] ?? [],
+                'attempts' => $job['attempts'],
+                'reason' => 'Max attempts exceeded',
+                'failed_at' => date('Y-m-d H:i:s'),
+            ];
+
+            return;
+        }
+
         $job['run_at'] = time() + $delay;
         self::$queues[$queue][$jobId] = $job;
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    public static function deadLetters(string $queue = ''): array
+    {
+        if ($queue !== '') {
+            return self::$deadLetters[$queue] ?? [];
+        }
+
+        return array_merge(...array_values(self::$deadLetters));
+    }
+
+    public static function deadLetterCount(string $queue = ''): int
+    {
+        return count(self::deadLetters($queue));
+    }
+
+    public static function clearDeadLetters(string $queue = ''): void
+    {
+        if ($queue !== '') {
+            unset(self::$deadLetters[$queue]);
+        } else {
+            self::$deadLetters = [];
+        }
     }
 
     public static function size(string $queue = 'default'): int
@@ -83,6 +131,18 @@ final class Queue
     public static function clear(string $queue = 'default'): void
     {
         unset(self::$queues[$queue]);
+    }
+
+    /**
+     * Reset all static queue state for long-lived worker safety.
+     *
+     * Clears all queues so subsequent requests start from a clean slate.
+     * Must be called during worker warmup or between isolated test runs.
+     */
+    public static function reset(): void
+    {
+        self::$queues = [];
+        self::$deadLetters = [];
     }
 
     public static function bulk(array $jobs, string $queue = 'default'): array

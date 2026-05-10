@@ -36,6 +36,19 @@ final class Storage
         $registry->register(new DiskName($name), $disk);
     }
 
+    /**
+     * Reset all static state for long-lived worker safety.
+     *
+     * Clears the disk registry and default disk so subsequent requests
+     * start from a clean slate. Must be called during worker warmup
+     * or between isolated test runs.
+     */
+    public static function reset() : void
+    {
+        self::$registry    = null;
+        self::$defaultDisk = null;
+    }
+
     private static function getRegistry() : RegisteredDisks
     {
         if (self::$registry === null) {

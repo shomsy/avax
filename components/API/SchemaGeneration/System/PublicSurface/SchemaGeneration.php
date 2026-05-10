@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Avax\Components\API\SchemaGeneration\System\PublicSurface;
 
 use Avax\Components\API\SchemaGeneration\System\Configuration\BuildSchemaGeneration;
+use Avax\Components\API\SchemaGeneration\System\Flows\GenerateOpenApiFromRoutes\GenerateOpenApiFromRoutes;
 use Avax\Components\API\SchemaGeneration\System\Foundation\JsonSchemaDocument;
 use Avax\Components\API\SchemaGeneration\System\Foundation\PayloadValidationResult;
+use Avax\Components\HTTP\Router\System\PublicSurface\Router;
 
 /**
  * SchemaGeneration — thin public API for generating JSON Schema from DataObject metadata.
@@ -61,6 +63,25 @@ final class SchemaGeneration
     public static function validatePayload(array $payload, JsonSchemaDocument $schema) : PayloadValidationResult
     {
         return self::assembly()->validatePayload->execute(payload: $payload, schema: $schema);
+    }
+
+    /**
+     * Generate OpenAPI 3.0 spec from registered Router routes.
+     *
+     * Produces a valid OpenAPI 3.0.3 document with paths inferred from routes.
+     * Path parameters are extracted from {param} patterns.
+     * Request/response schemas are not attached (routes do not store schema metadata).
+     *
+     * @return array<string, mixed>
+     */
+    public static function openApi(Router $router, ?string $title = null, ?string $version = null) : array
+    {
+        $generator = new GenerateOpenApiFromRoutes(
+            title: $title ?? 'AvaX API',
+            version: $version ?? '1.0.0',
+        );
+
+        return $generator->fromRouter($router);
     }
 
     /**

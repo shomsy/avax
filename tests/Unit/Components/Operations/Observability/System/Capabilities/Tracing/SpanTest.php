@@ -180,6 +180,66 @@ final class SpanTest extends TestCase
     }
 
     #[Test]
+    public function it_stores_exception_data_in_events() : void
+    {
+        $span = new Span('test', 'op');
+        $exception = new RuntimeException('test error');
+
+        $span->recordException($exception);
+
+        $events = $span->events();
+        self::assertCount(1, $events);
+        self::assertSame(RuntimeException::class, $events[0]['type']);
+        self::assertSame('test error', $events[0]['message']);
+        self::assertArrayHasKey('timestamp', $events[0]);
+        self::assertIsFloat($events[0]['timestamp']);
+    }
+
+    #[Test]
+    public function it_sets_status_to_error_on_exception() : void
+    {
+        $span = new Span('test', 'op');
+        self::assertSame('ok', $span->status());
+
+        $span->recordException(new RuntimeException('fail'));
+
+        self::assertSame('error', $span->status());
+    }
+
+    #[Test]
+    public function it_records_multiple_exceptions() : void
+    {
+        $span = new Span('test', 'op');
+
+        $span->recordException(new RuntimeException('first'));
+        $span->recordException(new \InvalidArgumentException('second'));
+
+        $events = $span->events();
+        self::assertCount(2, $events);
+        self::assertSame(RuntimeException::class, $events[0]['type']);
+        self::assertSame(\InvalidArgumentException::class, $events[1]['type']);
+    }
+
+    #[Test]
+    public function it_exports_span_data_with_events() : void
+    {
+        $span = new Span('http.request', 'GET /api', TraceId::generate());
+        $span->setAttribute('http.status_code', 500);
+        $span->recordException(new RuntimeException('server error'));
+        $span->end();
+
+        $exported = $span->export();
+
+        self::assertNotEmpty($exported['trace_id']);
+        self::assertSame('http.request', $exported['name']);
+        self::assertSame('error', $exported['status']);
+        self::assertSame(500, $exported['attributes']['http.status_code']);
+        self::assertCount(1, $exported['events']);
+        self::assertSame('server error', $exported['events'][0]['message']);
+        self::assertIsFloat($exported['end']);
+    }
+
+    #[Test]
     public function it_supports_fluent_interface_for_set_attribute() : void
     {
         $span = new Span('test', 'op');

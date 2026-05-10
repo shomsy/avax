@@ -7,6 +7,7 @@ namespace Avax\Framework\System\Configuration\BuildApplication;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentProviderInterface;
 use Avax\Framework\System\Capabilities\Configuration\RegisterConfigCommands;
 use Avax\Framework\System\Capabilities\Doctor\RegisterDoctorCommands;
+use Avax\Framework\System\Capabilities\Queue\RegisterQueueCommands;
 use Avax\Framework\System\Capabilities\Routing\RegisterRouteCommands;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
@@ -81,6 +82,12 @@ final class ApplicationBuilder
         $routeCommands = (new RegisterRouteCommands())();
 
         foreach ($routeCommands as $name => $command) {
+            $this->registerConsoleCommandDirectly(name: $name, command: $command);
+        }
+
+        $queueCommands = (new RegisterQueueCommands())();
+
+        foreach ($queueCommands as $name => $command) {
             $this->registerConsoleCommandDirectly(name: $name, command: $command);
         }
     }

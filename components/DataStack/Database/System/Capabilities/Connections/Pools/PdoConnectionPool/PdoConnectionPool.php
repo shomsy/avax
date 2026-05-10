@@ -68,16 +68,23 @@ final class PdoConnectionPool extends ConnectionPool
     private function buildDsn() : string
     {
         $driver = $this->dsn['driver'] ?? 'mysql';
-        $parts = ["{$driver}:"];
 
+        // SQLite uses a simple 'sqlite:/path' DSN format, not host/port/dbname.
+        if ($driver === 'sqlite') {
+            $path = $this->dsn['path'] ?? $this->dsn['database'] ?? ':memory:';
+
+            return "sqlite:{$path}";
+        }
+
+        $params = [];
         $allowed = ['host', 'port', 'dbname', 'unix_socket', 'charset'];
 
         foreach ($allowed as $key) {
             if (isset($this->dsn[$key])) {
-                $parts[] = "{$key}={$this->dsn[$key]}";
+                $params[] = "{$key}={$this->dsn[$key]}";
             }
         }
 
-        return implode(';', $parts);
+        return "{$driver}:" . implode(';', $params);
     }
 }

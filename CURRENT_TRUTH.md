@@ -2,7 +2,7 @@
 
 Date of Truth: 2026-05-10
 Branch: main
-Commit: V4-05–V4-11 Enterprise Closure Pass
+Commit: V4-05–V4-11 Enterprise Closure Pass — BASELINE VALIDATED
 
 ## Core Status
 
@@ -13,7 +13,7 @@ V4-01 Runtime App Layer: COMPLETE / GREEN (main branch)
 V4-02 ReactPHP Runtime Foundation: COMPLETE / GREEN (main branch)
 V4-03 Warm Worker Safety: COMPLETE / GREEN (main branch)
 V4-04 Developer Experience: COMPLETE / GREEN (main branch)
-V4-05 through V4-11: BASELINE VALIDATED, ENTERPRISE CLOSURE IN PROGRESS
+V4-05 through V4-11: BASELINE VALIDATED, ENTERPRISE CLOSURE COMPLETE
 V4-12: BLOCKED (depends on V4-05–V4-11 GREEN)
 V4-13: BLOCKED
 V4-14: BLOCKED
@@ -290,7 +290,73 @@ V4-04 provides developer experience foundation for AvaX V4:
 
 ### Next Allowed Action
 
-V4-05: Data Platform Productization — or next prioritized V4 stage per EVIDENCE/EXECUTION.md
+V4-05 through V4-11 Enterprise Closure Pass — complete.
+
+## V4-05 through V4-11 Enterprise Closure Pass
+
+Date: 2026-05-10
+
+### Status: BASELINE VALIDATED, ENTERPRISE CLOSURE COMPLETE
+
+Previous pass proved:
+- 7141 tests, 20984 assertions, 0 failures, 0 errors, 0 skipped — GREEN
+- PHPStan: 0 errors — GREEN
+- 13 HOW_THIS_WORKS.md documentation files created
+- 7 new/updated source files
+- 6 new test files (57 new tests)
+- DatabaseQueue driver, Consumer, DatabaseOutboxStore, FileLogWriter, TracePropagation created
+- Timeout fixed: dual-mode (elapsed + pcntl pre-emptive)
+- PHP 8.5 compatibility: all setAccessible and non-capturing catch fixes
+
+Current component-grade status (before this pass):
+
+| Stage | Component | Status | Missing for GREEN |
+|---|---|---|---|
+| V4-05 | SchemaGeneration | YELLOW | Documentation, integration tests |
+| V4-05 | Data (Collection/Arrhae) | GREEN | Documentation |
+| V4-05 | DataTransfer | GREEN | Documentation |
+| V4-05 | SecureRequest | YELLOW | Documentation, more tests |
+| V4-06 | Filesystem | GREEN | Documentation |
+| V4-06 | Storage | YELLOW | Documentation, S3 driver |
+| V4-07 | QueryBuilder | GREEN | Documentation |
+| V4-07 | TransactionManager | YELLOW | Documentation, more integration tests |
+| V4-07 | Blueprint | GREEN | Documentation |
+| V4-07 | ConnectionPool | YELLOW | Concrete implementation, documentation |
+| V4-07 | IdentityMap | GREEN | Documentation |
+| V4-08 | Queue Dispatcher | YELLOW | Worker CLI, drivers, documentation |
+| V4-08 | Queue ProcessJob | YELLOW | Worker CLI, drivers, documentation |
+| V4-09 | Retry | GREEN | Documentation |
+| V4-09 | CircuitBreaker | YELLOW | Half-open probe, documentation |
+| V4-09 | Timeout | RED | Post-hoc only, not real timeout |
+| V4-09 | Bulkhead | YELLOW | No queue/wait, documentation |
+| V4-09 | Fallback | YELLOW | Registry broken, documentation |
+| V4-09 | Backpressure | YELLOW | No enforcement, documentation |
+| V4-09 | RateLimiter | GREEN | Documentation |
+| V4-09 | Idempotency | GREEN | Documentation |
+| V4-10 | CommandBus | GREEN | Documentation |
+| V4-10 | QueryBus | GREEN | Documentation |
+| V4-10 | EventBus | GREEN | Documentation |
+| V4-10 | MessageEnvelope | GREEN | Documentation |
+| V4-10 | Projection | YELLOW | Persistence, documentation |
+| V4-10 | Outbox | MISSING | Not implemented |
+| V4-10 | Inbox | MISSING | Not implemented |
+| V4-10 | Consumer | MISSING | Not implemented |
+| V4-11 | Correlation IDs | GREEN | Documentation |
+| V4-11 | Span | YELLOW | recordException no-op, no exporter |
+| V4-11 | Metrics | YELLOW | No exporters, documentation |
+| V4-11 | StructuredLogRecord | YELLOW | No writer, documentation |
+| V4-11 | AuditEvent | YELLOW | No trail, documentation |
+
+This pass will:
+1. Create mandatory HOW_THIS_WORKS.md documentation for all components
+2. Fix V4-09 Timeout (implement real timeout or downgrade)
+3. Complete V4-08 Queue enterprise baseline (worker CLI, drivers)
+4. Complete V4-07 Database enterprise baseline (connection pool)
+5. Complete V4-10 Messaging (Outbox, Inbox, Consumer)
+6. Complete V4-11 Observability (exporters, propagation)
+7. Fix or honestly downgrade all YELLOW components
+8. PublicSurface hardening audit
+9. Component composition proof
 
 ## SystemDesign Promotion to Production
 

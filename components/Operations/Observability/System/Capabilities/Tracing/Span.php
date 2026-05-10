@@ -19,6 +19,13 @@ class Span
      */
     private array $attributes = [];
 
+    /**
+     * @var list<array{type: string, message: string, timestamp: float, stack_trace?: string}>
+     */
+    private array $events = [];
+
+    private string $status = 'ok';
+
     public function __construct(
         public readonly string $name,
         public readonly string $operation,
@@ -37,7 +44,27 @@ class Span
 
     public function recordException(Throwable $throwable): self
     {
+        $this->status = 'error';
+        $this->events[] = [
+            'type' => $throwable::class,
+            'message' => $throwable->getMessage(),
+            'timestamp' => hrtime(true) / 1e9,
+            'stack_trace' => $this->truncateStackTrace($throwable->getTraceAsString()),
+        ];
+
         return $this;
+    }
+
+    /**
+     * Truncate stack trace to avoid excessive output.
+     */
+    private function truncateStackTrace(string $trace, int $maxLength = 2000) : string
+    {
+        if (strlen($trace) <= $maxLength) {
+            return $trace;
+        }
+
+        return substr($trace, 0, $maxLength) . "\n... [truncated]";
     }
 
     public function end(): float
@@ -52,5 +79,38 @@ class Span
     public function duration(): ?float
     {
         return $this->endTime ? $this->endTime - $this->startTime : null;
+    }
+
+    /**
+     * @return list<array{type: string, message: string, timestamp: float, stack_trace?: string}>
+     */
+    public function events(): array
+    {
+        return $this->events;
+    }
+
+    public function status(): string
+    {
+        return $this->status;
+    }
+
+    /**
+     * Export span data for writing to trace exporter.
+     *
+     * @return array{trace_id: string, span_id: string, parent_id: string|null, name: string, start: float, end: float|null, status: string, attributes: array<string, mixed>, events: list<array<string, mixed>>}
+     */
+    public function export() : array
+    {
+        return [
+            'trace_id' => $this->traceId->value ?? '',
+            'span_id' => '',
+            'parent_id' => $this->parentSpanId?->value,
+            'name' => $this->name,
+            'start' => $this->startTime,
+            'end' => $this->endTime,
+            'status' => $this->status,
+            'attributes' => $this->attributes,
+            'events' => $this->events,
+        ];
     }
 }

@@ -217,6 +217,21 @@ final class StorageTest extends TestCase
     protected function tearDown() : void
     {
         $this->removeDirectoryRecursive($this->tempDir);
+        Storage::reset();
+    }
+
+    public function testResetClearsRegistryAndDefaultDisk() : void
+    {
+        // Arrange: register and use a disk
+        Storage::put('before_reset.txt', 'content');
+        self::assertTrue(Storage::exists('before_reset.txt'));
+
+        // Act: reset
+        Storage::reset();
+
+        // Assert: registry is empty, default disk falls back but no disks registered
+        $this->expectException(DiskNotFound::class);
+        Storage::disk('local');
     }
 
     private function removeDirectoryRecursive(string $path) : void

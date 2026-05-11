@@ -24,11 +24,20 @@ abstract class ConnectionPool implements ConnectionPoolInterface
     #[Override]
     public function get(): PooledConnection
     {
-        while ($connection = array_shift(array: $this->connections)) {
+        while ( $connection = array_shift($this->connections) ) {
+            // Check idle timeout before reusing
+            if ($this->isIdleTimedOut($connection)) {
+                $connection->close();
+                $this->createdCount--;
+
+                continue;
+            }
+
             if ($this->validateConnection(pooledConnection: $connection)) {
                 return $connection;
             }
 
+            $connection->close();
             $this->createdCount--;
         }
 
@@ -48,6 +57,10 @@ abstract class ConnectionPool implements ConnectionPoolInterface
     #[Override]
     public function destroy(): void
     {
+        foreach ($this->connections as $connection) {
+            $connection->close();
+        }
+
         $this->connections = [];
         $this->createdCount = 0;
     }
@@ -57,8 +70,8 @@ abstract class ConnectionPool implements ConnectionPoolInterface
     {
         return new PoolStats(
             totalConnections : $this->createdCount,
-            activeConnections: $this->createdCount - count(value: $this->connections),
-            idleConnections  : count(value: $this->connections),
+            activeConnections: $this->createdCount - count($this->connections),
+            idleConnections  : count($this->connections),
             waitingRequests  : 0,
             averageWaitTimeMs: 0.0,
         );
@@ -72,21 +85,72 @@ abstract class ConnectionPool implements ConnectionPoolInterface
         }
     }
 
+    /**
+     * Remove idle connections that have exceeded the timeout.
+     * Returns the number of stale connections removed.
+     */
+    public function pruneIdle() : int
+    {
+        $removed = 0;
+        $kept    = [];
+
+        foreach ($this->connections as $connection) {
+            if ($this->isIdleTimedOut($connection)) {
+                $connection->close();
+                $this->createdCount--;
+                $removed++;
+            } else {
+                $kept[] = $connection;
+            }
+        }
+
+        $this->connections = $kept;
+
+        return $removed;
+    }
+
     #[Override]
     public function release(PooledConnection $pooledConnection): void
     {
         if (! $this->validateConnection(pooledConnection: $pooledConnection)) {
+            $pooledConnection->close();
             $this->createdCount--;
 
             return;
         }
 
-        if (count(value: $this->connections) >= $this->maxConnections / 2) {
+        // Check idle timeout - stale connections should not be returned
+        if ($this->isIdleTimedOut($pooledConnection)) {
+            $pooledConnection->close();
             $this->createdCount--;
 
             return;
         }
+
+        if (count($this->connections) >= $this->maxConnections / 2) {
+            $pooledConnection->close();
+            $this->createdCount--;
+
+            return;
+        }
+
+        // Reset connection state before returning to pool
+        $pooledConnection->reset();
 
         $this->connections[] = $pooledConnection;
+    }
+
+    /**
+     * Check if a connection has exceeded the idle timeout.
+     */
+    protected function isIdleTimedOut(PooledConnection $connection) : bool
+    {
+        if ($this->idleTimeoutMs <= 0) {
+            return false;
+        }
+
+        $idleTimeMs = (int) ((microtime(true) - $connection->getLastUsedAt()) * 1000);
+
+        return $idleTimeMs > $this->idleTimeoutMs;
     }
 }

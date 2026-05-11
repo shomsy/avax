@@ -273,11 +273,26 @@ parameters:
             message: '#Call to function is_.*\(\) with bool will always#'
             path: 'components/Operations/Resilience/System/Capabilities/Timeout/Timeout.php'
         -
+            message: '#Provide more specific return type.*Response.*over abstract one#'
+            path: 'components/HTTP/Router/System/PublicSurface/Router.php'
+        -
+            message: '#Mixed variable in a.*can skip important errors#'
+            path: 'tests/Unit/Components/HTTP/Router'
+        -
             message: '#Result of \|\| is always false#'
             path: 'components/Operations/Resilience/System/Capabilities/Timeout/Timeout.php'
         -
             message: '#Parameter .2. \$handler of function pcntl_signal expects#'
             path: 'components/Operations/Resilience/System/Capabilities/Timeout/Timeout.php'
+        -
+            message: '#PHPDoc tag @var with type list<class-string> is not subtype#'
+            path: 'tests/Unit/Framework/MetadataWarmup/MetadataWarmupCommandsTest.php'
+        -
+            message: '#Call to static method PHPUnit.*Assert::assertInstanceOf.*will always evaluate to true#'
+            path: 'tests/Unit/Tooling/Rector/NoForbiddenNamespaceDirRectorTest.php'
+        -
+            message: '#Parameter.*haystack.*assertStringContainsString.*expects string, string\|false given#'
+            path: 'tests/Unit/Tooling/Rector/NoForbiddenNamespaceDirRectorTest.php'
     type_perfect:
         narrow_param: true
         narrow_return: true

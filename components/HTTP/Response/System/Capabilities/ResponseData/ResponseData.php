@@ -8,13 +8,38 @@ use Psr\Http\Message\StreamInterface;
 
 final readonly class ResponseData
 {
-    public function __construct(
+    private function __construct(
         public int             $statusCode,
         public array           $headers,
         public StreamInterface $body,
         public string          $reasonPhrase,
         public string          $protocolVersion,
     ) {}
+
+    /**
+     * @param array<string, mixed> $headers
+     */
+    public static function create(
+        int             $statusCode,
+        array           $headers,
+        StreamInterface $body,
+        string          $reasonPhrase,
+        string          $protocolVersion,
+    ) : self
+    {
+        $normalized = [];
+        foreach ($headers as $name => $values) {
+            $normalized[strtolower($name)] = $values;
+        }
+
+        return new self(
+            statusCode     : $statusCode,
+            headers        : $normalized,
+            body           : $body,
+            reasonPhrase   : $reasonPhrase,
+            protocolVersion: $protocolVersion,
+        );
+    }
 
     public function withProtocolVersion(string $version) : self
     {

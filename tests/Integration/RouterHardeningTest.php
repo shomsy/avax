@@ -13,7 +13,6 @@ use Avax\Components\HTTP\Router\System\PublicSurface\Router;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
 use Avax\Tests\TestCase;
 use Psr\Http\Message\ResponseInterface;
-use TypeError;
 
 final class RouterHardeningTest extends TestCase
 {
@@ -21,30 +20,30 @@ final class RouterHardeningTest extends TestCase
 
     private Responses $responses;
 
-    public function test_callable_returning_null_should_fail_fast(): void
+    public function test_callable_returning_null_returns_empty_response() : void
     {
         $router = new Router();
         $router->get(path: '/null-test', action: static fn () => null);
 
-        $this->expectException(TypeError::class);
+        $response = $router->resolve(request: $this->createRequest(path: '/null-test'));
 
-        $router->resolve(request: $this->createRequest(path: '/null-test'));
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('', (string) $response->getBody());
     }
 
-    public function test_post_on_get_only_route_should_throw_router_failure(): void
+    public function test_post_on_get_only_route_returns_405() : void
     {
-        $this->expectException(RouterFailure::class);
-        $this->expectExceptionMessage('Route not found');
+        $response = $this->router->resolve(request: $this->createRequest(method: 'POST', path: '/health'));
 
-        $this->router->resolve(request: $this->createRequest(method: 'POST', path: '/health'));
+        self::assertSame(405, $response->getStatusCode());
+        self::assertStringContainsString('GET', $response->getHeaderLine('Allow'));
     }
 
-    public function test_fallback_route_returns_router_failure_for_missing_route(): void
+    public function test_fallback_route_returns_404_for_missing_route() : void
     {
-        $this->expectException(RouterFailure::class);
-        $this->expectExceptionMessage('Route not found');
+        $response = $this->router->resolve(request: $this->createRequest(path: '/non-existent-route-12345'));
 
-        $this->router->resolve(request: $this->createRequest(path: '/non-existent-route-12345'));
+        self::assertSame(404, $response->getStatusCode());
     }
 
     public function test_stress_test_sequential_route_calls_no_leaks(): void
@@ -95,12 +94,11 @@ final class RouterHardeningTest extends TestCase
         self::assertStringContainsString('Router is Working!', (string) $response->getBody());
     }
 
-    public function test_debug_route_returns_router_failure(): void
+    public function test_debug_route_returns_404() : void
     {
-        $this->expectException(RouterFailure::class);
-        $this->expectExceptionMessage('Route not found');
+        $response = $this->router->resolve(request: $this->createRequest(path: '/debug'));
 
-        $this->router->resolve(request: $this->createRequest(path: '/debug'));
+        self::assertSame(404, $response->getStatusCode());
     }
 
     public function test_middleware_stagechain_reactivation_works(): void

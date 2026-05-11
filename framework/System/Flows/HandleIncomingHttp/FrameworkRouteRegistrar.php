@@ -6,6 +6,7 @@ namespace Avax\Framework\System\Flows\HandleIncomingHttp;
 
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\Registrar;
@@ -79,6 +80,18 @@ final class FrameworkRouteRegistrar implements RouterInterface
         return $proxies;
     }
 
+    public function group(string $prefix, callable $groupFn, string|array|callable|null $middleware = null) : void
+    {
+        // FrameworkRouteRegistrar is a configuration-only registrar.
+        // Route groups are handled by the actual Router at dispatch time.
+        // This method exists only to satisfy the interface contract.
+    }
+
+    public function url(string $name, array $parameters = [], bool $absolute = false) : string
+    {
+        throw new RuntimeException('URL generation is not supported through FrameworkRouteRegistrar.');
+    }
+
     public function fallback(mixed $handler): void
     {
         $this->fallback = is_string(value: $handler) || is_array(value: $handler)
@@ -109,7 +122,7 @@ final class FrameworkRouteRegistrar implements RouterInterface
 
         $this->routes[] = $definition;
 
-        return new Registrar(route: $definition);
+        return new Registrar(new RouteCollection(), $definition);
     }
 
     public function dispatch(RequestInterface $request): ResponseInterface

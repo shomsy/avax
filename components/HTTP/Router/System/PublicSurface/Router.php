@@ -5,20 +5,25 @@ declare(strict_types=1);
 namespace Avax\Components\HTTP\Router\System\PublicSurface;
 
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchResult;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\Registrar;
 use Avax\Components\HTTP\Router\System\Foundation\Failure\RouterFailure;
 use Override;
 
-final readonly class Router implements RouterInterface, RouterRuntimeInterface
+final class Router implements RouterInterface, RouterRuntimeInterface
 {
     private RouteCollection $routeCollection;
 
     private MatchRoute $matchRoute;
+
+    /** @var list<string|callable> */
+    private array $globalMiddleware = [];
 
     public function __construct()
     {
@@ -34,10 +39,10 @@ final readonly class Router implements RouterInterface, RouterRuntimeInterface
 
     private function addRoute(RouteMethod $method, string $path, mixed $action) : Registrar
     {
-        $route = new RouteDefinition($method, $path, $action);
+        $route = new RouteDefinition(method: $method, uri: $path, action: $action);
         $this->routeCollection->add($route);
 
-        return new Registrar($route);
+        return new Registrar($this->routeCollection, $route);
     }
 
     #[Override]
@@ -77,6 +82,197 @@ final readonly class Router implements RouterInterface, RouterRuntimeInterface
     }
 
     #[Override]
+    public function any(string $path, mixed $action) : Registrar
+    {
+        $registrar = $this->addRoute(RouteMethod::GET, $path, $action);
+        $this->addRoute(RouteMethod::POST, $path, $action);
+        $this->addRoute(RouteMethod::PUT, $path, $action);
+        $this->addRoute(RouteMethod::PATCH, $path, $action);
+        $this->addRoute(RouteMethod::DELETE, $path, $action);
+        $this->addRoute(RouteMethod::OPTIONS, $path, $action);
+        $this->addRoute(RouteMethod::HEAD, $path, $action);
+
+        return $registrar;
+    }
+
+    #[Override]
+    public function group(string $prefix, callable $groupFn, string|array|callable|null $middleware = null) : void
+    {
+        $prefix = rtrim($prefix, '/');
+
+        $groupFn(new class($this, $prefix, $middleware) implements RouterInterface {
+            public function __construct(
+                private readonly Router $router,
+                private readonly string $prefix,
+                private readonly mixed  $groupMiddleware,
+            ) {}
+
+            private function prefixPath(string $path) : string
+            {
+                $path = '/' . ltrim($path, '/');
+
+                return $path === '/' ? $this->prefix : $this->prefix . $path;
+            }
+
+            private function applyRegistrar(Registrar $registrar) : Registrar
+            {
+                if ($this->groupMiddleware !== null) {
+                    $registrar->middleware($this->groupMiddleware);
+                }
+
+                return $registrar;
+            }
+
+            #[Override]
+            public function get(string $path, mixed $action) : Registrar
+            {
+                return $this->applyRegistrar($this->router->get($this->prefixPath($path), $action));
+            }
+
+            #[Override]
+            public function post(string $path, mixed $action) : Registrar
+            {
+                return $this->applyRegistrar($this->router->post($this->prefixPath($path), $action));
+            }
+
+            #[Override]
+            public function put(string $path, mixed $action) : Registrar
+            {
+                return $this->applyRegistrar($this->router->put($this->prefixPath($path), $action));
+            }
+
+            #[Override]
+            public function patch(string $path, mixed $action) : Registrar
+            {
+                return $this->applyRegistrar($this->router->patch($this->prefixPath($path), $action));
+            }
+
+            #[Override]
+            public function delete(string $path, mixed $action) : Registrar
+            {
+                return $this->applyRegistrar($this->router->delete($this->prefixPath($path), $action));
+            }
+
+            #[Override]
+            public function options(string $path, mixed $action) : Registrar
+            {
+                return $this->applyRegistrar($this->router->options($this->prefixPath($path), $action));
+            }
+
+            #[Override]
+            public function head(string $path, mixed $action) : Registrar
+            {
+                return $this->applyRegistrar($this->router->head($this->prefixPath($path), $action));
+            }
+
+            #[Override]
+            public function any(string $path, mixed $action) : Registrar
+            {
+                return $this->applyRegistrar($this->router->any($this->prefixPath($path), $action));
+            }
+
+            #[Override]
+            public function group(string $prefix, callable $groupFn, string|array|callable|null $middleware = null) : void
+            {
+                $this->router->group($this->prefix . rtrim($prefix, '/'), $groupFn, $middleware);
+            }
+
+            #[Override]
+            public function fallback(mixed $handler) : void
+            {
+                $this->router->fallback($handler);
+            }
+
+            #[Override]
+            public function url(string $name, array $parameters = [], bool $absolute = false) : string
+            {
+                return $this->router->url($name, $parameters, $absolute);
+            }
+
+            #[Override]
+            public function dispatch(RequestInterface $request) : ResponseInterface
+            {
+                return $this->router->dispatch($request);
+            }
+        });
+    }
+
+    #[Override]
+    public function fallback(mixed $handler) : void
+    {
+        $fallback = new RouteDefinition(
+            method: RouteMethod::GET,
+            uri   : '/__fallback__',
+            action: $handler,
+        );
+        $this->routeCollection->setFallback($fallback);
+    }
+
+    #[Override]
+    public function url(string $name, array $parameters = [], bool $absolute = false) : string
+    {
+        $route = $this->routeCollection->getByName($name);
+        if ($route === null) {
+            throw new RouterFailure(sprintf("Route '%s' is not registered", $name));
+        }
+
+        $url = $this->substituteRouteParams($route->uri(), $parameters, $name);
+
+        if ($absolute) {
+            $url = 'http://localhost' . ($url[0] !== '/' ? '/' : '') . $url;
+        }
+
+        return $url;
+    }
+
+    /** @param array<string, mixed> $parameters */
+    private function substituteRouteParams(string $uri, array $parameters, string $name) : string
+    {
+        $url = (string) preg_replace_callback(
+            '/\{(\w+)\}/',
+            static function (array $matches) use ($parameters, $name) : string {
+                $param = $matches[1];
+                if (! array_key_exists($param, $parameters)) {
+                    throw new RouterFailure(
+                        sprintf("Missing required parameter '%s' for route '%s'", $param, $name),
+                    );
+                }
+
+                return (string) $parameters[$param];
+            },
+            $uri,
+        );
+
+        // Append extra parameters as query string
+        $remaining = [];
+        foreach ($parameters as $key => $value) {
+            if (! preg_match('/\{' . $key . '\}/', $uri)) {
+                $remaining[$key] = $value;
+            }
+        }
+
+        if ($remaining !== []) {
+            $query = http_build_query($remaining);
+            if ($query !== '') {
+                $url .= '?' . $query;
+            }
+        }
+
+        return $url;
+    }
+
+    /**
+     * Register global middleware that runs on every request.
+     *
+     * @param string|callable|list<string|callable> $middleware
+     */
+    public function use(string|array|callable $middleware) : void
+    {
+        $items                  = is_array($middleware) ? array_values($middleware) : [$middleware];
+        $this->globalMiddleware = [...$this->globalMiddleware, ...$items];
+    }
+
+    #[Override]
     public function resolve(RequestInterface $request) : ResponseInterface
     {
         return $this->dispatch(request: $request);
@@ -85,12 +281,105 @@ final readonly class Router implements RouterInterface, RouterRuntimeInterface
     #[Override]
     public function dispatch(RequestInterface $request) : ResponseInterface
     {
-        $route = $this->matchRoute->execute($this->routeCollection, $request);
-        if (! $route instanceof RouteDefinition) {
-            throw new RouterFailure('Route not found');
-        }
-        $a = $route->action();
+        $match = $this->matchRoute->execute($this->routeCollection, $request);
 
-        return is_callable($a) ? $a($request) : throw new RouterFailure('Invalid action');
+        if ($match->isMethodNotAllowed()) {
+            return $this->createMethodNotAllowedResponse($match->allowedMethods);
+        }
+
+        if ($match->isNotFound()) {
+            return $this->createNotFoundResponse();
+        }
+
+        $route = $match->route;
+        if ($route === null) {
+            return $this->createNotFoundResponse();
+        }
+
+        $action        = $route->action();
+        $allMiddleware = [...$this->globalMiddleware, ...$route->middleware()];
+
+        $handler = function (RequestInterface $req) use ($action, $match) : ResponseInterface {
+            if (is_callable($action)) {
+                $params = $match->parameters ?? [];
+                $result = $action($req, ...array_values($params));
+
+                return $this->normalizeToResponse($result);
+            }
+
+            throw new RouterFailure('Invalid route action');
+        };
+
+        if ($allMiddleware === []) {
+            return $handler($request);
+        }
+
+        // Build the middleware pipeline from inside out.
+        // The last middleware wraps the handler, the first middleware is the outermost.
+        $pipeline = $handler;
+        foreach (array_reverse($allMiddleware) as $middleware) {
+            if (is_string($middleware)) {
+                if (! class_exists($middleware)) {
+                    throw new RouterFailure(sprintf("Middleware class '%s' does not exist", $middleware));
+                }
+                $middleware = new $middleware();
+            }
+
+            if (! is_callable($middleware)) {
+                throw new RouterFailure('Middleware must be a callable or a class name');
+            }
+
+            $next     = $pipeline;
+            $mw       = $middleware;
+            $pipeline = static function (RequestInterface $req) use ($mw, $next) : ResponseInterface {
+                $result = $mw($req, $next);
+                if ($result instanceof ResponseInterface) {
+                    return $result;
+                }
+
+                return $next($req);
+            };
+        }
+
+        return $pipeline($request);
+    }
+
+    /** @phpstan-return ResponseInterface */
+    private function normalizeToResponse(mixed $result) : ResponseInterface
+    {
+        if ($result instanceof ResponseInterface) {
+            return $result;
+        }
+
+        if (is_string($result)) {
+            return Response::text($result);
+        }
+
+        if (is_array($result)) {
+            return Response::json($result);
+        }
+
+        return Response::text((string) $result);
+    }
+
+    /** @param list<RouteMethod> $allowedMethods */
+    private function createMethodNotAllowedResponse(array $allowedMethods) : ResponseInterface
+    {
+        $methods = array_map(
+            static fn (RouteMethod $m) => $m->value,
+            $allowedMethods,
+        );
+
+        $response = Response::json(
+            ['error' => 'Method Not Allowed', 'allowed' => $methods],
+            405,
+        );
+
+        return $response->withHeader('Allow', implode(', ', $methods));
+    }
+
+    private function createNotFoundResponse() : ResponseInterface
+    {
+        return Response::json(['error' => 'Not Found'], 404);
     }
 }

@@ -19,7 +19,7 @@ final class Response implements ResponseInterface
             $stream = Utils::streamFor('');
         }
 
-        $this->responseData = new ResponseData(
+        $this->responseData = ResponseData::create(
             statusCode     : $statusCode,
             headers        : $headers,
             body           : $stream,

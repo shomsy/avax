@@ -713,28 +713,36 @@ Required validation before merging any V4 branch into main:
 
 ## Next Allowed Actions
 
-1. **V5 Internal Convergence** — IN PROGRESS. See `EVIDENCE/v5/v5-stage-ledger.md` and `EVIDENCE/v5/v5-current-state-proof-report.md`.
-   - 16/24 stages GREEN_BY_EVIDENCE
-   - 4/24 stages PARTIAL_BY_PREVIOUS_MEGA_PASS (V5-08, V5-14, V5-19, V5-20)
-   - 1/24 stages MISSING_IMPLEMENTATION (V5-06)
-   - 1/24 stages NOT_ALLOWED_YET (V5-23)
-   - Next allowed: V5-06 DataTransfer / SecureRequest / Schema Metadata Compilation
+1. **V5 Internal Convergence** — COMPLETE / GREEN. All 23 stages (V5-00 through V5-22) GREEN_BY_EVIDENCE. V5-23 Final V5
+   Truth Report produced. See `EVIDENCE/v5/v5-stage-ledger.md` and `EVIDENCE/v5/v5-23-final-truth-report.md`.
 2. Release-grade merge of main into master when approved.
 
 ## V5 Internal Convergence — Current Position
 
 Date: 2026-05-11
 
-**17 GREEN:** V5-00, V5-01, V5-02, V5-03, V5-04, V5-05, V5-06 (metadata compilation), V5-07, V5-09, V5-10, V5-11, V5-12, V5-13, V5-15, V5-16, V5-17, V5-18
+**23 GREEN:** V5-00 through V5-22
 
-**6 PARTIAL:** V5-08 (attributes exist, not compiled), V5-14 (router partial), V5-19 (pooling abstract), V5-20 (hot path cache partial), V5-21 (no custom Rector rules), V5-22 (E2E gaps)
+**0 PARTIAL:** —
 
-**1 MISSING:** None
+**0 MISSING:** —
 
-**1 NOT_ALLOWED_YET:** V5-23 (requires all previous GREEN)
+**1 COMPLETE:** V5-23 (Final V5 Truth Report) — `EVIDENCE/v5/v5-23-final-truth-report.md`
 
-**Math:** 17 + 6 + 0 + 1 = 24
+**Math:** 23 + 0 + 0 = 23 stages + 1 final report = COMPLETE
 
-**Validation:** 7557 tests GREEN, PHPStan 0 errors, All Gates GREEN
+**Validation:** 7711 tests GREEN, PHPStan 0 errors, All Gates GREEN
 
-**Evidence:** `EVIDENCE/v5/v5-stage-ledger.md`, `EVIDENCE/v5/v5-06-data-transfer-secure-request-schema-metadata.md`
+**Evidence:** `EVIDENCE/v5/v5-stage-ledger.md`, `EVIDENCE/v5/v5-23-final-truth-report.md`
+
+### V5 Key Deliverables
+
+- Router middleware pipeline ($request/$handler pattern)
+- Connection pooling with idle timeout, reset/close lifecycle
+- Compiled metadata CLI (metadata:warm, metadata:clear)
+- Custom Rector rule (NoForbiddenNamespaceDirRector)
+- E2E test suite (13 tests through App public API + compiled metadata)
+
+### V5 Final Verdict
+
+**V5 Internal Convergence: COMPLETE / GREEN**

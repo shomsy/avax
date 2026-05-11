@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Avax\Tooling\Rector\NoForbiddenNamespaceDirRector\NoForbiddenNamespaceDirRector;
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\ClassMethod\RemoveUnusedPublicMethodParameterRector;
 use Rector\Php71\Rector\FuncCall\RemoveExtraParametersRector;
@@ -45,6 +46,9 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig->importNames();
     $rectorConfig->importShortClasses(false);
+
+    // AvaX custom governance rules
+    $rectorConfig->rule(NoForbiddenNamespaceDirRector::class);
 
     $rectorConfig->disableParallel();
 };

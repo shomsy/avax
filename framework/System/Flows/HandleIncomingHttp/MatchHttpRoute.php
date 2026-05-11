@@ -29,11 +29,11 @@ final readonly class MatchHttpRoute
             }
         }
 
-        $matchedRoute = $this->matchRoute->execute(routeCollection: $routeCollection, request: $serverRequest);
+        $match = $this->matchRoute->execute(routeCollection: $routeCollection, request: $serverRequest);
 
-        if ($matchedRoute instanceof RouteDefinition) {
+        if ($match->isMatch() && $match->route !== null) {
             return new MatchedHttpRoute(
-                routeDefinition: $matchedRoute,
+                routeDefinition: $match->route,
                 serverRequest  : $serverRequest,
             );
         }

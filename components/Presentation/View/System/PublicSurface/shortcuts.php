@@ -33,6 +33,7 @@ if (! function_exists('asset')) {
      */
     function asset(string $path): string
     {
+        /** @var ServerRequestInterface $request */
         $request = app(ServerRequestInterface::class);
         $uri     = $request->getUri();
         $baseUrl = $uri->getScheme() . '://' . $uri->getHost();

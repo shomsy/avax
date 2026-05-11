@@ -59,4 +59,16 @@ final class ArrayPooledConnection implements PooledConnection
         $this->executeCount++;
         $this->lastUsedAt = microtime(as_float: true);
     }
+
+    #[Override]
+    public function reset() : void
+    {
+        $this->executeCount = 0;
+    }
+
+    #[Override]
+    public function close() : void
+    {
+        // No-op for array/test connection
+    }
 }

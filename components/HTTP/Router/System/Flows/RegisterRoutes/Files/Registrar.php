@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files;
 
+use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 
 /**
@@ -11,15 +12,32 @@ use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinit
  */
 final class Registrar
 {
-    public function __construct(private readonly RouteDefinition $route) {}
+    private RouteCollection $collection;
+    private RouteDefinition $originalRoute;
+
+    /** @var list<string|callable> */
+    private array $middleware = [];
+
+    private string $name = '';
+
+    public function __construct(RouteCollection $collection, RouteDefinition $route)
+    {
+        $this->collection    = $collection;
+        $this->originalRoute = $route;
+    }
 
     /**
      * Assign middleware to the route.
+     *
+     * @param string|callable|list<string|callable> $middleware
      */
-    public function middleware(string|array $middleware) : self
+    public function middleware(string|array|callable $middleware) : self
     {
-        // Logic to add middleware to the route definition
-        // For now, we'll assume the route definition can handle it
+        $items            = is_array($middleware) ? array_values($middleware) : [$middleware];
+        $this->middleware = [...$this->middleware, ...$items];
+
+        $this->updateRouteInCollection();
+
         return $this;
     }
 
@@ -28,14 +46,54 @@ final class Registrar
      */
     public function name(string $name) : self
     {
+        $this->name = $name;
+
+        $this->updateRouteInCollection();
+
         return $this;
     }
 
     /**
-     * Get the underlying route definition.
+     * Get the underlying route definition with applied name and middleware.
      */
     public function route() : RouteDefinition
     {
-        return $this->route;
+        $resolved = $this->originalRoute;
+
+        if ($this->name !== '') {
+            $resolved = $resolved->withName($this->name);
+        }
+
+        if ($this->middleware !== []) {
+            $resolved = $resolved->withMiddleware($this->middleware);
+        }
+
+        return $resolved;
+    }
+
+    private function updateRouteInCollection() : void
+    {
+        $resolved = $this->originalRoute;
+
+        if ($this->name !== '') {
+            $resolved = $resolved->withName($this->name);
+        }
+
+        if ($this->middleware !== []) {
+            $resolved = $resolved->withMiddleware($this->middleware);
+        }
+
+        // Replace the route in the collection by finding it by object identity.
+        // Since RouteDefinition is readonly, we replace it by rebuilding the collection entry.
+        $allRoutes = $this->collection->all();
+        foreach ($allRoutes as $index => $existing) {
+            if ($existing === $this->originalRoute) {
+                $allRoutes[$index] = $resolved;
+
+                $this->collection->replaceWith($allRoutes);
+
+                break;
+            }
+        }
     }
 }

@@ -468,6 +468,161 @@ final class ConnectionPoolTest extends TestCase
 
         self::assertInstanceOf(expected: RuntimeException::class, actual: $exception);
     }
+
+    // ============================================================
+    // V5-19: Idle Timeout Enforcement
+    // ============================================================
+
+    #[Test]
+    public function idleTimeoutClosesStaleConnectionsOnGet() : void
+    {
+        $now = microtime(true);
+        // Connection last used 10 seconds ago, idle timeout is 5 seconds
+        $stale = new TestPooledConnection(id: 1, lastUsedAt: $now - 10);
+
+        $pool = new TestConnectionPoolWithPreLoaded(
+            connections   : [$stale],
+            minConnections: 1,
+            maxConnections: 5,
+            idleTimeoutMs : 5000,
+        );
+
+        // The stale connection should be closed and a new one created
+        $conn = $pool->get();
+
+        self::assertTrue($stale->isClosed());
+        self::assertInstanceOf(expected: PooledConnection::class, actual: $conn);
+    }
+
+    #[Test]
+    public function idleTimeoutKeepsFreshConnectionsOnGet() : void
+    {
+        $now = microtime(true);
+        // Connection last used 1 second ago, idle timeout is 5 seconds
+        $fresh = new TestPooledConnection(id: 1, lastUsedAt: $now - 1);
+
+        $pool = new TestConnectionPoolWithPreLoaded(
+            connections   : [$fresh],
+            minConnections: 1,
+            maxConnections: 5,
+            idleTimeoutMs : 5000,
+        );
+
+        $conn = $pool->get();
+
+        // Should reuse the fresh connection, not create a new one
+        self::assertSame($fresh, $conn);
+        self::assertFalse($fresh->isClosed());
+    }
+
+    #[Test]
+    public function pruneIdleRemovesStaleConnections() : void
+    {
+        $now   = microtime(true);
+        $stale = new TestPooledConnection(id: 1, lastUsedAt: $now - 10);
+        $fresh = new TestPooledConnection(id: 2, lastUsedAt: $now - 1);
+
+        $pool = new TestConnectionPoolWithPreLoaded(
+            connections   : [$stale, $fresh],
+            minConnections: 2,
+            maxConnections: 10,
+            idleTimeoutMs : 5000,
+        );
+
+        $removed = $pool->pruneIdle();
+
+        self::assertSame(1, $removed);
+        self::assertTrue($stale->isClosed());
+        self::assertFalse($fresh->isClosed());
+
+        $stats = $pool->stats();
+        self::assertSame(1, $stats->idleConnections);
+    }
+
+    #[Test]
+    public function pruneIdleReturnsZeroWhenNoStaleConnections() : void
+    {
+        $now   = microtime(true);
+        $fresh = new TestPooledConnection(id: 1, lastUsedAt: $now - 1);
+
+        $pool = new TestConnectionPoolWithPreLoaded(
+            connections   : [$fresh],
+            minConnections: 1,
+            maxConnections: 5,
+            idleTimeoutMs : 5000,
+        );
+
+        $removed = $pool->pruneIdle();
+
+        self::assertSame(0, $removed);
+        self::assertFalse($fresh->isClosed());
+    }
+
+    // ============================================================
+    // V5-19: Reset on Release
+    // ============================================================
+
+    #[Test]
+    public function releaseCallsResetOnConnection() : void
+    {
+        $conn = new TestPooledConnection(id: 1);
+        $pool = $this->createTestPool(minConnections: 1, maxConnections: 5);
+
+        $pool->release(pooledConnection: $conn);
+
+        self::assertTrue($conn->isReset());
+    }
+
+    // ============================================================
+    // V5-19: Close on Destroy
+    // ============================================================
+
+    #[Test]
+    public function destroyClosesAllIdleConnections() : void
+    {
+        $conn1 = new TestPooledConnection(id: 1);
+        $conn2 = new TestPooledConnection(id: 2);
+
+        $pool = new TestConnectionPoolWithPreLoaded(
+            connections   : [$conn1, $conn2],
+            minConnections: 2,
+            maxConnections: 10,
+        );
+
+        $pool->destroy();
+
+        self::assertTrue($conn1->isClosed());
+        self::assertTrue($conn2->isClosed());
+
+        $stats = $pool->stats();
+        self::assertSame(0, $stats->totalConnections);
+        self::assertSame(0, $stats->idleConnections);
+    }
+
+    // ============================================================
+    // V5-19: Stale Connection Rejected on Release
+    // ============================================================
+
+    #[Test]
+    public function releaseRejectsStaleConnection() : void
+    {
+        $now   = microtime(true);
+        $stale = new TestPooledConnection(id: 1, lastUsedAt: $now - 10);
+
+        // Use a pool with 5-second idle timeout so the 10-second-old connection is stale
+        $pool = new TestConnectionPool(
+            minConnections     : 0,
+            maxConnections     : 5,
+            connectionTimeoutMs: 10000,
+            idleTimeoutMs      : 5000,
+        );
+        $pool->release(pooledConnection: $stale);
+
+        self::assertTrue($stale->isClosed());
+
+        $stats = $pool->stats();
+        self::assertSame(0, $stats->idleConnections);
+    }
 }
 
 /**
@@ -513,9 +668,18 @@ final class TestConnectionPoolWithInvalid extends ConnectionPool
 /**
  * Simple PooledConnection implementation for testing.
  */
-final readonly class TestPooledConnection implements PooledConnection
+final class TestPooledConnection implements PooledConnection
 {
-    public function __construct(private int $id) {}
+    private bool  $closed = false;
+    private bool  $reset  = false;
+    private float $lastUsedAt;
+    private float $createdAt;
+
+    public function __construct(private int $id, ?float $createdAt = null, ?float $lastUsedAt = null)
+    {
+        $this->createdAt  = $createdAt ?? microtime(true);
+        $this->lastUsedAt = $lastUsedAt ?? $this->createdAt;
+    }
 
     public function getResource() : object
     {
@@ -524,21 +688,83 @@ final readonly class TestPooledConnection implements PooledConnection
 
     public function isValid() : bool
     {
-        return true;
+        return ! $this->closed;
     }
 
     public function getCreatedAt() : float
     {
-        return (float) hrtime(true);
+        return $this->createdAt;
     }
 
     public function getLastUsedAt() : float
     {
-        return (float) hrtime(true);
+        return $this->lastUsedAt;
     }
 
     public function executeCount() : int
     {
         return 0;
+    }
+
+    public function reset() : void
+    {
+        $this->reset = true;
+    }
+
+    public function close() : void
+    {
+        $this->closed = true;
+    }
+
+    public function isReset() : bool
+    {
+        return $this->reset;
+    }
+
+    public function isClosed() : bool
+    {
+        return $this->closed;
+    }
+}
+
+/**
+ * Test pool with pre-loaded connections for idle timeout testing.
+ */
+final class TestConnectionPoolWithPreLoaded extends ConnectionPool
+{
+    private int $nextId = 100;
+
+    /**
+     * @param list<PooledConnection> $connections
+     */
+    public function __construct(
+        array $connections,
+        int   $minConnections = 5,
+        int   $maxConnections = 20,
+        int   $connectionTimeoutMs = 10000,
+        int   $idleTimeoutMs = 300000,
+    )
+    {
+        parent::__construct(
+            minConnections     : $minConnections,
+            maxConnections     : $maxConnections,
+            connectionTimeoutMs: $connectionTimeoutMs,
+            idleTimeoutMs      : $idleTimeoutMs,
+        );
+
+        $this->connections  = $connections;
+        $this->createdCount = count($connections);
+    }
+
+    #[Override]
+    protected function validateConnection(PooledConnection $pooledConnection) : bool
+    {
+        return $pooledConnection->isValid();
+    }
+
+    #[Override]
+    protected function createConnection() : PooledConnection
+    {
+        return new TestPooledConnection(id: $this->nextId++);
     }
 }

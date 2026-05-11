@@ -41,6 +41,7 @@ if (! function_exists('url')) {
      */
     function url(string $path = '', array $parameters = []) : string
     {
+        /** @var ServerRequestInterface $request */
         $request = app(ServerRequestInterface::class);
         $uri     = $request->getUri();
         $scheme  = $uri->getScheme();

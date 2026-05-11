@@ -27,6 +27,7 @@
     "phpstan/phpstan": "^2.1",
     "phpstan/phpstan-phpunit": "^2.0",
     "phpunit/phpunit": "^10.5",
+    "rector/rector": "^2.4",
     "rector/type-perfect": "^2.1",
     "symfony/process": "^7.0",
     "vimeo/psalm": "^6.16"
@@ -55,7 +56,8 @@
     "psr-4": {
       "Avax\\Tests\\": "tests/",
       "Avax\\Labs\\": "labs/",
-      "Avax\\Examples\\": "examples/"
+      "Avax\\Examples\\": "examples/",
+      "Avax\\Tooling\\": "tooling/"
     },
     "classmap": [
       "tooling/"

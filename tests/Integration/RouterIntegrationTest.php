@@ -51,20 +51,19 @@ final class RouterIntegrationTest extends TestCase
         self::assertStringContainsString('text/plain', $response->getHeaderLine(name: 'Content-Type'));
     }
 
-    public function test_get_nonexistent_route_throws_router_failure(): void
+    public function test_get_nonexistent_route_returns_404() : void
     {
-        $this->expectException(RouterFailure::class);
-        $this->expectExceptionMessage('Route not found');
+        $response = $this->router->resolve(request: $this->createRequest(path: '/missing'));
 
-        $this->router->resolve(request: $this->createRequest(path: '/missing'));
+        self::assertSame(404, $response->getStatusCode());
     }
 
-    public function test_post_to_get_only_route_throws_router_failure(): void
+    public function test_post_to_get_only_route_returns_405() : void
     {
-        $this->expectException(RouterFailure::class);
-        $this->expectExceptionMessage('Route not found');
+        $response = $this->router->resolve(request: $this->createRequest(method: 'POST', path: '/health'));
 
-        $this->router->resolve(request: $this->createRequest(method: 'POST', path: '/health'));
+        self::assertSame(405, $response->getStatusCode());
+        self::assertStringContainsString('GET', $response->getHeaderLine('Allow'));
     }
 
     public function test_favicon_route_returns_204_no_content(): void

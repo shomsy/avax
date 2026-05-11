@@ -10,8 +10,8 @@
 
 | Status | Count | Stages |
 |--------|-------|--------|
-| GREEN_BY_EVIDENCE | 16 | V5-00, V5-01, V5-02, V5-03, V5-04, V5-05, V5-07, V5-09, V5-10, V5-11, V5-12, V5-13, V5-15, V5-16, V5-17, V5-18, V5-21, V5-22 |
-| PARTIAL_BY_PREVIOUS_MEGA_PASS | 4 | V5-08 (attributes exist but not compiled), V5-14 (router features partial), V5-19 (pooling abstract only), V5-20 (hot path cache not used) |
+| GREEN_BY_EVIDENCE | 16 | V5-00, V5-01, V5-02, V5-03, V5-04, V5-05, V5-07, V5-09, V5-10, V5-11, V5-12, V5-13, V5-15, V5-16, V5-17, V5-18 |
+| PARTIAL_BY_PREVIOUS_MEGA_PASS | 6 | V5-08 (attributes exist but not compiled), V5-14 (router features partial), V5-19 (pooling abstract only), V5-20 (hot path cache not used), V5-21 (no custom Rector rules), V5-22 (E2E gaps — no CLI/compiled metadata/parameterized route tests) |
 | MISSING_IMPLEMENTATION | 1 | V5-06 (compiled metadata pipeline) |
 | BLOCKED | 0 | — |
 | NOT_ALLOWED_YET | 1 | V5-23 (requires all previous GREEN) |
@@ -163,7 +163,8 @@ All listed validation commands exist and were executed. No faked results.
 | TODO.md does not reflect any V5 stage status | TODO.md is stale for V5 — needs update |
 | EVIDENCE/EXECUTION.md says V5 is "planned" not "in progress" | Needs update to reflect current V5 position |
 | CURRENT_TRUTH.md reports 7475 tests; actual is 7483 | Minor — updated by this session's E2E tests |
-| Previous `final-v5-truth-report.md` said 14/24 GREEN, 8/24 YELLOW | Ledger now shows 16/24 GREEN, 4/24 PARTIAL, 1/24 MISSING, 1/24 NOT_ALLOWED_YET — more accurate |
+| Previous `final-v5-truth-report.md` said 14/24 GREEN, 8/24 YELLOW | Ledger now shows 16/24 GREEN, 6/24 PARTIAL, 1/24 MISSING, 1/24 NOT_ALLOWED_YET — more accurate |
+| Previous ledger summary listed V5-21 and V5-22 as GREEN | FIXED: V5-21 reclassified PARTIAL (no custom Rector rules exist), V5-22 reclassified PARTIAL (E2E gaps remain) |
 
 ---
 
@@ -247,8 +248,8 @@ to achieve full V5 GREEN status.
 ---
 
 **Stage:** V5-23 Ledger Verification
-**Final Status:** YELLOW (16 GREEN, 4 PARTIAL, 1 MISSING, 1 NOT_ALLOWED_YET)
+**Final Status:** YELLOW (16 GREEN, 6 PARTIAL, 1 MISSING, 1 NOT_ALLOWED_YET)
 **Branch:** main
-**Files Changed:** 3 (this report, ledger, truth update)
+**Files Changed:** 2 (`EVIDENCE/v5/v5-stage-ledger.md`, `EVIDENCE/v5/v5-current-state-proof-report.md`)
 **Validation:** 7483 tests GREEN, PHPStan 0 errors, All Gates GREEN
 **Next Allowed Action:** V5-06 DataTransfer / SecureRequest / Schema Metadata Compilation

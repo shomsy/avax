@@ -725,13 +725,15 @@ Required validation before merging any V4 branch into main:
 
 Date: 2026-05-11
 
-**16 GREEN:** V5-00, V5-01, V5-02, V5-03, V5-04, V5-05, V5-07, V5-09, V5-10, V5-11, V5-12, V5-13, V5-15, V5-16, V5-17, V5-18, V5-21, V5-22
+**16 GREEN:** V5-00, V5-01, V5-02, V5-03, V5-04, V5-05, V5-07, V5-09, V5-10, V5-11, V5-12, V5-13, V5-15, V5-16, V5-17, V5-18
 
-**4 PARTIAL:** V5-08 (attributes exist, not compiled), V5-14 (router partial), V5-19 (pooling abstract), V5-20 (hot path cache partial)
+**6 PARTIAL:** V5-08 (attributes exist, not compiled), V5-14 (router partial), V5-19 (pooling abstract), V5-20 (hot path cache partial), V5-21 (no custom Rector rules), V5-22 (E2E gaps)
 
 **1 MISSING:** V5-06 (compiled metadata pipeline)
 
 **1 NOT_ALLOWED_YET:** V5-23 (requires all previous GREEN)
+
+**Math:** 16 + 6 + 1 + 1 = 24
 
 **Validation:** 7483 tests GREEN, PHPStan 0 errors, All Gates GREEN
 

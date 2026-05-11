@@ -27,12 +27,30 @@ Canonical active implementation queue.
 
 - `id`: V5-PHASE
 - `created_at`: 2026-05-10
-- `updated_at`: 2026-05-10
+- `updated_at`: 2026-05-11
 - `status`: in_progress
 - `estimate`: multi-session
-- `outcome`: V5 AvaX Eats AvaX + V5.5 AvaX Proves AvaX — full master plan created
-- `acceptance`: V5+V5.5 master plan written to EVIDENCE/.PLANS/v5-internal-convergence-modern-php-performance-plan.md. 24 V5 stages + 12 V5.5 stages defined with deliverables, acceptance criteria, stage lock, tooling gates, and evidence requirements.
-- `links`: `EVIDENCE/.PLANS/v5-internal-convergence-modern-php-performance-plan.md`
+- `outcome`: V5 Internal Convergence — 16/24 stages GREEN, ledger corrected
+- `acceptance`: V5 stage ledger internally consistent: 16 GREEN, 6 PARTIAL, 1 MISSING, 1 NOT_ALLOWED_YET. Proof report updated. TODO.md and CURRENT_TRUTH.md synced.
+- `links`: `EVIDENCE/v5/v5-stage-ledger.md`, `EVIDENCE/v5/v5-current-state-proof-report.md`
+
+## V5 Stage Ledger Status
+
+**Date:** 2026-05-11
+**Total:** 24 stages (V5-00 through V5-23)
+**Math:** 16 + 6 + 1 + 1 = 24
+
+### GREEN_BY_EVIDENCE (16)
+V5-00 Final V4 Truth Lock, V5-01 Governance Resolution, V5-02 Security Blocker Cleanup, V5-03 Capability Ownership Scan, V5-04 Dogfooding Adoption Matrix, V5-05 Filesystem/Storage/Cache Adoption, V5-07 Modern PHP 8.x Language Adoption, V5-09 DI & Autowiring Clean Code, V5-10 Data Structures Adoption, V5-11 Arrhae/Collection/JSON Productization, V5-12 Enum & Domain Value Cleanup, V5-13 Superglobal Isolation, V5-15 Naming & Structure Convergence, V5-16 Traits/Multi-Class/Empty Classes Cleanup, V5-17 Serialization & Payload Safety, V5-18 Async/Concurrency/Parallelism Adoption
+
+### PARTIAL_BY_PREVIOUS_MEGA_PASS (6)
+V5-08 Attribute/Annotation Runtime (attributes exist, not compiled), V5-14 Router Completion (partial features), V5-19 Pooling & Resource Lifecycle (abstract only), V5-20 Hot Path Cache & Compiled Metadata (not used in hot path), V5-21 Tooling Gates & Custom Rector Rules (no custom Rector rules), V5-22 E2E Tests / Reference Runtime Proof (gaps: no CLI/compiled metadata/parameterized route tests)
+
+### MISSING_IMPLEMENTATION (1)
+V5-06 DataTransfer/SecureRequest/Schema Metadata Compilation — **next allowed action**
+
+### NOT_ALLOWED_YET (1)
+V5-23 Final V5 Truth Report — blocked until all previous stages GREEN
 
 ## Completed
 

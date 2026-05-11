@@ -15,7 +15,8 @@ final class NormalizeHeaders
                 $n = substr($n, 5);
             }
 
-            $norm[$n] = $v;
+            // V5-22: Cast values to string to handle float/int $_SERVER values.
+            $norm[$n] = (string) $v;
         }
 
         return $norm;

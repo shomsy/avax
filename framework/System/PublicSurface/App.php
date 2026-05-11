@@ -4,6 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\PublicSurface;
 
+use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\CreateRequestFromGlobals;
+use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\ReadRequestBody;
+use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\ReadQueryParameters;
+use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\ReadServerParameters;
+use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\ReadUploadedFiles;
+use Avax\Components\HTTP\Request\System\Capabilities\Headers\NormalizeHeaders;
+use Avax\Components\HTTP\Request\System\Capabilities\Files\NormalizeUploadedFiles;
+use Avax\Components\HTTP\Request\System\Capabilities\Body\ParseJsonBody;
+use Avax\Components\HTTP\Request\System\Capabilities\Body\ParseFormBody;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\Response\ResponseFactory;
@@ -308,16 +317,29 @@ final class App
     {
         $this->ensureInitialized();
 
-        $method = RouteMethod::fromString($_SERVER['REQUEST_METHOD'] ?? 'GET');
-        $uri = $_SERVER['REQUEST_URI'] ?? '/';
-        $headers = $this->getHeadersFromServer();
-        $body = file_get_contents('php://input') ?: '';
+        // V5-13: Delegate superglobal access to canonical Request component.
+        // App.php must not access $_SERVER/$_GET/$_POST/$_FILES/php://input directly.
+        $createRequest = new CreateRequestFromGlobals(
+            readServerParameters: new ReadServerParameters(),
+            readQueryParameters: new ReadQueryParameters(),
+            readUploadedFiles: new ReadUploadedFiles(),
+            readRequestBody: new ReadRequestBody(),
+            normalizeHeaders: new NormalizeHeaders(),
+            normalizeUploadedFiles: new NormalizeUploadedFiles(),
+            parseJsonBody: new ParseJsonBody(),
+            parseFormBody: new ParseFormBody(),
+        );
+
+        $avaxRequest = $createRequest->execute();
+
+        /** @var array<string, list<string>> $headers */
+        $headers = $avaxRequest->getHeaders();
 
         $request = new RuntimeRequest(
-            method: $method->value,
-            uri: $uri,
+            method: $avaxRequest->getMethod(),
+            uri: (string) $avaxRequest->getUri(),
             headers: $headers,
-            body: $body,
+            body: (string) $avaxRequest->getBody(),
         );
 
         return $this->handle(request: $request);
@@ -340,30 +362,5 @@ final class App
         $isProduction = $this->runtime->environment()->isProduction();
 
         return $renderer->render(e: $e, isProduction: $isProduction);
-    }
-
-    /**
-     * @return array<string, list<string>>
-     */
-    private function getHeadersFromServer(): array
-    {
-        $headers = [];
-
-        foreach ($_SERVER as $key => $value) {
-            if (str_starts_with($key, 'HTTP_')) {
-                $header = str_replace('_', '-', substr($key, 5));
-                $headers[$header] = [(string) $value];
-            }
-        }
-
-        if (isset($_SERVER['CONTENT_TYPE'])) {
-            $headers['Content-Type'] = [$_SERVER['CONTENT_TYPE']];
-        }
-
-        if (isset($_SERVER['CONTENT_LENGTH'])) {
-            $headers['Content-Length'] = [$_SERVER['CONTENT_LENGTH']];
-        }
-
-        return $headers;
     }
 }

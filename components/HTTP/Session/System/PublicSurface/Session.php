@@ -170,7 +170,7 @@ final class Session implements SessionInterface
             $this->createNewRecord();
             $this->sessionAudit?->record('session.regenerated', ['old_id' => $oldId, 'new_id' => $this->id()]);
             $this->sessionEventBus?->dispatch('session.regenerated', ['old_id' => $oldId, 'new_id' => $this->id()]);
-            $this->logger?->info('Session regenerated: ' . $this->id());
+            $this->logger?->info('Session regenerated successfully');
         }
 
         return $result;

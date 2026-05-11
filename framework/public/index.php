@@ -1,9 +1,13 @@
 <?php
 
-namespace Avax\Framework\public;
+declare(strict_types=1);
+
+use Avax\Framework\System\PublicSurface\Avax;
 
 require __DIR__.'/../vendor/autoload.php';
 
-echo '<h1>🚀 Avax Server</h1>';
-echo '<p>Welcome to Avax Framework</p>';
-echo '<p>Create routes/web.php to get started.</p>';
+$app = Avax::create();
+
+$app->get('/', fn (): string => 'Hello AvaX');
+
+$app->run();

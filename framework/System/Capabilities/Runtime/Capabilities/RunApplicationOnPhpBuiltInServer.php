@@ -68,7 +68,7 @@ echo "<p>Create routes/web.php to get started.</p>";
 
     private static function isBackground(): bool
     {
-        global $argv;
+        $argv = $GLOBALS['argv'] ?? [];
 
         return in_array('--daemon', $argv, true) || in_array('-d', $argv, true);
     }

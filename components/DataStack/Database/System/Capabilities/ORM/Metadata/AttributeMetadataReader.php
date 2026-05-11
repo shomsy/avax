@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata;
 
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\AttributeCompiler;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\CompiledAttributeMetadata;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Column;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Entity;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\GeneratedValue;
@@ -23,6 +25,13 @@ final class AttributeMetadataReader
     /** @var array<class-string, EntityMetadata> */
     private array $cache = [];
 
+    private ?AttributeCompiler $attributeCompiler;
+
+    public function __construct(?AttributeCompiler $attributeCompiler = null)
+    {
+        $this->attributeCompiler = $attributeCompiler;
+    }
+
     /**
      * @param  class-string  $entityClass
      */
@@ -35,6 +44,101 @@ final class AttributeMetadataReader
      * @param  class-string  $entityClass
      */
     private function read(string $entityClass): EntityMetadata
+    {
+        // Try compiled metadata first (V5-08)
+        $compiled = $this->attributeCompiler?->resolve($entityClass);
+        if ($compiled !== null) {
+            return $this->readFromCompiled($entityClass, $compiled);
+        }
+
+        // Fall back to reflection
+        return $this->readFromReflection($entityClass);
+    }
+
+    /**
+     * Read entity metadata from compiled attribute metadata.
+     *
+     * @param class-string $entityClass
+     */
+    private function readFromCompiled(string $entityClass, CompiledAttributeMetadata $compiled): EntityMetadata
+    {
+        $classAttrs = $compiled->classAttributes;
+        if (! isset($classAttrs['Entity'])) {
+            throw new RuntimeException(message: sprintf('Entity class %s must declare #[Entity].', $entityClass));
+        }
+
+        $table = $classAttrs['Table']['name']
+            ?? strtolower((new ReflectionClass($entityClass))->getShortName()) . 's';
+
+        $fields = [];
+        $relations = [];
+        foreach ($compiled->propertyAttributes as $propertyName => $attrs) {
+            if (isset($attrs['Column']) || isset($attrs['Id'])) {
+                $columnArgs = $attrs['Column'] ?? [];
+                $fields[$propertyName] = new FieldMetadata(
+                    property: $propertyName,
+                    column: $columnArgs['name'] ?? $propertyName,
+                    type: $columnArgs['type'] ?? null,
+                    id: isset($attrs['Id']),
+                    generated: isset($attrs['GeneratedValue']),
+                    nullable: $columnArgs['nullable'] ?? false,
+                );
+            }
+
+            if (isset($attrs['ManyToOne']) || isset($attrs['OneToMany']) || isset($attrs['OneToOne']) || isset($attrs['ManyToMany'])) {
+                $kind = match (true) {
+                    isset($attrs['ManyToOne']) => RelationKind::ManyToOne,
+                    isset($attrs['OneToMany']) => RelationKind::OneToMany,
+                    isset($attrs['OneToOne']) => RelationKind::OneToOne,
+                    default => RelationKind::ManyToMany,
+                };
+
+                $relationArgs = $attrs[$this->getRelationKind($attrs)] ?? [];
+                $joinColumnArgs = $attrs['JoinColumn'] ?? [];
+
+                $relations[$propertyName] = new RelationMetadata(
+                    property: $propertyName,
+                    targetEntity: $relationArgs['targetEntity'],
+                    mappedBy: $relationArgs['mappedBy'] ?? null,
+                    inversedBy: $relationArgs['inversedBy'] ?? null,
+                    joinColumn: $joinColumnArgs['name'] ?? null,
+                    referencedColumn: $joinColumnArgs['referencedColumnName'] ?? 'id',
+                    cascade: $relationArgs['cascade'] ?? [],
+                    lazy: $relationArgs['lazy'] ?? true,
+                    relationKind: $kind,
+                );
+            }
+        }
+
+        return new EntityMetadata(
+            className: $entityClass,
+            table: $table,
+            fields: $fields,
+            relations: $relations,
+            repositoryClass: $classAttrs['Entity']['repositoryClass'] ?? null,
+        );
+    }
+
+    /**
+     * @param array<string, array<string, mixed>> $attrs
+     */
+    private function getRelationKind(array $attrs): string
+    {
+        foreach (['ManyToOne', 'OneToMany', 'OneToOne', 'ManyToMany'] as $kind) {
+            if (isset($attrs[$kind])) {
+                return $kind;
+            }
+        }
+
+        return 'ManyToMany';
+    }
+
+    /**
+     * Read entity metadata via reflection (original behavior).
+     *
+     * @param class-string $entityClass
+     */
+    private function readFromReflection(string $entityClass): EntityMetadata
     {
         $reflectionClass = new ReflectionClass(objectOrClass: $entityClass);
 
@@ -97,7 +201,7 @@ final class AttributeMetadataReader
                 referencedColumn: $joinColumn?->newInstance()->referencedColumnName ?? 'id',
                 cascade         : $instance->cascade ?? [],
                 lazy            : $instance->lazy ?? true,
-                kind            : $kind,
+                relationKind    : $kind,
             );
         }
 

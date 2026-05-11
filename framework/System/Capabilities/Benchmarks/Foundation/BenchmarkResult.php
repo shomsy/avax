@@ -43,6 +43,7 @@ final readonly class BenchmarkResult
         int $memoryPeakBytes,
         int $errors = 0,
         array $notes = [],
+        string $status = 'GREEN',
     ): self {
         $count = count($sortedTimes);
         $avgMs = $count > 0 ? array_sum($sortedTimes) / $count : 0.0;
@@ -70,6 +71,7 @@ final readonly class BenchmarkResult
             memoryAfterBytes: $memoryAfterBytes,
             memoryPeakBytes: $memoryPeakBytes,
             errorRate: $errorRate,
+            status: $status,
             notes: $notes,
         );
     }

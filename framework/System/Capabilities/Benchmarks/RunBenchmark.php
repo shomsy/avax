@@ -24,14 +24,19 @@ final class RunBenchmark
         $memoryBefore = memory_get_usage(true);
         $memoryPeakBefore = memory_get_peak_usage(true);
 
+        $errors = 0;
+
         // Warmup
         $actualWarmup = min($warmupIterations, $iterations);
         for ($i = 0; $i < $actualWarmup; $i++) {
-            $work();
+            try {
+                $work();
+            } catch (Throwable) {
+                $errors++;
+            }
         }
 
         $times = [];
-        $errors = 0;
         $totalStart = microtime(true);
 
         for ($i = 0; $i < $iterations; $i++) {

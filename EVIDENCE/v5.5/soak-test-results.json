@@ -6,7 +6,7 @@
         "opcache": "enabled",
         "jit": "disable",
         "git_commit": "unknown",
-        "timestamp": "2026-05-11T17:04:41+00:00"
+        "timestamp": "2026-05-11T20:58:49+00:00"
     },
     "results": [
         {
@@ -15,12 +15,12 @@
             "warmup_iterations": 200,
             "total_seconds": 0,
             "metrics": {
-                "avg_ms": 0.011,
+                "avg_ms": 0.0113,
                 "p50_ms": 0.011,
-                "p95_ms": 0.0119,
-                "p99_ms": 0.015,
+                "p95_ms": 0.0129,
+                "p99_ms": 0.0222,
                 "min_ms": 0.0098,
-                "max_ms": 0.0541,
+                "max_ms": 0.047,
                 "rps": 0,
                 "memory_before_bytes": 10485760,
                 "memory_after_bytes": 10485760,

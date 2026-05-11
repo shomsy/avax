@@ -30,9 +30,9 @@ Canonical active implementation queue.
 - `updated_at`: 2026-05-11
 - `status`: done
 - `estimate`: multi-session
-- `outcome`: V5.5 Benchmark Proof & World-Class Hardening — YELLOW. 12 of 13 stages completed with valid evidence. V5.5-05 Reference App Benchmarks remains YELLOW (reference apps not CLI-runnable).
-- `acceptance`: 12 GREEN, 1 YELLOW. Sub-millisecond request handling (0.011ms avg, 90K+ RPS). Zero memory growth after 10K iterations. Zero state leaks. PHPStan 0 errors on benchmark code. V5.5-05 blocker: reference apps exist but are not independently CLI-benchmarkable. See `EVIDENCE/v5.5/v5.5-stage-ledger.md`, `EVIDENCE/v5.5/v5.5-12-final-readiness-report.md`, `EVIDENCE/v5.5/v5.5-final-acceptance-audit.md`.
-- `links`: `EVIDENCE/v5.5/v5.5-stage-ledger.md`, `EVIDENCE/v5.5/v5.5-12-final-readiness-report.md`, `EVIDENCE/v5.5/v5.5-11-optimization-pass.md`, `EVIDENCE/v5.5/v5.5-final-acceptance-audit.md`
+- `outcome`: V5.5 Benchmark Proof & World-Class Hardening — GREEN. All 13 stages (V5.5-00 through V5.5-12) completed with valid evidence. V5.5-05 Reference App Benchmarks implemented — all 13 reference apps benchmarked.
+- `acceptance`: 13 GREEN, 0 YELLOW. Sub-millisecond request handling (0.011ms avg, 90K+ RPS). 13 reference apps benchmarked (avg 0.012-0.015ms, 66K-85K RPS). Zero memory growth after 10K iterations. Zero state leaks. PHPStan 0 errors on benchmark code. Benchmark infrastructure tests: 35 tests covering edge cases. See `EVIDENCE/v5.5/v5.5-stage-ledger.md`, `EVIDENCE/v5.5/v5.5-12-final-readiness-report.md`, `EVIDENCE/v5.5/v5.5-final-acceptance-audit.md`, `EVIDENCE/v5.5/reference-app-benchmarks.json`.
+- `links`: `EVIDENCE/v5.5/v5.5-stage-ledger.md`, `EVIDENCE/v5.5/v5.5-12-final-readiness-report.md`, `EVIDENCE/v5.5/v5.5-11-optimization-pass.md`, `EVIDENCE/v5.5/v5.5-final-acceptance-audit.md`, `EVIDENCE/v5.5/reference-app-benchmarks.json`, `docs/benchmarks/benchmark-infrastructure.md`
 
 - `id`: V5-PHASE
 - `created_at`: 2026-05-10
@@ -46,17 +46,15 @@ Canonical active implementation queue.
 ## V5.5 Stage Ledger Status
 
 **Date:** 2026-05-11
-**Total:** 12 GREEN + 1 YELLOW = 13 stages
-**Overall: YELLOW**
+**Total:** 13 GREEN = 13 stages
+**Overall: GREEN**
 
-### GREEN_BY_EVIDENCE (12)
-V5.5-00 Benchmark Methodology Lock, V5.5-01 Hardware/Environment Baseline, V5.5-02 Microbenchmarks, V5.5-03 Runtime Benchmarks, V5.5-04 HTTP Throughput, V5.5-06 Long-Running Worker Soak Tests, V5.5-07 Memory Leak & State Leak Tests, V5.5-08 Database/Queue/Messaging Throughput, V5.5-09 Observability & Security Overhead, V5.5-10 Framework Comparison Suite, V5.5-11 Optimization Pass, V5.5-12 Final World-Class Readiness
-
-### YELLOW (1)
-V5.5-05 Reference App Benchmarks — apps exist but not runnable in CLI (environment limitation). See `EVIDENCE/v5.5/v5.5-final-acceptance-audit.md`.
+### GREEN_BY_EVIDENCE (13)
+V5.5-00 Benchmark Methodology Lock, V5.5-01 Hardware/Environment Baseline, V5.5-02 Microbenchmarks, V5.5-03 Runtime Benchmarks, V5.5-04 HTTP Throughput, V5.5-05 Reference App Benchmarks (13 apps), V5.5-06 Long-Running Worker Soak Tests, V5.5-07 Memory Leak & State Leak Tests, V5.5-08 Database/Queue/Messaging Throughput, V5.5-09 Observability & Security Overhead, V5.5-10 Framework Comparison Suite, V5.5-11 Optimization Pass, V5.5-12 Final World-Class Readiness
 
 ### Key Metrics
-- Request handling: 0.011ms avg, 0.020ms p99, 90,861 RPS
+- Request handling: 0.011ms avg, 0.020ms p99, 90K+ RPS
+- Reference apps: 13/13 benchmarked, avg 0.012-0.015ms, 66K-85K RPS
 - Soak test: 10,000 iterations, 0 errors, 0KB memory growth
 - Memory leak: stable, 0KB growth
 - Overhead: logging +4.5%, signing +2.8%

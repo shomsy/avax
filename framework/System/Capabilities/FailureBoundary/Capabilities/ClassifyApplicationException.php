@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Framework\System\Capabilities\ErrorHandling;
+namespace Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\ClassifyApplicationException;
 
 use Avax\Components\HTTP\SecureRequest\System\Foundation\Failure\SecureRequestAuthorizationFailed;
 use Avax\Components\HTTP\SecureRequest\System\Foundation\Failure\SecureRequestValidationFailed;

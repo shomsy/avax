@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Framework\System\Capabilities\ErrorHandling;
+namespace Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RenderApplicationError;
 
 use Avax\Components\HTTP\Response\ResponseFactory;
+use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\ClassifyApplicationException\ClassifyApplicationException;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 

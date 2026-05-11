@@ -713,5 +713,26 @@ Required validation before merging any V4 branch into main:
 
 ## Next Allowed Actions
 
-1. V5 dogfooding / performance convergence (next planned major phase).
+1. **V5 Internal Convergence** — IN PROGRESS. See `EVIDENCE/v5/v5-stage-ledger.md` and `EVIDENCE/v5/v5-current-state-proof-report.md`.
+   - 16/24 stages GREEN_BY_EVIDENCE
+   - 4/24 stages PARTIAL_BY_PREVIOUS_MEGA_PASS (V5-08, V5-14, V5-19, V5-20)
+   - 1/24 stages MISSING_IMPLEMENTATION (V5-06)
+   - 1/24 stages NOT_ALLOWED_YET (V5-23)
+   - Next allowed: V5-06 DataTransfer / SecureRequest / Schema Metadata Compilation
 2. Release-grade merge of main into master when approved.
+
+## V5 Internal Convergence — Current Position
+
+Date: 2026-05-11
+
+**16 GREEN:** V5-00, V5-01, V5-02, V5-03, V5-04, V5-05, V5-07, V5-09, V5-10, V5-11, V5-12, V5-13, V5-15, V5-16, V5-17, V5-18, V5-21, V5-22
+
+**4 PARTIAL:** V5-08 (attributes exist, not compiled), V5-14 (router partial), V5-19 (pooling abstract), V5-20 (hot path cache partial)
+
+**1 MISSING:** V5-06 (compiled metadata pipeline)
+
+**1 NOT_ALLOWED_YET:** V5-23 (requires all previous GREEN)
+
+**Validation:** 7483 tests GREEN, PHPStan 0 errors, All Gates GREEN
+
+**Evidence:** `EVIDENCE/v5/v5-stage-ledger.md`, `EVIDENCE/v5/v5-current-state-proof-report.md`

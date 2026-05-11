@@ -747,11 +747,11 @@ Date: 2026-05-11
 
 **V5 Internal Convergence: COMPLETE / GREEN**
 
-## V5.5 Benchmark Proof & World-Class Hardening — COMPLETE / GREEN
+## V5.5 Benchmark Proof & World-Class Hardening — YELLOW (12 GREEN, 1 YELLOW)
 
 Date: 2026-05-11
 
-**12 GREEN:** V5.5-00 through V5.5-12
+**12 GREEN:** V5.5-00 through V5.5-04, V5.5-06 through V5.5-12
 
 **1 YELLOW:** V5.5-05 (Reference App Benchmarks — apps exist but not CLI-runnable)
 
@@ -761,7 +761,7 @@ Date: 2026-05-11
 
 **Validation:** PHPStan 0 errors on Benchmarks code, all evidence files valid JSON
 
-**Evidence:** `EVIDENCE/v5.5/v5.5-stage-ledger.md`, `EVIDENCE/v5.5/v5.5-12-final-readiness-report.md`
+**Evidence:** `EVIDENCE/v5.5/v5.5-stage-ledger.md`, `EVIDENCE/v5.5/v5.5-12-final-readiness-report.md`, `EVIDENCE/v5.5/v5.5-final-acceptance-audit.md`
 
 ### V5.5 Key Metrics
 
@@ -773,4 +773,6 @@ Date: 2026-05-11
 
 ### V5.5 Verdict
 
-**V5.5 Benchmark Proof & World-Class Hardening: COMPLETE / GREEN**
+**V5.5 Benchmark Proof & World-Class Hardening: YELLOW**
+
+Reason: V5.5-05 Reference App Benchmarks — reference apps exist in examples/v4/ but are not independently CLI-benchmarkable. V5.5-03 and V5.5-04 already cover the core HTTP performance patterns. Closing V5.5-05 requires a `benchmark:reference-apps` CLI command. See `EVIDENCE/v5.5/v5.5-final-acceptance-audit.md`.

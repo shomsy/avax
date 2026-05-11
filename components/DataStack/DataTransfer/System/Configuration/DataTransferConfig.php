@@ -20,6 +20,7 @@ final readonly class DataTransferConfig
         private ?Closure          $namingPolicy = null,
         private array             $valueCasters = [],
         private array             $validationRules = [],
+        public ?string            $schemaCacheDir = null,
     ) {}
 
     public static function default() : self

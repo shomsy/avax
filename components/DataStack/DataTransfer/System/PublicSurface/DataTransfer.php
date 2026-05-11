@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\DataTransfer\System\PublicSurface;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection\CacheDataShape;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection\CompileDataShapeSchema;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection\CompiledSchemaMetadata;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection\DataShapeCompiler;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection\InspectDataShape;
 use Avax\Components\DataStack\DataTransfer\System\Capabilities\TransferValidation\DataTransferFailure;
 use Avax\Components\DataStack\DataTransfer\System\Capabilities\TransferValidation\DataTransferResult;
 use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConfig;
@@ -36,6 +42,8 @@ final class DataTransfer implements ResettableState
     public function resetState() : void
     {
         self::$dataTransferConfig = null;
+        CacheDataShape::reset();
+        DataShapeCompiler::reset();
     }
 
     public static function configure(DataTransferConfig $dataTransferConfig) : void
@@ -113,5 +121,31 @@ final class DataTransfer implements ResettableState
     public static function config() : DataTransferConfig
     {
         return self::$dataTransferConfig ??= DataTransferConfig::default();
+    }
+
+    /**
+     * Warmup compiled schema metadata for production.
+     *
+     * Compiles DataShape metadata for the given classes and writes to disk
+     * with atomic writes, checksum validation, and source-change tracking.
+     *
+     * @param list<class-string> $classes
+     */
+    public static function warmupSchemaCache(
+        array $classes,
+        ?string $cacheDir = null,
+    ): CompiledSchemaMetadata {
+        $config = self::config();
+        $dir = $cacheDir ?? $config->schemaCacheDir ?? sys_get_temp_dir() . '/avax-data-transfer-cache';
+        $configHash = spl_object_id($config);
+
+        $inspector = new InspectDataShape(dataTransferConfig: $config);
+        $compiler = new CompileDataShapeSchema(
+            cacheDir: $dir,
+            configHash: (string) $configHash,
+            filesystem: new Filesystem(),
+        );
+
+        return $compiler->compile(classes: $classes, inspector: $inspector);
     }
 }

@@ -13,7 +13,7 @@ final readonly class WhereNode
         public ComparisonOperator $operator,
         public mixed $value,
         public string $boolean = 'AND',
-        public ?string $connector = null,
+        public string|null $connector = null,
     ) {
     }
 

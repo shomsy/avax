@@ -20,7 +20,7 @@ final readonly class DataFieldType
         public bool   $allowsNull = true,
     ) {}
 
-    public static function fromReflectionType(?ReflectionType $type) : self
+    public static function fromReflectionType(ReflectionType|null $type) : self
     {
         if (! $type instanceof ReflectionType) {
             return self::mixed();

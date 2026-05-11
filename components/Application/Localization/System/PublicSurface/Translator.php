@@ -20,7 +20,7 @@ final class Translator implements TranslatorInterface
 
     /** @param array<string, mixed> $replace */
     #[Override]
-    public function get(string $key, array $replace = [], ?string $locale = null) : string
+    public function get(string $key, array $replace = [], string|null $locale = null) : string
     {
         $locale ??= $this->locale;
 
@@ -59,7 +59,7 @@ final class Translator implements TranslatorInterface
         return [$namespace, $group, $item];
     }
 
-    private function getLine(string $locale, string $group, string $item, ?string $namespace) : ?string
+    private function getLine(string $locale, string $group, string $item, string|null $namespace) : ?string
     {
         $this->load($locale, $group, $namespace);
 
@@ -68,7 +68,7 @@ final class Translator implements TranslatorInterface
         return $this->loaded[$locale][$key][$item] ?? null;
     }
 
-    private function load(string $locale, string $group, ?string $namespace) : void
+    private function load(string $locale, string $group, string|null $namespace) : void
     {
         $key = ($namespace ? $namespace . '::' : '') . $group;
 

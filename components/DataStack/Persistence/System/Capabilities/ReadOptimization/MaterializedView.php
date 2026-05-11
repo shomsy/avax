@@ -16,9 +16,9 @@ final class MaterializedView implements MaterializedViewInterface
     /**
      * @var T|null Cached data
      */
-    private ?array $data = null;
+    private array|null $data = null;
 
-    private ?float $lastRefreshedAt = null;
+    private float|null $lastRefreshedAt = null;
 
     private int $rowCount = 0;
 

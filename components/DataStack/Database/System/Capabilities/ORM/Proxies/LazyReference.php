@@ -19,7 +19,7 @@ final class LazyReference
     {
     }
 
-    public function resolve(): ?object
+    public function resolve() : object|null
     {
         if (! $this->loaded) {
             $this->resolved = ($this->loader)();

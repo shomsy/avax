@@ -19,12 +19,12 @@ final readonly class ResolvedToken
         #[SensitiveParameter]
         public string                 $tokenId,
         public DateTimeImmutable      $expiresAt,
-        public ?DateTimeImmutable     $mfaVerifiedAt = null,
+        public DateTimeImmutable|null     $mfaVerifiedAt = null,
         public bool                   $phishingResistant = false,
-        public ?string                $clientId = null,
+        public string|null                $clientId = null,
         public array                  $scopes = [],
-        public ?OAuthSenderConstraint $senderConstraint = null,
-        public ?string                $familyId = null,
+        public OAuthSenderConstraint|null $senderConstraint = null,
+        public string|null                $familyId = null,
     ) {}
 
     public function isExpired() : bool

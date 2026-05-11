@@ -66,7 +66,7 @@ final readonly class SagaRuntime
 
 final readonly class SagaRuntimeConfig
 {
-    private function __construct(public string $storeType, public array $storeConfig, public string $messageBusType, public array $messageBusConfig, public ?int $timeoutSeconds, public ?int $maxRetries) {}
+    private function __construct(public string $storeType, public array $storeConfig, public string $messageBusType, public array $messageBusConfig, public int|null $timeoutSeconds, public int|null $maxRetries) {}
 
     public static function inMemory() : self
     {

@@ -12,9 +12,7 @@ use InvalidArgumentException;
 final readonly class OAuthTokenEndpointAuthMethodPolicy
 {
     public function resolve(
-        OAuthClientType               $oAuthClientType,
-        ?OAuthTokenEndpointAuthMethod $requested = null,
-        ?OAuthTokenEndpointAuthMethod $current = null,
+        OAuthClientType $oAuthClientType, OAuthTokenEndpointAuthMethod|null $requested = null, OAuthTokenEndpointAuthMethod|null $current = null,
         bool                          $workloadIdentity = false,
     ) : OAuthTokenEndpointAuthMethod
     {

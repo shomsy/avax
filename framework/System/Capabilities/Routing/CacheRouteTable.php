@@ -18,8 +18,7 @@ final readonly class CacheRouteTable
     private Filesystem $filesystem;
 
     public function __construct(
-        private string $cacheDirectory = '',
-        ?Filesystem $filesystem = null,
+        private string $cacheDirectory = '', Filesystem|null $filesystem = null,
     ) {
         $this->filesystem = $filesystem ?? new Filesystem();
     }

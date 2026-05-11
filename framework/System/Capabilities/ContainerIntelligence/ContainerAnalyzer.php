@@ -8,7 +8,7 @@ use Avax\Components\Application\Container\System\ContainerInterface;
 
 final readonly class ContainerAnalyzer
 {
-    public function __construct(private ?ContainerInterface $container = null)
+    public function __construct(private ContainerInterface|null $container = null)
     {
     }
 

@@ -10,7 +10,7 @@ use Attribute;
 final readonly class JoinColumn
 {
     public function __construct(
-        public ?string $name = null,
+        public string|null $name = null,
         public string $referencedColumnName = 'id',
     ) {
     }

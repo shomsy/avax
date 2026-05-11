@@ -12,7 +12,7 @@ final class ConcurrentTask
     private bool       $started  = false;
     private bool       $finished = false;
     private mixed      $result   = null;
-    private ?Throwable $error    = null;
+    private Throwable|null $error = null;
 
     public function __construct(
         public readonly TaskId   $id,

@@ -13,8 +13,8 @@ final readonly class CompiledCacheManifestEntry
         public CompiledCachePath $compiledCachePath,
         public Timestamp $timestamp,
         public string $sourceFingerprint,
-        public ?string $phpVersion = null,
-        public ?string $frameworkVersion = null,
+        public string|null $phpVersion = null,
+        public string|null $frameworkVersion = null,
     ) {
     }
 

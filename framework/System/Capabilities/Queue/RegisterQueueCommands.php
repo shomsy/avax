@@ -197,7 +197,7 @@ final readonly class RegisterQueueCommands
         return new MemoryQueue();
     }
 
-    private function getPdo(): ?PDO
+    private function getPdo() : PDO|null
     {
         if ($this->dbPath === '') {
             return null;

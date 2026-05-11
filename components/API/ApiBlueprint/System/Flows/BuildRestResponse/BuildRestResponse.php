@@ -9,7 +9,7 @@ use Avax\Components\API\ApiBlueprint\System\PublicSurface\RestResponseMeta;
 
 final readonly class BuildRestResponse
 {
-    public function build(mixed $data, ?RestResponseMeta $meta = null) : RestResponse
+    public function build(mixed $data, RestResponseMeta|null $meta = null) : RestResponse
     {
         $responseData = is_array($data) ? $data : (array) $data;
 

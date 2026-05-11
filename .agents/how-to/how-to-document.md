@@ -1,5 +1,24 @@
 # AGENT INSTRUCTIONS (GLOBAL, NON-NEGOTIABLE)
 
+## Status
+
+**MANDATORY** - This document defines non-negotiable documentation rules for AvaX.
+
+## Normative Language
+
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
+*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+
+- **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
+- **MUST NOT / FORBIDDEN**: prohibited pattern.
+- **SHOULD**: expected default unless documented exception exists.
+- **SHOULD NOT**: discouraged pattern requiring justification.
+- **MAY**: optional behavior.
+- **BLOCKER**: violation prevents GREEN status.
+- **HIGH**: must be fixed before production-complete unless explicitly accepted.
+- **MEDIUM**: must be tracked and fixed or explicitly deferred.
+- **LOW**: cleanup or documentation issue.
+
 These instructions are **GLOBAL** and apply to **ALL future documentation and PHPDoc work** in this repository.
 
 They define **how the agent must think**, how it traverses code, how it produces documentation, and how it validates

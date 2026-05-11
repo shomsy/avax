@@ -10,7 +10,7 @@ final readonly class RestResponseMeta
         public int  $total = 0,
         public int  $page = 1,
         public int  $perPage = 15,
-        public ?int $lastPage = null,
+        public int|null $lastPage = null,
     ) {}
 
     public function computedLastPage() : int

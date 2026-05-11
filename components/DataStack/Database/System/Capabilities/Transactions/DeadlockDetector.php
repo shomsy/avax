@@ -110,7 +110,7 @@ final readonly class DeadlockDetector
      */
     private DeadlockDetectorConfig $deadlockDetectorConfig;
 
-    public function __construct(?DeadlockDetectorConfig $deadlockDetectorConfig = null)
+    public function __construct(DeadlockDetectorConfig|null $deadlockDetectorConfig = null)
     {
         $this->deadlockDetectorConfig = $deadlockDetectorConfig ?? new DeadlockDetectorConfig();
     }

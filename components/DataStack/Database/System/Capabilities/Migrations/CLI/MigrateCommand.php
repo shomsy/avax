@@ -13,7 +13,7 @@ final readonly class MigrateCommand
     private string $path;
 
     public function __construct(
-        private ?Filesystem $filesystem = null,
+        private Filesystem|null $filesystem = null,
     )
     {
         $this->path = dirname(__DIR__, 6).'/database/migrations';
@@ -103,7 +103,7 @@ final readonly class MigrateCommand
         ];
     }
 
-    private function getLastMigration(): ?array
+    private function getLastMigration() : array|null
     {
         return null;
     }

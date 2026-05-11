@@ -29,10 +29,10 @@ final readonly class ResetPassword
         private AuditLogInterface           $auditLog,
         private Clock                       $clock,
         #[SensitiveParameter]
-        private ?SessionRegistryInterface   $sessionRegistry = null,
-        private ?MfaChallengeStoreInterface $mfaChallengeStore = null,
+        private SessionRegistryInterface|null   $sessionRegistry = null,
+        private MfaChallengeStoreInterface|null $mfaChallengeStore = null,
         #[SensitiveParameter]
-        private ?RefreshTokenStoreInterface $refreshTokenStore = null,
+        private RefreshTokenStoreInterface|null $refreshTokenStore = null,
     ) {}
 
     public function execute(ResetPasswordData $resetPasswordData) : bool

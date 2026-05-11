@@ -9,7 +9,7 @@ final class IdentityMap
     /** @var array<string, array<string, object>> */
     private array $entities = [];
 
-    public function get(string $entityClass, mixed $id): ?object
+    public function get(string $entityClass, mixed $id) : object|null
     {
         return $this->entities[$entityClass][(string) $id] ?? null;
     }

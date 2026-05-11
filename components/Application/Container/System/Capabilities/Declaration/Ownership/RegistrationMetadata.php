@@ -32,7 +32,7 @@ final readonly class RegistrationMetadata
     /** @var list<string> */
     public array $modes;
 
-    public ?string $overrideSource;
+    public string|null $overrideSource;
 
     public string $reason;
 
@@ -60,24 +60,7 @@ final readonly class RegistrationMetadata
      * @param  list<string>  $imports
      */
     public function __construct(
-        public string $unitId,
-        ?string $ownerSlice = null,
-        ?string $category = null,
-        ?string $visibility = null,
-        ?array $profiles = null,
-        ?array $flags = null,
-        ?array $tenants = null,
-        ?array $regions = null,
-        ?array $modes = null,
-        ?string $overrideSource = null,
-        ?string $reason = null,
-        ?string $intent = null,
-        ?string $provenance = null,
-        ?bool $exported = null,
-        ?array $imports = null,
-        ?string $concept = null,
-        ?bool $fallback = null,
-        ?bool $ownerLocked = null,
+        public string $unitId, string|null $ownerSlice = null, string|null $category = null, string|null $visibility = null, array|null $profiles = null, array|null $flags = null, array|null $tenants = null, array|null $regions = null, array|null $modes = null, string|null $overrideSource = null, string|null $reason = null, string|null $intent = null, string|null $provenance = null, bool|null $exported = null, array|null $imports = null, string|null $concept = null, bool|null $fallback = null, bool|null $ownerLocked = null,
         public bool $categoryLocked = false,
     ) {
         $ownerSlice ??= 'default';
@@ -157,7 +140,7 @@ final readonly class RegistrationMetadata
         return $items;
     }
 
-    private function normalizeNullable(?string $value): ?string
+    private function normalizeNullable(string|null $value) : string|null
     {
         if (! is_string(value: $value)) {
             return null;
@@ -295,7 +278,7 @@ final readonly class RegistrationMetadata
         return $this->copy(overrides: ['modes' => $modes]);
     }
 
-    public function withOverrideSource(?string $overrideSource): self
+    public function withOverrideSource(string|null $overrideSource) : self
     {
         return $this->copy(overrides: ['overrideSource' => $overrideSource]);
     }

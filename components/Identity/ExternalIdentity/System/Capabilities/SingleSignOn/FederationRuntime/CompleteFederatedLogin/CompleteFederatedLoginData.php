@@ -15,7 +15,7 @@ final readonly class CompleteFederatedLoginData
         public string  $connectionId,
         public array   $payload,
         #[SensitiveParameter]
-        public ?string $ipAddress = null,
-        public ?string $userAgent = null,
+        public string|null $ipAddress = null,
+        public string|null $userAgent = null,
     ) {}
 }

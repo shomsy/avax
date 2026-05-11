@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent;
 
 use Avax\Components\DataStack\Persistence\System\Capabilities\Diagnostics\QueryFingerprint;
-
 use function count;
 
 /**
@@ -20,9 +19,9 @@ final readonly class QueryResult
      */
     public function __construct(
         private array $rows = [],
-        public ?int $count = null,
-        public ?float $tookMs = null,
-        public ?QueryFingerprint $fingerprint = null,
+        public int|null              $count = null,
+        public float|null            $tookMs = null,
+        public QueryFingerprint|null $fingerprint = null,
     ) {
     }
 
@@ -47,7 +46,7 @@ final readonly class QueryResult
     /**
      * Returns the execution time in milliseconds.
      */
-    public function tookMs(): ?float
+    public function tookMs() : float|null
     {
         return $this->tookMs;
     }
@@ -65,7 +64,7 @@ final readonly class QueryResult
      *
      * @return array<string, mixed>|null
      */
-    public function first(): ?array
+    public function first() : array|null
     {
         return $this->rows[0] ?? null;
     }

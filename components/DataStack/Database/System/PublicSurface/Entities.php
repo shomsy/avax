@@ -20,7 +20,7 @@ final readonly class Entities
     /**
      * @param  class-string  $entityClass
      */
-    public function find(string $entityClass, mixed $id, ?string $connectionName = null): ?object
+    public function find(string $entityClass, mixed $id, string|null $connectionName = null) : object|null
     {
         return $this->entitiesCapability->find(
             entityClass: $entityClass,
@@ -36,12 +36,7 @@ final readonly class Entities
      */
     public function findBy(
         string $entityClass,
-        array $criteria,
-        ?string $orderBy = null,
-        ?string $direction = null,
-        ?int $limit = null,
-        ?int $offset = null,
-        ?string $connectionName = null,
+        array $criteria, string|null $orderBy = null, string|null $direction = null, int|null $limit = null, int|null $offset = null, string|null $connectionName = null,
     ): array {
         return $this->entitiesCapability->findBy(
             entityClass: $entityClass,
@@ -57,7 +52,7 @@ final readonly class Entities
     /**
      * @throws Throwable
      */
-    public function insert(object $entity, ?string $connectionName = null): void
+    public function insert(object $entity, string|null $connectionName = null) : void
     {
         $this->entitiesCapability->insert(entity: $entity, connection: $connectionName);
     }
@@ -67,7 +62,7 @@ final readonly class Entities
      *
      * @throws Throwable
      */
-    public function persist(object $entity, ?string $connectionName = null): void
+    public function persist(object $entity, string|null $connectionName = null) : void
     {
         $this->insert(entity: $entity, connectionName: $connectionName);
     }
@@ -75,7 +70,7 @@ final readonly class Entities
     /**
      * @throws Throwable
      */
-    public function update(object $entity, ?string $connectionName = null): void
+    public function update(object $entity, string|null $connectionName = null) : void
     {
         $this->entitiesCapability->update(entity: $entity, connection: $connectionName);
     }
@@ -83,7 +78,7 @@ final readonly class Entities
     /**
      * @throws Throwable
      */
-    public function delete(object $entity, ?string $connectionName = null): void
+    public function delete(object $entity, string|null $connectionName = null) : void
     {
         $this->entitiesCapability->delete(entity: $entity, connection: $connectionName);
     }
@@ -93,7 +88,7 @@ final readonly class Entities
      *
      * @throws Throwable
      */
-    public function remove(object $entity, ?string $connectionName = null): void
+    public function remove(object $entity, string|null $connectionName = null) : void
     {
         $this->delete(entity: $entity, connectionName: $connectionName);
     }
@@ -101,7 +96,7 @@ final readonly class Entities
     /**
      * @throws Throwable
      */
-    public function refresh(object $entity, ?string $connectionName = null): object
+    public function refresh(object $entity, string|null $connectionName = null) : object
     {
         return $this->entitiesCapability->refresh(entity: $entity, connection: $connectionName);
     }

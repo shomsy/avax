@@ -12,6 +12,6 @@ final readonly class BuildJarmResponseData
         public string  $clientId,
         #[SensitiveParameter]
         public string  $code,
-        public ?string $state = null,
+        public string|null $state = null,
     ) {}
 }

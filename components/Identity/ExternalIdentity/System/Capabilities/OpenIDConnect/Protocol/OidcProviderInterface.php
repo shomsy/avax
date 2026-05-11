@@ -16,10 +16,7 @@ interface OidcProviderInterface
     public function issueIdToken(
         User               $user,
         string             $clientId,
-        array              $scopes,
-        ?string            $nonce = null,
-        ?DateTimeImmutable $authenticatedAt = null,
-        ?string            $sessionId = null,
+        array $scopes, string|null $nonce = null, DateTimeImmutable|null $authenticatedAt = null, string|null $sessionId = null,
         bool               $phishingResistant = false,
     ) : OidcIdToken;
 

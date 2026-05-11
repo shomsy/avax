@@ -18,12 +18,9 @@ final readonly class SagaStepResult
 
     private function __construct(
         public string             $stepName,
-        public bool               $success,
-        ?array                    $output = null,
-        public ?string            $error = null,
-        ?int                      $attempt = null,
-        ?float                    $durationMs = null,
-        public ?DateTimeImmutable $completedAt = null,
+        public bool                   $success, array|null $output = null,
+        public string|null            $error = null, int|null $attempt = null, float|null $durationMs = null,
+        public DateTimeImmutable|null $completedAt = null,
     )
     {
         $output           ??= [];
@@ -35,9 +32,7 @@ final readonly class SagaStepResult
     }
 
     public static function success(
-        string $stepName,
-        ?array $output = null,
-        ?int   $attempt = null,
+        string $stepName, array|null $output = null, int|null $attempt = null,
         float  $durationMs = 0.0,
     ) : self
     {
@@ -56,8 +51,7 @@ final readonly class SagaStepResult
 
     public static function failure(
         string $stepName,
-        string $error,
-        ?int   $attempt = null,
+        string $error, int|null $attempt = null,
         float  $durationMs = 0.0,
     ) : self
     {
@@ -97,11 +91,7 @@ final readonly class SagaStepExecutionPolicy
 
     public bool $continueOnFailure;
 
-    private function __construct(
-        ?int        $maxRetries = null,
-        ?int        $retryDelayMs = null,
-        ?int        $timeoutSeconds = null,
-        ?bool       $continueOnFailure = null,
+    private function __construct(int|null $maxRetries = null, int|null $retryDelayMs = null, int|null $timeoutSeconds = null, bool|null $continueOnFailure = null,
         public bool $isolationPerStep = true,
     )
     {

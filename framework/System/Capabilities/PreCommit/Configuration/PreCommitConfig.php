@@ -40,13 +40,7 @@ final class PreCommitConfig
      * @param  list<string>|null  $blockingChecks
      * @param  list<string>|null  $warningChecks
      */
-    public function __construct(
-        ?array $enabledChecks = null,
-        ?array $blockingChecks = null,
-        ?array $warningChecks = null,
-        ?string $reportPath = null,
-        ?string $todoPath = null,
-        ?string $toolingPath = null
+    public function __construct(array|null $enabledChecks = null, array|null $blockingChecks = null, array|null $warningChecks = null, string|null $reportPath = null, string|null $todoPath = null, string|null $toolingPath = null
     ) {
         $basePath = getcwd() ?: '.';
 

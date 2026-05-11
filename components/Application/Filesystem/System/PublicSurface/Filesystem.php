@@ -116,7 +116,7 @@ final class Filesystem
         return (new CheckPathIsWritable())->execute($path);
     }
 
-    public function permissions(string $path): ?int
+    public function permissions(string $path) : int|null
     {
         return (new CheckPathPermissions())->execute($path);
     }

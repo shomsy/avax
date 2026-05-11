@@ -28,7 +28,7 @@ final readonly class RequireFreshMfa
      * @throws Unauthenticated
      * @throws FreshMfaRequired
      */
-    public function execute(?int $maxAgeSeconds = null) : void
+    public function execute(int|null $maxAgeSeconds = null) : void
     {
         $authenticationContext = $this->currentAuthentication->read();
         $user                  = $authenticationContext->user();

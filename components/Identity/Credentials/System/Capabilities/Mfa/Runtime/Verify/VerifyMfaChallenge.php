@@ -45,8 +45,8 @@ final readonly class VerifyMfaChallenge
         private CurrentAuthentication      $currentAuthentication,
         private AuditLogInterface          $auditLog,
         private Clock                      $clock,
-        private ?LimitMfaAttempts          $limitMfaAttempts = null,
-        private ?DeterministicRiskEngine   $deterministicRiskEngine = null,
+        private LimitMfaAttempts|null        $limitMfaAttempts = null,
+        private DeterministicRiskEngine|null $deterministicRiskEngine = null,
     ) {}
 
     /**
@@ -214,9 +214,7 @@ final readonly class VerifyMfaChallenge
         string  $challengeId,
         string  $reason,
         #[SensitiveParameter]
-        ?string $ipAddress,
-        ?string $userAgent,
-        ?int    $userId = null,
+        ?string $ipAddress, string|null $userAgent, int|null $userId = null,
         bool    $suspicious = false,
     ) : void
     {

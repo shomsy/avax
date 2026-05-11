@@ -124,8 +124,8 @@ final readonly class RenderRuntimeFailure
 
     public function __construct(
         private string $environment = 'production',
-        private ?string $correlationId = null,
-        private ?string $traceId = null,
+        private string|null $correlationId = null,
+        private string|null $traceId = null,
     ) {
     }
 

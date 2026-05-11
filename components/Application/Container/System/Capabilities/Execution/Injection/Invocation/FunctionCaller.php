@@ -20,7 +20,7 @@ use Throwable;
  */
 final class FunctionCaller
 {
-    private ?ResolveDependency $resolveDependency = null;
+    private ResolveDependency|null $resolveDependency = null;
 
     /** @var array<string, ResolvePlan> */
     private array $plans = [];
@@ -46,9 +46,7 @@ final class FunctionCaller
      * @throws Throwable
      */
     public function call(
-        callable|string $target,
-        ?array $parameters = null,
-        ?ResolveRequest $resolveRequest = null,
+        callable|string $target, array|null $parameters = null, ResolveRequest|null $resolveRequest = null,
     ): mixed {
         $parameters ??= [];
         if (! $this->resolveDependency instanceof ResolveDependency) {
@@ -86,7 +84,7 @@ final class FunctionCaller
      * @throws Throwable
      * @throws Throwable
      */
-    private function normalizeTarget(callable|string $target, ?ResolveRequest $resolveRequest = null): callable|string|array
+    private function normalizeTarget(callable|string $target, ResolveRequest|null $resolveRequest = null) : callable|string|array
     {
         $context = $resolveRequest?->context ?? [];
 

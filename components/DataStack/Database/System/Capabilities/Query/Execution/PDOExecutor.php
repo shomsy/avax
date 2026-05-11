@@ -21,7 +21,7 @@ use Throwable;
  */
 final readonly class PDOExecutor implements ExecutorInterface
 {
-    public function __construct(private DatabaseConnection $databaseConnection, private ?EventBus $eventBus = null, private string $connectionName = 'default')
+    public function __construct(private DatabaseConnection $databaseConnection, private EventBus|null $eventBus = null, private string $connectionName = 'default')
     {
     }
 
@@ -35,8 +35,7 @@ final readonly class PDOExecutor implements ExecutorInterface
     public function query(
         string $sql,
         #[SensitiveParameter]
-        array $bindings = [],
-        ?ExecutionScope $executionScope = null,
+        array $bindings = [], ExecutionScope|null $executionScope = null,
     ): array {
         $start = microtime(as_float: true);
 
@@ -80,8 +79,7 @@ final readonly class PDOExecutor implements ExecutorInterface
     public function execute(
         string $sql,
         #[SensitiveParameter]
-        array $bindings = [],
-        ?ExecutionScope $executionScope = null,
+        array $bindings = [], ExecutionScope|null $executionScope = null,
     ): ExecutionResult {
         $start = microtime(as_float: true);
 
@@ -121,8 +119,7 @@ final readonly class PDOExecutor implements ExecutorInterface
         string $sql,
         #[SensitiveParameter]
         array $bindings,
-        float $start,
-        ?ExecutionScope $executionScope = null,
+        float $start, ExecutionScope|null $executionScope = null,
         bool $redactBindings = true,
     ): void {
         if (! $this->eventBus instanceof EventBus) {
@@ -150,7 +147,7 @@ final readonly class PDOExecutor implements ExecutorInterface
         return strtolower(string: (string) $flag) !== 'raw';
     }
 
-    private function resolveLastInsertId(string $sql): ?string
+    private function resolveLastInsertId(string $sql) : string|null
     {
         if (preg_match(pattern: '/^\s*insert\b/i', subject: $sql) !== 1) {
             return null;

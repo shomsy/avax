@@ -47,22 +47,12 @@ final readonly class RegisterClientData
         public string                        $name,
         public OAuthClientType               $type,
         public array                         $redirectUris,
-        public ?string                       $tenantSlug = null,
-        ?array                               $allowedScopes = null,
-        ?array                               $allowedAudiences = null,
-        ?array                               $allowedGrantTypes = null,
-        ?array                               $audienceScopeBoundaries = null,
+        public string|null                       $tenantSlug = null, array|null $allowedScopes = null, array|null $allowedAudiences = null, array|null $allowedGrantTypes = null, array|null $audienceScopeBoundaries = null,
         #[SensitiveParameter]
-        public ?OAuthTokenEndpointAuthMethod $tokenEndpointAuthMethod = null,
-        public ?OAuthSenderConstraintType    $requiredSenderConstraint = null,
-        ?bool                                $workloadIdentity = null,
-        ?bool                                $phishingResistantRequired = null,
-        ?bool                                $requestObjectSignatureRequired = null,
-        ?bool                                $frontChannelLogoutSupported = null,
-        ?bool                                $backChannelLogoutSupported = null,
-        ?bool                                $approvalRequired = null,
+        public OAuthTokenEndpointAuthMethod|null $tokenEndpointAuthMethod = null,
+        public OAuthSenderConstraintType|null    $requiredSenderConstraint = null, bool|null $workloadIdentity = null, bool|null $phishingResistantRequired = null, bool|null $requestObjectSignatureRequired = null, bool|null $frontChannelLogoutSupported = null, bool|null $backChannelLogoutSupported = null, bool|null $approvalRequired = null,
         #[SensitiveParameter]
-        public ?string                       $requestObjectVerificationKeyPem = null,
+        public string|null                       $requestObjectVerificationKeyPem = null,
     )
     {
         $allowedScopes                        ??= [];

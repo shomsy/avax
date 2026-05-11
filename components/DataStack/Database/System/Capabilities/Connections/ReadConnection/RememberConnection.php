@@ -15,7 +15,7 @@ final class RememberConnection
     /**
      * @param  array<string, DatabaseConnection>  $connections
      */
-    public function read(array $connections, string $name): ?DatabaseConnection
+    public function read(array $connections, string $name) : DatabaseConnection|null
     {
         return $connections[$name] ?? null;
     }
@@ -33,7 +33,7 @@ final class RememberConnection
     /**
      * @param  array<string, ConnectionPool>  $pools
      */
-    public function readPool(array $pools, string $name): ?ConnectionPool
+    public function readPool(array $pools, string $name) : ConnectionPool|null
     {
         return $pools[$name] ?? null;
     }

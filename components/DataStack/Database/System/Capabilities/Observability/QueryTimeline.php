@@ -39,8 +39,7 @@ final class QueryTimeline
         float $durationMs = 0.0,
         string $type = 'unknown',
         string $connection = '',
-        int $affectedRows = 0,
-        ?string $error = null,
+        int $affectedRows = 0, string|null $error = null,
     ): QueryEntry {
         $queryEntry = new QueryEntry(
             sql         : $sql,
@@ -175,7 +174,7 @@ final class QueryTimeline
     /**
      * Returns the slowest query entry.
      */
-    public function slowest(): ?QueryEntry
+    public function slowest() : QueryEntry|null
     {
         if ($this->entries === []) {
             return null;

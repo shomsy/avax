@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\ValueObjects;
 
+use InvalidArgumentException;
+
 /**
  * Canonical database drivers as a backed enum.
  *
@@ -20,7 +22,7 @@ enum DatabaseDriver: string
     /**
      * Create a DatabaseDriver from a string value.
      *
-     * @throws \InvalidArgumentException if the driver is not recognized.
+     * @throws InvalidArgumentException if the driver is not recognized.
      */
     public static function fromString(string $driver): self
     {
@@ -29,14 +31,14 @@ enum DatabaseDriver: string
             'sqlite' => self::SQLite,
             'pgsql', 'postgresql' => self::PostgreSQL,
             'sqlsrv', 'mssql' => self::SQLServer,
-            default => throw new \InvalidArgumentException("Unknown database driver: {$driver}"),
+            default => throw new InvalidArgumentException("Unknown database driver: {$driver}"),
         };
     }
 
     /**
      * Try to create a DatabaseDriver from a string, returning null if unknown.
      */
-    public static function tryFromString(string $driver): ?self
+    public static function tryFromString(string $driver) : self|null
     {
         return match (strtolower($driver)) {
             'mysql' => self::MySQL,

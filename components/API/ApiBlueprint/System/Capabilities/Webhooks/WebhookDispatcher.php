@@ -4,41 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Components\API\ApiBlueprint\System\Capabilities\Webhooks;
 
+use Avax\Components\API\ApiBlueprint\System\Foundation\Failure\WebhookDeliveryFailed;
+use Avax\Components\Operations\Resilience\System\PublicSurface\Resilience;
+
 final class WebhookDispatcher
 {
     /**
      * @var array<string, list<string>>
      */
     private array $subscriptions = [];
-
-    private WebhookRetryPolicy $retryPolicy;
-
-    public function __construct(?WebhookRetryPolicy $retryPolicy = null)
-    {
-        $this->retryPolicy = $retryPolicy ?? new WebhookRetryPolicy();
-    }
-
-    public function subscribe(string $event, string $url) : self
-    {
-        if (! isset($this->subscriptions[$event])) {
-            $this->subscriptions[$event] = [];
-        }
-
-        $this->subscriptions[$event][] = $url;
-
-        return $this;
-    }
-
-    public function unsubscribe(string $event, string $url) : self
-    {
-        if (isset($this->subscriptions[$event])) {
-            $this->subscriptions[$event] = array_values(
-                array_filter($this->subscriptions[$event], fn (string $u) : bool => $u !== $url),
-            );
-        }
-
-        return $this;
-    }
 
     /**
      * @param array<string, mixed> $payload
@@ -64,26 +38,17 @@ final class WebhookDispatcher
      *
      * @return array{url: string, delivered: bool, attempts: int}
      */
-    private function deliver(string $url, string $event, array $payload, string $signature) : array
+    private function deliver(string $url, string $event, array $payload, string $signature, int $maxAttempts = 3, int $backoffMs = 1000) : array
     {
-        $attempts  = 0;
-        $delivered = false;
-
-        foreach ($this->retryPolicy->attempts() as $_) {
-            $attempts++;
-
-            $result = $this->sendHttpRequest($url, $event, $payload, $signature);
-
-            if ($result) {
-                $delivered = true;
-                break;
-            }
-        }
+        $result = Resilience::retry(fn () => $this->sendHttpRequest($url, $event, $payload, $signature))
+            ->times($maxAttempts)
+            ->backoff($backoffMs)
+            ->run();
 
         return [
             'url'       => $url,
-            'delivered' => $delivered,
-            'attempts'  => $attempts,
+            'delivered' => $result->success,
+            'attempts'  => $result->attempts,
         ];
     }
 
@@ -103,14 +68,40 @@ final class WebhookDispatcher
                 'method'  => 'POST',
                 'header'  => $headers,
                 'content' => json_encode($payload, JSON_THROW_ON_ERROR),
-                'timeout' => $this->retryPolicy->timeout(),
+                'timeout' => 10,
             ],
         ];
 
         $context = stream_context_create($context);
-        $result  = @file_get_contents($url, false, $context);
+        $result  = file_get_contents($url, false, $context);
 
-        return $result !== false;
+        if ($result === false) {
+            throw new WebhookDeliveryFailed("Webhook request to {$url} failed");
+        }
+
+        return true;
+    }
+
+    public function subscribe(string $event, string $url) : self
+    {
+        if (! isset($this->subscriptions[$event])) {
+            $this->subscriptions[$event] = [];
+        }
+
+        $this->subscriptions[$event][] = $url;
+
+        return $this;
+    }
+
+    public function unsubscribe(string $event, string $url) : self
+    {
+        if (isset($this->subscriptions[$event])) {
+            $this->subscriptions[$event] = array_values(
+                array_filter($this->subscriptions[$event], fn (string $u) : bool => $u !== $url),
+            );
+        }
+
+        return $this;
     }
 
     /**

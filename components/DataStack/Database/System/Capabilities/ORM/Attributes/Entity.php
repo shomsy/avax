@@ -9,7 +9,7 @@ use Attribute;
 #[Attribute(flags: Attribute::TARGET_CLASS)]
 final readonly class Entity
 {
-    public function __construct(public ?string $repositoryClass = null)
+    public function __construct(public string|null $repositoryClass = null)
     {
     }
 }

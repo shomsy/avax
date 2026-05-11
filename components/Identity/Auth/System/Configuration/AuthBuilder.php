@@ -220,83 +220,83 @@ use SensitiveParameter;
  */
 final class AuthBuilder
 {
-    private ?UserSourceInterface $userSource = null;
+    private UserSourceInterface|null $userSource = null;
 
-    private ?IdentityInterface $identity = null;
+    private IdentityInterface|null $identity = null;
 
-    private ?LoginRateLimit $loginRateLimit = null;
+    private LoginRateLimit|null $loginRateLimit = null;
 
-    private ?PasswordHasher $passwordHasher = null;
+    private PasswordHasher|null $passwordHasher = null;
 
-    private ?IdGeneratorInterface $idGenerator = null;
+    private IdGeneratorInterface|null $idGenerator = null;
 
-    private ?AuditLogInterface $auditLog = null;
+    private AuditLogInterface|null $auditLog = null;
 
-    private ?string $auditCorrelationId = null;
+    private string|null $auditCorrelationId = null;
 
-    private ?EmailVerificationStateStoreInterface $emailVerificationStateStore = null;
+    private EmailVerificationStateStoreInterface|null $emailVerificationStateStore = null;
 
-    private ?MfaStoreInterface $mfaStore = null;
+    private MfaStoreInterface|null $mfaStore = null;
 
-    private ?RefreshTokenStoreInterface $refreshTokenStore = null;
+    private RefreshTokenStoreInterface|null $refreshTokenStore = null;
 
-    private ?PasswordResetStoreInterface $passwordResetStore = null;
+    private PasswordResetStoreInterface|null $passwordResetStore = null;
 
-    private ?EmailVerificationStoreInterface $emailVerificationStore = null;
+    private EmailVerificationStoreInterface|null $emailVerificationStore = null;
 
-    private ?EmailChangeStoreInterface $emailChangeStore = null;
+    private EmailChangeStoreInterface|null $emailChangeStore = null;
 
-    private ?MfaChallengeStoreInterface $mfaChallengeStore = null;
+    private MfaChallengeStoreInterface|null $mfaChallengeStore = null;
 
-    private ?TotpInterface $totp = null;
+    private TotpInterface|null $totp = null;
 
-    private ?LimitMfaAttempts $limitMfaAttempts = null;
+    private LimitMfaAttempts|null $limitMfaAttempts = null;
 
-    private ?AttemptThrottle $passwordResetThrottle = null;
+    private AttemptThrottle|null $passwordResetThrottle = null;
 
-    private ?AttemptThrottle $mfaRecoveryThrottle = null;
+    private AttemptThrottle|null $mfaRecoveryThrottle = null;
 
-    private ?AttemptThrottle $scimThrottle = null;
+    private AttemptThrottle|null $scimThrottle = null;
 
-    private ?Clock $clock = null;
+    private Clock|null $clock = null;
 
-    private ?SessionRegistryInterface $sessionRegistry = null;
+    private SessionRegistryInterface|null $sessionRegistry = null;
 
-    private ?OAuthClientRegistryInterface $oAuthClientRegistry = null;
+    private OAuthClientRegistryInterface|null $oAuthClientRegistry = null;
 
-    private ?AuthorizationCodeStoreInterface $authorizationCodeStore = null;
+    private AuthorizationCodeStoreInterface|null $authorizationCodeStore = null;
 
-    private ?LifecycleStoreInterface $lifecycleStore = null;
+    private LifecycleStoreInterface|null $lifecycleStore = null;
 
-    private ?AdminElevationStoreInterface $adminElevationStore = null;
+    private AdminElevationStoreInterface|null $adminElevationStore = null;
 
-    private ?DeterministicRiskEngine $deterministicRiskEngine = null;
+    private DeterministicRiskEngine|null $deterministicRiskEngine = null;
 
-    private ?PasskeyRuntimeInterface $passkeyRuntime = null;
+    private PasskeyRuntimeInterface|null $passkeyRuntime = null;
 
-    private ?PasskeyCredentialStoreInterface $passkeyCredentialStore = null;
+    private PasskeyCredentialStoreInterface|null $passkeyCredentialStore = null;
 
-    private ?PasskeyChallengeStoreInterface $passkeyChallengeStore = null;
+    private PasskeyChallengeStoreInterface|null $passkeyChallengeStore = null;
 
-    private ?FederationRuntimeInterface $federationRuntime = null;
+    private FederationRuntimeInterface|null $federationRuntime = null;
 
-    private ?FederationConnectionStoreInterface $federationConnectionStore = null;
+    private FederationConnectionStoreInterface|null $federationConnectionStore = null;
 
-    private ?FederatedIdentityLinkStoreInterface $federatedIdentityLinkStore = null;
+    private FederatedIdentityLinkStoreInterface|null $federatedIdentityLinkStore = null;
 
-    private ?OidcProviderInterface $oidcProvider = null;
+    private OidcProviderInterface|null $oidcProvider = null;
 
-    private ?OidcRequestObjectStoreInterface $oidcRequestObjectStore = null;
+    private OidcRequestObjectStoreInterface|null $oidcRequestObjectStore = null;
 
-    private ?ScimDirectoryStoreInterface $scimDirectoryStore = null;
+    private ScimDirectoryStoreInterface|null $scimDirectoryStore = null;
 
-    private ?ScimProvisionedIdentityStoreInterface $scimProvisionedIdentityStore = null;
+    private ScimProvisionedIdentityStoreInterface|null $scimProvisionedIdentityStore = null;
 
-    private ?TenantStoreInterface $tenantStore = null;
+    private TenantStoreInterface|null $tenantStore = null;
 
-    private ?TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore = null;
+    private TenantSecurityConfigurationStoreInterface|null $tenantSecurityConfigurationStore = null;
 
-    private ?TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore = null;
+    private TenantSecurityChangeRequestStoreInterface|null $tenantSecurityChangeRequestStore = null;
 
     private string $mfaIssuer = 'Avax Auth';
 

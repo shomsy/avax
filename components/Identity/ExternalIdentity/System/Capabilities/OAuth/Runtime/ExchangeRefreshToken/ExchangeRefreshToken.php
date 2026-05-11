@@ -34,7 +34,7 @@ final readonly class ExchangeRefreshToken
         private JwtIdentityInterface         $jwtIdentity,
         private AuditLogInterface            $auditLog,
         private Clock                        $clock,
-        private ?DeterministicRiskEngine     $deterministicRiskEngine = null,
+        private DeterministicRiskEngine|null $deterministicRiskEngine = null,
     ) {}
 
     /**

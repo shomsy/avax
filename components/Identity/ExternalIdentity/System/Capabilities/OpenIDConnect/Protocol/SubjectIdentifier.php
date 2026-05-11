@@ -17,9 +17,7 @@ final readonly class SubjectIdentifier
      * Generates a subject identifier for a user.
      */
     public function generate(
-        string  $localSubject,
-        ?string $sectorIdentifier = null,
-        ?string $pairwiseSalt = null,
+        string $localSubject, string|null $sectorIdentifier = null, string|null $pairwiseSalt = null,
     ) : string
     {
         return match ($this->subjectIdentifierStrategy) {
@@ -38,8 +36,7 @@ final readonly class SubjectIdentifier
     }
 
     private function pairwiseIdentifier(
-        string  $localSubject,
-        ?string $sectorIdentifier,
+        string $localSubject, string|null $sectorIdentifier,
         string  $pairwiseSalt,
     ) : string
     {

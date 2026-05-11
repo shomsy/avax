@@ -23,13 +23,9 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
      * @param list<string> $scopes
      */
     public function issue(
-        User                   $user,
-        ?DateTimeImmutable     $issuedAt = null,
-        bool                   $phishingResistant = false,
-        ?string                $audience = null,
-        array                  $scopes = [],
-        ?string                $issuer = null,
-        ?OAuthSenderConstraint $oAuthSenderConstraint = null,
+        User  $user, DateTimeImmutable|null $issuedAt = null,
+        bool  $phishingResistant = false, string|null $audience = null,
+        array $scopes = [], string|null $issuer = null, OAuthSenderConstraint|null $oAuthSenderConstraint = null,
     ) : IssuedToken;
 
     public function resolve(string $token) : ?ResolvedToken;
@@ -40,27 +36,20 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
     public function issueWorkloadToken(
         string                 $subject,
         string                 $clientId,
-        array                  $scopes = [],
-        ?OAuthSenderConstraint $oAuthSenderConstraint = null,
-        ?string                $audience = null,
+        array $scopes = [], OAuthSenderConstraint|null $oAuthSenderConstraint = null, string|null $audience = null,
     ) : IssuedToken;
 
     public function resolveWorkloadToken(
-        string  $token,
-        ?string $expectedAudience = null,
-        ?string $expectedIssuer = null,
+        string $token, string|null $expectedAudience = null, string|null $expectedIssuer = null,
     ) : ?ResolvedWorkloadToken;
 
     /**
      * @param list<string> $scopes
      */
     public function issueRefreshToken(
-        User                   $user,
-        ?DateTimeImmutable     $issuedAt = null,
-        bool                   $phishingResistant = false,
-        ?string                $audience = null,
-        array                  $scopes = [],
-        ?OAuthSenderConstraint $oAuthSenderConstraint = null,
+        User  $user, DateTimeImmutable|null $issuedAt = null,
+        bool  $phishingResistant = false, string|null $audience = null,
+        array $scopes = [], OAuthSenderConstraint|null $oAuthSenderConstraint = null,
     ) : ?IssuedRefreshToken;
 
     public function revoke(string $tokenId, DateTimeImmutable $expiresAt) : void;

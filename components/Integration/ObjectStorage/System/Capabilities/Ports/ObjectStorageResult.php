@@ -12,7 +12,7 @@ class ObjectStorageResult
         public readonly ?string $url = null,
     ) {}
 
-    public static function success(?string $url = null) : self
+    public static function success(string|null $url = null) : self
     {
         return new self(true, null, $url);
     }

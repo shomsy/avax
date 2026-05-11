@@ -8,7 +8,7 @@ use Avax\Components\DataStack\Data\System\Capabilities\Forms\CollectionForm\Coll
 
 final class MaxValue
 {
-    public function __invoke(Collection $collection, ?string $key = null): mixed
+    public function __invoke(Collection $collection, string|null $key = null) : mixed
     {
         if ($collection->isEmpty()) {
             return null;

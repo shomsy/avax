@@ -465,7 +465,7 @@ final class SimpleDto
         public string $name,
         #[Optional]
         #[IntegerType]
-        public ?int   $version = null,
+        public int|null $version = null,
     ) {}
 }
 

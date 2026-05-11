@@ -14,15 +14,14 @@ final readonly class LeastFrequentlyUsedReplacement implements ChooseCachedValue
 {
     private FrequencyTracker $frequencyTracker;
 
-    public function __construct(
-        ?Clock $clock = null,
+    public function __construct(Clock|null $clock = null,
         float $decayFactor = 0.5,
     ) {
         $this->frequencyTracker = new FrequencyTracker(clock: $clock ?? new SystemClock(), decayFactor: $decayFactor);
     }
 
     #[Override]
-    public function choose(array $entries): ?string
+    public function choose(array $entries) : string|null
     {
         if ($entries === []) {
             return null;

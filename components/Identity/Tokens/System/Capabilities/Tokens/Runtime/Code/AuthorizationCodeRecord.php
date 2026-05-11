@@ -17,10 +17,10 @@ final readonly class AuthorizationCodeRecord
         public string            $code,
         public string            $subject,
         public DateTimeImmutable $expiresAt,
-        public ?string           $clientId = null,
+        public string|null $clientId = null,
         public array             $scopes = [],
-        public ?string           $redirectUri = null,
-        public ?string           $state = null,
+        public string|null $redirectUri = null,
+        public string|null $state = null,
     ) {}
 
     public function isExpired(DateTimeImmutable $moment) : bool

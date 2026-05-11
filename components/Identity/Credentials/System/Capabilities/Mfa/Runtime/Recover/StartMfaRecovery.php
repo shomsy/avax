@@ -29,9 +29,8 @@ final readonly class StartMfaRecovery
         private UserSourceInterface $userSource,
         private MfaStoreInterface   $mfaStore,
         private AuditLogInterface   $auditLog,
-        private Clock               $clock,
-        ?int                        $expiresAfterSeconds = null,
-        private ?AttemptThrottle    $attemptThrottle = null,
+        private Clock                $clock, int|null $expiresAfterSeconds = null,
+        private AttemptThrottle|null $attemptThrottle = null,
     )
     {
         $expiresAfterSeconds       ??= 900;

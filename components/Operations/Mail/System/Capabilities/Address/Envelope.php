@@ -8,7 +8,7 @@ final readonly class Envelope
 {
     public function __construct(
         public string $from,
-        public ?string $returnPath = null,
+        public string|null $returnPath = null,
         public array $senderOptions = [],
     ) {
     }

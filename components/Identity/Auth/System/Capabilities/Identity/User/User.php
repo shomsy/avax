@@ -24,9 +24,7 @@ final class User implements Stringable, UserInterface
         public UserEmail $email,
         public string    $username,
         #[SensitiveParameter]
-        public string    $passwordHash,
-        ?array           $roles = null,
-        ?array           $permissions = null,
+        public string $passwordHash, array|null $roles = null, array|null $permissions = null,
         public bool      $isActive = true,
     )
     {
@@ -44,9 +42,7 @@ final class User implements Stringable, UserInterface
         UserEmail $userEmail,
         string    $username,
         #[SensitiveParameter]
-        string    $passwordHash,
-        ?array    $roles = null,
-        ?array    $permissions = null,
+        string $passwordHash, array|null $roles = null, array|null $permissions = null,
         bool      $isActive = true,
     ) : self
     {

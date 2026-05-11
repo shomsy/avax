@@ -32,7 +32,7 @@ final readonly class RecordedHttpResponse
         public string     $body = '',
         public float      $delayMs = 0.0,
         public bool       $useRegex = false,
-        public ?Throwable $exception = null,
+        public Throwable|null $exception = null,
     ) {}
 
     /**

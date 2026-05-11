@@ -27,8 +27,7 @@ interface ExecutorInterface
      */
     public function query(
         string $sql,
-        array $bindings = [],
-        ?ExecutionScope $executionScope = null,
+        array $bindings = [], ExecutionScope|null $executionScope = null,
     ): array;
 
     /**
@@ -42,8 +41,7 @@ interface ExecutorInterface
      */
     public function execute(
         string $sql,
-        array $bindings = [],
-        ?ExecutionScope $executionScope = null,
+        array $bindings = [], ExecutionScope|null $executionScope = null,
     ): ExecutionResult;
 
     /**

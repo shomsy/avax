@@ -39,10 +39,7 @@ final class ReadConnection
      */
     public function __construct(
         private readonly array $config,
-        private readonly ?EventBus $eventBus = null,
-        ?ExecutionScope $executionScope = null,
-        ?ResolveDefaultConnection $resolveDefaultConnection = null,
-        ?RememberConnection $rememberConnection = null,
+        private readonly ?EventBus $eventBus = null, ExecutionScope|null $executionScope = null, ResolveDefaultConnection|null $resolveDefaultConnection = null, RememberConnection|null $rememberConnection = null,
     ) {
         $this->executionScope = $executionScope ?? ExecutionScope::fresh();
         $this->resolveDefaultConnection = $resolveDefaultConnection ?? new ResolveDefaultConnection(config: $this->config);
@@ -52,7 +49,7 @@ final class ReadConnection
     /**
      * @throws Throwable
      */
-    public function connection(?string $name = null): DatabaseConnection
+    public function connection(string|null $name = null) : DatabaseConnection
     {
         $resolvedName = $this->resolveDefaultConnection->resolve(connectionName: $name);
         $cached = $this->rememberConnection->read(connections: $this->connections, name: $resolvedName);

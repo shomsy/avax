@@ -40,8 +40,8 @@ final readonly class ProvisionScimUser
         private IdGeneratorInterface                  $idGenerator,
         private AuditLogInterface                     $auditLog,
         private Clock                                 $clock,
-        private ?LifecycleOrchestrator                $lifecycleOrchestrator = null,
-        private ?AttemptThrottle                      $attemptThrottle = null,
+        private LifecycleOrchestrator|null $lifecycleOrchestrator = null,
+        private AttemptThrottle|null       $attemptThrottle = null,
     ) {}
 
     /**

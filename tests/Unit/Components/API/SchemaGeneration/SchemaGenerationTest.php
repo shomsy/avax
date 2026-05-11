@@ -224,11 +224,11 @@ final class SimpleUserRequest extends DataObject
 
     #[Optional]
     #[IntegerType]
-    public ?int $age = null;
+    public int|null $age = null;
 
     #[Optional]
     #[StringType]
-    public ?string $nickname = null;
+    public string|null $nickname = null;
 }
 
 final class SimpleUserInstance extends DataObject

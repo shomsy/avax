@@ -167,7 +167,7 @@ final class ComponentMuscleAuditBuilder
         }
     }
 
-    private function currentTargetForPath(string $relative): ?string
+    private function currentTargetForPath(string $relative) : string|null
     {
         if (str_starts_with($relative, 'framework/System/')) {
             return 'framework/System';
@@ -195,7 +195,7 @@ final class ComponentMuscleAuditBuilder
         return null;
     }
 
-    private function targetFromTestPath(string $relative): ?string
+    private function targetFromTestPath(string $relative) : string|null
     {
         $lower = strtolower($relative);
         $rules = [

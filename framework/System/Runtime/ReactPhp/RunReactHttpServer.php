@@ -30,10 +30,10 @@ use Throwable;
 final class RunReactHttpServer
 {
     private LoopInterface $loop;
-    private ?HttpServer $server = null;
+    private HttpServer|null $server = null;
 
-    private ?HandleWarmRequest $warmHandler = null;
-    private ?MonitorWorkerMemory $memoryGuard = null;
+    private HandleWarmRequest|null   $warmHandler = null;
+    private MonitorWorkerMemory|null $memoryGuard = null;
 
     public function __construct(
         private string $host = '127.0.0.1',
@@ -161,12 +161,12 @@ final class RunReactHttpServer
         return $this->loop;
     }
 
-    public function warmHandler(): ?HandleWarmRequest
+    public function warmHandler() : HandleWarmRequest|null
     {
         return $this->warmHandler;
     }
 
-    public function memoryGuard(): ?MonitorWorkerMemory
+    public function memoryGuard() : MonitorWorkerMemory|null
     {
         return $this->memoryGuard;
     }

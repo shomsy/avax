@@ -62,7 +62,7 @@ final class EncryptionService
      *
      * @return string
      */
-    public function decrypt(string $ciphertext, string $key, string $iv, ?string $tag = null) : string
+    public function decrypt(string $ciphertext, string $key, string $iv, string|null $tag = null) : string
     {
         $rawCiphertext = base64_decode(string: $ciphertext, strict: true);
         $rawIv         = base64_decode(string: $iv, strict: true);

@@ -245,7 +245,7 @@ function addRef(string $fqn, string $file, string $ctx, int $line, array &$refer
  * @param  array<string, string>  $defined
  * @param  list<string>  $externalPrefixes
  */
-function processType(?Node $node, string $ns, array $uses, string $file, string $ctx, int $line, array &$references, array $defined, array $externalPrefixes): void
+function processType(Node|null $node, string $ns, array $uses, string $file, string $ctx, int $line, array &$references, array $defined, array $externalPrefixes) : void
 {
     if (! $node instanceof Node) {
         return;
@@ -282,7 +282,7 @@ class RefVisitor extends NodeVisitorAbstract
         $this->references = &$references;
     }
 
-    public function enterNode(Node $node): ?int
+    public function enterNode(Node $node) : int|null
     {
         if ($node instanceof Namespace_) {
             $this->ns = $node->name instanceof Name ? $node->name->toString() : '';
@@ -401,7 +401,7 @@ class RefVisitor extends NodeVisitorAbstract
         return resolveName($name, $this->ns, $this->uses);
     }
 
-    private function processType(?Node $node, string $ctx, int $line): void
+    private function processType(Node|null $node, string $ctx, int $line) : void
     {
         processType($node, $this->ns, $this->uses, $this->file, $ctx, $line, $this->references, $this->defined, $this->externalPrefixes);
     }

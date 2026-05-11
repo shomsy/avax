@@ -35,9 +35,7 @@ final readonly class BuildService
      */
     public function build(
         string $class,
-        ServiceResolver $resolver,
-        ?array $overrides = null,
-        ?ResolveRequest $request = null
+        ServiceResolver $resolver, array|null $overrides = null, ResolveRequest|null $request = null
     ): object {
         $overrides ??= [];
         $serviceId = $request?->serviceId ?? $class;

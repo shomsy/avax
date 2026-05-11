@@ -27,8 +27,7 @@ final class CompileClassAttributes
 
     public function __construct(
         string      $cacheDir,
-        string      $configHash,
-        ?Filesystem $filesystem = null,
+        string $configHash, Filesystem|null $filesystem = null,
     )
     {
         $this->cacheDir   = rtrim($cacheDir, '/\\');
@@ -125,7 +124,7 @@ final class CompileClassAttributes
 
         $quarantineDir = $this->cacheDir . '/compiled-attributes/quarantine';
         if (! is_dir($quarantineDir)) {
-            mkdir($quarantineDir, 0o755, true);
+            $this->filesystem->createDirectory($quarantineDir);
         }
 
         $timestamp = (new DateTimeImmutable())->format('YmdHis');

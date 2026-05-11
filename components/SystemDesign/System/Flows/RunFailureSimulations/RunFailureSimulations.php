@@ -89,7 +89,7 @@ final class RunFailureSimulations
      *     }>,
      * }
      */
-    public function execute(CapacityModel $model, ?array $customFailures = null) : array
+    public function execute(CapacityModel $model, array|null $customFailures = null) : array
     {
         $failures   = $customFailures ?? self::$defaultFailures;
         $results    = [];

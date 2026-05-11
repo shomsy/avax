@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\PdoConnectionPool;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\ConnectionPool;
-use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\PooledConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\PdoPooledConnection\PdoPooledConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\PooledConnection;
 use PDO;
 
 /**
@@ -19,16 +19,14 @@ final class PdoConnectionPool extends ConnectionPool
 {
     /** @var array<string, mixed> */
     private array $dsn;
-    private ?string $username;
-    private ?string $password;
+    private string|null $username;
+    private string|null $password;
 
     /**
      * @param array<string, mixed> $dsn  PDO DSN config (driver, host, port, database, etc.)
      */
     public function __construct(
-        array $dsn,
-        ?string $username = null,
-        ?string $password = null,
+        array $dsn, string|null $username = null, string|null $password = null,
         int $minConnections = 2,
         int $maxConnections = 10,
         int $connectionTimeoutMs = 5000,

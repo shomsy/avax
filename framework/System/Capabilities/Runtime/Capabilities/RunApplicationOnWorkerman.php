@@ -28,7 +28,7 @@ final readonly class RunApplicationOnWorkerman implements WorkerRuntimeInterface
         return 'workerman';
     }
 
-    public function receive(): ?WorkerRequest
+    public function receive() : WorkerRequest|null
     {
         return ($this->receiver)();
     }

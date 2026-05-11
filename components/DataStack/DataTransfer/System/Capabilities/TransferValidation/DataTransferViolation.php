@@ -15,7 +15,7 @@ final readonly class DataTransferViolation implements JsonSerializable
     public function __construct(
         public string  $field,
         public string  $message,
-        public ?string $code = null,
+        public string|null $code = null,
         public mixed   $invalidValue = null,
     ) {}
 

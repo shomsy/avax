@@ -283,7 +283,7 @@ final readonly class DIContainer implements ContainerInterface
         return new OpenScope(resolver: $this->resolveDependency);
     }
 
-    public function closeScope(?string $kind = null): void
+    public function closeScope(string|null $kind = null) : void
     {
         $this->closeScopeFlow()->close(kind: $kind);
     }
@@ -323,7 +323,7 @@ final readonly class DIContainer implements ContainerInterface
         $this->resolveDependency->rebuildCompiled(serviceIds: $serviceIds);
     }
 
-    public function compileReport(array $serviceIds = []): ?CompileReport
+    public function compileReport(array $serviceIds = []) : CompileReport|null
     {
         return $this->resolveDependency->compileReport(serviceIds: $serviceIds);
     }

@@ -34,7 +34,7 @@ final readonly class ConfigSchemaField
         public bool $required = true,
         public mixed $default = null,
         public array $allowed = [],
-        public ?string $description = null,
+        public string|null $description = null,
     ) {
     }
 }

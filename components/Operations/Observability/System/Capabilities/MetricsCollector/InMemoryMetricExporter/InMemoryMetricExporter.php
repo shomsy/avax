@@ -19,7 +19,7 @@ final class InMemoryMetricExporter
      *
      * @param array<string, string> $tags
      */
-    public function record(string $name, string $type, float $value, array $tags = [], ?float $timestamp = null): void
+    public function record(string $name, string $type, float $value, array $tags = [], float|null $timestamp = null) : void
     {
         $this->metrics[] = [
             'name' => $name,

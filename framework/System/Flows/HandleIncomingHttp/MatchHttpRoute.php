@@ -15,7 +15,7 @@ final readonly class MatchHttpRoute
 {
     private MatchRoute $matchRoute;
 
-    public function __construct(?MatchRoute $matchRoute = null)
+    public function __construct(MatchRoute|null $matchRoute = null)
     {
         $this->matchRoute = $matchRoute ?? new MatchRoute();
     }

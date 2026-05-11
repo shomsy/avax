@@ -36,7 +36,7 @@ enum ServeMode: string
     /**
      * Try to create a ServeMode from a string, returning null if unknown.
      */
-    public static function tryFromString(string $mode): ?self
+    public static function tryFromString(string $mode) : self|null
     {
         return match (strtolower($mode)) {
             'built-in' => self::BuiltIn,

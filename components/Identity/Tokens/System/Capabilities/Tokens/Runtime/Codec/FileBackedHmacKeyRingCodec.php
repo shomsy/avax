@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Codec;
 
+use Avax\Components\Operations\Filesystem\System\PublicSurface\Filesystem;
 use InvalidArgumentException;
 use JsonException;
 use SensitiveParameter;
@@ -52,11 +53,7 @@ final readonly class FileBackedHmacKeyRingCodec implements TokenCodecInterface
             throw new InvalidArgumentException(message: 'Key ring file is not readable: ' . $this->keyRingPath);
         }
 
-        $json = file_get_contents(filename: $this->keyRingPath);
-
-        if ($json === false) {
-            throw new InvalidArgumentException(message: 'Key ring file could not be read: ' . $this->keyRingPath);
-        }
+        $json = Filesystem::read($this->keyRingPath);
 
         try {
             $decoded = json_decode(json: $json, associative: true, depth: 512, flags: JSON_THROW_ON_ERROR);

@@ -40,10 +40,9 @@ final class PreCommitIssue
         private string $checkName,
         private string $severity,
         private string $message,
-        private ?string $file = null,
-        private ?int $line = null,
-        private string $ruleCode = '',
-        ?string $deleteClassification = null
+        private string|null $file = null,
+        private int|null    $line = null,
+        private string      $ruleCode = '', string|null $deleteClassification = null
     ) {
         $this->deleteClassification = $deleteClassification ?? self::DELETE_UNSAFE;
     }
@@ -79,12 +78,12 @@ final class PreCommitIssue
         return $this->message;
     }
 
-    public function getFile(): ?string
+    public function getFile() : string|null
     {
         return $this->file;
     }
 
-    public function getLine(): ?int
+    public function getLine() : int|null
     {
         return $this->line;
     }

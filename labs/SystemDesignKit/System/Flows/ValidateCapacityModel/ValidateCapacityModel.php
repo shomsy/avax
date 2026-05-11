@@ -20,10 +20,7 @@ final class ValidateCapacityModel
     private string $schemaDir;
     private NativeYamlParser $yamlParser;
 
-    public function __construct(
-        ?SchemaValidator $schemaValidator = null,
-        ?string $schemaDir = null,
-        ?NativeYamlParser $yamlParser = null,
+    public function __construct(SchemaValidator|null $schemaValidator = null, string|null $schemaDir = null, NativeYamlParser|null $yamlParser = null,
     ) {
         $this->schemaValidator = $schemaValidator ?? new SchemaValidator();
         $this->schemaDir = $schemaDir ?? __DIR__ . '/../../../schemas';

@@ -21,7 +21,7 @@ abstract class Migration
     /**
      * Query builder instance for executing migration statements.
      */
-    protected ?QueryBuilder $queryBuilder = null;
+    protected QueryBuilder|null $queryBuilder = null;
 
     /**
      * Set the query builder instance for this migration.

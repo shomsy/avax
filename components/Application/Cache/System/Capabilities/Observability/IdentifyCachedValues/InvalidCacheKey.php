@@ -11,8 +11,7 @@ final class InvalidCacheKey extends InvalidArgumentException
 {
     public function __construct(
         string $message,
-        public readonly ?string $key = null,
-        ?Throwable $throwable = null,
+        public readonly ?string $key = null, Throwable|null $throwable = null,
     ) {
         parent::__construct(message: $message, code: 0, previous: $throwable);
     }

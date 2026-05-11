@@ -11,9 +11,9 @@ final readonly class JoinNode
     public function __construct(
         public string $type,
         public string $table,
-        public ?string $alias = null,
-        public ?WhereNode $on = null,
-        public ?string $using = null,
+        public string|null    $alias = null,
+        public WhereNode|null $on = null,
+        public string|null    $using = null,
     ) {
     }
 

@@ -278,7 +278,7 @@ readonly class ContextContainer implements ContainerInterface
         $this->foundationContainer->openScope(kind: $kind, scopeId: $scopeId);
     }
 
-    public function closeScope(?string $kind = null): void
+    public function closeScope(string|null $kind = null) : void
     {
         $this->foundationContainer->closeScope(kind: $kind);
     }
@@ -349,7 +349,7 @@ readonly class ContextContainer implements ContainerInterface
         $this->foundationContainer->rebuildCompiled(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
     }
 
-    public function compileReport(array $serviceIds = []): ?CompileReport
+    public function compileReport(array $serviceIds = []) : CompileReport|null
     {
         return $this->foundationContainer->compileReport(serviceIds: $this->compileTargets(serviceIds: $serviceIds));
     }

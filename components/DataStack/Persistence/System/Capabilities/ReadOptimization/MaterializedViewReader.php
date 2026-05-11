@@ -64,7 +64,7 @@ final readonly class MaterializedViewReader
         public float $durationMs = 0.0,
         public float $refreshedAt = 0.0,
         public bool $success = true,
-        public ?string $error = null,
+        public string|null $error = null,
     ) {
     }
 

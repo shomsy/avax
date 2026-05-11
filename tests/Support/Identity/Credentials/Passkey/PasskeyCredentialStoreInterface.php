@@ -10,7 +10,7 @@ interface PasskeyCredentialStoreInterface
 {
     public function save(PasskeyCredential $passkeyCredential): void;
 
-    public function find(string $credentialId): ?PasskeyCredential;
+    public function find(string $credentialId) : PasskeyCredential|null;
 
     /**
      * @return list<PasskeyCredential>

@@ -38,8 +38,7 @@ final class RedisCacheStore implements CacheStore
         private readonly int $database = 0,
         private readonly float $timeout = self::DEFAULT_TIMEOUT,
         private readonly string $prefix = self::DEFAULT_PREFIX,
-        private readonly Clock $clock = new SystemClock(),
-        ?CacheSerializer $cacheSerializer = null,
+        private readonly Clock $clock = new SystemClock(), CacheSerializer|null $cacheSerializer = null,
     ) {
         if (! class_exists('Redis')) {
             throw new RuntimeException('Redis cache store requires the redis PHP extension.');

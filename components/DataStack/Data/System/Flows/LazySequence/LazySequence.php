@@ -24,7 +24,7 @@ final readonly class LazySequence implements IteratorAggregate
         private Closure $factory,
         private array $maps = [],
         private array $filters = [],
-        private ?int $limit = null,
+        private int|null $limit = null,
     ) {
     }
 

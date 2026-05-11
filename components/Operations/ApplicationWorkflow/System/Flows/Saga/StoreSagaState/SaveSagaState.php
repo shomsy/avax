@@ -12,7 +12,7 @@ final readonly class SaveSagaState
     /**
      * @param array<string, SagaState> $states
      */
-    public function save(array &$states, SagaState $sagaState, ?int $expectedVersion = null) : SagaState
+    public function save(array &$states, SagaState $sagaState, int|null $expectedVersion = null) : SagaState
     {
         $current = $states[$sagaState->instanceId] ?? null;
 

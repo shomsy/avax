@@ -21,7 +21,7 @@ final class L1MemoryCache
         return $tieredCache;
     }
 
-    public static function create(?Clock $clock = null): InMemoryCacheStore
+    public static function create(Clock|null $clock = null) : InMemoryCacheStore
     {
         return new InMemoryCacheStore(clock: $clock ?? new SystemClock());
     }

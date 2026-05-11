@@ -12,7 +12,10 @@ use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\
 use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\Optional;
 use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\Required;
 use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConfig;
+use ReflectionClass;
+use ReflectionException;
 use ReflectionProperty;
+use Throwable;
 
 /**
  * Resolves DataShape for a class using a 3-tier fallback:
@@ -39,7 +42,7 @@ final class DataShapeCompiler
      *
      * @param class-string $class
      */
-    public function resolve(string $class, ?DataTransferConfig $config = null): DataShape
+    public function resolve(string $class, DataTransferConfig|null $config = null) : DataShape
     {
         $configHash = $this->configHash ?? (string) ($config ? spl_object_id($config) : 'default');
         $cacheKey = $class . ':' . $configHash;
@@ -72,7 +75,7 @@ final class DataShapeCompiler
     /**
      * @param class-string $class
      */
-    private function tryResolveFromCompiled(string $class, string $configHash): ?DataShape
+    private function tryResolveFromCompiled(string $class, string $configHash) : DataShape|null
     {
         if ($this->compileDataShapeSchema === null) {
             return null;
@@ -101,7 +104,7 @@ final class DataShapeCompiler
             }
 
             return $this->deserializeDataShape($metadata->entries[$class]);
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return null;
         }
     }
@@ -177,7 +180,7 @@ final class DataShapeCompiler
         return $attributes;
     }
 
-    private function resolveAttributeClass(string $shortName): ?string
+    private function resolveAttributeClass(string $shortName) : string|null
     {
         $namespace = 'Avax\\Components\\DataStack\\DataTransfer\\System\\Capabilities\\AttributeReading\\';
         $fqcn = $namespace . $shortName;
@@ -207,17 +210,17 @@ final class DataShapeCompiler
         return new $fqcn(...$mapped);
     }
 
-    private function tryGetReflectionProperty(string $class, string $name): ?ReflectionProperty
+    private function tryGetReflectionProperty(string $class, string $name) : ReflectionProperty|null
     {
         try {
             if (! class_exists($class)) {
                 return null;
             }
 
-            $reflection = new \ReflectionClass($class);
+            $reflection = new ReflectionClass($class);
 
             return $reflection->hasProperty($name) ? $reflection->getProperty($name) : null;
-        } catch (\ReflectionException) {
+        } catch (ReflectionException) {
             return null;
         }
     }

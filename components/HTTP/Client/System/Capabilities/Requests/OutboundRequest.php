@@ -25,7 +25,7 @@ final readonly class OutboundRequest
         public string          $url = '',
         public mixed           $body = null,
         public array           $headers = [],
-        public ?RequestOptions $options = null,
+        public RequestOptions|null $options = null,
         public array           $context = [],
     ) {}
 

@@ -15,8 +15,8 @@ final readonly class CacheConfiguration
      */
     public function __construct(
         public string $name = 'default',
-        public ?int $defaultTtl = 3600,
-        public ?int $maxCapacity = null,
+        public int|null $defaultTtl = 3600,
+        public int|null $maxCapacity = null,
         public StaleValuePolicy $staleValuePolicy = StaleValuePolicy::DO_NOT_SERVE_STALE,
         public ChooseCachedValueForReplacement $chooseCachedValueForReplacement = new LeastRecentlyUsedReplacement(),
         public bool $enableMetrics = true,

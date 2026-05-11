@@ -17,9 +17,9 @@ class Supervisor
 
     private int $failureCount = 0;
 
-    private ?int $lastFailureAt = null;
+    private int|null $lastFailureAt = null;
 
-    private ?int $startedAt = null;
+    private int|null $startedAt = null;
 
     private int $restartCount = 0;
 

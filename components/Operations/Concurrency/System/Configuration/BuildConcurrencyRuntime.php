@@ -10,7 +10,7 @@ use Fiber;
 
 final readonly class BuildConcurrencyRuntime
 {
-    public function build(?ConcurrencyConfig $config = null) : TaskRuntimeInterface
+    public function build(ConcurrencyConfig|null $config = null) : TaskRuntimeInterface
     {
         $config = $config ?? ConcurrencyConfig::fromArray([]);
 

@@ -42,7 +42,7 @@ final readonly class LoadRuntimeConfiguration
         return RuntimeConfiguration::fromArray($config);
     }
 
-    private function resolveConfigFile(): ?string
+    private function resolveConfigFile() : string|null
     {
         $path = $this->configPath !== '' ? $this->configPath : $this->defaultProjectPath();
         $file = $path . '/config/runtime.php';

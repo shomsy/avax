@@ -89,7 +89,7 @@ final class RouteAnalyzer
         return $conflicts;
     }
 
-    private function checkConflict(RouteInfo $a, RouteInfo $b): ?RouteConflict
+    private function checkConflict(RouteInfo $a, RouteInfo $b) : RouteConflict|null
     {
         if ($a->pattern === $b->pattern) {
             return new RouteConflict(
@@ -146,7 +146,7 @@ final class RouteAnalyzer
     /**
      * Explain how a request would be matched.
      */
-    public function explainMatch(string $method, string $path): ?RouteInfo
+    public function explainMatch(string $method, string $path) : RouteInfo|null
     {
         $method = strtoupper($method);
 

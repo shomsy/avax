@@ -10,7 +10,7 @@ final readonly class FromNode
 {
     public function __construct(
         public string $table,
-        public ?string $alias = null,
+        public string|null $alias = null,
     ) {
     }
 

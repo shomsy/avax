@@ -661,9 +661,9 @@ final class QueryGrammarTest extends TestCase
             grammar     : $this->baseGrammar,
             orchestrator: new QueryOrchestrator(
                               executor: new class implements ExecutorInterface {
-                                          public function query(string $sql, array $bindings = [], ?ExecutionScope $executionScope = null) : array { return []; }
+                                          public function query(string $sql, array $bindings = [], ExecutionScope|null $executionScope = null) : array { return []; }
 
-                                          public function execute(string $sql, array $bindings = [], ?ExecutionScope $executionScope = null) : ExecutionResult { return ExecutionResult::success(affectedRows: 0); }
+                                          public function execute(string $sql, array $bindings = [], ExecutionScope|null $executionScope = null) : ExecutionResult { return ExecutionResult::success(affectedRows: 0); }
 
                                           public function getDriverName() : string { return 'mysql'; }
                                       },

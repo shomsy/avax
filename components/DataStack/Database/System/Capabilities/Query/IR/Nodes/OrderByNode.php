@@ -11,7 +11,7 @@ final readonly class OrderByNode
     public function __construct(
         public string $column,
         public string $direction = 'ASC',
-        public ?int $nulls = null,
+        public int|null $nulls = null,
     ) {
     }
 

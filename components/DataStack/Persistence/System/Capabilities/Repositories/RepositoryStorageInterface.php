@@ -18,7 +18,7 @@ interface RepositoryStorageInterface
      *
      * @param  class-string  $entityClass
      */
-    public function find(string $entityClass, string|int $id): ?object;
+    public function find(string $entityClass, string|int $id) : object|null;
 
     /**
      * Find entities by criteria with optional ordering and pagination.
@@ -30,10 +30,7 @@ interface RepositoryStorageInterface
      */
     public function findBy(
         string $entityClass,
-        array $criteria,
-        ?array $orderBy = null,
-        ?int $limit = null,
-        ?int $offset = null,
+        array $criteria, array|null $orderBy = null, int|null $limit = null, int|null $offset = null,
     ): array;
 
     /**

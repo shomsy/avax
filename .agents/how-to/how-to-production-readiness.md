@@ -6,6 +6,27 @@ Current Readiness: **Architecture: YELLOW/GREEN candidate · Testing/Integrity: 
 Roadmap Source: `EVIDENCE/master-plan/avax-master-development-plan.md`  
 Current Truth Source: `CURRENT_TRUTH.md`
 
+## Status
+
+**MANDATORY** - This document defines non-negotiable production readiness rules for AvaX.
+
+## Normative Language
+
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
+*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+
+- **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
+- **MUST NOT / FORBIDDEN**: prohibited pattern.
+- **SHOULD**: expected default unless documented exception exists.
+- **SHOULD NOT**: discouraged pattern requiring justification.
+- **MAY**: optional behavior.
+- **BLOCKER**: violation prevents GREEN status.
+- **HIGH**: must be fixed before production-complete unless explicitly accepted.
+- **MEDIUM**: must be tracked and fixed or explicitly deferred.
+- **LOW**: cleanup or documentation issue.
+
+A rule without an explicit exception **MUST** be treated as mandatory.
+
 ---
 
 ## 0. Purpose

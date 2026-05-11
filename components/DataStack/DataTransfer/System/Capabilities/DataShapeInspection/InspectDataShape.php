@@ -9,7 +9,7 @@ use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConf
 final readonly class InspectDataShape
 {
     public function __construct(
-        private ?DataTransferConfig $dataTransferConfig = null,
+        private DataTransferConfig|null $dataTransferConfig = null,
         private CacheDataShape      $cacheDataShape = new CacheDataShape(),
     ) {}
 

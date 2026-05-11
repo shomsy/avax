@@ -32,10 +32,10 @@ final readonly class ConfirmEmailChange
         private CurrentAuthentication                $currentAuthentication,
         private IdentityInterface                    $identity,
         #[SensitiveParameter]
-        private ?SessionRegistryInterface            $sessionRegistry = null,
-        private ?MfaChallengeStoreInterface          $mfaChallengeStore = null,
+        private SessionRegistryInterface|null   $sessionRegistry = null,
+        private MfaChallengeStoreInterface|null $mfaChallengeStore = null,
         #[SensitiveParameter]
-        private ?RefreshTokenStoreInterface          $refreshTokenStore = null,
+        private RefreshTokenStoreInterface|null $refreshTokenStore = null,
     ) {}
 
     /**

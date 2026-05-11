@@ -55,9 +55,7 @@ final class Transactions
      * @throws Throwable
      */
     public function transactionWithRetry(
-        Closure $callback,
-        ?IsolationLevel $isolationLevel = null,
-        ?RetryPolicy $retryPolicy = null,
+        Closure $callback, IsolationLevel|null $isolationLevel = null, RetryPolicy|null $retryPolicy = null,
     ): mixed {
         $policy = $retryPolicy ?? RetryPolicy::forDeadlocks();
         $attempt = 0;
@@ -94,7 +92,7 @@ final class Transactions
      *
      * @throws Throwable Re-throws the original exception after rollback
      */
-    public function transaction(Closure $callback, ?IsolationLevel $isolationLevel = null): mixed
+    public function transaction(Closure $callback, IsolationLevel|null $isolationLevel = null) : mixed
     {
         $this->begin($isolationLevel);
 
@@ -121,7 +119,7 @@ final class Transactions
      *
      * @throws RuntimeException If a transaction is already active at the root level
      */
-    public function begin(?IsolationLevel $isolationLevel = null): void
+    public function begin(IsolationLevel|null $isolationLevel = null) : void
     {
         if ($this->depth === 0) {
             $this->databaseConnection->beginTransaction();
@@ -261,7 +259,7 @@ final class Transactions
     /**
      * Returns the current savepoint name (for the innermost nested transaction).
      */
-    public function currentSavepoint(): ?string
+    public function currentSavepoint() : string|null
     {
         return $this->savepoints === [] ? null : end($this->savepoints);
     }

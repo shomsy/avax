@@ -12,7 +12,7 @@ final readonly class OperationResult
     public function __construct(
         public bool $success,
         public mixed $data = null,
-        public ?string $error = null,
+        public string|null $error = null,
     ) {
     }
 

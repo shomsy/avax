@@ -15,8 +15,8 @@ final readonly class StoredCacheRecord
     public function __construct(
         public mixed $value,
         public CachedValueLifecycle $cachedValueLifecycle,
-        public ?string $serializedData = null,
-        public ?string $format = null,
+        public string|null $serializedData = null,
+        public string|null $format = null,
     ) {
     }
 
@@ -26,7 +26,7 @@ final readonly class StoredCacheRecord
      * @param  mixed  $value  The cached value
      * @param  int|null  $ttl  Time-to-live in seconds (null for no expiration)
      */
-    public static function create(mixed $value, ?int $ttl = null, ?Clock $clock = null): self
+    public static function create(mixed $value, int|null $ttl = null, Clock|null $clock = null) : self
     {
         $clock ??= new SystemClock();
         $now = $clock->now();

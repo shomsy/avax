@@ -6,6 +6,8 @@ namespace Avax\Components\Operations\Observability\System\Capabilities\Tracing;
 
 use Avax\Components\Operations\Observability\System\Capabilities\Correlation\SpanId;
 use Avax\Components\Operations\Observability\System\Capabilities\Correlation\TraceId;
+use InvalidArgumentException;
+use function sprintf;
 
 /**
  * Trace propagation context for distributed tracing.
@@ -20,7 +22,7 @@ final readonly class TracePropagation
     public function __construct(
         public TraceId $traceId,
         public SpanId $spanId,
-        public ?SpanId $parentSpanId = null,
+        public SpanId|null $parentSpanId = null,
         public bool $sampled = true,
     ) {}
 
@@ -59,7 +61,7 @@ final readonly class TracePropagation
         $parts = explode('-', $header);
 
         if (count($parts) !== 4 || $parts[0] !== '00') {
-            throw new \InvalidArgumentException("Invalid traceparent header: {$header}");
+            throw new InvalidArgumentException("Invalid traceparent header: {$header}");
         }
 
         $flags = hexdec($parts[3]);
@@ -78,7 +80,7 @@ final readonly class TracePropagation
     {
         $flags = $this->sampled ? '01' : '00';
 
-        return \sprintf(
+        return sprintf(
             '00-%s-%s-%s',
             $this->traceId,
             $this->spanId,

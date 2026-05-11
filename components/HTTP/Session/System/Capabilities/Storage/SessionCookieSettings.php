@@ -22,11 +22,7 @@ final readonly class SessionCookieSettings
     /**
      * @param 'Lax'|'Strict'|'None' $sameSite
      */
-    public function __construct(
-        ?bool         $secure = null,
-        ?bool         $httpOnly = null,
-        ?string       $sameSite = null,
-        ?string       $path = null,
+    public function __construct(bool|null $secure = null, bool|null $httpOnly = null, string|null $sameSite = null, string|null $path = null,
         public string $domain = '',
     )
     {

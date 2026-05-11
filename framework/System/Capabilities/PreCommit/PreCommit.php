@@ -50,9 +50,7 @@ final readonly class PreCommit
     /**
      * @param  list<string>|null  $files
      */
-    public function __construct(
-        ?PreCommitConfig $preCommitConfig = null,
-        ?array $files = null,
+    public function __construct(PreCommitConfig|null $preCommitConfig = null, array|null $files = null,
         private bool $touchedOnly = true
     ) {
         $this->preCommitConfig = $preCommitConfig ?? new PreCommitConfig();

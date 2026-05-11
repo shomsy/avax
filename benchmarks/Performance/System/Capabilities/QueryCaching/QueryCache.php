@@ -11,7 +11,7 @@ final class QueryCache
     /** @var array<string, array{value:mixed,expires_at:int|null}> */
     private array $items = [];
 
-    public function remember(string $key, Closure $query, ?int $ttlSeconds = 60): mixed
+    public function remember(string $key, Closure $query, int|null $ttlSeconds = 60) : mixed
     {
         $cached = $this->items[$key] ?? null;
 

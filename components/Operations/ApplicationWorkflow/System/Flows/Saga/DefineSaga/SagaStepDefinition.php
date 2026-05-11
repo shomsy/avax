@@ -23,16 +23,10 @@ final readonly class SagaStepDefinition
     private function __construct(
         public string        $name,
         public string        $component,
-        public SagaStepKind  $kind,
-        ?array               $input = null,
-        public ?string       $compensationComponent = null,
-        public ?array        $compensationInput = null,
-        ?int                 $maxRetries = null,
-        ?int                 $retryDelayMs = null,
-        ?SagaStepRetryPolicy $sagaStepRetryPolicy = null,
-        ?int                 $timeoutSeconds = null,
-        ?bool                $optional = null,
-        public ?string       $description = null,
+        public SagaStepKind $kind, array|null $input = null,
+        public string|null  $compensationComponent = null,
+        public array|null   $compensationInput = null, int|null $maxRetries = null, int|null $retryDelayMs = null, SagaStepRetryPolicy|null $sagaStepRetryPolicy = null, int|null $timeoutSeconds = null, bool|null $optional = null,
+        public string|null  $description = null,
     )
     {
         $input                ??= [];
@@ -51,8 +45,7 @@ final readonly class SagaStepDefinition
 
     public static function action(
         string $name,
-        string $component,
-        ?array $input = null,
+        string $component, array|null $input = null,
         array  $options = [],
     ) : self
     {

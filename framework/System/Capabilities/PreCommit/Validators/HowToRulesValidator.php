@@ -20,7 +20,7 @@ class HowToRulesValidator extends BaseValidator
     /** @var array<string, array{file: string, forbidden_patterns: list<string>, required_patterns: list<string>}> */
     private array $rules = [];
 
-    public function __construct(?string $howToDir = null)
+    public function __construct(string|null $howToDir = null)
     {
         parent::__construct('HowToRulesValidator');
         $this->howToDir = $howToDir ?? ((getcwd() ?: '.').'/.agents/how-to');

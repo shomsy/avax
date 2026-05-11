@@ -36,8 +36,8 @@ final readonly class SendResult
 {
     public function __construct(
         public bool $success,
-        public ?string $messageId = null,
-        public ?string $error = null,
+        public string|null $messageId = null,
+        public string|null $error = null,
     ) {
     }
 
@@ -54,13 +54,13 @@ final readonly class SendResult
 
 final class RawMailBuilder
 {
-    private ?string $from = null;
+    private string|null $from = null;
 
-    private ?string $to = null;
+    private string|null $to = null;
 
-    private ?string $subject = null;
+    private string|null $subject = null;
 
-    private ?string $body = null;
+    private string|null $body = null;
 
     /** @var array<string, string> */
     private array $headers = [];
@@ -71,14 +71,14 @@ final class RawMailBuilder
     ) {
     }
 
-    public function from(string $address, ?string $name = null): self
+    public function from(string $address, string|null $name = null) : self
     {
         $this->from = $name !== null ? sprintf('%s <%s>', $name, $address) : $address;
 
         return $this;
     }
 
-    public function to(string $address, ?string $name = null): self
+    public function to(string $address, string|null $name = null) : self
     {
         $this->to = $name !== null ? sprintf('%s <%s>', $name, $address) : $address;
 

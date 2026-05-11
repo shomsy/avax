@@ -6,9 +6,9 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Forms\JsonForm;
 
 use Avax\Components\DataStack\Data\System\Capabilities\Forms\ArrayForm\Arrhae;
 use Avax\Components\DataStack\Data\System\Capabilities\Lenses\DataPath\DotPath;
+use Avax\Components\DataStack\Data\System\Capabilities\Structures\Functional\Pair;
 use Avax\Components\DataStack\Data\System\Foundation\Failure\InvalidJson;
 use Avax\Components\DataStack\Data\System\Foundation\Mutability\MutationGuard;
-use Avax\Components\DataStack\Data\System\Capabilities\Structures\Functional\Pair;
 use JsonException;
 use NoDiscard;
 
@@ -163,7 +163,11 @@ final readonly class Json
 
     // -- Order -------------------------------------------------------------------
 
-    #[NoDiscard] public function sort(?callable $callback = null): static { return new self(arrhae: $this->arrhae->sort(callback: $callback)); }
+    #[NoDiscard]
+    public function sort(callable|null $callback = null) : static
+    {
+        return new self(arrhae: $this->arrhae->sort(callback: $callback));
+    }
     #[NoDiscard] public function sortBy(string|callable $key, bool $descending = false): static { return new self(arrhae: $this->arrhae->sortBy(key: $key, descending: $descending)); }
     #[NoDiscard] public function reverse(): static { return new self(arrhae: $this->arrhae->reverse()); }
     #[NoDiscard] public function shuffle(): static { return new self(arrhae: $this->arrhae->shuffle()); }

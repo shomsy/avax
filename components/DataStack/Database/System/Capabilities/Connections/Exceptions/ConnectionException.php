@@ -38,8 +38,7 @@ final class ConnectionException extends DatabaseException
      */
     public function __construct(
         private readonly string $name,
-        string $message,
-        ?Throwable $throwable = null,
+        string $message, Throwable|null $throwable = null,
     ) {
         parent::__construct(message: sprintf('Connection [%s] failed: %s', $this->name, $message), code: 0, previous: $throwable);
     }

@@ -14,7 +14,7 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
  */
 final readonly class CacheHealthStatus
 {
-    public function __construct(public bool $connected, public int $latency, public float $memoryUsage, public float $hitRate, public Timestamp $timestamp, public ?string $error = null, public int $memoryLimit = 0, public int $keyCount = 0, public int $connectionCount = 0, public string $version = '')
+    public function __construct(public bool $connected, public int $latency, public float $memoryUsage, public float $hitRate, public Timestamp $timestamp, public string|null $error = null, public int $memoryLimit = 0, public int $keyCount = 0, public int $connectionCount = 0, public string $version = '')
     {
     }
 
@@ -24,9 +24,7 @@ final readonly class CacheHealthStatus
     public static function healthy(
         int $latency = 0,
         float $memoryUsage = 0.0,
-        float $hitRate = 1.0,
-        ?Timestamp $lastCheck = null,
-        ?Timestamp $timestamp = null,
+        float $hitRate = 1.0, Timestamp|null $lastCheck = null, Timestamp|null $timestamp = null,
         int $memoryLimit = 0,
         int $keyCount = 0,
         int $connectionCount = 0,
@@ -53,9 +51,7 @@ final readonly class CacheHealthStatus
         string $error,
         int $latency = 0,
         float $memoryUsage = 0.0,
-        float $hitRate = 0.0,
-        ?Timestamp $lastCheck = null,
-        ?Timestamp $timestamp = null,
+        float $hitRate = 0.0, Timestamp|null $lastCheck = null, Timestamp|null $timestamp = null,
     ): self {
         return new self(
             connected  : false,
@@ -74,9 +70,7 @@ final readonly class CacheHealthStatus
         string $error,
         int $latency = 0,
         float $memoryUsage = 0.0,
-        float $hitRate = 0.5,
-        ?Timestamp $lastCheck = null,
-        ?Timestamp $timestamp = null,
+        float $hitRate = 0.5, Timestamp|null $lastCheck = null, Timestamp|null $timestamp = null,
         int $memoryLimit = 0,
         int $keyCount = 0,
         int $connectionCount = 0,

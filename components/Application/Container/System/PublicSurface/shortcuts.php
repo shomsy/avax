@@ -13,7 +13,7 @@ if (! function_exists('appInstance')) {
     /**
      * Get or set the global container instance.
      */
-    function appInstance(?ContainerInterface $instance = null): ?ContainerInterface
+    function appInstance(ContainerInterface|null $instance = null) : ContainerInterface|null
     {
         static $container = null;
 
@@ -30,7 +30,7 @@ if (! function_exists('app')) {
     /**
      * Get the container or resolve a service.
      */
-    function app(?string $abstract = null): mixed
+    function app(string|null $abstract = null) : mixed
     {
         $container = appInstance();
 

@@ -29,15 +29,15 @@ use SensitiveParameter;
 final readonly class SingleSignOn
 {
     public function __construct(
-        private ?RegisterFederationConnection       $registerFederationConnection,
-        private ?ReadFederationConnections          $readFederationConnections,
-        private ?VerifyFederationDomain             $verifyFederationDomain,
-        private ?SyncFederationMetadata             $syncFederationMetadata,
-        private ?CheckFederationConnectionHealth    $checkFederationConnectionHealth,
-        private ?EvaluateFederationBreakGlassBypass $evaluateFederationBreakGlassBypass,
-        private ?DiscoverFederationConnection       $discoverFederationConnection,
-        private ?StartFederatedLogin                $startFederatedLogin,
-        private ?CompleteFederatedLogin             $completeFederatedLogin,
+        private RegisterFederationConnection|null       $registerFederationConnection,
+        private ReadFederationConnections|null          $readFederationConnections,
+        private VerifyFederationDomain|null             $verifyFederationDomain,
+        private SyncFederationMetadata|null             $syncFederationMetadata,
+        private CheckFederationConnectionHealth|null    $checkFederationConnectionHealth,
+        private EvaluateFederationBreakGlassBypass|null $evaluateFederationBreakGlassBypass,
+        private DiscoverFederationConnection|null       $discoverFederationConnection,
+        private StartFederatedLogin|null                $startFederatedLogin,
+        private CompleteFederatedLogin|null             $completeFederatedLogin,
     ) {}
 
     public function isConfigured() : bool

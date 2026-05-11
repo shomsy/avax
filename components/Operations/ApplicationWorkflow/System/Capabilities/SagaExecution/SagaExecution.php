@@ -41,7 +41,7 @@ final class SagaExecution
      */
     private array $completedSteps = [];
 
-    private ?string $failureReason = null;
+    private string|null $failureReason = null;
 
     private SagaStoreInterface $sagaStore;
 
@@ -72,7 +72,7 @@ final class SagaExecution
         return new self($name);
     }
 
-    public function addStep(string $name, Closure $action, ?Closure $compensation = null) : void
+    public function addStep(string $name, Closure $action, Closure|null $compensation = null) : void
     {
         $this->steps[] = new SagaStep(
             name        : $name,

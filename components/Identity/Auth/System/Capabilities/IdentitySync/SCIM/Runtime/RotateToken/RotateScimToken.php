@@ -25,7 +25,7 @@ final readonly class RotateScimToken
         private PasswordHasher              $passwordHasher,
         private AuditLogInterface           $auditLog,
         private Clock                       $clock,
-        private ?AttemptThrottle            $attemptThrottle = null,
+        private AttemptThrottle|null $attemptThrottle = null,
     ) {}
 
     /**

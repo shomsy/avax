@@ -23,7 +23,7 @@ final readonly class LocalStorageAdapter
         return $this->local->put(path: $path, contents: $contents);
     }
 
-    public function get(string $path): ?string
+    public function get(string $path) : string|null
     {
         return $this->local->get(path: $path);
     }

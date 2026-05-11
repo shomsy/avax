@@ -16,7 +16,7 @@ class CacheResult
     ) {
     }
 
-    public static function hit(mixed $value, ?CacheKey $cacheKey = null): self
+    public static function hit(mixed $value, CacheKey|null $cacheKey = null) : self
     {
         return new self(
             CacheResultState::HIT,
@@ -25,7 +25,7 @@ class CacheResult
         );
     }
 
-    public static function miss(?CacheKey $cacheKey = null): self
+    public static function miss(CacheKey|null $cacheKey = null) : self
     {
         return new self(
             CacheResultState::MISS,
@@ -34,7 +34,7 @@ class CacheResult
         );
     }
 
-    public static function expired(mixed $value, ?CacheKey $cacheKey = null): self
+    public static function expired(mixed $value, CacheKey|null $cacheKey = null) : self
     {
         return new self(
             CacheResultState::EXPIRED,
@@ -43,7 +43,7 @@ class CacheResult
         );
     }
 
-    public static function stale(mixed $value, ?CacheKey $cacheKey = null): self
+    public static function stale(mixed $value, CacheKey|null $cacheKey = null) : self
     {
         return new self(
             cacheResultState: CacheResultState::STALE,
@@ -52,7 +52,7 @@ class CacheResult
         );
     }
 
-    public static function stored(bool $success, ?CacheKey $cacheKey = null): self
+    public static function stored(bool $success, CacheKey|null $cacheKey = null) : self
     {
         return new self(
             $success ? CacheResultState::STORED : CacheResultState::STORE_FAILED,
@@ -61,7 +61,7 @@ class CacheResult
         );
     }
 
-    public static function deleted(bool $success, ?CacheKey $cacheKey = null): self
+    public static function deleted(bool $success, CacheKey|null $cacheKey = null) : self
     {
         return new self(
             $success ? CacheResultState::DELETED : CacheResultState::DELETE_FAILED,
@@ -78,7 +78,7 @@ class CacheResult
         );
     }
 
-    public static function error(string $message, ?CacheKey $cacheKey = null): self
+    public static function error(string $message, CacheKey|null $cacheKey = null) : self
     {
         return new self(
             CacheResultState::ERROR,

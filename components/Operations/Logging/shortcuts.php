@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Psr\Log\LoggerInterface;
 
 if (! function_exists('logger')) {
-    function logger(?string $message = null, ?array $context = null, string $level = 'info'): ?LoggerInterface
+    function logger(string|null $message = null, array|null $context = null, string $level = 'info') : LoggerInterface|null
     {
         // Assumes app() helper exists
         $logger = app(LoggerInterface::class);

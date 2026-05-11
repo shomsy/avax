@@ -21,7 +21,7 @@ interface ScopeInterface
 
     public function openScope(string $kind = ScopeKind::Operation->value, string $scopeId = ''): void;
 
-    public function closeScope(?string $kind = null): void;
+    public function closeScope(string|null $kind = null) : void;
 
     public function terminate(): void;
 }

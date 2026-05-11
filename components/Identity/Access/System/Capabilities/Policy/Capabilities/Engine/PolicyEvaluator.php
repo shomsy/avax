@@ -71,6 +71,6 @@ final readonly class PolicyDecision
 {
     public function __construct(
         public bool    $allowed,
-        public ?string $reason,
+        public string|null $reason,
     ) {}
 }

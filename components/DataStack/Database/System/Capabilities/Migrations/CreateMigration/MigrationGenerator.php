@@ -23,7 +23,7 @@ final class MigrationGenerator
      * @param  bool  $create  Whether this is a creation migration
      * @return string Created file path
      */
-    public function generate(string $name, string $path, ?string $table = null, bool $create = false): string
+    public function generate(string $name, string $path, string|null $table = null, bool $create = false) : string
     {
         $timestamp = $this->getTimestamp();
         $className = $this->getClassName(name: $name);
@@ -50,7 +50,7 @@ final class MigrationGenerator
                 |> (static fn ($x): string|array => str_replace(search: ' ', replace: '', subject: $x));
     }
 
-    private function getStubContent(?string $table, bool $create): string
+    private function getStubContent(string|null $table, bool $create) : string
     {
         $stubName = 'blank.stub';
 
@@ -63,7 +63,7 @@ final class MigrationGenerator
         return Filesystem::read(path: $stubPath);
     }
 
-    private function populateStub(string $stub, string $className, ?string $table): string
+    private function populateStub(string $stub, string $className, string|null $table) : string
     {
         $replacements = [
             '{{className}}' => $className,

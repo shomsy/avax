@@ -39,12 +39,9 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         private UserSourceInterface            $userSource,
         private TokenCodecInterface            $tokenCodec,
         private Clock                          $clock,
-        private ?TokenRevocationStoreInterface $tokenRevocationStore = null,
+        private TokenRevocationStoreInterface|null $tokenRevocationStore = null,
         #[SensitiveParameter]
-        private ?RefreshTokenStoreInterface    $refreshTokenStore = null,
-        ?int                                   $tokenExpiry = null,
-        ?int                                   $refreshTokenExpiry = null,
-        ?string                                $issuer = null,
+        private RefreshTokenStoreInterface|null    $refreshTokenStore = null, int|null $tokenExpiry = null, int|null $refreshTokenExpiry = null, string|null $issuer = null,
         private int                            $leeway = 60,
     )
     {
@@ -169,9 +166,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
     public function issueWorkloadToken(
         string                 $subject,
         string                 $clientId,
-        array                  $scopes = [],
-        ?OAuthSenderConstraint $oAuthSenderConstraint = null,
-        ?string                $audience = null,
+        array $scopes = [], OAuthSenderConstraint|null $oAuthSenderConstraint = null, string|null $audience = null,
     ) : IssuedToken
     {
         $normalizedSubject = trim(string: $subject);
@@ -216,9 +211,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
 
     public function resolveWorkloadToken(
         #[SensitiveParameter]
-        string  $token,
-        ?string $expectedAudience = null,
-        ?string $expectedIssuer = null,
+        string $token, string|null $expectedAudience = null, string|null $expectedIssuer = null,
     ) : ?ResolvedWorkloadToken
     {
         try {
@@ -308,12 +301,9 @@ final readonly class JwtIdentity implements JwtIdentityInterface
      * @throws DateMalformedStringException
      */
     public function issueRefreshToken(
-        User                   $user,
-        ?DateTimeImmutable     $issuedAt = null,
-        bool                   $phishingResistant = false,
-        ?string                $audience = null,
-        array                  $scopes = [],
-        ?OAuthSenderConstraint $oAuthSenderConstraint = null,
+        User  $user, DateTimeImmutable|null $issuedAt = null,
+        bool  $phishingResistant = false, string|null $audience = null,
+        array $scopes = [], OAuthSenderConstraint|null $oAuthSenderConstraint = null,
     ) : ?IssuedRefreshToken
     {
         if (! $this->refreshTokenStore instanceof RefreshTokenStoreInterface) {
@@ -338,14 +328,11 @@ final readonly class JwtIdentity implements JwtIdentityInterface
      * @throws DateMalformedStringException
      */
     public function issue(
-        User                   $user,
-        ?DateTimeImmutable     $issuedAt = null,
-        bool                   $phishingResistant = false,
-        ?string                $audience = null,
+        User    $user, DateTimeImmutable|null $issuedAt = null,
+        bool    $phishingResistant = false, string|null $audience = null,
         array                  $scopes = [],
         #[SensitiveParameter]
-        ?string                $issuer = null,
-        ?OAuthSenderConstraint $oAuthSenderConstraint = null,
+        ?string $issuer = null, OAuthSenderConstraint|null $oAuthSenderConstraint = null,
     ) : IssuedToken
     {
         if (! $user->isActive()) {

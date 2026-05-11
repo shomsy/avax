@@ -141,7 +141,7 @@ final class SQLToPHPTypeMapper
         };
     }
 
-    public function suggestValueObject(string $sqlType): ?string
+    public function suggestValueObject(string $sqlType) : string|null
     {
         if (! $this->shouldUseValueObject(sqlType: $sqlType)) {
             return null;

@@ -17,11 +17,8 @@ interface TokenIssuerInterface
      * @param list<string> $scopes
      */
     public function issue(
-        User               $user,
-        ?DateTimeImmutable $mfaVerifiedAt = null,
-        bool               $phishingResistant = false,
-        ?string            $clientId = null,
-        array              $scopes = [],
-        ?string            $refreshTokenFamilyId = null,
+        User  $user, DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool  $phishingResistant = false, string|null $clientId = null,
+        array $scopes = [], string|null $refreshTokenFamilyId = null,
     ) : IssuedToken;
 }

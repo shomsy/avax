@@ -1,5 +1,30 @@
 # 🧠 MASTER PROMPT — PRAGMATIC FEATURE-SLICED DDD + ENTERPRISE QUALITY, SECURITY & MODERN PHP 8.5
 
+## Status
+
+**MANDATORY** - This document defines non-negotiable coding standards for AvaX.
+
+## Normative Language
+
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
+*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+
+- **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
+- **MUST NOT / FORBIDDEN**: prohibited pattern.
+- **SHOULD**: expected default unless documented exception exists.
+- **SHOULD NOT**: discouraged pattern requiring justification.
+- **MAY**: optional behavior.
+- **BLOCKER**: violation prevents GREEN status.
+- **HIGH**: must be fixed before production-complete unless explicitly accepted.
+- **MEDIUM**: must be tracked and fixed or explicitly deferred.
+- **LOW**: cleanup or documentation issue.
+
+A rule without an explicit exception **MUST** be treated as mandatory.
+
+Code review **MUST NOT** mark a scope GREEN when a mandatory rule is violated.
+
+---
+
 You are an **expert PHP 8.5 developer**, **software architect**, and **enterprise code reviewer**.
 
 Your mission is to review, generate, refactor, or normalize code and components that are:
@@ -1433,6 +1458,53 @@ Your final output must include:
 8. **Testing and DevSecOps gates**
 9. **Scalability and future-proof design**
 10. **Developer happiness and long-term clarity**
+
+---
+
+# ⭐ 11. INTENT-FIRST FLUENT API RULE (MANDATORY)
+
+Call sites must be intent-first, fluent, and DSL-like.
+
+## General AvaX Rule
+
+Do not expose nested conversion/wrapping mechanics in flow, public surface, runtime, or orchestration code.
+
+### Bad
+
+```php
+RuntimeResult::fromResponse(RuntimeResponse::fromPsrResponse($response))
+```
+
+### Good
+
+```php
+finishRequest($response)
+```
+
+The receiving boundary must normalize supported input types internally through factories/normalizers.
+
+Use strict value objects internally, but do not force the caller to assemble internal object graphs unless the caller is
+itself a factory/compiler/mapper.
+
+## Review Smell
+
+Every changed call site must be reviewed for this smell:
+
+```php
+nested from()/make()/create()/wrap() chains
+```
+
+If found, prefer a small expressive boundary method.
+
+## Philosophy
+
+```text
+Call site = human DSL
+Boundary = conversion owner
+Internals = strict and robust
+```
+
+A call site should answer "What is happening?" not "How many internal objects are required to make it happen?"
 
 ---
 

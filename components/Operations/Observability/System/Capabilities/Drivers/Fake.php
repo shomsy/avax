@@ -64,12 +64,12 @@ class Fake implements ObservabilityAdapterInterface
         return $this->spans;
     }
 
-    public function getCounter(string $name): ?Counter
+    public function getCounter(string $name) : Counter|null
     {
         return $this->counters[$name] ?? null;
     }
 
-    public function getGauge(string $name): ?Gauge
+    public function getGauge(string $name) : Gauge|null
     {
         return $this->gauges[$name] ?? null;
     }

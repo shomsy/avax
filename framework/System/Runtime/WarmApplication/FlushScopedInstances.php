@@ -16,9 +16,9 @@ use Avax\Framework\System\Capabilities\StateReset\StateResetReport;
  */
 final class FlushScopedInstances
 {
-    private ?RequestScope $scope = null;
+    private RequestScope|null $scope = null;
 
-    private ?StateResetRegistry $resetRegistry = null;
+    private StateResetRegistry|null $resetRegistry = null;
 
     /**
      * @var list<callable(): void>
@@ -50,7 +50,7 @@ final class FlushScopedInstances
      * Flush all scoped instances and reset state.
      * Returns the reset report from the StateResetRegistry if available.
      */
-    public function flush(): ?StateResetReport
+    public function flush() : StateResetReport|null
     {
         $report = null;
 

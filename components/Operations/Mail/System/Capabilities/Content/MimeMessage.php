@@ -14,9 +14,9 @@ final readonly class MimeMessage
         public string $contentType = 'text/plain',
         public array $headers = [],
         public array $attachments = [],
-        public ?string $replyTo = null,
-        public ?string $cc = null,
-        public ?string $bcc = null,
+        public string|null $replyTo = null,
+        public string|null $cc = null,
+        public string|null $bcc = null,
     ) {
     }
 

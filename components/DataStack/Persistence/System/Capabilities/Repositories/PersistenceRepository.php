@@ -24,7 +24,7 @@ abstract class PersistenceRepository implements RepositoryInterface
     ) {
     }
 
-    public function findById(string|int $id): ?object
+    public function findById(string|int $id) : object|null
     {
         return $this->repositoryStorage->find(
             entityClass: $this->entityClass(),
@@ -37,16 +37,13 @@ abstract class PersistenceRepository implements RepositoryInterface
      */
     abstract protected function entityClass(): string;
 
-    public function findAll(?int $limit = null, int $offset = 0): array
+    public function findAll(int|null $limit = null, int $offset = 0) : array
     {
         return $this->findBy(criteria: [], limit: $limit ?? 100, offset: $offset);
     }
 
     public function findBy(
-        array $criteria,
-        ?array $orderBy = null,
-        ?int $limit = null,
-        ?int $offset = null,
+        array $criteria, array|null $orderBy = null, int|null $limit = null, int|null $offset = null,
     ): array {
         return $this->repositoryStorage->findBy(
             entityClass: $this->entityClass(),
@@ -57,7 +54,7 @@ abstract class PersistenceRepository implements RepositoryInterface
         );
     }
 
-    public function findOneBy(array $criteria): ?object
+    public function findOneBy(array $criteria) : object|null
     {
         $results = $this->findBy(criteria: $criteria, limit: 1);
 

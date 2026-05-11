@@ -28,16 +28,16 @@ use SensitiveParameter;
 final readonly class Passkey
 {
     public function __construct(
-        private ?BeginPasskeyRegistration      $beginPasskeyRegistration,
-        private ?CompletePasskeyRegistration   $completePasskeyRegistration,
+        private BeginPasskeyRegistration|null      $beginPasskeyRegistration,
+        private CompletePasskeyRegistration|null   $completePasskeyRegistration,
         #[SensitiveParameter]
-        private ?BeginPasskeyAuthentication    $beginPasskeyAuthentication,
+        private BeginPasskeyAuthentication|null    $beginPasskeyAuthentication,
         #[SensitiveParameter]
-        private ?CompletePasskeyAuthentication $completePasskeyAuthentication,
-        private ?ListPasskeys                  $listPasskeys,
-        private ?RenamePasskey                 $renamePasskey,
+        private CompletePasskeyAuthentication|null $completePasskeyAuthentication,
+        private ListPasskeys|null                  $listPasskeys,
+        private RenamePasskey|null                 $renamePasskey,
         #[SensitiveParameter]
-        private ?RevokePasskey                 $revokePasskey,
+        private RevokePasskey|null                 $revokePasskey,
     ) {}
 
     public function isConfigured() : bool

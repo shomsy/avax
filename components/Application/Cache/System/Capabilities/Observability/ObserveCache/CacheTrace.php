@@ -11,7 +11,7 @@ interface CacheTrace
     /**
      * @return list<CacheOperation>
      */
-    public function getOperations(?string $key = null): array;
+    public function getOperations(string|null $key = null) : array;
 
     public function clear(): void;
 }

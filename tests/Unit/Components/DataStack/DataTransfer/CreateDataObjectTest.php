@@ -558,7 +558,7 @@ final class ConstructorPromotedDto
         public string $name,
         #[Optional]
         #[IntegerType]
-        public ?int   $version = null,
+        public int|null $version = null,
     ) {}
 }
 
@@ -590,7 +590,7 @@ final class OptionalDto
         #[Required]
         public string  $name,
         #[Optional]
-        public ?string $tag = null,
+        public string|null $tag = null,
     ) {}
 }
 
@@ -698,7 +698,7 @@ final class NullableDto
     public function __construct(
         #[Required]
         public string  $name,
-        public ?string $tag = null,
+        public string|null $tag = null,
     ) {}
 }
 

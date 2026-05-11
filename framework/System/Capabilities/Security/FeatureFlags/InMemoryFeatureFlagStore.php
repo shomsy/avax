@@ -12,7 +12,7 @@ final class InMemoryFeatureFlagStore implements FeatureFlagStore
     /** @var array<string, FeatureFlag> */
     private array $flags = [];
 
-    public function get(FeatureFlagName $name): ?FeatureFlag
+    public function get(FeatureFlagName $name) : FeatureFlag|null
     {
         return $this->flags[$name->value] ?? null;
     }

@@ -25,7 +25,7 @@ final class ResponseDecoder
      *
      * @throws InvalidHttpResponse if decoding fails
      */
-    public function decode(ClientResponse $clientResponse, ?string $format = null) : mixed
+    public function decode(ClientResponse $clientResponse, string|null $format = null) : mixed
     {
         $format ??= $this->detectFormat($clientResponse);
 

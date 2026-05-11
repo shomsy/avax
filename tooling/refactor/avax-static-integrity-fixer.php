@@ -393,7 +393,7 @@ function replaceNamedArgumentsInCalls(string $content, array $methodNames, array
     return $updatedContent;
 }
 
-function findClosingParenthesis(string $content, int $openParenthesis): ?int
+function findClosingParenthesis(string $content, int $openParenthesis) : int|null
 {
     $depth = 0;
     $length = strlen($content);

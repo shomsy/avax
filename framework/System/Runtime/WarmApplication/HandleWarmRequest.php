@@ -35,13 +35,13 @@ final class HandleWarmRequest
 
     private DetectLeakedState $leakDetector;
 
-    private ?RecordMemorySnapshot $memoryRecorder = null;
+    private RecordMemorySnapshot|null $memoryRecorder = null;
 
-    private ?WarmStateContract $contract = null;
+    private WarmStateContract|null $contract = null;
 
     private bool $resetRan = false;
 
-    private ?StateResetReport $lastResetReport = null;
+    private StateResetReport|null $lastResetReport = null;
 
     public function __construct()
     {
@@ -100,7 +100,7 @@ final class HandleWarmRequest
         return $this->leakDetector;
     }
 
-    public function lastResetReport(): ?StateResetReport
+    public function lastResetReport() : StateResetReport|null
     {
         return $this->lastResetReport;
     }

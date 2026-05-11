@@ -9,6 +9,7 @@ declare(strict_types=1);
 use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 if (! function_exists('route')) {
     /**
@@ -40,8 +41,14 @@ if (! function_exists('url')) {
      */
     function url(string $path = '', array $parameters = []) : string
     {
-        $scheme = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $request = app(ServerRequestInterface::class);
+        $uri     = $request->getUri();
+        $scheme  = $uri->getScheme();
+        $host    = $uri->getHost();
+        $port    = $uri->getPort();
+        if ($port !== null) {
+            $host .= ':' . $port;
+        }
         $path   = ltrim($path, '/');
 
         if ($parameters !== []) {

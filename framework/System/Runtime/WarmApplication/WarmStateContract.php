@@ -26,9 +26,7 @@ final readonly class WarmStateContract
      * @param list<AllowedWarmState>|null $allowedWarm
      * @param list<MustResetState>|null $mustReset
      */
-    public function __construct(
-        ?array $allowedWarm = null,
-        ?array $mustReset = null,
+    public function __construct(array|null $allowedWarm = null, array|null $mustReset = null,
     ) {
         $this->allowedWarmState = $allowedWarm ?? self::defaultAllowedWarm();
         $this->mustResetState = $mustReset ?? self::defaultMustReset();

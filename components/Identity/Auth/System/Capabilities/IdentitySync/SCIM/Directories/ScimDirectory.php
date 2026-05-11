@@ -22,12 +22,11 @@ final readonly class ScimDirectory
         public string             $tokenHash,
         public array              $groupRoleMap,
         public DateTimeImmutable  $createdAt,
-        public ?DateTimeImmutable $rotatedAt = null,
-        ?ScimDirectoryHealth      $scimDirectoryHealth = null,
-        public ?DateTimeImmutable $healthCheckedAt = null,
-        public ?string            $outageReason = null,
-        public ?DateTimeImmutable $outageStartedAt = null,
-        public ?DateTimeImmutable $outageRecoveredAt = null,
+        public DateTimeImmutable|null $rotatedAt = null, ScimDirectoryHealth|null $scimDirectoryHealth = null,
+        public DateTimeImmutable|null $healthCheckedAt = null,
+        public string|null            $outageReason = null,
+        public DateTimeImmutable|null $outageStartedAt = null,
+        public DateTimeImmutable|null $outageRecoveredAt = null,
     )
     {
         $scimDirectoryHealth ??= ScimDirectoryHealth::HEALTHY;
@@ -39,7 +38,7 @@ final readonly class ScimDirectory
         return $this->health !== ScimDirectoryHealth::UNAVAILABLE;
     }
 
-    public function markOutage(DateTimeImmutable $startedAt, ?string $reason = null) : self
+    public function markOutage(DateTimeImmutable $startedAt, string|null $reason = null) : self
     {
         return new self(
             directoryId    : $this->directoryId,

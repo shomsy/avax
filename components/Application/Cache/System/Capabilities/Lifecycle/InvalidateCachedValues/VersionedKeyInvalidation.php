@@ -9,11 +9,10 @@ use Override;
 
 final class VersionedKeyInvalidation implements InvalidationStrategy
 {
-    private ?CacheVersion $cacheVersion = null;
+    private CacheVersion|null $cacheVersion = null;
 
     public function __construct(
-        CacheVersion $initialVersion,
-        ?CacheVersion $currentVersion = null,
+        CacheVersion $initialVersion, CacheVersion|null $currentVersion = null,
     ) {
         $this->cacheVersion = $currentVersion ?? $initialVersion;
     }
@@ -49,7 +48,7 @@ final class VersionedKeyInvalidation implements InvalidationStrategy
         return $new;
     }
 
-    public function getCurrentVersion(): ?CacheVersion
+    public function getCurrentVersion() : CacheVersion|null
     {
         return $this->cacheVersion;
     }

@@ -105,7 +105,7 @@ final readonly class PublishSagaCompensated
 
 class SagaCompensationFailure extends RuntimeException
 {
-    public function __construct(string $message = 'Saga compensation failed.', ?Throwable $previous = null)
+    public function __construct(string $message = 'Saga compensation failed.', Throwable|null $previous = null)
     {
         parent::__construct(message: $message, previous: $previous);
     }

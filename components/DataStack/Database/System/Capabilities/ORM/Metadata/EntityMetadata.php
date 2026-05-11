@@ -17,11 +17,11 @@ final readonly class EntityMetadata
         public string $table,
         public array $fields,
         public array $relations,
-        public ?string $repositoryClass = null,
+        public string|null $repositoryClass = null,
     ) {
     }
 
-    public function identifierField(): ?FieldMetadata
+    public function identifierField() : FieldMetadata|null
     {
         foreach ($this->fields as $field) {
             if ($field->id) {
@@ -47,7 +47,7 @@ final readonly class EntityMetadata
         return $values;
     }
 
-    public function propertyForColumn(string $column): ?string
+    public function propertyForColumn(string $column) : string|null
     {
         foreach ($this->fields as $field) {
             if ($field->column === $column) {

@@ -19,9 +19,8 @@ final readonly class AuditEvent
      */
     public function __construct(
         public string            $name,
-        public DateTimeImmutable $occurredAt,
-        ?array                   $context = null,
-        public ?string           $correlationId = null,
+        public DateTimeImmutable $occurredAt, array|null $context = null,
+        public string|null       $correlationId = null,
     )
     {
         $context       ??= [];

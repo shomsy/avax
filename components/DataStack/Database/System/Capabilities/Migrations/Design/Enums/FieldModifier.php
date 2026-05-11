@@ -22,7 +22,7 @@ enum FieldModifier: string
     case Foreign = 'foreign';
     case Comment = 'comment';
 
-    public static function fromInput(string|self|null $value): ?self
+    public static function fromInput(string|self|null $value) : self|null
     {
         if ($value instanceof self) {
             return $value;

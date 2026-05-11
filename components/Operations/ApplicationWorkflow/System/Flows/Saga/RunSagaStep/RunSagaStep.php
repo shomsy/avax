@@ -7,7 +7,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\RunSa
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\SagaDefinition;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\SagaStepDefinition;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StartSaga\SagaInstance;
-use Throwable;
+use Avax\Components\Operations\Resilience\System\PublicSurface\Resilience;
 
 final readonly class RunSagaStep
 {
@@ -34,43 +34,31 @@ final readonly class RunSagaStep
         }
 
         $sagaStepExecutionPolicy = SagaStepExecutionPolicy::fromStep(step: $stepDef);
-        $attempt                 = 1;
+        $maxAttempts = $sagaStepExecutionPolicy->maxRetries + 1;
         $startTime               = microtime(true);
 
-        while ( $attempt <= $sagaStepExecutionPolicy->maxRetries + 1 ) {
-            try {
-                $output   = $stepRunner($stepDef, $sagaInstance->data);
-                $duration = (microtime(true) - $startTime) * 1000;
-
-                return SagaStepResult::success(
-                    stepName  : $currentStep,
-                    output    : is_array($output) ? $output : ['result' => $output],
-                    attempt   : $attempt,
-                    durationMs: $duration,
-                );
-            } catch (Throwable $e) {
-                if (! $sagaStepExecutionPolicy->canRetry(currentAttempt: $attempt)) {
-                    $duration = (microtime(true) - $startTime) * 1000;
-
-                    return SagaStepResult::failure(
-                        stepName  : $currentStep,
-                        error     : $e->getMessage(),
-                        attempt   : $attempt,
-                        durationMs: $duration,
-                    );
-                }
-
-                $attempt++;
-                usleep($sagaStepExecutionPolicy->retryDelayMs * 1000);
-            }
-        }
+        $result = Resilience::retry(function () use ($stepRunner, $stepDef, $sagaInstance) : mixed {
+            return $stepRunner($stepDef, $sagaInstance->data);
+        })
+            ->times($maxAttempts)
+            ->backoff($sagaStepExecutionPolicy->retryDelayMs)
+            ->run();
 
         $duration = (microtime(true) - $startTime) * 1000;
 
+        if ($result->success) {
+            return SagaStepResult::success(
+                stepName  : $currentStep,
+                output    : is_array($result->result) ? $result->result : ['result' => $result->result],
+                attempt   : $result->attempts,
+                durationMs: $duration,
+            );
+        }
+
         return SagaStepResult::failure(
             stepName  : $currentStep,
-            error     : '_MAX_RETRIES_EXCEEDED',
-            attempt   : $attempt,
+            error     : $result->lastException?->getMessage() ?? '_MAX_RETRIES_EXCEEDED',
+            attempt   : $result->attempts,
             durationMs: $duration,
         );
     }

@@ -1,5 +1,30 @@
 # How To Design Components
 
+## Status
+
+**MANDATORY** - This document defines non-negotiable component design rules for AvaX.
+
+## Normative Language
+
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
+*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+
+- **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
+- **MUST NOT / FORBIDDEN**: prohibited pattern.
+- **SHOULD**: expected default unless documented exception exists.
+- **SHOULD NOT**: discouraged pattern requiring justification.
+- **MAY**: optional behavior.
+- **BLOCKER**: violation prevents GREEN status.
+- **HIGH**: must be fixed before production-complete unless explicitly accepted.
+- **MEDIUM**: must be tracked and fixed or explicitly deferred.
+- **LOW**: cleanup or documentation issue.
+
+A rule without an explicit exception **MUST** be treated as mandatory.
+
+Code review **MUST NOT** mark a scope GREEN when a mandatory rule is violated.
+
+---
+
 ## 1. Purpose
 
 This document defines how AvaX components must be designed, completed, composed, exported, tested, and promoted into
@@ -2058,3 +2083,56 @@ Interfaces are cheap.
 Platform muscles are proven.
 
 Build muscles.
+
+---
+
+## Completion Language
+
+### Component Status Definitions
+
+A component **MUST NOT** be marked **production-complete** unless:
+
+- [ ] Public API is stable and documented
+- [ ] Internal runtime behavior is implemented
+- [ ] Fake/local implementation exists
+- [ ] Production implementation boundary exists
+- [ ] Configuration schema is defined
+- [ ] Health check exists
+- [ ] Doctor check exists
+- [ ] Failure model is documented
+- [ ] Reliability policy exists (for external I/O)
+- [ ] Observability events are recorded
+- [ ] Compatibility tests exist (contract tests)
+- [ ] Failure tests exist
+- [ ] Runtime-safety rules are documented
+- [ ] Example usage exists
+- [ ] Documentation exists
+- [ ] Operator diagnostics exist
+
+A component **MUST** be marked **draft** if any of the above are missing.
+
+A component **MUST** be marked **experimental** if it's not proven in production.
+
+A component **MUST** be marked **production-ready** only when all items above are satisfied.
+
+### Stage Completion Language
+
+A stage **MUST NOT** be marked GREEN unless:
+
+- All MANDATORY rules pass
+- All tests pass
+- PHPStan passes (no errors)
+- Component completion criteria are met
+- No BLOCKER/HIGH issue remains unresolved
+- Every deferred MEDIUM issue has owner, reason, and next action
+
+A stage **MUST** be YELLOW if:
+
+- Validation passes but component completion incomplete
+- MEDIUM/HIGH findings remain deferred
+
+A stage **MUST** be RED if:
+
+- Tests fail
+- PHPStan fails with errors
+- Component violates mandatory design rules

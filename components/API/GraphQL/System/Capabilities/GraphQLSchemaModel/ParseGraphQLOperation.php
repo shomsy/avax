@@ -110,7 +110,7 @@ final class ParseGraphQLOperation
         return $token;
     }
 
-    private function isName(?string $token) : bool
+    private function isName(string|null $token) : bool
     {
         return $token !== null && preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $token) === 1;
     }

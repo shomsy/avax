@@ -22,7 +22,7 @@ final class InMemoryIdempotencyStore implements IdempotencyStore
         return $this->get($key) !== null;
     }
 
-    public function get(string $key): ?array
+    public function get(string $key) : array|null
     {
         if (! isset($this->store[$key])) {
             return null;

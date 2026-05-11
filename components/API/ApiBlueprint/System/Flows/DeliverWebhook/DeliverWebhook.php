@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\API\ApiBlueprint\System\Flows\DeliverWebhook;
 
-use Avax\Components\API\ApiBlueprint\System\Capabilities\Webhooks\WebhookRetryPolicy;
 use Avax\Components\API\ApiBlueprint\System\Capabilities\Webhooks\WebhookSignature;
+use Avax\Components\API\ApiBlueprint\System\Foundation\Failure\WebhookDeliveryFailed;
+use Avax\Components\Operations\Resilience\System\PublicSurface\Resilience;
 
 final readonly class DeliverWebhook
 {
@@ -14,24 +15,20 @@ final readonly class DeliverWebhook
      *
      * @return array{url: string, event: string, delivered: bool, attempts: int, signature: string}
      */
-    public function deliver(string $url, string $event, array $payload, string $secret, ?WebhookRetryPolicy $retryPolicy = null) : array
+    public function deliver(string $url, string $event, array $payload, string $secret, int $maxAttempts = 3, int $backoffMs = 1000) : array
     {
-        $retryPolicy = $retryPolicy ?? new WebhookRetryPolicy();
-        $signature   = WebhookSignature::generate($payload, $secret);
+        $signature = WebhookSignature::generate($payload, $secret);
 
         $attempts  = 0;
         $delivered = false;
 
-        foreach ($retryPolicy->attempts() as $_) {
-            $attempts++;
+        $result = Resilience::retry(fn () => $this->sendRequest($url, $event, $payload, $signature))
+            ->times($maxAttempts)
+            ->backoff($backoffMs)
+            ->run();
 
-            $result = $this->sendRequest($url, $event, $payload, $signature);
-
-            if ($result) {
-                $delivered = true;
-                break;
-            }
-        }
+        $attempts  = $result->attempts;
+        $delivered = $result->success;
 
         return [
             'url'       => $url,
@@ -63,6 +60,12 @@ final readonly class DeliverWebhook
 
         $context = stream_context_create($context);
 
-        return @file_get_contents($url, false, $context) !== false;
+        $result = file_get_contents($url, false, $context);
+
+        if ($result === false) {
+            throw new WebhookDeliveryFailed("Webhook request to {$url} failed");
+        }
+
+        return true;
     }
 }

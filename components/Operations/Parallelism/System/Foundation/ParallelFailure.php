@@ -15,7 +15,7 @@ final readonly class ParallelFailure
         public string|int $name,
         public string     $message,
         public int        $code,
-        public ?Throwable $previous = null,
+        public Throwable|null $previous = null,
     ) {}
 
     public function getName() : string|int

@@ -28,7 +28,7 @@ class EntityRepository
      *
      * @throws Throwable
      */
-    public function find(mixed $id, ?string $connectionName = null): ?object
+    public function find(mixed $id, string|null $connectionName = null) : object|null
     {
         return $this->entityManager->find(
             entityClass   : $this->entityClass,
@@ -43,7 +43,7 @@ class EntityRepository
      *
      * @throws Throwable
      */
-    public function findOneBy(array $criteria, ?string $connectionName = null): ?object
+    public function findOneBy(array $criteria, string|null $connectionName = null) : object|null
     {
         return $this->findBy(criteria: $criteria, limit: 1, connectionName: $connectionName)[0] ?? null;
     }
@@ -55,12 +55,7 @@ class EntityRepository
      * @throws Throwable
      */
     public function findBy(
-        array $criteria,
-        ?string $orderBy = null,
-        ?string $direction = null,
-        ?int $limit = null,
-        ?int $offset = null,
-        ?string $connectionName = null,
+        array $criteria, string|null $orderBy = null, string|null $direction = null, int|null $limit = null, int|null $offset = null, string|null $connectionName = null,
     ): array {
         return $this->entityManager->findBy(
             entityClass   : $this->entityClass,
@@ -78,7 +73,7 @@ class EntityRepository
      *
      * @throws Throwable
      */
-    public function findAll(?string $connectionName = null): array
+    public function findAll(string|null $connectionName = null) : array
     {
         return $this->entityManager->findBy(
             entityClass   : $this->entityClass,

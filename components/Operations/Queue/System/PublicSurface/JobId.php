@@ -8,11 +8,11 @@ final readonly class JobId
 {
     public function __construct(
         public string $value,
-        public ?string $queue = null,
+        public string|null $queue = null,
     ) {
     }
 
-    public static function generate(?string $queue = null): self
+    public static function generate(string|null $queue = null) : self
     {
         return new self(
             value: uniqid('job-', true),

@@ -17,7 +17,7 @@ final readonly class ChooseReplicaForRead
         return new PrimaryReplica(index: 0);
     }
 
-    public function chooseSecondary(): ?SecondaryReplica
+    public function chooseSecondary() : SecondaryReplica|null
     {
         if ($this->replicaCount->secondaries === 0) {
             return null;

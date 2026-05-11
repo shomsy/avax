@@ -91,7 +91,7 @@ final readonly class CountMinSketch implements Countable, ProbabilisticStructure
 
     private function hash(mixed $value, int $seed) : int
     {
-        $serialized = is_scalar(value: $value) || $value === null ? (string) $value : serialize(value: $value);
+        $serialized = is_scalar(value: $value) || $value === null ? (string) $value : json_encode(value: $value, flags: JSON_THROW_ON_ERROR);
 
         return crc32(string: $seed . ':' . $serialized) & 0x7FFFFFFF;
     }

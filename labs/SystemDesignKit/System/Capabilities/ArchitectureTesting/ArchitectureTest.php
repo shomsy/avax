@@ -49,7 +49,7 @@ final readonly class ArchitectureTest
      *     detail: string,
      * }
      */
-    public function evaluate(CapacityModel $capacity, ?MessagingModel $messaging = null) : array
+    public function evaluate(CapacityModel $capacity, MessagingModel|null $messaging = null) : array
     {
         $passed = $this->check($capacity, $messaging);
 
@@ -61,7 +61,7 @@ final readonly class ArchitectureTest
         ];
     }
 
-    private function check(CapacityModel $capacity, ?MessagingModel $messaging) : bool
+    private function check(CapacityModel $capacity, MessagingModel|null $messaging) : bool
     {
         return match ($this->type) {
             'hot_path'      => $this->checkHotPath($capacity),
@@ -90,7 +90,7 @@ final readonly class ArchitectureTest
         return true;
     }
 
-    private function checkIdempotency(CapacityModel $capacity, ?MessagingModel $messaging) : bool
+    private function checkIdempotency(CapacityModel $capacity, MessagingModel|null $messaging) : bool
     {
         if ($messaging === null) {
             return false;
@@ -101,7 +101,7 @@ final readonly class ArchitectureTest
         return count($idempotentMessages) > 0;
     }
 
-    private function checkExternalPort(CapacityModel $capacity, ?MessagingModel $messaging) : bool
+    private function checkExternalPort(CapacityModel $capacity, MessagingModel|null $messaging) : bool
     {
         $required = $this->parameters['required'] ?? [];
 
@@ -119,7 +119,7 @@ final readonly class ArchitectureTest
         };
     }
 
-    private function checkDeadLetter(?MessagingModel $messaging) : bool
+    private function checkDeadLetter(MessagingModel|null $messaging) : bool
     {
         if ($messaging === null) {
             return false;
@@ -134,7 +134,7 @@ final readonly class ArchitectureTest
         return true;
     }
 
-    private function checkObservability(?MessagingModel $messaging) : bool
+    private function checkObservability(MessagingModel|null $messaging) : bool
     {
         if ($messaging === null) {
             return false;
@@ -149,7 +149,7 @@ final readonly class ArchitectureTest
         return true;
     }
 
-    private function checkReliability(CapacityModel $capacity, ?MessagingModel $messaging) : bool
+    private function checkReliability(CapacityModel $capacity, MessagingModel|null $messaging) : bool
     {
         $required = $this->parameters['required'] ?? [];
 
@@ -166,7 +166,7 @@ final readonly class ArchitectureTest
         };
     }
 
-    private function checkArchitecture(CapacityModel $capacity, ?MessagingModel $messaging) : bool
+    private function checkArchitecture(CapacityModel $capacity, MessagingModel|null $messaging) : bool
     {
         return match ($this->parameters['expected'] ?? null) {
             'eventual_consistency_reads' => true,
@@ -174,7 +174,7 @@ final readonly class ArchitectureTest
         };
     }
 
-    private function checkMessaging(?MessagingModel $messaging) : bool
+    private function checkMessaging(MessagingModel|null $messaging) : bool
     {
         if ($messaging === null) {
             return false;
@@ -198,7 +198,7 @@ final readonly class ArchitectureTest
         };
     }
 
-    private function explain(CapacityModel $capacity, ?MessagingModel $messaging) : string
+    private function explain(CapacityModel $capacity, MessagingModel|null $messaging) : string
     {
         return match ($this->type) {
             'hot_path'      => $this->explainHotPath($capacity),
@@ -225,7 +225,7 @@ final readonly class ArchitectureTest
         return "Read ratio: {$readRatio}%. Hot path optimization assumed for read-heavy workloads.";
     }
 
-    private function explainIdempotency(?MessagingModel $messaging) : string
+    private function explainIdempotency(MessagingModel|null $messaging) : string
     {
         if ($messaging === null) {
             return "No messaging model configured; idempotency cannot be verified.";
@@ -236,7 +236,7 @@ final readonly class ArchitectureTest
         return "{$count} idempotent messages configured.";
     }
 
-    private function explainExternalPort(CapacityModel $capacity, ?MessagingModel $messaging) : string
+    private function explainExternalPort(CapacityModel $capacity, MessagingModel|null $messaging) : string
     {
         $parts = [];
 
@@ -263,7 +263,7 @@ final readonly class ArchitectureTest
         };
     }
 
-    private function explainDeadLetter(?MessagingModel $messaging) : string
+    private function explainDeadLetter(MessagingModel|null $messaging) : string
     {
         if ($messaging === null) {
             return 'No messaging model; dead letter queue cannot be verified.';
@@ -274,7 +274,7 @@ final readonly class ArchitectureTest
             : 'Dead letter queue not configured';
     }
 
-    private function explainObservability(?MessagingModel $messaging) : string
+    private function explainObservability(MessagingModel|null $messaging) : string
     {
         if ($messaging === null) {
             return 'No messaging model; observability cannot be verified.';
@@ -285,7 +285,7 @@ final readonly class ArchitectureTest
         return "Alert channel: {$alertChannel}";
     }
 
-    private function explainReliability(CapacityModel $capacity, ?MessagingModel $messaging) : string
+    private function explainReliability(CapacityModel $capacity, MessagingModel|null $messaging) : string
     {
         $parts = [];
 
@@ -303,12 +303,12 @@ final readonly class ArchitectureTest
         return "SLO: {$capacity->slo->percentage}%, failure budget: {$capacity->failureBudget->minutesPerMonth} min/month";
     }
 
-    private function explainArchitecture(CapacityModel $capacity, ?MessagingModel $messaging) : string
+    private function explainArchitecture(CapacityModel $capacity, MessagingModel|null $messaging) : string
     {
         return "Architecture assertion evaluated against capacity model.";
     }
 
-    private function explainMessaging(?MessagingModel $messaging) : string
+    private function explainMessaging(MessagingModel|null $messaging) : string
     {
         if ($messaging === null) {
             return 'No messaging model configured.';

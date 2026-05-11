@@ -64,9 +64,7 @@ class ScriptRunnerValidator extends BaseValidator
     /**
      * @param  list<string>|null  $enabledScripts  Scripts to enable, null for all discovered
      */
-    public function __construct(
-        ?string $toolingPath = null,
-        ?array $enabledScripts = null,
+    public function __construct(string|null $toolingPath = null, array|null $enabledScripts = null,
         private bool $discoverScripts = true
     ) {
         parent::__construct('ScriptRunnerValidator');
@@ -186,7 +184,7 @@ class ScriptRunnerValidator extends BaseValidator
     /**
      * Match file extension to executor type
      */
-    private function matchExtension(string $extension): ?string
+    private function matchExtension(string $extension) : string|null
     {
         foreach (self::$scriptExecutors as $type => $config) {
             $ext = ltrim($config['extension'], '.');

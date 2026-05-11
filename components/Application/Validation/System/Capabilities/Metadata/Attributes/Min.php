@@ -11,7 +11,7 @@ final readonly class Min
 {
     public function __construct(
         public int|float $minimum,
-        public ?string $message = null,
+        public string|null $message = null,
     ) {
     }
 

@@ -14,7 +14,7 @@ use RuntimeException;
  */
 abstract class Seeder
 {
-    protected ?QueryBuilder $builder = null;
+    protected QueryBuilder|null $builder = null;
 
     /**
      * Seed the given seeder class.

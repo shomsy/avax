@@ -16,7 +16,7 @@ class StoreObjectsOnS3 implements ObjectStoragePort
 
     private string $region;
 
-    private ?string $endpoint;
+    private string|null $endpoint;
 
     private object $client;
 
@@ -24,8 +24,7 @@ class StoreObjectsOnS3 implements ObjectStoragePort
 
     public function __construct(
         string $bucket,
-        string $region = 'us-east-1',
-        ?string $endpoint = null,
+        string $region = 'us-east-1', string|null $endpoint = null,
     ) {
         $this->bucket = $bucket;
         $this->region = $region;
@@ -48,7 +47,7 @@ class StoreObjectsOnS3 implements ObjectStoragePort
         }
     }
 
-    public function read(string $key): ?string
+    public function read(string $key) : string|null
     {
         try {
             $result = $this->client->getObject([

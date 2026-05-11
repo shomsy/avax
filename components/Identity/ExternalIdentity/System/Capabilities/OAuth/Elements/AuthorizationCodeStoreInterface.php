@@ -20,12 +20,7 @@ interface AuthorizationCodeStoreInterface
         string             $clientId,
         string             $redirectUri,
         array              $scopes,
-        DateTimeImmutable  $expiresAt,
-        ?string            $state = null,
-        ?string            $nonce = null,
-        ?string            $codeChallenge = null,
-        ?PkceMethod        $pkceMethod = null,
-        ?DateTimeImmutable $mfaVerifiedAt = null,
+        DateTimeImmutable $expiresAt, string|null $state = null, string|null $nonce = null, string|null $codeChallenge = null, PkceMethod|null $pkceMethod = null, DateTimeImmutable|null $mfaVerifiedAt = null,
         bool               $phishingResistant = false,
     ) : IssuedAuthorizationCode;
 

@@ -23,7 +23,7 @@ use SensitiveParameter;
 
 final readonly class PushAuthorizationRequest
 {
-    public function __construct(private OidcRequestObjectStoreInterface $oidcRequestObjectStore, private AuditLogInterface $auditLog, private Clock $clock, private ?OAuthClientRegistryInterface $oAuthClientRegistry = null, private ?OidcProviderInterface $oidcProvider = null) {}
+    public function __construct(private OidcRequestObjectStoreInterface $oidcRequestObjectStore, private AuditLogInterface $auditLog, private Clock $clock, private OAuthClientRegistryInterface|null $oAuthClientRegistry = null, private OidcProviderInterface|null $oidcProvider = null) {}
 
     /**
      * @throws DateMalformedStringException
@@ -367,7 +367,7 @@ final readonly class PushAuthorizationRequest
         return $parts === false ? [] : $parts;
     }
 
-    private function normalizeCodeChallengeMethod(?string $value) : ?PkceMethod
+    private function normalizeCodeChallengeMethod(string|null $value) : ?PkceMethod
     {
         if ($value === null || trim(string: $value) === '') {
             return null;

@@ -23,7 +23,7 @@ final class CacheCluster
         $this->detectUnhealthyCacheNode = new DetectUnhealthyCacheNode(failureThreshold: $failureThreshold);
     }
 
-    public function getNode(CacheNodeId $cacheNodeId): ?CacheNode
+    public function getNode(CacheNodeId $cacheNodeId) : CacheNode|null
     {
         return $this->nodes[$cacheNodeId->toString()] ?? null;
     }
@@ -76,7 +76,7 @@ final class CacheCluster
         return $this;
     }
 
-    public function getNodeForKey(CacheKey $cacheKey): ?CacheNode
+    public function getNodeForKey(CacheKey $cacheKey) : CacheNode|null
     {
         return $this->consistentHashRing->getNodeForKey(cacheKey: $cacheKey);
     }

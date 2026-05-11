@@ -9,7 +9,7 @@ use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConf
 
 final readonly class ReadDataObject
 {
-    public function __construct(private ?DataTransferConfig $dataTransferConfig = null) {}
+    public function __construct(private DataTransferConfig|null $dataTransferConfig = null) {}
 
     /**
      * @return array<array-key, mixed>

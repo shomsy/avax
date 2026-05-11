@@ -11,8 +11,8 @@ final readonly class LogoutResult
     public function __construct(
         public bool    $revoked,
         #[SensitiveParameter]
-        public ?string $sessionId = null,
-        public ?string $postLogoutRedirectUri = null,
-        public ?string $state = null,
+        public string|null $sessionId = null,
+        public string|null $postLogoutRedirectUri = null,
+        public string|null $state = null,
     ) {}
 }

@@ -18,7 +18,7 @@ final readonly class PreCommitReportWriter
 
     private string $todoPath;
 
-    public function __construct(?string $reportPath = null, ?string $todoPath = null)
+    public function __construct(string|null $reportPath = null, string|null $todoPath = null)
     {
         $basePath = getcwd();
 
@@ -207,7 +207,7 @@ final readonly class PreCommitReportWriter
     }
 
     /** @return array<string, mixed>|null */
-    public function getLatest(): ?array
+    public function getLatest() : array|null
     {
         $latestPath = $this->reportPath.'/latest.json';
         if (! file_exists($latestPath)) {

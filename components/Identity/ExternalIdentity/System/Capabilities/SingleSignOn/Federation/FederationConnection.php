@@ -24,19 +24,16 @@ final readonly class FederationConnection
         public string               $tenantSlug,
         public string               $name,
         public FederationProvider   $provider,
-        public string               $domain,
-        ?bool                       $ssoOnly = null,
-        ?array                      $groupRoleMap = null,
-        public ?string              $metadataUrl = null,
-        public ?string              $metadataIssuer = null,
+        public string                 $domain, bool|null $ssoOnly = null, array|null $groupRoleMap = null,
+        public string|null            $metadataUrl = null,
+        public string|null            $metadataIssuer = null,
         #[SensitiveParameter]
-        public ?string              $metadataHash = null,
-        public ?DateTimeImmutable   $metadataSyncedAt = null,
+        public string|null            $metadataHash = null,
+        public DateTimeImmutable|null $metadataSyncedAt = null,
         #[SensitiveParameter]
-        public ?string              $domainVerificationToken = null,
-        public ?DateTimeImmutable   $domainVerifiedAt = null,
-        ?FederationConnectionHealth $federationConnectionHealth = null,
-        public ?DateTimeImmutable   $healthCheckedAt = null,
+        public string|null            $domainVerificationToken = null,
+        public DateTimeImmutable|null $domainVerifiedAt = null, FederationConnectionHealth|null $federationConnectionHealth = null,
+        public DateTimeImmutable|null $healthCheckedAt = null,
         public bool                 $breakGlassAllowed = false,
     )
     {

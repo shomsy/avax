@@ -30,7 +30,7 @@ final class RequestValidationResult
         return new self(false, $errors);
     }
 
-    public function toException(): ?ApiContractInvalid
+    public function toException() : ApiContractInvalid|null
     {
         if ($this->valid) {
             return null;

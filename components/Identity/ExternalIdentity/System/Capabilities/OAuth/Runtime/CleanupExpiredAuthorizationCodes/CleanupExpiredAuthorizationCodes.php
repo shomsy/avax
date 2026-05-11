@@ -12,7 +12,7 @@ final readonly class CleanupExpiredAuthorizationCodes
 {
     public function __construct(
         #[SensitiveParameter]
-        private ?PruneExpiredAuthorizationCodesInterface $pruneExpiredAuthorizationCodes,
+        private PruneExpiredAuthorizationCodesInterface|null $pruneExpiredAuthorizationCodes,
         private Clock                                    $clock,
     ) {}
 

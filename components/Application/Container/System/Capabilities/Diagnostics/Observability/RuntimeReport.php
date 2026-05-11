@@ -32,7 +32,7 @@ final readonly class RuntimeReport implements JsonSerializable
      *     frames: array<int, array{kind: string, id: string, services: list<string>, pooledServices: list<string>}>
      * }                                                                                   $scopes
      */
-    public function __construct(public int $registrationRevision, public int $compiledRevision, public bool $compiledAttached, public bool $warmedUp, public string $executionMode, public string $asyncTarget, public string $sliceBoundaryMode, public string $diagnosticsMode, public bool $timelineEnabled, public array $lazyServices, public array $aliases, public array $deferredProviders, public int $sharedServiceCount, public int $scopedServiceCount, public array $metrics, public array $timeline, public array $scopes, public array $hotPath, public ?CompileReport $compileReport = null)
+    public function __construct(public int $registrationRevision, public int $compiledRevision, public bool $compiledAttached, public bool $warmedUp, public string $executionMode, public string $asyncTarget, public string $sliceBoundaryMode, public string $diagnosticsMode, public bool $timelineEnabled, public array $lazyServices, public array $aliases, public array $deferredProviders, public int $sharedServiceCount, public int $scopedServiceCount, public array $metrics, public array $timeline, public array $scopes, public array $hotPath, public CompileReport|null $compileReport = null)
     {
     }
 

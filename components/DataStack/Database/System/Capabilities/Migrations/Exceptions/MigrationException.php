@@ -27,8 +27,7 @@ final class MigrationException extends DatabaseException
     public function __construct(
         private readonly string $migrationClass,
         string $message,
-        private readonly ?string $sql = null,
-        ?Throwable $throwable = null,
+        private readonly ?string $sql = null, Throwable|null $throwable = null,
     ) {
         parent::__construct(message: sprintf('Migration [%s] failed: %s', $this->migrationClass, $message), code: 0, previous: $throwable);
     }
@@ -48,7 +47,7 @@ final class MigrationException extends DatabaseException
      *
      * -- intent: facilitate manual correction of the schema.
      */
-    public function getSql(): ?string
+    public function getSql() : string|null
     {
         return $this->sql;
     }

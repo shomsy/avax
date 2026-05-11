@@ -6,7 +6,7 @@ namespace Avax\Components\Security\Secrets\System\Foundation\Failure;
 
 final class SecretNotFound extends SecretException
 {
-    public function __construct(string $key, ?string $message = null)
+    public function __construct(string $key, string|null $message = null)
     {
         $message ??= "Secret not found: {$key}";
         parent::__construct($message, 404);

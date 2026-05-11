@@ -18,7 +18,7 @@ use Psr\Http\Message\UriInterface;
 final readonly class HttpContext implements HttpContextInterface
 {
     public function __construct(
-        private ?ServerRequestInterface  $serverRequest,
+        private ServerRequestInterface|null $serverRequest,
         private GlobalsProviderInterface $globalsProvider,
     ) {}
 

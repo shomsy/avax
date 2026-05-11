@@ -34,8 +34,7 @@ final class TransactionException extends DatabaseException
      */
     public function __construct(
         string $message,
-        private readonly int $nestingLevel,
-        ?Throwable $previous = null,
+        private readonly int $nestingLevel, Throwable|null $previous = null,
     ) {
         parent::__construct(
             message : sprintf('Transaction failed (Level %d): %s', $this->nestingLevel, $message),

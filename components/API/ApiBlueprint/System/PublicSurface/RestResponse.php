@@ -12,7 +12,7 @@ final readonly class RestResponse
     public function __construct(
         public array             $data = [],
         public int               $status = 200,
-        public ?RestResponseMeta $meta = null,
+        public RestResponseMeta|null $meta = null,
     ) {}
 
     public function toJson() : string

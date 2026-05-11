@@ -13,7 +13,7 @@ final class Response implements ResponseInterface
 {
     private ResponseData $responseData;
 
-    public function __construct(int $statusCode = 200, array $headers = [], ?StreamInterface $stream = null, string $reasonPhrase = '', string $protocolVersion = '1.1')
+    public function __construct(int $statusCode = 200, array $headers = [], StreamInterface|null $stream = null, string $reasonPhrase = '', string $protocolVersion = '1.1')
     {
         if (! $stream instanceof StreamInterface) {
             $stream = Utils::streamFor('');

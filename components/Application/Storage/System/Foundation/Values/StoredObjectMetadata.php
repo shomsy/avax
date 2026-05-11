@@ -8,9 +8,9 @@ final readonly class StoredObjectMetadata
 {
     public function __construct(
         public int     $size,
-        public ?int    $lastModified = null,
-        public ?string $mimeType = null,
-        public ?string $visibility = null,
+        public int|null    $lastModified = null,
+        public string|null $mimeType = null,
+        public string|null $visibility = null,
     ) {}
 
     /**

@@ -15,7 +15,7 @@ final readonly class QueryResult
     public function __construct(
         public array $rows = [],
         public int $affectedRows = 0,
-        public ?string $lastInsertId = null,
+        public string|null $lastInsertId = null,
         public float $elapsedMs = 0.0,
     ) {}
 
@@ -27,7 +27,7 @@ final readonly class QueryResult
         return new self(rows: $rows, elapsedMs: $elapsedMs);
     }
 
-    public static function write(int $affectedRows = 0, ?string $lastInsertId = null, float $elapsedMs = 0.0) : self
+    public static function write(int $affectedRows = 0, string|null $lastInsertId = null, float $elapsedMs = 0.0) : self
     {
         return new self(affectedRows: $affectedRows, lastInsertId: $lastInsertId, elapsedMs: $elapsedMs);
     }

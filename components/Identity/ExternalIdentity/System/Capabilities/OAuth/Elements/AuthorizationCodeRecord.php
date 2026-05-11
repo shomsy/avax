@@ -24,13 +24,13 @@ final readonly class AuthorizationCodeRecord
         public string             $redirectUri,
         public array              $scopes,
         public DateTimeImmutable  $expiresAt,
-        public ?string            $nonce = null,
+        public string|null            $nonce = null,
         #[SensitiveParameter]
-        public ?string            $codeChallenge = null,
+        public string|null            $codeChallenge = null,
         #[SensitiveParameter]
-        public ?PkceMethod        $codeChallengeMethod = null,
-        public ?DateTimeImmutable $usedAt = null,
-        public ?DateTimeImmutable $mfaVerifiedAt = null,
+        public PkceMethod|null        $codeChallengeMethod = null,
+        public DateTimeImmutable|null $usedAt = null,
+        public DateTimeImmutable|null $mfaVerifiedAt = null,
         public bool               $phishingResistant = false,
     ) {}
 

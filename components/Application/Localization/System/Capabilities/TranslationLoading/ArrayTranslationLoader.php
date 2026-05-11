@@ -13,7 +13,7 @@ final class ArrayTranslationLoader implements TranslationLoaderInterface
 
     #[Override]
     /** @return array<string, string> */
-    public function load(string $locale, string $group, ?string $namespace = null) : array
+    public function load(string $locale, string $group, string|null $namespace = null) : array
     {
         $key = ($namespace ? $namespace . '::' : '') . $group;
 
@@ -25,7 +25,7 @@ final class ArrayTranslationLoader implements TranslationLoaderInterface
      *
      * @param array<string, string> $messages
      */
-    public function addMessages(string $locale, string $group, array $messages, ?string $namespace = null) : void
+    public function addMessages(string $locale, string $group, array $messages, string|null $namespace = null) : void
     {
         $key                           = ($namespace ? $namespace . '::' : '') . $group;
         $this->messages[$locale][$key] = array_merge(

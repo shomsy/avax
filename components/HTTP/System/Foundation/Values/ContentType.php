@@ -92,7 +92,7 @@ enum ContentType: string
      *
      * @param string|null $charset Override the default charset. If null, uses utf-8.
      */
-    public function mimeTypeWithCharset(?string $charset = null) : string
+    public function mimeTypeWithCharset(string|null $charset = null) : string
     {
         $charset ??= self::DEFAULT_CHARSET;
 

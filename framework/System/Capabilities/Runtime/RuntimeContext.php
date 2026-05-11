@@ -10,11 +10,11 @@ use Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured;
 
 final class RuntimeContext implements ResettableState
 {
-    private ?RuntimeRequest $runtimeRequest = null;
+    private RuntimeRequest|null $runtimeRequest = null;
 
-    private ?RequestScopeId $requestScopeId = null;
+    private RequestScopeId|null $requestScopeId = null;
 
-    private ?RuntimeResult $runtimeResult = null;
+    private RuntimeResult|null $runtimeResult = null;
 
     public function hasActiveRequest(): bool
     {
@@ -43,17 +43,17 @@ final class RuntimeContext implements ResettableState
         $this->runtimeResult = $result;
     }
 
-    public function currentRequest(): ?RuntimeRequest
+    public function currentRequest() : RuntimeRequest|null
     {
         return $this->runtimeRequest;
     }
 
-    public function currentScopeId(): ?RequestScopeId
+    public function currentScopeId() : RequestScopeId|null
     {
         return $this->requestScopeId;
     }
 
-    public function lastResult(): ?RuntimeResult
+    public function lastResult() : RuntimeResult|null
     {
         return $this->runtimeResult;
     }

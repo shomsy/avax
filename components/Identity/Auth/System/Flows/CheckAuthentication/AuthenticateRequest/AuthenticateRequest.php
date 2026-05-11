@@ -29,9 +29,9 @@ final readonly class AuthenticateRequest
         private AuditLogInterface         $auditLog,
         private Clock                     $clock,
         #[SensitiveParameter]
-        private ?SessionIdentityInterface $sessionIdentity = null,
+        private SessionIdentityInterface|null $sessionIdentity = null,
         #[SensitiveParameter]
-        private ?JwtIdentityInterface     $jwtIdentity = null,
+        private JwtIdentityInterface|null     $jwtIdentity = null,
     ) {}
 
     public function execute(AuthenticationRequest $authenticationRequest) : AuthenticationContext
@@ -144,9 +144,7 @@ final readonly class AuthenticateRequest
         ];
     }
 
-    private function latestMfaMoment(
-        ?DateTimeImmutable $left,
-        ?DateTimeImmutable $right,
+    private function latestMfaMoment(DateTimeImmutable|null $left, DateTimeImmutable|null $right,
     ) : ?DateTimeImmutable
     {
         if (! $left instanceof DateTimeImmutable) {

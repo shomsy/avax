@@ -37,7 +37,7 @@ class StoreObjectsOnLocalFilesystem implements ObjectStoragePort
         return ObjectStorageResult::success();
     }
 
-    public function read(string $key): ?string
+    public function read(string $key) : string|null
     {
         $path = $this->basePath.'/'.$key;
 

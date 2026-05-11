@@ -9,8 +9,8 @@ final readonly class JobResult
     public function __construct(
         public bool $success,
         public mixed $result = null,
-        public ?string $error = null,
-        public ?int $attempts = null,
+        public string|null $error = null,
+        public int|null    $attempts = null,
     ) {
     }
 

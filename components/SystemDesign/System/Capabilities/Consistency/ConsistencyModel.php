@@ -40,7 +40,7 @@ final readonly class ConsistencyModel
         public array           $stalenessBudgets,
         public array           $conflictResolutions,
         public array           $projectionLags,
-        public ?ReplicationLag $replicationLag = null,
+        public ReplicationLag|null $replicationLag = null,
     ) {}
 
     /**

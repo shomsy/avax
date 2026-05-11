@@ -11,7 +11,7 @@ interface TranslatorInterface
      *
      * @param array<string, mixed> $replace
      */
-    public function get(string $key, array $replace = [], ?string $locale = null) : string;
+    public function get(string $key, array $replace = [], string|null $locale = null) : string;
 
     /**
      * Get the current locale.

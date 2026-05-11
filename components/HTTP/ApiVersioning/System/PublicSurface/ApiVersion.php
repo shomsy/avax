@@ -48,6 +48,6 @@ final readonly class ApiVersionResolved
     public function __construct(
         public int                $version,
         public bool               $deprecated,
-        public ?DateTimeInterface $sunset = null,
+        public DateTimeInterface|null $sunset = null,
     ) {}
 }

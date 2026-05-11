@@ -23,10 +23,7 @@ class HttpTimeout extends HttpRequestFailed
      */
     public function __construct(
         string                $message = 'HTTP request timed out',
-        public readonly float $timeoutMs = 0.0,
-        ?string               $url = null,
-        ?string               $method = null,
-        ?Throwable            $previous = null,
+        public readonly float $timeoutMs = 0.0, string|null $url = null, string|null $method = null, Throwable|null $previous = null,
     )
     {
         parent::__construct(

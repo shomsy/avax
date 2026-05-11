@@ -9,8 +9,8 @@ final readonly class StoredObject
     public function __construct(
         public DiskName              $disk,
         public StoragePath           $path,
-        public ?string               $content = null,
-        public ?StoredObjectMetadata $metadata = null,
+        public string|null               $content = null,
+        public StoredObjectMetadata|null $metadata = null,
     ) {}
 
     public function exists() : bool

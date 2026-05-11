@@ -22,11 +22,9 @@ final readonly class CreateServiceBlueprint
 {
     private BlueprintCache $cache;
 
-    private ?ResolveDependencies $dependencies;
+    private ResolveDependencies|null $dependencies;
 
-    public function __construct(
-        ?BlueprintCache $cache = null,
-        ?ResolveDependencies $dependencies = null
+    public function __construct(BlueprintCache|null $cache = null, ResolveDependencies|null $dependencies = null
     ) {
         $this->dependencies = $dependencies;
         $this->cache = $cache ?? new BlueprintCache();
@@ -185,7 +183,7 @@ final readonly class CreateServiceBlueprint
     /**
      * Infers one service id from the property attribute or object type.
      */
-    private function serviceIdFor(ReflectionProperty $property): ?string
+    private function serviceIdFor(ReflectionProperty $property) : string|null
     {
         $attributes = $property->getAttributes(name: Inject::class);
         if ($attributes !== []) {

@@ -14,7 +14,7 @@ final readonly class ChooseTaskRuntime
         private BuildConcurrencyRuntime $builder = new BuildConcurrencyRuntime(),
     ) {}
 
-    public function forConfig(?ConcurrencyConfig $config = null) : TaskRuntimeInterface
+    public function forConfig(ConcurrencyConfig|null $config = null) : TaskRuntimeInterface
     {
         $config = $config ?? ConcurrencyConfig::fromArray([]);
 

@@ -62,7 +62,7 @@ final class DatabaseUnitOfWork
     /**
      * @throws Throwable
      */
-    public function flush(?string $connectionName = null): void
+    public function flush(string|null $connectionName = null) : void
     {
         foreach ($this->new as $objectId => $entity) {
             $this->entityPersister->insert(entity: $entity, connectionName: $connectionName);

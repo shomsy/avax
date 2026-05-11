@@ -9,8 +9,7 @@ use RuntimeException;
 final class ApiContractInvalid extends RuntimeException
 {
     public function __construct(
-        string $field,
-        ?string $reason = null,
+        string $field, string|null $reason = null,
     ) {
         parent::__construct(
             $reason !== null

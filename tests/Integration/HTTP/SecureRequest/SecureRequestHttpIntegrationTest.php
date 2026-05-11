@@ -79,10 +79,7 @@ final class SecureRequestHttpIntegrationTest extends TestCase
      * @param array<string, mixed>|null $headers
      */
     private function createServerRequest(
-        string $method = 'GET',
-        ?array $body = null,
-        ?array $query = null,
-        ?array $headers = null,
+        string $method = 'GET', array|null $body = null, array|null $query = null, array|null $headers = null,
     ) : ServerRequest
     {
         return new ServerRequest(

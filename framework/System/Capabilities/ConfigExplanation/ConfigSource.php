@@ -21,8 +21,8 @@ final readonly class ConfigSource
         public string $key,
         public string $source,
         public mixed $value,
-        public ?string $envVar = null,
-        public ?string $filePath = null,
+        public string|null $envVar = null,
+        public string|null $filePath = null,
     ) {
     }
 

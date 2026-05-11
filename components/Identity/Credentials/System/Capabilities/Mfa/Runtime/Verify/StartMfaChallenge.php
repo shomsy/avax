@@ -33,8 +33,7 @@ final readonly class StartMfaChallenge
         private GeneralMfaStoreInterface   $generalMfaStore,
         private MfaChallengeStoreInterface $mfaChallengeStore,
         private AuditLogInterface          $auditLog,
-        private Clock                      $clock,
-        ?int                               $expiresAfterSeconds = null,
+        private Clock $clock, int|null $expiresAfterSeconds = null,
         private int                        $maxAttempts = 5,
     )
     {
@@ -47,7 +46,7 @@ final readonly class StartMfaChallenge
      * @throws RandomException
      * @throws Unauthenticated
      */
-    public function execute(#[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null) : MfaChallenge
+    public function execute(#[SensitiveParameter] ?string $ipAddress = null, string|null $userAgent = null) : MfaChallenge
     {
         $user = $this->currentAuthentication->read()->user();
 
@@ -72,8 +71,7 @@ final readonly class StartMfaChallenge
         UserId              $userId,
         MfaChallengePurpose $mfaChallengePurpose,
         #[SensitiveParameter]
-        ?string             $ipAddress,
-        ?string             $userAgent,
+        ?string $ipAddress, string|null $userAgent,
     ) : MfaChallenge
     {
         if (! $this->generalMfaStore->isEnabled(userId: $userId)) {
@@ -112,7 +110,7 @@ final readonly class StartMfaChallenge
      * @throws DateMalformedStringException
      * @throws RandomException
      */
-    public function issueForLogin(User $user, #[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null) : MfaChallenge
+    public function issueForLogin(User $user, #[SensitiveParameter] ?string $ipAddress = null, string|null $userAgent = null) : MfaChallenge
     {
         return $this->issueForUserId(
             userId   : $user->getId(),

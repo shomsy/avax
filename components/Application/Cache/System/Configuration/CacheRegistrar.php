@@ -23,7 +23,7 @@ final class CacheRegistrar extends BaseRegisterDependency
     /** @var array<string, array<string, mixed>> */
     private array $namedCaches = [];
 
-    private ?string $compiledCacheDirectory = null;
+    private string|null $compiledCacheDirectory = null;
 
     #[Override]
     public function register(): void

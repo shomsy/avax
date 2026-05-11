@@ -39,26 +39,26 @@ use SensitiveParameter;
 final readonly class OAuth
 {
     public function __construct(
-        private ?RegisterClient            $registerClient,
-        private ?ApproveClientRegistration $approveClientRegistration,
-        private ?UpdateClient              $updateClient,
-        private ?DisableClient             $disableClient,
+        private RegisterClient|null            $registerClient,
+        private ApproveClientRegistration|null $approveClientRegistration,
+        private UpdateClient|null              $updateClient,
+        private DisableClient|null             $disableClient,
         #[SensitiveParameter]
-        private ?RotateClientSecret        $rotateClientSecret,
-        private ?ReadClients               $readClients,
-        private ?ReadWorkloadIdentities    $readWorkloadIdentities,
+        private RotateClientSecret|null        $rotateClientSecret,
+        private ReadClients|null               $readClients,
+        private ReadWorkloadIdentities|null    $readWorkloadIdentities,
         #[SensitiveParameter]
-        private ?AuthorizeCode             $authorizeCode,
+        private AuthorizeCode|null             $authorizeCode,
         #[SensitiveParameter]
-        private ?ExchangeAuthorizationCode $exchangeAuthorizationCode,
+        private ExchangeAuthorizationCode|null $exchangeAuthorizationCode,
         #[SensitiveParameter]
-        private ?ExchangeClientCredentials $exchangeClientCredentials,
+        private ExchangeClientCredentials|null $exchangeClientCredentials,
         #[SensitiveParameter]
-        private ?ExchangeRefreshToken      $exchangeRefreshToken,
+        private ExchangeRefreshToken|null      $exchangeRefreshToken,
         #[SensitiveParameter]
-        private ?RevokeToken               $revokeToken,
+        private RevokeToken|null               $revokeToken,
         #[SensitiveParameter]
-        private ?IntrospectToken           $introspectToken,
+        private IntrospectToken|null           $introspectToken,
     ) {}
 
     public function isConfigured() : bool

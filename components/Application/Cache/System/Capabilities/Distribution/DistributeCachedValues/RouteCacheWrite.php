@@ -13,7 +13,7 @@ final readonly class RouteCacheWrite
     ) {
     }
 
-    public function routeToPrimary(CacheKey $cacheKey): ?CacheNode
+    public function routeToPrimary(CacheKey $cacheKey) : CacheNode|null
     {
         return $this->chooseCacheNodeForKey->choose(cacheKey: $cacheKey);
     }

@@ -8,7 +8,7 @@ use DateTimeImmutable;
 
 final readonly class PasskeyChallengeRecord
 {
-    public function __construct(public string $challengeId, public string $challenge, public PasskeyChallengePurpose $purpose, public DateTimeImmutable $expiresAt, public ?int $userId = null, public ?DateTimeImmutable $usedAt = null)
+    public function __construct(public string $challengeId, public string $challenge, public PasskeyChallengePurpose $purpose, public DateTimeImmutable $expiresAt, public int|null $userId = null, public DateTimeImmutable|null $usedAt = null)
     {
     }
 

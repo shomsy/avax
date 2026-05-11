@@ -130,7 +130,7 @@ final readonly class DependencyCompiler
         ];
     }
 
-    private function candidateFor(string $serviceId, ?DependencyRegistration $dependencyRegistration): mixed
+    private function candidateFor(string $serviceId, DependencyRegistration|null $dependencyRegistration) : mixed
     {
         if ($dependencyRegistration instanceof DependencyRegistration) {
             return $dependencyRegistration->concrete;

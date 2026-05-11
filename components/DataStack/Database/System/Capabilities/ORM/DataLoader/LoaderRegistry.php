@@ -29,7 +29,7 @@ final class LoaderRegistry
         return isset($this->loaders[$relation]);
     }
 
-    public function clear(?string $relation = null): self
+    public function clear(string|null $relation = null) : self
     {
         if ($relation !== null) {
             unset($this->loaders[$relation]);

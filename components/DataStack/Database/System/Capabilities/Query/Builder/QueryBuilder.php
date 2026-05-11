@@ -439,7 +439,7 @@ class QueryBuilder
      *
      * @throws Throwable
      */
-    public function pluck(string $value, ?string $key = null): array
+    public function pluck(string $value, string|null $key = null) : array
     {
         $columns = $key ? [$value, $key] : [$value];
         $results = $this->select(...$columns)->get();

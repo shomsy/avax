@@ -209,7 +209,7 @@ trait HasSoftDeletes
      *                      null
      *                      filter.
      */
-    public function whereNull(string $column, ?string $boolean = null, bool $not = false): QueryBuilder
+    public function whereNull(string $column, string|null $boolean = null, bool $not = false) : QueryBuilder
     {
         $boolean ??= 'AND';
         $operator = $not ? 'IS NOT NULL' : 'IS NULL';

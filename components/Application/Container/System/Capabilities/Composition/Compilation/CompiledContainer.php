@@ -21,7 +21,7 @@ abstract class CompiledContainer
         return isset($this->entries[$serviceId]);
     }
 
-    public function methodFor(string $serviceId): ?string
+    public function methodFor(string $serviceId) : string|null
     {
         return $this->entries[$serviceId] ?? null;
     }

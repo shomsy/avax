@@ -22,7 +22,7 @@ use Random\RandomException;
 
 final readonly class BeginTenantSecurityChange
 {
-    public function __construct(private TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore, private TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore, private ?FederationConnectionStoreInterface $federationConnectionStore, private ?ScimDirectoryStoreInterface $scimDirectoryStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(private TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore, private TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore, private FederationConnectionStoreInterface|null $federationConnectionStore, private ScimDirectoryStoreInterface|null $scimDirectoryStore, private AuditLogInterface $auditLog, private Clock $clock) {}
 
     /**
      * @throws TenantSecurityFailed
@@ -92,7 +92,7 @@ final readonly class BeginTenantSecurityChange
     /**
      * @return array<string, string>
      */
-    private function diff(?TenantSecurityConfiguration $before, TenantSecurityConfiguration $after) : array
+    private function diff(TenantSecurityConfiguration|null $before, TenantSecurityConfiguration $after) : array
     {
         $beforeSnapshot = $this->snapshot(configuration: $before);
         $afterSnapshot  = $this->snapshot(configuration: $after);
@@ -116,7 +116,7 @@ final readonly class BeginTenantSecurityChange
     /**
      * @return array<string, string>
      */
-    private function snapshot(?TenantSecurityConfiguration $tenantSecurityConfiguration) : array
+    private function snapshot(TenantSecurityConfiguration|null $tenantSecurityConfiguration) : array
     {
         if (! $tenantSecurityConfiguration instanceof TenantSecurityConfiguration) {
             return [];

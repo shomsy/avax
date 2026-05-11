@@ -51,7 +51,7 @@ final readonly class Tasks
         return (new RetryTask())->retry($runner, $task, $policy);
     }
 
-    public static function retry(?TaskRetryPolicy $policy = null) : TaskRetryPolicy
+    public static function retry(TaskRetryPolicy|null $policy = null) : TaskRetryPolicy
     {
         return $policy ?? new TaskRetryPolicy();
     }

@@ -8,9 +8,9 @@ use InvalidArgumentException;
 
 final readonly class Port
 {
-    private ?int $port;
+    private int|null $port;
 
-    public function __construct(?int $port, ?Scheme $scheme = null)
+    public function __construct(int|null $port, Scheme|null $scheme = null)
     {
         if ($port !== null && ($port < 1 || $port > 65535)) {
             throw new InvalidArgumentException("Invalid port number: {$port}");

@@ -44,7 +44,7 @@ final class OpenAPITest extends TestCase
         self::assertArrayHasKey('404', $operation['responses']);
     }
 
-    private function endpoint(?ResponseSchema $successResponse = null) : EndpointDefinition
+    private function endpoint(ResponseSchema|null $successResponse = null) : EndpointDefinition
     {
         return new EndpointDefinition(
             path           : '/users',

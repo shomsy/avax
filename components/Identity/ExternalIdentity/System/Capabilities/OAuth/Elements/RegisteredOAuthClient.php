@@ -14,6 +14,6 @@ final readonly class RegisteredOAuthClient
     public function __construct(
         public OAuthClient $client,
         #[SensitiveParameter]
-        public ?string     $plainTextSecret = null,
+        public string|null $plainTextSecret = null,
     ) {}
 }

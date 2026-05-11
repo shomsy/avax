@@ -16,15 +16,15 @@ use Avax\Framework\System\Capabilities\RequestScope\RequestScope;
  */
 final class DetectLeakedState
 {
-    private ?string $snapshotBefore = null;
-    private ?string $snapshotAfter = null;
+    private string|null $snapshotBefore = null;
+    private string|null $snapshotAfter  = null;
 
     /**
      * @var array<string, mixed>
      */
     private array $trackedState = [];
 
-    private ?RequestScope $scope = null;
+    private RequestScope|null $scope = null;
 
     private bool $scopeAvailable = false;
 
@@ -152,7 +152,7 @@ final class DetectLeakedState
         $this->clear();
     }
 
-    private function findMustResetStateByKey(string $key): ?MustResetState
+    private function findMustResetStateByKey(string $key) : MustResetState|null
     {
         foreach (MustResetState::cases() as $state) {
             if ($state->value === $key) {

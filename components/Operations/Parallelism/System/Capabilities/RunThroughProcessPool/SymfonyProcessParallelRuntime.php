@@ -20,13 +20,13 @@ final readonly class SymfonyProcessParallelRuntime implements ParallelRuntimeInt
         private StartWorkerProcess $starter = new StartWorkerProcess(),
         private ReadWorkerResult   $reader = new ReadWorkerResult(),
         private StopWorkerProcess  $stopper = new StopWorkerProcess(),
-        private ?string            $signingKey = null,
+        private string|null $signingKey = null,
     ) {}
 
     /**
      * @param array<string|int, Closure(): mixed> $work
      */
-    public function run(array $work, int|null $maxWorkers = null, ?string $workerScript = null) : ParallelResult
+    public function run(array $work, int|null $maxWorkers = null, string|null $workerScript = null) : ParallelResult
     {
         if (empty($work)) {
             return new ParallelResult(

@@ -25,7 +25,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
         #[SensitiveParameter]
         private string  $secret,
         private string  $algorithm = 'HS256',
-        private ?string $keyId = null,
+        private string|null $keyId = null,
     )
     {
         if ($this->secret === '') {

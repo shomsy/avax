@@ -23,8 +23,7 @@ final readonly class WhereNode
     public function __construct(
         public string $column,
         public string $operator,
-        public mixed $value = null,
-        ?string $boolean = null,
+        public mixed $value = null, string|null $boolean = null,
         public string $type = 'Basic',
     ) {
         $boolean ??= 'AND';

@@ -19,9 +19,9 @@ final class PersistenceTimeline
      */
     private array $entries = [];
 
-    private ?float $startTime = null;
+    private float|null $startTime = null;
 
-    private ?float $endTime = null;
+    private float|null $endTime = null;
 
     /**
      * Records a query execution in the timeline.
@@ -30,7 +30,7 @@ final class PersistenceTimeline
      * @param  float  $duration  Duration in milliseconds
      * @param  float|null  $timestamp  Optional timestamp in milliseconds
      */
-    public function record(string $query, float $duration, ?float $timestamp = null): void
+    public function record(string $query, float $duration, float|null $timestamp = null) : void
     {
         $timestamp ??= microtime(true) * 1000;
         $queryFingerprint = QueryFingerprint::fromQuery($query);
@@ -171,7 +171,7 @@ final class PersistenceTimeline
      *
      * @return array{query: string, duration: float, timestamp: float, fingerprint: QueryFingerprint}|null
      */
-    public function getSlowestQuery(): ?array
+    public function getSlowestQuery() : array|null
     {
         if ($this->entries === []) {
             return null;

@@ -17,8 +17,7 @@ final readonly class SagaEvent
         public string            $type,
         public string            $sagaId,
         public string            $sagaName,
-        public ?string           $stepName,
-        ?array                   $payload,
+        public string|null $stepName, array|null $payload,
         public DateTimeImmutable $occurredAt,
     )
     {
@@ -38,9 +37,7 @@ final readonly class SagaEvent
     public static function create(
         string  $sagaId,
         string  $sagaName,
-        string  $type,
-        ?array  $payload = null,
-        ?string $stepName = null,
+        string $type, array|null $payload = null, string|null $stepName = null,
     ) : self
     {
         $payload ??= [];

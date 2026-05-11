@@ -153,8 +153,7 @@ final class V4HealthEndpointsTest extends TestCase
         self::assertArrayNotHasKey('checks', $data);
     }
 
-    private function registerHealthRoutes(
-        ?CheckReadiness $readiness = null,
+    private function registerHealthRoutes(CheckReadiness|null $readiness = null,
         bool $productionMode = false,
     ): void {
         $liveness = new CheckLiveness();

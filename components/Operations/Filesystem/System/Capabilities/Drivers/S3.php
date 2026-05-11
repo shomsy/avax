@@ -25,7 +25,7 @@ final class S3 implements StorageAdapter
         return trim(string: str_replace(search: '\\', replace: '/', subject: $path), characters: '/');
     }
 
-    public function get(string $path): ?string
+    public function get(string $path) : string|null
     {
         return $this->objects[$this->normalize(path: $path)] ?? null;
     }

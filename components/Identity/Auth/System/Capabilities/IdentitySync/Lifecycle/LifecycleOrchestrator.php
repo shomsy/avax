@@ -15,12 +15,12 @@ final readonly class LifecycleOrchestrator
 {
     public function __construct(private ProvisionableUserSourceInterface $provisionableUserSource, private LifecycleStoreInterface $lifecycleStore, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function activate(UserId $userId, LifecycleSource $lifecycleSource, ?string $reason = null) : LifecycleRecord
+    public function activate(UserId $userId, LifecycleSource $lifecycleSource, string|null $reason = null) : LifecycleRecord
     {
         return $this->transition(userId: $userId, reason: $reason, target: LifecycleState::ACTIVE, source: $lifecycleSource);
     }
 
-    private function transition(UserId $userId, LifecycleState $lifecycleState, LifecycleSource $lifecycleSource, ?string $reason) : LifecycleRecord
+    private function transition(UserId $userId, LifecycleState $lifecycleState, LifecycleSource $lifecycleSource, string|null $reason) : LifecycleRecord
     {
         $user = $this->provisionableUserSource->findById(id: $userId);
 
@@ -79,12 +79,12 @@ final readonly class LifecycleOrchestrator
         $this->provisionableUserSource->deactivate(id: $userId);
     }
 
-    public function suspend(UserId $userId, LifecycleSource $lifecycleSource, ?string $reason = null) : LifecycleRecord
+    public function suspend(UserId $userId, LifecycleSource $lifecycleSource, string|null $reason = null) : LifecycleRecord
     {
         return $this->transition(userId: $userId, reason: $reason, target: LifecycleState::SUSPENDED, source: $lifecycleSource);
     }
 
-    public function deprovision(UserId $userId, LifecycleSource $lifecycleSource, ?string $reason = null) : LifecycleRecord
+    public function deprovision(UserId $userId, LifecycleSource $lifecycleSource, string|null $reason = null) : LifecycleRecord
     {
         return $this->transition(userId: $userId, reason: $reason, target: LifecycleState::DEPROVISIONED, source: $lifecycleSource);
     }

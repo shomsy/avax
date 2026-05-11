@@ -16,9 +16,9 @@ use Throwable;
 final readonly class ReportRuntimeFailure
 {
     public function __construct(
-        private ?Logging $logging = null,
-        private ?string $correlationId = null,
-        private ?string $traceId = null,
+        private Logging|null $logging = null,
+        private string|null  $correlationId = null,
+        private string|null  $traceId = null,
     ) {
     }
 

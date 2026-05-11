@@ -16,37 +16,37 @@ final readonly class Schema
     ) {
     }
 
-    public function create(string $table, callable $callback, ?string $connectionName = null): void
+    public function create(string $table, callable $callback, string|null $connectionName = null) : void
     {
         $this->schemaCapability->create($table, $callback, $connectionName);
     }
 
-    public function table(string $table, callable $callback, ?string $connectionName = null): void
+    public function table(string $table, callable $callback, string|null $connectionName = null) : void
     {
         $this->schemaCapability->table($table, $callback, $connectionName);
     }
 
-    public function drop(string $table, ?string $connectionName = null): void
+    public function drop(string $table, string|null $connectionName = null) : void
     {
         $this->schemaCapability->drop($table, $connectionName);
     }
 
-    public function dropIfExists(string $table, ?string $connectionName = null): void
+    public function dropIfExists(string $table, string|null $connectionName = null) : void
     {
         $this->schemaCapability->dropIfExists($table, $connectionName);
     }
 
-    public function truncate(string $table, ?string $connectionName = null): void
+    public function truncate(string $table, string|null $connectionName = null) : void
     {
         $this->schemaCapability->truncate($table, $connectionName);
     }
 
-    public function createDatabase(string $name, ?string $connectionName = null): void
+    public function createDatabase(string $name, string|null $connectionName = null) : void
     {
         $this->schemaCapability->createDatabase($name, $connectionName);
     }
 
-    public function dropDatabase(string $name, ?string $connectionName = null): void
+    public function dropDatabase(string $name, string|null $connectionName = null) : void
     {
         $this->schemaCapability->dropDatabase($name, $connectionName);
     }

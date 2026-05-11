@@ -19,7 +19,7 @@ final readonly class MatchResult
     /**
      * Get named group value or null if not found.
      */
-    public function group(string $name): ?string
+    public function group(string $name) : string|null
     {
         return $this->matches[$name] ?? null;
     }
@@ -35,7 +35,7 @@ final readonly class MatchResult
     /**
      * Get full match (index 0).
      */
-    public function fullMatch(): ?string
+    public function fullMatch() : string|null
     {
         return $this->matches[0] ?? null;
     }

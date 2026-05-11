@@ -12,9 +12,9 @@ use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Provisio
 final readonly class Provisioning
 {
     public function __construct(
-        private ?SuspendUser     $suspendUser,
-        private ?ReactivateUser  $reactivateUser,
-        private ?DeprovisionUser $deprovisionUser,
+        private SuspendUser|null     $suspendUser,
+        private ReactivateUser|null  $reactivateUser,
+        private DeprovisionUser|null $deprovisionUser,
     ) {}
 
     public function isConfigured() : bool

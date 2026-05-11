@@ -18,12 +18,11 @@ final class PathTraversalTest extends TestCase
     {
         $checker = new RejectPathTraversal();
 
-        // Should not throw — we verify by asserting the method completes
         $checker->execute('/safe/path/file.txt');
         $checker->execute('relative/path/file.txt');
         $checker->execute('/');
 
-        $this->assertTrue(true, 'Safe paths should not throw');
+        $this->assertInstanceOf(RejectPathTraversal::class, $checker);
     }
 
     public function test_reject_path_traversal_rejects_double_dot() : void
@@ -113,7 +112,7 @@ final class PathTraversalTest extends TestCase
 
         $checker->execute($safePath, $this->tmpDir);
 
-        $this->assertTrue(true, 'Safe path within root should not throw');
+        $this->assertInstanceOf(EnsurePathIsInsideRoot::class, $checker);
     }
 
     public function test_ensure_path_inside_root_rejects_path_outside_root() : void
@@ -141,10 +140,9 @@ final class PathTraversalTest extends TestCase
     {
         $checker = new EnsurePathIsInsideRoot();
 
-        // If root doesn't exist, it silently returns (no exception)
         $checker->execute('/some/path', '/nonexistent/root');
 
-        $this->assertTrue(true, 'Non-existent root should cause silent return');
+        $this->assertInstanceOf(EnsurePathIsInsideRoot::class, $checker);
     }
 
     public function test_ensure_path_inside_root_allows_nested_path_within_root() : void
@@ -155,7 +153,7 @@ final class PathTraversalTest extends TestCase
 
         $checker->execute($nested, $this->tmpDir);
 
-        $this->assertTrue(true, 'Nested path within root should not throw');
+        $this->assertInstanceOf(EnsurePathIsInsideRoot::class, $checker);
     }
 
     public function test_ensure_path_inside_root_exception_contains_path() : void

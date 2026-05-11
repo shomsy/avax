@@ -38,7 +38,7 @@ final readonly class CapacityModel
         public LatencyBudget         $latencyBudget,
         public Slo                   $slo,
         public FailureBudget         $failureBudget,
-        public ?FanoutSize           $fanoutSize = null,
+        public FanoutSize|null $fanoutSize = null,
     ) {}
 
     /**

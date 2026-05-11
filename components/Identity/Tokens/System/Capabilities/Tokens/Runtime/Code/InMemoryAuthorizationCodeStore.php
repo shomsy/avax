@@ -20,11 +20,8 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
      */
     public function create(
         string            $subject,
-        DateTimeImmutable $expiresAt,
-        ?string           $clientId = null,
-        array             $scopes = [],
-        ?string           $redirectUri = null,
-        ?string           $state = null,
+        DateTimeImmutable $expiresAt, string|null $clientId = null,
+        array             $scopes = [], string|null $redirectUri = null, string|null $state = null,
     ) : AuthorizationCodeRecord
     {
         $code                    = bin2hex(string: random_bytes(length: 32));

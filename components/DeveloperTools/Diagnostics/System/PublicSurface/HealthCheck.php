@@ -101,7 +101,7 @@ final readonly class CheckResult
     public function __construct(
         public string  $status,
         public float   $latencyMs = 0.0,
-        public ?string $error = null,
+        public string|null $error = null,
         public array   $meta = [],
     ) {}
 

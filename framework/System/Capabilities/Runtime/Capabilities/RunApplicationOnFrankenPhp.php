@@ -28,7 +28,7 @@ final readonly class RunApplicationOnFrankenPhp implements WorkerRuntimeInterfac
         return 'frankenphp';
     }
 
-    public function receive(): ?WorkerRequest
+    public function receive() : WorkerRequest|null
     {
         return ($this->receiver)();
     }

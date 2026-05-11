@@ -124,7 +124,7 @@ final readonly class ExchangeClientCredentials
                                        ));
     }
 
-    private function normalizeAudience(?string $audience) : ?string
+    private function normalizeAudience(string|null $audience) : ?string
     {
         $normalized = trim(string: (string) $audience);
 

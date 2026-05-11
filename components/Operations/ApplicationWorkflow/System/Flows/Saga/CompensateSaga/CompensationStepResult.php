@@ -17,9 +17,9 @@ final readonly class CompensationStepResult
     public function __construct(
         public string             $stepName,
         public CompensationStatus $status,
-        public ?string            $error,
+        public string|null $error,
         public float              $startedAt,
-        public ?float             $finishedAt,
+        public float|null  $finishedAt,
     ) {}
 
     public static function success(string $stepName, float $startedAt) : self

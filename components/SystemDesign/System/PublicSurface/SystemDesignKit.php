@@ -375,8 +375,7 @@ final class SystemDesignKit
      */
     public static function runArchitectureTests(
         string          $testsPath,
-        CapacityModel   $capacity,
-        ?MessagingModel $messaging = null,
+        CapacityModel $capacity, MessagingModel|null $messaging = null,
     ) : array
     {
         return (new RunArchitectureTests())->execute($testsPath, $capacity, $messaging);
@@ -406,7 +405,7 @@ final class SystemDesignKit
      *     }>,
      * }
      */
-    public static function runFailureSimulations(CapacityModel $model, ?array $customFailures = null) : array
+    public static function runFailureSimulations(CapacityModel $model, array|null $customFailures = null) : array
     {
         return (new RunFailureSimulations())->execute($model, $customFailures);
     }

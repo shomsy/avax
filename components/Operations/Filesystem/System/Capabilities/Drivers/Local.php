@@ -88,7 +88,7 @@ final readonly class Local implements StorageAdapter
         return $contents !== null && $this->put(path: $to, contents: $contents);
     }
 
-    public function get(string $path): ?string
+    public function get(string $path) : string|null
     {
         $fullPath = $this->fullPath(path: $path);
 

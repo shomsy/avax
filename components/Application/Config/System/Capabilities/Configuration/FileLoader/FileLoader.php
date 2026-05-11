@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Config\System\Capabilities\Configuration\FileLoader;
 
+use Avax\Components\Operations\Filesystem\System\PublicSurface\Filesystem;
 use Override;
 use RuntimeException;
 
@@ -94,7 +95,8 @@ class FileLoader implements ConfigLoader
      */
     private function loadJsonFile(string $filePath): array
     {
-        $config = json_decode(json: file_get_contents(filename: $filePath), associative: true);
+        $content = Filesystem::read($filePath);
+        $config  = json_decode(json: $content, associative: true);
 
         // Check for and handle JSON decoding errors.
         if (json_last_error() !== JSON_ERROR_NONE) {

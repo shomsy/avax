@@ -9,7 +9,7 @@ namespace Avax\Framework\System\Capabilities\TracingTimeline;
  */
 final class Tracing
 {
-    private ?RuntimeTimeline $runtimeTimeline = null;
+    private RuntimeTimeline|null $runtimeTimeline = null;
 
     public function start(): RuntimeTimeline
     {
@@ -24,9 +24,7 @@ final class Tracing
      * @param  array<string, mixed>  $metadata
      */
     public function record(
-        string $name,
-        ?float $durationMS = null,
-        ?string $category = null,
+        string $name, float|null $durationMS = null, string|null $category = null,
         array $metadata = [],
     ): void {
         $this->runtimeTimeline?->record(
@@ -37,12 +35,12 @@ final class Tracing
         );
     }
 
-    public function timeline(): ?RuntimeTimeline
+    public function timeline() : RuntimeTimeline|null
     {
         return $this->runtimeTimeline;
     }
 
-    public function begin(string $name, ?string $category = null): TraceSpan
+    public function begin(string $name, string|null $category = null) : TraceSpan
     {
         return $this->runtimeTimeline?->begin(
             name    : $name,

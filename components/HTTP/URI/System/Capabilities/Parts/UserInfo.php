@@ -12,7 +12,7 @@ final readonly class UserInfo implements Stringable
     public function __construct(
         private string  $user,
         #[SensitiveParameter]
-        private ?string $password = null,
+        private string|null $password = null,
     ) {}
 
     public function user() : string

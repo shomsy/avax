@@ -23,7 +23,6 @@ use Avax\Components\DataStack\DataTransfer\System\Flows\CreateDataObject\CreateD
 use Avax\Components\DataStack\DataTransfer\System\PublicSurface\DataObject;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 /**
  * Regression tests: CreateDataObject with DataShapeCompiler produces identical results.
@@ -234,7 +233,7 @@ final class DSConstructorPromotedDto
         public string $name,
         #[Optional]
         #[IntegerType]
-        public ?int $version = null,
+        public int|null $version = null,
     ) {}
 }
 
@@ -266,7 +265,7 @@ final class DSOptionalDto
         #[Required]
         public string $name,
         #[Optional]
-        public ?string $tag = null,
+        public string|null $tag = null,
     ) {}
 }
 

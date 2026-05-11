@@ -8,7 +8,7 @@ final class QueryNode
 {
     private array $select = [];
 
-    private ?FromNode $fromNode = null;
+    private FromNode|null $fromNode = null;
 
     private array $joins = [];
 
@@ -18,9 +18,9 @@ final class QueryNode
 
     private array $orders = [];
 
-    private ?int $limit = null;
+    private int|null $limit = null;
 
-    private ?int $offset = null;
+    private int|null $offset = null;
 
     private bool $distinct = false;
 
@@ -33,7 +33,7 @@ final class QueryNode
         return $this;
     }
 
-    public function from(string $table, ?string $alias = null): self
+    public function from(string $table, string|null $alias = null) : self
     {
         $this->fromNode = new FromNode(table: $table, alias: $alias);
 
@@ -101,7 +101,7 @@ final class QueryNode
         return $this->select;
     }
 
-    public function getFrom(): ?FromNode
+    public function getFrom() : FromNode|null
     {
         return $this->fromNode;
     }
@@ -126,12 +126,12 @@ final class QueryNode
         return $this->orders;
     }
 
-    public function getLimit(): ?int
+    public function getLimit() : int|null
     {
         return $this->limit;
     }
 
-    public function getOffset(): ?int
+    public function getOffset() : int|null
     {
         return $this->offset;
     }

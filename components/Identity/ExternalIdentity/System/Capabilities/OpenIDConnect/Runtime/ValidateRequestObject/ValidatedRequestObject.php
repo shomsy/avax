@@ -19,14 +19,13 @@ final readonly class ValidatedRequestObject
         #[SensitiveParameter]
         public string      $requestUri,
         public string      $clientId,
-        public string      $redirectUri,
-        ?array             $scopes = null,
-        public ?string     $state = null,
-        public ?string     $nonce = null,
+        public string          $redirectUri, array|null $scopes = null,
+        public string|null     $state = null,
+        public string|null     $nonce = null,
         #[SensitiveParameter]
-        public ?string     $codeChallenge = null,
+        public string|null     $codeChallenge = null,
         #[SensitiveParameter]
-        public ?PkceMethod $codeChallengeMethod = null,
+        public PkceMethod|null $codeChallengeMethod = null,
     )
     {
         $scopes       ??= [];

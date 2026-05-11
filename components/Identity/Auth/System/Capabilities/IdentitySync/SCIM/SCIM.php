@@ -36,18 +36,18 @@ use SensitiveParameter;
 final readonly class SCIM
 {
     public function __construct(
-        private ?RegisterScimDirectory      $registerScimDirectory,
-        private ?ReadScimDirectories        $readScimDirectories,
+        private RegisterScimDirectory|null      $registerScimDirectory,
+        private ReadScimDirectories|null        $readScimDirectories,
         #[SensitiveParameter]
-        private ?RotateScimToken            $rotateScimToken,
-        private ?MarkScimDirectoryOutage    $markScimDirectoryOutage,
-        private ?RecoverScimDirectoryOutage $recoverScimDirectoryOutage,
-        private ?ProvisionScimUser          $provisionScimUser,
-        private ?DeleteScimUser             $deleteScimUser,
-        private ?ReadScimUsers              $readScimUsers,
-        private ?ReadScimGroups             $readScimGroups,
-        private ?SyncScimGroups             $syncScimGroups,
-        private ?RunScimBulk                $runScimBulk,
+        private RotateScimToken|null            $rotateScimToken,
+        private MarkScimDirectoryOutage|null    $markScimDirectoryOutage,
+        private RecoverScimDirectoryOutage|null $recoverScimDirectoryOutage,
+        private ProvisionScimUser|null          $provisionScimUser,
+        private DeleteScimUser|null             $deleteScimUser,
+        private ReadScimUsers|null              $readScimUsers,
+        private ReadScimGroups|null             $readScimGroups,
+        private SyncScimGroups|null             $syncScimGroups,
+        private RunScimBulk|null                $runScimBulk,
     ) {}
 
     public function isConfigured() : bool
@@ -81,7 +81,7 @@ final readonly class SCIM
     /**
      * @return list<ScimDirectory>
      */
-    public function readDirectories(?string $tenantSlug = null) : array
+    public function readDirectories(string|null $tenantSlug = null) : array
     {
         return $this->readScimDirectoriesOrFail()->execute(tenantSlug: $tenantSlug);
     }

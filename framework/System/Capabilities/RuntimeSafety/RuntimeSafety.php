@@ -21,10 +21,7 @@ final readonly class RuntimeSafety
 
     private ResetVerifier $resetVerifier;
 
-    public function __construct(
-        ?StateLeakDetector $stateLeakDetector = null,
-        ?StaticStateScanner $staticStateScanner = null,
-        ?ResetVerifier $resetVerifier = null,
+    public function __construct(StateLeakDetector|null $stateLeakDetector = null, StaticStateScanner|null $staticStateScanner = null, ResetVerifier|null $resetVerifier = null,
     ) {
         $this->stateLeakDetector = $stateLeakDetector ?? new StateLeakDetector();
         $this->staticStateScanner = $staticStateScanner ?? new StaticStateScanner();

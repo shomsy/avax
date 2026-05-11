@@ -22,9 +22,7 @@ final readonly class VersionedValue
      */
     public static function create(
         mixed $value,
-        string $nodeId,
-        ?VectorClock $vectorClock = null,
-        ?float $timestamp = null,
+        string $nodeId, VectorClock|null $vectorClock = null, float|null $timestamp = null,
     ): self {
         $vectorClock ??= VectorClock::initial($nodeId);
         $timestamp ??= microtime(true);

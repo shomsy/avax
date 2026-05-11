@@ -20,7 +20,7 @@ final readonly class ReadRiskSignals
     /**
      * @return list<RiskSignal>
      */
-    public function execute(?int $userId = null) : array
+    public function execute(int|null $userId = null) : array
     {
         $resolvedUserId = $userId ?? $this->currentAuthentication->read()->user()?->id;
 

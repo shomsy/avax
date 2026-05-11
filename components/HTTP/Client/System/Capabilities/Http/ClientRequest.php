@@ -10,7 +10,7 @@ final readonly class ClientRequest
         public string  $method,
         public string  $url,
         public array   $headers = [],
-        public ?string $body = null,
+        public string|null $body = null,
         public array   $options = [],
     ) {}
 }

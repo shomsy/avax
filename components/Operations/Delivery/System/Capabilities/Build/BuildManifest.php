@@ -35,7 +35,7 @@ class BuildManifest
         return $this->artifacts;
     }
 
-    public function getChecksum(string $path): ?string
+    public function getChecksum(string $path) : string|null
     {
         return $this->checksums[$path] ?? null;
     }

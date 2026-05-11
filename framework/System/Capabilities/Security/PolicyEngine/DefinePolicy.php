@@ -29,7 +29,7 @@ final class DefinePolicy
     /**
      * @param callable(PolicySubject, PolicyAction, PolicyResource, PolicyContext): bool|null $condition
      */
-    public function allow(string $ruleName, ?callable $condition = null): self
+    public function allow(string $ruleName, callable|null $condition = null) : self
     {
         $this->rules[] = new PolicyRule($ruleName, PolicyEffect::Allow, $condition);
 
@@ -39,7 +39,7 @@ final class DefinePolicy
     /**
      * @param callable(PolicySubject, PolicyAction, PolicyResource, PolicyContext): bool|null $condition
      */
-    public function deny(string $ruleName, ?callable $condition = null): self
+    public function deny(string $ruleName, callable|null $condition = null) : self
     {
         $this->rules[] = new PolicyRule($ruleName, PolicyEffect::Deny, $condition);
 

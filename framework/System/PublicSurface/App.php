@@ -79,11 +79,11 @@ final class App
 
     private bool $running = false;
 
-    private ?Closure $exceptionHandler = null;
+    private Closure|null $exceptionHandler = null;
 
-    private ?RunApplication $dispatcher = null;
+    private RunApplication|null $dispatcher = null;
 
-    private ?ResponseFactory $responseFactory = null;
+    private ResponseFactory|null $responseFactory = null;
 
     public function __construct(
         private readonly RuntimeInterface $runtime,

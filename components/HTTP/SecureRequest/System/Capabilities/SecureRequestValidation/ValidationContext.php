@@ -14,8 +14,7 @@ final class ValidationContext
     public function __construct(
         public readonly object  $request,
         /** @var array<string, mixed> */
-        public readonly array   $input,
-        ?DataTransferViolations $violations = null,
+        public readonly array $input, DataTransferViolations|null $violations = null,
     )
     {
         $this->violations = $violations ?? DataTransferViolations::empty();
@@ -23,8 +22,7 @@ final class ValidationContext
 
     public function addViolation(
         string  $field,
-        string  $message,
-        ?string $code = null,
+        string $message, string|null $code = null,
         mixed   $invalidValue = null,
     ) : void
     {

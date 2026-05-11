@@ -20,12 +20,12 @@ final readonly class RefreshTokenRecord
         public string                 $familyId,
         public UserId                 $userId,
         public DateTimeImmutable      $expiresAt,
-        public ?DateTimeImmutable     $mfaVerifiedAt = null,
+        public DateTimeImmutable|null     $mfaVerifiedAt = null,
         public bool                   $phishingResistant = false,
-        public ?string                $clientId = null,
+        public string|null                $clientId = null,
         public array                  $scopes = [],
-        public ?string                $replacementId = null,
-        public ?OAuthSenderConstraint $senderConstraint = null,
+        public string|null                $replacementId = null,
+        public OAuthSenderConstraint|null $senderConstraint = null,
         public bool                   $revoked = false,
     ) {}
 

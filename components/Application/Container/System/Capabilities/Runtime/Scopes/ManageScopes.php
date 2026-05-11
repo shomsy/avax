@@ -13,7 +13,7 @@ use Override;
  */
 final readonly class ManageScopes implements ScopeInterface
 {
-    public function __construct(private ScopeStore $scopeStore, private DependencyPool $dependencyPool, private DisposeInstances $disposeInstances = new DisposeInstances(), private ?ResolutionMetrics $resolutionMetrics = null)
+    public function __construct(private ScopeStore $scopeStore, private DependencyPool $dependencyPool, private DisposeInstances $disposeInstances = new DisposeInstances(), private ResolutionMetrics|null $resolutionMetrics = null)
     {
     }
 
@@ -64,7 +64,7 @@ final readonly class ManageScopes implements ScopeInterface
      * Closes the current scope layer.
      */
     #[Override]
-    public function closeScope(?string $kind = null): void
+    public function closeScope(string|null $kind = null) : void
     {
         $frame = $this->scopeStore->close(kind: $kind);
         foreach ($frame['pooled'] as $serviceId => $options) {
@@ -210,8 +210,7 @@ final readonly class ManageScopes implements ScopeInterface
 
     public function setScoped(
         string $abstract,
-        mixed $instance,
-        ?string $kind = null,
+        mixed $instance, string|null $kind = null,
         bool $disposable = false,
     ): void {
         $kind ??= ScopeKind::Any->value;
@@ -234,8 +233,7 @@ final readonly class ManageScopes implements ScopeInterface
     public function checkoutPooled(
         string $abstract,
         string $kind,
-        int $maxSize,
-        ?bool $resetBeforeReuse = null,
+        int $maxSize, bool|null $resetBeforeReuse = null,
         bool $disposable = false,
     ): array {
         $resetBeforeReuse ??= true;
@@ -277,8 +275,7 @@ final readonly class ManageScopes implements ScopeInterface
         string $abstract,
         mixed $instance,
         string $kind,
-        int $maxSize,
-        ?bool $resetBeforeReuse = null,
+        int $maxSize, bool|null $resetBeforeReuse = null,
         bool $disposable = false,
     ): void {
         $resetBeforeReuse ??= true;

@@ -7,7 +7,6 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Structures\Probabil
 use Avax\Components\DataStack\Data\System\Capabilities\Structures\Foundation\ProbabilisticStructure;
 use Avax\Components\DataStack\Data\System\Foundation\Failure\InvalidCapacity;
 use Countable;
-use Override;
 
 /**
  * HyperLogLog — a probabilistic cardinality estimator.
@@ -84,7 +83,7 @@ final readonly class HyperLogLog implements Countable, ProbabilisticStructure
 
     private function hash(mixed $value) : int
     {
-        $serialized = is_scalar(value: $value) || $value === null ? (string) $value : serialize(value: $value);
+        $serialized = is_scalar(value: $value) || $value === null ? (string) $value : json_encode(value: $value, flags: JSON_THROW_ON_ERROR);
 
         return crc32(string: $serialized) & 0xFFFFFFFF;
     }

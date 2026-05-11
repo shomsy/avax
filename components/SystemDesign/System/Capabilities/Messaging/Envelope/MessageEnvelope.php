@@ -16,8 +16,8 @@ final readonly class MessageEnvelope
 {
     public function __construct(
         public string  $messageId,
-        public ?string $correlationId,
-        public ?string $causationId,
+        public string|null $correlationId,
+        public string|null $causationId,
         public string  $topic,
         public int     $ttlSeconds,
         public int     $version,

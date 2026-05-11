@@ -16,7 +16,7 @@ final class ValidateProjectStructure
 
     private array $passed = [];
 
-    public function __construct(?string $basePath = null)
+    public function __construct(string|null $basePath = null)
     {
         $this->basePath = $basePath ?? dirname(__DIR__, 2);
     }

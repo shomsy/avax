@@ -12,7 +12,7 @@ final readonly class QueryResult
     ) {
     }
 
-    public function first(): ?array
+    public function first() : array|null
     {
         return $this->rows[0] ?? null;
     }

@@ -79,7 +79,7 @@ final readonly class ReadinessCheck
         public string  $name,
         public bool    $ready,
         public float   $latencyMs = 0.0,
-        public ?string $error = null,
+        public string|null $error = null,
     ) {}
 
     public static function check(string $name) : self

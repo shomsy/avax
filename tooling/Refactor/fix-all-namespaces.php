@@ -21,7 +21,7 @@ $basePath = dirname(__DIR__, 2);
 $fixed = 0;
 $checked = 0;
 
-function getExpectedNamespace(string $filePath, array $psr4Map, string $basePath): ?string
+function getExpectedNamespace(string $filePath, array $psr4Map, string $basePath) : string|null
 {
     $relativePath = str_replace($basePath.'/', '', $filePath);
 

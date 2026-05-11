@@ -90,7 +90,7 @@ final class FrequencyTracker
     /**
      * @param  list<string>  $keys
      */
-    public function getLeastFrequent(array $keys): ?string
+    public function getLeastFrequent(array $keys) : string|null
     {
         if ($keys === []) {
             return null;

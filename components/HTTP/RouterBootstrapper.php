@@ -56,7 +56,7 @@ final class RouterBootstrapper
     /**
      * Create bootstrapper with router and route collection.
      */
-    public function __construct(RouterInterface $router, ?RouterRuntimeInterface $routerRuntime = null)
+    public function __construct(RouterInterface $router, RouterRuntimeInterface|null $routerRuntime = null)
     {
         $this->router = $router;
         $this->routerRuntime = $routerRuntime ?? ($router instanceof RouterRuntimeInterface ? $router : null);
@@ -197,7 +197,7 @@ final class RouterBootstrapper
      * @param  callable(self): void  $routes
      * @param  list<MiddlewareInterface>|null  $middleware
      */
-    public function group(callable $routes, ?array $middleware = null, string $prefix = ''): self
+    public function group(callable $routes, array|null $middleware = null, string $prefix = '') : self
     {
         $middleware ??= [];
         $previousMiddleware = $this->activeMiddleware;

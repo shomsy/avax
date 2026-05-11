@@ -188,7 +188,7 @@ class TestFacade extends Facade
     protected static string $accessor = 'test.service';
 
     // Helper for testing to bypass container caching issues globally
-    public static function setContainerMock(?ContainerInterface $container) : void
+    public static function setContainerMock(ContainerInterface|null $container) : void
     {
         static::$container = $container;
     }

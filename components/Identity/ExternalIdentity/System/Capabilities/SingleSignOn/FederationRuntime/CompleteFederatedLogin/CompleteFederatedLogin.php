@@ -47,8 +47,8 @@ final readonly class CompleteFederatedLogin
         private IdGeneratorInterface                $idGenerator,
         private AuditLogInterface                   $auditLog,
         private Clock                               $clock,
-        private ?DeterministicRiskEngine            $deterministicRiskEngine = null,
-        private ?LifecycleOrchestrator              $lifecycleOrchestrator = null,
+        private DeterministicRiskEngine|null $deterministicRiskEngine = null,
+        private LifecycleOrchestrator|null   $lifecycleOrchestrator = null,
     ) {}
 
     /**

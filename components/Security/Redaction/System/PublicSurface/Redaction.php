@@ -15,7 +15,7 @@ use Avax\Components\Security\Redaction\System\Flows\RedactLogData\RedactLogData;
 
 final class Redaction
 {
-    public static function policyEngine(?RedactionConfiguration $config = null) : PolicyEngine
+    public static function policyEngine(RedactionConfiguration|null $config = null) : PolicyEngine
     {
         return new PolicyEngine();
     }

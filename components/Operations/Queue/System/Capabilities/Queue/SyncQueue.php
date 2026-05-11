@@ -13,7 +13,7 @@ final class SyncQueue implements QueueBroker
         $this->queues[$queue][] = $job;
     }
 
-    public function pop(string $queue): ?array
+    public function pop(string $queue) : array|null
     {
         return array_shift($this->queues[$queue] ?? []) ?? null;
     }

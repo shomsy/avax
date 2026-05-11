@@ -132,8 +132,7 @@ final class DataTransfer implements ResettableState
      * @param list<class-string> $classes
      */
     public static function warmupSchemaCache(
-        array $classes,
-        ?string $cacheDir = null,
+        array $classes, string|null $cacheDir = null,
     ): CompiledSchemaMetadata {
         $config = self::config();
         $dir = $cacheDir ?? $config->schemaCacheDir ?? sys_get_temp_dir() . '/avax-data-transfer-cache';

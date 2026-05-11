@@ -183,7 +183,7 @@ final readonly class BootProviders
     /**
      * Returns the metrics system service when available.
      */
-    private function metrics(): ?ResolutionMetrics
+    private function metrics() : ResolutionMetrics|null
     {
         try {
             $metrics = $this->container->get(id: ResolutionMetrics::class);
@@ -197,7 +197,7 @@ final readonly class BootProviders
     /**
      * Returns the resolver system service when available.
      */
-    private function resolver(): ?ResolveDependency
+    private function resolver() : ResolveDependency|null
     {
         try {
             $resolver = $this->container->get(id: ResolveDependency::class);

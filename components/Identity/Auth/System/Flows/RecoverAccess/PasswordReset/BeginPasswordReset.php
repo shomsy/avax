@@ -26,9 +26,8 @@ final readonly class BeginPasswordReset
         #[SensitiveParameter]
         private PasswordResetStoreInterface $passwordResetStore,
         private AuditLogInterface           $auditLog,
-        private Clock                       $clock,
-        ?int                                $expiresAfterSeconds = null,
-        private ?AttemptThrottle            $attemptThrottle = null,
+        private Clock                $clock, int|null $expiresAfterSeconds = null,
+        private AttemptThrottle|null $attemptThrottle = null,
     )
     {
         $expiresAfterSeconds       ??= 3600;

@@ -42,7 +42,7 @@ final readonly class LoadApplicationConfiguration
         return ApplicationConfiguration::fromArray($config);
     }
 
-    private function resolveConfigFile(): ?string
+    private function resolveConfigFile() : string|null
     {
         $path = $this->configPath !== '' ? $this->configPath : $this->defaultProjectPath();
         $file = $path . '/config/app.php';

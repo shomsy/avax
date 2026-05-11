@@ -12,7 +12,7 @@ final readonly class InvalidateCachedValue
 {
     public function __construct(
         private CacheStore $cacheStore,
-        private ?CacheMetrics $cacheMetrics = null,
+        private CacheMetrics|null $cacheMetrics = null,
     ) {
     }
 

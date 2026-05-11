@@ -11,7 +11,7 @@ final class SystemClock
 {
     private static ?DateTimeImmutable $dateTimeImmutable = null;
 
-    public static function create(?string $timezone = null): DateTimeImmutable
+    public static function create(string|null $timezone = null) : DateTimeImmutable
     {
         if (self::$dateTimeImmutable instanceof DateTimeImmutable) {
             $tz = $timezone ?? date_default_timezone_get();

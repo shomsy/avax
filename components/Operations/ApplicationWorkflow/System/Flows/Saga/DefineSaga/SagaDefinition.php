@@ -30,20 +30,12 @@ final readonly class SagaDefinition implements IteratorAggregate
 
     private function __construct(
         public string             $name,
-        public string             $type,
-        ?array                    $steps = null,
-        ?array                    $stepOrder = null,
-        public ?TenantBoundary    $tenantBoundary = null,
-        ?SagaStartCondition       $sagaStartCondition = null,
-        public ?string            $startTrigger = null,
-        ?int                      $timeoutSeconds = null,
-        ?int                      $maxDurationSeconds = null,
-        ?bool                     $allowConcurrent = null,
-        ?bool                     $allowRemoteCompensation = null,
-        public ?string            $description = null,
-        ?SagaStatus               $sagaStatus = null,
-        public ?DateTimeImmutable $createdAt = null,
-        public ?DateTimeImmutable $updatedAt = null,
+        public string                 $type, array|null $steps = null, array|null $stepOrder = null,
+        public TenantBoundary|null    $tenantBoundary = null, SagaStartCondition|null $sagaStartCondition = null,
+        public string|null            $startTrigger = null, int|null $timeoutSeconds = null, int|null $maxDurationSeconds = null, bool|null $allowConcurrent = null, bool|null $allowRemoteCompensation = null,
+        public string|null            $description = null, SagaStatus|null $sagaStatus = null,
+        public DateTimeImmutable|null $createdAt = null,
+        public DateTimeImmutable|null $updatedAt = null,
     )
     {
         $steps                         ??= [];
@@ -70,8 +62,7 @@ final readonly class SagaDefinition implements IteratorAggregate
     }
 
     public static function create(
-        string  $name,
-        ?string $type = null,
+        string $name, string|null $type = null,
         array   $options = [],
     ) : self
     {

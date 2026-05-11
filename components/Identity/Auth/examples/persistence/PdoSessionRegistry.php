@@ -24,7 +24,7 @@ final readonly class PdoSessionRegistry implements SessionRegistryInterface
     /**
      * @throws DateMalformedStringException
      */
-    public function find(#[SensitiveParameter] string $sessionId): ?SessionRecord
+    public function find(#[SensitiveParameter] string $sessionId) : SessionRecord|null
     {
         /** @noinspection SqlNoDataSourceInspection */
         $statement = $this->pdo->prepare(query: 'SELECT * FROM auth_sessions WHERE session_id = :session_id LIMIT 1');

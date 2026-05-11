@@ -37,7 +37,7 @@ final class DetectNPlusOneQuery
      * @param  string  $query  The SQL query string
      * @param  float|null  $timestamp  Optional timestamp in milliseconds
      */
-    public function record(string $query, ?float $timestamp = null): void
+    public function record(string $query, float|null $timestamp = null) : void
     {
         $timestamp ??= microtime(true) * 1000;
         $queryFingerprint = QueryFingerprint::fromQuery($query);

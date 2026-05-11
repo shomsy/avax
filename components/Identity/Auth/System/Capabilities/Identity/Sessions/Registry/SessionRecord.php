@@ -22,10 +22,10 @@ final readonly class SessionRecord
         public DateTimeImmutable  $lastSeenAt,
         public DateTimeImmutable  $idleExpiresAt,
         public DateTimeImmutable  $absoluteExpiresAt,
-        public ?string            $ipCreated = null,
-        public ?string            $userAgentCreated = null,
-        public ?DateTimeImmutable $revokedAt = null,
-        public ?string            $revokeReason = null,
+        public string|null            $ipCreated = null,
+        public string|null            $userAgentCreated = null,
+        public DateTimeImmutable|null $revokedAt = null,
+        public string|null            $revokeReason = null,
     ) {}
 
     public function isActiveAt(DateTimeImmutable $moment) : bool
@@ -62,7 +62,7 @@ final readonly class SessionRecord
         );
     }
 
-    public function withClientMetadata(#[SensitiveParameter] ?string $ipAddress, ?string $userAgent) : self
+    public function withClientMetadata(#[SensitiveParameter] ?string $ipAddress, string|null $userAgent) : self
     {
         return new self(
             sessionId        : $this->sessionId,

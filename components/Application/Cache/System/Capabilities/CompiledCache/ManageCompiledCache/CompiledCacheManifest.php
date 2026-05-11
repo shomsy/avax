@@ -12,8 +12,7 @@ final class CompiledCacheManifest
     /** @var array<string, CompiledCacheManifestEntry> */
     private array $entries = [];
 
-    public function __construct(
-        ?CompiledCacheManifestEntry $compiledCacheManifestEntry = null,
+    public function __construct(CompiledCacheManifestEntry|null $compiledCacheManifestEntry = null,
         private Filesystem $filesystem = new Filesystem(),
     ) {
         if ($compiledCacheManifestEntry instanceof CompiledCacheManifestEntry) {
@@ -81,7 +80,7 @@ final class CompiledCacheManifest
         return $entry->sourceFingerprint === $compiledCacheSources->fingerprint();
     }
 
-    public function get(string $name): ?CompiledCacheManifestEntry
+    public function get(string $name) : CompiledCacheManifestEntry|null
     {
         return $this->entries[$name] ?? null;
     }

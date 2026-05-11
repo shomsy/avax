@@ -184,7 +184,7 @@ final class CacheNodeHealth
     /**
      * Get the health record for a specific node.
      */
-    public function getRecord(string $nodeId): ?NodeHealthRecord
+    public function getRecord(string $nodeId) : NodeHealthRecord|null
     {
         return $this->records[$nodeId] ?? null;
     }

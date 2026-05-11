@@ -12,9 +12,9 @@ final class RuntimeState
 
     private int $bootCount = 0;
 
-    private ?DateTimeImmutable $bootedAt = null;
+    private DateTimeImmutable|null $bootedAt = null;
 
-    private ?DateTimeImmutable $shutdownAt = null;
+    private DateTimeImmutable|null $shutdownAt = null;
 
     public function __construct(private readonly string $runtimeName)
     {
@@ -35,12 +35,12 @@ final class RuntimeState
         return $this->bootCount;
     }
 
-    public function bootedAt(): ?DateTimeImmutable
+    public function bootedAt() : DateTimeImmutable|null
     {
         return $this->bootedAt;
     }
 
-    public function shutdownAt(): ?DateTimeImmutable
+    public function shutdownAt() : DateTimeImmutable|null
     {
         return $this->shutdownAt;
     }

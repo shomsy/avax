@@ -8,7 +8,7 @@ final readonly class FindRecoverableSaga
 {
     public function __construct(private object $store) {}
 
-    public function find(?string $tenantId = null, int $limit = 100) : array
+    public function find(string|null $tenantId = null, int $limit = 100) : array
     {
         $recoverable = [];
         $allSagas    = $this->store->all();
@@ -25,7 +25,7 @@ final readonly class FindRecoverableSaga
         return $recoverable;
     }
 
-    private function isRecoverable(array $data, ?string $tenantId) : bool
+    private function isRecoverable(array $data, string|null $tenantId) : bool
     {
         if (($data['status'] ?? '') !== 'failed') {
             return false;

@@ -11,7 +11,7 @@ final class ConfigurationRepository
      */
     private array $config = [];
 
-    public function get(string $key, ?string $default = null): ?string
+    public function get(string $key, string|null $default = null) : string|null
     {
         $keys = explode('.', $key);
         $current = $this->config;

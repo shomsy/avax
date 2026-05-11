@@ -11,7 +11,7 @@ final readonly class ParsedGraphQLOperation
      */
     public function __construct(
         public string  $type,
-        public ?string $name,
+        public string|null $name,
         public array   $selections,
     ) {}
 

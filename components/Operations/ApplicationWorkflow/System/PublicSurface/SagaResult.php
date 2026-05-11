@@ -15,7 +15,7 @@ final readonly class SagaResult
         public array   $data,
         public array   $completedSteps,
         public array   $stepResults,
-        public ?string $failureReason = null,
+        public string|null $failureReason = null,
     ) {}
 
     public function isSuccessful() : bool

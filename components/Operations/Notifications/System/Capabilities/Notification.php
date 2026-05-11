@@ -31,7 +31,7 @@ abstract class Notification
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(): ?MailNotificationContent
+    public function toMail() : MailNotificationContent|null
     {
         return null;
     }
@@ -39,7 +39,7 @@ abstract class Notification
     /**
      * Get the database representation of the notification.
      */
-    public function toDatabase(): ?array
+    public function toDatabase() : array|null
     {
         return null;
     }

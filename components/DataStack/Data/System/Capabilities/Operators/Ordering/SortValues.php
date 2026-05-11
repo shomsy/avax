@@ -16,13 +16,13 @@ final readonly class SortValues
     }
 
     /** @return array<array-key, mixed> */
-    public function __invoke(?callable $callback = null): array
+    public function __invoke(callable|null $callback = null) : array
     {
         return $this->sort(callback: $callback);
     }
 
     /** @return array<array-key, mixed> */
-    public function sort(?callable $callback = null): array
+    public function sort(callable|null $callback = null) : array
     {
         $items = $this->items;
 

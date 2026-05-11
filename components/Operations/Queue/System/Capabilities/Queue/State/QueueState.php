@@ -18,7 +18,7 @@ final class QueueState
     /** @var array<string, array<string, array<string, mixed>>> */
     private array $queues = [];
 
-    private ?FailedJobsStore $failedJobsStore = null;
+    private FailedJobsStore|null $failedJobsStore = null;
 
     /**
      * Push a job onto the queue.

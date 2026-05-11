@@ -12,7 +12,7 @@ final readonly class CleanupExpiredSessions
 {
     public function __construct(
         #[SensitiveParameter]
-        private ?PruneExpiredSessionsInterface $pruneExpiredSessions,
+        private PruneExpiredSessionsInterface|null $pruneExpiredSessions,
         private Clock                          $clock,
     ) {}
 

@@ -10,8 +10,8 @@ final readonly class Authority implements Stringable
 {
     public function __construct(
         private Host      $host,
-        private ?Port     $port = null,
-        private ?UserInfo $userInfo = null,
+        private Port|null     $port = null,
+        private UserInfo|null $userInfo = null,
     ) {}
 
     public static function fromString(string $authority, Scheme $scheme) : self

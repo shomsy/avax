@@ -34,10 +34,10 @@ final readonly class RefreshAuthentication
         private AuditLogInterface           $auditLog,
         private Clock                       $clock,
         #[SensitiveParameter]
-        private ?RefreshTokenStoreInterface $refreshTokenStore = null,
+        private RefreshTokenStoreInterface|null $refreshTokenStore = null,
         #[SensitiveParameter]
-        private ?JwtIdentityInterface       $jwtIdentity = null,
-        private ?DeterministicRiskEngine    $deterministicRiskEngine = null,
+        private JwtIdentityInterface|null       $jwtIdentity = null,
+        private DeterministicRiskEngine|null    $deterministicRiskEngine = null,
     ) {}
 
     /**

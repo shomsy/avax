@@ -79,7 +79,7 @@ final class Queue
         return $jobId;
     }
 
-    public static function pop(string $queue = 'default'): ?array
+    public static function pop(string $queue = 'default') : array|null
     {
         return self::state()->pop(queue: $queue, now: time());
     }

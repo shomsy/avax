@@ -23,7 +23,7 @@ final class ComponentDiscovery
         $this->components[$componentManifest->name] = $componentManifest;
     }
 
-    public function get(string $name): ?ComponentManifest
+    public function get(string $name) : ComponentManifest|null
     {
         return $this->components[$name] ?? null;
     }

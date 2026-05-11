@@ -27,11 +27,11 @@ final readonly class BackChannelLogout
         private AuditLogInterface             $auditLog,
         private Clock                         $clock,
         #[SensitiveParameter]
-        private ?SessionRegistryInterface     $sessionRegistry = null,
+        private SessionRegistryInterface|null     $sessionRegistry = null,
         #[SensitiveParameter]
-        private ?RefreshTokenStoreInterface   $refreshTokenStore = null,
-        private ?OidcProviderInterface        $oidcProvider = null,
-        private ?OAuthClientRegistryInterface $oAuthClientRegistry = null,
+        private RefreshTokenStoreInterface|null   $refreshTokenStore = null,
+        private OidcProviderInterface|null        $oidcProvider = null,
+        private OAuthClientRegistryInterface|null $oAuthClientRegistry = null,
     ) {}
 
     public function execute(BackChannelLogoutData $backChannelLogoutData) : LogoutResult
@@ -88,7 +88,7 @@ final readonly class BackChannelLogout
     /**
      * @param array<string, mixed>|null $claims
      */
-    private function resolveClientFromClaims(?array $claims) : ?OAuthClient
+    private function resolveClientFromClaims(array|null $claims) : ?OAuthClient
     {
         if ($claims === null || ! $this->oAuthClientRegistry instanceof OAuthClientRegistryInterface) {
             return null;

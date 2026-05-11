@@ -18,7 +18,7 @@ final readonly class RouteInfo
         public string $pattern,
         public string $handler,
         public array $middleware = [],
-        public ?string $name = null,
+        public string|null $name = null,
         public array $constraints = [],
     ) {
     }

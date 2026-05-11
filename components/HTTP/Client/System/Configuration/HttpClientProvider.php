@@ -119,8 +119,7 @@ final class HttpClientProvider
     /**
      * Create a client with strict timeouts.
      */
-    public static function withStrictTimeouts(
-        ?string $baseUrl = null,
+    public static function withStrictTimeouts(string|null $baseUrl = null,
         int     $timeoutMs = 3000,
     ) : HttpClient
     {
@@ -140,8 +139,7 @@ final class HttpClientProvider
     /**
      * Create a client with middleware.
      */
-    public static function withMiddleware(
-        ?string                   $baseUrl = null,
+    public static function withMiddleware(string|null $baseUrl = null,
         ClientMiddlewareInterface ...$middlewares,
     ) : HttpClient
     {
@@ -160,12 +158,8 @@ final class HttpClientProvider
      * @param array<ClientMiddlewareInterface> $middlewares    Middleware to apply
      * @param string|null                      $name           Named client identifier (for caching)
      */
-    public function client(
-        ?string                 $baseUrl = null,
-        ?RequestOptions         $requestOptions = null,
-        ?HttpTransportInterface $httpTransport = null,
-        array                   $middlewares = [],
-        ?string                 $name = null,
+    public function client(string|null $baseUrl = null, RequestOptions|null $requestOptions = null, HttpTransportInterface|null $httpTransport = null,
+                           array       $middlewares = [], string|null $name = null,
     ) : HttpClient
     {
         // Use name-based caching if a name is provided

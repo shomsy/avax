@@ -30,7 +30,7 @@ final class TypedResult
      * @param  array<array-key, mixed>  $row
      * @return T|null
      */
-    public static function fromRow(string $className, array $row): ?object
+    public static function fromRow(string $className, array $row) : object|null
     {
         if ($row === []) {
             return null;

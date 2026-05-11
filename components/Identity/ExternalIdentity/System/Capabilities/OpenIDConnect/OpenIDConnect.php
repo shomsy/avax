@@ -27,12 +27,12 @@ use SensitiveParameter;
 final readonly class OpenIDConnect
 {
     public function __construct(
-        private ?ReadOidcProviderMetadata $readOidcProviderMetadata,
-        private ?ReadOidcJsonWebKeySet    $readOidcJsonWebKeySet,
-        private ?ReadOidcUserInfo         $readOidcUserInfo,
-        private ?PushAuthorizationRequest $pushAuthorizationRequest,
-        private ?Logout                   $logout,
-        private ?BuildJarmResponse        $buildJarmResponse,
+        private ReadOidcProviderMetadata|null $readOidcProviderMetadata,
+        private ReadOidcJsonWebKeySet|null    $readOidcJsonWebKeySet,
+        private ReadOidcUserInfo|null         $readOidcUserInfo,
+        private PushAuthorizationRequest|null $pushAuthorizationRequest,
+        private Logout|null                   $logout,
+        private BuildJarmResponse|null        $buildJarmResponse,
     ) {}
 
     public function isConfigured() : bool

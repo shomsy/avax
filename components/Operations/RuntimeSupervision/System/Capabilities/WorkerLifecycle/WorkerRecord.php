@@ -10,8 +10,8 @@ final readonly class WorkerRecord
         public string $id,
         public string $name,
         public string $status = 'idle',
-        public ?int   $startedAt = null,
-        public ?int   $lastHeartbeat = null,
+        public int|null $startedAt = null,
+        public int|null $lastHeartbeat = null,
         public int    $processedJobs = 0,
         public int    $failedJobs = 0,
     ) {}

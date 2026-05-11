@@ -19,12 +19,9 @@ final readonly class ResolveRequest
      * @param  array<string, mixed>  $overrides
      */
     public function __construct(
-        public string $serviceId,
-        ?array $overrides = null,
-        ?array $context = null,
-        public ?self $parent = null,
-        ?bool $manualInjection = null,
-        public ?string $consumer = null,
+        public string      $serviceId, array|null $overrides = null, array|null $context = null,
+        public self|null   $parent = null, bool|null $manualInjection = null,
+        public string|null $consumer = null,
     ) {
         $overrides ??= [];
         $context ??= [];

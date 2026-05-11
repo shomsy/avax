@@ -11,8 +11,7 @@ class SecureRequestResolutionFailed extends RuntimeException
 {
     public function __construct(
         string     $message = 'SecureRequest could not be resolved from current HTTP request.',
-        int        $code = 500,
-        ?Throwable $previous = null,
+        int $code = 500, Throwable|null $previous = null,
     )
     {
         parent::__construct($message, $code, $previous);

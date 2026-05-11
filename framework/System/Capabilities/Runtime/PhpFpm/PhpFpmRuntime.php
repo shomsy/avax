@@ -30,8 +30,7 @@ final readonly class PhpFpmRuntime
     public function handleGlobals(
         array $server,
         array $query = [],
-        array $parsedBody = [],
-        ?string $body = null,
+        array $parsedBody = [], string|null $body = null,
     ): RuntimeResponse {
         return $this->handle(
             runtimeRequest: $this->phpFpmRequestReader->read(

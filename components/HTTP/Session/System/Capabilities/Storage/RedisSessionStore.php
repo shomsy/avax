@@ -12,7 +12,7 @@ final class RedisSessionStore implements SessionStoreInterface
     /** @var array<string, array<string, mixed>> */
     private array $fallback = [];
 
-    private ?Redis $redis = null;
+    private Redis|null $redis = null;
 
     private readonly string $prefix;
 

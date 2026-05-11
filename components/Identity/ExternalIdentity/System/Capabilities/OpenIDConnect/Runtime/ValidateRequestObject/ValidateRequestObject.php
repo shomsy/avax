@@ -12,7 +12,7 @@ use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\
 
 final readonly class ValidateRequestObject
 {
-    public function __construct(private ?OidcRequestObjectStoreInterface $oidcRequestObjectStore = null, private ?OAuthClientRegistryInterface $oAuthClientRegistry = null) {}
+    public function __construct(private OidcRequestObjectStoreInterface|null $oidcRequestObjectStore = null, private OAuthClientRegistryInterface|null $oAuthClientRegistry = null) {}
 
     public function execute(ValidateRequestObjectData $validateRequestObjectData) : ValidatedRequestObject
     {
@@ -119,7 +119,7 @@ final readonly class ValidateRequestObject
         return $parts === false ? [] : $parts;
     }
 
-    private function normalizeCodeChallengeMethod(?string $value) : ?PkceMethod
+    private function normalizeCodeChallengeMethod(string|null $value) : ?PkceMethod
     {
         if ($value === null || trim(string: $value) === '') {
             return null;

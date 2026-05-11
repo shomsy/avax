@@ -24,8 +24,7 @@ final readonly class ResolveCallArguments
     public function resolve(
         array $parameters,
         array $overrides,
-        ResolveDependency $resolveDependency,
-        ?ResolveRequest $resolveRequest = null,
+        ResolveDependency $resolveDependency, ResolveRequest|null $resolveRequest = null,
     ): array {
         return $this->resolvePlan(
             overrides: $overrides,
@@ -44,8 +43,7 @@ final readonly class ResolveCallArguments
     public function resolvePlan(
         ResolvePlan $resolvePlan,
         array $overrides,
-        ResolveDependency $resolveDependency,
-        ?ResolveRequest $resolveRequest = null,
+        ResolveDependency $resolveDependency, ResolveRequest|null $resolveRequest = null,
     ): array {
         return $this->resolveDependencies->resolvePlan(
             overrides: $overrides,

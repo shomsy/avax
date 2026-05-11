@@ -118,7 +118,7 @@ final readonly class TreeNodeStorage
     /**
      * Check if a value exists in the tree using a comparison callback.
      */
-    public function contains(mixed $value, ?callable $compare = null) : bool
+    public function contains(mixed $value, callable|null $compare = null) : bool
     {
         $compare ??= static fn (mixed $a, mixed $b) : bool => $a === $b;
 

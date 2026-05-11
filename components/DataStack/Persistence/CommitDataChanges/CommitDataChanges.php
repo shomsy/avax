@@ -37,7 +37,7 @@ final class CommitDataChanges
         return (object) ['status' => 'rolled_back'];
     }
 
-    public function commit(?object $transaction = null): void
+    public function commit(object|null $transaction = null) : void
     {
         if (method_exists($this->databaseRuntime, 'commit')) {
             $this->databaseRuntime->commit();

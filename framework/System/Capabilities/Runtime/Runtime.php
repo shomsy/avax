@@ -30,7 +30,7 @@ final readonly class Runtime implements RuntimeInterface
         private EnvironmentName $environmentName,
         private Clock $clock,
         private string $runtimeName,
-        private ?Closure $httpHandler = null,
+        private Closure|null $httpHandler = null,
         private array $consoleCommands = [],
     ) {
     }
@@ -80,7 +80,7 @@ final readonly class Runtime implements RuntimeInterface
         return $this->runtimeName;
     }
 
-    public function httpHandler(): ?Closure
+    public function httpHandler() : Closure|null
     {
         return $this->httpHandler;
     }

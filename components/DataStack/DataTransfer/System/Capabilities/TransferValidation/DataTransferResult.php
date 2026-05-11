@@ -7,8 +7,8 @@ namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\TransferVal
 final readonly class DataTransferResult
 {
     private function __construct(
-        private ?object $object,
-        private ?DataTransferFailure $dataTransferFailure,
+        private object|null              $object,
+        private DataTransferFailure|null $dataTransferFailure,
     ) {}
 
     public static function success(object $object) : self

@@ -8,7 +8,7 @@ use DateTimeImmutable;
 
 final readonly class LifecycleRecord
 {
-    public function __construct(public int $userId, public LifecycleState $state, public LifecycleSource $source, public DateTimeImmutable $changedAt, public ?string $reason = null) {}
+    public function __construct(public int $userId, public LifecycleState $state, public LifecycleSource $source, public DateTimeImmutable $changedAt, public string|null $reason = null) {}
 
     public function allowsAuthentication() : bool
     {

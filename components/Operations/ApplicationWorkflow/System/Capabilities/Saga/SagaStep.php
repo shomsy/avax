@@ -10,9 +10,9 @@ final readonly class SagaStep
 {
     public Closure $action;
 
-    public ?Closure $compensation;
+    public Closure|null $compensation;
 
-    public function __construct(public string $name, callable $action, ?callable $compensation = null)
+    public function __construct(public string $name, callable $action, callable|null $compensation = null)
     {
         $this->action       = Closure::fromCallable($action);
         $this->compensation = $compensation === null ? null : Closure::fromCallable($compensation);

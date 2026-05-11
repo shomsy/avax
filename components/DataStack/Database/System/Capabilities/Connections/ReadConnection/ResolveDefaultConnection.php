@@ -16,7 +16,7 @@ final readonly class ResolveDefaultConnection
     {
     }
 
-    public function resolve(?string $connectionName = null): string
+    public function resolve(string|null $connectionName = null) : string
     {
         return $connectionName ?? $this->config['default'] ?? 'mysql';
     }

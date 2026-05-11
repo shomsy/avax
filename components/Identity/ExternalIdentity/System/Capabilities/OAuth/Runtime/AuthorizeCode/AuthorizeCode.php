@@ -36,8 +36,8 @@ final readonly class AuthorizeCode
         private AuthorizationCodeStoreInterface $authorizationCodeStore,
         private AuditLogInterface               $auditLog,
         private Clock                           $clock,
-        private ?OidcProviderInterface          $oidcProvider = null,
-        private ?ValidateRequestObject          $validateRequestObject = null,
+        private OidcProviderInterface|null $oidcProvider = null,
+        private ValidateRequestObject|null $validateRequestObject = null,
     ) {}
 
     /**

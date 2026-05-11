@@ -18,7 +18,6 @@ interface TotpInterface
     public function verify(
         string            $secret,
         string            $code,
-        DateTimeImmutable $moment,
-        ?int              $lastAcceptedTimeStep = null,
+        DateTimeImmutable $moment, int|null $lastAcceptedTimeStep = null,
     ) : TotpVerification;
 }

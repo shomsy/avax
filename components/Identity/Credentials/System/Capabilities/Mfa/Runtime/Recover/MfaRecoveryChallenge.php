@@ -15,8 +15,8 @@ final readonly class MfaRecoveryChallenge
     public function __construct(
         public bool               $dispatched,
         #[SensitiveParameter]
-        public ?string            $token = null,
-        public ?DateTimeImmutable $expiresAt = null,
+        public string|null            $token = null,
+        public DateTimeImmutable|null $expiresAt = null,
     ) {}
 
     public static function hidden() : self

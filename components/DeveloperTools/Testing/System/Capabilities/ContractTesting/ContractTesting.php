@@ -67,7 +67,7 @@ final readonly class ComponentContractResult
         public string  $component,
         public bool    $passed,
         public array   $checks = [],
-        public ?string $error = null,
+        public string|null $error = null,
     ) {}
 
     public function toArray() : array

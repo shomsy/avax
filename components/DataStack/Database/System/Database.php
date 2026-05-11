@@ -76,7 +76,7 @@ final readonly class Database implements DatabaseInterface
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function table(string $table, ?string $connectionName = null): QueryBuilder
+    public function table(string $table, string|null $connectionName = null) : QueryBuilder
     {
         return $this->query->from(table: $table, connectionName: $connectionName);
     }

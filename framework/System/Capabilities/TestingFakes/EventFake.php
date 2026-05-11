@@ -32,7 +32,7 @@ final class EventFake
         $this->dispatchedPayloads[$event][] = $payload;
     }
 
-    public function assertDispatched(string $event, ?int $times = null): self
+    public function assertDispatched(string $event, int|null $times = null) : self
     {
         if (! $this->wasDispatched($event)) {
             throw new TestingFakeException(

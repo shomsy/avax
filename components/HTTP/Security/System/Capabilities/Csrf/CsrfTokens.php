@@ -106,7 +106,7 @@ final readonly class CsrfTokens
         return bin2hex(random_bytes(32));
     }
 
-    public function validateToken(?string $token) : bool
+    public function validateToken(string|null $token) : bool
     {
         if ($token === null) {
             return false;

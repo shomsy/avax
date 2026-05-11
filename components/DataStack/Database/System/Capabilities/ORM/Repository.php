@@ -24,7 +24,7 @@ abstract class Repository
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function findById(int $id): ?object
+    public function findById(int $id) : object|null
     {
         return $this->findOneBy(conditions: ['id' => $id]);
     }
@@ -38,7 +38,7 @@ abstract class Repository
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function findOneBy(array $conditions): ?object
+    public function findOneBy(array $conditions) : object|null
     {
         try {
             $query = $this->query();
@@ -112,7 +112,7 @@ abstract class Repository
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function findAll(?int $limit = null, int $offset = 0): array
+    public function findAll(int|null $limit = null, int $offset = 0) : array
     {
         $limit ??= 100;
 
@@ -133,11 +133,7 @@ abstract class Repository
      * @throws Throwable
      */
     public function findBy(
-        array $conditions,
-        ?string $orderBy = null,
-        ?string $direction = null,
-        ?int $limit = null,
-        ?int $offset = null,
+        array $conditions, string|null $orderBy = null, string|null $direction = null, int|null $limit = null, int|null $offset = null,
     ): array {
         try {
             $query = $this->query();

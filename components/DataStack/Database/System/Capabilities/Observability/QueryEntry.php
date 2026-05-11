@@ -19,7 +19,7 @@ final readonly class QueryEntry
         public string $type = 'unknown',
         public string $connection = '',
         public int $affectedRows = 0,
-        public ?string $error = null,
+        public string|null $error = null,
     ) {
     }
 
@@ -32,8 +32,7 @@ final readonly class QueryEntry
         float $durationMs = 0.0,
         string $type = 'unknown',
         string $connection = '',
-        int $affectedRows = 0,
-        ?string $error = null,
+        int $affectedRows = 0, string|null $error = null,
     ): self {
         return new self(
             sql: $sql,

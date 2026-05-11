@@ -68,21 +68,10 @@ final readonly class QueryState
      * @param  BindingBag  $bindingBag  The immutable container for secure, parameterized query
      *                                  tokens.
      */
-    public function __construct(
-        ?array $columns = null,
-        public ?string $from = null,
-        ?array $joins = null,
-        ?array $wheres = null,
-        ?array $groups = null,
-        ?array $havings = null,
-        ?array $orders = null,
-        public ?int $limit = null,
-        public ?int $offset = null,
-        ?array $values = null,
-        ?array $updateColumns = null,
-        ?bool $distinct = null,
-        ?array $ctes = null,
-        ?array $windows = null,
+    public function __construct(array|null         $columns = null,
+                                public string|null $from = null, array|null $joins = null, array|null $wheres = null, array|null $groups = null, array|null $havings = null, array|null $orders = null,
+                                public int|null    $limit = null,
+                                public int|null    $offset = null, array|null $values = null, array|null $updateColumns = null, bool|null $distinct = null, array|null $ctes = null, array|null $windows = null,
         private BindingBag $bindingBag = new BindingBag(),
     ) {
         $columns ??= ['*'];
@@ -153,7 +142,7 @@ final readonly class QueryState
      * @param  int|null  $limit  The maximum record volume allowed in the result set.
      * @return self A fresh QueryState instance with the applied limit.
      */
-    public function withLimit(?int $limit): self
+    public function withLimit(int|null $limit) : self
     {
         return new self(
             ...[...get_object_vars(object: $this), 'limit' => $limit],
@@ -170,7 +159,7 @@ final readonly class QueryState
      * @param  int|null  $offset  The technical volume of records to skip.
      * @return self A fresh QueryState instance with the applied offset.
      */
-    public function withOffset(?int $offset): self
+    public function withOffset(int|null $offset) : self
     {
         return new self(
             ...[...get_object_vars(object: $this), 'offset' => $offset],

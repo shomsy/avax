@@ -79,7 +79,7 @@ final class CacheHealthDetector
     /**
      * Get cached health status if still valid.
      */
-    private function getCachedStatus(string $storeId, Timestamp $timestamp): ?CacheHealthStatus
+    private function getCachedStatus(string $storeId, Timestamp $timestamp) : CacheHealthStatus|null
     {
         if (! isset($this->statusCache[$storeId])) {
             return null;
@@ -204,8 +204,7 @@ final class CacheHealthDetector
     /**
      * Create a new health detector with default settings.
      */
-    public static function create(
-        ?Clock $clock = null,
+    public static function create(Clock|null $clock = null,
         int $latencyThresholdMs = 100,
         float $memoryUsageThreshold = 90.0,
         float $hitRateThreshold = 0.5,
@@ -337,7 +336,7 @@ final class CacheHealthDetector
      *
      * Override this method in a subclass to support specific cache backends.
      */
-    private function getHitRate(): ?float
+    private function getHitRate() : float|null
     {
         return $this->hitRateThreshold >= 0.0 ? null : 1.0;
     }

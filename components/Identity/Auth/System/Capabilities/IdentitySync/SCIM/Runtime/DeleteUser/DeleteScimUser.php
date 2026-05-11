@@ -22,7 +22,7 @@ use SensitiveParameter;
 
 final readonly class DeleteScimUser
 {
-    public function __construct(private ProvisionableUserSourceInterface $provisionableUserSource, private ScimDirectoryStoreInterface $scimDirectoryStore, private ScimProvisionedIdentityStoreInterface $scimProvisionedIdentityStore, private AuditLogInterface $auditLog, private Clock $clock, private ?LifecycleOrchestrator $lifecycleOrchestrator = null, private ?AttemptThrottle $attemptThrottle = null) {}
+    public function __construct(private ProvisionableUserSourceInterface $provisionableUserSource, private ScimDirectoryStoreInterface $scimDirectoryStore, private ScimProvisionedIdentityStoreInterface $scimProvisionedIdentityStore, private AuditLogInterface $auditLog, private Clock $clock, private LifecycleOrchestrator|null $lifecycleOrchestrator = null, private AttemptThrottle|null $attemptThrottle = null) {}
 
     /**
      * @throws ScimFailed

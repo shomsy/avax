@@ -17,7 +17,7 @@ final readonly class ConfigSchemaViolation
         public string $severity,
         public string $key,
         public string $message,
-        public ?string $remediation = null,
+        public string|null $remediation = null,
     ) {
     }
 

@@ -53,7 +53,7 @@ final class FakeHttpClient implements HttpClientInterface
      *
      * @param array<string, RecordedHttpResponse> $responses
      */
-    public static function fromResponses(array $responses, ?string $baseUrl = null) : self
+    public static function fromResponses(array $responses, string|null $baseUrl = null) : self
     {
         return new self(responses: $responses, baseUrl: $baseUrl);
     }

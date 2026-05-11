@@ -20,9 +20,8 @@ final readonly class OrderNode
      * @param  string  $type  The classification of the sorting node (e.g., 'Basic', 'Raw').
      */
     public function __construct(
-        public ?string $column = null,
-        ?string $direction = null,
-        public ?string $sql = null,
+        public string|null $column = null, string|null $direction = null,
+        public string|null $sql = null,
         public string $type = 'Basic',
     ) {
         $direction ??= 'ASC';

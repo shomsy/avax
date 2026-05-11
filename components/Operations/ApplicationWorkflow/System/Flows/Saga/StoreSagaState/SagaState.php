@@ -19,11 +19,8 @@ final readonly class SagaState implements ArrayAccess, Countable, IteratorAggreg
 
     private int $currentStepIndex;
 
-    public function __construct(
-        ?array          $events = null,
-        ?array          $data = null,
-        private ?string $currentStep = null,
-        ?int            $currentStepIndex = null,
+    public function __construct(array|null          $events = null, array|null $data = null,
+                                private string|null $currentStep = null, int|null $currentStepIndex = null,
         private array   $stepResults = [],
     )
     {

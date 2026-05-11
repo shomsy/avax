@@ -8,15 +8,15 @@ final readonly class PolicyDecision
 {
     public function __construct(
         public bool    $allowed,
-        public ?string $reason,
+        public string|null $reason,
     ) {}
 
-    public static function deny(?string $reason) : self
+    public static function deny(string|null $reason) : self
     {
         return new self(false, $reason);
     }
 
-    public static function allow(?string $reason = null) : self
+    public static function allow(string|null $reason = null) : self
     {
         return new self(true, $reason);
     }

@@ -23,7 +23,7 @@ enum SagaInstanceStatus: string
 
 final readonly class SagaInstance
 {
-    private function __construct(public string $id, public string $definitionName, public string $type, public SagaInstanceStatus $status, public int $currentStepIndex, public ?string $currentStepName, public array $data, public array $completedSteps, public array $stepResults, public ?DateTimeImmutable $startedAt, public ?DateTimeImmutable $completedAt, public ?DateTimeImmutable $timeoutAt, public ?string $correlationId, public ?string $tenantId) {}
+    private function __construct(public string $id, public string $definitionName, public string $type, public SagaInstanceStatus $status, public int $currentStepIndex, public string|null $currentStepName, public array $data, public array $completedSteps, public array $stepResults, public DateTimeImmutable|null $startedAt, public DateTimeImmutable|null $completedAt, public DateTimeImmutable|null $timeoutAt, public string|null $correlationId, public string|null $tenantId) {}
 
     /**
      * @throws DateMalformedStringException

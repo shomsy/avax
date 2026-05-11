@@ -89,7 +89,7 @@ final class Saga
      * @param Closure      $action       The action to execute
      * @param Closure|null $compensation The compensation to run on failure
      */
-    public function step(string $name, Closure $action, ?Closure $compensation = null) : self
+    public function step(string $name, Closure $action, Closure|null $compensation = null) : self
     {
         $this->steps[] = new SagaStep(
             name        : $name,
@@ -325,7 +325,7 @@ final readonly class SagaResult
         public array   $data,
         public array   $completedSteps,
         public array   $stepResults,
-        public ?string $failureReason = null,
+        public string|null $failureReason = null,
     ) {}
 
     /**

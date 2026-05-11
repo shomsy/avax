@@ -33,8 +33,7 @@ final readonly class StartMfaEnrollment
         private MfaStoreInterface     $mfaStore,
         private TotpInterface         $totp,
         private AuditLogInterface     $auditLog,
-        private Clock                 $clock,
-        ?string                       $issuer = null,
+        private Clock $clock, string|null $issuer = null,
         private int                   $expiresAfterSeconds = 900,
     )
     {

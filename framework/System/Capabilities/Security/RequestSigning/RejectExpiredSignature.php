@@ -10,8 +10,7 @@ final readonly class RejectExpiredSignature
 {
     public static function check(
         SignatureTimestamp $timestamp,
-        int $toleranceSeconds,
-        ?int $currentTime = null,
+        int $toleranceSeconds, int|null $currentTime = null,
     ): SignatureVerificationResult {
         $now = $currentTime ?? time();
 

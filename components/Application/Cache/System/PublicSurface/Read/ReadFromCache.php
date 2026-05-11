@@ -10,7 +10,7 @@ use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheRegistry;
 
 readonly class ReadFromCache
 {
-    public function __construct(private CacheRegistry $cacheRegistry, private ?CompiledCacheContract $compiledCacheContract = null)
+    public function __construct(private CacheRegistry $cacheRegistry, private CompiledCacheContract|null $compiledCacheContract = null)
     {
     }
 

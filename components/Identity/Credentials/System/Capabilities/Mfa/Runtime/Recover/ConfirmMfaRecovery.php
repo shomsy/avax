@@ -29,12 +29,12 @@ final readonly class ConfirmMfaRecovery
         private AuditLogInterface           $auditLog,
         private Clock                       $clock,
         #[SensitiveParameter]
-        private ?SessionRegistryInterface   $sessionRegistry = null,
+        private SessionRegistryInterface|null   $sessionRegistry = null,
         #[SensitiveParameter]
-        private ?RefreshTokenStoreInterface $refreshTokenStore = null,
+        private RefreshTokenStoreInterface|null $refreshTokenStore = null,
         #[SensitiveParameter]
-        private ?CurrentAuthentication      $currentAuthentication = null,
-        private ?IdentityInterface          $identity = null,
+        private CurrentAuthentication|null      $currentAuthentication = null,
+        private IdentityInterface|null          $identity = null,
     ) {}
 
     /**

@@ -26,7 +26,7 @@ final readonly class EntityPersister
     /**
      * @throws Throwable
      */
-    public function insert(object $entity, ?string $connectionName = null): void
+    public function insert(object $entity, string|null $connectionName = null) : void
     {
         $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
         $identifier = $entityMetadata->identifierField();
@@ -80,7 +80,7 @@ final readonly class EntityPersister
     /**
      * @throws Throwable
      */
-    public function update(object $entity, ?string $connectionName = null): void
+    public function update(object $entity, string|null $connectionName = null) : void
     {
         $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
         $identifier = $entityMetadata->identifierField();
@@ -105,7 +105,7 @@ final readonly class EntityPersister
     /**
      * @throws Throwable
      */
-    public function delete(object $entity, ?string $connectionName = null): void
+    public function delete(object $entity, string|null $connectionName = null) : void
     {
         $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
         $identifier = $entityMetadata->identifierField();
@@ -128,7 +128,7 @@ final readonly class EntityPersister
     /**
      * @throws Throwable
      */
-    public function refresh(object $entity, ?string $connectionName = null): object
+    public function refresh(object $entity, string|null $connectionName = null) : object
     {
         $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
         $identifier = $entityMetadata->identifierField();
@@ -163,7 +163,7 @@ final readonly class EntityPersister
      *
      * @throws Throwable
      */
-    public function find(string $entityClass, mixed $id, ?string $connectionName = null): ?object
+    public function find(string $entityClass, mixed $id, string|null $connectionName = null) : object|null
     {
         $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entityClass);
         $identifier = $entityMetadata->identifierField();
@@ -191,7 +191,7 @@ final readonly class EntityPersister
      *
      * @throws Throwable
      */
-    public function findAll(string $entityClass, ?array $criteria = null, ?string $connectionName = null): array
+    public function findAll(string $entityClass, array|null $criteria = null, string|null $connectionName = null) : array
     {
         $criteria ??= [];
 
@@ -207,12 +207,7 @@ final readonly class EntityPersister
      */
     public function findBy(
         string $entityClass,
-        array $criteria,
-        ?string $orderBy = null,
-        ?string $direction = null,
-        ?int $limit = null,
-        ?int $offset = null,
-        ?string $connectionName = null,
+        array $criteria, string|null $orderBy = null, string|null $direction = null, int|null $limit = null, int|null $offset = null, string|null $connectionName = null,
     ): array {
         $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entityClass);
         $query = $this->query->builder(connectionName: $connectionName)->from(table: $entityMetadata->table);

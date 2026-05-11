@@ -11,6 +11,7 @@ use Avax\Components\Operations\Resilience\System\Capabilities\Retry\RetryResult;
 use Avax\Components\Operations\Resilience\System\Capabilities\Timeout\Timeout;
 use Avax\Components\Operations\Resilience\System\Foundation\Values\ReliabilityResult;
 use Closure;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -26,10 +27,10 @@ final class ExecuteWithReliability
 {
     private int $maxAttempts = 3;
     private int $backoffMs = 100;
-    private ?int $timeoutMs = null;
+    private int|null     $timeoutMs = null;
     private int $cbFailureThreshold = 5;
     private int $cbCooldownSeconds = 30;
-    private ?Closure $fallback = null;
+    private Closure|null $fallback  = null;
 
     public function withMaxAttempts(int $max) : self
     {
@@ -45,7 +46,7 @@ final class ExecuteWithReliability
         return $this;
     }
 
-    public function withTimeoutMs(?int $ms) : self
+    public function withTimeoutMs(int|null $ms) : self
     {
         $this->timeoutMs = $ms;
 
@@ -163,7 +164,7 @@ final class ExecuteWithReliability
             return ($this->fallback)($retryResult->lastException);
         }
 
-        throw $retryResult->lastException ?? new \RuntimeException('Operation failed after retries');
+        throw $retryResult->lastException ?? new RuntimeException('Operation failed after retries');
     }
 
     private function sleep(int $backoffMs) : void

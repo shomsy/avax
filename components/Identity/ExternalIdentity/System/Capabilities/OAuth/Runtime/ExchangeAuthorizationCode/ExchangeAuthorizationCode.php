@@ -40,8 +40,8 @@ final readonly class ExchangeAuthorizationCode
         private AuditLogInterface               $auditLog,
         private Clock                           $clock,
         #[SensitiveParameter]
-        private ?CurrentAuthentication          $currentAuthentication = null,
-        private ?OidcProviderInterface          $oidcProvider = null,
+        private CurrentAuthentication|null $currentAuthentication = null,
+        private OidcProviderInterface|null $oidcProvider = null,
     ) {}
 
     /**

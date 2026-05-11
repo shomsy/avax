@@ -39,18 +39,11 @@ final class SessionIdentity implements SessionIdentityInterface
 
     private readonly SessionStoreInterface $sessionStore;
 
-    public function __construct(
-        ?SessionStoreInterface                     $sessionStore = null,
-        ?Clock                                     $clock = null,
-        ?AuditLogInterface                         $auditLog = null,
-        ?SessionLifetime                           $sessionLifetime = null,
+    public function __construct(SessionStoreInterface|null $sessionStore = null, Clock|null $clock = null, AuditLogInterface|null $auditLog = null, SessionLifetime|null $sessionLifetime = null,
         #[SensitiveParameter]
         private readonly ?SessionRegistryInterface $sessionRegistry = null,
         #[SensitiveParameter]
-        ?string                                    $sessionKey = null,
-        ?string                                    $mfaVerifiedAtKey = null,
-        ?string                                    $phishingResistantKey = null,
-        ?string                                    $issuedAtKey = null,
+                                ?string                    $sessionKey = null, string|null $mfaVerifiedAtKey = null, string|null $phishingResistantKey = null, string|null $issuedAtKey = null,
         private readonly string                    $lastSeenAtKey = 'auth_session_last_seen_at',
     )
     {
@@ -76,8 +69,7 @@ final class SessionIdentity implements SessionIdentityInterface
      * @throws DateMalformedStringException
      */
     public function issue(
-        int                $userId,
-        ?DateTimeImmutable $mfaVerifiedAt = null,
+        int $userId, DateTimeImmutable|null $mfaVerifiedAt = null,
         bool               $phishingResistant = false,
     ) : ?string
     {
@@ -107,7 +99,7 @@ final class SessionIdentity implements SessionIdentityInterface
     /**
      * @throws DateMalformedStringException
      */
-    public function captureCurrentSession(#[SensitiveParameter] ?string $ipAddress = null, ?string $userAgent = null) : void
+    public function captureCurrentSession(#[SensitiveParameter] ?string $ipAddress = null, string|null $userAgent = null) : void
     {
         $sessionId = $this->currentSessionId();
 

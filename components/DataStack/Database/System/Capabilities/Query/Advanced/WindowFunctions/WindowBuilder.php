@@ -11,8 +11,8 @@ final class WindowBuilder
     public function __construct(
         private readonly GrammarInterface $grammar,
         private readonly string $function,
-        private ?array $partitionBy = null,
-        private ?string $orderBy = null,
+        private array|null  $partitionBy = null,
+        private string|null $orderBy = null,
         private string $frame = 'ROWS UNBOUNDED PRECEDING',
     ) {
         $this->partitionBy ??= [];

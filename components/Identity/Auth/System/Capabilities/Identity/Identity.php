@@ -38,19 +38,19 @@ final readonly class Identity implements IdentityInterface
 {
     public function __construct(
         #[SensitiveParameter]
-        private ?Authentication           $authentication = null,
+        private Authentication|null           $authentication = null,
         #[SensitiveParameter]
-        private ?Sessions                 $sessions = null,
+        private Sessions|null                 $sessions = null,
         #[SensitiveParameter]
-        private ?Account                  $account = null,
-        private ?Recovery                 $recovery = null,
-        private ?Verification             $verification = null,
-        private ?Mfa                      $mfa = null,
-        private ?Passkey                  $passkey = null,
+        private Account|null                  $account = null,
+        private Recovery|null                 $recovery = null,
+        private Verification|null             $verification = null,
+        private Mfa|null                      $mfa = null,
+        private Passkey|null                  $passkey = null,
         #[SensitiveParameter]
-        private ?SessionIdentityInterface $sessionIdentity = null,
+        private SessionIdentityInterface|null $sessionIdentity = null,
         #[SensitiveParameter]
-        private ?JwtIdentityInterface     $jwtIdentity = null,
+        private JwtIdentityInterface|null     $jwtIdentity = null,
     )
     {
         if (! $this->sessionIdentity instanceof SessionIdentityInterface && ! $this->jwtIdentity instanceof JwtIdentityInterface) {
@@ -74,8 +74,7 @@ final readonly class Identity implements IdentityInterface
     // ── Owned behavior (cross-cutting identity lifecycle) ──
 
     public function issue(
-        User               $user,
-        ?DateTimeImmutable $mfaVerifiedAt = null,
+        User $user, DateTimeImmutable|null $mfaVerifiedAt = null,
         bool               $phishingResistant = false,
     ) : IssuedAuthentication
     {
@@ -123,7 +122,7 @@ final readonly class Identity implements IdentityInterface
         return AuthenticationMode::TOKEN;
     }
 
-    public function clear(?AuthenticationContext $authenticationContext = null) : void
+    public function clear(AuthenticationContext|null $authenticationContext = null) : void
     {
         $this->sessionIdentity?->clear();
 

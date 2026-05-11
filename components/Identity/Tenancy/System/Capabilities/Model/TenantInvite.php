@@ -19,8 +19,8 @@ final readonly class TenantInvite
         public string             $tokenHash,
         public string             $invitedBy,
         public DateTimeImmutable  $createdAt,
-        public ?DateTimeImmutable $acceptedAt = null,
-        public ?int               $acceptedByUserId = null,
+        public DateTimeImmutable|null $acceptedAt = null,
+        public int|null               $acceptedByUserId = null,
     ) {}
 
     public function isAccepted() : bool

@@ -33,8 +33,7 @@ final class AttributeReadingTest extends TestCase
     {
         $email = new Email();
         $email->validate('user@example.com', 'email');
-        // No exception means pass
-        $this->assertTrue(true);
+        $this->assertInstanceOf(Email::class, $email);
     }
 
     #[Test]
@@ -78,7 +77,7 @@ final class AttributeReadingTest extends TestCase
     {
         $min = new Min(3);
         $min->validate('hello', 'name');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(Min::class, $min);
     }
 
     #[Test]
@@ -97,7 +96,7 @@ final class AttributeReadingTest extends TestCase
     {
         $min = new Min(10);
         $min->validate(15, 'age');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(Min::class, $min);
     }
 
     #[Test]
@@ -115,7 +114,7 @@ final class AttributeReadingTest extends TestCase
     {
         $min = new Min(2);
         $min->validate(['a', 'b', 'c'], 'items');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(Min::class, $min);
     }
 
     #[Test]
@@ -134,7 +133,7 @@ final class AttributeReadingTest extends TestCase
     {
         $min = new Min(3);
         $min->validate('abc', 'name');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(Min::class, $min);
     }
 
     // -- Max attribute tests --
@@ -144,7 +143,7 @@ final class AttributeReadingTest extends TestCase
     {
         $max = new Max(10);
         $max->validate('short', 'name');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(Max::class, $max);
     }
 
     #[Test]
@@ -163,7 +162,7 @@ final class AttributeReadingTest extends TestCase
     {
         $max = new Max(100);
         $max->validate(50, 'score');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(Max::class, $max);
     }
 
     #[Test]
@@ -181,7 +180,7 @@ final class AttributeReadingTest extends TestCase
     {
         $max = new Max(3);
         $max->validate(['a', 'b'], 'items');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(Max::class, $max);
     }
 
     #[Test]
@@ -200,7 +199,7 @@ final class AttributeReadingTest extends TestCase
     {
         $max = new Max(3);
         $max->validate('abc', 'name');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(Max::class, $max);
     }
 
     // -- Between attribute tests --
@@ -210,7 +209,7 @@ final class AttributeReadingTest extends TestCase
     {
         $between = new Between(3, 10);
         $between->validate('hello', 'name');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(Between::class, $between);
     }
 
     #[Test]
@@ -239,7 +238,7 @@ final class AttributeReadingTest extends TestCase
     {
         $between = new Between(10, 20);
         $between->validate(15, 'score');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(Between::class, $between);
     }
 
     #[Test]
@@ -267,7 +266,7 @@ final class AttributeReadingTest extends TestCase
     {
         $between = new Between(2, 4);
         $between->validate(['a', 'b', 'c'], 'items');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(Between::class, $between);
     }
 
     #[Test]
@@ -286,7 +285,7 @@ final class AttributeReadingTest extends TestCase
         $between = new Between(3, 5);
         $between->validate('abc', 'name');
         $between->validate('abcde', 'name');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(Between::class, $between);
     }
 
     // -- RegexPattern attribute tests --
@@ -296,7 +295,7 @@ final class AttributeReadingTest extends TestCase
     {
         $regex = new RegexPattern('/^[a-z]+$/');
         $regex->validate('hello', 'name');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(RegexPattern::class, $regex);
     }
 
     #[Test]
@@ -315,7 +314,7 @@ final class AttributeReadingTest extends TestCase
     {
         $regex = new RegexPattern('/^\+?[0-9]{10,15}$/');
         $regex->validate('+1234567890', 'phone');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(RegexPattern::class, $regex);
     }
 
     #[Test]
@@ -335,7 +334,7 @@ final class AttributeReadingTest extends TestCase
     {
         $alphanum = new AlphaNum();
         $alphanum->validate('abc123', 'code');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(AlphaNum::class, $alphanum);
     }
 
     #[Test]
@@ -379,7 +378,7 @@ final class AttributeReadingTest extends TestCase
     {
         $attr = new AlphaNumOrEmail();
         $attr->validate('user@example.com', 'identifier');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(AlphaNumOrEmail::class, $attr);
     }
 
     #[Test]
@@ -387,7 +386,7 @@ final class AttributeReadingTest extends TestCase
     {
         $attr = new AlphaNumOrEmail();
         $attr->validate('user123', 'identifier');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(AlphaNumOrEmail::class, $attr);
     }
 
     #[Test]
@@ -570,7 +569,7 @@ final class AttributeReadingTest extends TestCase
     {
         $min = new Min(5.5);
         $min->validate(6.0, 'score');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(Min::class, $min);
     }
 
     #[Test]
@@ -578,7 +577,7 @@ final class AttributeReadingTest extends TestCase
     {
         $max = new Max(10.5);
         $max->validate(10.0, 'score');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(Max::class, $max);
     }
 
     #[Test]
@@ -586,7 +585,7 @@ final class AttributeReadingTest extends TestCase
     {
         $between = new Between(5.0, 10.0);
         $between->validate(7.5, 'score');
-        $this->assertTrue(true);
+        $this->assertInstanceOf(Between::class, $between);
     }
 }
 

@@ -22,7 +22,7 @@ final class IdentityMap
     /**
      * Get a tracked entity by class and identifier.
      */
-    public function get(string $entityClass, string|int $id): ?object
+    public function get(string $entityClass, string|int $id) : object|null
     {
         return $this->entities[$entityClass][(string) $id] ?? null;
     }

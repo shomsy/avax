@@ -43,7 +43,7 @@ trait HasAdvancedMutations
      *
      * @throws Throwable If the SQL compilation for the specific dialect or physical execution fails.
      */
-    public function upsert(array $values, array|string $uniqueBy, ?array $update = null): int
+    public function upsert(array $values, array|string $uniqueBy, array|null $update = null) : int
     {
         if ($values === []) {
             return 0;

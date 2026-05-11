@@ -357,7 +357,7 @@ final class SimpleShapeDto
         #[StringType]
         public string  $name,
         #[Optional]
-        public ?string $email = null,
+        public string|null $email = null,
     ) {}
 }
 
@@ -392,7 +392,7 @@ final class NullableShapeDto
 {
     public function __construct(
         public string  $name,
-        public ?string $tag = null,
+        public string|null $tag = null,
     ) {}
 }
 

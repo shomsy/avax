@@ -14,7 +14,7 @@ final readonly class ComponentManifest
     public function __construct(
         public string $name,
         public string $version,
-        public ?string $path = null,
+        public string|null $path = null,
         public array $dependencies = [],
     ) {
     }

@@ -8,7 +8,7 @@ interface QueueBroker
 {
     public function push(string $queue, array $job): void;
 
-    public function pop(string $queue): ?array;
+    public function pop(string $queue) : array|null;
 
     public function size(string $queue): int;
 

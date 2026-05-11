@@ -15,12 +15,12 @@ final readonly class ExchangeAuthorizationCodeData
         public string                 $code,
         public string                 $redirectUri,
         #[SensitiveParameter]
-        public ?string                $clientSecret = null,
+        public string|null                $clientSecret = null,
         #[SensitiveParameter]
-        public ?string                $codeVerifier = null,
+        public string|null                $codeVerifier = null,
         #[SensitiveParameter]
-        public ?string                $ipAddress = null,
-        public ?string                $userAgent = null,
-        public ?OAuthSenderConstraint $senderConstraint = null,
+        public string|null                $ipAddress = null,
+        public string|null                $userAgent = null,
+        public OAuthSenderConstraint|null $senderConstraint = null,
     ) {}
 }

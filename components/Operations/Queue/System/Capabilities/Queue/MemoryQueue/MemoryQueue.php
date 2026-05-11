@@ -23,8 +23,7 @@ final class MemoryQueue implements QueueBroker
     private FailedJobsStore $failedJobsStore;
 
     public function __construct(
-        private readonly int $defaultMaxAttempts = 3,
-        ?FailedJobsStore $failedJobsStore = null,
+        private readonly int $defaultMaxAttempts = 3, FailedJobsStore|null $failedJobsStore = null,
     )
     {
         $this->failedJobsStore = $failedJobsStore ?? new InMemoryFailedJobsStore();

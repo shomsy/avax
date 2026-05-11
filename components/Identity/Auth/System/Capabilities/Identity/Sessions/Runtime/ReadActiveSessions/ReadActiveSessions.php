@@ -25,7 +25,7 @@ final readonly class ReadActiveSessions
         private CurrentAuthentication     $currentAuthentication,
         private Clock                     $clock,
         #[SensitiveParameter]
-        private ?SessionRegistryInterface $sessionRegistry = null,
+        private SessionRegistryInterface|null $sessionRegistry = null,
     ) {}
 
     /**

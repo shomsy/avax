@@ -94,7 +94,7 @@ final class Cache
         return self::default()->get(key: $key, default: $default);
     }
 
-    public static function store(?string $name = null): CacheContract
+    public static function store(string|null $name = null) : CacheContract
     {
         if ($name !== null) {
             throw new NotConfigured(message: 'Named store requires RegisterCacheDependencies');

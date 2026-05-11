@@ -35,13 +35,9 @@ final readonly class ConnectionConfig
      * @param  string  $name  A simple nickname to identify this specific config.
      */
     public function __construct(
-        DatabaseDriver|string|null $driver = null,
-        ?string $host = null,
-        ?string $database = null,
-        ?string $username = null,
+        DatabaseDriver|string|null $driver = null, string|null $host = null, string|null $database = null, string|null $username = null,
         #[SensitiveParameter]
-        ?string $password = null,
-        ?string $charset = null,
+        ?string                    $password = null, string|null $charset = null,
         public string $name = 'default',
     ) {
         $driver = is_string($driver) ? DatabaseDriver::fromString($driver) : ($driver ?? DatabaseDriver::MySQL);

@@ -33,7 +33,7 @@ final readonly class DisableMfa
         private AuditLogInterface           $auditLog,
         private Clock                       $clock,
         #[SensitiveParameter]
-        private ?RefreshTokenStoreInterface $refreshTokenStore = null,
+        private RefreshTokenStoreInterface|null $refreshTokenStore = null,
     ) {}
 
     /**

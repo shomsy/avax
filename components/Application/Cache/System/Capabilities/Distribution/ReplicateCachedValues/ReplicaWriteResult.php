@@ -13,7 +13,7 @@ final readonly class ReplicaWriteResult
         public int $replicaIndex,
         public string $key,
         public bool $success,
-        public ?string $error,
+        public string|null $error,
     ) {
     }
 }

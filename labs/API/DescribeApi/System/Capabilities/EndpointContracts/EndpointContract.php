@@ -42,7 +42,7 @@ final class EndpointContract
         return $this->requiredPermissions !== [];
     }
 
-    public function getErrorResponse(int $statusCode): ?ErrorResponseContract
+    public function getErrorResponse(int $statusCode) : ErrorResponseContract|null
     {
         foreach ($this->errorResponses as $response) {
             if ($response->statusCode === $statusCode) {

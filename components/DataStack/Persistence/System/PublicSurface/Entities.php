@@ -21,7 +21,7 @@ final readonly class Entities
     ) {
     }
 
-    public function find(string $entityClass, mixed $id): ?object
+    public function find(string $entityClass, mixed $id) : object|null
     {
         return $this->repositoryRegistry->get($entityClass)->find($id);
     }
@@ -36,7 +36,7 @@ final readonly class Entities
         $this->unitOfWork->remove($entity);
     }
 
-    public function flush(?string $connectionName = null): void
+    public function flush(string|null $connectionName = null) : void
     {
         $this->unitOfWork->flush($connectionName);
     }

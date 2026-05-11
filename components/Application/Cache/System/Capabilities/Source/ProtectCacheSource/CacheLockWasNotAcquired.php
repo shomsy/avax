@@ -13,8 +13,7 @@ final class CacheLockWasNotAcquired extends RuntimeException
     public function __construct(
         string $message,
         public readonly CacheKey $cacheKey,
-        public readonly int $timeoutSeconds,
-        ?Throwable $throwable = null,
+        public readonly int $timeoutSeconds, Throwable|null $throwable = null,
     ) {
         parent::__construct(message: $message, code: 0, previous: $throwable);
     }

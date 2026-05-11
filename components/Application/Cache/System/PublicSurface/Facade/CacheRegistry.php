@@ -13,7 +13,7 @@ class CacheRegistry
     /** @var array<string, CacheContract> */
     private array $caches = [];
 
-    private ?string $defaultName = null;
+    private string|null $defaultName = null;
 
     public function register(string $name, CacheContract $cacheContract): void
     {

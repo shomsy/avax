@@ -14,9 +14,9 @@ final readonly class ManyToMany
      */
     public function __construct(
         public string $targetEntity,
-        public ?string $mappedBy = null,
-        public ?string $inversedBy = null,
-        public ?string $joinTable = null,
+        public string|null $mappedBy = null,
+        public string|null $inversedBy = null,
+        public string|null $joinTable = null,
         public array $cascade = [],
         public bool $lazy = true,
     ) {

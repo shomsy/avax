@@ -10,7 +10,7 @@ use Closure;
 
 final readonly class ConnectClient
 {
-    public function connect(ConnectionPool $pool, ?Closure $sendCallback = null, ?string $id = null) : Connection
+    public function connect(ConnectionPool $pool, Closure|null $sendCallback = null, string|null $id = null) : Connection
     {
         $connection = new Connection(
             sender: $sendCallback ?? static fn (mixed $_message) : mixed => null,

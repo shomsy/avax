@@ -26,7 +26,8 @@ final readonly class SlidingExpiration implements CacheExpiration
     public function calculateExpiresAt(
         int|DateInterval|null $ttl,
         Clock $clock,
-    ): ?Timestamp {
+    ) : Timestamp|null
+    {
         if ($ttl === null) {
             return null;
         }
@@ -40,7 +41,7 @@ final readonly class SlidingExpiration implements CacheExpiration
         return $clock->now()->add(duration: $duration);
     }
 
-    public function slide(?Timestamp $timestamp, Clock $clock): ?Timestamp
+    public function slide(Timestamp|null $timestamp, Clock $clock) : Timestamp|null
     {
         if (! $timestamp instanceof Timestamp) {
             return null;
@@ -52,8 +53,7 @@ final readonly class SlidingExpiration implements CacheExpiration
     }
 
     #[Override]
-    public function isExpired(
-        ?Timestamp $timestamp,
+    public function isExpired(Timestamp|null $timestamp,
         Clock $clock,
     ): bool {
         if (! $timestamp instanceof Timestamp) {

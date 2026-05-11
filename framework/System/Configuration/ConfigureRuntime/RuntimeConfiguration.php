@@ -106,7 +106,7 @@ final class RuntimeConfiguration
             return Closure::fromCallable($receiver);
         }
 
-        return static fn (): ?WorkerRequest => null;
+        return static fn () : WorkerRequest|null => null;
     }
 
     /**

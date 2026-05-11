@@ -12,7 +12,7 @@ enum ForeignAction: string
     case SetNull = 'SET NULL';
     case SetDefault = 'SET DEFAULT';
 
-    public static function fromInput(string|self|null $value): ?self
+    public static function fromInput(string|self|null $value) : self|null
     {
         if ($value instanceof self) {
             return $value;

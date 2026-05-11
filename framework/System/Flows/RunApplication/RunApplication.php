@@ -54,7 +54,7 @@ final readonly class RunApplication
     private ArgumentResolver $argumentResolver;
 
     public function __construct(
-        private ?MetricsCollector $metricsCollector = null,
+        private MetricsCollector|null $metricsCollector = null,
     )
     {
         $this->readRequest = new ReadIncomingHttpRequest();

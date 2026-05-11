@@ -14,7 +14,7 @@ final class FakeHttpClientBuilder
      */
     private array $responses = [];
 
-    private ?string $baseUrl = null;
+    private string|null $baseUrl = null;
 
     private string $pendingMethod = '*';
 

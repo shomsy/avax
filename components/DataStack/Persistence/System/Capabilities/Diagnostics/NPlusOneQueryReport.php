@@ -20,7 +20,7 @@ final readonly class NPlusOneQueryReport
         public int $count,
         public float $timeSpanMs,
         public array $sampleQueries = [],
-        public ?string $suggestion = null,
+        public string|null $suggestion = null,
     ) {
     }
 
@@ -53,7 +53,7 @@ final readonly class NPlusOneQueryReport
     /**
      * Returns the optimization suggestion.
      */
-    public function suggestion(): ?string
+    public function suggestion() : string|null
     {
         return $this->suggestion;
     }

@@ -17,9 +17,9 @@ final readonly class DataQueryPlan
      * @param  array<string>  $suggestions
      */
     public function __construct(
-        public ?string $sql = null,
+        public string|null $sql = null,
         public array $bindings = [],
-        public ?float $estimatedCost = null,
+        public float|null  $estimatedCost = null,
         public array $indexesUsed = [],
         private array $suggestions = [],
     ) {

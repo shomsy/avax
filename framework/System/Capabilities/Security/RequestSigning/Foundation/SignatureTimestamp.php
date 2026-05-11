@@ -16,7 +16,7 @@ final readonly class SignatureTimestamp
         return new self(time());
     }
 
-    public function isWithinTolerance(int $toleranceSeconds, ?int $now = null): bool
+    public function isWithinTolerance(int $toleranceSeconds, int|null $now = null) : bool
     {
         $now ??= time();
 

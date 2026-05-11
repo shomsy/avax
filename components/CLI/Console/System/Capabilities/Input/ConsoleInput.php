@@ -151,7 +151,7 @@ class ConsoleInput
     /**
      * Get the first positional argument (commonly the command name).
      */
-    public function getFirstArgument(): ?string
+    public function getFirstArgument() : string|null
     {
         return $this->arguments[0] ?? null;
     }

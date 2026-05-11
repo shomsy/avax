@@ -29,7 +29,7 @@ final readonly class Text implements Stringable
         return new self($value);
     }
 
-    public static function fromNullable(?string $value, string $default = ''): self
+    public static function fromNullable(string|null $value, string $default = '') : self
     {
         return new self($value ?? $default);
     }

@@ -38,7 +38,7 @@ final class Idempotency
         return (int) $ttl;
     }
 
-    public static function replay(string $key): ?array
+    public static function replay(string $key) : array|null
     {
         return self::store()->get($key);
     }
@@ -48,7 +48,7 @@ final class Idempotency
         return bin2hex(random_bytes(16));
     }
 
-    public static function fromHeader(string $header): ?string
+    public static function fromHeader(string $header) : string|null
     {
         return $header ?: null;
     }

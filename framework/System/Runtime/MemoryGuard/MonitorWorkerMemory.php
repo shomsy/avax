@@ -12,9 +12,9 @@ namespace Avax\Framework\System\Runtime\MemoryGuard;
  */
 final class MonitorWorkerMemory
 {
-    private ?int $memoryBefore = null;
+    private int|null $memoryBefore = null;
 
-    private ?int $memoryAfter = null;
+    private int|null $memoryAfter = null;
 
     private int $peakMemory = 0;
 
@@ -25,7 +25,7 @@ final class MonitorWorkerMemory
 
     private int $requestCount = 0;
 
-    private ?RequestWorkerRecycle $recycleDecision = null;
+    private RequestWorkerRecycle|null $recycleDecision = null;
 
     public function __construct(
         private int $softThresholdBytes = 128 * 1024 * 1024, // 128MB
@@ -75,7 +75,7 @@ final class MonitorWorkerMemory
      * Calculate memory delta between before and after.
      * Returns null if before/after not both captured.
      */
-    public function memoryDelta(): ?int
+    public function memoryDelta() : int|null
     {
         if ($this->memoryBefore === null || $this->memoryAfter === null) {
             return null;
@@ -113,7 +113,7 @@ final class MonitorWorkerMemory
     /**
      * Get the latest recycle decision, if any.
      */
-    public function recycleDecision(): ?RequestWorkerRecycle
+    public function recycleDecision() : RequestWorkerRecycle|null
     {
         return $this->recycleDecision;
     }
@@ -123,7 +123,7 @@ final class MonitorWorkerMemory
      *
      * @return array{memory_bytes: int|null, memory_mb: float|null, peak_bytes: int, peak_mb: float, delta_bytes: int|null, request_count: int}|null
      */
-    public function latestSnapshot(): ?array
+    public function latestSnapshot() : array|null
     {
         if ($this->memoryAfter === null) {
             return null;

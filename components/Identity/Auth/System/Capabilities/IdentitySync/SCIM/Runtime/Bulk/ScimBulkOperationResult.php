@@ -17,7 +17,7 @@ final readonly class ScimBulkOperationResult
         public string  $path,
         public int     $status,
         array          $response = [],
-        public ?string $bulkId = null,
+        public string|null $bulkId = null,
     )
     {
         $response       ??= [];

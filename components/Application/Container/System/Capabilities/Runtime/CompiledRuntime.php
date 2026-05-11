@@ -25,8 +25,7 @@ final class CompiledRuntime
     private readonly HotPathInliner $hotPathInliner;
 
     public function __construct(
-        private readonly ?CompileContainer $compileContainer = null,
-        ?HotPathInliner $hotPathInliner = null,
+        private readonly ?CompileContainer $compileContainer = null, HotPathInliner|null $hotPathInliner = null,
         private readonly ?ResolutionMetrics $resolutionMetrics = null,
         private readonly string $executionMode = CreateContainerConfig::EXECUTION_MODE_COMPILED,
     ) {
@@ -60,7 +59,7 @@ final class CompiledRuntime
      * @throws ReflectionException
      * @throws JsonException
      */
-    public function compile(?array $serviceIds = null, ?array $validationIssues = null, bool $warmed = false): ?CompiledContainer
+    public function compile(array|null $serviceIds = null, array|null $validationIssues = null, bool $warmed = false) : CompiledContainer|null
     {
         $serviceIds ??= [];
         $validationIssues ??= [];
@@ -86,7 +85,7 @@ final class CompiledRuntime
         return $this->hotPathInliner->isAttached();
     }
 
-    public function report(array $serviceIds = []): ?CompileReport
+    public function report(array $serviceIds = []) : CompileReport|null
     {
         return $this->compileContainer?->report(serviceIds: $serviceIds);
     }
@@ -107,7 +106,7 @@ final class CompiledRuntime
     /**
      * @throws ReflectionException
      */
-    public function refresh(DependencyRegistry $dependencyRegistry, ?string $serviceId = null): void
+    public function refresh(DependencyRegistry $dependencyRegistry, string|null $serviceId = null) : void
     {
         if ($this->executionMode === CreateContainerConfig::EXECUTION_MODE_DYNAMIC) {
             $this->hotPathInliner->detach();

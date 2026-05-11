@@ -13,7 +13,7 @@ final readonly class TodoGenerator
 {
     private string $todoFile;
 
-    public function __construct(?string $todoFile = null)
+    public function __construct(string|null $todoFile = null)
     {
         $this->todoFile = $todoFile ?? (getcwd().'/.agents/management/TODO.md');
     }

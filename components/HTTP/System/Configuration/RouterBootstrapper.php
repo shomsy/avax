@@ -15,7 +15,7 @@ use LogicException;
 final readonly class RouterBootstrapper
 {
     public function __construct(
-        private ?RouterRuntimeInterface $routerRuntime = null,
+        private RouterRuntimeInterface|null $routerRuntime = null,
     ) {}
 
     public function bootstrap(): RouterRuntimeInterface

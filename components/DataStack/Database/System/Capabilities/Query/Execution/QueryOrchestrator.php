@@ -24,7 +24,7 @@ final class QueryOrchestrator
      */
     public function __construct(
         private readonly ExecutorInterface $executor,
-        private ?ExecutionScope $executionScope
+        private ExecutionScope|null $executionScope
         = null {
             get {
                 return $this->executionScope;
@@ -76,8 +76,7 @@ final class QueryOrchestrator
      * @throws Throwable
      */
     public function execute(
-        string $sql,
-        ?array $bindings = null,
+        string $sql, array|null $bindings = null,
     ): ExecutionResult {
         $bindings ??= [];
 

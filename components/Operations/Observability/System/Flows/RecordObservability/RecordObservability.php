@@ -29,9 +29,7 @@ final class RecordObservability
             'access_token', 'refresh_token', 'private_key', 'secret_key',
         ];
 
-    public function __construct(
-        ?MetricsCollector $metrics = null,
-        ?TraceTimeline $timeline = null,
+    public function __construct(MetricsCollector|null $metrics = null, TraceTimeline|null $timeline = null,
     ) {
         $this->metrics = $metrics ?? new MetricsCollector();
         $this->timeline = $timeline ?? new TraceTimeline();
@@ -46,8 +44,7 @@ final class RecordObservability
      */
     public function record(
         string $operation,
-        Closure $callback,
-        ?CorrelationId $correlationId = null,
+        Closure $callback, CorrelationId|null $correlationId = null,
     ) : mixed {
         $corr = $correlationId ?? CorrelationId::generate();
         $traceId = TraceId::generate();

@@ -12,7 +12,7 @@ final readonly class EmailChangeChallenge
     public function __construct(
         public bool               $dispatched,
         #[SensitiveParameter]
-        public ?string            $token = null,
-        public ?DateTimeImmutable $expiresAt = null,
+        public string|null            $token = null,
+        public DateTimeImmutable|null $expiresAt = null,
     ) {}
 }

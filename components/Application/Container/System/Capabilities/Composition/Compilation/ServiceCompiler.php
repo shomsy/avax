@@ -142,7 +142,7 @@ final readonly class ServiceCompiler
         ];
     }
 
-    private function candidateFor(string $serviceId, ?ServiceRegistration $registration): mixed
+    private function candidateFor(string $serviceId, ServiceRegistration|null $registration) : mixed
     {
         if ($registration !== null) {
             return $registration->concrete;

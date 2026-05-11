@@ -14,11 +14,11 @@ use Stringable;
 
 final readonly class SerializedCachePayload implements Stringable
 {
-    public function __construct(public string $data, public string $format, public Timestamp $timestamp, public ?string $checksum = null)
+    public function __construct(public string $data, public string $format, public Timestamp $timestamp, public string|null $checksum = null)
     {
     }
 
-    public static function create(string $data, string $format, ?Clock $clock = null): self
+    public static function create(string $data, string $format, Clock|null $clock = null) : self
     {
         $clock ??= new SystemClock();
         $checksum = hash_hmac(algo: 'sha256', data: $data, key: self::class);

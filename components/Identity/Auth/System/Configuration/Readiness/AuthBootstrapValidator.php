@@ -19,17 +19,12 @@ use SensitiveParameter;
 
 final readonly class AuthBootstrapValidator
 {
-    public static function validate(
-        ?UserSourceInterface        $userSource,
-        ?IdentityInterface          $identity,
+    public static function validate(UserSourceInterface|null    $userSource, IdentityInterface|null $identity,
         AuthCapabilityRequests      $authCapabilityRequests,
         #[SensitiveParameter]
         ?SessionRegistryInterface   $sessionRegistry,
         #[SensitiveParameter]
-        ?RefreshTokenStoreInterface $refreshTokenStore,
-        ?PasskeyRuntimeInterface    $passkeyRuntime,
-        ?FederationRuntimeInterface $federationRuntime,
-        ?OidcProviderInterface      $oidcProvider,
+                                    ?RefreshTokenStoreInterface $refreshTokenStore, PasskeyRuntimeInterface|null $passkeyRuntime, FederationRuntimeInterface|null $federationRuntime, OidcProviderInterface|null $oidcProvider,
         string                      $buildPath = 'AuthBuilder::ready()',
     ) : void
     {

@@ -15,7 +15,7 @@ final readonly class FeatureFlag
     ) {
     }
 
-    public function isEnabled(?string $environment = null): bool
+    public function isEnabled(string|null $environment = null) : bool
     {
         if ($environment !== null && isset($this->environmentOverrides[$environment])) {
             return $this->environmentOverrides[$environment] === FeatureFlagState::Enabled->value;

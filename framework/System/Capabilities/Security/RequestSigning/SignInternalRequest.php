@@ -26,9 +26,7 @@ final readonly class SignInternalRequest
         string $method,
         string $path,
         string $body = '',
-        array $headers = [],
-        ?SignatureNonce $nonce = null,
-        ?SignatureTimestamp $timestamp = null,
+        array $headers = [], SignatureNonce|null $nonce = null, SignatureTimestamp|null $timestamp = null,
     ): SignaturePayload {
         $nonce ??= SignatureNonce::generate();
         $timestamp ??= SignatureTimestamp::now();

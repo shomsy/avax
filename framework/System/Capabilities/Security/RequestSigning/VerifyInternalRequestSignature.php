@@ -6,6 +6,7 @@ namespace Avax\Framework\System\Capabilities\Security\RequestSigning;
 
 use Avax\Framework\System\Capabilities\Security\RequestSigning\Foundation\NonceStore;
 use Avax\Framework\System\Capabilities\Security\RequestSigning\Foundation\SignaturePayload;
+use InvalidArgumentException;
 
 final readonly class VerifyInternalRequestSignature
 {
@@ -13,7 +14,7 @@ final readonly class VerifyInternalRequestSignature
         private string $secretKey,
         private int $toleranceSeconds = 300,
         private NonceStore $nonceStore = new NonceStore(),
-        private ?int $currentTime = null,
+        private int|null $currentTime = null,
     ) {
     }
 
@@ -30,7 +31,7 @@ final readonly class VerifyInternalRequestSignature
     ): SignatureVerificationResult {
         try {
             $payload = SignaturePayload::fromHeaders($headers);
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             return SignatureVerificationResult::failure('Missing signature headers: ' . $e->getMessage());
         }
 

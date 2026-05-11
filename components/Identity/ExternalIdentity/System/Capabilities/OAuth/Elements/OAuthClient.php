@@ -51,26 +51,16 @@ final readonly class OAuthClient
         public OAuthClientType            $type,
         public array                      $redirectUris,
         public array                      $allowedScopes,
-        public ?string                    $tenantSlug = null,
-        ?array                            $allowedAudiences = null,
-        ?array                            $allowedGrantTypes = null,
-        ?array                            $audienceScopeBoundaries = null,
+        public string|null                    $tenantSlug = null, array|null $allowedAudiences = null, array|null $allowedGrantTypes = null, array|null $audienceScopeBoundaries = null,
         #[SensitiveParameter]
         ?OAuthTokenEndpointAuthMethod     $oAuthTokenEndpointAuthMethod = null,
-        public ?OAuthSenderConstraintType $requiredSenderConstraint = null,
-        ?bool                             $workloadIdentity = null,
-        ?bool                             $phishingResistantRequired = null,
-        ?bool                             $requestObjectSignatureRequired = null,
-        ?bool                             $frontChannelLogoutSupported = null,
-        ?bool                             $backChannelLogoutSupported = null,
-        ?OAuthClientApprovalStatus        $oAuthClientApprovalStatus = null,
-        public ?DateTimeImmutable         $approvedAt = null,
-        public ?string                    $approvedBy = null,
-        ?bool                             $active = null,
+        public OAuthSenderConstraintType|null $requiredSenderConstraint = null, bool|null $workloadIdentity = null, bool|null $phishingResistantRequired = null, bool|null $requestObjectSignatureRequired = null, bool|null $frontChannelLogoutSupported = null, bool|null $backChannelLogoutSupported = null, OAuthClientApprovalStatus|null $oAuthClientApprovalStatus = null,
+        public DateTimeImmutable|null         $approvedAt = null,
+        public string|null                    $approvedBy = null, bool|null $active = null,
         #[SensitiveParameter]
-        public ?string                    $secretHash = null,
+        public string|null                    $secretHash = null,
         #[SensitiveParameter]
-        public ?string                    $requestObjectVerificationKeyPem = null,
+        public string|null                    $requestObjectVerificationKeyPem = null,
     )
     {
         $allowedAudiences                     ??= [];
@@ -122,7 +112,7 @@ final readonly class OAuthClient
         return $this->allowedAudiences !== [];
     }
 
-    public function allowsAudience(?string $audience) : bool
+    public function allowsAudience(string|null $audience) : bool
     {
         if ($this->allowedAudiences === []) {
             return $audience === null || trim(string: $audience) === '';
@@ -138,7 +128,7 @@ final readonly class OAuthClient
     /**
      * @param list<string> $scopes
      */
-    public function allowsAudienceScopes(?string $audience, array $scopes) : bool
+    public function allowsAudienceScopes(string|null $audience, array $scopes) : bool
     {
         if (! $this->allowsScopes(scopes: $scopes)) {
             return false;

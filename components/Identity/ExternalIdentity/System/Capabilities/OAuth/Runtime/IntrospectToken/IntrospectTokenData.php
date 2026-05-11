@@ -13,8 +13,8 @@ final readonly class IntrospectTokenData
         #[SensitiveParameter]
         public string  $token,
         #[SensitiveParameter]
-        public ?string $clientSecret = null,
-        public ?string $expectedAudience = null,
-        public ?string $expectedIssuer = null,
+        public string|null $clientSecret = null,
+        public string|null $expectedAudience = null,
+        public string|null $expectedIssuer = null,
     ) {}
 }

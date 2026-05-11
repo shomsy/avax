@@ -189,7 +189,7 @@ interface ContainerInterface extends DependencyRegistryContract, PsrContainerInt
      *
      * @throws ContainerException
      */
-    public function closeScope(?string $kind = null): void;
+    public function closeScope(string|null $kind = null) : void;
 
     /**
      * @param  list<string>  $serviceIds
@@ -220,7 +220,7 @@ interface ContainerInterface extends DependencyRegistryContract, PsrContainerInt
     /**
      * @param  list<string>  $serviceIds
      */
-    public function compileReport(array $serviceIds = []): ?CompileReport;
+    public function compileReport(array $serviceIds = []) : CompileReport|null;
 
     /**
      * Returns the current runtime state report.

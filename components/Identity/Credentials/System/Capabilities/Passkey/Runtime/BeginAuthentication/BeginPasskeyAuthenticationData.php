@@ -9,9 +9,9 @@ use SensitiveParameter;
 final readonly class BeginPasskeyAuthenticationData
 {
     public function __construct(
-        public ?string $identifier = null,
+        public string|null $identifier = null,
         #[SensitiveParameter]
-        public ?string $ipAddress = null,
-        public ?string $userAgent = null,
+        public string|null $ipAddress = null,
+        public string|null $userAgent = null,
     ) {}
 }

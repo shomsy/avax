@@ -109,7 +109,7 @@ final class DatabaseBuilder
         }
     }
 
-    private function defaultConnectionName(): ?string
+    private function defaultConnectionName() : string|null
     {
         $default = $this->config['default'] ?? null;
 

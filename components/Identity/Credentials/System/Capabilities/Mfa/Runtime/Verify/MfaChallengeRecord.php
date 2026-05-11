@@ -27,8 +27,7 @@ final readonly class MfaChallengeRecord
         public UserId              $userId,
         public MfaChallengePurpose $purpose,
         public DateTimeImmutable   $createdAt,
-        public DateTimeImmutable   $expiresAt,
-        ?int                       $maxAttempts = null,
+        public DateTimeImmutable $expiresAt, int|null $maxAttempts = null,
         public array               $attempts = [],
     )
     {

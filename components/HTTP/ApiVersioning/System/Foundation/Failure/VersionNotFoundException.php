@@ -8,7 +8,7 @@ use RuntimeException;
 
 final class VersionNotFoundException extends RuntimeException
 {
-    public function __construct(string $version, ?string $message = null)
+    public function __construct(string $version, string|null $message = null)
     {
         $message ??= "API version not found: {$version}";
         parent::__construct($message, 400);

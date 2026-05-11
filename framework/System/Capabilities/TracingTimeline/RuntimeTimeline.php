@@ -18,7 +18,7 @@ final class RuntimeTimeline
 
     private bool $isFinished = false;
 
-    private ?float $endMS = null;
+    private float|null $endMS = null;
 
     public function __construct()
     {
@@ -28,7 +28,7 @@ final class RuntimeTimeline
     /**
      * Start timing a named operation.
      */
-    public function begin(string $name, ?string $category = null): TraceSpan
+    public function begin(string $name, string|null $category = null) : TraceSpan
     {
         return new TraceSpan(
             name    : $name,
@@ -46,9 +46,7 @@ final class RuntimeTimeline
      * @param  array<string, mixed>  $metadata
      */
     public function record(
-        string $name,
-        ?float $durationMS = null,
-        ?string $category = null,
+        string $name, float|null $durationMS = null, string|null $category = null,
         array $metadata = [],
     ): void {
         $timestamp = microtime(true) * 1000;

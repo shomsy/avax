@@ -25,7 +25,7 @@ final readonly class DynamicArray implements Countable, LinearStructure
     /**
      * @param array<int, mixed> $items
      */
-    public function __construct(array $items = [], ?int $capacity = null)
+    public function __construct(array $items = [], int|null $capacity = null)
     {
         $this->items = array_values(array: $items);
         $this->capacity = $capacity ?? max(1, count(value: $items));

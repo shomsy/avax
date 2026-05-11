@@ -28,7 +28,7 @@ final readonly class RunApplicationOnSwoole implements WorkerRuntimeInterface
         return 'swoole';
     }
 
-    public function receive(): ?WorkerRequest
+    public function receive() : WorkerRequest|null
     {
         return ($this->receiver)();
     }

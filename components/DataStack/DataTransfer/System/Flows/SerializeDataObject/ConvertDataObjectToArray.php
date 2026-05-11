@@ -10,12 +10,12 @@ use Avax\Components\DataStack\DataTransfer\System\Flows\ReadDataObject\ReadDataO
 
 final readonly class ConvertDataObjectToArray
 {
-    public function __construct(private ?DataTransferConfig $dataTransferConfig = null) {}
+    public function __construct(private DataTransferConfig|null $dataTransferConfig = null) {}
 
     /**
      * @return array<array-key, mixed>
      */
-    public function convert(object $object, ?int $depth = null, bool $excludeHidden = true) : array
+    public function convert(object $object, int|null $depth = null, bool $excludeHidden = true) : array
     {
         $config   = $this->dataTransferConfig ?? DataTransferConfig::default();
         $maxDepth = $depth ?? $config->maxDepth;

@@ -13,7 +13,7 @@ final class CircuitBreaker
 
     private int $failures = 0;
 
-    private ?int $openedAt = null;
+    private int|null $openedAt = null;
 
     public function __construct(
         private readonly int $failureThreshold = 3,

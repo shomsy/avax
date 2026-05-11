@@ -16,8 +16,7 @@ final readonly class AttemptThrottle
 
     public function __construct(
         private AttemptThrottleStoreInterface $attemptThrottleStore,
-        private Clock                         $clock,
-        ?int                                  $maxAttempts = null,
+        private Clock $clock, int|null $maxAttempts = null,
         private int                           $decaySeconds = 900,
     )
     {

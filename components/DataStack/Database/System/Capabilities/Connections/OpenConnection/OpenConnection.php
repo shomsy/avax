@@ -18,8 +18,8 @@ final readonly class OpenConnection
 {
     public function __construct(
         private BuildPhysicalConnection $buildPhysicalConnection,
-        private ?EventBus $eventBus = null,
-        private ?ExecutionScope $executionScope = null,
+        private EventBus|null       $eventBus = null,
+        private ExecutionScope|null $executionScope = null,
     ) {
     }
 

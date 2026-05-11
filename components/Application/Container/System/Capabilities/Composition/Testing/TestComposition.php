@@ -36,8 +36,7 @@ final readonly class TestComposition
     public function bindFlow(
         string $slice,
         string $abstract,
-        mixed $concrete = null,
-        ?bool $entry = null,
+        mixed $concrete = null, bool|null $entry = null,
         array $imports = [],
     ): DependencyRegistration {
         $entry ??= false;

@@ -148,7 +148,7 @@ final class ProcessRunner
     /**
      * @param  list<string>  $command
      */
-    public function run(array $command, ?string $workingDirectory = null): ProcessResult
+    public function run(array $command, string|null $workingDirectory = null) : ProcessResult
     {
         $descriptorSpec = [
             0 => ['pipe', 'r'],

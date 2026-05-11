@@ -14,7 +14,7 @@ use Psr\Log\LoggerInterface;
 
 final class Session implements SessionInterface
 {
-    private ?SessionRecord $sessionRecord = null;
+    private SessionRecord|null $sessionRecord = null;
 
     private readonly SessionTransaction $sessionTransaction;
 

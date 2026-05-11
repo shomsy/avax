@@ -13,11 +13,11 @@ final readonly class Pipe
 {
     public function __construct(
         private Closure $callback,
-        private ?string $name = null,
+        private string|null $name = null,
     ) {
     }
 
-    public static function from(callable $callback, ?string $name = null): self
+    public static function from(callable $callback, string|null $name = null) : self
     {
         return new self(callback: $callback(...), name: $name);
     }

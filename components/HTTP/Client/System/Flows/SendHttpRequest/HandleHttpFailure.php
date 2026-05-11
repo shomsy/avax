@@ -38,8 +38,7 @@ final class HandleHttpFailure
     public function handle(
         OutboundRequest $outboundRequest,
         callable        $retryCallback,
-        Throwable       $throwable,
-        ?RequestOptions $requestOptions = null,
+        Throwable $throwable, RequestOptions|null $requestOptions = null,
     ) : ClientResponse
     {
         $retryPolicy = $requestOptions?->retryPolicy;

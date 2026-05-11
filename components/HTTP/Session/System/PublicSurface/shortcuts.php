@@ -15,7 +15,7 @@ if (! function_exists('session')) {
      *
      * @return mixed|SessionInterface
      */
-    function session(?string $key = null, mixed $default = null) : mixed
+    function session(string|null $key = null, mixed $default = null) : mixed
     {
         $session = app(SessionInterface::class);
 
@@ -31,7 +31,7 @@ if (! function_exists('session_flash')) {
     /**
      * Get or set a flash message.
      */
-    function session_flash(?string $key = null, mixed $value = null, mixed $default = null) : mixed
+    function session_flash(string|null $key = null, mixed $value = null, mixed $default = null) : mixed
     {
         $session = app(SessionInterface::class);
 

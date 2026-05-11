@@ -13,7 +13,7 @@ final readonly class CacheLockTimeout
     {
     }
 
-    public function isExpired(int $acquiredAt, ?Clock $clock = null): bool
+    public function isExpired(int $acquiredAt, Clock|null $clock = null) : bool
     {
         $clock ??= new SystemClock();
         $now = $clock->now();

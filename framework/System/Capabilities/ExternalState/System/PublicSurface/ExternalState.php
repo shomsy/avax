@@ -117,7 +117,7 @@ final class ExternalState
         );
     }
 
-    private static function adapterType(?State $state): string
+    private static function adapterType(State|null $state) : string
     {
         if ($state instanceof Redis) {
             return 'Redis';

@@ -309,7 +309,7 @@ final class BasicUserDto extends DataObject
 
     #[Optional]
     #[StringType]
-    public ?string $bio = null;
+    public string|null $bio = null;
 }
 
 final class UserInstanceDto
@@ -342,7 +342,7 @@ final class NumericUserDto extends DataObject
 
     #[Optional]
     #[IntegerType]
-    public ?int $score = null;
+    public int|null $score = null;
 }
 
 enum UserStatus: string
@@ -395,11 +395,11 @@ final class AllOptionalDto extends DataObject
 {
     #[Optional]
     #[StringType]
-    public ?string $a = null;
+    public string|null $a = null;
 
     #[Optional]
     #[IntegerType]
-    public ?int $b = null;
+    public int|null $b = null;
 }
 
 final class EmptyDto extends DataObject {}

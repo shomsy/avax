@@ -26,9 +26,9 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
 
     private StreamInterface $stream;
 
-    private ?UriInterface $uri = null;
+    private UriInterface|null $uri = null;
 
-    private ?string $requestTarget = null;
+    private string|null $requestTarget = null;
 
     private string $method = 'GET';
 
@@ -37,12 +37,11 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         private array $cookieParams = [],
         private array $queryParams = [],
         private array $uploadedFiles = [],
-        private ?array $parsedBody = null,
+        private array|null $parsedBody = null,
         string $method = 'GET',
         UriInterface|string|null $uri = null,
         private string $protocolVersion = '1.1',
-        array $headers = [],
-        ?StreamInterface $stream = null,
+        array              $headers = [], StreamInterface|null $stream = null,
     ) {
         $this->method = strtoupper($method);
         $this->stream = $stream ?? Utils::streamFor('');
@@ -75,7 +74,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
             public function __construct(
                 private string $scheme,
                 private string $host,
-                private ?int $port,
+                private int|null $port,
                 private string $path,
                 private string $query,
                 private string $fragment,
@@ -108,7 +107,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
                 return $this->host;
             }
 
-            public function getPort(): ?int
+            public function getPort() : int|null
             {
                 return $this->port;
             }
@@ -353,7 +352,7 @@ class ServerRequest implements RequestInterface, ServerRequestInterface
         return $new;
     }
 
-    public function getParsedBody(): ?array
+    public function getParsedBody() : array|null
     {
         return $this->parsedBody;
     }

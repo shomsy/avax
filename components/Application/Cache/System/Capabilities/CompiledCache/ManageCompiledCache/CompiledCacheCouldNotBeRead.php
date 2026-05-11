@@ -10,8 +10,7 @@ use Throwable;
 final class CompiledCacheCouldNotBeRead extends RuntimeException
 {
     public function __construct(
-        string $name,
-        ?Throwable $throwable = null,
+        string $name, Throwable|null $throwable = null,
     ) {
         parent::__construct(
             message : sprintf('Compiled cache "%s" could not be read', $name),

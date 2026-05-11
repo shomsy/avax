@@ -10,8 +10,8 @@ use Attribute;
 final readonly class Column
 {
     public function __construct(
-        public ?string $name = null,
-        public ?string $type = null,
+        public string|null $name = null,
+        public string|null $type = null,
     ) {
     }
 }

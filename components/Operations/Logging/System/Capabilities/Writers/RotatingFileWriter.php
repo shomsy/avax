@@ -30,8 +30,7 @@ final class RotatingFileWriter
     public function __construct(
         private string $baseLogPath,
         private string $timezone = 'UTC',
-        private int $maxLogFiles = 30,
-        ?Filesystem $filesystem = null,
+        private int $maxLogFiles = 30, Filesystem|null $filesystem = null,
     ) {
         $this->filesystem = $filesystem ?? new Filesystem();
     }

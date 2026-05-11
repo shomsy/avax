@@ -15,7 +15,7 @@ final readonly class BeginEmailVerificationData
         #[SensitiveParameter]
         public string  $email,
         #[SensitiveParameter]
-        public ?string $ipAddress = null,
-        public ?string $userAgent = null,
+        public string|null $ipAddress = null,
+        public string|null $userAgent = null,
     ) {}
 }

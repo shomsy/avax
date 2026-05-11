@@ -14,11 +14,8 @@ interface AuthorizationCodeStoreInterface
      */
     public function create(
         string            $subject,
-        DateTimeImmutable $expiresAt,
-        ?string           $clientId = null,
-        array             $scopes = [],
-        ?string           $redirectUri = null,
-        ?string           $state = null,
+        DateTimeImmutable $expiresAt, string|null $clientId = null,
+        array             $scopes = [], string|null $redirectUri = null, string|null $state = null,
     ) : AuthorizationCodeRecord;
 
     public function consume(#[SensitiveParameter] string $code, DateTimeImmutable $moment) : ?AuthorizationCodeRecord;

@@ -14,18 +14,16 @@ final readonly class CacheOperation implements Stringable
         public string $operation,
         public CacheKey $key,
         public float $timestamp,
-        public ?int $ttlSeconds = null,
-        public ?int $durationMicroseconds = null,
-        public ?string $storeName = null,
-        public ?string $tier = null,
+        public int|null    $ttlSeconds = null,
+        public int|null    $durationMicroseconds = null,
+        public string|null $storeName = null,
+        public string|null $tier = null,
     ) {
     }
 
     public static function read(
         CacheKey $key,
-        float $timestamp,
-        ?int $durationMicroseconds = null,
-        ?string $storeName = null,
+        float $timestamp, int|null $durationMicroseconds = null, string|null $storeName = null,
     ): self {
         return new self(
             operation           : 'read',
@@ -39,9 +37,7 @@ final readonly class CacheOperation implements Stringable
     public static function write(
         CacheKey $key,
         float $timestamp,
-        int $ttlSeconds,
-        ?int $durationMicroseconds = null,
-        ?string $storeName = null,
+        int $ttlSeconds, int|null $durationMicroseconds = null, string|null $storeName = null,
     ): self {
         return new self(
             operation           : 'write',
@@ -55,9 +51,7 @@ final readonly class CacheOperation implements Stringable
 
     public static function delete(
         CacheKey $key,
-        float $timestamp,
-        ?int $durationMicroseconds = null,
-        ?string $storeName = null,
+        float $timestamp, int|null $durationMicroseconds = null, string|null $storeName = null,
     ): self {
         return new self(
             operation           : 'delete',
@@ -70,9 +64,7 @@ final readonly class CacheOperation implements Stringable
 
     public static function hit(
         CacheKey $key,
-        float $timestamp,
-        ?int $durationMicroseconds = null,
-        ?string $storeName = null,
+        float $timestamp, int|null $durationMicroseconds = null, string|null $storeName = null,
     ): self {
         return new self(
             operation           : 'hit',
@@ -85,9 +77,7 @@ final readonly class CacheOperation implements Stringable
 
     public static function miss(
         CacheKey $key,
-        float $timestamp,
-        ?int $durationMicroseconds = null,
-        ?string $storeName = null,
+        float $timestamp, int|null $durationMicroseconds = null, string|null $storeName = null,
     ): self {
         return new self(
             operation           : 'miss',
@@ -101,8 +91,7 @@ final readonly class CacheOperation implements Stringable
     public static function eviction(
         CacheKey $key,
         float $timestamp,
-        string $reason,
-        ?string $storeName = null,
+        string $reason, string|null $storeName = null,
     ): self {
         return new self(
             operation: 'eviction',
@@ -115,8 +104,7 @@ final readonly class CacheOperation implements Stringable
     public static function invalidation(
         CacheKey $key,
         float $timestamp,
-        string $reason,
-        ?string $storeName = null,
+        string $reason, string|null $storeName = null,
     ): self {
         return new self(
             operation: 'invalidation',
@@ -128,9 +116,7 @@ final readonly class CacheOperation implements Stringable
 
     public static function refresh(
         CacheKey $key,
-        float $timestamp,
-        ?int $durationMicroseconds = null,
-        ?string $storeName = null,
+        float $timestamp, int|null $durationMicroseconds = null, string|null $storeName = null,
     ): self {
         return new self(
             operation           : 'refresh',
@@ -144,8 +130,7 @@ final readonly class CacheOperation implements Stringable
     public static function sourceFailure(
         CacheKey $key,
         float $timestamp,
-        string $error,
-        ?string $storeName = null,
+        string $error, string|null $storeName = null,
     ): self {
         return new self(
             operation: 'source_failure',
@@ -158,8 +143,7 @@ final readonly class CacheOperation implements Stringable
     public static function storeFailure(
         CacheKey $key,
         float $timestamp,
-        string $error,
-        ?string $storeName = null,
+        string $error, string|null $storeName = null,
     ): self {
         return new self(
             operation: 'store_failure',

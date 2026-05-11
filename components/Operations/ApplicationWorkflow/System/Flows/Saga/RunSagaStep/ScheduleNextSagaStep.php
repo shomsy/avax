@@ -9,7 +9,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\RunSa
  */
 final readonly class ScheduleNextSagaStep
 {
-    public function schedule(?string $nextStepName) : ?string
+    public function schedule(string|null $nextStepName) : ?string
     {
         return $nextStepName;
     }

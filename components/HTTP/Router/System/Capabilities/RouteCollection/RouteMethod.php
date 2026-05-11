@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Router\System\Capabilities\RouteCollection;
 
+use InvalidArgumentException;
+
 /**
  * Canonical HTTP methods as a backed enum.
  *
@@ -23,7 +25,7 @@ enum RouteMethod: string
     /**
      * Create an HttpMethod from a string value.
      *
-     * @throws \InvalidArgumentException if the method is not a recognized HTTP method.
+     * @throws InvalidArgumentException if the method is not a recognized HTTP method.
      */
     public static function fromString(string $method): self
     {
@@ -37,14 +39,14 @@ enum RouteMethod: string
             'DELETE' => self::DELETE,
             'OPTIONS' => self::OPTIONS,
             'HEAD' => self::HEAD,
-            default => throw new \InvalidArgumentException("Unknown HTTP method: {$method}"),
+            default => throw new InvalidArgumentException("Unknown HTTP method: {$method}"),
         };
     }
 
     /**
      * Try to create a RouteMethod from a string, returning null if unknown.
      */
-    public static function tryFromString(string $method): ?self
+    public static function tryFromString(string $method) : self|null
     {
         $upper = strtoupper($method);
 

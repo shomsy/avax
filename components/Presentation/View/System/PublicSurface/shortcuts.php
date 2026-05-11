@@ -9,6 +9,7 @@ declare(strict_types=1);
 use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 use Avax\Components\Presentation\View\TemplateEngine;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 if (! function_exists('view')) {
     /**
@@ -32,8 +33,13 @@ if (! function_exists('asset')) {
      */
     function asset(string $path): string
     {
-        $baseUrl = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-        $baseUrl .= $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $request = app(ServerRequestInterface::class);
+        $uri     = $request->getUri();
+        $baseUrl = $uri->getScheme() . '://' . $uri->getHost();
+        $port    = $uri->getPort();
+        if ($port !== null) {
+            $baseUrl .= ':' . $port;
+        }
 
         return $baseUrl.'/'.ltrim($path, '/');
     }

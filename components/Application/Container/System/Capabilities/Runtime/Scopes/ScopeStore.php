@@ -40,7 +40,7 @@ final class ScopeStore
         return array_key_exists(key: $abstract, array: $this->scopes[$index]['items']);
     }
 
-    private function frameIndex(string $kind): ?int
+    private function frameIndex(string $kind) : int|null
     {
         if ($this->scopes === []) {
             return null;
@@ -94,8 +94,7 @@ final class ScopeStore
      */
     public function setFor(
         string $abstract,
-        mixed $instance,
-        ?string $kind = null,
+        mixed $instance, string|null $kind = null,
         bool $disposable = false,
     ): void {
         $kind ??= ScopeKind::Any->value;
@@ -119,7 +118,7 @@ final class ScopeStore
     /**
      * Opens one new nested scope.
      */
-    public function open(?string $kind = null, string $scopeId = ''): void
+    public function open(string|null $kind = null, string $scopeId = '') : void
     {
         $kind ??= ScopeKind::Operation->value;
         $this->scopes[] = [
@@ -144,7 +143,7 @@ final class ScopeStore
      *
      * @throws ContainerException
      */
-    public function close(?string $kind = null): array
+    public function close(string|null $kind = null) : array
     {
         if ($this->scopes === []) {
             throw new ContainerException(message: 'Cannot close scope without an active scope.');
@@ -185,8 +184,7 @@ final class ScopeStore
         string $abstract,
         mixed $instance,
         string $kind,
-        int $maxSize,
-        ?bool $resetBeforeReuse = null,
+        int $maxSize, bool|null $resetBeforeReuse = null,
         bool $disposable = false,
     ): void {
         $resetBeforeReuse ??= true;

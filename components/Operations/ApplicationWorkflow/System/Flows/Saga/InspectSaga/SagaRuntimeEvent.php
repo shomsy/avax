@@ -18,8 +18,8 @@ final readonly class SagaRuntimeEvent
         public string            $type,
         public string            $instanceId,
         public array             $payload = [],
-        public ?string           $correlationId = null,
-        public ?string           $causationId = null,
+        public string|null $correlationId = null,
+        public string|null $causationId = null,
         public DateTimeImmutable $occurredAt = new DateTimeImmutable(),
     ) {}
 }

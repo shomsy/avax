@@ -8,7 +8,7 @@ final readonly class DecideCacheWriteConsistency
 {
     public function __construct(
         private CacheConsistencyLevel $cacheConsistencyLevel,
-        private ?ConsistencyWindow $consistencyWindow = null,
+        private ConsistencyWindow|null $consistencyWindow = null,
     ) {
     }
 

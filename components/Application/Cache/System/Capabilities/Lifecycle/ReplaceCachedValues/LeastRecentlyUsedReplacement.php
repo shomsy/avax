@@ -9,7 +9,7 @@ use Override;
 final readonly class LeastRecentlyUsedReplacement implements ChooseCachedValueForReplacement
 {
     #[Override]
-    public function choose(array $entries): ?string
+    public function choose(array $entries) : string|null
     {
         if ($entries === []) {
             return null;

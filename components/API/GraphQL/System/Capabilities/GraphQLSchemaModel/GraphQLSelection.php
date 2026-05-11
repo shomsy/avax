@@ -12,7 +12,7 @@ final readonly class GraphQLSelection
      */
     public function __construct(
         public string  $name,
-        public ?string $alias = null,
+        public string|null $alias = null,
         public array   $arguments = [],
         public array   $selections = [],
     ) {}

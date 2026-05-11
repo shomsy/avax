@@ -66,7 +66,7 @@ enum FieldType: string
     case UniqueIdentifier = 'uniqueIdentifier';
     case RowVersion = 'rowVersion';
 
-    public static function fromInput(string|self|null $value): ?self
+    public static function fromInput(string|self|null $value) : self|null
     {
         if ($value instanceof self) {
             return $value;

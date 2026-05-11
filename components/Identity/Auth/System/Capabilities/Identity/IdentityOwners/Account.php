@@ -30,7 +30,7 @@ final readonly class Account
         #[SensitiveParameter]
         private BeginEmailChange    $beginEmailChange,
         #[SensitiveParameter]
-        private ?ConfirmEmailChange $confirmEmailChange,
+        private ConfirmEmailChange|null $confirmEmailChange,
         private Register            $register,
     ) {}
 

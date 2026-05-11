@@ -27,17 +27,16 @@ final readonly class OAuthTokenGrant
         #[SensitiveParameter]
         public DateTimeImmutable      $accessTokenExpiresAt,
         #[SensitiveParameter]
-        public ?string                $refreshToken,
+        public string|null                $refreshToken,
         #[SensitiveParameter]
-        public ?string                $idToken,
+        public string|null                $idToken,
         public string                 $clientId,
-        public ?int                   $userId,
-        ?array                        $scopes = null,
+        public int|null                   $userId, array|null $scopes = null,
         #[SensitiveParameter]
         ?string                       $tokenType = null,
-        public ?OAuthSenderConstraint $senderConstraint = null,
-        public ?string                $subject = null,
-        public ?string                $audience = null,
+        public OAuthSenderConstraint|null $senderConstraint = null,
+        public string|null                $subject = null,
+        public string|null                $audience = null,
         public bool                   $workloadIdentity = false,
     )
     {

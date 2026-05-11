@@ -19,11 +19,10 @@ final class ValidationResult
      */
     public function __construct(
         private bool $passed,
-        private array $messages = [],
-        ?string $severity = 'info',
-        private ?string $file = null,
-        private ?int $line = null,
-        private ?string $ruleCode = null
+        private array       $messages = [], string|null $severity = 'info',
+        private string|null $file = null,
+        private int|null    $line = null,
+        private string|null $ruleCode = null
     ) {
         $this->severity = $severity ?? 'info';
     }
@@ -49,17 +48,17 @@ final class ValidationResult
         return $this->severity;
     }
 
-    public function getFile(): ?string
+    public function getFile() : string|null
     {
         return $this->file;
     }
 
-    public function getLine(): ?int
+    public function getLine() : int|null
     {
         return $this->line;
     }
 
-    public function getRuleCode(): ?string
+    public function getRuleCode() : string|null
     {
         return $this->ruleCode;
     }
@@ -113,7 +112,7 @@ final class ValidationResult
         return new self(true, $message !== '' && $message !== '0' ? [$message] : [], 'info');
     }
 
-    public static function fail(string $message, ?string $severity = 'error', ?string $file = null, ?int $line = null, ?string $ruleCode = null): self
+    public static function fail(string $message, string|null $severity = 'error', string|null $file = null, int|null $line = null, string|null $ruleCode = null) : self
     {
         return new self(false, [$message], $severity, $file, $line, $ruleCode);
     }

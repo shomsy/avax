@@ -17,12 +17,12 @@ final readonly class AuthenticationResult
     public function __construct(
         private AuthenticationState   $authenticationState,
         private AuthenticationContext $authenticationContext,
-        private ?AuthenticatedUser    $authenticatedUser = null,
+        private AuthenticatedUser|null $authenticatedUser = null,
         #[SensitiveParameter]
-        private ?string               $accessToken = null,
+        private string|null            $accessToken = null,
         #[SensitiveParameter]
-        private ?string               $refreshToken = null,
-        private ?MfaChallenge         $mfaChallenge = null,
+        private string|null            $refreshToken = null,
+        private MfaChallenge|null      $mfaChallenge = null,
     ) {}
 
     public static function success(

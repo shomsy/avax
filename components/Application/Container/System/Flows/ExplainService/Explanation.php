@@ -50,7 +50,7 @@ final readonly class Explanation
      * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
-    public function debugGovernance(?string $id = null, array $context = []): array
+    public function debugGovernance(string|null $id = null, array $context = []) : array
     {
         $id ??= '';
         if ($context === []) {
@@ -64,7 +64,7 @@ final readonly class Explanation
      * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
-    public function debugArchitecture(?string $id = null, array $context = []): array
+    public function debugArchitecture(string|null $id = null, array $context = []) : array
     {
         $id ??= '';
         if ($context === []) {
@@ -78,7 +78,7 @@ final readonly class Explanation
      * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
-    public function debugSlice(?string $slice = null, array $context = []): array
+    public function debugSlice(string|null $slice = null, array $context = []) : array
     {
         $slice ??= '';
         if ($context === []) {
@@ -92,7 +92,7 @@ final readonly class Explanation
      * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
-    public function debugImports(?string $slice = null, array $context = []): array
+    public function debugImports(string|null $slice = null, array $context = []) : array
     {
         $slice ??= '';
         if ($context === []) {
@@ -108,7 +108,7 @@ final readonly class Explanation
      *
      * @throws ReflectionException
      */
-    public function debugExports(?string $slice = null, array $context = []): array
+    public function debugExports(string|null $slice = null, array $context = []) : array
     {
         $slice ??= '';
         if ($context === []) {
@@ -123,7 +123,7 @@ final readonly class Explanation
      * @param  array<string, mixed>  $context
      * @return array<string, mixed>
      */
-    public function debugVisibilityViolations(?array $serviceIds = null, array $context = []): array
+    public function debugVisibilityViolations(array|null $serviceIds = null, array $context = []) : array
     {
         $serviceIds ??= [];
         if ($context === []) {

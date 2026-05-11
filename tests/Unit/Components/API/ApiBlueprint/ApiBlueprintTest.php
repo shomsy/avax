@@ -48,11 +48,8 @@ final class ApiBlueprintTest extends TestCase
     private function endpoint(
         string                  $path = '/users',
         string                  $method = 'GET',
-        EndpointVersion         $version = EndpointVersion::V1,
-        ?EndpointDeprecation    $deprecation = null,
-        ?ResponseSchema         $successResponse = null,
-        bool                    $includeSuccessResponse = true,
-        ?RequiredAuthentication $authentication = null,
+        EndpointVersion $version = EndpointVersion::V1, EndpointDeprecation|null $deprecation = null, ResponseSchema|null $successResponse = null,
+        bool            $includeSuccessResponse = true, RequiredAuthentication|null $authentication = null,
         bool                    $includeAuthentication = true,
         string                  $operationId = 'users.index',
     ) : EndpointDefinition

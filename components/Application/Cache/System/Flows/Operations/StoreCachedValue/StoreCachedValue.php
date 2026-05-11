@@ -20,7 +20,7 @@ final readonly class StoreCachedValue
     public function __construct(
         private CacheStore $cacheStore,
         private Clock $clock,
-        private ?CacheMetrics $cacheMetrics = null,
+        private CacheMetrics|null $cacheMetrics = null,
         private CacheTtl $cacheTtl = new CacheTtl(),
     ) {
     }

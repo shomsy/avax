@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools;
 
-use Exception;
+use Avax\Components\Operations\Resilience\System\PublicSurface\Resilience;
 
 final readonly class RetryablePool
 {
@@ -14,26 +14,17 @@ final readonly class RetryablePool
     ) {
     }
 
-    /**
-     * @throws Exception
-     */
     public function execute(callable $operation): mixed
     {
-        $attempts = 0;
+        $result = Resilience::retry(fn () => $operation($this->baseConnectionPool))
+            ->times($this->maxRetries)
+            ->backoff(100)
+            ->run();
 
-        while ($attempts < $this->maxRetries) {
-            try {
-                return $operation($this->baseConnectionPool);
-            } catch (Exception $exception) {
-                $attempts++;
-                if ($attempts >= $this->maxRetries) {
-                    throw $exception;
-                }
-
-                usleep(microseconds: 100000 * $attempts);
-            }
+        if (! $result->success) {
+            return null;
         }
 
-        return null;
+        return $result->result;
     }
 }

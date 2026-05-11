@@ -20,8 +20,8 @@ final readonly class RuntimeSafetyFinding
         public string $severity,
         public string $component,
         public string $message,
-        public ?string $remediation = null,
-        public ?string $location = null,
+        public string|null $remediation = null,
+        public string|null $location = null,
     ) {
     }
 

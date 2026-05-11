@@ -49,7 +49,7 @@ use PDO;
 final class PooledConnectionAuthority implements ConnectionPoolInterface, DatabaseConnection
 {
     /** @var DatabaseConnection|null The actual tool we've grabbed from the library (null if we haven't needed it yet). */
-    private ?DatabaseConnection $databaseConnection = null;
+    private DatabaseConnection|null $databaseConnection = null;
 
     /**
      * @param  ConnectionPoolInterface  $connectionPool  The "Library" we borrow from.

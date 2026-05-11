@@ -16,19 +16,19 @@ final readonly class AuthenticationContext
     public function __construct(
         private bool               $authenticated,
         private AuthenticationMode $authenticationMode,
-        private ?AuthenticatedUser $authenticatedUser = null,
-        private ?string            $reason = null,
+        private AuthenticatedUser|null $authenticatedUser = null,
+        private string|null            $reason = null,
         #[SensitiveParameter]
-        private ?string            $sessionId = null,
+        private string|null            $sessionId = null,
         #[SensitiveParameter]
-        private ?string            $accessTokenId = null,
+        private string|null            $accessTokenId = null,
         #[SensitiveParameter]
-        private ?DateTimeImmutable $accessTokenExpiresAt = null,
+        private DateTimeImmutable|null $accessTokenExpiresAt = null,
         #[SensitiveParameter]
-        private ?string            $refreshTokenId = null,
+        private string|null            $refreshTokenId = null,
         #[SensitiveParameter]
-        private ?string            $refreshTokenFamilyId = null,
-        private ?DateTimeImmutable $mfaVerifiedAt = null,
+        private string|null            $refreshTokenFamilyId = null,
+        private DateTimeImmutable|null $mfaVerifiedAt = null,
         private bool               $phishingResistant = false,
     )
     {
@@ -41,7 +41,7 @@ final readonly class AuthenticationContext
         }
     }
 
-    public static function guest(?string $reason = null) : self
+    public static function guest(string|null $reason = null) : self
     {
         return new self(
             authenticated: false,
@@ -62,8 +62,7 @@ final readonly class AuthenticationContext
         #[SensitiveParameter]
         ?string            $refreshTokenId = null,
         #[SensitiveParameter]
-        ?string            $refreshTokenFamilyId = null,
-        ?DateTimeImmutable $mfaVerifiedAt = null,
+        ?string $refreshTokenFamilyId = null, DateTimeImmutable|null $mfaVerifiedAt = null,
         bool               $phishingResistant = false,
     ) : self
     {

@@ -22,7 +22,7 @@ final readonly class PublishToOutbox
     /**
      * @param array<string, mixed> $body
      */
-    public function execute(string $eventType, array $body, ?string $correlationId = null) : MessageEnvelope
+    public function execute(string $eventType, array $body, string|null $correlationId = null) : MessageEnvelope
     {
         $envelope = MessageEnvelope::create(
             type: $eventType,

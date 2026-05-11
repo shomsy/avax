@@ -15,13 +15,13 @@ final readonly class NeverExpires implements CacheExpiration
     public function calculateExpiresAt(
         int|DateInterval|null $ttl,
         Clock $clock,
-    ): ?Timestamp {
+    ) : Timestamp|null
+    {
         return null;
     }
 
     #[Override]
-    public function isExpired(
-        ?Timestamp $timestamp,
+    public function isExpired(Timestamp|null $timestamp,
         Clock $clock,
     ): bool {
         return false;

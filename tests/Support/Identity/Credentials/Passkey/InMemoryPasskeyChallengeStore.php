@@ -16,7 +16,7 @@ final class InMemoryPasskeyChallengeStore implements PasskeyChallengeStoreInterf
         $this->records[$passkeyChallengeRecord->challengeId] = $passkeyChallengeRecord;
     }
 
-    public function find(string $challengeId): ?PasskeyChallengeRecord
+    public function find(string $challengeId) : PasskeyChallengeRecord|null
     {
         return $this->records[$challengeId] ?? null;
     }

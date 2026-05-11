@@ -12,7 +12,7 @@ final class RequestUri implements UriInterface
         private string $scheme = '',
         private string $userInfo = '',
         private string $host = '',
-        private ?int   $port = null,
+        private int|null $port = null,
         private string $path = '',
         private string $query = '',
         private string $fragment = '',

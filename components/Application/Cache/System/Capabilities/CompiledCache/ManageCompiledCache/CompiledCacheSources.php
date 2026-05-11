@@ -44,7 +44,7 @@ final class CompiledCacheSources
         return isset($this->sources[$path]);
     }
 
-    public function get(string $path): ?CompiledCacheSource
+    public function get(string $path) : CompiledCacheSource|null
     {
         return $this->sources[$path] ?? null;
     }

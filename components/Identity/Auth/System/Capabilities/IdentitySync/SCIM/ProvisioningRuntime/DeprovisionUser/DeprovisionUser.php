@@ -25,11 +25,11 @@ final readonly class DeprovisionUser
         private AuditLogInterface                $auditLog,
         private Clock                            $clock,
         #[SensitiveParameter]
-        private ?SessionRegistryInterface        $sessionRegistry = null,
+        private SessionRegistryInterface|null     $sessionRegistry = null,
         #[SensitiveParameter]
-        private ?RefreshTokenStoreInterface      $refreshTokenStore = null,
-        private ?AdminElevationStoreInterface    $adminElevationStore = null,
-        private ?LifecycleOrchestrator           $lifecycleOrchestrator = null,
+        private RefreshTokenStoreInterface|null   $refreshTokenStore = null,
+        private AdminElevationStoreInterface|null $adminElevationStore = null,
+        private LifecycleOrchestrator|null        $lifecycleOrchestrator = null,
     ) {}
 
     public function execute(int $userId) : void

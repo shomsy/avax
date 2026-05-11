@@ -21,13 +21,10 @@ final class AttributeCompiler
     /** @var array<string, CompiledAttributeMetadata> */
     private static array $resolvedCache = [];
 
-    private ?CompileClassAttributes $compiler;
+    private CompileClassAttributes|null $compiler;
     private string                  $configHash;
 
-    public function __construct(
-        ?string                 $cacheDir = null,
-        ?string                 $configHash = null,
-        ?CompileClassAttributes $compiler = null,
+    public function __construct(string|null $cacheDir = null, string|null $configHash = null, CompileClassAttributes|null $compiler = null,
     )
     {
         if ($compiler !== null) {

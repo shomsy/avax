@@ -19,14 +19,11 @@ final readonly class AccessPolicy
     public bool $freshMfa;
 
     public function __construct(
-        public ?UserRole       $requiredRole = null,
-        public ?UserPermission $requiredPermission = null,
-        public ?int            $resourceOwnerUserId = null,
-        ?bool                  $freshMfa = null,
-        ?bool                  $adminElevation = null,
-        ?bool                  $phishingResistantRequired = null,
-        public ?int            $freshMfaMaxAgeSeconds = null,
-        public ?IdentityPolicy $identityPolicy = null,
+        public UserRole|null       $requiredRole = null,
+        public UserPermission|null $requiredPermission = null,
+        public int|null            $resourceOwnerUserId = null, bool|null $freshMfa = null, bool|null $adminElevation = null, bool|null $phishingResistantRequired = null,
+        public int|null            $freshMfaMaxAgeSeconds = null,
+        public IdentityPolicy|null $identityPolicy = null,
     )
     {
         $freshMfa                        ??= false;
@@ -37,9 +34,7 @@ final readonly class AccessPolicy
         $this->phishingResistantRequired = $phishingResistantRequired;
     }
 
-    public static function admin(
-        ?UserPermission $userPermission = null,
-        ?int            $resourceOwnerUserId = null,
+    public static function admin(UserPermission|null $userPermission = null, int|null $resourceOwnerUserId = null,
     ) : self
     {
         return self::forIdentityPolicy(
@@ -51,10 +46,7 @@ final readonly class AccessPolicy
     }
 
     public static function forIdentityPolicy(
-        IdentityPolicy  $identityPolicy,
-        ?UserRole       $userRole = null,
-        ?UserPermission $userPermission = null,
-        ?int            $resourceOwnerUserId = null,
+        IdentityPolicy $identityPolicy, UserRole|null $userRole = null, UserPermission|null $userPermission = null, int|null $resourceOwnerUserId = null,
     ) : self
     {
         return new self(
@@ -69,9 +61,7 @@ final readonly class AccessPolicy
         );
     }
 
-    public static function tenantAdmin(
-        ?UserPermission $userPermission = null,
-        ?int            $resourceOwnerUserId = null,
+    public static function tenantAdmin(UserPermission|null $userPermission = null, int|null $resourceOwnerUserId = null,
     ) : self
     {
         return self::forIdentityPolicy(

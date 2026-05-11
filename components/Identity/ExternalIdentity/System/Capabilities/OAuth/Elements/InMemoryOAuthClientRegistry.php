@@ -30,21 +30,18 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
     public function register(
         string                        $name,
         OAuthClientType               $oAuthClientType,
-        array                         $redirectUris,
-        ?string                       $tenantSlug = null,
+        array                         $redirectUris, string|null $tenantSlug = null,
         array                         $allowedScopes = [],
         array                         $allowedAudiences = [],
         array                         $allowedGrantTypes = [],
         array                         $audienceScopeBoundaries = [],
         #[SensitiveParameter]
-        ?OAuthTokenEndpointAuthMethod $oAuthTokenEndpointAuthMethod = null,
-        ?OAuthSenderConstraintType    $oAuthSenderConstraintType = null,
+        ?OAuthTokenEndpointAuthMethod $oAuthTokenEndpointAuthMethod = null, OAuthSenderConstraintType|null $oAuthSenderConstraintType = null,
         bool                          $workloadIdentity = false,
         bool                          $phishingResistantRequired = false,
         bool                          $requestObjectSignatureRequired = false,
         bool                          $frontChannelLogoutSupported = false,
-        bool                          $backChannelLogoutSupported = false,
-        ?bool                         $approvalRequired = null,
+        bool                          $backChannelLogoutSupported = false, bool|null $approvalRequired = null,
         #[SensitiveParameter]
         ?string                       $requestObjectVerificationKeyPem = null,
     ) : RegisteredOAuthClient
@@ -245,7 +242,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         return $normalized;
     }
 
-    private function normalizeTenantSlug(?string $tenantSlug) : ?string
+    private function normalizeTenantSlug(string|null $tenantSlug) : ?string
     {
         $normalized = trim(string: (string) $tenantSlug);
 

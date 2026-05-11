@@ -28,7 +28,7 @@ final class CompiledCacheFreshness
     /**
      * Create a new freshness checker.
      */
-    public static function create(?Clock $clock = null, ?Filesystem $filesystem = null) : self
+    public static function create(Clock|null $clock = null, Filesystem|null $filesystem = null) : self
     {
         return new self(clock: $clock ?? new SystemClock(), filesystem: $filesystem ?? new Filesystem());
     }

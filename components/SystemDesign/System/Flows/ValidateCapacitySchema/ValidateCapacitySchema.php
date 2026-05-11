@@ -17,7 +17,7 @@ final class ValidateCapacitySchema
     private SchemaValidator $validator;
     private string          $schemaDir;
 
-    public function __construct(?SchemaValidator $validator = null, ?string $schemaDir = null)
+    public function __construct(SchemaValidator|null $validator = null, string|null $schemaDir = null)
     {
         $this->validator = $validator ?? new SchemaValidator();
         $this->schemaDir = $schemaDir ?? __DIR__ . '/../../../schemas';

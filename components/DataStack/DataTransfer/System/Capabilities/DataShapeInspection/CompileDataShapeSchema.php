@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspection;
 
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
+use DateTimeImmutable;
+use ReflectionClass;
+use ReflectionException;
 use RuntimeException;
+use Throwable;
 
 /**
  * Compiles DataShape inspections to disk-based metadata with atomic writes,
@@ -19,8 +23,7 @@ final class CompileDataShapeSchema
 
     public function __construct(
         string $cacheDir,
-        string $configHash,
-        ?Filesystem $filesystem = null,
+        string $configHash, Filesystem|null $filesystem = null,
     ) {
         $this->cacheDir = rtrim($cacheDir, '/\\');
         $this->configHash = $configHash;
@@ -43,7 +46,7 @@ final class CompileDataShapeSchema
             $shape = $inspector->inspect($class);
             $entries[$class] = $this->serializeDataShape($shape);
 
-            $reflection = new \ReflectionClass($class);
+            $reflection = new ReflectionClass($class);
             $fileName = $reflection->getFileName();
             if ($fileName !== false && is_file($fileName)) {
                 $sourceMtimes[$class] = filemtime($fileName);
@@ -51,7 +54,7 @@ final class CompileDataShapeSchema
         }
 
         $fingerprint = $this->computeFingerprint($classes, $entries);
-        $now = (new \DateTimeImmutable())->format('c');
+        $now = (new DateTimeImmutable())->format('c');
 
         $body = [
             'format' => CompiledSchemaMetadata::FORMAT,
@@ -78,7 +81,7 @@ final class CompileDataShapeSchema
      * Load existing compiled metadata from disk.
      * Returns null if file is missing, corrupt, or invalid.
      */
-    public function loadMetadata(): ?CompiledSchemaMetadata
+    public function loadMetadata() : CompiledSchemaMetadata|null
     {
         $path = $this->metadataPath();
 
@@ -89,7 +92,7 @@ final class CompileDataShapeSchema
         try {
             $json = $this->filesystem->read($path);
             $state = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-        } catch (\Throwable) {
+        } catch (Throwable) {
             $this->quarantineCorrupt($path);
 
             return null;
@@ -144,14 +147,14 @@ final class CompileDataShapeSchema
                 return true;
             }
 
-            $reflection = new \ReflectionClass($class);
+            $reflection = new ReflectionClass($class);
             $fileName = $reflection->getFileName();
             if ($fileName === false || ! is_file($fileName)) {
                 return true;
             }
 
             return filemtime($fileName) !== $storedMtime;
-        } catch (\ReflectionException) {
+        } catch (ReflectionException) {
             return true;
         }
     }
@@ -194,7 +197,7 @@ final class CompileDataShapeSchema
         $result = [];
         foreach ($attributes as $attribute) {
             $className = $attribute::class;
-            $shortName = (new \ReflectionClass($attribute))->getShortName();
+            $shortName = (new ReflectionClass($attribute))->getShortName();
             $result[$shortName] = $this->extractConstructorArgs($attribute);
         }
 
@@ -206,7 +209,7 @@ final class CompileDataShapeSchema
      */
     private function extractConstructorArgs(object $object): array
     {
-        $reflection = new \ReflectionClass($object);
+        $reflection = new ReflectionClass($object);
         $constructor = $reflection->getConstructor();
         if ($constructor === null) {
             return [];
@@ -256,10 +259,10 @@ final class CompileDataShapeSchema
 
         $quarantineDir = $this->cacheDir . '/compiled/quarantine';
         if (! is_dir($quarantineDir)) {
-            mkdir($quarantineDir, 0o755, true);
+            $this->filesystem->createDirectory($quarantineDir);
         }
 
-        $timestamp = (new \DateTimeImmutable())->format('YmdHis');
+        $timestamp = (new DateTimeImmutable())->format('YmdHis');
         $hash = substr(hash('sha256', $path), 0, 8);
         $basename = pathinfo($path, PATHINFO_BASENAME);
         $dest = $quarantineDir . '/' . $timestamp . '.' . $hash . '.' . $basename;
@@ -271,7 +274,7 @@ final class CompileDataShapeSchema
     {
         $dir = $this->compiledDirectory();
         if (! is_dir($dir)) {
-            mkdir($dir, 0o755, true);
+            $this->filesystem->createDirectory($dir);
         }
     }
 

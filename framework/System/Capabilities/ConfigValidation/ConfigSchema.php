@@ -15,7 +15,7 @@ final readonly class ConfigSchema
     public function __construct(
         public string $name,
         public array $fields = [],
-        public ?string $description = null,
+        public string|null $description = null,
     ) {
     }
 
@@ -32,8 +32,7 @@ final readonly class ConfigSchema
         string $type = ConfigSchemaField::TYPE_STRING,
         bool $required = true,
         mixed $default = null,
-        array $allowed = [],
-        ?string $description = null,
+        array $allowed = [], string|null $description = null,
     ): self {
         $fields = $this->fields;
         $fields[$name] = new ConfigSchemaField(

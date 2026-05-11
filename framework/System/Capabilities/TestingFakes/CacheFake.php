@@ -38,7 +38,7 @@ final class CacheFake
         return $this->store[$key] ?? $default;
     }
 
-    public function set(string $key, mixed $value, ?int $ttl = null): void
+    public function set(string $key, mixed $value, int|null $ttl = null) : void
     {
         $this->setCalls[] = ['key' => $key, 'value' => $value, 'ttl' => $ttl];
         $this->store[$key] = $value;

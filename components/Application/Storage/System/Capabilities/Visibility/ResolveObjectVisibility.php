@@ -6,7 +6,7 @@ namespace Avax\Components\Application\Storage\System\Capabilities\Visibility;
 
 final readonly class ResolveObjectVisibility
 {
-    public function execute(?string $visibility) : ObjectVisibility
+    public function execute(string|null $visibility) : ObjectVisibility
     {
         if ($visibility === null) {
             return ObjectVisibility::PRIVATE;

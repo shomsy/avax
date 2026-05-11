@@ -11,7 +11,7 @@ final class GenerateCode
     /**
      * @param array<string, string> $variables
      */
-    public function generate(string $template, array $variables, string $outputPath, ?Filesystem $filesystem = null) : bool
+    public function generate(string $template, array $variables, string $outputPath, Filesystem|null $filesystem = null) : bool
     {
         $code = str_replace(
             array_map(fn ($k) => '{{' . $k . '}}', array_keys($variables)),

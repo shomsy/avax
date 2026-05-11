@@ -38,7 +38,7 @@ final class DeferredProviderRegistry
         return $services;
     }
 
-    public function ownerOf(string $serviceId): ?string
+    public function ownerOf(string $serviceId) : string|null
     {
         return $this->serviceOwners[$serviceId] ?? null;
     }
@@ -46,7 +46,7 @@ final class DeferredProviderRegistry
     /**
      * @param  list<string>  $serviceIds
      */
-    public function bootFor(array $serviceIds, DependencyRegistry $dependencyRegistry, ?ResolutionMetrics $resolutionMetrics = null): void
+    public function bootFor(array $serviceIds, DependencyRegistry $dependencyRegistry, ResolutionMetrics|null $resolutionMetrics = null) : void
     {
         foreach (array_values(array: array_unique(array: $serviceIds)) as $serviceId) {
             $this->bootIfNeeded(
@@ -56,7 +56,7 @@ final class DeferredProviderRegistry
         }
     }
 
-    public function bootIfNeeded(string $serviceId, ?ResolutionMetrics $resolutionMetrics = null): void
+    public function bootIfNeeded(string $serviceId, ResolutionMetrics|null $resolutionMetrics = null) : void
     {
         $providerClass = $this->serviceOwners[$serviceId] ?? null;
         if ($providerClass === null || isset($this->bootedProviders[$providerClass])) {
@@ -69,7 +69,7 @@ final class DeferredProviderRegistry
     /**
      * @param  class-string<RegisterDependency>  $providerClass
      */
-    private function bootProvider(string $providerClass, ?ResolutionMetrics $resolutionMetrics = null): void
+    private function bootProvider(string $providerClass, ResolutionMetrics|null $resolutionMetrics = null) : void
     {
         $provider = $this->providers[$providerClass] ?? null;
         if (! $provider instanceof RegisterDependency) {
@@ -90,7 +90,7 @@ final class DeferredProviderRegistry
         $this->bootedProviders[$providerClass] = true;
     }
 
-    public function register(RegisterDependency $registerDependency, array $serviceIds, DependencyRegistry $dependencyRegistry, ?ResolutionMetrics $resolutionMetrics = null): void
+    public function register(RegisterDependency $registerDependency, array $serviceIds, DependencyRegistry $dependencyRegistry, ResolutionMetrics|null $resolutionMetrics = null) : void
     {
         $providerClass = $registerDependency::class;
         $ids = array_map(

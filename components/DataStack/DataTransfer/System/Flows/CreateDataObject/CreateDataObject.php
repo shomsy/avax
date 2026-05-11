@@ -24,7 +24,6 @@ use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConf
 use BackedEnum;
 use InvalidArgumentException;
 use ReflectionClass;
-use ReflectionNamedType;
 
 /**
  * CreateDataObject — hydrates and validates a typed object from input.
@@ -35,8 +34,8 @@ use ReflectionNamedType;
 final readonly class CreateDataObject
 {
     public function __construct(
-        private ?DataTransferConfig $dataTransferConfig = null,
-        private ?DataShapeCompiler $dataShapeCompiler = null,
+        private DataTransferConfig|null $dataTransferConfig = null,
+        private DataShapeCompiler|null  $dataShapeCompiler = null,
     ) {}
 
     /**
@@ -357,7 +356,8 @@ final readonly class CreateDataObject
         object $attribute,
         mixed $value,
         string $fieldName,
-    ): ?DataTransferViolation {
+    ) : DataTransferViolation|null
+    {
         if (! method_exists($attribute, 'validate')) {
             return null;
         }

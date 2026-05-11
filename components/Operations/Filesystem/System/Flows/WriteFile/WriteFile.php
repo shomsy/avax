@@ -16,12 +16,34 @@ final readonly class WriteFile
             mkdir($directory, 0755, true);
         }
 
-        $result = @file_put_contents($path, $content);
+        $result = $this->writeFileContents($path, $content);
 
         if ($result === false) {
             throw new FilesystemException("Unable to write file: {$path}");
         }
 
         return true;
+    }
+
+    private function writeFileContents(string $path, string $content) : int|false
+    {
+        $error = null;
+        set_error_handler(static function (int $errno, string $errstr) use (&$error) : true {
+            $error = $errstr;
+
+            return true;
+        });
+
+        try {
+            $result = file_put_contents($path, $content);
+        } finally {
+            restore_error_handler();
+        }
+
+        if ($result === false && $error !== null) {
+            throw new FilesystemException("Unable to write file: {$path} ({$error})");
+        }
+
+        return $result;
     }
 }

@@ -25,7 +25,7 @@ interface UnitOfWorkInterface
     /**
      * Flush all pending changes to the underlying storage.
      */
-    public function flush(?string $connectionName = null): void;
+    public function flush(string|null $connectionName = null) : void;
 
     /**
      * Clear all tracked entities without flushing.

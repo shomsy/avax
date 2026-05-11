@@ -30,7 +30,7 @@ final class ShutdownErrorHandler
     /**
      * Get the singleton instance.
      */
-    public static function getInstance(): ?self
+    public static function getInstance() : self|null
     {
         return self::$instance;
     }

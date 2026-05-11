@@ -492,12 +492,12 @@ final class ServiceRegistry implements ServiceRegistryInterface
         return isset($this->aliases[$alias]);
     }
 
-    public function ownership(string $abstract): ?RegistrationMetadata
+    public function ownership(string $abstract) : RegistrationMetadata|null
     {
         return $this->get(abstract: $abstract)?->metadata;
     }
 
-    public function get(string $abstract): ?ServiceRegistration
+    public function get(string $abstract) : ServiceRegistration|null
     {
         $abstract = $this->resolveAlias(abstract: $abstract);
 
@@ -545,7 +545,7 @@ final class ServiceRegistry implements ServiceRegistryInterface
     /**
      * @return array<string, mixed>|null
      */
-    public function sliceManifest(string $slice): ?array
+    public function sliceManifest(string $slice) : array|null
     {
         $normalized = trim(string: $slice);
         if ($normalized === '') {

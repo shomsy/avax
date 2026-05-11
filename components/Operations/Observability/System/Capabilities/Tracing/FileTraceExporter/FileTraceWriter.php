@@ -22,8 +22,7 @@ final class FileTraceWriter
     private Filesystem $filesystem;
 
     public function __construct(
-        private string $filePath,
-        ?Filesystem $filesystem = null,
+        private string $filePath, Filesystem|null $filesystem = null,
     )
     {
         $this->filesystem = $filesystem ?? new Filesystem();

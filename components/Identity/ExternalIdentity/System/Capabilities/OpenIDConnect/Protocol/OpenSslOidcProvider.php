@@ -32,11 +32,9 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         #[SensitiveParameter]
         private string             $tokenEndpoint,
         private string             $userInfoEndpoint,
-        private string             $jsonWebKeySetUri,
-        ?SubjectIdentifierStrategy $subjectIdentifierStrategy = null,
+        private string      $jsonWebKeySetUri, SubjectIdentifierStrategy|null $subjectIdentifierStrategy = null,
         #[SensitiveParameter]
-        private ?string            $pairwiseSalt = null,
-        ?int                       $idTokenLifetime = null,
+        private string|null $pairwiseSalt = null, int|null $idTokenLifetime = null,
         private string             $algorithm = 'RS256',
     )
     {
@@ -84,9 +82,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
     public function issueIdToken(
         User               $user,
         string             $clientId,
-        array              $scopes,
-        ?string            $nonce = null,
-        ?DateTimeImmutable $authenticatedAt = null,
+        array $scopes, string|null $nonce = null, DateTimeImmutable|null $authenticatedAt = null,
         #[SensitiveParameter]
         ?string            $sessionId = null,
         bool               $phishingResistant = false,

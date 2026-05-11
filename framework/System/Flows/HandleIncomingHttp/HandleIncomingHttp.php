@@ -22,7 +22,7 @@ final readonly class HandleIncomingHttp
 {
     public function __construct(
         private ResponseFactory   $responseFactory = new ResponseFactory(),
-        private ?MetricsCollector $metricsCollector = null,
+        private MetricsCollector|null $metricsCollector = null,
     ) {
     }
 

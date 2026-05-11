@@ -14,7 +14,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 
 final class SourceSyncCoordinator
 {
-    public function __construct(private readonly CacheSource $cacheSource, private readonly ?CacheStore $cacheStore = null, private readonly SourceSyncPolicy $sourceSyncPolicy = SourceSyncPolicy::CACHE_ASIDE, private ?DeferredSourceWrite $deferredSourceWrite = null)
+    public function __construct(private readonly CacheSource $cacheSource, private readonly ?CacheStore $cacheStore = null, private readonly SourceSyncPolicy $sourceSyncPolicy = SourceSyncPolicy::CACHE_ASIDE, private DeferredSourceWrite|null $deferredSourceWrite = null)
     {
     }
 

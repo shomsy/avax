@@ -26,8 +26,7 @@ final class ResolveDependencies
     public function resolveParameters(
         array $parameters,
         array $overrides,
-        ResolveDependency $resolveDependency,
-        ?ResolveRequest $resolveRequest = null,
+        ResolveDependency $resolveDependency, ResolveRequest|null $resolveRequest = null,
     ): array {
         return $this->resolvePlan(
             overrides: $overrides,
@@ -47,8 +46,7 @@ final class ResolveDependencies
     public function resolvePlan(
         ResolvePlan $resolvePlan,
         array $overrides,
-        ResolveDependency $resolveDependency,
-        ?ResolveRequest $resolveRequest,
+        ResolveDependency $resolveDependency, ResolveRequest|null $resolveRequest,
     ): array {
         $resolved = [];
 
@@ -74,8 +72,7 @@ final class ResolveDependencies
     private function resolveCompiledParameter(
         array $parameter,
         array $overrides,
-        ResolveDependency $resolveDependency,
-        ?ResolveRequest $resolveRequest,
+        ResolveDependency $resolveDependency, ResolveRequest|null $resolveRequest,
     ): mixed {
         if (array_key_exists(key: $parameter['name'], array: $overrides)) {
             return $overrides[$parameter['name']];
@@ -142,7 +139,7 @@ final class ResolveDependencies
     /**
      * Infers one service id from the parameter attribute or object type.
      */
-    private function serviceIdFor(ReflectionParameter $reflectionParameter): ?string
+    private function serviceIdFor(ReflectionParameter $reflectionParameter) : string|null
     {
         if ($reflectionParameter->getAttributes(name: RuntimeInput::class) !== []) {
             return null;

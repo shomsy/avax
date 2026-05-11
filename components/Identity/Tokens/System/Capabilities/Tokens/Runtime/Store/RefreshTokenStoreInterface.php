@@ -21,13 +21,9 @@ interface RefreshTokenStoreInterface
      */
     public function issue(
         UserId                 $userId,
-        DateTimeImmutable      $expiresAt,
-        ?string                $familyId = null,
-        ?DateTimeImmutable     $mfaVerifiedAt = null,
-        bool                   $phishingResistant = false,
-        ?string                $clientId = null,
-        array                  $scopes = [],
-        ?OAuthSenderConstraint $oAuthSenderConstraint = null,
+        DateTimeImmutable $expiresAt, string|null $familyId = null, DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool              $phishingResistant = false, string|null $clientId = null,
+        array             $scopes = [], OAuthSenderConstraint|null $oAuthSenderConstraint = null,
     ) : IssuedRefreshToken;
 
     public function find(#[SensitiveParameter] string $plainToken) : ?RefreshTokenRecord;

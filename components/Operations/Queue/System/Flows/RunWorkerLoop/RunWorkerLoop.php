@@ -29,7 +29,7 @@ final readonly class RunWorkerLoop
      *
      * @return array{processed: int, failed: int, dead_lettered: int}
      */
-    public function runOnce(string $queue = 'default', ?int $maxJobs = null) : array
+    public function runOnce(string $queue = 'default', int|null $maxJobs = null) : array
     {
         $processed = 0;
         $failed = 0;

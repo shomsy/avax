@@ -12,7 +12,7 @@ final readonly class RetryResult
         public bool $success,
         public mixed $result,
         public int $attempts,
-        public ?Throwable $lastException,
+        public Throwable|null $lastException,
     ) {
     }
 }

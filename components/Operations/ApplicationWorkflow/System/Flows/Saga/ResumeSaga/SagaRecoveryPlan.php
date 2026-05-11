@@ -8,15 +8,14 @@ final readonly class SagaRecoveryPlan
 {
     private function __construct(
         public string  $sagaId,
-        public ?string $failedStep,
+        public string|null $failedStep,
         public int     $attemptNumber,
         public array   $recoverySteps,
         public bool    $isRecoverable,
     ) {}
 
     public static function create(
-        string  $sagaId,
-        ?string $failedStep,
+        string $sagaId, string|null $failedStep,
         int     $attemptNumber,
     ) : self
     {

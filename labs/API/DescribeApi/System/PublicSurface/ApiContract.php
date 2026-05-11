@@ -17,7 +17,7 @@ final class ApiContract
     ) {
     }
 
-    public function findEndpoint(string $path, string $method): ?EndpointContract
+    public function findEndpoint(string $path, string $method) : EndpointContract|null
     {
         foreach ($this->endpoints as $endpoint) {
             if ($endpoint->path === $path && $endpoint->method === $method) {

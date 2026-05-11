@@ -57,7 +57,7 @@ final readonly class Moment
         return $this->dateTimeImmutable->format($format);
     }
 
-    public function diffForHumans(?self $other = null): string
+    public function diffForHumans(self|null $other = null) : string
     {
         $other ??= self::now();
         $diff = $this->dateTimeImmutable->diff($other->dateTimeImmutable);

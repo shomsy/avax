@@ -27,7 +27,7 @@ final class RouteRegistrar
         ];
     }
 
-    public function resource(string $baseUri, callable $index, ?callable $show = null, ?callable $store = null, ?callable $update = null, ?callable $destroy = null) : self
+    public function resource(string $baseUri, callable $index, callable|null $show = null, callable|null $store = null, callable|null $update = null, callable|null $destroy = null) : self
     {
         $this->get($baseUri, $index);
 

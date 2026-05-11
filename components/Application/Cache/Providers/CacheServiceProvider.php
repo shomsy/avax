@@ -24,7 +24,7 @@ final class CacheServiceProvider extends ServiceProvider
     /** @var array<string, array<string, mixed>> */
     private array $namedCaches = [];
 
-    private ?string $compiledCacheDirectory = null;
+    private string|null $compiledCacheDirectory = null;
 
     public function register(): void
     {

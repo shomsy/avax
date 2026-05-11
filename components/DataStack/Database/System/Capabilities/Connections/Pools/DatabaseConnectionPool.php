@@ -31,7 +31,7 @@ final class DatabaseConnectionPool implements ConnectionPoolInterface
     private readonly PoolState $poolState;
 
     /** @var ExecutionScope|null The "Luggage Tag" (Trace ID) for this pool's actions. */
-    private ?ExecutionScope $executionScope = null;
+    private ExecutionScope|null $executionScope = null;
 
     /**
      * @param  array<string, mixed>  $config  The instructions for the garage (e.g., "Max 10 cars").
@@ -141,7 +141,7 @@ final class DatabaseConnectionPool implements ConnectionPoolInterface
     /**
      * Ask a connection "Are you alive?" (Ping).
      */
-    public function validateConnection(?DatabaseConnection $databaseConnection = null): bool
+    public function validateConnection(DatabaseConnection|null $databaseConnection = null) : bool
     {
         if (! $databaseConnection instanceof DatabaseConnection) {
             return false;

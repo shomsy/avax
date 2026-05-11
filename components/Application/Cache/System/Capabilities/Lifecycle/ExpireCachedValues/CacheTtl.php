@@ -18,7 +18,7 @@ final readonly class CacheTtl implements CacheExpiration
     ) {
     }
 
-    public static function toSeconds(int|DateInterval|null $ttl): ?int
+    public static function toSeconds(int|DateInterval|null $ttl) : int|null
     {
         if ($ttl === null) {
             return null;
@@ -33,9 +33,9 @@ final readonly class CacheTtl implements CacheExpiration
 
     #[Override]
     public function calculateExpiresAt(
-        int|DateInterval|null $ttl,
-        ?Clock $clock = null,
-    ): ?Timestamp {
+        int|DateInterval|null $ttl, Clock|null $clock = null,
+    ) : Timestamp|null
+    {
         $clock ??= $this->clock;
 
         if ($ttl === null) {
@@ -58,9 +58,7 @@ final readonly class CacheTtl implements CacheExpiration
     }
 
     #[Override]
-    public function isExpired(
-        ?Timestamp $timestamp,
-        ?Clock $clock = null,
+    public function isExpired(Timestamp|null $timestamp, Clock|null $clock = null,
     ): bool {
         $clock ??= $this->clock;
 

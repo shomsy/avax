@@ -12,7 +12,7 @@ final readonly class EvaluateFeatureFlag
 {
     public function __construct(
         private FeatureFlagStore $store,
-        private ?string $environment = null,
+        private string|null $environment = null,
     ) {
     }
 
@@ -27,7 +27,7 @@ final readonly class EvaluateFeatureFlag
         return $flag->isEnabled($this->environment);
     }
 
-    public function get(FeatureFlagName $name): ?FeatureFlag
+    public function get(FeatureFlagName $name) : FeatureFlag|null
     {
         return $this->store->get($name);
     }

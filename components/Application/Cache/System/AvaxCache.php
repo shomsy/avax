@@ -35,17 +35,14 @@ final class AvaxCache implements CacheContract
 
     private readonly ShouldRefreshCachedValue $shouldRefreshCachedValue;
 
-    private ?AcquireCacheStampedeLock $acquireCacheStampedeLock = null;
+    private AcquireCacheStampedeLock|null $acquireCacheStampedeLock = null;
 
     private bool $stampedeProtectionEnabled;
 
     public function __construct(
         private readonly CacheStore $cacheStore,
         private readonly Clock $clock = new SystemClock(),
-        private readonly ?CacheMetrics $cacheMetrics = null,
-        ?StaleValuePolicy $staleValuePolicy = null,
-        ?RefreshPolicy $refreshPolicy = null,
-        ?CacheLockStore $cacheLockStore = null,
+        private readonly ?CacheMetrics $cacheMetrics = null, StaleValuePolicy|null $staleValuePolicy = null, RefreshPolicy|null $refreshPolicy = null, CacheLockStore|null $cacheLockStore = null,
         bool $stampedeProtection = false,
         private readonly int $lockWaitTimeoutSeconds = 5,
         private readonly int $lockTtlSeconds = 30,
@@ -230,7 +227,8 @@ final class AvaxCache implements CacheContract
 
         try {
             $this->set(key: $key, value: $loader(), ttl: $ttl);
-        } catch (Throwable) {
+        } catch (Throwable $e) {
+            error_log(sprintf('Cache background refresh failed for key "%s": %s', $key, $e->getMessage()));
         }
     }
 

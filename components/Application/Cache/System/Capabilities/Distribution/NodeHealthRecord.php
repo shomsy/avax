@@ -12,7 +12,7 @@ use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
  */
 final readonly class NodeHealthRecord
 {
-    public function __construct(public string $nodeId, public CacheNodeStatus $cacheNodeStatus, public Timestamp $lastCheck, public int $consecutiveFailures, public int $consecutiveSuccesses, public ?Timestamp $lastFailure, public ?Timestamp $lastSuccess)
+    public function __construct(public string $nodeId, public CacheNodeStatus $cacheNodeStatus, public Timestamp $lastCheck, public int $consecutiveFailures, public int $consecutiveSuccesses, public Timestamp|null $lastFailure, public Timestamp|null $lastSuccess)
     {
     }
 

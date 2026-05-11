@@ -149,8 +149,7 @@ final class DependencyPool
     public function releasePooled(
         string $abstract,
         mixed $instance,
-        int $maxSize,
-        ?bool $resetBeforeReuse = null,
+        int $maxSize, bool|null $resetBeforeReuse = null,
         bool $disposable = false,
     ): array {
         $resetBeforeReuse ??= true;

@@ -11,7 +11,7 @@ use Symfony\Component\Process\Process;
 
 final readonly class BuildParallelRuntime
 {
-    public function build(?ParallelismConfig $config = null) : ParallelRuntimeInterface
+    public function build(ParallelismConfig|null $config = null) : ParallelRuntimeInterface
     {
         $config = $config ?? ParallelismConfig::fromArray([]);
 

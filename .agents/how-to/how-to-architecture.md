@@ -4,6 +4,29 @@ rule, strict TDD, ownership law, naming law, review rules, and pragmatic multi-l
 be dropped into a file such as `ARCHITECTURE_GOVERNANCE.md` or `ENGINEERING_GOVERNANCE.md`. It is based on and expands
 the governance text you provided.
 
+## Status
+
+**MANDATORY** - This document defines non-negotiable architecture rules for AvaX.
+
+## Normative Language
+
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
+*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+
+- **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
+- **MUST NOT / FORBIDDEN**: prohibited pattern.
+- **SHOULD**: expected default unless documented exception exists.
+- **SHOULD NOT**: discouraged pattern requiring justification.
+- **MAY**: optional behavior.
+- **BLOCKER**: violation prevents GREEN status.
+- **HIGH**: must be fixed before production-complete unless explicitly accepted.
+- **MEDIUM**: must be tracked and fixed or explicitly deferred.
+- **LOW**: cleanup or documentation issue.
+
+A rule without an explicit exception **MUST** be treated as mandatory.
+
+Code review **MUST NOT** mark a scope GREEN when a mandatory rule is violated.
+
 ````md
 # Engineering Governance
 ## Pragmatic Fractal Flow Architecture and Recursive Ownership Standard
@@ -144,6 +167,10 @@ It must not read like a storage room of technical categories.
 
 ## 4. Core Architectural Law
 
+**Status:** MANDATORY  
+**Severity:** BLOCKER  
+**Scope:** All folder, file, class, function naming
+
 The primary architectural law is:
 
 **folder says flow or capability, unit says responsibility, function says exact action.**
@@ -153,6 +180,44 @@ This is the main rule.
 Everything else is subordinate to it.
 
 If a structural decision violates this rule, the decision is wrong unless there is an exceptional and explicitly justified reason.
+
+### Requirement
+
+Folders **MUST** be named after flows or capabilities.
+
+Files/classes **MUST** be named after their responsibility.
+
+Functions/methods **MUST** describe exact action.
+
+```text
+// GOOD
+Flows/
+  RegisterUser/
+    RegisterUser.php
+  HandleIncomingHttp/
+Capabilities/
+  CacheReading/
+    ReadRedisCache.php
+
+// BAD
+Services/
+  UserService.php
+  HttpHandler.php
+Helpers/
+  StringHelper.php
+```
+
+### GREEN Criteria
+
+- Folder names describe flows or capabilities
+- File names describe responsibility
+- Function names describe exact action
+
+### RED Criteria
+
+- Folder named Services, Helpers, Utils, Common, Managers
+- File named somethingService, somethingHelper, somethingUtil
+- Function named process(), handle(), doSomething()
 
 ### 4.1 Meaning of "unit"
 

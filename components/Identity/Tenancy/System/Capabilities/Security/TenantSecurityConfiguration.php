@@ -20,11 +20,8 @@ final readonly class TenantSecurityConfiguration
      */
     public function __construct(
         public string  $tenantSlug,
-        public ?string $federationConnectionId = null,
-        public ?string $scimDirectoryId = null,
-        ?array         $verifiedDomains = null,
-        ?array         $groupRoleMap = null,
-        ?string        $policyProfile = null,
+        public string|null $federationConnectionId = null,
+        public string|null $scimDirectoryId = null, array|null $verifiedDomains = null, array|null $groupRoleMap = null, string|null $policyProfile = null,
         public int     $rolloutVersion = 1,
     )
     {

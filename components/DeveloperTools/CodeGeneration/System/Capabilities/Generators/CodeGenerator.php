@@ -22,10 +22,8 @@ abstract class CodeGenerator
     /** Default namespace for generated classes */
     protected string $defaultNamespace;
 
-    public function __construct(
-        ?string $baseDirectory = null,
-        ?string $defaultNamespace = null,
-        private ?Filesystem $filesystem = null,
+    public function __construct(string|null             $baseDirectory = null, string|null $defaultNamespace = null,
+                                private Filesystem|null $filesystem = null,
     )
     {
         $this->baseDirectory    = $baseDirectory ?? $this->detectBaseDirectory();

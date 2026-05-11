@@ -41,8 +41,7 @@ final readonly class ExpiresAt implements CacheExpiration
     }
 
     #[Override]
-    public function isExpired(
-        ?Timestamp $timestamp,
+    public function isExpired(Timestamp|null $timestamp,
         Clock $clock,
     ): bool {
         if (! $timestamp instanceof Timestamp) {

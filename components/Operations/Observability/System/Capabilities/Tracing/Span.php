@@ -12,7 +12,7 @@ class Span
 {
     private readonly float $startTime;
 
-    private ?float $endTime = null;
+    private float|null $endTime = null;
 
     /**
      * @var array<string, mixed>
@@ -76,7 +76,7 @@ class Span
         return $this->endTime - $this->startTime;
     }
 
-    public function duration(): ?float
+    public function duration() : float|null
     {
         return $this->endTime ? $this->endTime - $this->startTime : null;
     }

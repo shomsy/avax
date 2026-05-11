@@ -11,9 +11,8 @@ class DataTransferFailure extends RuntimeException
 {
     public function __construct(
         string                         $message = '',
-        public ?DataTransferViolations $violations = null,
-        int                            $code = 0,
-        ?Throwable                     $previous = null,
+        public DataTransferViolations|null $violations = null,
+        int                                $code = 0, Throwable|null $previous = null,
     )
     {
         parent::__construct($message, $code, $previous);

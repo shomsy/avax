@@ -21,12 +21,8 @@ final readonly class DependencyBlueprint
      * @param  list<array{name: string, plan: ResolvePlan}>  $injectableMethods
      */
     public function __construct(
-        public string $class,
-        ?bool $instantiable = null,
-        public ?ResolvePlan $resolvePlan = null,
-        ?array $injectableProperties = null,
-        ?array $injectableMethods = null,
-        ?bool $shared = null,
+        public string           $class, bool|null $instantiable = null,
+        public ResolvePlan|null $resolvePlan = null, array|null $injectableProperties = null, array|null $injectableMethods = null, bool|null $shared = null,
         public string $fingerprint = '',
     ) {
         $instantiable ??= false;

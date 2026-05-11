@@ -24,10 +24,7 @@ final readonly class AuthCapabilityReadiness
         #[SensitiveParameter]
         ?JwtIdentityInterface             $jwtIdentity,
         #[SensitiveParameter]
-        ?RefreshTokenStoreInterface       $refreshTokenStore,
-        ?PasskeyRuntimeInterface          $passkeyRuntime,
-        ?FederationRuntimeInterface       $federationRuntime,
-        ?ProvisionableUserSourceInterface $provisionableUserSource,
+        ?RefreshTokenStoreInterface $refreshTokenStore, PasskeyRuntimeInterface|null $passkeyRuntime, FederationRuntimeInterface|null $federationRuntime, ProvisionableUserSourceInterface|null $provisionableUserSource,
     ) : self
     {
         return new self(

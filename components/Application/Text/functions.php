@@ -17,7 +17,7 @@ function text(string $value): Text
 /**
  * Create Text instance from nullable string.
  */
-function t(?string $value, string $default = ''): Text
+function t(string|null $value, string $default = '') : Text
 {
     return Text::fromNullable(value: $value, default: $default);
 }

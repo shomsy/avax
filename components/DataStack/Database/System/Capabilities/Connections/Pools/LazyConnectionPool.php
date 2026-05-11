@@ -10,7 +10,7 @@ use Override;
 
 final class LazyConnectionPool implements ConnectionPoolInterface
 {
-    private ?ConnectionPoolInterface $connectionPool = null;
+    private ConnectionPoolInterface|null $connectionPool = null;
 
     public function __construct(
         private readonly ?Closure $factory = null,

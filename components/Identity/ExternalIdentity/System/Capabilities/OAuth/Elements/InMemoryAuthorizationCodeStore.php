@@ -28,14 +28,11 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         string             $clientId,
         string             $redirectUri,
         array              $scopes,
-        DateTimeImmutable  $expiresAt,
-        ?string            $state = null,
-        ?string            $nonce = null,
+        DateTimeImmutable $expiresAt, string|null $state = null, string|null $nonce = null,
         #[SensitiveParameter]
         ?string            $codeChallenge = null,
         #[SensitiveParameter]
-        ?PkceMethod        $pkceMethod = null,
-        ?DateTimeImmutable $mfaVerifiedAt = null,
+        ?PkceMethod       $pkceMethod = null, DateTimeImmutable|null $mfaVerifiedAt = null,
         bool               $phishingResistant = false,
     ) : IssuedAuthorizationCode
     {

@@ -15,7 +15,7 @@ final readonly class StartWorkerProcess
      *
      * @param string $signedPayload JSON-encoded signed callable payload from CallableSerialization
      */
-    public function start(string $signedPayload, ?string $workerScript = null) : Process
+    public function start(string $signedPayload, string|null $workerScript = null) : Process
     {
         $script  = $workerScript ?? $this->getDefaultWorkerScript();
         $encoded = base64_encode($signedPayload);

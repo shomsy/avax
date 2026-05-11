@@ -53,7 +53,7 @@ final readonly class ReadIncomingHttpRequest
      * @param  array<string, list<string>>  $headers
      * @return array<mixed>|null
      */
-    private function parseBody(array $headers, string $body): ?array
+    private function parseBody(array $headers, string $body) : array|null
     {
         if ($body === '') {
             return null;

@@ -17,8 +17,7 @@ final class ConfigurationException extends AuthException
         #[SensitiveParameter]
         private readonly string $errorCode = 'auth.configuration.invalid',
         private readonly array  $context = [],
-        int                     $code = 0,
-        ?Throwable              $previous = null,
+        int $code = 0, Throwable|null $previous = null,
     )
     {
         parent::__construct(message: $message, code: $code, previous: $previous);
@@ -48,8 +47,7 @@ final class ConfigurationException extends AuthException
         );
     }
 
-    public static function missingIdentityBackend(
-        ?string $buildPath = null,
+    public static function missingIdentityBackend(string|null $buildPath = null,
         string  $hint = 'Provide at least one session or JWT backend.',
     ) : self
     {

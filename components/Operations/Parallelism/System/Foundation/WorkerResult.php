@@ -10,7 +10,7 @@ final readonly class WorkerResult
         public string           $workerId,
         public mixed            $value,
         public bool             $success,
-        public ?ParallelFailure $failure,
+        public ParallelFailure|null $failure,
     ) {}
 
     public static function success(string $workerId, mixed $value) : self

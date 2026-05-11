@@ -20,8 +20,8 @@ final readonly class ResolvedWorkloadToken
         public string                 $tokenId,
         public DateTimeImmutable      $expiresAt,
         public array                  $scopes = [],
-        public ?string                $audience = null,
-        public ?string                $issuer = null,
-        public ?OAuthSenderConstraint $senderConstraint = null,
+        public string|null                $audience = null,
+        public string|null                $issuer = null,
+        public OAuthSenderConstraint|null $senderConstraint = null,
     ) {}
 }

@@ -8,7 +8,7 @@ use Closure;
 
 final class TaskBatch
 {
-    private ?Closure $then = null;
+    private Closure|null $then = null;
 
     public function __construct(
         /** @var list<object> */

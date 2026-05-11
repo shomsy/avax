@@ -9,7 +9,7 @@ use Avax\Framework\System\Capabilities\Runtime\Worker\WorkerRuntimeInterface;
 final readonly class StartWorker
 {
     public function __construct(
-        private ?WorkerRuntimeInterface $workerRuntime = null,
+        private WorkerRuntimeInterface|null $workerRuntime = null,
     ) {
     }
 

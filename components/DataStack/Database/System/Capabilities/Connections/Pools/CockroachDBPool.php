@@ -48,7 +48,7 @@ class CockroachDBPool extends BaseConnectionPool
     /**
      * Get a wrapped retryable pool for handling CockroachDB transaction retries.
      */
-    public function withRetry(?int $maxRetries = null): RetryablePool
+    public function withRetry(int|null $maxRetries = null) : RetryablePool
     {
         return new RetryablePool(
             maxRetries: $maxRetries ?? $this->maxRetries,

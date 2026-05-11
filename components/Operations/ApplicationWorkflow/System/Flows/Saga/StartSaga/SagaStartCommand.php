@@ -15,7 +15,7 @@ final readonly class SagaStartCommand
     public function __construct(
         public string  $definitionName,
         public array   $payload = [],
-        public ?string $commandKey = null,
-        public ?string $correlationId = null,
+        public string|null $commandKey = null,
+        public string|null $correlationId = null,
     ) {}
 }

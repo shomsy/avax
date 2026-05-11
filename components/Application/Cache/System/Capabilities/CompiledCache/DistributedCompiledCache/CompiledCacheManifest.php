@@ -22,7 +22,7 @@ final class CompiledCacheManifest
     /** @var array<string, CompiledCacheManifestEntry> */
     private array $entries = [];
 
-    private ?string $manifestPath = null;
+    private string|null $manifestPath = null;
 
     public function __construct(
         private readonly Clock $clock = new SystemClock(),
@@ -33,7 +33,7 @@ final class CompiledCacheManifest
     /**
      * Create a new empty manifest.
      */
-    public static function empty(?Clock $clock = null): self
+    public static function empty(Clock|null $clock = null) : self
     {
         return new self(clock: $clock ?? new SystemClock());
     }
@@ -43,7 +43,7 @@ final class CompiledCacheManifest
      *
      * @throws RuntimeException if the file exists but contains invalid JSON
      */
-    public static function load(string $path, ?Clock $clock = null): self
+    public static function load(string $path, Clock|null $clock = null) : self
     {
         $filesystem = new Filesystem();
         $manifest = new self(clock: $clock ?? new SystemClock());
@@ -76,7 +76,7 @@ final class CompiledCacheManifest
      *
      * @throws RuntimeException if the file cannot be written
      */
-    public function save(?string $path = null): void
+    public function save(string|null $path = null) : void
     {
         $savePath = $path ?? $this->manifestPath;
 
@@ -124,10 +124,7 @@ final class CompiledCacheManifest
     public function addEntry(
         string $name,
         string $compiledPath,
-        array $sourceFiles,
-        ?string $type = null,
-        ?string $phpVersion = null,
-        ?string $frameworkVersion = null,
+        array $sourceFiles, string|null $type = null, string|null $phpVersion = null, string|null $frameworkVersion = null,
     ): CompiledCacheManifestEntry {
         $now = $this->clock->now();
 
@@ -192,7 +189,7 @@ final class CompiledCacheManifest
     /**
      * Get an entry by name.
      */
-    public function getEntry(string $name): ?CompiledCacheManifestEntry
+    public function getEntry(string $name) : CompiledCacheManifestEntry|null
     {
         return $this->entries[$name] ?? null;
     }
@@ -301,7 +298,7 @@ final class CompiledCacheManifest
     /**
      * Get the manifest path.
      */
-    public function getManifestPath(): ?string
+    public function getManifestPath() : string|null
     {
         return $this->manifestPath;
     }

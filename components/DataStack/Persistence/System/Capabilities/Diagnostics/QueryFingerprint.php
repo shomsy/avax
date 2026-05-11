@@ -16,8 +16,8 @@ final readonly class QueryFingerprint implements Stringable
 {
     public function __construct(
         public string $originalQuery,
-        public ?string $pattern = null,
-        public ?string $hash = null,
+        public string|null $pattern = null,
+        public string|null $hash = null,
     ) {
     }
 

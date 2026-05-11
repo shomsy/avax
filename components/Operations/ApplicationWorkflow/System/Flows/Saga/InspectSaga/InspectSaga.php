@@ -81,7 +81,7 @@ final class InspectSaga implements Countable, IteratorAggregate
 
 final readonly class SagaRuntimeEvent
 {
-    private function __construct(public string $id, public string $sagaId, public string $sagaName, public string $type, public ?string $stepName, public array $payload, public DateTimeImmutable $occurredAt) {}
+    private function __construct(public string $id, public string $sagaId, public string $sagaName, public string $type, public string|null $stepName, public array $payload, public DateTimeImmutable $occurredAt) {}
 
     public static function started(string $sagaId, string $sagaName) : self
     {
@@ -91,9 +91,7 @@ final readonly class SagaRuntimeEvent
     public static function create(
         string  $sagaId,
         string  $sagaName,
-        string  $type,
-        ?array  $payload = null,
-        ?string $stepName = null,
+        string $type, array|null $payload = null, string|null $stepName = null,
     ) : self
     {
         $payload ??= [];
@@ -163,7 +161,7 @@ final readonly class SagaRuntimeEvent
 
 final readonly class SagaTimeline
 {
-    private function __construct(public string $sagaId, public array $events, public array $steps, public ?string $startedAt, public ?string $completedAt, public ?float $durationMs, public ?string $finalStatus) {}
+    private function __construct(public string $sagaId, public array $events, public array $steps, public string|null $startedAt, public string|null $completedAt, public float|null $durationMs, public string|null $finalStatus) {}
 
     /**
      * @throws DateMalformedStringException

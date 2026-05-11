@@ -30,7 +30,7 @@ final readonly class ValidationFailure
         return isset($this->errors[$field]);
     }
 
-    public function getError(string $field): ?string
+    public function getError(string $field) : string|null
     {
         return $this->errors[$field][0] ?? null;
     }
@@ -47,7 +47,7 @@ final readonly class ValidationFailure
         return $this->errors;
     }
 
-    public function first(): ?string
+    public function first() : string|null
     {
         foreach ($this->errors as $error) {
             return $error[0];

@@ -17,7 +17,7 @@ final class RunScenarios
 {
     private NativeYamlParser $yamlParser;
 
-    public function __construct(?NativeYamlParser $yamlParser = null)
+    public function __construct(NativeYamlParser|null $yamlParser = null)
     {
         $this->yamlParser = $yamlParser ?? new NativeYamlParser();
     }

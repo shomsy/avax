@@ -16,7 +16,7 @@ use Throwable;
  */
 final readonly class MigrationRunner
 {
-    public function __construct(private MigrationRepository $migrationRepository, private QueryBuilder $queryBuilder, private Transactions $transactions, private ?string $connectionName = null)
+    public function __construct(private MigrationRepository $migrationRepository, private QueryBuilder $queryBuilder, private Transactions $transactions, private string|null $connectionName = null)
     {
     }
 
@@ -52,9 +52,7 @@ final readonly class MigrationRunner
         mixed $migration,
         string $method,
         string $name,
-        QueryBuilder $queryBuilder,
-        ?int $batch = null,
-        ?string $checksum = null,
+        QueryBuilder $queryBuilder, int|null $batch = null, string|null $checksum = null,
     ): void {
         try {
             // Inject QueryBuilder into migration if it supports it

@@ -62,7 +62,7 @@ final class ResetVerifier
     /**
      * Verify a single component resets cleanly.
      */
-    private function verifyComponent(string $name, ResettableState $resettableState): ?RuntimeSafetyFinding
+    private function verifyComponent(string $name, ResettableState $resettableState) : RuntimeSafetyFinding|null
     {
         try {
             $resettableState->resetState();

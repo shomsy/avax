@@ -11,10 +11,7 @@ final class StorageOperationFailed extends RuntimeException
 {
     public function __construct(
         public readonly string $operation,
-        public readonly string $path,
-        ?string                $message = null,
-        ?int                   $code = null,
-        ?Throwable             $previous = null,
+        public readonly string $path, string|null $message = null, int|null $code = null, Throwable|null $previous = null,
     )
     {
         $message ??= "Failed to {$operation}: {$path}";

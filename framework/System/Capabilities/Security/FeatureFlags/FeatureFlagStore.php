@@ -9,7 +9,7 @@ use Avax\Framework\System\Capabilities\Security\FeatureFlags\Foundation\FeatureF
 
 interface FeatureFlagStore
 {
-    public function get(FeatureFlagName $name): ?FeatureFlag;
+    public function get(FeatureFlagName $name) : FeatureFlag|null;
 
     /** @return list<FeatureFlag> */
     public function all(): array;

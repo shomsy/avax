@@ -20,7 +20,7 @@ final readonly class RuntimeRequest
         string $method,
         string $uri,
         private array $headers = [],
-        private ?string $body = null,
+        private string|null $body = null,
         private array $attributes = [],
     ) {
         $normalizedMethod = strtoupper(string: trim(string: $method));
@@ -56,7 +56,7 @@ final readonly class RuntimeRequest
         return $this->headers;
     }
 
-    public function body(): ?string
+    public function body() : string|null
     {
         return $this->body;
     }

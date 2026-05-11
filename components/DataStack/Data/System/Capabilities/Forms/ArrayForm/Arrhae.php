@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Data\System\Capabilities\Forms\ArrayForm;
 
+use Avax\Components\DataStack\Data\System\Capabilities\Codecs\JsonCodec\EncodeJson;
+use Avax\Components\DataStack\Data\System\Capabilities\Codecs\XmlCodec\EncodeXml;
+use Avax\Components\DataStack\Data\System\Capabilities\Lenses\DataPath\DotPath;
 use Avax\Components\DataStack\Data\System\Capabilities\Operators\Aggregate\AverageValues;
 use Avax\Components\DataStack\Data\System\Capabilities\Operators\Aggregate\FindMaxValue;
 use Avax\Components\DataStack\Data\System\Capabilities\Operators\Aggregate\FindMinValue;
 use Avax\Components\DataStack\Data\System\Capabilities\Operators\Aggregate\SumValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Lenses\DataPath\DotPath;
-use Avax\Components\DataStack\Data\System\Foundation\Mutability\MutationGuard;
-use Avax\Components\DataStack\Data\System\Foundation\Normalization\MakeCollection;
-use Avax\Components\DataStack\Data\System\Foundation\Normalization\WrapValue;
+use Avax\Components\DataStack\Data\System\Capabilities\Operators\Ordering\ReverseValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Operators\Ordering\ShuffleValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Operators\Ordering\SortValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Operators\Ordering\SortValuesBy;
 use Avax\Components\DataStack\Data\System\Capabilities\Operators\Search\ContainsValue;
 use Avax\Components\DataStack\Data\System\Capabilities\Operators\Search\SearchValue;
 use Avax\Components\DataStack\Data\System\Capabilities\Operators\Selection\HasValue;
 use Avax\Components\DataStack\Data\System\Capabilities\Operators\Selection\ReadValueByPath;
-use Avax\Components\DataStack\Data\System\Capabilities\Structures\Functional\Pair;
 use Avax\Components\DataStack\Data\System\Capabilities\Operators\Transform\AppendValue;
 use Avax\Components\DataStack\Data\System\Capabilities\Operators\Transform\ChunkValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Codecs\JsonCodec\EncodeJson;
-use Avax\Components\DataStack\Data\System\Capabilities\Codecs\XmlCodec\EncodeXml;
 use Avax\Components\DataStack\Data\System\Capabilities\Operators\Transform\EachValues;
 use Avax\Components\DataStack\Data\System\Capabilities\Operators\Transform\FilterValues;
 use Avax\Components\DataStack\Data\System\Capabilities\Operators\Transform\FlattenValues;
@@ -32,11 +32,11 @@ use Avax\Components\DataStack\Data\System\Capabilities\Operators\Transform\PullV
 use Avax\Components\DataStack\Data\System\Capabilities\Operators\Transform\PutValueByPath;
 use Avax\Components\DataStack\Data\System\Capabilities\Operators\Transform\ReduceValues;
 use Avax\Components\DataStack\Data\System\Capabilities\Operators\Transform\RejectValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Operators\Ordering\ReverseValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Operators\Ordering\ShuffleValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Operators\Ordering\SortValues;
-use Avax\Components\DataStack\Data\System\Capabilities\Operators\Ordering\SortValuesBy;
 use Avax\Components\DataStack\Data\System\Capabilities\Operators\Transform\UniqueValues;
+use Avax\Components\DataStack\Data\System\Capabilities\Structures\Functional\Pair;
+use Avax\Components\DataStack\Data\System\Foundation\Mutability\MutationGuard;
+use Avax\Components\DataStack\Data\System\Foundation\Normalization\MakeCollection;
+use Avax\Components\DataStack\Data\System\Foundation\Normalization\WrapValue;
 use NoDiscard;
 
 /**
@@ -268,7 +268,7 @@ final readonly class Arrhae
     // -- Order -------------------------------------------------------------------
 
     #[NoDiscard]
-    public function sort(?callable $callback = null): static
+    public function sort(callable|null $callback = null) : static
     {
         return new self(
             items: (new SortValues(items: $this->items))->sort(callback: $callback),

@@ -16,7 +16,7 @@ final readonly class ScimBulkOperation
         public string  $method,
         public string  $path,
         array          $body = [],
-        public ?string $bulkId = null,
+        public string|null $bulkId = null,
     )
     {
         $body       ??= [];

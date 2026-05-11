@@ -312,7 +312,7 @@ final class TestFailedHookedRequest extends SecureRequest
     public string $name;
 
     public bool                    $failedValidationCalled = false;
-    public ?DataTransferViolations $capturedViolations     = null;
+    public DataTransferViolations|null $capturedViolations = null;
 
     public function authorize() : bool
     {

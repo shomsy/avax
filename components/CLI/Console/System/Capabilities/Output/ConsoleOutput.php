@@ -30,7 +30,7 @@ class ConsoleOutput
     /** Whether ANSI colors are enabled */
     private readonly bool $colorsEnabled;
 
-    public function __construct(?bool $colorsEnabled = null)
+    public function __construct(bool|null $colorsEnabled = null)
     {
         $this->colorsEnabled = $colorsEnabled ?? $this->detectColors();
     }
@@ -130,7 +130,7 @@ class ConsoleOutput
     /**
      * Ask a secret question.
      */
-    public function askSecret(string $question, ?string $default = null): string
+    public function askSecret(string $question, string|null $default = null) : string
     {
         return Question::askSecret($question, $default);
     }
@@ -146,7 +146,7 @@ class ConsoleOutput
     /**
      * Ask a text question.
      */
-    public function ask(string $question, ?string $default = null): string
+    public function ask(string $question, string|null $default = null) : string
     {
         return Question::ask($question, $default);
     }

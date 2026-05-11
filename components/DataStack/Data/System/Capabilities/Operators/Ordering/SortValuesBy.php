@@ -16,7 +16,7 @@ final readonly class SortValuesBy
     }
 
     /** @return array<array-key, mixed> */
-    public function __invoke(string|callable $key, ?int $options = null, bool $descending = false): array
+    public function __invoke(string|callable $key, int|null $options = null, bool $descending = false) : array
     {
         $options ??= SORT_REGULAR;
 
@@ -24,7 +24,7 @@ final readonly class SortValuesBy
     }
 
     /** @return array<array-key, mixed> */
-    public function sortBy(string|callable $key, ?int $options = null, bool $descending = false): array
+    public function sortBy(string|callable $key, int|null $options = null, bool $descending = false) : array
     {
         $options ??= SORT_REGULAR;
         $items = $this->items;

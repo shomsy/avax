@@ -13,8 +13,7 @@ final readonly class RequireCsrfProtection
 {
     private string $cookieName;
 
-    public function __construct(
-        ?string $cookieName = null,
+    public function __construct(string|null $cookieName = null,
         #[SensitiveParameter]
         private string $headerName = 'x-csrf-token',
     ) {
@@ -28,8 +27,7 @@ final readonly class RequireCsrfProtection
      * @param  array<string, mixed>  $cookies
      */
     public function execute(
-        string $method,
-        ?array $server = null,
+        string $method, array|null $server = null,
         #[SensitiveParameter]
         ?array $headers = null,
         array $cookies = [],
@@ -66,7 +64,7 @@ final readonly class RequireCsrfProtection
     /**
      * @param  array<string, mixed>  $values
      */
-    private function readValue(array $values, string $key): ?string
+    private function readValue(array $values, string $key) : string|null
     {
         foreach ($values as $candidateKey => $value) {
             if (strcasecmp(string1: $candidateKey, string2: $key) !== 0) {
@@ -83,7 +81,7 @@ final readonly class RequireCsrfProtection
         return null;
     }
 
-    private function sameOrigin(?string $originLikeValue, ?string $host): bool
+    private function sameOrigin(string|null $originLikeValue, string|null $host) : bool
     {
         if ($originLikeValue === null || $host === null) {
             return false;

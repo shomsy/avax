@@ -27,7 +27,7 @@ final readonly class MessageEnvelope
     /**
      * @param array<string, mixed> $body
      */
-    public static function create(string $type, array $body, ?string $correlationId = null) : self
+    public static function create(string $type, array $body, string|null $correlationId = null) : self
     {
         return new self(
             messageId: uniqid('msg_', true),

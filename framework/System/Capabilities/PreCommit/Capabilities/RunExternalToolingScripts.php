@@ -107,7 +107,7 @@ final class RunExternalToolingScripts implements CheckInterface
         return $scripts;
     }
 
-    private function matchExtension(string $extension): ?string
+    private function matchExtension(string $extension) : string|null
     {
         foreach (self::$scriptExecutors as $type => $config) {
             $ext = ltrim($config['extension'], '.');

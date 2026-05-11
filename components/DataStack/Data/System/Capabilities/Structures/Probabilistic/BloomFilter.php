@@ -51,7 +51,7 @@ final readonly class BloomFilter implements Countable, ProbabilisticStructure
      */
     private function indexesFor(mixed $value) : array
     {
-        $serialized = is_scalar(value: $value) || $value === null ? (string) $value : serialize(value: $value);
+        $serialized = is_scalar(value: $value) || $value === null ? (string) $value : json_encode(value: $value, flags: JSON_THROW_ON_ERROR);
         $indexes    = [];
 
         for ($i = 0; $i < $this->hashCount; $i++) {

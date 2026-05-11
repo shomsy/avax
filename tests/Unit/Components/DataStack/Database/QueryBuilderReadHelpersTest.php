@@ -151,8 +151,7 @@ final class RecordingReadHelperExecutor implements ExecutorInterface
      */
     public function query(
         string $sql,
-        array $bindings = [],
-        ?ExecutionScope $executionScope = null,
+        array $bindings = [], ExecutionScope|null $executionScope = null,
     ): array {
         $this->queries[] = [
             'sql' => $sql,
@@ -167,8 +166,7 @@ final class RecordingReadHelperExecutor implements ExecutorInterface
      */
     public function execute(
         string $sql,
-        array $bindings = [],
-        ?ExecutionScope $executionScope = null,
+        array $bindings = [], ExecutionScope|null $executionScope = null,
     ): ExecutionResult {
         return ExecutionResult::success(affectedRows: 1);
     }

@@ -49,7 +49,7 @@ final readonly class MailChannel implements NotificationChannel
         $this->mailTransport->send($mimeMessage, $envelope);
     }
 
-    private function resolveEmail(mixed $notifiable): ?string
+    private function resolveEmail(mixed $notifiable) : string|null
     {
         if (is_string($notifiable)) {
             return $notifiable;

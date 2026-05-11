@@ -13,5 +13,5 @@ final readonly class WorkloadIdentityProfile
      * @param list<string>                $allowedAudiences
      * @param array<string, list<string>> $audienceScopeBoundaries
      */
-    public function __construct(public string $clientId, public string $name, public array $allowedScopes, public array $allowedAudiences, public array $audienceScopeBoundaries, public ?OAuthSenderConstraintType $requiredSenderConstraint, public bool $phishingResistantRequired) {}
+    public function __construct(public string $clientId, public string $name, public array $allowedScopes, public array $allowedAudiences, public array $audienceScopeBoundaries, public OAuthSenderConstraintType|null $requiredSenderConstraint, public bool $phishingResistantRequired) {}
 }

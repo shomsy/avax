@@ -30,9 +30,9 @@ final readonly class CompiledCacheManifestEntry
         public string $fingerprint,
         public Timestamp $createdAt,
         public Timestamp $updatedAt,
-        public ?string $type = null,
-        public ?string $phpVersion = null,
-        public ?string $frameworkVersion = null,
+        public string|null $type = null,
+        public string|null $phpVersion = null,
+        public string|null $frameworkVersion = null,
     ) {
     }
 

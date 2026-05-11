@@ -49,7 +49,7 @@ final class Environment
         return self::detector()->detectRuntime();
     }
 
-    public static function container(): ?string
+    public static function container() : string|null
     {
         return self::detector()->detectContainer();
     }

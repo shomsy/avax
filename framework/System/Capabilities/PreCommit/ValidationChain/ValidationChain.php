@@ -14,9 +14,9 @@ use Avax\Framework\System\Capabilities\PreCommit\Validators\ValidatorInterface;
  */
 class ValidationChain
 {
-    private ?ValidatorInterface $head = null;
+    private ValidatorInterface|null $head = null;
 
-    private ?ValidatorInterface $tail = null;
+    private ValidatorInterface|null $tail = null;
 
     /** @var list<ValidatorInterface> */
     private array $validators = [];
@@ -75,7 +75,7 @@ class ValidationChain
     /**
      * Get validator by name
      */
-    public function getValidator(string $name): ?ValidatorInterface
+    public function getValidator(string $name) : ValidatorInterface|null
     {
         foreach ($this->validators as $validator) {
             if ($validator->getName() === $name) {

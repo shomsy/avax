@@ -18,7 +18,7 @@ final readonly class CacheLockOwner implements Stringable
     ) {
     }
 
-    public static function current(string $ownerId, int $ttlSeconds = 30, ?Clock $clock = null): self
+    public static function current(string $ownerId, int $ttlSeconds = 30, Clock|null $clock = null) : self
     {
         $clock ??= new SystemClock();
         $now = $clock->now();
@@ -30,7 +30,7 @@ final readonly class CacheLockOwner implements Stringable
         );
     }
 
-    public function isExpired(?Clock $clock = null): bool
+    public function isExpired(Clock|null $clock = null) : bool
     {
         $clock ??= new SystemClock();
         $now = $clock->now();

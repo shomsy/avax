@@ -13,7 +13,7 @@ final readonly class ScenarioStep
 {
     public function __construct(
         public string  $action,
-        public ?string $target = null,
+        public string|null $target = null,
         public mixed   $parameter = null,
     ) {}
 

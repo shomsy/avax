@@ -24,10 +24,9 @@ final readonly class Query
 
     public function __construct(
         private Connections $connections,
-        private ?EventBus $eventBus = null,
+        private EventBus|null       $eventBus = null,
         private GrammarInterface $grammar = new MySQLGrammar(),
-        private ?ExecutionScope $executionScope = null,
-        ?CreateBuilder $createBuilder = null,
+        private ExecutionScope|null $executionScope = null, CreateBuilder|null $createBuilder = null,
     ) {
         $this->createBuilder = $createBuilder ?? new CreateBuilder(
             connections: $this->connections,
@@ -41,7 +40,7 @@ final readonly class Query
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function from(string $table, ?string $connectionName = null): QueryBuilder
+    public function from(string $table, string|null $connectionName = null) : QueryBuilder
     {
         return $this->builder(connectionName: $connectionName)->from(table: $table);
     }
@@ -50,7 +49,7 @@ final readonly class Query
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function builder(?string $connectionName = null): QueryBuilder
+    public function builder(string|null $connectionName = null) : QueryBuilder
     {
         return $this->createBuilder->for(connectionName: $connectionName);
     }
@@ -59,7 +58,7 @@ final readonly class Query
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function raw(string $value, ?string $connectionName = null): Expression
+    public function raw(string $value, string|null $connectionName = null) : Expression
     {
         return $this->builder(connectionName: $connectionName)->raw(value: $value);
     }

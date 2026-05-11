@@ -40,8 +40,7 @@ final class MethodEmitter
     public function emitDirectMethod(
         string $methodName,
         string $serviceId,
-        string $class,
-        ?ResolvePlan $resolvePlan,
+        string $class, ResolvePlan|null $resolvePlan,
         array $registrationArguments,
         bool $needsFinish,
     ): string {
@@ -96,7 +95,7 @@ final class MethodEmitter
     /**
      * @return list<string>
      */
-    private function emitArguments(?ResolvePlan $resolvePlan, string $serviceId): array
+    private function emitArguments(ResolvePlan|null $resolvePlan, string $serviceId) : array
     {
         if (! $resolvePlan instanceof ResolvePlan || $resolvePlan->isEmpty()) {
             return [];

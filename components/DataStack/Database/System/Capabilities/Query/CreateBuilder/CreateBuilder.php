@@ -22,8 +22,8 @@ final readonly class CreateBuilder
     public function __construct(
         private Connections $connections,
         private GrammarInterface $grammar,
-        private ?EventBus $eventBus = null,
-        private ?ExecutionScope $executionScope = null,
+        private EventBus|null       $eventBus = null,
+        private ExecutionScope|null $executionScope = null,
     ) {
     }
 
@@ -31,7 +31,7 @@ final readonly class CreateBuilder
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function for(?string $connectionName = null): QueryBuilder
+    public function for(string|null $connectionName = null) : QueryBuilder
     {
         $connection = $this->connections->connection(name: $connectionName);
         $queryOrchestrator = new QueryOrchestrator(

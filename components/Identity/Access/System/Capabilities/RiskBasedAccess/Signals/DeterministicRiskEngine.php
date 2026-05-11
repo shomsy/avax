@@ -19,8 +19,7 @@ final readonly class DeterministicRiskEngine
     public function assessSuccessfulAuthentication(
         User    $user,
         #[SensitiveParameter]
-        ?string $ipAddress,
-        ?string $userAgent,
+        ?string $ipAddress, string|null $userAgent,
     ) : RiskDecision
     {
         $userId = $user->getId()->value;
@@ -47,7 +46,7 @@ final readonly class DeterministicRiskEngine
         return RiskDecision::allow('known_environment');
     }
 
-    public function recordRefreshReuse(int $userId, ?string $clientId) : RiskDecision
+    public function recordRefreshReuse(int $userId, string|null $clientId) : RiskDecision
     {
         $this->riskSignalStore->record(signal: new RiskSignal(
                                                    userId    : $userId,

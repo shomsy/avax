@@ -18,9 +18,7 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
     public function issueIdToken(
         User               $user,
         string             $clientId,
-        array              $scopes,
-        ?string            $nonce = null,
-        ?DateTimeImmutable $authenticatedAt = null,
+        array $scopes, string|null $nonce = null, DateTimeImmutable|null $authenticatedAt = null,
         #[SensitiveParameter]
         ?string            $sessionId = null,
         bool               $phishingResistant = false,

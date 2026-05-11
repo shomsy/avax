@@ -49,8 +49,7 @@ final readonly class StartSaga
 
     public function start(
         SagaDefinition   $sagaDefinition,
-        SagaStartCommand $sagaStartCommand,
-        ?callable        $correlationIdGenerator = null,
+        SagaStartCommand $sagaStartCommand, callable|null $correlationIdGenerator = null,
     ) : SagaInstance
     {
         if (! $sagaDefinition->isValid()) {
@@ -101,11 +100,10 @@ final readonly class StartSaga
 
 final readonly class SagaStartCommand
 {
-    private function __construct(public ?string $sagaId, public string $definitionName, public array $initialData, public ?string $correlationId, public ?string $tenantId, public ?string $idempotencyKey) {}
+    private function __construct(public string|null $sagaId, public string $definitionName, public array $initialData, public string|null $correlationId, public string|null $tenantId, public string|null $idempotencyKey) {}
 
     public static function create(
-        string $definitionName,
-        ?array $initialData = null,
+        string $definitionName, array|null $initialData = null,
         array  $options = [],
     ) : self
     {
@@ -139,7 +137,7 @@ final readonly class SagaStartCommand
 
 final readonly class SagaCorrelationId implements Stringable
 {
-    private function __construct(public string $value, public ?string $prefix = null, public ?string $suffix = null) {}
+    private function __construct(public string $value, public string|null $prefix = null, public string|null $suffix = null) {}
 
     /**
      * @throws RandomException

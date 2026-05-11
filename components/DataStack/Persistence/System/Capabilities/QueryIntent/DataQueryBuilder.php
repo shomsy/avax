@@ -13,15 +13,15 @@ use function is_string;
  */
 final class DataQueryBuilder
 {
-    private ?string $entityType = null;
+    private string|null $entityType = null;
 
     private array $conditions = [];
 
     private array $orderBy = [];
 
-    private ?int $limit = null;
+    private int|null $limit = null;
 
-    private ?int $offset = null;
+    private int|null $offset = null;
 
     private array $joins = [];
 

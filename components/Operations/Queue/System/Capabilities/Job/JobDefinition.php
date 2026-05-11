@@ -9,11 +9,11 @@ final readonly class JobDefinition
     public function __construct(
         public string $handler,
         public array $payload = [],
-        public ?string $queue = null,
+        public string|null $queue = null,
         public int $maxAttempts = 3,
         public int $timeout = 60,
         public int $retryDelay = 0,
-        public ?string $correlationId = null,
+        public string|null $correlationId = null,
     ) {
     }
 

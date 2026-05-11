@@ -12,7 +12,7 @@ final class CsrfTokenGenerator
 {
     private const string SESSION_KEY = '_csrf_token';
 
-    public function validate(?string $token) : bool
+    public function validate(string|null $token) : bool
     {
         if ($token === null || $token === '') {
             return false;

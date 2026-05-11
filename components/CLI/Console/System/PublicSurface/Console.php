@@ -22,9 +22,7 @@ class Console
 
     private readonly string $appVersion;
 
-    public function __construct(
-        ?string $name = null,
-        ?string $version = null,
+    public function __construct(string|null $name = null, string|null $version = null,
         private readonly ConsoleOutput $consoleOutput = new ConsoleOutput(),
     ) {
         $this->appName = $name ?? 'Avax Console';
@@ -52,7 +50,7 @@ class Console
     /**
      * Resolve a command by name.
      */
-    public function resolve(string $name): ?Command
+    public function resolve(string $name) : Command|null
     {
         return $this->commands[$name] ?? null;
     }
@@ -70,7 +68,7 @@ class Console
      *
      * Parses argv, resolves the command, and executes it.
      */
-    public function run(?array $argv = null): int
+    public function run(array|null $argv = null) : int
     {
         $argv ??= $_SERVER['argv'] ?? [];
 

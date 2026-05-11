@@ -16,7 +16,7 @@ class ProcessRegistry
         $this->processes[$processRecord->id] = $processRecord;
     }
 
-    public function find(string $id): ?ProcessRecord
+    public function find(string $id) : ProcessRecord|null
     {
         return $this->processes[$id] ?? null;
     }

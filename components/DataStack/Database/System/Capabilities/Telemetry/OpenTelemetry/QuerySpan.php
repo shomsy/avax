@@ -11,9 +11,9 @@ final readonly class QuerySpan
         public array $bindings = [],
         public float $startTime = 0.0,
         public float $endTime = 0.0,
-        public ?string $connection = null,
-        public ?int $rows = null,
-        public ?string $error = null,
+        public string|null $connection = null,
+        public int|null    $rows = null,
+        public string|null $error = null,
     ) {
     }
 

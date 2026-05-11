@@ -8,7 +8,7 @@ interface Storage
 {
     public function put(string $path, string $contents): bool;
 
-    public function get(string $path): ?string;
+    public function get(string $path) : string|null;
 
     public function delete(string $path): bool;
 

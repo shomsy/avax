@@ -18,12 +18,12 @@ final readonly class IssuedAuthentication
     public function __construct(
         public AuthenticationMode  $mode,
         #[SensitiveParameter]
-        public ?string             $sessionId = null,
+        public string|null             $sessionId = null,
         #[SensitiveParameter]
-        public ?IssuedToken        $accessToken = null,
+        public IssuedToken|null        $accessToken = null,
         #[SensitiveParameter]
-        public ?IssuedRefreshToken $refreshToken = null,
-        public ?DateTimeImmutable  $mfaVerifiedAt = null,
+        public IssuedRefreshToken|null $refreshToken = null,
+        public DateTimeImmutable|null  $mfaVerifiedAt = null,
         public bool                $phishingResistant = false,
     ) {}
 }

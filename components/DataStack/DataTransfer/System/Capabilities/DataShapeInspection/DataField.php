@@ -28,8 +28,8 @@ final readonly class DataField
         public bool                 $isPublicProperty,
         public bool                 $hasDefaultValue,
         public mixed                $defaultValue,
-        public ?ReflectionProperty  $reflectionProperty = null,
-        public ?ReflectionParameter $reflectionParameter = null,
+        public ReflectionProperty|null  $reflectionProperty = null,
+        public ReflectionParameter|null $reflectionParameter = null,
     ) {}
 
     public function isRequired() : bool

@@ -69,7 +69,7 @@ final class ConsistentHashRing
         return $this;
     }
 
-    public function getNodeForPartition(int $partitionIndex): ?CacheNode
+    public function getNodeForPartition(int $partitionIndex) : CacheNode|null
     {
         $partitionHash = $this->hash(value: (string) $partitionIndex);
 
@@ -78,7 +78,7 @@ final class ConsistentHashRing
         );
     }
 
-    public function getNodeForKey(CacheKey $cacheKey): ?CacheNode
+    public function getNodeForKey(CacheKey $cacheKey) : CacheNode|null
     {
         if ($this->ring === []) {
             return null;

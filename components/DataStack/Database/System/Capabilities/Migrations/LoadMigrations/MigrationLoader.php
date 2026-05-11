@@ -87,7 +87,7 @@ final class MigrationLoader
         return $files;
     }
 
-    private function loadMigrationFile(string $file): ?BaseMigration
+    private function loadMigrationFile(string $file) : BaseMigration|null
     {
         $migration = require $file;
 

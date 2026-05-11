@@ -19,11 +19,11 @@ final readonly class DataQuery
      * @param  array<array{type: string, table: string, on: string}>  $joins
      */
     public function __construct(
-        public ?string $entityType = null,
+        public string|null $entityType = null,
         public array $conditions = [],
         public array $orderBy = [],
-        public ?int $limit = null,
-        public ?int $offset = null,
+        public int|null    $limit = null,
+        public int|null    $offset = null,
         public array $joins = [],
         public array $select = ['*'],
     ) {

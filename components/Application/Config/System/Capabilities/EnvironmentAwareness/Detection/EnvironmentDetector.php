@@ -50,7 +50,7 @@ final class EnvironmentDetector
         return 'fpm';
     }
 
-    public function detectContainer(): ?string
+    public function detectContainer() : string|null
     {
         if (getenv('KUBERNETES_SERVICE_HOST')) {
             return 'kubernetes';

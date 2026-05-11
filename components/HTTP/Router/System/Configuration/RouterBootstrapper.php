@@ -35,7 +35,7 @@ final class RouterBootstrapper
     /**
      * Create bootstrapper with router and optional runtime.
      */
-    public function __construct(RouterInterface $router, ?RouterRuntimeInterface $routerRuntime = null)
+    public function __construct(RouterInterface $router, RouterRuntimeInterface|null $routerRuntime = null)
     {
         $this->router        = $router;
         $this->routerRuntime = $routerRuntime ?? ($router instanceof RouterRuntimeInterface ? $router : null);
@@ -147,7 +147,7 @@ final class RouterBootstrapper
     /**
      * Group routes with common middleware or prefix.
      */
-    public function group(callable $routes, ?array $middleware = null, string $prefix = '') : self
+    public function group(callable $routes, array|null $middleware = null, string $prefix = '') : self
     {
         $middleware         ??= [];
         $previousMiddleware = $this->activeMiddleware;

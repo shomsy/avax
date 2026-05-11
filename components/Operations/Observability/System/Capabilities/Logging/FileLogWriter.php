@@ -37,8 +37,7 @@ final class FileLogWriter
     private bool $closed = false;
 
     public function __construct(
-        private readonly string $path,
-        ?Filesystem $filesystem = null,
+        private readonly string $path, Filesystem|null $filesystem = null,
     )
     {
         $this->filesystem = $filesystem ?? new Filesystem();

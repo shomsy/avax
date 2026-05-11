@@ -13,10 +13,10 @@ use Closure;
 final readonly class SagaRuntimeConfig
 {
     public function __construct(
-        public ?StoreSagaState $store = null,
-        public ?Closure        $stepRunner = null,
-        public ?Closure        $messageBus = null,
-        public ?Closure        $eventRecorder = null,
+        public StoreSagaState|null $store = null,
+        public Closure|null        $stepRunner = null,
+        public Closure|null        $messageBus = null,
+        public Closure|null        $eventRecorder = null,
     ) {}
 
     public function withStore(StoreSagaState $storeSagaState) : self

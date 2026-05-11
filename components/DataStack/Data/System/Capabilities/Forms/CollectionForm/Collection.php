@@ -6,11 +6,11 @@ namespace Avax\Components\DataStack\Data\System\Capabilities\Forms\CollectionFor
 
 use ArrayIterator;
 use Avax\Components\DataStack\Data\System\Capabilities\Forms\ArrayForm\Arrhae;
+use Avax\Components\DataStack\Data\System\Capabilities\Structures\Functional\Pair;
 use Avax\Components\DataStack\Data\System\Foundation\Failure\MutationException;
 use Avax\Components\DataStack\Data\System\Foundation\Mutability\MutationGuard;
 use Avax\Components\DataStack\Data\System\Foundation\Normalization\MakeCollection;
 use Avax\Components\DataStack\Data\System\Foundation\Normalization\WrapValue;
-use Avax\Components\DataStack\Data\System\Capabilities\Structures\Functional\Pair;
 use Traversable;
 
 /**
@@ -184,7 +184,7 @@ final readonly class Collection implements CollectionInterface
 
     // -- Order -------------------------------------------------------------------
 
-    public function sort(?callable $callback = null): static
+    public function sort(callable|null $callback = null) : static
     {
         return new self(arrhae: $this->arrhae->sort(callback: $callback));
     }

@@ -10,7 +10,7 @@ interface WorkerRuntimeInterface
 {
     public function name(): string;
 
-    public function receive(): ?WorkerRequest;
+    public function receive() : WorkerRequest|null;
 
     public function send(WorkerResponse $workerResponse): void;
 

@@ -89,11 +89,9 @@ final readonly class CompensationStepResult
 
     private function __construct(
         public string             $stepName,
-        public bool               $success,
-        ?array                    $output = null,
-        public ?string            $error = null,
-        ?float                    $durationMs = null,
-        public ?DateTimeImmutable $completedAt = null,
+        public bool                   $success, array|null $output = null,
+        public string|null            $error = null, float|null $durationMs = null,
+        public DateTimeImmutable|null $completedAt = null,
     )
     {
         $output           ??= [];
@@ -103,8 +101,7 @@ final readonly class CompensationStepResult
     }
 
     public static function success(
-        string $stepName,
-        ?array $output = null,
+        string $stepName, array|null $output = null,
         float  $durationMs = 0.0,
     ) : self
     {
@@ -149,12 +146,11 @@ final readonly class CompensationStepResult
 
 final readonly class CompensationPlan
 {
-    private function __construct(public string $sagaId, public array $steps, public ?string $failedOnStep, public bool $isRecoverable) {}
+    private function __construct(public string $sagaId, public array $steps, public string|null $failedOnStep, public bool $isRecoverable) {}
 
     public static function create(
         string  $sagaId,
-        array   $steps,
-        ?string $failedOnStep,
+        array $steps, string|null $failedOnStep,
     ) : self
     {
         return new self(

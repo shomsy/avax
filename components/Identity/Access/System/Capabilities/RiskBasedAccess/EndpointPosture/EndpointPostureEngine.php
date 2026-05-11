@@ -68,9 +68,7 @@ final readonly class EndpointPosturePolicy
 
     public float $denyThreshold;
 
-    public function __construct(
-        ?float       $denyThreshold = null,
-        ?float       $stepUpThreshold = null,
+    public function __construct(float|null $denyThreshold = null, float|null $stepUpThreshold = null,
         public float $quarantineThreshold = 0.3,
     )
     {

@@ -51,7 +51,7 @@ final class BuildResourceObject
     /**
      * @param array<string, mixed>|null $links
      */
-    public function relationship(string $name, string $type, string|int $id, ?array $links = null) : self
+    public function relationship(string $name, string $type, string|int $id, array|null $links = null) : self
     {
         $relationship = [
             'data' => [

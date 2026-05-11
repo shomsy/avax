@@ -8,6 +8,7 @@ use Avax\Components\Foundation\CallableSerialization\System\Configuration\BuildC
 use Avax\Components\Foundation\CallableSerialization\System\Configuration\CallableSerializationConfig;
 use Avax\Components\Foundation\CallableSerialization\System\Configuration\EncodeDecodePair;
 use Avax\Components\Foundation\CallableSerialization\System\Foundation\Failure\CallablePayloadFailure;
+use Closure;
 
 /**
  * Static facade for the CallableSerialization capability.
@@ -32,7 +33,7 @@ final class CallableSerialization
     /**
      * Serialize and sign a closure. Returns JSON payload string.
      */
-    public static function encode(\Closure $closure, ?string $signingKey = null) : string
+    public static function encode(Closure $closure, string|null $signingKey = null) : string
     {
         $pair = self::pair($signingKey);
 
@@ -42,16 +43,16 @@ final class CallableSerialization
     /**
      * Verify signature and deserialize a closure from JSON payload.
      *
-     * @return array{closure: \Closure}|array{failure: CallablePayloadFailure}
+     * @return array{closure: Closure}|array{failure: CallablePayloadFailure}
      */
-    public static function decode(string $jsonPayload, ?string $signingKey = null) : array
+    public static function decode(string $jsonPayload, string|null $signingKey = null) : array
     {
         $pair = self::pair($signingKey);
 
         return $pair->decoder->decode($jsonPayload);
     }
 
-    private static function pair(?string $signingKey) : EncodeDecodePair
+    private static function pair(string|null $signingKey) : EncodeDecodePair
     {
         if ($signingKey !== null) {
             return (new BuildCallableSerialization())->build([

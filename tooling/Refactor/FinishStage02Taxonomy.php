@@ -76,7 +76,7 @@ final class NotImplemented extends Exception
         echo "Stage 02 Taxonomy Repair Finished.\n";
     }
 
-    private function moveFile(string $from, string $to, ?string $newContent = null, ?string $oldNs = null, ?string $newNs = null): void
+    private function moveFile(string $from, string $to, string|null $newContent = null, string|null $oldNs = null, string|null $newNs = null) : void
     {
         $fromPath = $this->basePath.'/'.$from;
         $toPath = $this->basePath.'/'.$to;

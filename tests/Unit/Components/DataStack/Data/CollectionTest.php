@@ -322,7 +322,7 @@ final class CollectionTest extends TestCase
     public function test_reduce_with_initial_null() : void
     {
         $collection = Collection::make(['a', 'b', 'c']);
-        $result     = $collection->reduce(static fn (?string $carry, string $item) : string => ($carry ?? '') . $item);
+        $result = $collection->reduce(static fn (string|null $carry, string $item) : string => ($carry ?? '') . $item);
 
         $this->assertSame('abc', $result);
     }

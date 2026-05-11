@@ -26,13 +26,13 @@ interface PersistenceInterface
 
     public function entities(): Entities;
 
-    public function find(string $entityClass, mixed $id): ?object;
+    public function find(string $entityClass, mixed $id) : object|null;
 
     public function persist(object $entity): void;
 
     public function remove(object $entity): void;
 
-    public function flush(?string $connectionName = null): void;
+    public function flush(string|null $connectionName = null) : void;
 
     public function clear(): void;
 }

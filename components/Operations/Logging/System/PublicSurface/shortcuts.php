@@ -12,7 +12,7 @@ if (! function_exists('logger')) {
     /**
      * Log a message or get the Logger instance.
      */
-    function logger(?string $message = null, ?array $context = null, string $level = 'info'): ?LoggerInterface
+    function logger(string|null $message = null, array|null $context = null, string $level = 'info') : LoggerInterface|null
     {
         $context ??= [];
         $logger = app(LoggerInterface::class);

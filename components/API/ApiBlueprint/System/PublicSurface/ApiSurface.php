@@ -24,7 +24,7 @@ final readonly class ApiSurface
         return new ResourceTransformer();
     }
 
-    public static function pagination(?int $page = 1, ?int $perPage = 15) : PaginationHandler
+    public static function pagination(int|null $page = 1, int|null $perPage = 15) : PaginationHandler
     {
         return new PaginationHandler(page: $page ?? 1, perPage: $perPage ?? 15);
     }
@@ -53,7 +53,7 @@ final readonly class ApiSurface
         return new HandleRestRequest()->handle($request);
     }
 
-    public static function buildResponse(mixed $data, ?RestResponseMeta $meta = null) : RestResponse
+    public static function buildResponse(mixed $data, RestResponseMeta|null $meta = null) : RestResponse
     {
         return new BuildRestResponse()->build(data: $data, meta: $meta);
     }

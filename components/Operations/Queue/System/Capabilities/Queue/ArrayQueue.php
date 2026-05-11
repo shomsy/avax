@@ -18,7 +18,7 @@ final class ArrayQueue implements QueueBroker
         $this->queues[$key][] = $job;
     }
 
-    public function pop(string $queue): ?array
+    public function pop(string $queue) : array|null
     {
         $key = $this->prefix.$queue;
 

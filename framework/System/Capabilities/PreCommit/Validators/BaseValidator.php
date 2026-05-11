@@ -8,7 +8,7 @@ use Avax\Framework\System\Capabilities\PreCommit\ValidationResult;
 
 abstract class BaseValidator implements ValidatorInterface
 {
-    protected ?ValidatorInterface $next = null;
+    protected ValidatorInterface|null $next = null;
 
     protected string $name;
 

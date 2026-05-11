@@ -28,7 +28,7 @@ final readonly class RunApplicationOnRoadRunner implements WorkerRuntimeInterfac
         return 'roadrunner';
     }
 
-    public function receive(): ?WorkerRequest
+    public function receive() : WorkerRequest|null
     {
         return ($this->receiver)();
     }

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Data\System\Capabilities\Structures\Sets;
 
 use ArrayIterator;
-use Avax\Components\DataStack\Data\System\Capabilities\Structures\Linear\DataList;
 use Avax\Components\DataStack\Data\System\Capabilities\Operators\Ordering\Comparator;
+use Avax\Components\DataStack\Data\System\Capabilities\Structures\Linear\DataList;
 use Avax\Components\DataStack\Data\System\Foundation\Normalization\NormalizedIterable;
 use Countable;
 use IteratorAggregate;
@@ -46,7 +46,7 @@ final readonly class Set implements Countable, IteratorAggregate
             try {
                 $hash = Comparator::hash(value: $item);
             } catch (JsonException) {
-                $hash = serialize($item);
+                $hash = hash(algo: 'xxh128', data: json_encode(value: $item, flags: JSON_THROW_ON_ERROR));
             }
 
             if (isset($seen[$hash])) {
@@ -78,7 +78,7 @@ final readonly class Set implements Countable, IteratorAggregate
         try {
             $hash = Comparator::hash(value: $value);
         } catch (JsonException) {
-            $hash = serialize($value);
+            $hash = hash(algo: 'xxh128', data: json_encode(value: $value, flags: JSON_THROW_ON_ERROR));
         }
 
         $filtered = array_values(array_filter(
@@ -87,7 +87,7 @@ final readonly class Set implements Countable, IteratorAggregate
                 try {
                     return Comparator::hash(value: $item) !== $hash;
                 } catch (JsonException) {
-                    return serialize($item) !== $hash;
+                    return hash(algo: 'xxh128', data: json_encode(value: $item, flags: JSON_THROW_ON_ERROR)) !== $hash;
                 }
             },
         ));
@@ -117,14 +117,14 @@ final readonly class Set implements Countable, IteratorAggregate
         try {
             $hash = Comparator::hash(value: $value);
         } catch (JsonException) {
-            $hash = serialize($value);
+            $hash = hash(algo: 'xxh128', data: json_encode(value: $value, flags: JSON_THROW_ON_ERROR));
         }
 
         foreach ($this->items as $item) {
             try {
                 $itemHash = Comparator::hash(value: $item);
             } catch (JsonException) {
-                $itemHash = serialize($item);
+                $itemHash = hash(algo: 'xxh128', data: json_encode(value: $item, flags: JSON_THROW_ON_ERROR));
             }
 
             if ($itemHash === $hash) {

@@ -41,13 +41,12 @@ final readonly class ProtectSagaIdempotency
 
 final readonly class SagaCommandKey implements Stringable
 {
-    private function __construct(public string $value, public string $aggregateType, public string $aggregateId, public string $action, public ?string $tenantId) {}
+    private function __construct(public string $value, public string $aggregateType, public string $aggregateId, public string $action, public string|null $tenantId) {}
 
     public static function create(
         string  $aggregateType,
         string  $aggregateId,
-        string  $action,
-        ?string $tenantId = null,
+        string $action, string|null $tenantId = null,
     ) : self
     {
         $parts = array_filter([$aggregateType, $aggregateId, $action, $tenantId]);
@@ -75,7 +74,7 @@ final readonly class SagaCommandKey implements Stringable
 
 final readonly class SagaCommandResult
 {
-    private function __construct(public string $sagaId, public bool $success, public array $output, public ?string $error, public DateTimeImmutable $occurredAt) {}
+    private function __construct(public string $sagaId, public bool $success, public array $output, public string|null $error, public DateTimeImmutable $occurredAt) {}
 
     public static function success(string $sagaId, array $output = []) : self
     {
@@ -115,8 +114,8 @@ final class DuplicateSagaCommand extends Exception
 {
     public function __construct(
         string                    $message = 'Duplicate saga command detected.',
-        public ?string            $sagaId = null,
-        public ?SagaCommandResult $previousResult = null,
+        public string|null            $sagaId = null,
+        public SagaCommandResult|null $previousResult = null,
     )
     {
         parent::__construct(message: $message);

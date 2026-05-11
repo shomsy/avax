@@ -20,14 +20,14 @@ interface RepositoryInterface
      *
      * @return T|null
      */
-    public function findById(string|int $id): ?object;
+    public function findById(string|int $id) : object|null;
 
     /**
      * Find all entities, optionally with pagination.
      *
      * @return array<T>
      */
-    public function findAll(?int $limit = null, int $offset = 0): array;
+    public function findAll(int|null $limit = null, int $offset = 0) : array;
 
     /**
      * Find entities matching the given criteria.
@@ -37,10 +37,7 @@ interface RepositoryInterface
      * @return array<T>
      */
     public function findBy(
-        array $criteria,
-        ?array $orderBy = null,
-        ?int $limit = null,
-        ?int $offset = null,
+        array $criteria, array|null $orderBy = null, int|null $limit = null, int|null $offset = null,
     ): array;
 
     /**
@@ -49,7 +46,7 @@ interface RepositoryInterface
      * @param  array<string, mixed>  $criteria
      * @return T|null
      */
-    public function findOneBy(array $criteria): ?object;
+    public function findOneBy(array $criteria) : object|null;
 
     /**
      * Persist an entity (schedule for insert or update via UnitOfWork).

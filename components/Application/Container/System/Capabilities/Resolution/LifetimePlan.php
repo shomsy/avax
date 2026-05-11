@@ -33,12 +33,7 @@ final readonly class LifetimePlan
     public function __construct(
         public string $serviceId,
         public string $name,
-        public string $storage,
-        ?string $scopeKind = null,
-        ?bool $warm = null,
-        ?bool $lazy = null,
-        ?bool $disposable = null,
-        ?int $poolSize = null,
+        public string $storage, string|null $scopeKind = null, bool|null $warm = null, bool|null $lazy = null, bool|null $disposable = null, int|null $poolSize = null,
         public bool $poolResetBeforeReuse = true,
     ) {
         $scopeKind ??= '';
@@ -53,7 +48,7 @@ final readonly class LifetimePlan
         $this->poolSize = $poolSize;
     }
 
-    public static function fromRegistration(string $serviceId, ?DependencyRegistration $dependencyRegistration): self
+    public static function fromRegistration(string $serviceId, DependencyRegistration|null $dependencyRegistration) : self
     {
         $name = $dependencyRegistration?->lifetime ?? TransientLifetime::NAME;
         $storage = self::storageFor(name: $name);

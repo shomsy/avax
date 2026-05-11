@@ -15,7 +15,7 @@ final readonly class ReliabilityResult
         public bool $success,
         public mixed $result = null,
         public int $attempts = 1,
-        public ?Throwable $lastException = null,
+        public Throwable|null $lastException = null,
         public bool $fallbackUsed = false,
         public float $elapsedMs = 0.0,
     ) {}

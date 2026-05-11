@@ -56,7 +56,7 @@ final class ServiceRegistration
 
     public string $poolScopeKind = ScopeKind::Operation->value;
 
-    public ?string $group = null;
+    public string|null $group = null;
 
     public int $groupOrder = 0;
 
@@ -393,9 +393,7 @@ final class ServiceRegistration
         return $this;
     }
 
-    public function pooled(
-        ?int $maxSize = null,
-        ?string $scopeKind = null,
+    public function pooled(int|null $maxSize = null, string|null $scopeKind = null,
         bool $resetBeforeReuse = true
     ): self {
         $maxSize ??= 8;

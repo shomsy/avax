@@ -30,10 +30,7 @@ final readonly class AuthenticatedUser
         public int    $id,
         #[SensitiveParameter]
         public string $email,
-        public string $username,
-        ?array        $roles = null,
-        ?array        $permissions = null,
-        ?bool         $emailVerified = null,
+        public string $username, array|null $roles = null, array|null $permissions = null, bool|null $emailVerified = null,
         public bool   $mfaEnabled = false,
     )
     {
@@ -46,8 +43,7 @@ final readonly class AuthenticatedUser
     }
 
     public static function fromUser(
-        User  $user,
-        ?bool $emailVerified = null,
+        User $user, bool|null $emailVerified = null,
         bool  $mfaEnabled = false,
     ) : self
     {

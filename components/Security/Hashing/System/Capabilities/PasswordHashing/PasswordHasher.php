@@ -22,9 +22,7 @@ final readonly class PasswordHasher
     /**
      * @param  array<string, int|string|bool>|null  $options
      */
-    public function __construct(
-        ?string $algo = null,
-        ?array $options = null,
+    public function __construct(string|null $algo = null, array|null $options = null,
     ) {
         $this->algo = $algo
             ?? $this->inferAlgorithmFromOptions(options: $options)
@@ -35,7 +33,7 @@ final readonly class PasswordHasher
     /**
      * @param  array<string, int|string|bool>|null  $options
      */
-    private function inferAlgorithmFromOptions(?array $options): ?string
+    private function inferAlgorithmFromOptions(array|null $options) : string|null
     {
         if ($options === null) {
             return null;

@@ -32,7 +32,7 @@ final class ApplicationBuilder
      */
     private array $consoleCommands = [];
 
-    private ?Closure $httpHandler = null;
+    private Closure|null $httpHandler = null;
 
     public function __construct(
         private ProjectPath $projectPath,
@@ -207,7 +207,7 @@ final class ApplicationBuilder
         return $this->consoleCommands;
     }
 
-    public function httpHandler(): ?Closure
+    public function httpHandler() : Closure|null
     {
         return $this->httpHandler;
     }

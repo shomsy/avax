@@ -9,7 +9,7 @@ use Override;
 final readonly class FirstInFirstOutReplacement implements ChooseCachedValueForReplacement
 {
     #[Override]
-    public function choose(array $entries): ?string
+    public function choose(array $entries) : string|null
     {
         if ($entries === []) {
             return null;

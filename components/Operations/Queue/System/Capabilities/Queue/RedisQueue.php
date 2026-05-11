@@ -9,7 +9,7 @@ use Throwable;
 
 final class RedisQueue
 {
-    private ?Redis $redis = null;
+    private Redis|null $redis = null;
 
     public function __construct(private readonly array $config = [])
     {
@@ -54,7 +54,7 @@ final class RedisQueue
         return ($this->config['prefix'] ?? 'avax:queue:').$queue;
     }
 
-    public function pop(string $queue, int $timeout = 0): ?array
+    public function pop(string $queue, int $timeout = 0) : array|null
     {
         if (! $this->redis instanceof Redis) {
             return Queue::pop(queue: $queue);

@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Avax\Components\API\SchemaGeneration\System\PublicSurface;
 
 use Avax\Components\API\SchemaGeneration\System\Configuration\BuildSchemaGeneration;
+use Avax\Components\API\SchemaGeneration\System\Configuration\SchemaGenerationAssembly;
 use Avax\Components\API\SchemaGeneration\System\Flows\GenerateOpenApiFromRoutes\GenerateOpenApiFromRoutes;
 use Avax\Components\API\SchemaGeneration\System\Foundation\JsonSchemaDocument;
 use Avax\Components\API\SchemaGeneration\System\Foundation\PayloadValidationResult;
+use Avax\Components\DataStack\DataTransfer\System\PublicSurface\DataObject;
 use Avax\Components\HTTP\Router\System\PublicSurface\Router;
 
 /**
@@ -15,9 +17,9 @@ use Avax\Components\HTTP\Router\System\PublicSurface\Router;
  */
 final class SchemaGeneration
 {
-    private static ?\Avax\Components\API\SchemaGeneration\System\Configuration\SchemaGenerationAssembly $assembly = null;
+    private static ?SchemaGenerationAssembly $assembly = null;
 
-    private static function assembly() : \Avax\Components\API\SchemaGeneration\System\Configuration\SchemaGenerationAssembly
+    private static function assembly() : SchemaGenerationAssembly
     {
         return self::$assembly ??= BuildSchemaGeneration::make();
     }
@@ -25,7 +27,7 @@ final class SchemaGeneration
     /**
      * Generate JSON Schema from a DataObject class or instance.
      *
-     * @template T of \Avax\Components\DataStack\DataTransfer\System\PublicSurface\DataObject
+     * @template T of DataObject
      * @param class-string<T>|T $dataObject
      */
     public static function fromDataObject(string|object $dataObject) : JsonSchemaDocument
@@ -36,7 +38,7 @@ final class SchemaGeneration
     /**
      * Generate JSON Schema for an incoming request payload.
      *
-     * @template T of \Avax\Components\DataStack\DataTransfer\System\PublicSurface\DataObject
+     * @template T of DataObject
      * @param class-string<T> $requestClass
      */
     public static function request(string $requestClass) : JsonSchemaDocument
@@ -47,7 +49,7 @@ final class SchemaGeneration
     /**
      * Generate JSON Schema for an outgoing response payload.
      *
-     * @template T of \Avax\Components\DataStack\DataTransfer\System\PublicSurface\DataObject
+     * @template T of DataObject
      * @param class-string<T> $responseClass
      */
     public static function response(string $responseClass) : JsonSchemaDocument
@@ -74,7 +76,7 @@ final class SchemaGeneration
      *
      * @return array<string, mixed>
      */
-    public static function openApi(Router $router, ?string $title = null, ?string $version = null) : array
+    public static function openApi(Router $router, string|null $title = null, string|null $version = null) : array
     {
         $generator = new GenerateOpenApiFromRoutes(
             title: $title ?? 'AvaX API',
@@ -87,7 +89,7 @@ final class SchemaGeneration
     /**
      * Replace the default assembly (for testing).
      */
-    public static function setAssembly(?\Avax\Components\API\SchemaGeneration\System\Configuration\SchemaGenerationAssembly $assembly) : void
+    public static function setAssembly(?SchemaGenerationAssembly $assembly) : void
     {
         self::$assembly = $assembly;
     }

@@ -490,12 +490,12 @@ final class DependencyRegistry implements DependencyRegistryContract
         return isset($this->aliases[$alias]);
     }
 
-    public function ownership(string $abstract): ?RegistrationMetadata
+    public function ownership(string $abstract) : RegistrationMetadata|null
     {
         return $this->get(abstract: $abstract)?->metadata;
     }
 
-    public function get(string $abstract): ?DependencyRegistration
+    public function get(string $abstract) : DependencyRegistration|null
     {
         $abstract = $this->resolveAlias(abstract: $abstract);
 
@@ -543,7 +543,7 @@ final class DependencyRegistry implements DependencyRegistryContract
     /**
      * @return array<string, mixed>|null
      */
-    public function sliceManifest(string $slice): ?array
+    public function sliceManifest(string $slice) : array|null
     {
         $normalized = trim(string: $slice);
         if ($normalized === '') {

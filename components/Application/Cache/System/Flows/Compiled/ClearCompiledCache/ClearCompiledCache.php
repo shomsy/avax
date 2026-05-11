@@ -19,7 +19,7 @@ final class ClearCompiledCache
     public function __construct(
         private readonly CompiledCacheDirectory $compiledCacheDirectory,
         private CompiledCacheManifest           $compiledCacheManifest,
-        private ?Filesystem                     $filesystem = null,
+        private Filesystem|null $filesystem = null,
     )
     {
     }

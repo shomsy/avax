@@ -18,7 +18,7 @@ final readonly class ReportStorage
 
     private string $todoFile;
 
-    public function __construct(?string $reportDir = null, ?string $todoFile = null)
+    public function __construct(string|null $reportDir = null, string|null $todoFile = null)
     {
         $basePath = getcwd() ?: '.';
         $this->reportDir = $reportDir ?? $basePath.'/.agents/reports/validation';
@@ -63,7 +63,7 @@ final readonly class ReportStorage
     }
 
     /** @return array<string, mixed>|null */
-    public function getLatest(): ?array
+    public function getLatest() : array|null
     {
         $latestPath = $this->reportDir.'/latest.json';
         if (! file_exists($latestPath)) {

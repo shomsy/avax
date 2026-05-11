@@ -6,25 +6,25 @@ namespace Avax\Components\API\ApiBlueprint\System\Capabilities\JsonApi;
 
 final class BuildErrorObject
 {
-    private ?string $id = null;
+    private string|null $id = null;
 
-    private ?string $status = null;
+    private string|null $status = null;
 
-    private ?string $code = null;
+    private string|null $code = null;
 
-    private ?string $title = null;
+    private string|null $title = null;
 
-    private ?string $detail = null;
+    private string|null $detail = null;
 
     /**
      * @var array{pointer?: string, parameter?: string}|null
      */
-    private ?array $source = null;
+    private array|null $source = null;
 
     /**
      * @var array<string, mixed>|null
      */
-    private ?array $meta = null;
+    private array|null $meta = null;
 
     public function withId(string $id) : self
     {

@@ -34,7 +34,7 @@ interface RuntimeInterface
 
     public function runtimeName(): string;
 
-    public function httpHandler(): ?Closure;
+    public function httpHandler() : Closure|null;
 
     /**
      * @return array<string, Closure>

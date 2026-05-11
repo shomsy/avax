@@ -30,7 +30,7 @@ final readonly class Migrations
         private Query $query,
         private Connections $connections,
         private Transactions $transactions,
-        private ?Schema $schema = null,
+        private Schema|null $schema = null,
     ) {
     }
 
@@ -38,7 +38,7 @@ final readonly class Migrations
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function create(string $table, callable $callback, ?string $connectionName = null): void
+    public function create(string $table, callable $callback, string|null $connectionName = null) : void
     {
         $this->schema()->create(table: $table, callback: $callback, connectionName: $connectionName);
     }
@@ -52,7 +52,7 @@ final readonly class Migrations
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function dropIfExists(string $table, ?string $connectionName = null): void
+    public function dropIfExists(string $table, string|null $connectionName = null) : void
     {
         $this->schema()->dropIfExists(table: $table, connectionName: $connectionName);
     }
@@ -61,7 +61,7 @@ final readonly class Migrations
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function truncate(string $table, ?string $connectionName = null): void
+    public function truncate(string $table, string|null $connectionName = null) : void
     {
         $this->schema()->truncate(table: $table, connectionName: $connectionName);
     }
@@ -70,7 +70,7 @@ final readonly class Migrations
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function createDatabase(string $name, ?string $connectionName = null): void
+    public function createDatabase(string $name, string|null $connectionName = null) : void
     {
         $this->schema()->createDatabase(name: $name, connectionName: $connectionName);
     }
@@ -79,7 +79,7 @@ final readonly class Migrations
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function dropDatabase(string $name, ?string $connectionName = null): void
+    public function dropDatabase(string $name, string|null $connectionName = null) : void
     {
         $this->schema()->dropDatabase(name: $name, connectionName: $connectionName);
     }
@@ -93,7 +93,7 @@ final readonly class Migrations
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function exporter(?string $connectionName = null): DatabaseExporter
+    public function exporter(string|null $connectionName = null) : DatabaseExporter
     {
         return new DatabaseExporter(pdo: $this->connections->pdo(name: $connectionName));
     }
@@ -102,7 +102,7 @@ final readonly class Migrations
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function rollbacker(?string $connectionName = null): RollbackMigrations
+    public function rollbacker(string|null $connectionName = null) : RollbackMigrations
     {
         return new RollbackMigrations(
             repository: $this->repository(connectionName: $connectionName),
@@ -115,7 +115,7 @@ final readonly class Migrations
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function repository(?string $connectionName = null): MigrationRepository
+    public function repository(string|null $connectionName = null) : MigrationRepository
     {
         return new MigrationRepository(
             schema : $this->schema(),
@@ -127,7 +127,7 @@ final readonly class Migrations
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function builder(?string $connectionName = null): QueryBuilder
+    public function builder(string|null $connectionName = null) : QueryBuilder
     {
         return $this->query->builder(connectionName: $connectionName);
     }
@@ -136,7 +136,7 @@ final readonly class Migrations
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function runner(?string $connectionName = null): MigrationRunner
+    public function runner(string|null $connectionName = null) : MigrationRunner
     {
         return new MigrationRunner(
             transactions  : $this->transactions,
@@ -155,7 +155,7 @@ final readonly class Migrations
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function status(?string $connectionName = null): ReadMigrationStatus
+    public function status(string|null $connectionName = null) : ReadMigrationStatus
     {
         return new ReadMigrationStatus(
             repository: $this->repository(connectionName: $connectionName),
@@ -167,7 +167,7 @@ final readonly class Migrations
      * @throws ReflectionException
      * @throws Throwable
      */
-    public function seed(Seeder|string $seeder, ?string $connectionName = null): void
+    public function seed(Seeder|string $seeder, string|null $connectionName = null) : void
     {
         $instance = is_string(value: $seeder) ? new $seeder() : $seeder;
 

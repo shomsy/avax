@@ -101,7 +101,7 @@ final class TieredCache implements CacheStore
         $this->currentTierIndex = 0;
     }
 
-    private function getCurrentTierName(): ?string
+    private function getCurrentTierName() : string|null
     {
         return $this->tierOrder[$this->currentTierIndex] ?? null;
     }
@@ -111,7 +111,7 @@ final class TieredCache implements CacheStore
         $this->currentTierIndex++;
     }
 
-    private function getStoreForTier(string $tierName): ?CacheStore
+    private function getStoreForTier(string $tierName) : CacheStore|null
     {
         return $this->tiers[$tierName] ?? null;
     }
@@ -150,7 +150,7 @@ final class TieredCache implements CacheStore
     #[Override]
     public function exists(CacheKey $cacheKey): bool
     {
-        return array_any($this->tiers, static fn (?CacheStore $tier): bool => $tier !== null && $tier->exists(cacheKey: $cacheKey));
+        return array_any($this->tiers, static fn (CacheStore|null $tier) : bool => $tier !== null && $tier->exists(cacheKey: $cacheKey));
     }
 
     #[Override]
@@ -197,7 +197,7 @@ final class TieredCache implements CacheStore
         }
     }
 
-    public function getTier(CacheTierName $cacheTierName): ?CacheStore
+    public function getTier(CacheTierName $cacheTierName) : CacheStore|null
     {
         return $this->tiers[$cacheTierName->value] ?? null;
     }

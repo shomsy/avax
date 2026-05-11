@@ -21,7 +21,7 @@ final readonly class CacheEntry
     /**
      * Checks if this cache entry has expired.
      */
-    public function isExpired(?float $now = null): bool
+    public function isExpired(float|null $now = null) : bool
     {
         $now ??= microtime(true);
 
@@ -31,7 +31,7 @@ final readonly class CacheEntry
     /**
      * Returns the remaining time-to-live in seconds.
      */
-    public function remainingTtl(?float $now = null): float
+    public function remainingTtl(float|null $now = null) : float
     {
         $now ??= microtime(true);
         $elapsed = $now - $this->createdAt;
@@ -42,7 +42,7 @@ final readonly class CacheEntry
     /**
      * Returns the age of this entry in seconds.
      */
-    public function age(?float $now = null): float
+    public function age(float|null $now = null) : float
     {
         $now ??= microtime(true);
 

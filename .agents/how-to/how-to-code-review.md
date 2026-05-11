@@ -949,5 +949,75 @@ Use one entry per significant decision.
 
 > **Final Rule**
 >
-> A review that does not clearly determine what to do next and why  
+> A review that does not clearly determine what to do next and why
 > is not an enterprise-grade review.
+
+---
+
+## Completion Language
+
+### Mandatory Status Definitions
+
+A component, stage, or pass **MUST NOT** be marked GREEN unless:
+
+- All MANDATORY rules pass
+- All tests pass
+- PHPStan passes (no errors)
+- Relevant gates pass
+- Evidence agrees with code
+- No BLOCKER/HIGH issue remains unresolved
+- Every deferred MEDIUM issue has owner, reason, and next action
+
+A stage **MUST** be YELLOW if:
+
+- Validation passes
+- But mandatory evidence is incomplete
+- Or MEDIUM/HIGH findings remain deferred
+- Or implementation is partial
+
+A stage **MUST** be RED if:
+
+- Tests fail
+- PHPStan fails with errors
+- Security gate fails
+- Evidence contradicts code
+- Mandatory governance is ignored
+
+### Code Review Output Requirements
+
+Code review **MUST** produce for each finding:
+
+- **finding**: what was discovered
+- **governance source**: which how-to document and rule
+- **violated MUST/MUST NOT rule**: the exact rule violated
+- **file/path**: where the violation occurs
+- **severity**: BLOCKER / HIGH / MEDIUM / LOW
+- **why it matters**: impact explanation
+- **required fix**: what needs to be done
+- **whether it blocks GREEN**: yes/no with justification
+- **test/gate proof required**: what validates the fix
+
+Code review **MUST NOT** say "all findings fixed" if any HIGH/MEDIUM finding remains deferred.
+
+Code review **MUST** distinguish:
+
+- **fixed**: confirmed resolved
+- **deferred**: acknowledged but not fixed, with owner and timeline
+- **accepted exception**: explicitly accepted with reason, trade-off, risk, and owner
+- **false positive**: incorrectly flagged
+- **not applicable**: rule doesn't apply to this context
+
+### Governance Compliance Summary
+
+Every review **MUST** include:
+
+```
+Governance documents found: <number>
+Governance documents applied: <number>
+Rules checked: <number>
+Passed: <number>
+Partial: <number>
+Failed: <number>
+Blocked: <number>
+Highest severity: BLOCKER / HIGH / MEDIUM / LOW
+```

@@ -12,7 +12,7 @@ final class Mailable
 
     private string $body = '';
 
-    private ?string $from = null;
+    private string|null $from = null;
 
     /** @var list<string> */
     private array $cc = [];
@@ -77,7 +77,7 @@ final class Mailable
         return $this->body;
     }
 
-    public function getFrom(): ?string
+    public function getFrom() : string|null
     {
         return $this->from;
     }

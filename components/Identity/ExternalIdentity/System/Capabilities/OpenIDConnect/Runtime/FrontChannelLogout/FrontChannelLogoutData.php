@@ -10,10 +10,10 @@ final readonly class FrontChannelLogoutData
 {
     public function __construct(
         #[SensitiveParameter]
-        public ?string $sessionId = null,
+        public string|null $sessionId = null,
         #[SensitiveParameter]
-        public ?string $idTokenHint = null,
-        public ?string $postLogoutRedirectUri = null,
-        public ?string $state = null,
+        public string|null $idTokenHint = null,
+        public string|null $postLogoutRedirectUri = null,
+        public string|null $state = null,
     ) {}
 }

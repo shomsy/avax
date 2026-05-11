@@ -11,11 +11,11 @@ final readonly class CacheSourceKey implements Stringable
 {
     public function __construct(
         public string $key,
-        public ?string $namespace = null,
+        public string|null $namespace = null,
     ) {
     }
 
-    public static function create(string $key, ?string $namespace = null): self
+    public static function create(string $key, string|null $namespace = null) : self
     {
         return new self(key: $key, namespace: $namespace);
     }

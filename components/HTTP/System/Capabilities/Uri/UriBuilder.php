@@ -16,7 +16,7 @@ final class UriBuilder implements Stringable
 
     private string $host = '';
 
-    private ?int $port = null;
+    private int|null $port = null;
 
     private string $path = '';
 
@@ -27,7 +27,7 @@ final class UriBuilder implements Stringable
 
     private string $user = '';
 
-    private ?string $password = null;
+    private string|null $password = null;
 
     public static function createFromString(string $uri) : self
     {
@@ -69,7 +69,7 @@ final class UriBuilder implements Stringable
         return $clone;
     }
 
-    public function withPort(?int $port) : self
+    public function withPort(int|null $port) : self
     {
         $clone       = clone $this;
         $clone->port = $port;
@@ -128,7 +128,7 @@ final class UriBuilder implements Stringable
         return $clone;
     }
 
-    public function withUserInfo(string $user, ?string $password = null) : self
+    public function withUserInfo(string $user, string|null $password = null) : self
     {
         $clone           = clone $this;
         $clone->user     = $user;

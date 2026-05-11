@@ -42,14 +42,14 @@ final readonly class MessagingModel
         public string                $system,
         public array                 $messages,
         public array                 $consumers,
-        public ?Broker $broker = null,
-        public ?Outbox               $outbox = null,
-        public ?Inbox                $inbox = null,
-        public ?DeadLetterQueue      $deadLetterQueue = null,
-        public ?RetryPolicy          $retryPolicy = null,
+        public Broker|null          $broker = null,
+        public Outbox|null          $outbox = null,
+        public Inbox|null           $inbox = null,
+        public DeadLetterQueue|null $deadLetterQueue = null,
+        public RetryPolicy|null     $retryPolicy = null,
         public AcknowledgementPolicy $ackPolicy = AcknowledgementPolicy::Manual,
-        public ?CommandSide          $commandSide = null,
-        public ?QuerySide            $querySide = null,
+        public CommandSide|null     $commandSide = null,
+        public QuerySide|null       $querySide = null,
     ) {}
 
     /**

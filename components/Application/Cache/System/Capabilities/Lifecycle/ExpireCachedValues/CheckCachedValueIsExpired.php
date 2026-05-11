@@ -14,7 +14,7 @@ final readonly class CheckCachedValueIsExpired
     ) {
     }
 
-    public function check(?Timestamp $timestamp): bool
+    public function check(Timestamp|null $timestamp) : bool
     {
         if (! $timestamp instanceof Timestamp) {
             return false;
@@ -23,7 +23,7 @@ final readonly class CheckCachedValueIsExpired
         return $this->clock->now()->isAfter(other: $timestamp);
     }
 
-    public function secondsUntilExpiry(?Timestamp $timestamp): int
+    public function secondsUntilExpiry(Timestamp|null $timestamp) : int
     {
         if (! $timestamp instanceof Timestamp) {
             return PHP_INT_MAX;

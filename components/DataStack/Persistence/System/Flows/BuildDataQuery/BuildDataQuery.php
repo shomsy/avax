@@ -6,7 +6,6 @@ namespace Avax\Components\DataStack\Persistence\System\Flows\BuildDataQuery;
 
 use Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent\DataQuery;
 use InvalidArgumentException;
-
 use function class_exists;
 use function in_array;
 use function is_array;
@@ -40,12 +39,9 @@ final class BuildDataQuery
      *
      * @throws InvalidArgumentException
      */
-    public function build(
-        ?string $entityType = null,
+    public function build(string|null $entityType = null,
         array $conditions = [],
-        array $orderBy = [],
-        ?int $limit = null,
-        ?int $offset = null,
+                          array       $orderBy = [], int|null $limit = null, int|null $offset = null,
         array $joins = [],
         array $select = ['*'],
     ): DataQuery {
@@ -70,7 +66,7 @@ final class BuildDataQuery
      *
      * @throws InvalidArgumentException
      */
-    private function resolveEntityType(?string $entityType): ?string
+    private function resolveEntityType(string|null $entityType) : string|null
     {
         if ($entityType === null) {
             return null;
@@ -151,7 +147,7 @@ final class BuildDataQuery
      *
      * @throws InvalidArgumentException
      */
-    private function validateLimit(?int $limit): ?int
+    private function validateLimit(int|null $limit) : int|null
     {
         if ($limit !== null && $limit < 0) {
             throw new InvalidArgumentException('Limit must be a non-negative integer.');
@@ -165,7 +161,7 @@ final class BuildDataQuery
      *
      * @throws InvalidArgumentException
      */
-    private function validateOffset(?int $offset): ?int
+    private function validateOffset(int|null $offset) : int|null
     {
         if ($offset !== null && $offset < 0) {
             throw new InvalidArgumentException('Offset must be a non-negative integer.');

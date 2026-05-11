@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata;
 
-use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\AttributeCompiler;
-use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\CompiledAttributeMetadata;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Column;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Entity;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\GeneratedValue;
@@ -17,6 +15,8 @@ use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\OneToM
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\OneToOne;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Table;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Relations\RelationKind;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\AttributeCompiler;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\CompiledAttributeMetadata;
 use ReflectionClass;
 use RuntimeException;
 
@@ -25,9 +25,9 @@ final class AttributeMetadataReader
     /** @var array<class-string, EntityMetadata> */
     private array $cache = [];
 
-    private ?AttributeCompiler $attributeCompiler;
+    private AttributeCompiler|null $attributeCompiler;
 
-    public function __construct(?AttributeCompiler $attributeCompiler = null)
+    public function __construct(AttributeCompiler|null $attributeCompiler = null)
     {
         $this->attributeCompiler = $attributeCompiler;
     }

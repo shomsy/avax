@@ -10,7 +10,7 @@ final readonly class ValueConversionContext
 {
     public function __construct(
         public DataField $dataField,
-        public ?object   $parent = null,
-        public ?string   $propertyName = null,
+        public object|null $parent = null,
+        public string|null $propertyName = null,
     ) {}
 }

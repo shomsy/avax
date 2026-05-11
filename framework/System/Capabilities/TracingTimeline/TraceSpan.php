@@ -16,8 +16,7 @@ final readonly class TraceSpan
     private Closure $onFinish;
 
     public function __construct(
-        private string $name,
-        ?Closure $onFinish = null,
+        private string $name, Closure|null $onFinish = null,
     ) {
         $this->startMS = microtime(true) * 1000;
         $this->onFinish = $onFinish ?? static fn (): null => null;

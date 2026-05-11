@@ -50,7 +50,7 @@ final class BatchLoader
         return $this;
     }
 
-    public function clear(?string $name = null): self
+    public function clear(string|null $name = null) : self
     {
         if ($name !== null) {
             unset($this->cache[$name]);

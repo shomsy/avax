@@ -29,9 +29,9 @@ final readonly class LogoutAllSessions
         private AuditLogInterface           $auditLog,
         private Clock                       $clock,
         #[SensitiveParameter]
-        private ?SessionRegistryInterface   $sessionRegistry = null,
+        private SessionRegistryInterface|null   $sessionRegistry = null,
         #[SensitiveParameter]
-        private ?RefreshTokenStoreInterface $refreshTokenStore = null,
+        private RefreshTokenStoreInterface|null $refreshTokenStore = null,
     ) {}
 
     /**

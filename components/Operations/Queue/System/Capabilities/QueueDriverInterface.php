@@ -12,7 +12,7 @@ interface QueueDriverInterface
 
     public function later(DateTimeInterface $delay, string $job, array $data = []): string;
 
-    public function pop(): ?Job;
+    public function pop() : Job|null;
 
     public function size(string $queue = 'default'): int;
 

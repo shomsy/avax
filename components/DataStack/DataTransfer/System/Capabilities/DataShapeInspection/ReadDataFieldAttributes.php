@@ -15,7 +15,7 @@ final readonly class ReadDataFieldAttributes
     /**
      * @return object[]
      */
-    public function read(?ReflectionProperty $reflectionProperty = null, ?ReflectionParameter $reflectionParameter = null) : array
+    public function read(ReflectionProperty|null $reflectionProperty = null, ReflectionParameter|null $reflectionParameter = null) : array
     {
         $instances = [];
 

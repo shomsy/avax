@@ -24,7 +24,7 @@ final class HttpFake
     /**
      * @var array{status: int, body: string, headers: array<string, list<string>>}|null
      */
-    private ?array $defaultResponse = null;
+    private array|null $defaultResponse = null;
 
     /**
      * @param  array<string, mixed>  $options
@@ -99,7 +99,7 @@ final class HttpFake
         return $this;
     }
 
-    public function assertSent(string $method, ?string $url = null): self
+    public function assertSent(string $method, string|null $url = null) : self
     {
         $found = false;
 
@@ -129,7 +129,7 @@ final class HttpFake
         return $this;
     }
 
-    public function assertNotSent(string $method, ?string $url = null): self
+    public function assertNotSent(string $method, string|null $url = null) : self
     {
         foreach ($this->requests as $request) {
             if (strtoupper($request['method']) !== strtoupper($method)) {

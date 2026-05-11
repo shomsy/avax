@@ -11,17 +11,17 @@ final class InMemoryKnownAuthenticationEnvironmentStore implements KnownAuthenti
     /** @var array<int, array<string, true>> */
     private array $seen = [];
 
-    public function hasSeen(int $userId, #[SensitiveParameter] ?string $ipAddress, ?string $userAgent) : bool
+    public function hasSeen(int $userId, #[SensitiveParameter] ?string $ipAddress, string|null $userAgent) : bool
     {
         return isset($this->seen[$userId][$this->key(ipAddress: $ipAddress, userAgent: $userAgent)]);
     }
 
-    private function key(#[SensitiveParameter] ?string $ipAddress, ?string $userAgent) : string
+    private function key(#[SensitiveParameter] ?string $ipAddress, string|null $userAgent) : string
     {
         return strtolower(string: trim(string: $ipAddress ?? 'unknown')) . '|' . strtolower(string: trim(string: $userAgent ?? 'unknown'));
     }
 
-    public function remember(int $userId, #[SensitiveParameter] ?string $ipAddress, ?string $userAgent) : void
+    public function remember(int $userId, #[SensitiveParameter] ?string $ipAddress, string|null $userAgent) : void
     {
         $this->seen[$userId][$this->key(ipAddress: $ipAddress, userAgent: $userAgent)] = true;
     }

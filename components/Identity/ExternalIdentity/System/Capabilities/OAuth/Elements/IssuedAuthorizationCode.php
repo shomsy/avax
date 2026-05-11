@@ -18,6 +18,6 @@ final readonly class IssuedAuthorizationCode
         #[SensitiveParameter]
         public string            $codeId,
         public DateTimeImmutable $expiresAt,
-        public ?string           $state = null,
+        public string|null $state = null,
     ) {}
 }

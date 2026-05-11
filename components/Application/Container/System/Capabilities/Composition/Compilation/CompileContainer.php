@@ -30,7 +30,7 @@ final class CompileContainer
 
     private readonly DependencyCompiler $dependencyCompiler;
 
-    private ?ArtifactMetadata $artifactMetadata = null;
+    private ArtifactMetadata|null $artifactMetadata = null;
 
     private readonly bool $validateBeforeCompile;
 
@@ -64,25 +64,10 @@ final class CompileContainer
 
     public function __construct(
         private readonly DependencyRegistry $dependencyRegistry,
-        private readonly CreateDependencyBlueprint $createDependencyBlueprint,
-        ?string $cacheDir = null,
-        ?string $cacheVersion = null,
+        private readonly CreateDependencyBlueprint $createDependencyBlueprint, string|null $cacheDir = null, string|null $cacheVersion = null,
         #[SensitiveParameter]
-        ?string $configHash = null,
-        ?string $diagnosticsMode = null,
-        ?string $environment = null,
-        ?string $compileMode = null,
-        ?bool $strict = null,
-        ?string $settingsFingerprint = null,
-        ?string $benchmarkBuildMarker = null,
-        ?string $executionMode = null,
-        ?string $pruneMode = null,
-        ?bool $validateOnLoad = null,
-        ?bool $failClosedOnCorruption = null,
-        ?bool $validateBeforeCompile = null,
-        private readonly ?ResolutionMetrics $resolutionMetrics = null,
-        ?DependencyCompiler $dependencyCompiler = null,
-        ?Filesystem $filesystem = null,
+        ?string                                    $configHash = null, string|null $diagnosticsMode = null, string|null $environment = null, string|null $compileMode = null, bool|null $strict = null, string|null $settingsFingerprint = null, string|null $benchmarkBuildMarker = null, string|null $executionMode = null, string|null $pruneMode = null, bool|null $validateOnLoad = null, bool|null $failClosedOnCorruption = null, bool|null $validateBeforeCompile = null,
+        private readonly ?ResolutionMetrics        $resolutionMetrics = null, DependencyCompiler|null $dependencyCompiler = null, Filesystem|null $filesystem = null,
     ) {
         $cacheDir ??= '';
         $cacheVersion ??= 'container-v1';
@@ -136,7 +121,7 @@ final class CompileContainer
      * @throws JsonException
      * @throws ReflectionException
      */
-    public function compile(?array $serviceIds = null, ?array $validationIssues = null, bool $warmed = false): CompiledContainer
+    public function compile(array|null $serviceIds = null, array|null $validationIssues = null, bool $warmed = false) : CompiledContainer
     {
         $serviceIds ??= [];
         $validationIssues ??= [];
@@ -332,7 +317,7 @@ final class CompileContainer
         ];
     }
 
-    private function loadMetadata(bool $quarantineOnFailure = true): ?ArtifactMetadata
+    private function loadMetadata(bool $quarantineOnFailure = true) : ArtifactMetadata|null
     {
         if ($this->cacheDir === '') {
             return null;
@@ -681,8 +666,7 @@ final class CompileContainer
      */
     private function metadataFor(
         array $snapshot,
-        array $validationIssues,
-        ?ArtifactMetadata $artifactMetadata,
+        array $validationIssues, ArtifactMetadata|null $artifactMetadata,
         bool $warmed,
     ): ArtifactMetadata {
         $previousServices = $artifactMetadata?->services ?? [];
@@ -974,7 +958,7 @@ final class CompileContainer
      *
      * @throws ReflectionException
      */
-    public function load(array $serviceIds = []): ?CompiledContainer
+    public function load(array $serviceIds = []) : CompiledContainer|null
     {
         if ($this->cacheDir === '') {
             return null;
@@ -1215,7 +1199,7 @@ final class CompileContainer
         );
     }
 
-    private function reportMetadata(): ?ArtifactMetadata
+    private function reportMetadata() : ArtifactMetadata|null
     {
         return $this->loadMetadata(quarantineOnFailure: false) ?? $this->artifactMetadata;
     }
@@ -1225,7 +1209,7 @@ final class CompileContainer
      *
      * @throws ReflectionException
      */
-    private function freshnessStateFor(?ArtifactMetadata $artifactMetadata, array $serviceIds): string
+    private function freshnessStateFor(ArtifactMetadata|null $artifactMetadata, array $serviceIds) : string
     {
         if (! $artifactMetadata instanceof ArtifactMetadata) {
             return 'missing';
@@ -1258,8 +1242,7 @@ final class CompileContainer
      * @param  list<string>  $compatibilityIssues
      * @return list<string>
      */
-    private function warningsFor(
-        ?ArtifactMetadata $artifactMetadata,
+    private function warningsFor(ArtifactMetadata|null $artifactMetadata,
         string $freshnessState,
         array $compatibilityIssues,
         bool $checksumValid,
@@ -1299,7 +1282,7 @@ final class CompileContainer
     /**
      * @return array<string, int>
      */
-    private function lifetimePlanSummaryFor(?ArtifactMetadata $artifactMetadata): array
+    private function lifetimePlanSummaryFor(ArtifactMetadata|null $artifactMetadata) : array
     {
         $summary = [];
 

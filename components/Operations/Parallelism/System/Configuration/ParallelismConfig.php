@@ -11,7 +11,7 @@ final readonly class ParallelismConfig
         public int     $maxWorkers = 8,
         public int     $defaultTimeoutMs = 3000,
         public bool    $failFast = false,
-        public ?string $workerScript = null,
+        public string|null $workerScript = null,
     ) {}
 
     public static function fromArray(array $config) : self

@@ -29,7 +29,7 @@ final readonly class RevokeSession
         private AuditLogInterface         $auditLog,
         private Clock                     $clock,
         #[SensitiveParameter]
-        private ?SessionRegistryInterface $sessionRegistry = null,
+        private SessionRegistryInterface|null $sessionRegistry = null,
     ) {}
 
     /**

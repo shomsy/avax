@@ -17,10 +17,10 @@ final readonly class DataTransferConfig
         public bool               $allowPublicPropertyHydration = true,
         public bool               $collectUnknownFields = false,
         public int                $maxDepth = 32,
-        private ?Closure          $namingPolicy = null,
+        private Closure|null $namingPolicy = null,
         private array             $valueCasters = [],
         private array             $validationRules = [],
-        public ?string            $schemaCacheDir = null,
+        public string|null   $schemaCacheDir = null,
     ) {}
 
     public static function default() : self

@@ -16,7 +16,7 @@ final readonly class ServiceBlueprint
 
     public array $injectableProperties;
 
-    public ?ResolvePlan $constructor;
+    public ResolvePlan|null $constructor;
 
     public bool $instantiable;
 
@@ -27,12 +27,7 @@ final readonly class ServiceBlueprint
      * @param  list<array{name: string, plan: ResolvePlan}>  $injectableMethods
      */
     public function __construct(
-        string $class,
-        ?bool $instantiable = null,
-        ?ResolvePlan $constructor = null,
-        ?array $injectableProperties = null,
-        ?array $injectableMethods = null,
-        ?bool $shared = null,
+        string $class, bool|null $instantiable = null, ResolvePlan|null $constructor = null, array|null $injectableProperties = null, array|null $injectableMethods = null, bool|null $shared = null,
         string $fingerprint = ''
     ) {
         $instantiable ??= false;

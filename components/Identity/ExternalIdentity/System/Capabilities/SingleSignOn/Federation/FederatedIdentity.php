@@ -18,8 +18,7 @@ final readonly class FederatedIdentity
         public string $subject,
         #[SensitiveParameter]
         public string $email,
-        public string $displayName,
-        ?array        $groups = null,
+        public string $displayName, array|null $groups = null,
         public bool   $emailVerified = true,
     )
     {

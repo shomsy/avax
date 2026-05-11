@@ -30,7 +30,7 @@ final readonly class DatabaseExporter
      *
      * @throws Throwable If export fails
      */
-    public function exportToSql(string $path, ?string $table = null): string
+    public function exportToSql(string $path, string|null $table = null) : string
     {
         $filename = (in_array($table, [null, '', '0'], true) ? 'full_db' : $table).'_export_'.date(format: 'Y_m_d_His').'.sql';
         $fullPath = rtrim(string: $path, characters: DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$filename;

@@ -16,7 +16,7 @@ final readonly class ReadOidcUserInfo
     public function __construct(
         #[SensitiveParameter]
         private JwtIdentityInterface   $jwtIdentity,
-        private ?OidcProviderInterface $oidcProvider = null,
+        private OidcProviderInterface|null $oidcProvider = null,
     ) {}
 
     public function execute(#[SensitiveParameter] string $accessToken) : OidcUserInfo
@@ -47,7 +47,7 @@ final readonly class ReadOidcUserInfo
         return new OidcUserInfo(claims: $claims);
     }
 
-    private function subjectIdentifier(User $user, ?string $clientId) : string
+    private function subjectIdentifier(User $user, string|null $clientId) : string
     {
         if ($this->oidcProvider instanceof OidcProviderInterface && $clientId !== null && trim(string: $clientId) !== '') {
             return $this->oidcProvider->subjectIdentifier(user: $user, clientId: $clientId);

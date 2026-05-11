@@ -19,7 +19,7 @@ final class Filesystem
         return self::disk()->put(path: $path, contents: $contents);
     }
 
-    public static function disk(?string $name = null): StorageAdapter
+    public static function disk(string|null $name = null) : StorageAdapter
     {
         $disk = $name ?? 'local';
 
@@ -40,7 +40,7 @@ final class Filesystem
         };
     }
 
-    public static function get(string $path): ?string
+    public static function get(string $path) : string|null
     {
         return self::disk()->get(path: $path);
     }

@@ -487,7 +487,7 @@ final class SerializeNullableDto extends DataObject
     public string $name;
 
     #[Optional]
-    public ?string $tag = null;
+    public string|null $tag = null;
 }
 
 final class JsonApiDto extends DataObject
@@ -508,7 +508,7 @@ final class NoIdDto extends DataObject
 final class CircularDto
 {
     public string $name    = '';
-    public ?self  $related = null;
+    public self|null $related = null;
 }
 
 final class JsonApiHiddenDto extends DataObject

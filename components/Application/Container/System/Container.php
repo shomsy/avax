@@ -23,7 +23,7 @@ class Container implements ResettableState
 {
     private static ?ContainerInterface $container = null;
 
-    private ?ContainerInterface $engine = null;
+    private ContainerInterface|null $engine = null;
 
     public function resetState(): void
     {

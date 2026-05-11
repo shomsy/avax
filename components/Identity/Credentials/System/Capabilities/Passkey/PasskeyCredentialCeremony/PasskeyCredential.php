@@ -15,8 +15,8 @@ final readonly class PasskeyCredential
         public string             $credentialId,
         public string             $label,
         public DateTimeImmutable  $registeredAt,
-        public ?DateTimeImmutable $lastUsedAt = null,
-        public ?DateTimeImmutable $revokedAt = null,
+        public DateTimeImmutable|null $lastUsedAt = null,
+        public DateTimeImmutable|null $revokedAt = null,
     ) {}
 
     public function isRevoked() : bool

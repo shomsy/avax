@@ -27,7 +27,7 @@ final class ResponseBuilder
     /** @var array<string, list<string>> */
     private array $headers = [];
 
-    private ?string $body = null;
+    private string|null $body = null;
 
     private string $protocolVersion = '1.1';
 

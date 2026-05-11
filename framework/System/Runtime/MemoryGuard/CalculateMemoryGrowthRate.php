@@ -19,7 +19,7 @@ final readonly class CalculateMemoryGrowthRate
      * @param int|null $window Use only the last N snapshots. Null = all.
      * @return float|null Growth rate in bytes per request. Null if fewer than 2 snapshots.
      */
-    public function calculate(array $snapshots, ?int $window = null): ?float
+    public function calculate(array $snapshots, int|null $window = null) : float|null
     {
         if ($window !== null && count($snapshots) > $window) {
             $snapshots = array_slice($snapshots, -$window);
@@ -60,7 +60,7 @@ final readonly class CalculateMemoryGrowthRate
      * @param int $thresholdBytesPerRequest Growth rate threshold in bytes per request
      * @return bool True if growth rate exceeds threshold (potential leak)
      */
-    public function isPotentialLeak(array $snapshots, int $thresholdBytesPerRequest = 1024, ?int $window = null): bool
+    public function isPotentialLeak(array $snapshots, int $thresholdBytesPerRequest = 1024, int|null $window = null) : bool
     {
         $rate = $this->calculate($snapshots, $window);
         if ($rate === null) {

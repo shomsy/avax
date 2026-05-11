@@ -8,6 +8,30 @@ tests, characterization tests i pravilo da struktura mora da bude jasna, ne deko
 
 ---
 
+## Status
+
+**MANDATORY** - This document defines non-negotiable unit testing rules for AvaX.
+
+## Normative Language
+
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, **BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+
+- **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
+- **MUST NOT / FORBIDDEN**: prohibited pattern.
+- **SHOULD**: expected default unless documented exception exists.
+- **SHOULD NOT**: discouraged pattern requiring justification.
+- **MAY**: optional behavior.
+- **BLOCKER**: violation prevents GREEN status.
+- **HIGH**: must be fixed before production-complete unless explicitly accepted.
+- **MEDIUM**: must be tracked and fixed or explicitly deferred.
+- **LOW**: cleanup or documentation issue.
+
+A rule without an explicit exception **MUST** be treated as mandatory.
+
+Code review **MUST NOT** mark a scope GREEN when a mandatory rule is violated.
+
+---
+
 ## 1. Status of This Document
 
 This document is a unit testing governance standard.

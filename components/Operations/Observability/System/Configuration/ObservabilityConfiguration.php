@@ -16,5 +16,5 @@ interface ObservabilityConfiguration
 
     public function isAuditEnabled(): bool;
 
-    public function getExporter(): ?string;
+    public function getExporter() : string|null;
 }

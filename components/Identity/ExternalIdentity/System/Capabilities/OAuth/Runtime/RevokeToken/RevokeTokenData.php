@@ -13,11 +13,11 @@ final readonly class RevokeTokenData
         #[SensitiveParameter]
         public string  $token,
         #[SensitiveParameter]
-        public ?string $clientSecret = null,
+        public string|null $clientSecret = null,
         #[SensitiveParameter]
-        public ?string $tokenTypeHint = null,
+        public string|null $tokenTypeHint = null,
         #[SensitiveParameter]
-        public ?string $ipAddress = null,
-        public ?string $userAgent = null,
+        public string|null $ipAddress = null,
+        public string|null $userAgent = null,
     ) {}
 }

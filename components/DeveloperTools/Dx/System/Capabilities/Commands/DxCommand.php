@@ -20,7 +20,7 @@ class DxCommand implements Stringable
 
     public function __construct(private readonly string $name) {}
 
-    public function addOption(string $name, ?string $value = null) : self
+    public function addOption(string $name, string|null $value = null) : self
     {
         $this->options[$name] = $value;
 

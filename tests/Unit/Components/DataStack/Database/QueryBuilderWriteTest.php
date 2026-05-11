@@ -110,8 +110,7 @@ final class RecordingWriteExecutor implements ExecutorInterface
      */
     public function query(
         string $sql,
-        array $bindings = [],
-        ?ExecutionScope $executionScope = null,
+        array $bindings = [], ExecutionScope|null $executionScope = null,
     ): array {
         return [];
     }
@@ -121,8 +120,7 @@ final class RecordingWriteExecutor implements ExecutorInterface
      */
     public function execute(
         string $sql,
-        array $bindings = [],
-        ?ExecutionScope $executionScope = null,
+        array $bindings = [], ExecutionScope|null $executionScope = null,
     ): ExecutionResult {
         $this->executions[] = [
             'sql' => $sql,

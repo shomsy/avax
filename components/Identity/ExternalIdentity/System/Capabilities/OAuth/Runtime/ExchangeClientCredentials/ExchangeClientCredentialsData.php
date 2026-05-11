@@ -18,13 +18,12 @@ final readonly class ExchangeClientCredentialsData
     public function __construct(
         public string                 $clientId,
         #[SensitiveParameter]
-        public ?string                $clientSecret = null,
-        ?array                        $scopes = null,
-        public ?string                $audience = null,
+        public string|null                $clientSecret = null, array|null $scopes = null,
+        public string|null                $audience = null,
         #[SensitiveParameter]
-        public ?string                $ipAddress = null,
-        public ?string                $userAgent = null,
-        public ?OAuthSenderConstraint $senderConstraint = null,
+        public string|null                $ipAddress = null,
+        public string|null                $userAgent = null,
+        public OAuthSenderConstraint|null $senderConstraint = null,
     )
     {
         $scopes       ??= [];

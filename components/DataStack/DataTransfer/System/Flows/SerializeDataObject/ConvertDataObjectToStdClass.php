@@ -10,7 +10,7 @@ use stdClass;
 
 final readonly class ConvertDataObjectToStdClass
 {
-    public function __construct(private ?DataTransferConfig $dataTransferConfig = null) {}
+    public function __construct(private DataTransferConfig|null $dataTransferConfig = null) {}
 
     /**
      * @throws JsonException

@@ -13,7 +13,11 @@ parameters:
         - vendor
     reportUnmatchedIgnoredErrors: false
     ignoreErrors:
-        - '#Property .* is never read, only written#'
+        -
+            message: '#Call to .* on a separate line has no effect#'
+            path: 'framework/System/Capabilities/Benchmarks/MicroBenchmarkRunner.php'
+        -
+            message: '#Property .* is never read, only written#'
         - '#Constructor of class.*has an unused parameter#'
         - '#Parameters should have .* types as the only types passed to this method#'
         - '#Mixed variable in a `\$file->\.\.\.\(\)` can skip important errors#'

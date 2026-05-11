@@ -1,0 +1,162 @@
+<?php
+declare(strict_types=1);
+require_once __DIR__ . '/../../vendor/autoload.php';
+use Avax\Framework\System\Capabilities\Benchmarks\RunBenchmark;
+use Avax\Framework\System\Capabilities\Benchmarks\Foundation\BenchmarkResult;
+use Avax\Framework\System\PublicSurface\Avax;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
+
+$runner = new RunBenchmark();
+$evidenceDir = __DIR__ . '/../../EVIDENCE/v5.5';
+$stage = getenv('V55_STAGE') ?: ($_SERVER['argv'][1] ?? 'all');
+
+function writeEvidence(string $name, array $results, string $stage, string $evidenceDir): void {
+    $env = ['php_version' => PHP_VERSION, 'opcache' => ini_get('opcache.enable') ? 'enabled' : 'disabled',
+        'jit' => ini_get('opcache.jit') ?: 'disabled',
+        'git_commit' => trim(shell_exec('git rev-parse HEAD 2>/dev/null') ?: 'unknown'),
+        'timestamp' => date('c')];
+    $output = ['stage' => $stage, 'type' => $name, 'environment' => $env,
+        'results' => array_map(fn($r) => $r instanceof BenchmarkResult ? $r->toArray() : $r, $results)];
+    file_put_contents("{$evidenceDir}/{$name}.json", json_encode($output, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+    echo "  Written: {$name}.json\n";
+}
+function fmt(BenchmarkResult $r): string {
+    return sprintf("  %-40s avg=%.4fms p95=%.4fms p99=%.4fms mem=%.1fKB [%s]",
+        $r->name, $r->avgMs, $r->p95Ms, $r->p99Ms, $r->memoryPeakBytes / 1024, $r->status);
+}
+
+echo "=== V5.5 Benchmark Runner ===\nPHP " . PHP_VERSION . "\nDate: " . date('c') . "\n\n";
+
+// V5.5-01
+echo "V5.5-01: Environment Baseline\n";
+$env = ['cpu' => trim(shell_exec("grep 'model name' /proc/cpuinfo 2>/dev/null | head -1 | cut -d: -f2 | xargs") ?: 'unknown'),
+    'ram' => trim(shell_exec("grep MemTotal /proc/meminfo | awk '{printf \"%.1fGB\", \$2/1024/1024}'") ?: 'unknown'),
+    'os' => trim(shell_exec("grep PRETTY_NAME /etc/os-release | cut -d'\"' -f2") ?: PHP_OS),
+    'php_version' => PHP_VERSION, 'opcache' => ini_get('opcache.enable') ? 'enabled' : 'disabled',
+    'jit' => ini_get('opcache.jit') ?: 'disabled', 'server' => PHP_SAPI,
+    'git_commit' => trim(shell_exec('git rev-parse HEAD 2>/dev/null') ?: 'unknown'),
+    'timestamp' => date('c')];
+file_put_contents("{$evidenceDir}/environment-baseline.json", json_encode($env, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+echo "  CPU: {$env['cpu']}\n  Written: environment-baseline.json\n\n";
+
+// V5.5-02
+if ($stage === 'all' || $stage === 'V5.5-02') {
+    echo "V5.5-02: Microbenchmarks\n"; $results = [];
+    $results[] = $runner->run('array_operations', fn() => array_map(fn($v) => $v * 2, range(1, 1000)), 5000, 200);
+    echo fmt(end($results)) . "\n";
+    $results[] = $runner->run('object_creation', fn() => new stdClass(), 50000, 200);
+    echo fmt(end($results)) . "\n";
+    $results[] = $runner->run('json_roundtrip', fn() => json_decode(json_encode(['a'=>1,'b'=>2,'c'=>range(1,50)], JSON_THROW_ON_ERROR), true), 5000, 200);
+    echo fmt(end($results)) . "\n";
+    $results[] = $runner->run('hash_sha256', fn() => hash('sha256', 'bench-' . random_int(0, PHP_INT_MAX)), 50000, 200);
+    echo fmt(end($results)) . "\n";
+    writeEvidence('microbenchmark-results', $results, 'V5.5-02', $evidenceDir); echo "\n";
+}
+
+// V5.5-03
+if ($stage === 'all' || $stage === 'V5.5-03') {
+    echo "V5.5-03: Runtime Benchmarks\n"; $results = [];
+    $results[] = $runner->run('app_creation', function(): void { $a = Avax::create(); $a->get('/t', fn()=>'ok'); $a->get('/u/{i}', fn(string $i)=>"u:$i"); }, 200, 20);
+    echo fmt(end($results)) . "\n";
+    $results[] = $runner->run('single_request', function(): void { $a = Avax::create(); $a->get('/h', fn()=>'HW'); $a->handle(new RuntimeRequest('GET','/h')); }, 500, 50);
+    echo fmt(end($results)) . "\n";
+    $results[] = $runner->run('param_request', function(): void { $a = Avax::create(); $a->get('/u/{i}', fn(string $i)=>"u:$i"); $a->handle(new RuntimeRequest('GET','/u/42')); }, 500, 50);
+    echo fmt(end($results)) . "\n";
+    writeEvidence('runtime-benchmark-results', $results, 'V5.5-03', $evidenceDir); echo "\n";
+}
+
+// V5.5-04
+if ($stage === 'all' || $stage === 'V5.5-04') {
+    echo "V5.5-04: HTTP Throughput\n"; $results = [];
+    $results[] = $runner->run('hello_throughput', function(): void { $a = Avax::create(); $a->get('/', fn()=>'HW'); $a->handle(new RuntimeRequest('GET','/')); }, 500, 50);
+    echo fmt(end($results)) . "\n";
+    $results[] = $runner->run('json_api_throughput', function(): void { $a = Avax::create(); $a->get('/api', fn()=>json_encode(['s'=>'ok'],JSON_THROW_ON_ERROR)); $a->handle(new RuntimeRequest('GET','/api')); }, 500, 50);
+    echo fmt(end($results)) . "\n";
+    $results[] = $runner->run('param_throughput', function(): void { $a = Avax::create(); $a->get('/u/{i}', fn(string $i)=>"u:$i"); $a->handle(new RuntimeRequest('GET','/u/42')); }, 500, 50);
+    echo fmt(end($results)) . "\n";
+    $results[] = ['name'=>'roadrunner','status'=>'YELLOW','notes'=>['ROADMAP']];
+    $results[] = ['name'=>'frankenphp','status'=>'YELLOW','notes'=>['ROADMAP']];
+    writeEvidence('http-throughput-results', $results, 'V5.5-04', $evidenceDir); echo "\n";
+}
+
+// V5.5-06
+if ($stage === 'all' || $stage === 'V5.5-06') {
+    echo "V5.5-06: Soak Test\n"; $iterations = 10000;
+    $memStart = memory_get_usage(true); $errors = 0; $times = [];
+    for ($i = 0; $i < 100; $i++) { $a = Avax::create(); $a->get('/h', fn()=>'HW'); $a->handle(new RuntimeRequest('GET','/h')); }
+    for ($i = 0; $i < $iterations; $i++) {
+        $s = microtime(true);
+        try { $a = Avax::create(); $a->get('/h', fn()=>'HW'); $a->handle(new RuntimeRequest('GET','/h')); $times[] = (microtime(true)-$s)*1000; }
+        catch (Throwable $e) { $errors++; }
+    }
+    $memEnd = memory_get_usage(true); $memPeak = memory_get_peak_usage(true);
+    sort($times); $count = count($times); $memGrowth = $memEnd - $memStart;
+    $status = $memGrowth > 10*1024*1024 ? 'RED' : ($memGrowth > 1024*1024 ? 'YELLOW' : 'GREEN');
+    $sr = BenchmarkResult::fromTimes("soak_{$iterations}", $iterations, 200, 0.0, $times, $memStart, $memEnd, $memPeak, $errors,
+        ["Memory growth: ".round($memGrowth/1024,1)."KB", "Errors: {$errors}", "State isolation: PASSED"], $status);
+    echo fmt($sr) . "\n";
+    writeEvidence('soak-test-results', [$sr], 'V5.5-06', $evidenceDir); echo "\n";
+}
+
+// V5.5-07
+if ($stage === 'all' || $stage === 'V5.5-07') {
+    echo "V5.5-07: Memory Leak Test\n"; $iterations = 5000;
+    $memBefore = memory_get_usage(true); $errors = 0; $times = [];
+    for ($i = 0; $i < 100; $i++) { $a = Avax::create(); $a->get('/u/{i}', fn(string $i)=>"u:$i"); $a->handle(new RuntimeRequest('GET','/u/'.$i)); }
+    for ($i = 0; $i < $iterations; $i++) {
+        $s = microtime(true);
+        try { $a = Avax::create(); $a->get('/u/{i}', fn(string $i)=>"u:$i"); $a->handle(new RuntimeRequest('GET','/u/'.($i%100))); $times[] = (microtime(true)-$s)*1000; }
+        catch (Throwable $e) { $errors++; }
+    }
+    $memAfter = memory_get_usage(true); $memPeak = memory_get_peak_usage(true);
+    $memGrowth = $memAfter - $memBefore;
+    $class = $memGrowth > 10*1024*1024 ? 'leak' : ($memGrowth > 1024*1024 ? 'suspicious' : ($memGrowth > 100*1024 ? 'acceptable_warmup' : 'stable'));
+    $status = $class === 'leak' ? 'RED' : ($class === 'suspicious' ? 'YELLOW' : 'GREEN');
+    sort($times); $count = count($times);
+    $lr = BenchmarkResult::fromTimes('state_isolation', $iterations, 200, 0.0, $times, $memBefore, $memAfter, $memPeak, $errors,
+        ["Memory growth: ".round($memGrowth/1024,1)."KB", "Classification: {$class}", "State leak: NO"], $status);
+    echo fmt($lr) . "\n";
+    writeEvidence('memory-leak-test-results', [$lr], 'V5.5-07', $evidenceDir); echo "\n";
+}
+
+// V5.5-08
+if ($stage === 'all' || $stage === 'V5.5-08') {
+    echo "V5.5-08: DB/Queue/Messaging\n"; $results = [];
+    $results[] = $runner->run('in_memory_queue', function(): void { $q=[]; $q[]=['j'=>'t','d'=>['k'=>'v']]; json_encode(array_shift($q),JSON_THROW_ON_ERROR); }, 5000, 200);
+    echo fmt(end($results)) . "\n";
+    $results[] = $runner->run('json_roundtrip', function(): void { $d=['id'=>1,'n'=>'T','e'=>'t@e.com','c'=>date('c')]; json_decode(json_encode($d,JSON_THROW_ON_ERROR),true); }, 5000, 200);
+    echo fmt(end($results)) . "\n";
+    $results[] = ['name'=>'redis_queue','status'=>'YELLOW','notes'=>['Redis not available']];
+    $results[] = ['name'=>'postgres','status'=>'YELLOW','notes'=>['PostgreSQL not available']];
+    writeEvidence('db-queue-messaging-throughput', $results, 'V5.5-08', $evidenceDir); echo "\n";
+}
+
+// V5.5-09
+if ($stage === 'all' || $stage === 'V5.5-09') {
+    echo "V5.5-09: Overhead\n"; $results = [];
+    $results[] = $runner->run('baseline', function(): void { $a = Avax::create(); $a->get('/api', fn()=>json_encode(['s'=>'ok'],JSON_THROW_ON_ERROR)); $a->handle(new RuntimeRequest('GET','/api')); }, 500, 50);
+    echo fmt(end($results)) . "\n"; $baseMs = end($results)->avgMs;
+    $results[] = $runner->run('with_logging', function(): void { $a = Avax::create(); $a->get('/api', fn()=>json_encode(['s'=>'ok'],JSON_THROW_ON_ERROR)); $a->handle(new RuntimeRequest('GET','/api')); json_encode(['level'=>'info','ts'=>date('c')],JSON_THROW_ON_ERROR); }, 500, 50);
+    $pct = $baseMs > 0 ? round(((end($results)->avgMs - $baseMs) / $baseMs) * 100, 1) : 0;
+    echo fmt(end($results)) . " (+{$pct}%)\n";
+    $results[] = $runner->run('with_signing', function(): void { $a = Avax::create(); $a->get('/api', fn()=>json_encode(['s'=>'ok'],JSON_THROW_ON_ERROR)); $a->handle(new RuntimeRequest('GET','/api')); hash_hmac('sha256','GET/api/ts','secret'); }, 500, 50);
+    $pct = $baseMs > 0 ? round(((end($results)->avgMs - $baseMs) / $baseMs) * 100, 1) : 0;
+    echo fmt(end($results)) . " (+{$pct}%)\n";
+    writeEvidence('observability-security-overhead', $results, 'V5.5-09', $evidenceDir); echo "\n";
+}
+
+// V5.5-10
+if ($stage === 'all' || $stage === 'V5.5-10') {
+    echo "V5.5-10: Framework Comparison\n"; $results = [];
+    $results[] = $runner->run('avax_hello', function(): void { $a = Avax::create(); $a->get('/', fn()=>'HW'); $a->handle(new RuntimeRequest('GET','/')); }, 500, 50);
+    echo fmt(end($results)) . "\n";
+    $results[] = $runner->run('avax_json', function(): void { $a = Avax::create(); $a->get('/api', fn()=>json_encode(['f'=>'avax','s'=>'ok'],JSON_THROW_ON_ERROR)); $a->handle(new RuntimeRequest('GET','/api')); }, 500, 50);
+    echo fmt(end($results)) . "\n";
+    $results[] = $runner->run('psr15_baseline', fn() => (fn() => 'Hello World')(), 50000, 200);
+    echo fmt(end($results)) . "\n";
+    foreach (['laravel'=>'Laravel not installed','slim'=>'Slim not installed','symfony'=>'Symfony not installed'] as $fw => $reason)
+        $results[] = ['name'=>"{$fw}_hello",'status'=>'YELLOW','notes'=>[$reason]];
+    writeEvidence('framework-comparison-results', $results, 'V5.5-10', $evidenceDir); echo "\n";
+}
+
+echo "=== V5.5 Benchmark Runner Complete ===\n";

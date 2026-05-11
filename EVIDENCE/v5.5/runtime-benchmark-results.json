@@ -1,0 +1,76 @@
+{
+    "stage": "V5.5-03",
+    "type": "runtime-benchmark-results",
+    "environment": {
+        "php_version": "8.5.5",
+        "opcache": "enabled",
+        "jit": "disable",
+        "git_commit": "unknown",
+        "timestamp": "2026-05-11T17:04:41+00:00"
+    },
+    "results": [
+        {
+            "name": "app_creation",
+            "iterations": 200,
+            "warmup_iterations": 20,
+            "total_seconds": 0.0005,
+            "metrics": {
+                "avg_ms": 0.0023,
+                "p50_ms": 0.0021,
+                "p95_ms": 0.0031,
+                "p99_ms": 0.0041,
+                "min_ms": 0.0019,
+                "max_ms": 0.0091,
+                "rps": 427336.12,
+                "memory_before_bytes": 10485760,
+                "memory_after_bytes": 10485760,
+                "memory_peak_bytes": 13107200,
+                "error_rate": 0
+            },
+            "status": "GREEN",
+            "notes": []
+        },
+        {
+            "name": "single_request",
+            "iterations": 500,
+            "warmup_iterations": 50,
+            "total_seconds": 0.0057,
+            "metrics": {
+                "avg_ms": 0.0114,
+                "p50_ms": 0.011,
+                "p95_ms": 0.015,
+                "p99_ms": 0.0172,
+                "min_ms": 0.0098,
+                "max_ms": 0.0219,
+                "rps": 87246.83,
+                "memory_before_bytes": 10485760,
+                "memory_after_bytes": 10485760,
+                "memory_peak_bytes": 13107200,
+                "error_rate": 0
+            },
+            "status": "GREEN",
+            "notes": []
+        },
+        {
+            "name": "param_request",
+            "iterations": 500,
+            "warmup_iterations": 50,
+            "total_seconds": 0.0065,
+            "metrics": {
+                "avg_ms": 0.013,
+                "p50_ms": 0.0129,
+                "p95_ms": 0.015,
+                "p99_ms": 0.0191,
+                "min_ms": 0.0119,
+                "max_ms": 0.0639,
+                "rps": 76768.14,
+                "memory_before_bytes": 10485760,
+                "memory_after_bytes": 10485760,
+                "memory_peak_bytes": 13107200,
+                "error_rate": 0
+            },
+            "status": "GREEN",
+            "notes": []
+        }
+    ]
+}

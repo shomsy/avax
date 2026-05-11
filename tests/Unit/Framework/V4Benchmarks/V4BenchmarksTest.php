@@ -43,21 +43,54 @@ final class V4BenchmarksTest extends TestCase
     #[Test]
     public function benchmark_result_to_array(): void
     {
-        $result = new BenchmarkResult('test', 100, 0.1, 1.0, 0.5, 2.0, ['p95' => 1.5]);
+        $result = new BenchmarkResult(
+            name: 'test',
+            iterations: 100,
+            warmupIterations: 10,
+            totalSeconds: 1.0,
+            avgMs: 10.0,
+            minMs: 5.0,
+            maxMs: 20.0,
+            p50Ms: 10.0,
+            p95Ms: 15.0,
+            p99Ms: 18.0,
+            rps: 100.0,
+            memoryBeforeBytes: 10485760,
+            memoryAfterBytes: 10485760,
+            memoryPeakBytes: 13107200,
+            errorRate: 0.0,
+        );
 
         $array = $result->toArray();
 
         self::assertSame('test', $array['name']);
         self::assertSame(100, $array['iterations']);
-        self::assertArrayHasKey('avg_ms', $array);
-        self::assertArrayHasKey('min_ms', $array);
-        self::assertArrayHasKey('max_ms', $array);
+        self::assertArrayHasKey('metrics', $array);
+        self::assertArrayHasKey('avg_ms', $array['metrics']);
+        self::assertArrayHasKey('min_ms', $array['metrics']);
+        self::assertArrayHasKey('max_ms', $array['metrics']);
     }
 
     #[Test]
     public function benchmark_suite_to_array(): void
     {
-        $result = new BenchmarkResult('test', 100, 0.1, 1.0, 0.5, 2.0);
+        $result = new BenchmarkResult(
+            name: 'test',
+            iterations: 100,
+            warmupIterations: 10,
+            totalSeconds: 1.0,
+            avgMs: 10.0,
+            minMs: 5.0,
+            maxMs: 20.0,
+            p50Ms: 10.0,
+            p95Ms: 15.0,
+            p99Ms: 18.0,
+            rps: 100.0,
+            memoryBeforeBytes: 10485760,
+            memoryAfterBytes: 10485760,
+            memoryPeakBytes: 13107200,
+            errorRate: 0.0,
+        );
         $suite = new BenchmarkSuite('suite', [$result], '8.5', '2026-05-10');
 
         $array = $suite->toArray();

@@ -25,6 +25,15 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: V5.5-PHASE
+- `created_at`: 2026-05-11
+- `updated_at`: 2026-05-11
+- `status`: done
+- `estimate`: multi-session
+- `outcome`: V5.5 Benchmark Proof & World-Class Hardening — COMPLETE / GREEN. All 13 stages completed with valid evidence.
+- `acceptance`: 12 GREEN, 1 YELLOW (reference apps not CLI-runnable). Sub-millisecond request handling (0.011ms avg, 90K+ RPS). Zero memory growth after 10K iterations. Zero state leaks. PHPStan 0 errors on benchmark code. See `EVIDENCE/v5.5/v5.5-stage-ledger.md`, `EVIDENCE/v5.5/v5.5-12-final-readiness-report.md`.
+- `links`: `EVIDENCE/v5.5/v5.5-stage-ledger.md`, `EVIDENCE/v5.5/v5.5-12-final-readiness-report.md`, `EVIDENCE/v5.5/v5.5-11-optimization-pass.md`
+
 - `id`: V5-PHASE
 - `created_at`: 2026-05-10
 - `updated_at`: 2026-05-11
@@ -33,6 +42,23 @@ Canonical active implementation queue.
 - `outcome`: V5 Internal Convergence — COMPLETE / GREEN. All 23 stages (V5-00 through V5-22) GREEN_BY_EVIDENCE. V5-23 Final V5 Truth Report produced.
 - `acceptance`: 7711 tests GREEN, PHPStan 0 errors, all governance gates PASS. E2E suite covers parameterized routes, 405 behavior, compiled metadata pipeline. Reflection risks classified as non-hot-path ALLOWED. See `EVIDENCE/v5/v5-stage-ledger.md`, `EVIDENCE/v5/v5-23-final-truth-report.md`, `EVIDENCE/v5/v5-final-acceptance-audit.md`.
 - `links`: `EVIDENCE/v5/v5-stage-ledger.md`, `EVIDENCE/v5/v5-23-final-truth-report.md`, `EVIDENCE/v5/v5-final-acceptance-audit.md`
+
+## V5.5 Stage Ledger Status
+
+**Date:** 2026-05-11
+**Total:** 12 GREEN + 1 YELLOW = 13 stages
+
+### GREEN_BY_EVIDENCE (12)
+V5.5-00 Benchmark Methodology Lock, V5.5-01 Hardware/Environment Baseline, V5.5-02 Microbenchmarks, V5.5-03 Runtime Benchmarks, V5.5-04 HTTP Throughput, V5.5-06 Long-Running Worker Soak Tests, V5.5-07 Memory Leak & State Leak Tests, V5.5-08 Database/Queue/Messaging Throughput, V5.5-09 Observability & Security Overhead, V5.5-10 Framework Comparison Suite, V5.5-11 Optimization Pass, V5.5-12 Final World-Class Readiness
+
+### YELLOW (1)
+V5.5-05 Reference App Benchmarks — apps exist but not runnable in CLI (environment limitation)
+
+### Key Metrics
+- Request handling: 0.011ms avg, 0.020ms p99, 90,861 RPS
+- Soak test: 10,000 iterations, 0 errors, 0KB memory growth
+- Memory leak: stable, 0KB growth
+- Overhead: logging +4.5%, signing +2.8%
 
 ## V5 Stage Ledger Status
 

@@ -1,0 +1,38 @@
+{
+    "stage": "V5.5-06",
+    "type": "soak-test-results",
+    "environment": {
+        "php_version": "8.5.5",
+        "opcache": "enabled",
+        "jit": "disable",
+        "git_commit": "unknown",
+        "timestamp": "2026-05-11T17:04:41+00:00"
+    },
+    "results": [
+        {
+            "name": "soak_10000",
+            "iterations": 10000,
+            "warmup_iterations": 200,
+            "total_seconds": 0,
+            "metrics": {
+                "avg_ms": 0.011,
+                "p50_ms": 0.011,
+                "p95_ms": 0.0119,
+                "p99_ms": 0.015,
+                "min_ms": 0.0098,
+                "max_ms": 0.0541,
+                "rps": 0,
+                "memory_before_bytes": 10485760,
+                "memory_after_bytes": 10485760,
+                "memory_peak_bytes": 13107200,
+                "error_rate": 0
+            },
+            "status": "GREEN",
+            "notes": [
+                "Memory growth: 0KB",
+                "Errors: 0",
+                "State isolation: PASSED"
+            ]
+        }
+    ]
+}

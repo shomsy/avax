@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Framework\System\Capabilities\Doctor\Foundation;
+namespace Avax\Framework\System\Capabilities\Doctor\Types;
 
 /**
  * DoctorReport — Aggregates all doctor findings and provides overall status.
@@ -14,7 +14,7 @@ final class DoctorReport
      */
     private array $findings = [];
 
-    public function add(DoctorFinding $finding): void
+    public function add(DoctorFinding $finding) : void
     {
         $this->findings[] = $finding;
     }
@@ -22,12 +22,33 @@ final class DoctorReport
     /**
      * @return list<DoctorFinding>
      */
-    public function findings(): array
+    public function findings() : array
     {
         return $this->findings;
     }
 
-    public function overallStatus(): DoctorSeverity
+    public function render() : string
+    {
+        $lines = ["Avax Doctor\n", ''];
+
+        foreach ($this->findings as $finding) {
+            $symbol  = match ($finding->severity) {
+                DoctorSeverity::Green   => '✓',
+                DoctorSeverity::Yellow  => '!',
+                DoctorSeverity::Red     => '✗',
+                DoctorSeverity::Unknown => '?',
+            };
+            $lines[] = "  [{$symbol}] {$finding->check}: {$finding->message}";
+        }
+
+        $overall = $this->overallStatus();
+        $lines[] = '';
+        $lines[] = "Overall: {$overall->value}";
+
+        return implode("\n", $lines);
+    }
+
+    public function overallStatus() : DoctorSeverity
     {
         foreach ($this->findings as $finding) {
             if ($finding->severity === DoctorSeverity::Red) {
@@ -48,26 +69,5 @@ final class DoctorReport
         }
 
         return DoctorSeverity::Green;
-    }
-
-    public function render(): string
-    {
-        $lines = ["Avax Doctor\n", ''];
-
-        foreach ($this->findings as $finding) {
-            $symbol = match ($finding->severity) {
-                DoctorSeverity::Green => '✓',
-                DoctorSeverity::Yellow => '!',
-                DoctorSeverity::Red => '✗',
-                DoctorSeverity::Unknown => '?',
-            };
-            $lines[] = "  [{$symbol}] {$finding->check}: {$finding->message}";
-        }
-
-        $overall = $this->overallStatus();
-        $lines[] = '';
-        $lines[] = "Overall: {$overall->value}";
-
-        return implode("\n", $lines);
     }
 }

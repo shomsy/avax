@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Framework\System\Capabilities\Doctor\Foundation;
+namespace Avax\Framework\System\Capabilities\Doctor\Types;
 
 /**
  * DoctorFinding — A single doctor check result.
@@ -10,9 +10,8 @@ namespace Avax\Framework\System\Capabilities\Doctor\Foundation;
 final readonly class DoctorFinding
 {
     public function __construct(
-        public string $check,
+        public string         $check,
         public DoctorSeverity $severity,
-        public string $message,
-    ) {
-    }
+        public string         $message,
+    ) {}
 }

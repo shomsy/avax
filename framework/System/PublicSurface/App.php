@@ -4,27 +4,31 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\PublicSurface;
 
+use Avax\Components\HTTP\Request\System\Capabilities\Body\ParseFormBody;
+use Avax\Components\HTTP\Request\System\Capabilities\Body\ParseJsonBody;
+use Avax\Components\HTTP\Request\System\Capabilities\Files\NormalizeUploadedFiles;
+use Avax\Components\HTTP\Request\System\Capabilities\Headers\NormalizeHeaders;
 use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\CreateRequestFromGlobals;
-use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\ReadRequestBody;
 use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\ReadQueryParameters;
+use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\ReadRequestBody;
 use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\ReadServerParameters;
 use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\ReadUploadedFiles;
-use Avax\Components\HTTP\Request\System\Capabilities\Headers\NormalizeHeaders;
-use Avax\Components\HTTP\Request\System\Capabilities\Files\NormalizeUploadedFiles;
-use Avax\Components\HTTP\Request\System\Capabilities\Body\ParseJsonBody;
-use Avax\Components\HTTP\Request\System\Capabilities\Body\ParseFormBody;
+use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
-use Avax\Components\HTTP\Response\ResponseFactory;
+use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;
+use Avax\Framework\System\Capabilities\ErrorHandling\RenderApplicationError;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResult;
+use Avax\Framework\System\Capabilities\StateReset\StateResetReport;
 use Avax\Framework\System\Flows\HandleIncomingHttp\CloseHttpRequestScope;
 use Avax\Framework\System\Flows\HandleIncomingHttp\OpenHttpRequestScope;
 use Avax\Framework\System\Flows\HandleIncomingHttp\RegisteredHttpRoutes;
 use Avax\Framework\System\Flows\ResetApplicationState\ResetApplicationState;
 use Avax\Framework\System\Flows\RunApplication\RunApplication;
+use Avax\Framework\System\Flows\RunConsoleCommand\RunConsoleCommand;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\PublicSurface\Console\ConsoleKernel;
 use Avax\Framework\System\PublicSurface\Console\ConsoleKernelInterface;
@@ -33,6 +37,7 @@ use Avax\Framework\System\PublicSurface\Runtime\RuntimeKernel;
 use Avax\Framework\System\PublicSurface\Runtime\RuntimeKernelInterface;
 use Closure;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -83,6 +88,7 @@ final class App
     public function __construct(
         private readonly RuntimeInterface $runtime,
         private readonly ResetApplicationState $resetApplicationState,
+        private readonly ?MetricsCollector $metricsCollector = null,
     ) {
     }
 
@@ -181,7 +187,7 @@ final class App
     public function run(): ResponseInterface
     {
         if ($this->running) {
-            throw new \RuntimeException('App is already running.');
+            throw new RuntimeException('App is already running.');
         }
 
         $this->running = true;
@@ -238,7 +244,7 @@ final class App
     /**
      * Reset application state.
      */
-    public function resetState(): \Avax\Framework\System\Capabilities\StateReset\StateResetReport
+    public function resetState(): StateResetReport
     {
         return $this->resetApplicationState->reset();
     }
@@ -266,7 +272,7 @@ final class App
     public function asConsoleKernel(): ConsoleKernel
     {
         return new ConsoleKernel(
-            runConsoleCommand: new \Avax\Framework\System\Flows\RunConsoleCommand\RunConsoleCommand($this->runtime),
+            runConsoleCommand: new RunConsoleCommand($this->runtime),
         );
     }
 
@@ -292,7 +298,7 @@ final class App
     private function ensureInitialized(): void
     {
         if ($this->dispatcher === null) {
-            $this->dispatcher = new RunApplication();
+            $this->dispatcher = new RunApplication(metricsCollector: $this->metricsCollector);
             $this->responseFactory = new ResponseFactory();
         }
     }
@@ -355,7 +361,7 @@ final class App
             }
         }
 
-        $renderer = new \Avax\Framework\System\Capabilities\ErrorHandling\RenderApplicationError(
+        $renderer = new RenderApplicationError(
             responseFactory: $this->responseFactory ?? new ResponseFactory(),
         );
 

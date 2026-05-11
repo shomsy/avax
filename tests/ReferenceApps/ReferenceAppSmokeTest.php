@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\ReferenceApps;
 
-use Avax\Framework\System\Capabilities\Doctor\Foundation\DoctorFinding;
-use Avax\Framework\System\Capabilities\Doctor\Foundation\DoctorReport;
-use Avax\Framework\System\Capabilities\Doctor\Foundation\DoctorSeverity;
+use Avax\Framework\System\Capabilities\Doctor\Types\DoctorFinding;
+use Avax\Framework\System\Capabilities\Doctor\Types\DoctorReport;
+use Avax\Framework\System\Capabilities\Doctor\Types\DoctorSeverity;
 use Avax\Framework\System\Capabilities\Health\CheckLiveness;
 use Avax\Framework\System\Capabilities\Health\CheckReadiness;
 use Avax\Framework\System\Capabilities\Health\Foundation\HealthFinding;
@@ -22,10 +22,10 @@ use Avax\Framework\System\Capabilities\Security\PolicyEngine\EvaluatePolicy;
 use Avax\Framework\System\Capabilities\Security\PolicyEngine\Foundation\PolicyAction;
 use Avax\Framework\System\Capabilities\Security\PolicyEngine\Foundation\PolicyResource;
 use Avax\Framework\System\Capabilities\Security\PolicyEngine\Foundation\PolicySubject;
-use Avax\Framework\System\Capabilities\Security\RequestSigning\SignInternalRequest;
 use Avax\Framework\System\Capabilities\Security\RequestSigning\Foundation\SignatureKeyId;
 use Avax\Framework\System\Capabilities\Security\RequestSigning\Foundation\SignatureNonce;
 use Avax\Framework\System\Capabilities\Security\RequestSigning\Foundation\SignatureTimestamp;
+use Avax\Framework\System\Capabilities\Security\RequestSigning\SignInternalRequest;
 use Avax\Framework\System\Capabilities\Security\ServiceDiscovery\Foundation\ServiceEndpoint;
 use Avax\Framework\System\Capabilities\Security\ServiceDiscovery\Foundation\ServiceName;
 use Avax\Framework\System\Capabilities\Security\ServiceDiscovery\InMemoryServiceRegistry;

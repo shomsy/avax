@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\Security\Doctor;
 
-use Avax\Framework\System\Capabilities\Doctor\Foundation\DoctorFinding;
-use Avax\Framework\System\Capabilities\Doctor\Foundation\DoctorSeverity;
+use Avax\Framework\System\Capabilities\Doctor\Types\DoctorFinding;
+use Avax\Framework\System\Capabilities\Doctor\Types\DoctorSeverity;
 
 final readonly class CheckSecurityRuntime
 {

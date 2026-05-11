@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Flows\HandleIncomingHttp;
 
 use Avax\Components\HTTP\Response\ResponseFactory;
+use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
@@ -19,8 +20,10 @@ use Throwable;
 
 final readonly class HandleIncomingHttp
 {
-    public function __construct(private ResponseFactory $responseFactory = new ResponseFactory())
-    {
+    public function __construct(
+        private ResponseFactory   $responseFactory = new ResponseFactory(),
+        private ?MetricsCollector $metricsCollector = null,
+    ) {
     }
 
     /**
@@ -51,10 +54,16 @@ final readonly class HandleIncomingHttp
             throw new FrameworkMisconfigured(message: 'No HTTP handler is configured for the framework runtime.');
         }
 
+        $this->metricsCollector?->incrementCounter(name: 'request.count');
+
+        $startTime = microtime(true);
+
         try {
             $response = $this->normalizeResponse(
                 value: $httpHandler($runtimeRequest, $runtime),
             );
+
+            $this->recordLatency(startTime: $startTime);
 
             $runtime->context()->finishRequest(
                 runtimeResult: RuntimeResult::fromResponse(runtimeResponse: $response),
@@ -62,6 +71,9 @@ final readonly class HandleIncomingHttp
 
             return $response;
         } catch (Throwable) {
+            $this->metricsCollector?->incrementCounter(name: 'request.error');
+            $this->recordLatency(startTime: $startTime);
+
             $response = RuntimeResponse::fromPsrResponse(
                 response: $this->responseFactory->createErrorResponse(
                     message   : 'Internal Server Error',
@@ -75,6 +87,12 @@ final readonly class HandleIncomingHttp
 
             return $response;
         }
+    }
+
+    private function recordLatency(float $startTime) : void
+    {
+        $latencyMs = (microtime(true) - $startTime) * 1000;
+        $this->metricsCollector?->observeHistogram(name: 'request.latency', value: $latencyMs);
     }
 
     private function normalizeResponse(mixed $value): RuntimeResponse

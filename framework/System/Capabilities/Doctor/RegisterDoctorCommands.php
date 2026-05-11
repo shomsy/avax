@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\Doctor;
 
-use Avax\Framework\System\Capabilities\Doctor\Foundation\DoctorSeverity;
+use Avax\Framework\System\Capabilities\Doctor\Types\DoctorSeverity;
 use Closure;
 
 /**
@@ -37,8 +37,8 @@ final readonly class RegisterDoctorCommands
                 new CheckMemoryGuard(),
             ];
 
-            $runDoctor = new RunDoctor(checks: $checks);
-            $report = $runDoctor->run();
+            $executeChecks = new ExecuteDoctorChecks(checks: $checks);
+            $report        = $executeChecks->run();
 
             $output = "\033[33mAvax Doctor\033[0m\n";
             $output .= sprintf("Mode: %s\n\n", $workerMode ? 'worker' : 'development');
@@ -74,8 +74,8 @@ final readonly class RegisterDoctorCommands
                     new CheckMemoryGuard(),
                 ];
 
-                $runDoctor = new RunDoctor(checks: $checks);
-                $report = $runDoctor->run();
+                $executeChecks = new ExecuteDoctorChecks(checks: $checks);
+                $report        = $executeChecks->run();
                 $output .= $report->render();
             } else {
                 $output .= "Running focused validation...\n\n";
@@ -85,8 +85,8 @@ final readonly class RegisterDoctorCommands
                     new CheckRuntimeMode(),
                 ];
 
-                $runDoctor = new RunDoctor(checks: $checks);
-                $report = $runDoctor->run();
+                $executeChecks = new ExecuteDoctorChecks(checks: $checks);
+                $report        = $executeChecks->run();
                 $output .= $report->render();
             }
 
@@ -115,8 +115,8 @@ final readonly class RegisterDoctorCommands
                 new CheckMemoryGuard(),
             ];
 
-            $runDoctor = new RunDoctor(checks: $checks);
-            $report = $runDoctor->run();
+            $executeChecks = new ExecuteDoctorChecks(checks: $checks);
+            $report        = $executeChecks->run();
             $output .= $report->render();
 
             return $output;

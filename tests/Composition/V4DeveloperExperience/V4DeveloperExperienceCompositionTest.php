@@ -6,6 +6,8 @@ namespace Avax\Tests\Composition\V4DeveloperExperience;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 /**
  * V4DeveloperExperienceCompositionTest — Verifies V4-04 architecture compliance.
@@ -29,7 +31,7 @@ final class V4DeveloperExperienceCompositionTest extends TestCase
         $doctorPath = $this->frameworkRoot.'/Capabilities/Doctor';
 
         $expectedFiles = [
-            'RunDoctor.php',
+            'ExecuteDoctorChecks.php',
             'CheckAutoload.php',
             'CheckConfiguration.php',
             'CheckRuntimeMode.php',
@@ -49,7 +51,7 @@ final class V4DeveloperExperienceCompositionTest extends TestCase
     #[Test]
     public function doctorFoundationTypesExist(): void
     {
-        $foundationPath = $this->frameworkRoot.'/Capabilities/Doctor/Foundation';
+        $foundationPath = $this->frameworkRoot . '/Capabilities/Doctor/Types';
 
         $expectedFiles = [
             'DoctorSeverity.php',
@@ -60,7 +62,7 @@ final class V4DeveloperExperienceCompositionTest extends TestCase
         foreach ($expectedFiles as $file) {
             self::assertFileExists(
                 $foundationPath.'/'.$file,
-                "Doctor foundation type {$file} should exist",
+                "Doctor types type {$file} should exist",
             );
         }
     }
@@ -116,6 +118,17 @@ final class V4DeveloperExperienceCompositionTest extends TestCase
     }
 
     #[Test]
+    public function routingTypesExist() : void
+    {
+        $typesPath = $this->frameworkRoot . '/Capabilities/Routing/Types';
+
+        self::assertFileExists(
+            $typesPath . '/RouteCacheFailed.php',
+            'Routing type RouteCacheFailed.php should exist',
+        );
+    }
+
+    #[Test]
     public function configLoadersExist(): void
     {
         $configPath = $this->frameworkRoot.'/Configuration';
@@ -155,8 +168,8 @@ final class V4DeveloperExperienceCompositionTest extends TestCase
         ];
 
         foreach ($dxPaths as $path) {
-            $iterator = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($path),
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($path),
             );
 
             foreach ($iterator as $file) {

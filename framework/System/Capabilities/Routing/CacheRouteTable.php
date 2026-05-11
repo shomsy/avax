@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Capabilities\Routing;
 
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
-use Avax\Framework\System\Capabilities\Routing\Foundation\RouteCacheFailed;
+use Avax\Framework\System\Capabilities\Routing\Types\RouteCacheFailed;
 
 /**
  * CacheRouteTable — Compiles and writes the route cache.

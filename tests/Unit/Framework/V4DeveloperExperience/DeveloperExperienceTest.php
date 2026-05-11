@@ -8,10 +8,10 @@ use Avax\Framework\System\Capabilities\Doctor\CheckAutoload;
 use Avax\Framework\System\Capabilities\Doctor\CheckMemoryGuard;
 use Avax\Framework\System\Capabilities\Doctor\CheckRuntimeMode;
 use Avax\Framework\System\Capabilities\Doctor\CheckWarmSafety;
-use Avax\Framework\System\Capabilities\Doctor\Foundation\DoctorFinding;
-use Avax\Framework\System\Capabilities\Doctor\Foundation\DoctorReport;
-use Avax\Framework\System\Capabilities\Doctor\Foundation\DoctorSeverity;
-use Avax\Framework\System\Capabilities\Doctor\RunDoctor;
+use Avax\Framework\System\Capabilities\Doctor\ExecuteDoctorChecks;
+use Avax\Framework\System\Capabilities\Doctor\Types\DoctorFinding;
+use Avax\Framework\System\Capabilities\Doctor\Types\DoctorReport;
+use Avax\Framework\System\Capabilities\Doctor\Types\DoctorSeverity;
 use Avax\Framework\System\Capabilities\Routing\CacheRouteTable;
 use Avax\Framework\System\Capabilities\Routing\LoadCachedRoutes;
 use Avax\Framework\System\Configuration\Foundation\ApplicationConfiguration;
@@ -66,7 +66,7 @@ final class DeveloperExperienceTest extends TestCase
     }
 
     #[Test]
-    public function runDoctorExecutesAllChecks(): void
+    public function executeDoctorChecksExecutesAllChecks() : void
     {
         $callCount = 0;
         $check = static function () use (&$callCount): DoctorFinding {
@@ -75,8 +75,8 @@ final class DeveloperExperienceTest extends TestCase
             return new DoctorFinding(check: 'counter', severity: DoctorSeverity::Green, message: "Called {$callCount}");
         };
 
-        $runDoctor = new RunDoctor(checks: [$check, $check, $check]);
-        $report = $runDoctor->run();
+        $executeChecks = new ExecuteDoctorChecks(checks: [$check, $check, $check]);
+        $report        = $executeChecks->run();
 
         self::assertCount(3, $report->findings());
         self::assertSame(3, $callCount);

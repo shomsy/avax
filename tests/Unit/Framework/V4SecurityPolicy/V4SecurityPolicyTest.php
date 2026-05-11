@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Framework\V4SecurityPolicy;
 
-use Avax\Framework\System\Capabilities\Doctor\Foundation\DoctorSeverity;
+use Avax\Framework\System\Capabilities\Doctor\Types\DoctorSeverity;
 use Avax\Framework\System\Capabilities\Security\Doctor\CheckSecurityRuntime;
 use Avax\Framework\System\Capabilities\Security\FeatureFlags\EvaluateFeatureFlag;
 use Avax\Framework\System\Capabilities\Security\FeatureFlags\FeatureFlagStore;
@@ -30,12 +30,13 @@ use Avax\Framework\System\Capabilities\Security\RequestSigning\Foundation\Signat
 use Avax\Framework\System\Capabilities\Security\RequestSigning\Foundation\SignatureTimestamp;
 use Avax\Framework\System\Capabilities\Security\RequestSigning\RejectExpiredSignature;
 use Avax\Framework\System\Capabilities\Security\RequestSigning\RejectReplayedNonce;
-use Avax\Framework\System\Capabilities\Security\RequestSigning\SignInternalRequest;
 use Avax\Framework\System\Capabilities\Security\RequestSigning\SignatureVerificationResult;
+use Avax\Framework\System\Capabilities\Security\RequestSigning\SignInternalRequest;
 use Avax\Framework\System\Capabilities\Security\RequestSigning\VerifyInternalRequestSignature;
 use Avax\Framework\System\Capabilities\Security\ServiceDiscovery\Foundation\ServiceEndpoint;
 use Avax\Framework\System\Capabilities\Security\ServiceDiscovery\Foundation\ServiceName;
 use Avax\Framework\System\Capabilities\Security\ServiceDiscovery\InMemoryServiceRegistry;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -382,7 +383,7 @@ final class V4SecurityPolicyTest extends TestCase
     #[Test]
     public function service_endpoint_validation(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         new ServiceEndpoint('not-a-valid-url');
     }
 
@@ -536,28 +537,28 @@ final class V4SecurityPolicyTest extends TestCase
     #[Test]
     public function signature_nonce_must_not_be_empty(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         new SignatureNonce('');
     }
 
     #[Test]
     public function signature_key_id_must_not_be_empty(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         new SignatureKeyId('');
     }
 
     #[Test]
     public function feature_flag_name_must_not_be_empty(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         new FeatureFlagName('');
     }
 
     #[Test]
     public function service_name_must_not_be_empty(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         new ServiceName('');
     }
 
@@ -602,7 +603,7 @@ final class V4SecurityPolicyTest extends TestCase
     #[Test]
     public function signature_payload_from_headers_throws_on_missing(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         SignaturePayload::fromHeaders([]);
     }
 }

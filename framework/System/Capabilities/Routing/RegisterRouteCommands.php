@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\Routing;
 
-use Avax\Framework\System\Capabilities\Routing\Foundation\RouteCacheFailed;
+use Avax\Framework\System\Capabilities\Routing\Types\RouteCacheFailed;
 use Closure;
 
 /**

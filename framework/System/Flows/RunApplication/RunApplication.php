@@ -7,23 +7,25 @@ namespace Avax\Framework\System\Flows\RunApplication;
 use Avax\Components\Application\Container\System\Container;
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ActionResolution\ControllerResolver;
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ArgumentResolution\ArgumentResolver;
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedException;
 use Avax\Components\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
+use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;
 use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
 use Avax\Framework\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
-use Avax\Framework\System\Flows\HandleIncomingHttp\MatchHttpRoute;
 use Avax\Framework\System\Flows\HandleIncomingHttp\MatchedHttpRoute;
+use Avax\Framework\System\Flows\HandleIncomingHttp\MatchHttpRoute;
 use Avax\Framework\System\Flows\HandleIncomingHttp\ReadIncomingHttpRequest;
 use Avax\Framework\System\Flows\HandleIncomingHttp\RegisteredHttpRoutes;
 use Avax\Framework\System\Flows\HandleIncomingHttp\RouteFacadeContainer;
-use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Closure;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionMethod;
 use RuntimeException;
+use Throwable;
 
 /**
  * RunApplication — Dispatches routes with V4 response normalization.
@@ -51,7 +53,9 @@ final readonly class RunApplication
 
     private ArgumentResolver $argumentResolver;
 
-    public function __construct()
+    public function __construct(
+        private ?MetricsCollector $metricsCollector = null,
+    )
     {
         $this->readRequest = new ReadIncomingHttpRequest();
         $this->matchRoute = new MatchHttpRoute();
@@ -68,6 +72,10 @@ final readonly class RunApplication
         RuntimeRequest $runtimeRequest,
         RegisteredHttpRoutes $routes,
     ): ResponseInterface {
+        $this->metricsCollector?->incrementCounter(name: 'request.count');
+
+        $startTime = microtime(true);
+
         $serverRequest = $this->readRequest->read(runtimeRequest: $runtimeRequest);
 
         try {
@@ -76,11 +84,18 @@ final readonly class RunApplication
                 serverRequest: $serverRequest,
             );
 
-            return $this->dispatchRoute(
+            $response = $this->dispatchRoute(
                 route: $matchedRoute->route(),
                 serverRequest: $serverRequest,
             );
+
+            $this->recordLatency(startTime: $startTime);
+
+            return $response;
         } catch (RouteNotFoundException) {
+            $this->metricsCollector?->incrementCounter(name: 'request.error');
+            $this->recordLatency(startTime: $startTime);
+
             if ($routes->hasFallback()) {
                 $fallback = $routes->fallback();
 
@@ -99,11 +114,25 @@ final readonly class RunApplication
                 statusCode: 404,
             );
         } catch (MethodNotAllowedException $e) {
+            $this->metricsCollector?->incrementCounter(name: 'request.error');
+            $this->recordLatency(startTime: $startTime);
+
             return $this->responseFactory->createErrorResponse(
                 message: $e->getMessage(),
                 statusCode: 405,
             );
+        } catch (Throwable $e) {
+            $this->metricsCollector?->incrementCounter(name: 'request.error');
+            $this->recordLatency(startTime: $startTime);
+
+            throw $e;
         }
+    }
+
+    private function recordLatency(float $startTime) : void
+    {
+        $latencyMs = (microtime(true) - $startTime) * 1000;
+        $this->metricsCollector?->observeHistogram(name: 'request.latency', value: $latencyMs);
     }
 
     private function dispatchRoute(RouteDefinition $route, ServerRequest $serverRequest): ResponseInterface

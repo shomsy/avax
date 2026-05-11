@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Framework\V4Health;
 
-use Avax\Framework\System\Capabilities\Doctor\Foundation\DoctorFinding;
-use Avax\Framework\System\Capabilities\Doctor\Foundation\DoctorSeverity;
+use Avax\Framework\System\Capabilities\Doctor\Types\DoctorFinding;
+use Avax\Framework\System\Capabilities\Doctor\Types\DoctorSeverity;
 use Avax\Framework\System\Capabilities\Health\CheckLiveness;
 use Avax\Framework\System\Capabilities\Health\CheckReadiness;
 use Avax\Framework\System\Capabilities\Health\Foundation\DiagnosticFinding;

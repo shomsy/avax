@@ -8,12 +8,12 @@ use Avax\Components\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedExc
 use Avax\Components\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
 use Avax\Components\HTTP\SecureRequest\System\Foundation\Failure\SecureRequestAuthorizationFailed;
 use Avax\Components\HTTP\SecureRequest\System\Foundation\Failure\SecureRequestValidationFailed;
-use Avax\Framework\System\Capabilities\ErrorHandling\RenderApplicationError;
+use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RenderApplicationError\RenderApplicationError;
 use RuntimeException;
 use Avax\Tests\TestCase;
 
 /**
- * @covers \Avax\Framework\System\Capabilities\ErrorHandling\RenderApplicationError
+ * @covers \Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RenderApplicationError\RenderApplicationError
  */
 final class RenderApplicationErrorTest extends TestCase
 {

@@ -17,7 +17,7 @@ use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;
-use Avax\Framework\System\Capabilities\ErrorHandling\RenderApplicationError;
+use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RenderApplicationError\RenderApplicationError;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;

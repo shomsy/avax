@@ -777,3 +777,49 @@ Date: 2026-05-11
 **V5.5 Benchmark Proof & World-Class Hardening: GREEN**
 
 All 13 stages complete. V5.5-05 Reference App Benchmarks implemented — all 13 reference apps benchmarked with evidence in `EVIDENCE/v5.5/reference-app-benchmarks.json`.
+
+## V5.6 Declarative Failure Boundary Proof & Adoption — YELLOW
+
+Date: 2026-05-12
+
+**Component:** `framework/System/Capabilities/FailureBoundary/` (39 PHP files)
+
+**Tests:** 52 unit tests + 7 E2E adoption tests = 59 tests total, all pass
+
+**PHPStan:** Clean (0 errors)
+
+**Gates:** 4/4 GREEN (check-attributes-compiled, check-local-try-catch, check-dogfooding, check-failure-boundary-adoption)
+
+**Evidence:** `EVIDENCE/failure-boundary/` (8 documents)
+
+### What Works (GREEN)
+- FailureBoundary component with RunProtectedAction + RunFailurePipeline
+- 8 declarative PHP attributes (OnFailure, ReportFailure, Retry, Fallback, DeadLetter, Rethrow, Timeout, RecoverWith)
+- Compiled metadata with static cache + staleness detection (no hot-path reflection)
+- HTTP middleware registered in AppKernel (class_exists guard)
+- OnFailure + ReportFailure adopted in real demo controller + E2E tested
+- Decision routing: Retry/Fallback/MapToResult/DeadLetter/Rethrow/ReportOnly
+- Cleanup guaranteed via finally block
+- Unmapped exceptions propagate (not swallowed)
+
+### MVP Placeholders (YELLOW)
+- ReportFailure: error_log() only (replaced when Observability exists)
+- DeadLetter: JSON log only (replaced when Queue exists)
+- Retry: Standalone engine (replaced when Resilience component exists)
+- Retry/Fallback/DeadLetter: Unit tested, no real production adoption yet
+
+### Deferred (RED — intentionally)
+- Timeout: Compiled but not enforced (requires fiber/pcntl support)
+- RecoverWith: Compiled but not enforced (requires recovery handler interface)
+
+### Key Decisions
+- ErrorHandling directory removed, replaced by FailureBoundary
+- Middleware registered via class_exists guard (components/framework separation)
+- HandleIncomingHttp outer catch kept as lifecycle safety net
+- 17 try/catch blocks scanned: 16 legitimate boundaries kept, 1 deferred
+
+### V5.6 Verdict
+
+**V5.6 Declarative Failure Boundary Proof & Adoption: YELLOW**
+
+Core feature proven end-to-end. Retry/Fallback/DeadLetter functional but MVP-only. Timeout/RecoverWith deferred.

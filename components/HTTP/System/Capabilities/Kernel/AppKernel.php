@@ -77,6 +77,16 @@ final readonly class AppKernel implements HttpInterface, Kernel
             $middleware[] = MiddlewareRegistry::create('json', [$this->responseFactory]);
         }
 
+        // FailureBoundary: outermost error-handling middleware (framework-level, optional)
+        if (class_exists(\Avax\Framework\System\Capabilities\FailureBoundary\Configuration\BuildFailureBoundary::class)
+            && class_exists(\Avax\Framework\System\Capabilities\FailureBoundary\Integration\HttpFailureBoundaryMiddleware::class)) {
+            $fbBuilder = new \Avax\Framework\System\Capabilities\FailureBoundary\Configuration\BuildFailureBoundary();
+            $middleware[] = new \Avax\Framework\System\Capabilities\FailureBoundary\Integration\HttpFailureBoundaryMiddleware(
+                $fbBuilder->build(),
+            );
+        }
+
+        /** @var list<MiddlewareInterface> $middleware */
         return $middleware;
     }
 

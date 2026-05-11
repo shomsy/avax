@@ -25,6 +25,15 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: V5.6-PHASE
+- `created_at`: 2026-05-12
+- `updated_at`: 2026-05-12
+- `status`: done
+- `estimate`: multi-session
+- `outcome`: V5.6 Declarative Failure Boundary Proof & Adoption — YELLOW. Core feature proven end-to-end with real attribute adoption (demo controller + E2E tests), HTTP middleware wired into AppKernel, compiled metadata proof, 8 evidence documents, 4 gates passing.
+- `acceptance`: 59 tests (52 unit + 7 E2E) pass, PHPStan 0 errors, 4/4 gates GREEN. OnFailure + ReportFailure adopted in real flow. Retry/Fallback/DeadLetter functional (MVP). Timeout/RecoverWith deferred. See `EVIDENCE/failure-boundary/`.
+- `links`: `EVIDENCE/failure-boundary/failure-boundary-implementation-inventory.md`, `EVIDENCE/failure-boundary/ownership-decision.md`, `EVIDENCE/failure-boundary/try-catch-inventory.md`, `EVIDENCE/failure-boundary/http-integration-proof.md`, `EVIDENCE/failure-boundary/compiled-failure-policy-proof.md`, `EVIDENCE/failure-boundary/dogfooding-proof.md`, `EVIDENCE/failure-boundary/adoption-scan.md`, `EVIDENCE/failure-boundary/final-failure-boundary-report.md`, `docs/failure-boundary/declarative-failure-boundary.md`
+
 - `id`: V5.5-PHASE
 - `created_at`: 2026-05-11
 - `updated_at`: 2026-05-11

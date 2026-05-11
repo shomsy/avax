@@ -98,17 +98,28 @@ final class MockAvaXRequest implements RequestInterface
     public function withRequestTarget(string $target): static { return $this; }
     public function withMethod(string $method): static { return $this; }
     public function withUri(UriInterface $uri, bool $preserveHost = false): static { return $this; }
+    /** @return array<string, mixed> */
     public function getServerParams(): array { return []; }
+    /** @return array<string, mixed> */
     public function getCookieParams(): array { return []; }
+    /** @param array<string, mixed> $cookies */
     public function withCookieParams(array $cookies): static { return $this; }
+    /** @return array<string, mixed> */
     public function getQueryParams(): array { return []; }
+    /** @param array<string, mixed> $query */
     public function withQueryParams(array $query): static { return $this; }
-    public function getUploadedFiles(): array { return []; }
-    public function withUploadedFiles(array $uploadedFiles): static { return $this; }
-    public function getParsedBody(): ?array { return null; }
-    public function withParsedBody($data): static { return $this; }
+    /** @return array<string, mixed> */
     public function getAttributes(): array { return []; }
     public function getAttribute(string $name, $default = null): mixed { return $default; }
     public function withAttribute(string $name, $value): static { return $this; }
     public function withoutAttribute(string $name): static { return $this; }
+
+    /** @return array<string, \Psr\Http\Message\UploadedFileInterface> */
+    public function getUploadedFiles(): array { return []; }
+    /** @param array<string, \Psr\Http\Message\UploadedFileInterface> $uploadedFiles */
+    public function withUploadedFiles(array $uploadedFiles): static { return $this; }
+    /** @return array<string, mixed>|null */
+    public function getParsedBody(): ?array { return null; }
+    /** @param array<string, mixed>|null $data */
+    public function withParsedBody($data): static { return $this; }
 }

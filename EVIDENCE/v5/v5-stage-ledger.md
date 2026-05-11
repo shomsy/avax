@@ -12,7 +12,7 @@
 | V5-03 | Capability Ownership Scan | GREEN_BY_EVIDENCE | `EVIDENCE/v5/capability-ownership-map.md`, `duplicate-capability-owners.md` | 74-component inventory; RouterBootstrapper filled | `check-duplicate-owners.php` PASS | `check-duplicate-owners.php` PASS | 0 errors | None | Carry forward |
 | V5-04 | Dogfooding Adoption Matrix | GREEN_BY_EVIDENCE | `EVIDENCE/v5/dogfooding-adoption-matrix.md` | 11 canonical owners; adoption matrix built | `check-component-adoption.php` PASS — 8 checks | `check-component-adoption.php` PASS | 0 errors | None | Carry forward |
 | V5-05 | Filesystem/Storage/Cache Adoption | GREEN_BY_EVIDENCE | `EVIDENCE/v5/raw-file-operations-*.md` | Filesystem: isFile/isDirectory/listFilesByPattern; 18+ components migrated | N/A | `check-raw-file-operations.php` PASS — 0 MIGRATE | 0 errors | None | Carry forward |
-| V5-06 | DataTransfer/SecureRequest/Schema Metadata Compilation | MISSING_IMPLEMENTATION | None | DataTransfer attributes exist; Container compile interface exists; no compiled metadata classes | N/A | N/A | 0 errors | No CompiledDataObjectShape, no reflection-to-compiled pipeline, no atomic writes, no corruption detection, no source-change invalidation | **Implement V5-06** |
+| V5-06 | DataTransfer/SecureRequest/Schema Metadata Compilation | GREEN_BY_EVIDENCE | `EVIDENCE/v5/v5-06-data-transfer-secure-request-schema-metadata.md` | CompiledSchemaMetadata model, CompileDataShapeSchema (atomic writes, checksum, quarantine, mtime invalidation), DataShapeCompiler (3-tier: compiled → cache → reflection), CreateDataObject refactored to use DataShape | 37 new tests + 41 existing unchanged — all pass | All gates PASS | 0 errors | Disk warmup requires explicit config; no CLI warmup command yet | Carry forward |
 | V5-07 | Modern PHP 8.x Language Adoption | GREEN_BY_EVIDENCE | `EVIDENCE/v5/final-v5-truth-report.md` | strict_types 100%; readonly 48%; constructor promotion 88%; pipe/match/Override/union present | Tests pass | N/A | 0 errors | 4 old-style constructors remain | Carry forward |
 | V5-08 | Attribute/Annotation Runtime | PARTIAL_BY_PREVIOUS_MEGA_PASS | None | #[Inject], #[Policy], #[FeatureFlag], #[RateLimit], #[Cache], #[Queue] exist; DataTransfer attributes exist | Attribute tests pass | N/A | 0 errors | No #[Route]/#[Controller]/#[Validate]/#[Audit]/#[Trace]/#[Transactional]/#[MessageConsumer]; no attribute compilation; attributes read via reflection at runtime | Implement attribute compilation |
 | V5-09 | DI & Autowiring Clean Code | GREEN_BY_EVIDENCE | None | ContainerInterface: 200+ line API with compile/warm/injectInto/scopes; #[Inject] attribute; Provider system; LazyProxy | Container tests pass | N/A | 0 errors | No method injection for route handlers | Carry forward |
@@ -37,9 +37,9 @@
 
 | Status | Count | Stages |
 |--------|-------|--------|
-| GREEN_BY_EVIDENCE | 16 | V5-00, V5-01, V5-02, V5-03, V5-04, V5-05, V5-07, V5-09, V5-10, V5-11, V5-12, V5-13, V5-15, V5-16, V5-17, V5-18 |
+| GREEN_BY_EVIDENCE | 17 | V5-00, V5-01, V5-02, V5-03, V5-04, V5-05, V5-06, V5-07, V5-09, V5-10, V5-11, V5-12, V5-13, V5-15, V5-16, V5-17, V5-18 |
 | PARTIAL_BY_PREVIOUS_MEGA_PASS | 6 | V5-08, V5-14, V5-19, V5-20, V5-21, V5-22 |
-| MISSING_IMPLEMENTATION | 1 | V5-06 |
+| MISSING_IMPLEMENTATION | 0 | — |
 | BLOCKED | 0 | — |
 | NOT_ALLOWED_YET | 1 | V5-23 |
 | **TOTAL** | **24** | |

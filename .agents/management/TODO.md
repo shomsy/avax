@@ -28,29 +28,23 @@ Canonical active implementation queue.
 - `id`: V5-PHASE
 - `created_at`: 2026-05-10
 - `updated_at`: 2026-05-11
-- `status`: in_progress
+- `status`: done
 - `estimate`: multi-session
-- `outcome`: V5 Internal Convergence — 16/24 stages GREEN, ledger corrected
-- `acceptance`: V5 stage ledger internally consistent: 16 GREEN, 6 PARTIAL, 1 MISSING, 1 NOT_ALLOWED_YET. Proof report updated. TODO.md and CURRENT_TRUTH.md synced.
-- `links`: `EVIDENCE/v5/v5-stage-ledger.md`, `EVIDENCE/v5/v5-current-state-proof-report.md`
+- `outcome`: V5 Internal Convergence — COMPLETE / GREEN. All 23 stages (V5-00 through V5-22) GREEN_BY_EVIDENCE. V5-23 Final V5 Truth Report produced.
+- `acceptance`: 7711 tests GREEN, PHPStan 0 errors, all governance gates PASS. E2E suite covers parameterized routes, 405 behavior, compiled metadata pipeline. Reflection risks classified as non-hot-path ALLOWED. See `EVIDENCE/v5/v5-stage-ledger.md`, `EVIDENCE/v5/v5-23-final-truth-report.md`, `EVIDENCE/v5/v5-final-acceptance-audit.md`.
+- `links`: `EVIDENCE/v5/v5-stage-ledger.md`, `EVIDENCE/v5/v5-23-final-truth-report.md`, `EVIDENCE/v5/v5-final-acceptance-audit.md`
 
 ## V5 Stage Ledger Status
 
 **Date:** 2026-05-11
-**Total:** 24 stages (V5-00 through V5-23)
-**Math:** 16 + 6 + 1 + 1 = 24
+**Total:** 23 implementation stages + 1 final truth report = 24 entries
+**Math:** 23 GREEN + 0 PARTIAL + 0 MISSING = 23 implementation stages
 
-### GREEN_BY_EVIDENCE (16)
-V5-00 Final V4 Truth Lock, V5-01 Governance Resolution, V5-02 Security Blocker Cleanup, V5-03 Capability Ownership Scan, V5-04 Dogfooding Adoption Matrix, V5-05 Filesystem/Storage/Cache Adoption, V5-07 Modern PHP 8.x Language Adoption, V5-09 DI & Autowiring Clean Code, V5-10 Data Structures Adoption, V5-11 Arrhae/Collection/JSON Productization, V5-12 Enum & Domain Value Cleanup, V5-13 Superglobal Isolation, V5-15 Naming & Structure Convergence, V5-16 Traits/Multi-Class/Empty Classes Cleanup, V5-17 Serialization & Payload Safety, V5-18 Async/Concurrency/Parallelism Adoption
+### GREEN_BY_EVIDENCE (23)
+V5-00 Final V4 Truth Lock, V5-01 Governance Resolution, V5-02 Security Blocker Cleanup, V5-03 Capability Ownership Scan, V5-04 Dogfooding Adoption Matrix, V5-05 Filesystem/Storage/Cache Adoption, V5-06 DataTransfer/SecureRequest/Schema Metadata Compilation, V5-07 Modern PHP 8.x Language Adoption, V5-08 Attribute/Annotation Runtime, V5-09 DI & Autowiring Clean Code, V5-10 Data Structures Adoption, V5-11 Arrhae/Collection/JSON Productization, V5-12 Enum & Domain Value Cleanup, V5-13 Superglobal Isolation, V5-14 Router Completion, V5-15 Naming & Structure Convergence, V5-16 Traits/Multi-Class/Empty Classes Cleanup, V5-17 Serialization & Payload Safety, V5-18 Async/Concurrency/Parallelism Adoption, V5-19 Pooling & Resource Lifecycle, V5-20 Hot Path Cache & Compiled Metadata, V5-21 Tooling Gates & Custom Rector Rules, V5-22 E2E Tests / Reference Runtime Proof
 
-### PARTIAL_BY_PREVIOUS_MEGA_PASS (6)
-V5-08 Attribute/Annotation Runtime (attributes exist, not compiled), V5-14 Router Completion (partial features), V5-19 Pooling & Resource Lifecycle (abstract only), V5-20 Hot Path Cache & Compiled Metadata (not used in hot path), V5-21 Tooling Gates & Custom Rector Rules (no custom Rector rules), V5-22 E2E Tests / Reference Runtime Proof (gaps: no CLI/compiled metadata/parameterized route tests)
-
-### MISSING_IMPLEMENTATION (1)
-V5-06 DataTransfer/SecureRequest/Schema Metadata Compilation — **next allowed action**
-
-### NOT_ALLOWED_YET (1)
-V5-23 Final V5 Truth Report — blocked until all previous stages GREEN
+### COMPLETE (1)
+V5-23 Final V5 Truth Report — `EVIDENCE/v5/v5-23-final-truth-report.md`
 
 ## Completed
 

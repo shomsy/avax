@@ -19,9 +19,10 @@ final class EnforceBackpressureTest extends TestCase
         $policy = new BackpressurePolicy(maxQueueSize: 100, loadThreshold: 0.9);
         $enforcer = new EnforceBackpressure($policy);
 
-        // Should not throw
+        // Should not throw — work is allowed below threshold
         $enforcer->execute(currentQueueSize: 50, currentLoad: 0.5);
 
+        // No exception means the work was allowed
         self::assertTrue(true);
     }
 

@@ -55,47 +55,53 @@ Canonical active implementation queue.
 - `id`: V5.6-Y3
 - `created_at`: 2026-05-12
 - `updated_at`: 2026-05-12
-- `status`: todo
+- `status`: done
 - `estimate`: medium
-- `outcome`: Turn CleanupAfterFailure stub into real cleanup hook or narrow scope
-- `acceptance`: Cleanup hook invoked on all paths or documented as intentional extension point. See `EVIDENCE/failure-boundary/deferred/V5.6-Y3-cleanup-hook.md`
-- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`, `EVIDENCE/failure-boundary/deferred/V5.6-Y3-cleanup-hook.md`
+- `outcome`: CleanupAfterFailure uses FailureCleanupRegistry with hook registration, execution, failure isolation
+- `acceptance`: Cleanup guaranteed via finally block with FailureCleanupRegistry. See
+  `EVIDENCE/failure-boundary/full-closure-evidence.md`
+- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`,
+  `EVIDENCE/failure-boundary/full-closure-evidence.md`
 
 - `id`: V5.6-Y1
 - `created_at`: 2026-05-12
 - `updated_at`: 2026-05-12
-- `status`: todo
+- `status`: done
 - `estimate`: medium
-- `outcome`: Replace standalone retry with canonical Resilience RetryExecutor
-- `acceptance`: Retry dogfooded through Resilience. See `EVIDENCE/failure-boundary/deferred/V5.6-Y1-retry-resilience.md`
-- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`, `EVIDENCE/failure-boundary/deferred/V5.6-Y1-retry-resilience.md`
+- `outcome`: Retry delegates to canonical Resilience RetryExecutor with backoff strategies + jitter
+- `acceptance`: Retry dogfooded through Resilience. See `EVIDENCE/failure-boundary/full-closure-evidence.md`
+- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`,
+  `EVIDENCE/failure-boundary/full-closure-evidence.md`
 
 - `id`: V5.6-Y2
 - `created_at`: 2026-05-12
 - `updated_at`: 2026-05-12
-- `status`: blocked
+- `status`: done
 - `estimate`: large
-- `outcome`: Replace NDJSON fallback with canonical Queue/DeadLetter transport
-- `acceptance`: DeadLetter uses canonical Queue transport. BLOCKED until transport boundary designed. See `EVIDENCE/failure-boundary/deferred/V5.6-Y2-deadletter-queue.md`
-- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`, `EVIDENCE/failure-boundary/deferred/V5.6-Y2-deadletter-queue.md`
+- `outcome`: DeadLetter uses Queue FailedJobsStore as primary transport with error_log NDJSON fallback
+- `acceptance`: DeadLetter uses canonical Queue transport. See `EVIDENCE/failure-boundary/full-closure-evidence.md`
+- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`,
+  `EVIDENCE/failure-boundary/full-closure-evidence.md`
 
 - `id`: V5.6-Y5
 - `created_at`: 2026-05-12
 - `updated_at`: 2026-05-12
-- `status`: todo
+- `status`: done
 - `estimate`: large
-- `outcome`: Define and enforce RecoverWith recovery strategy
-- `acceptance`: Recovery handler contract + enforcement. DEFERRED until design complete. See `EVIDENCE/failure-boundary/deferred/V5.6-Y5-recoverwith-enforcement.md`
-- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`, `EVIDENCE/failure-boundary/deferred/V5.6-Y5-recoverwith-enforcement.md`
+- `outcome`: RecoverWith enforced through RunRecoveryAction with FailureDecision::Recover
+- `acceptance`: Recovery handler contract + enforcement proven. See `EVIDENCE/failure-boundary/full-closure-evidence.md`
+- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`,
+  `EVIDENCE/failure-boundary/full-closure-evidence.md`
 
 - `id`: V5.6-Y4
 - `created_at`: 2026-05-12
 - `updated_at`: 2026-05-12
-- `status`: todo
+- `status`: done
 - `estimate`: large
-- `outcome`: Implement Timeout runtime enforcement
-- `acceptance`: Timeout enforced via fiber/async. DEFERRED until runtime support. See `EVIDENCE/failure-boundary/deferred/V5.6-Y4-timeout-enforcement.md`
-- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`, `EVIDENCE/failure-boundary/deferred/V5.6-Y4-timeout-enforcement.md`
+- `outcome`: Timeout enforced via Resilience Timeout at action level; elapsed mode by default
+- `acceptance`: Timeout enforced through Resilience. See `EVIDENCE/failure-boundary/full-closure-evidence.md`
+- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`,
+  `EVIDENCE/failure-boundary/full-closure-evidence.md`
 
 - `id`: V5.5-PHASE
 - `created_at`: 2026-05-11

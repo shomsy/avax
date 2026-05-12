@@ -8,6 +8,7 @@ use Avax\Components\Operations\Observability\System\Capabilities\Correlation\Spa
 use Avax\Components\Operations\Observability\System\Capabilities\Correlation\TraceId;
 use Avax\Components\Operations\Observability\System\Capabilities\Tracing\Span;
 use Avax\Components\Operations\Observability\System\Capabilities\Tracing\SpanStatus;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -155,7 +156,8 @@ final class SpanTest extends TestCase
         $span->setAttribute('key', 'first');
         $span->setAttribute('key', 'second');
 
-        self::assertTrue(true);
+        $exported = $span->export();
+        self::assertSame('second', $exported['attributes']['key']);
     }
 
     #[Test]
@@ -177,7 +179,10 @@ final class SpanTest extends TestCase
 
         $span->recordException($exception);
 
-        self::assertTrue(true);
+        $events = $span->events();
+        self::assertCount(1, $events);
+        self::assertSame(RuntimeException::class, $events[0]['type']);
+        self::assertSame('should not throw', $events[0]['message']);
     }
 
     #[Test]
@@ -213,12 +218,12 @@ final class SpanTest extends TestCase
         $span = new Span('test', 'op');
 
         $span->recordException(new RuntimeException('first'));
-        $span->recordException(new \InvalidArgumentException('second'));
+        $span->recordException(new InvalidArgumentException('second'));
 
         $events = $span->events();
         self::assertCount(2, $events);
         self::assertSame(RuntimeException::class, $events[0]['type']);
-        self::assertSame(\InvalidArgumentException::class, $events[1]['type']);
+        self::assertSame(InvalidArgumentException::class, $events[1]['type']);
     }
 
     #[Test]
@@ -272,7 +277,14 @@ final class SpanTest extends TestCase
         $span->setAttribute('null', null);
         $span->setAttribute('array', [1, 2, 3]);
 
-        self::assertTrue(true);
+        $exported = $span->export();
+        $attrs    = $exported['attributes'];
+        self::assertSame('value', $attrs['string']);
+        self::assertSame(42, $attrs['int']);
+        self::assertSame(3.14, $attrs['float']);
+        self::assertTrue($attrs['bool']);
+        self::assertNull($attrs['null']);
+        self::assertSame([1, 2, 3], $attrs['array']);
     }
 
     #[Test]

@@ -1,7 +1,15 @@
 # FailureBoundary — Timeout and RecoverWith Deferred
 
+> **SUPERSEDED — 2026-05-12**
+> Both Timeout and RecoverWith were implemented in the V5.6 Full Closure Pass.
+> Timeout: `EnforceTimeout` delegates to Resilience Timeout (elapsed-mode default). GREEN_ELAPSED_DOCUMENTED.
+> RecoverWith: `RunRecoveryAction` enforces #[RecoverWith] at runtime. GREEN.
+> See: `EVIDENCE/failure-boundary/full-closure-evidence.md`, `EVIDENCE/failure-boundary/full-closure-final-acceptance-audit.md`
+> Superseded by: `EVIDENCE/current-plan-lock/22-v4-09-timeout-verification.md`
+
 **Date:** 2026-05-12
 **Stage:** Phase 3 — Production-Grade Closure
+**Status:** SUPERSEDED — historical record of pre-implementation state only
 
 ## Timeout
 

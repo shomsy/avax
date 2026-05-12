@@ -34,11 +34,17 @@
 | DateTime→DateTimeImmutable     | code scan                 | untracked       | P3             | 03-bug-inventory.md                | ROADMAP         |
 | EXECUTION.md stale state       | EXECUTION.md              | V4 IN PROGRESS  | STALE          | 17-execution-truth-closure.md      | FIXED_IN_THIS_PASS |
 | ACTIVE board stale cards       | ACTIVE.md                 | old stages      | STALE          | 18-active-board-closure.md         | FIXED_IN_THIS_PASS |
+| V4-09 Timeout RED stale claim  | 09-timeout-recoverwith-deferred.md | RED/deferred | STALE_RED_SUPERSEDED | 22-v4-09-timeout-verification.md | SUPERSEDED |
+| V5.6-Y4 DEFERRED stale claim   | deferred/V5.6-Y4-timeout-enforcement.md | DEFERRED | STALE | 23-v5-6-failure-boundary-timeout-verification.md | SUPERSEDED |
+| Docs stale "What Is Deferred"  | docs/failure-boundary/declarative-failure-boundary.md | not enforced | OUTDATED | 21-timeout-evidence-inventory.md | FIXED_IN_THIS_PASS |
+| V4-05 to V4-11 docs gap claim  | ROADMAP claim | missing docs | EVIDENCE_ONLY_ACCEPTABLE | 25-v4-05-to-v4-11-documentation-verification.md | NON_BLOCKING |
+| V4-10 EventBus vs V5.7 Events  | V5.7 design lock | potential conflict | MESSAGEBUS_SPECIFIC_ADAPTER | 26-v4-10-eventbus-v5-7-events-relationship.md | DOCUMENTED |
 
 ## Summary
 
 - **DONE:** 20 (V1 through V5.6-Y7)
 - **ROADMAP:** 6 (V5.7 through V5.10, V6.0-V6.9, DateTime cleanup)
-- **FIXED_IN_THIS_PASS:** 4 (PSR-4 namespaces, raw file gate, EXECUTION.md, ACTIVE board)
-- **SUPERSEDED:** 0
+- **FIXED_IN_THIS_PASS:** 5 (PSR-4 namespaces, raw file gate, EXECUTION.md, ACTIVE board, docs stale table)
+- **SUPERSEDED:** 2 (09-timeout-recoverwith-deferred.md, deferred/V5.6-Y4-timeout-enforcement.md)
+- **DOCUMENTED_NON_BLOCKING:** 3 (V4-09 Timeout truth, V4-05-V4-11 docs, V4-10 EventBus relation)
 - **Vague/unresolved:** 0

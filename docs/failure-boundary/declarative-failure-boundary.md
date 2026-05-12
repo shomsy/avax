@@ -119,18 +119,28 @@ php tooling/refactor/check-failure-boundary-adoption.php
 vendor/bin/phpstan analyse framework/System/Capabilities/FailureBoundary --memory-limit=1G
 ```
 
-## What Is Deferred
+## What Is Enforced
 
-| Attribute | Status | Reason |
-|-----------|--------|--------|
-| Timeout | Compiled but not enforced | Requires fiber-level or pcntl_alarm support |
-| RecoverWith | Compiled but not enforced | Requires well-defined recovery handler interface |
+| Attribute | Status | Implementation |
+|-----------|--------|----------------|
+| Timeout | Enforced (elapsed-mode default) | `EnforceTimeout` delegates to Resilience Timeout. `OperationTimedOut` thrown on exceed. Elapsed mode by default; pcntl pre-emptive available in Resilience but not used by FailureBoundary. |
+| RecoverWith | Enforced | `RunRecoveryAction` resolves and invokes `#[RecoverWith]` handler. Takes precedence over Fallback. |
 
-| Capability | Status | Reason |
+## What Is Dogfooded
+
+| Capability | Status | Implementation |
+|-----------|--------|----------------|
+| ReportFailure | GREEN | Logger primary path with structured context + redaction; error_log fallback for backward compatibility |
+| DeadLetter | GREEN | Queue FailedJobsStore primary transport; error_log NDJSON fallback when no store configured |
+| Retry | GREEN | Delegates to canonical Resilience RetryExecutor with backoff strategies (none/fixed/linear/exponential) + jitter |
+| Cleanup | GREEN | `FailureCleanupRegistry` with hook registration, execution in finally block, failure isolation |
+
+## What Remains ROADMAP
+
+| Area | Status | Note |
 |-----------|--------|--------|
-| ReportFailure | Structured logging (Observability Logger) with error_log fallback | Primary path uses Logger with redaction; fallback for backward compatibility |
-| DeadLetter | Structured envelope produced, NDJSON transport | Envelope shape is production-ready; Queue integration deferred |
-| Retry | Functional standalone | Well-tested with 3 backoff strategies; Resilience integration is optimization |
+| Pre-emptive timeout in FailureBoundary | ROADMAP | Elapsed mode is default; pcntl pre-emptive requires careful signal handling. Per-client timeouts recommended for HTTP/DB I/O. |
+| Disk-persistent compiled registry | ROADMAP | Current registry is in-memory with file-based compilation |
 
 ## What Must Not Be Duplicated
 

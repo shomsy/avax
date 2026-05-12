@@ -128,9 +128,9 @@ vendor/bin/phpstan analyse framework/System/Capabilities/FailureBoundary --memor
 
 | Capability | Status | Reason |
 |-----------|--------|--------|
-| ReportFailure | MVP (error_log) | Replace when Observability component exists |
-| DeadLetter | MVP (JSON log) | Replace when Queue component exists |
-| Retry | Standalone | Replace when Resilience component exists |
+| ReportFailure | Structured logging (Observability Logger) with error_log fallback | Primary path uses Logger with redaction; fallback for backward compatibility |
+| DeadLetter | Structured envelope produced, NDJSON transport | Envelope shape is production-ready; Queue integration deferred |
+| Retry | Functional standalone | Well-tested with 3 backoff strategies; Resilience integration is optimization |
 
 ## What Must Not Be Duplicated
 

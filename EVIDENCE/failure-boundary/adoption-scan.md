@@ -1,4 +1,7 @@
-# FailureBoundary Adoption Scan
+> **SUPERSEDED** by `14-final-production-closure-report.md` and `15-final-status-normalization.md`.
+> This document reflects the MVP-era state. For current status, see the Phase 3 closure reports.
+
+# FailureBoundary Adoption Scan (MVP Era — Superseded)
 
 Date: 2026-05-12
 

@@ -778,48 +778,50 @@ Date: 2026-05-11
 
 All 13 stages complete. V5.5-05 Reference App Benchmarks implemented — all 13 reference apps benchmarked with evidence in `EVIDENCE/v5.5/reference-app-benchmarks.json`.
 
-## V5.6 Declarative Failure Boundary Proof & Adoption — YELLOW
+## V5.6 Declarative Failure Boundary — Core GREEN, Extended Deferred (Overall YELLOW)
 
 Date: 2026-05-12
 
 **Component:** `framework/System/Capabilities/FailureBoundary/` (39 PHP files)
 
-**Tests:** 52 unit tests + 7 E2E adoption tests = 59 tests total, all pass
+**Tests:** 65 tests / 129 assertions, all pass
 
-**PHPStan:** Clean (0 errors)
+**PHPStan:** Clean on FailureBoundary scope; 5 pre-existing warnings in test files (unrelated)
 
 **Gates:** 4/4 GREEN (check-attributes-compiled, check-local-try-catch, check-dogfooding, check-failure-boundary-adoption)
 
-**Evidence:** `EVIDENCE/failure-boundary/` (8 documents)
+**Evidence:** `EVIDENCE/failure-boundary/` (15 documents, 00-14 + normalization)
 
-### What Works (GREEN)
+### Core Production-Ready (GREEN)
 - FailureBoundary component with RunProtectedAction + RunFailurePipeline
 - 8 declarative PHP attributes (OnFailure, ReportFailure, Retry, Fallback, DeadLetter, Rethrow, Timeout, RecoverWith)
 - Compiled metadata with static cache + staleness detection (no hot-path reflection)
 - HTTP middleware registered in AppKernel (class_exists guard)
 - OnFailure + ReportFailure adopted in real demo controller + E2E tested
+- ReportFailure: Observability Logger integration with structured context + redaction (error_log fallback)
 - Decision routing: Retry/Fallback/MapToResult/DeadLetter/Rethrow/ReportOnly
 - Cleanup guaranteed via finally block
 - Unmapped exceptions propagate (not swallowed)
 
-### MVP Placeholders (YELLOW)
-- ReportFailure: error_log() only (replaced when Observability exists)
-- DeadLetter: JSON log only (replaced when Queue exists)
-- Retry: Standalone engine (replaced when Resilience component exists)
-- Retry/Fallback/DeadLetter: Unit tested, no real production adoption yet
+### Extended Policies (YELLOW — functional, not canonical dogfooded)
+- Retry: standalone engine (functional, well-tested; Resilience integration deferred)
+- DeadLetter: structured envelope produced, NDJSON transport (Queue integration deferred)
+- Fallback: attribute-driven, functional, unit-tested
 
-### Deferred (RED — intentionally)
-- Timeout: Compiled but not enforced (requires fiber/pcntl support)
-- RecoverWith: Compiled but not enforced (requires recovery handler interface)
+### Deferred (DEFERRED_NOT_ENFORCED — intentionally, not counted in GREEN scope)
+- Timeout: Compiled but not enforced (requires fiber/async runtime — V4 runtime adapters)
+- RecoverWith: Compiled but not enforced (requires recovery handler — V5.6 reliability engine)
 
 ### Key Decisions
 - ErrorHandling directory removed, replaced by FailureBoundary
 - Middleware registered via class_exists guard (components/framework separation)
 - HandleIncomingHttp outer catch kept as lifecycle safety net
-- 17 try/catch blocks scanned: 16 legitimate boundaries kept, 1 deferred
+- 13 try/catch blocks scanned: all legitimate boundaries kept
+- ReportFailure upgraded: Logger primary path, error_log fallback (structured, redacted)
 
 ### V5.6 Verdict
 
-**V5.6 Declarative Failure Boundary Proof & Adoption: YELLOW**
+**V5.6 Declarative Failure Boundary: Core production-ready, extended policies deferred.**
 
-Core feature proven end-to-end. Retry/Fallback/DeadLetter functional but MVP-only. Timeout/RecoverWith deferred.
+Overall: YELLOW. Core boundary (OnFailure, ReportFailure, Rethrow, Compilation, HTTP integration) is GREEN.
+Extended policies (Retry standalone, DeadLetter transport, Timeout, RecoverWith) are YELLOW/deferred.

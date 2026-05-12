@@ -1,4 +1,7 @@
-# Final Failure Boundary Report — V5.6 Proof & Adoption
+> **SUPERSEDED** by `14-final-production-closure-report.md` and `15-final-status-normalization.md`.
+> This document reflects the MVP-era state with "To be run" validation entries. For current status, see the Phase 3 closure reports.
+
+# Final Failure Boundary Report — V5.6 Proof & Adoption (MVP Era — Superseded)
 
 Date: 2026-05-12
 Status: YELLOW

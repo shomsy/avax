@@ -12,8 +12,20 @@ use Throwable;
 /**
  * SendFailureToDeadLetter — Sends a failure to a dead letter queue.
  *
- * For MVP: serializes failure data and calls a configurable handler.
- * Queue integration comes when the Queue component is available.
+ * Produces a structured dead-letter envelope.
+ * Current transport: error_log as NDJSON (testable, observable).
+ * When a real Queue/Messaging component is available, this class
+ * should accept it via constructor and enqueue the envelope.
+ *
+ * Envelope shape:
+ * {
+ *   "type": "dead_letter",
+ *   "version": 1,
+ *   "queue": "<queue_name>",
+ *   "failure": { "class": "...", "message": "...", "file": "...", "line": N },
+ *   "context": { "kind": "...", "target_class": "...", "target_method": "..." },
+ *   "timestamp": "ISO8601"
+ * }
  */
 final readonly class SendFailureToDeadLetter
 {
@@ -24,13 +36,16 @@ final readonly class SendFailureToDeadLetter
     ): FailurePipelineResult {
         $queue = $policy->deadLetterQueue ?? 'failed';
 
-        $payload = [
+        $envelope = [
+            'type' => 'dead_letter',
+            'version' => 1,
             'queue' => $queue,
-            'exception_class' => $failure::class,
-            'message' => $failure->getMessage(),
-            'file' => $failure->getFile(),
-            'line' => $failure->getLine(),
-            'trace' => $failure->getTraceAsString(),
+            'failure' => [
+                'class' => $failure::class,
+                'message' => $failure->getMessage(),
+                'file' => $failure->getFile(),
+                'line' => $failure->getLine(),
+            ],
             'context' => [
                 'kind' => $context->kind->value,
                 'target_class' => $context->targetClass,
@@ -39,9 +54,9 @@ final readonly class SendFailureToDeadLetter
             'timestamp' => date('c'),
         ];
 
-        // For MVP: log the dead letter payload.
-        // In production, this would send to an actual dead letter queue.
-        error_log('[DeadLetter] ' . json_encode($payload, JSON_THROW_ON_ERROR));
+        // Transport: error_log as NDJSON.
+        // When Messaging/Queue component is available, enqueue the envelope instead.
+        error_log(json_encode($envelope, JSON_THROW_ON_ERROR));
 
         return FailurePipelineResult::deadLettered();
     }

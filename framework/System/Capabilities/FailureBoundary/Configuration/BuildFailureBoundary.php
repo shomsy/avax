@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Capabilities\FailureBoundary\Configuration;
 
 use Avax\Components\HTTP\Response\ResponseFactory;
+use Avax\Components\Operations\Observability\System\Capabilities\Logging\Logger;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\CleanupAfterFailure\CleanupAfterFailure;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\ClassifyFailure\ClassifyFailure;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\MapFailureToResult\MapFailureToResult;
@@ -24,13 +25,13 @@ final readonly class BuildFailureBoundary
     /**
      * @param array<string, mixed> $config
      */
-    public function build(array $config = []): RunProtectedAction
+    public function build(array $config = [], ?Logger $logger = null): RunProtectedAction
     {
         $config = FailureBoundaryConfiguration::fromArray($config);
 
         $cleanup = new CleanupAfterFailure();
         $classify = new ClassifyFailure();
-        $report = new ReportFailure();
+        $report = new ReportFailure($logger);
         $retry = new RetryFailedAction();
         $fallback = new RunFallbackAction();
         $deadLetter = new SendFailureToDeadLetter();

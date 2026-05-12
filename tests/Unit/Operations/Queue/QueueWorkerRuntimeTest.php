@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Operations\Queue;
+namespace Avax\Tests\Unit\Operations\Queue;
 
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\MemoryQueue\MemoryQueue;
 use Avax\Components\Operations\Queue\System\Flows\RunWorkerLoop\RunWorkerLoop;

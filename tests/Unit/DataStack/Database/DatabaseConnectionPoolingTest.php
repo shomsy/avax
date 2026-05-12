@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\DataStack\Database;
+namespace Avax\Tests\Unit\DataStack\Database;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\PdoConnectionPool\PdoConnectionPool;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\PdoPooledConnection\PdoPooledConnection;

@@ -130,9 +130,23 @@ V1 Kernel Green: PROVEN
 
 V2 Platform Baseline: CLOSED / GREEN (all 72 components complete)
 
-V3 Implementation: CLOSED / GREEN (SystemDesignKit complete — reference architectures, scenarios, failure simulations, architecture tests)
+V3 Implementation: CLOSED / GREEN (SystemDesignKit promoted to components/SystemDesign)
 
-This status is derived from CURRENT_TRUTH.md and the latest truth-reconciliation report.
+V4 Product Runtime: CLOSED / GREEN (V4-01 through V4-17 complete)
+
+V5 Internal Convergence: CLOSED / GREEN (V5-00 through V5-23 complete)
+
+V5.5 Benchmark Proof: CLOSED / GREEN (V5.5-00 through V5.5-12 complete)
+
+V5.6 Failure Boundary: CLOSED / FULL GREEN (Y1-Y7 complete, 90 tests, 4 gates GREEN)
+
+Current Plan Lock: CLOSED / FULL GREEN
+
+Active stage: None
+
+Next allowed stage: V5.7 — Events Fluent DSL & PSR-14 Interop (READY_NEXT, NOT_STARTED)
+
+This status is derived from CURRENT_TRUTH.md and EVIDENCE/current-plan-lock/final-current-plan-lock-report.md.
 
 ---
 
@@ -167,43 +181,16 @@ An agent must not combine stages unless EXECUTION.md explicitly allows it.
 The current active stage is:
 
 ```text
-None — V2 Engine Implementation Phase CLOSED
+None — All stages through V5.6 COMPLETE / FULL GREEN
 ```
 
 Last completed stage:
 
 ```text
-Stage V2-03: V2 Engine Implementation
+V5.6 Declarative Failure Boundary — FULL GREEN (Y1-Y7 complete)
 ```
 
-Recent completed evidence:
-
-```text
-EVIDENCE/master-plan/stage-01-final-project-tree-freeze-report.md
-EVIDENCE/component-taxonomy/stage-02-taxonomy-integrity-report.md
-EVIDENCE/muscle-recovery/stage-v1-01-backup-muscle-inventory-report.md
-EVIDENCE/muscle-recovery/backup-muscle-inventory.md
-EVIDENCE/muscle-recovery/backup-muscle-inventory.json
-EVIDENCE/muscle-recovery/component-muscle-audit.md
-EVIDENCE/muscle-recovery/component-muscle-audit.json
-EVIDENCE/recovery-reports/static-integrity-closure-report.md
-EVIDENCE/v1-integrity/static-integrity-closure-report.md
-EVIDENCE/master-plan/api-classification-matrix.md
-EVIDENCE/master-plan/canonical-class-map.md
-EVIDENCE/master-plan/stage-08-static-analysis-report.md
-EVIDENCE/master-plan/stage-09-kernel-green-report.md
-EVIDENCE/master-plan/stage-11-golden-path-app-report.md
-EVIDENCE/master-plan/stage-12-public-api-governance-report.md
-EVIDENCE/master-plan/stage-13-extension-plugin-architecture-report.md
-EVIDENCE/master-plan/stage-14-benchmark-performance-report.md
-EVIDENCE/master-plan/stage-15-observability-contract-report.md
-EVIDENCE/master-plan/stage-16-to-19-enterprise-governance-report.md
-EVIDENCE/recovery-reports/v2-api-engine-closure/v2-api-engine-closure-report.md
-EVIDENCE/v2-naming-reconciliation-report.md
-EVIDENCE/v2-engine-implementation-closure/
-```
-
-All other stages are read-only context until Stage 10 is complete.
+Current Plan Lock: FULL GREEN
 
 ### V2 API Engine Closure
 
@@ -638,7 +625,7 @@ No proof, no progress.
 
 ## 16. V4 Implementation Lock
 
-V4 Product Runtime & Enterprise Muscle — IN PROGRESS (RECONCILED)
+V4 Product Runtime & Enterprise Muscle — COMPLETE / GREEN
 
 V4-00 Integrity Lock & Stage Definition: COMPLETE
 V4-01 Runtime App Layer: COMPLETE / GREEN (main branch)

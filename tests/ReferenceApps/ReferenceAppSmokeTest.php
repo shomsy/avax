@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\ReferenceApps;
+namespace Avax\Tests\ReferenceApps;
 
 use Avax\Framework\System\Capabilities\Doctor\Types\DoctorFinding;
 use Avax\Framework\System\Capabilities\Doctor\Types\DoctorReport;

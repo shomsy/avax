@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Unit\Framework\FailureBoundary\TimeoutEnforcementTest;
+namespace Avax\Tests\Unit\Framework\FailureBoundary;
 
 use Avax\Components\Operations\Resilience\System\Foundation\Failure\OperationTimedOut\OperationTimedOut;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\EnforceTimeout\EnforceTimeout;

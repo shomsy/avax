@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Unit\Framework\FailureBoundary\RetryResilienceIntegrationTest;
+namespace Avax\Tests\Unit\Framework\FailureBoundary;
 
 use Avax\Components\Operations\Resilience\System\Capabilities\Retry\RetryExecutor;
 use Avax\Components\Operations\Resilience\System\Capabilities\Retry\RetryOptions;

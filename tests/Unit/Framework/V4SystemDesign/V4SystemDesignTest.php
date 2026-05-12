@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Framework\V4SystemDesign;
+namespace Avax\Tests\Unit\Framework\V4SystemDesign;
 
 use Avax\Framework\System\Capabilities\SystemDesign\EstimateRuntimeCapacity;
 use Avax\Framework\System\Capabilities\SystemDesign\GenerateRuntimeArchitectureReport;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Operations\MessageBus;
+namespace Avax\Tests\Unit\Operations\MessageBus;
 
 use Avax\Components\Operations\MessageBus\System\Capabilities\Envelope\MessageEnvelope;
 use Avax\Components\Operations\MessageBus\System\Capabilities\Inbox\InMemoryInbox;

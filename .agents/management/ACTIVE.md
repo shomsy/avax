@@ -19,26 +19,33 @@ Recommended card format:
 
 ```mermaid
 flowchart LR
-    subgraph Ready["Ready"]
-        R0["Stage 05 | Production Readiness"]
+    subgraph Done["Completed"]
+        D0["V1 Kernel — PROVEN"]
+        D1["V2 Platform — GREEN"]
+        D2["V3 SystemDesign — GREEN"]
+        D3["V4 Runtime — GREEN"]
+        D4["V5 Convergence — GREEN"]
+        D5["V5.5 Benchmarks — GREEN"]
+        D6["V5.6 FailureBoundary — FULL GREEN"]
+        D7["Current Plan Lock — FULL GREEN"]
+    end
+
+    subgraph Ready["Ready Next"]
+        R0["V5.7 Events DSL — NOT_STARTED"]
     end
 
     subgraph InProgress["In Progress"]
         P0["None"]
     end
 
-    subgraph Blocked["Blocked"]
-        B0["DATA-STRUCTURES-WAVE-0 | governance validators blocked | updated 2026-05-09"]
+    subgraph Planned["Locked Roadmap"]
+        PL0["V5.8-V6.9 — PLANNED/LOCKED"]
     end
 
-    subgraph Verify["Verify / Review"]
-        V0["No active cards"]
-    end
-
+    Done --> Ready
     Ready --> InProgress
-    InProgress --> Verify
-    InProgress --> Blocked
-    Blocked --> InProgress
+    InProgress --> Planned
 ```
 
-Stage 04 Component Completion is COMPLETED. V1 Kernel Green is PROVEN. Stage 05 Production Readiness is ready.
+All stages through V5.6 are COMPLETE. Current Plan Lock is FULL GREEN.
+V5.7 is READY_NEXT but NOT_STARTED. V5.8-V6.9 are PLANNED/LOCKED.

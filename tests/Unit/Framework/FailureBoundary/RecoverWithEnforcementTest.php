@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Unit\Framework\FailureBoundary\RecoverWithEnforcementTest;
+namespace Avax\Tests\Unit\Framework\FailureBoundary;
 
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RunRecoveryAction\RunRecoveryAction;
 use Avax\Framework\System\Capabilities\FailureBoundary\Configuration\BuildFailureBoundary;
@@ -25,7 +25,7 @@ final class RecoverWithEnforcementTest extends TestCase
     #[Test]
     public function recoverWithHandlerIsInvokedOnFailure() : void
     {
-        $policy   = new FailurePolicy(recoverWithClass: TestRecoveryHandler::class);
+        $policy   = new FailurePolicy(recoverWithClass: RecoverWithTestRecoveryHandler::class);
         $compiled = new CompiledMethodPolicy(
             targetClass : 'RecoveryTestController',
             targetMethod: 'handle',
@@ -51,8 +51,8 @@ final class RecoverWithEnforcementTest extends TestCase
     {
         // When both RecoverWith and Fallback are configured, RecoverWith wins
         $policy   = new FailurePolicy(
-            recoverWithClass: TestRecoveryHandler::class,
-            fallbackClass   : TestFallbackHandler::class,
+            recoverWithClass: RecoverWithTestRecoveryHandler::class,
+            fallbackClass   : RecoverWithTestFallbackHandler::class,
         );
         $compiled = new CompiledMethodPolicy(
             targetClass : 'PrecedenceController',
@@ -78,7 +78,7 @@ final class RecoverWithEnforcementTest extends TestCase
     #[Test]
     public function recoveryHandlerReceivesFailureAndContext() : void
     {
-        $policy   = new FailurePolicy(recoverWithClass: CapturingRecoveryHandler::class);
+        $policy   = new FailurePolicy(recoverWithClass: RecoverWithCapturingRecoveryHandler::class);
         $compiled = new CompiledMethodPolicy(
             targetClass : 'CaptureController',
             targetMethod: 'handle',
@@ -97,8 +97,8 @@ final class RecoverWithEnforcementTest extends TestCase
             context: FailureContext::forConsole('CaptureController', 'handle'),
         );
 
-        self::assertSame($expectedMessage, CapturingRecoveryHandler::$lastFailureMessage);
-        self::assertSame('CaptureController', CapturingRecoveryHandler::$lastTargetClass);
+        self::assertSame($expectedMessage, RecoverWithCapturingRecoveryHandler::$lastFailureMessage);
+        self::assertSame('CaptureController', RecoverWithCapturingRecoveryHandler::$lastTargetClass);
     }
 
     #[Test]
@@ -118,7 +118,7 @@ final class RecoverWithEnforcementTest extends TestCase
     public function recoveryWithoutInvokeThrowsRuntimeException() : void
     {
         $action  = new RunRecoveryAction();
-        $policy  = new FailurePolicy(recoverWithClass: InvalidRecoveryHandler::class);
+        $policy  = new FailurePolicy(recoverWithClass: RecoverWithInvalidRecoveryHandler::class);
         $context = FailureContext::forConsole('Test', 'handle');
 
         $this->expectException(RuntimeException::class);
@@ -134,7 +134,7 @@ final class RecoverWithEnforcementTest extends TestCase
 }
 
 /** Test recovery handler that formats the failure message */
-final class TestRecoveryHandler
+final class RecoverWithTestRecoveryHandler
 {
     public function __invoke(Throwable $failure, mixed $context) : string
     {
@@ -143,7 +143,7 @@ final class TestRecoveryHandler
 }
 
 /** Test fallback handler (should not be used when RecoverWith is present) */
-final class TestFallbackHandler
+final class RecoverWithTestFallbackHandler
 {
     public function __invoke(Throwable $failure, mixed $context) : string
     {
@@ -152,7 +152,7 @@ final class TestFallbackHandler
 }
 
 /** Recovery handler that captures the failure details for assertions */
-final class CapturingRecoveryHandler
+final class RecoverWithCapturingRecoveryHandler
 {
     public static string $lastFailureMessage = '';
     public static string $lastTargetClass    = '';
@@ -167,4 +167,4 @@ final class CapturingRecoveryHandler
 }
 
 /** Invalid recovery handler without __invoke */
-final class InvalidRecoveryHandler {}
+final class RecoverWithInvalidRecoveryHandler {}

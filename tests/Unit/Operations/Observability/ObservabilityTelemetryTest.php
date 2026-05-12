@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Operations\Observability;
+namespace Avax\Tests\Unit\Operations\Observability;
 
 use Avax\Components\Operations\Observability\System\Capabilities\Correlation\CorrelationId;
 use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;

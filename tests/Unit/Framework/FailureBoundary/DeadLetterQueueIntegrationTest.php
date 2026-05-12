@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Unit\Framework\FailureBoundary\DeadLetterQueueIntegrationTest;
+namespace Avax\Tests\Unit\Framework\FailureBoundary;
 
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\InMemoryFailedJobsStore;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\SendFailureToDeadLetter\SendFailureToDeadLetter;

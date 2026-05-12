@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Framework\V4Health;
+namespace Avax\Tests\Unit\Framework\V4Health;
 
 use Avax\Framework\System\Capabilities\Doctor\Types\DoctorFinding;
 use Avax\Framework\System\Capabilities\Doctor\Types\DoctorSeverity;

@@ -29,16 +29,16 @@
 | V5.9 Boot DSL                  | ROADMAP                   | PLANNED         | PLANNED        | forward-roadmap-lock.md            | ROADMAP         |
 | V5.10 PSR Interop              | ROADMAP                   | PLANNED         | PLANNED        | forward-roadmap-lock.md            | ROADMAP         |
 | V6.0-V6.9                      | ROADMAP                   | PLANNED         | PLANNED        | forward-roadmap-lock.md            | ROADMAP         |
-| PSR-4 test namespace fix       | BUGS.md scan              | untracked       | P2             | 00-baseline-validation.md          | OPEN_WITH_OWNER |
-| check-raw-file-operations.php  | tooling audit             | UNAVAILABLE     | P2             | 09-tooling-and-gate-audit.md       | OPEN_WITH_OWNER |
+| PSR-4 test namespace fix       | BUGS.md scan              | untracked       | P2             | 15-psr4-warning-closure.md         | FIXED_IN_THIS_PASS |
+| check-raw-file-operations.php  | tooling audit             | UNAVAILABLE     | P2             | 16-raw-file-gate-closure.md        | FIXED_IN_THIS_PASS |
 | DateTime→DateTimeImmutable     | code scan                 | untracked       | P3             | 03-bug-inventory.md                | ROADMAP         |
-| EXECUTION.md stale state       | EXECUTION.md              | V4 IN PROGRESS  | STALE          | 01-current-plan-inventory.md       | SUPERSEDED      |
-| ACTIVE board stale cards       | ACTIVE.md                 | old stages      | STALE          | —                                  | SUPERSEDED      |
+| EXECUTION.md stale state       | EXECUTION.md              | V4 IN PROGRESS  | STALE          | 17-execution-truth-closure.md      | FIXED_IN_THIS_PASS |
+| ACTIVE board stale cards       | ACTIVE.md                 | old stages      | STALE          | 18-active-board-closure.md         | FIXED_IN_THIS_PASS |
 
 ## Summary
 
 - **DONE:** 20 (V1 through V5.6-Y7)
-- **ROADMAP:** 10 (V5.7 through V6.9, plus DateTime cleanup)
-- **OPEN_WITH_OWNER:** 2 (PSR-4 namespaces, missing gate)
-- **SUPERSEDED:** 2 (EXECUTION.md, ACTIVE.md stale state)
+- **ROADMAP:** 6 (V5.7 through V5.10, V6.0-V6.9, DateTime cleanup)
+- **FIXED_IN_THIS_PASS:** 4 (PSR-4 namespaces, raw file gate, EXECUTION.md, ACTIVE board)
+- **SUPERSEDED:** 0
 - **Vague/unresolved:** 0

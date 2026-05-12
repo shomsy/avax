@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Components\Operations\Observability;
+namespace Avax\Tests\Unit\Components\Operations\Observability;
 
 use Avax\Components\Operations\Observability\System\Capabilities\Audit\FileAuditWriter\FileAuditWriter;
 use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\InMemoryMetricExporter\InMemoryMetricExporter;

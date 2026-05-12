@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Framework\V4HealthEndpoints;
+namespace Avax\Tests\Unit\Framework\V4HealthEndpoints;
 
 use Avax\Framework\System\Capabilities\Health\CheckLiveness;
 use Avax\Framework\System\Capabilities\Health\CheckReadiness;

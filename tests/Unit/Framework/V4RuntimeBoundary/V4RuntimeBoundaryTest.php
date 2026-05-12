@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Framework\V4RuntimeBoundary;
+namespace Avax\Tests\Unit\Framework\V4RuntimeBoundary;
 
 use Avax\Framework\System\Capabilities\RuntimeBoundary\ReactPhpAdapter;
 use Avax\Framework\System\Capabilities\RuntimeBoundary\RoadRunnerAdapter;

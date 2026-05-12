@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Framework\V4SecurityPolicy;
+namespace Avax\Tests\Unit\Framework\V4SecurityPolicy;
 
 use Avax\Framework\System\Capabilities\Doctor\Types\DoctorSeverity;
 use Avax\Framework\System\Capabilities\Security\Doctor\CheckSecurityRuntime;

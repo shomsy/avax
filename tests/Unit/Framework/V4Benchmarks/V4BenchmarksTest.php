@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Framework\V4Benchmarks;
+namespace Avax\Tests\Unit\Framework\V4Benchmarks;
 
 use Avax\Framework\System\Capabilities\Benchmarks\Foundation\BenchmarkResult;
 use Avax\Framework\System\Capabilities\Benchmarks\Foundation\BenchmarkSuite;

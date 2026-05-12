@@ -788,9 +788,9 @@ Date: 2026-05-12
 
 **PHPStan:** 0 errors full scope (framework, components, tests, labs/SystemDesignKit)
 
-**Gates:** 4/4 GREEN (check-attributes-compiled, check-local-try-catch, check-dogfooding, check-failure-boundary-adoption)
+**Gates:** 14/14 GREEN (check-attributes-compiled, check-local-try-catch, check-dogfooding, check-failure-boundary-adoption, check-component-canonical-shape, check-namespace-drift, check-public-surface, check-runtime-leaks, check-advanced-pattern-folder-violations, check-component-adoption, composer validate, dump-autoload, phpunit, phpstan)
 
-**Evidence:** `EVIDENCE/failure-boundary/full-closure-evidence.md`
+**Evidence:** `EVIDENCE/failure-boundary/full-closure-evidence.md`, `EVIDENCE/failure-boundary/full-closure-final-acceptance-audit.md`
 
 ### Production-Ready (GREEN)
 - FailureBoundary component with RunProtectedAction + RunFailurePipeline

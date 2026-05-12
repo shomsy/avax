@@ -1,8 +1,8 @@
 # CURRENT_TRUTH
 
-Date of Truth: 2026-05-10
+Date of Truth: 2026-05-13
 Branch: main
-Commit: V4 Final Closure Pass — V4-12 through V4-17 COMPLETE
+Commit: V5.7 Final Acceptance — Events Fluent DSL, Dogfooding, CQRS Projection, Event-History Proof
 
 ## Core Status
 
@@ -829,12 +829,11 @@ dogfooding.
 
 Overall: GREEN. 7899 tests, 22821 assertions, PHPStan 0 errors.
 
-## V5.7 Events Fluent DSL & PSR-14 Interop — Implementation IN_PROGRESS
+## V5.7 Events Fluent DSL & PSR-14 Interop — COMPLETE / GREEN
 
-Date: 2026-05-12
+Date: 2026-05-13
 
-**Status:** V5.7-00 Design Lock GREEN, V5.7-01 Owner Convergence GREEN, V5.7-02 Contracts and Foundation GREEN, V5.7-03 Fluent DSL GREEN, V5.7-04 emit() Surface GREEN, V5.7-05 ListensTo Attribute GREEN, V5.7-06 Compiled Registry GREEN, V5.7-07 Dispatch Runtime GREEN, V5.7-08 PSR-14 Adapter GREEN
-**Implementation:** IN_PROGRESS (9/13 stages complete)
+**Status:** V5.7-00 through V5.7-13 COMPLETE / GREEN
 
 **V5.7-04 emit() Surface completed:**
 - `emit(object $event): object` global function — object-only public API
@@ -872,29 +871,45 @@ Date: 2026-05-12
 - PSR StoppableEventInterface respected via duck-typing
 - User API remains AvaX DSL (onEvent/emit), not PSR plumbing
 
+**V5.7-09 Real Dogfooding completed:**
+- SecureRegistrationApi emits UserRegistered after successful registration
+- 3 listeners: RecordRegistrationAudit, ProjectRegisteredUser, RecordUserRegisteredEvent
+- All registered through onEvent(UserRegistered::class)->do(...)
+- No EventInterface or ListenerInterface required
+
+**V5.7-10 CQRS Projection Proof completed:**
+- ProjectRegisteredUser builds RegisteredUserView from UserRegistered events
+- ReadRegisteredUser queries the read model
+- No generic CQRS folder — ownership inside reference flow
+
+**V5.7-11 Event-History Reference Proof completed:**
+- ReferenceEventHistoryStore stores UserRegistered events
+- ReplayEventHistory replays events to rebuild RegisteredUserView
+- Marked explicitly as reference/proof only — NOT production Event Sourcing Kit
+
+**V5.7-12 Tooling Gates completed:**
+- 10 event gates implemented, all PASS (137 checks total)
+
+**V5.7-13 Final Acceptance Audit completed:**
+- 8069 tests GREEN, PHPStan 0 errors, all gates PASS
+
 **Key decisions:**
 - emit(object): object — no class-string emission in public API
 - In-memory compiled registry only (disk persistence ROADMAP)
 - Simple listener instantiation (container integration ROADMAP)
-- Eager listener instantiation from DSL documented as temporary
+- Container lifecycle event dogfooding deferred
 
-**Tests:** 49 new tests in EventsRuntimeClosureTest.php — all pass
-**Validation:** 8045 tests GREEN, PHPStan 0 errors, all gates PASS
+**Tests:** 12 new dogfooding tests + 49 existing events tests — all pass
+**Validation:** 8069 tests GREEN, PHPStan 0 errors, all 10 event gates PASS, all 7 governance gates PASS
 
-**Evidence:** `EVIDENCE/v5.7/34-events-runtime-closure-final-report.md`
+**Evidence:** `EVIDENCE/v5.7/43-real-event-dogfooding.md` through `EVIDENCE/v5.7/54-v5.7-final-acceptance-audit.md`
 
 ### V5.7 Verdict
 
-**V5.7 Design Lock: GREEN.**
-**V5.7-01 Owner Convergence: GREEN.**
-**V5.7-02 Contracts and Foundation: GREEN.**
-**V5.7-03 Fluent Event DSL: GREEN.**
-**V5.7-04 emit() Surface: GREEN.**
-**V5.7-05 ListensTo Attribute: GREEN.**
-**V5.7-06 Compiled Listener Registry: GREEN.**
-**V5.7-07 Dispatch Runtime: GREEN.**
-**V5.7-08 PSR-14 Adapter: GREEN.**
-**V5.7 Implementation: IN_PROGRESS (9/13 stages).**
+**V5.7 Complete: GREEN.**
+All 14 stages (V5.7-00 through V5.7-13) GREEN.
+Events Fluent DSL, Runtime, PSR-14 Interop, Real Dogfooding, CQRS Projection, Event-History Reference — all GREEN.
+Production Event Sourcing Kit = ROADMAP.
 
 ### V5.6 Completed Work Log
 

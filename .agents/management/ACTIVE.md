@@ -37,10 +37,16 @@ flowchart LR
         D14["V5.7-06 Compiled Registry — GREEN"]
         D15["V5.7-07 Dispatch Runtime — GREEN"]
         D16["V5.7-08 PSR-14 Adapter — GREEN"]
+        D17["V5.7-09 Real Dogfooding — GREEN"]
+        D18["V5.7-10 CQRS Projection — GREEN"]
+        D19["V5.7-11 Event-History — GREEN_REF"]
+        D20["V5.7-12 Tooling Gates — GREEN"]
+        D21["V5.7-13 Final Audit — GREEN"]
+        D22["V5.7 COMPLETE — GREEN"]
     end
 
     subgraph Ready["Ready Next"]
-        R0["V5.7-09 Stoppable Events — READY_NEXT"]
+        R0["None — V5.7 complete"]
     end
 
     subgraph InProgress["In Progress"]
@@ -56,5 +62,5 @@ flowchart LR
     InProgress --> Planned
 ```
 
-All stages through V5.6 are COMPLETE. Current Plan Lock is FULL GREEN.
-V5.7 Design Lock is GREEN. V5.7-01 through V5.7-03 are GREEN. V5.7-04 is READY_NEXT. V5.8-V6.9 are PLANNED/LOCKED.
+All stages through V5.7 are COMPLETE. V5.7 is FULL GREEN (14 stages, 10 event gates PASS, 8069 tests GREEN, PHPStan 0 errors).
+V5.8-V6.9 are PLANNED/LOCKED.

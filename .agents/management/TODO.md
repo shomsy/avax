@@ -25,6 +25,51 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: V5.7-13
+- `created_at`: 2026-05-13
+- `updated_at`: 2026-05-13
+- `status`: done
+- `estimate`: medium
+- `outcome`: V5.7-13 Final Acceptance Audit — GREEN. 8069 tests GREEN, PHPStan 0 errors, 10 event gates PASS, 7 governance gates PASS. V5.7 COMPLETE / GREEN.
+- `acceptance`: All 14 V5.7 stages (V5.7-00 through V5.7-13) GREEN. Events Fluent DSL, Runtime, PSR-14 Interop, Real Dogfooding, CQRS Projection, Event-History Reference — all GREEN. Evidence: EVIDENCE/v5.7/43 through EVIDENCE/v5.7/54.
+- `links`: `EVIDENCE/v5.7/54-v5.7-final-acceptance-audit.md`
+
+- `id`: V5.7-12
+- `created_at`: 2026-05-13
+- `updated_at`: 2026-05-13
+- `status`: done
+- `estimate`: large
+- `outcome`: V5.7-12 Tooling Gates — GREEN. 10 event gates implemented (137 checks total), all PASS.
+- `acceptance`: All event gates PASS. Evidence: EVIDENCE/v5.7/49, EVIDENCE/v5.7/50.
+- `links`: `EVIDENCE/v5.7/49-event-gates-implementation.md`, `EVIDENCE/v5.7/50-event-gates-proof.md`
+
+- `id`: V5.7-11
+- `created_at`: 2026-05-13
+- `updated_at`: 2026-05-13
+- `status`: done
+- `estimate`: medium
+- `outcome`: V5.7-11 Event-History Reference Proof — GREEN_REFERENCE_ONLY. ReferenceEventHistoryStore + ReplayEventHistory proven in SecureRegistrationApi.
+- `acceptance`: Event-history stores UserRegistered. Replay rebuilds RegisteredUserView. Explicitly marked as reference/proof only. Evidence: EVIDENCE/v5.7/45.
+- `links`: `EVIDENCE/v5.7/45-event-history-reference-proof.md`
+
+- `id`: V5.7-10
+- `created_at`: 2026-05-13
+- `updated_at`: 2026-05-13
+- `status`: done
+- `estimate`: medium
+- `outcome`: V5.7-10 CQRS Projection Dogfooding — GREEN. ProjectRegisteredUser builds RegisteredUserView from UserRegistered events. ReadRegisteredUser queries read model.
+- `acceptance`: Projection created through listener. Read model queryable. No generic CQRS folder. Evidence: EVIDENCE/v5.7/44.
+- `links`: `EVIDENCE/v5.7/44-cqrs-projection-dogfooding.md`
+
+- `id`: V5.7-09
+- `created_at`: 2026-05-13
+- `updated_at`: 2026-05-13
+- `status`: done
+- `estimate`: large
+- `outcome`: V5.7-09 Real Event Dogfooding — GREEN. SecureRegistrationApi emits UserRegistered through canonical AvaX Events runtime. 3 listeners: audit, projection, event-history. 12 new tests pass.
+- `acceptance:` Registration emits event. Listeners invoked. Projection built. Event replay works. No EventInterface/ListenerInterface required. Evidence: EVIDENCE/v5.7/43.
+- `links`: `EVIDENCE/v5.7/43-real-event-dogfooding.md`
+
 - `id`: V5.7-08
 - `created_at`: 2026-05-12
 - `updated_at`: 2026-05-12

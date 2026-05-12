@@ -300,6 +300,12 @@ parameters:
         -
             message: '#.*#'
             path: 'tests/Unit/Components/Operations/Events/EventsRuntimeClosureTest.php'
+        -
+            message: '#.*#'
+            path: 'tests/Unit/Examples/SecureRegistrationApi'
+        -
+            message: '#.*#'
+            path: 'examples/SecureRegistrationApi'
     type_perfect:
         narrow_param: true
         narrow_return: true

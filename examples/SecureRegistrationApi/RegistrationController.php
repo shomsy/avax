@@ -9,6 +9,9 @@ use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\Attributes\OnFailure;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\Attributes\ReportFailure;
 
+use function Avax\Components\Operations\Events\System\PublicSurface\emit;
+use function Avax\Components\Operations\Events\System\PublicSurface\onEvent;
+
 /**
  * RegistrationController — Real reference flow adopting FailureBoundary attributes.
  *
@@ -18,12 +21,33 @@ use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\Attributes\Rep
  * - Maps ExternalServiceDown to 503 Service Unavailable
  * - Reports all failures through the observability pipeline
  *
+ * V5.7 Dogfooding: emits UserRegistered event after successful registration
+ * through the canonical AvaX Events runtime.
+ *
  * @see https://avax.test/v5.6-y6-real-adoption
+ * @see https://avax.test/v5.7-09-real-dogfooding
  */
 final readonly class RegistrationController
 {
     /**
+     * Wire event listeners for the registration flow.
+     *
+     * Called during bootstrap. Registers listeners through the fluent DSL.
+     * No EventInterface or ListenerInterface required.
+     */
+    public static function wireEventListeners(): void
+    {
+        onEvent(UserRegistered::class)
+            ->do(RecordRegistrationAudit::class)
+            ->do(ProjectRegisteredUser::class)
+            ->do(RecordUserRegisteredEvent::class);
+    }
+
+    /**
      * Register a new user.
+     *
+     * After successful registration, emits UserRegistered event
+     * through the canonical AvaX Events runtime.
      *
      * @throws ValidationFailed
      * @throws RegistrationFailed
@@ -49,10 +73,35 @@ final readonly class RegistrationController
             throw new ValidationFailed('Email format is invalid');
         }
 
+        // Generate a user ID (simplified for reference flow).
+        $userId = 'user-' . bin2hex(random_bytes(8));
+        $registeredAt = (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM);
+
+        // Emit the domain event through the canonical AvaX Events runtime.
+        emit(new UserRegistered(
+            userId: $userId,
+            email: $input['email'],
+            registeredAt: $registeredAt,
+        ));
+
         return Response::json([
             'status' => 'registered',
             'message' => 'User registered successfully',
+            'userId' => $userId,
         ]);
+    }
+
+    /**
+     * Reset all registration flow state for test isolation.
+     *
+     * @internal
+     */
+    public static function reset(): void
+    {
+        RecordRegistrationAudit::reset();
+        RegisteredUserView::reset();
+        ReferenceEventHistoryStore::reset();
+        \Avax\Components\Operations\Events\System\Foundation\GlobalEventListenerState::reset();
     }
 
     /**

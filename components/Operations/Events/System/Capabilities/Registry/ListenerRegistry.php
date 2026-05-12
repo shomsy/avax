@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Events\System\Capabilities\Registry;
 
+use Avax\Components\Operations\Events\System\Foundation\ListenerRegistration;
+
 /**
  * Registry for event listeners with priority support.
  */
@@ -15,10 +17,21 @@ final class ListenerRegistry
     /** @var array<string, array<callable>> Sorted cache */
     private array $sorted = [];
 
+    private int $registrationOrder = 0;
+
     public function subscribe(string $event, callable $listener, int $priority = 0): void
     {
         $this->listeners[$event][$priority][] = $listener;
         unset($this->sorted[$event]);
+    }
+
+    /**
+     * Register a typed listener registration.
+     */
+    public function register(ListenerRegistration $registration): void
+    {
+        $this->listeners[$registration->eventClass][$registration->priority][] = $registration->listener;
+        unset($this->sorted[$registration->eventClass]);
     }
 
     public function getListenersFor(string $event): array
@@ -37,6 +50,16 @@ final class ListenerRegistry
         $this->sorted[$event] = array_merge(...array_values($eventListeners));
 
         return $this->sorted[$event];
+    }
+
+    /**
+     * Alias for getListenersFor — matches PSR-14 listener provider naming.
+     *
+     * @return array<int, callable>
+     */
+    public function listenersFor(string $eventClass): array
+    {
+        return $this->getListenersFor($eventClass);
     }
 
     public function clear(): void

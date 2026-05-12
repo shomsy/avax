@@ -25,6 +25,15 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: V5.7-02
+- `created_at`: 2026-05-12
+- `updated_at`: 2026-05-12
+- `status`: done
+- `estimate`: medium
+- `outcome`: V5.7-02 Event Contracts and Foundation — GREEN. Foundation types created (ListenerSource, ListenerExecutionMode, ListenerRegistration, CompiledListener). ListenerProvider capability. ListenerRegistry enhanced with register(), listenersFor(), registration order tracking. 12 new tests. No forced interfaces. 7923 tests pass, PHPStan 0 errors, event owner gate 7/7 PASS.
+- `acceptance`: ListenerRegistration and CompiledListener hold all fields. ListenerRegistry returns sorted listeners by priority descending with deterministic tie-breaking. ListenerProvider delegates to registry. User events are plain objects, user listeners are plain callables. Sync is the only execution mode. Evidence: EVIDENCE/v5.7/20-21.
+- `links`: `EVIDENCE/v5.7/20-event-contracts-foundation-implementation.md`, `EVIDENCE/v5.7/21-event-foundation-test-proof.md`
+
 - `id`: V5.7-01
 - `created_at`: 2026-05-12
 - `updated_at`: 2026-05-12

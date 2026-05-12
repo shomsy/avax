@@ -833,8 +833,8 @@ Overall: GREEN. 7899 tests, 22821 assertions, PHPStan 0 errors.
 
 Date: 2026-05-12
 
-**Status:** V5.7-00 Design Lock GREEN, V5.7-01 Owner Convergence GREEN
-**Implementation:** IN_PROGRESS (2/13 stages complete)
+**Status:** V5.7-00 Design Lock GREEN, V5.7-01 Owner Convergence GREEN, V5.7-02 Contracts and Foundation GREEN
+**Implementation:** IN_PROGRESS (3/13 stages complete)
 
 **V5.7-01 Owner Convergence completed:**
 - Duplicate `ListenerRegistry/ListenerRegistry.php` removed (incomplete, unused)
@@ -842,6 +842,14 @@ Date: 2026-05-12
 - Gate created: `tooling/events/check-canonical-event-owner.php` (7/7 PASS)
 - 4 event systems classified (CANONICAL_OWNER, MESSAGEBUS_SPECIFIC_ADAPTER, DATABASE_TELEMETRY_SOURCE, SESSION_LIFECYCLE_SOURCE)
 - No breaking changes — only dead code removed
+
+**V5.7-02 Contracts and Foundation completed:**
+- Foundation types: ListenerSource, ListenerExecutionMode, ListenerRegistration, CompiledListener
+- ListenerProvider capability wrapping ListenerRegistry
+- ListenerRegistry enhanced with register(ListenerRegistration), listenersFor(string), registration order tracking
+- 12 new tests in EventFoundationTest.php — all pass
+- No forced interfaces: user events are plain objects, user listeners are plain callables
+- Validation: 7923 tests GREEN, PHPStan 0 errors, event owner gate 7/7 PASS
 
 **Key decisions:**
 - Canonical owner: `components/Operations/Events/`
@@ -861,8 +869,9 @@ Date: 2026-05-12
 
 **V5.7 Design Lock: GREEN.**
 **V5.7-01 Owner Convergence: GREEN.**
-**V5.7-02 Contracts and Foundation: READY_NEXT.**
-**V5.7 Implementation: IN_PROGRESS (2/13 stages).**
+**V5.7-02 Contracts and Foundation: GREEN.**
+**V5.7-03 Fluent Event DSL: READY_NEXT.**
+**V5.7 Implementation: IN_PROGRESS (3/13 stages).**
 
 ### V5.6 Completed Work Log
 

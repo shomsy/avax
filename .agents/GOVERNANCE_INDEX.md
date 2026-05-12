@@ -41,6 +41,7 @@ The `.agents/` folder is the project-local agent workspace.
 | Task Type                  | Must Read                                                                       |
 |----------------------------|---------------------------------------------------------------------------------|
 | Architecture/refactor      | how-to-architecture, how-to-design-components, DDD extension, advanced patterns |
+| Events, listeners, CQRS, event sourcing | how-to-events-listeners-event-sourcing-cqrs-realtime, advanced patterns |
 | Component design           | how-to-design-components, security, performance, production readiness           |
 | PHP code                   | coding standards, code style, clean code                                        |
 | Modern PHP / attributes / DI | how-to-modern-php-attributes-di                                               |
@@ -123,6 +124,7 @@ If a claim is important, it must point to:
 | how-to-production-readiness.md               | Production gates                         |
 | how-to-code-review.md                        | Review process                           |
 | how-to-modern-php-attributes-di.md           | Modern PHP 8.x, attributes, DI, compiled metadata |
+| how-to-events-listeners-event-sourcing-cqrs-realtime.md | Events DSL, listeners, event sourcing, CQRS, realtime, governance event sourcing |
 
 ## Conflict Resolution
 

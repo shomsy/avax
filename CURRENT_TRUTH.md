@@ -833,8 +833,8 @@ Overall: GREEN. 7899 tests, 22821 assertions, PHPStan 0 errors.
 
 Date: 2026-05-12
 
-**Status:** V5.7-00 Design Lock GREEN, V5.7-01 Owner Convergence GREEN, V5.7-02 Contracts and Foundation GREEN
-**Implementation:** IN_PROGRESS (3/13 stages complete)
+**Status:** V5.7-00 Design Lock GREEN, V5.7-01 Owner Convergence GREEN, V5.7-02 Contracts and Foundation GREEN, V5.7-03 Fluent DSL GREEN
+**Implementation:** IN_PROGRESS (4/13 stages complete)
 
 **V5.7-01 Owner Convergence completed:**
 - Duplicate `ListenerRegistry/ListenerRegistry.php` removed (incomplete, unused)
@@ -850,6 +850,14 @@ Date: 2026-05-12
 - 12 new tests in EventFoundationTest.php — all pass
 - No forced interfaces: user events are plain objects, user listeners are plain callables
 - Validation: 7923 tests GREEN, PHPStan 0 errors, event owner gate 7/7 PASS
+
+**V5.7-03 Fluent DSL completed:**
+- EventListenerDsl with chainable `do(string|callable, int $priority)` method
+- Global functions: `onEvent()`, `onEventSetRegistry()`
+- GlobalEventListenerState boot-time singleton for shared registry
+- Class-string resolution: DSL instantiates invokable classes
+- 12 new tests in EventDslTest.php — all pass
+- Validation: 7947 tests GREEN, PHPStan 0 errors, event owner gate 7/7 PASS
 
 **Key decisions:**
 - Canonical owner: `components/Operations/Events/`
@@ -870,8 +878,9 @@ Date: 2026-05-12
 **V5.7 Design Lock: GREEN.**
 **V5.7-01 Owner Convergence: GREEN.**
 **V5.7-02 Contracts and Foundation: GREEN.**
-**V5.7-03 Fluent Event DSL: READY_NEXT.**
-**V5.7 Implementation: IN_PROGRESS (3/13 stages).**
+**V5.7-03 Fluent Event DSL: GREEN.**
+**V5.7-04 emit() Surface: READY_NEXT.**
+**V5.7 Implementation: IN_PROGRESS (4/13 stages).**
 
 ### V5.6 Completed Work Log
 

@@ -43,7 +43,8 @@
       },
       "files": [
         "components/Application/Container/System/PublicSurface/shortcuts.php",
-        "components/Operations/Concurrency/System/PublicSurface/shortcuts.php"
+        "components/Operations/Concurrency/System/PublicSurface/shortcuts.php",
+        "components/Operations/Events/System/PublicSurface/functions.php"
       ],
       "exclude-from-classmap": [
         "components/compat.php",

@@ -25,6 +25,15 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: V5.7-03
+- `created_at`: 2026-05-12
+- `updated_at`: 2026-05-12
+- `status`: done
+- `estimate`: small
+- `outcome`: V5.7-03 Fluent Event DSL — GREEN. EventListenerDsl with chainable do() method. Global onEvent() and onEventSetRegistry() functions. GlobalEventListenerState boot-time singleton. Class-string resolution for invokable listeners. 12 new tests. 7947 tests pass, PHPStan 0 errors, event owner gate 7/7 PASS.
+- `acceptance`: onEvent(Event::class)->do(Listener::class) registers listener. Priority works (higher = earlier). Multiple do() calls chain correctly. Shared registry used across calls. Evidence: EVIDENCE/v5.7/22.
+- `links`: `EVIDENCE/v5.7/22-fluent-dsl-implementation.md`
+
 - `id`: V5.7-02
 - `created_at`: 2026-05-12
 - `updated_at`: 2026-05-12

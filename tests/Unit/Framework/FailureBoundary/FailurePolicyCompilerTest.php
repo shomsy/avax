@@ -198,6 +198,10 @@ final class FailurePolicyCompilerTest extends TestCase
 
 final class CompilerTestController
 {
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     #[\Avax\Framework\System\Capabilities\FailureBoundary\Foundation\Attributes\OnFailure(\InvalidArgumentException::class, respondWith: 422)]
     #[\Avax\Framework\System\Capabilities\FailureBoundary\Foundation\Attributes\OnFailure(\UnexpectedValueException::class, respondWith: 401)]
     #[\Avax\Framework\System\Capabilities\FailureBoundary\Foundation\Attributes\ReportFailure(channel: 'http')]

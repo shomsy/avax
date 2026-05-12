@@ -8,7 +8,6 @@ use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Framework\System\Capabilities\FailureBoundary\Integration\HttpFailureBoundaryMiddleware;
 use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -16,7 +15,7 @@ use Psr\Http\Message\UriInterface;
  */
 final class HttpFailureBoundaryTest extends TestCase
 {
-    private function createMockRequest(string $method = 'GET', string $uri = 'http://localhost/'): RequestInterface
+    private function createMockRequest(string $method = 'GET', string $uri = 'http://localhost/'): MockAvaXRequest
     {
         return new MockAvaXRequest($method, $uri);
     }
@@ -33,8 +32,8 @@ final class HttpFailureBoundaryTest extends TestCase
             Response::json(['ok' => true])
         );
 
-        self::assertInstanceOf(ResponseInterface::class, $response);
         self::assertSame(200, $response->getStatusCode());
+        self::assertStringContainsString('ok', (string) $response->getBody());
     }
 
     public function testUnhandledExceptionRethrows(): void
@@ -80,6 +79,7 @@ final class MockAvaXRequest implements RequestInterface
     }
 
     public function input(string $key, mixed $default = null): mixed { return $default; }
+    /** @return array<string, mixed> */
     public function all(): array { return []; }
     public function getMethod(): string { return $this->method; }
     public function getUri(): UriInterface { return new \GuzzleHttp\Psr7\Uri($this->uri); }

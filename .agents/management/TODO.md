@@ -37,11 +37,11 @@ Canonical active implementation queue.
 - `id`: V5.6-Y7
 - `created_at`: 2026-05-12
 - `updated_at`: 2026-05-12
-- `status`: todo
+- `status`: done
 - `estimate`: small
-- `outcome`: Fix 5 pre-existing PHPStan test warnings (cosmetic type hints)
-- `acceptance`: PHPStan 0 issues for full scope. See `EVIDENCE/failure-boundary/deferred/V5.6-Y7-phpstan-warnings.md`
-- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`, `EVIDENCE/failure-boundary/deferred/V5.6-Y7-phpstan-warnings.md`
+- `outcome`: Fixed 5 pre-existing PHPStan test warnings — PHPStan 0 errors full scope
+- `acceptance`: PHPStan 0 issues for full scope. `EVIDENCE/failure-boundary/deferred/V5.6-Y7-phpstan-warnings-resolution.md`
+- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`, `EVIDENCE/failure-boundary/deferred/V5.6-Y7-phpstan-warnings-resolution.md`
 
 - `id`: V5.6-Y6
 - `created_at`: 2026-05-12

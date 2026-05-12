@@ -786,7 +786,7 @@ Date: 2026-05-12
 
 **Tests:** 65 tests / 129 assertions, all pass
 
-**PHPStan:** Clean on FailureBoundary scope; 5 pre-existing warnings in test files (unrelated)
+**PHPStan:** 0 errors full scope (framework, components, tests, labs/SystemDesignKit); 5 pre-existing test warnings fixed in V5.6-Y7
 
 **Gates:** 4/4 GREEN (check-attributes-compiled, check-local-try-catch, check-dogfooding, check-failure-boundary-adoption)
 
@@ -840,6 +840,6 @@ Extended policies tracked in executable backlog: `EVIDENCE/failure-boundary/v5.6
 | V5.6-Y4 Timeout | DEFERRED | No runtime enforcement available |
 | V5.6-Y5 RecoverWith | DEFERRED | No recovery strategy contract exists |
 | V5.6-Y6 Real Adoption | READY | Adopt beyond demo controller |
-| V5.6-Y7 PHPStan Warnings | READY | Fix 5 cosmetic test warnings |
+| V5.6-Y7 PHPStan Warnings | DONE | 5 cosmetic test warnings fixed, PHPStan 0 errors |
 
-Next recommended: V5.6-Y7 (PHPStan) or V5.6-Y6 (Real Adoption) — both READY, both independent, both low risk.
+Next recommended: V5.6-Y6 (Real Adoption) — READY, independent, low risk.

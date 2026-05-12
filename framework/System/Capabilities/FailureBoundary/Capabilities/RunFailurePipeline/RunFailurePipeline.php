@@ -10,9 +10,11 @@ use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\ReportFailur
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\ResolveFailurePolicy\ResolveFailurePolicy;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RetryFailedAction\RetryFailedAction;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RunFallbackAction\RunFallbackAction;
+use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RunRecoveryAction\RunRecoveryAction;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\SendFailureToDeadLetter\SendFailureToDeadLetter;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureContext;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureDecision;
+use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailurePolicy;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\UnhandledFailure;
 use Closure;
 use Throwable;
@@ -28,6 +30,7 @@ final readonly class RunFailurePipeline
         private ReportFailure $report,
         private RetryFailedAction $retry,
         private RunFallbackAction $fallback,
+        private RunRecoveryAction $recovery,
         private MapFailureToResult $mapToResult,
         private SendFailureToDeadLetter $deadLetter,
     ) {
@@ -47,11 +50,17 @@ final readonly class RunFailurePipeline
                 policy: $policy,
                 originalAction: $originalAction,
             ),
+            FailureDecision::Recover => $this->recovery->execute($failure, $context, $policy),
             FailureDecision::Fallback => $this->fallback->execute($failure, $context, $policy),
             FailureDecision::MapToResult => $this->mapToResult->execute($failure, $context, $policy),
             FailureDecision::DeadLetter => $this->deadLetter->send($failure, $context, $policy),
             FailureDecision::Rethrow => throw $failure,
             FailureDecision::ReportOnly => throw new UnhandledFailure($failure, $context),
         };
+    }
+
+    public function getPolicy(FailureContext $context) : FailurePolicy
+    {
+        return $this->resolvePolicy->for($context);
     }
 }

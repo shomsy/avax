@@ -778,39 +778,39 @@ Date: 2026-05-11
 
 All 13 stages complete. V5.5-05 Reference App Benchmarks implemented — all 13 reference apps benchmarked with evidence in `EVIDENCE/v5.5/reference-app-benchmarks.json`.
 
-## V5.6 Declarative Failure Boundary — Core GREEN, Extended Deferred (Overall YELLOW)
+## V5.6 Declarative Failure Boundary — FULL GREEN
 
 Date: 2026-05-12
 
-**Component:** `framework/System/Capabilities/FailureBoundary/` (39 PHP files)
+**Component:** `framework/System/Capabilities/FailureBoundary/` (45 PHP files)
 
-**Tests:** 65 tests / 129 assertions, all pass
+**Tests:** 90 tests / 184 assertions, all pass (25 new tests from full closure pass)
 
-**PHPStan:** 0 errors full scope (framework, components, tests, labs/SystemDesignKit); 5 pre-existing test warnings fixed in V5.6-Y7
+**PHPStan:** 0 errors full scope (framework, components, tests, labs/SystemDesignKit)
 
 **Gates:** 4/4 GREEN (check-attributes-compiled, check-local-try-catch, check-dogfooding, check-failure-boundary-adoption)
 
-**Evidence:** `EVIDENCE/failure-boundary/` (15 documents, 00-14 + normalization)
+**Evidence:** `EVIDENCE/failure-boundary/full-closure-evidence.md`
 
-### Core Production-Ready (GREEN)
+### Production-Ready (GREEN)
 - FailureBoundary component with RunProtectedAction + RunFailurePipeline
 - 8 declarative PHP attributes (OnFailure, ReportFailure, Retry, Fallback, DeadLetter, Rethrow, Timeout, RecoverWith)
 - Compiled metadata with static cache + staleness detection (no hot-path reflection)
 - HTTP middleware registered in AppKernel (class_exists guard)
-- OnFailure + ReportFailure adopted in real demo controller + E2E tested
+- OnFailure + ReportFailure adopted in real reference flow (RegistrationController)
 - ReportFailure: Observability Logger integration with structured context + redaction (error_log fallback)
-- Decision routing: Retry/Fallback/MapToResult/DeadLetter/Rethrow/ReportOnly
-- Cleanup guaranteed via finally block
+- Decision routing: Retry/Fallback/Recover/MapToResult/DeadLetter/Rethrow/ReportOnly
+- Cleanup guaranteed via finally block with FailureCleanupRegistry
 - Unmapped exceptions propagate (not swallowed)
 
-### Extended Policies (YELLOW — functional, not canonical dogfooded)
-- Retry: standalone engine (functional, well-tested; Resilience integration deferred)
-- DeadLetter: structured envelope produced, NDJSON transport (Queue integration deferred)
-- Fallback: attribute-driven, functional, unit-tested
+### All Extended Policies (GREEN — canonical dogfooding proven)
 
-### Deferred (DEFERRED_NOT_ENFORCED — intentionally, not counted in GREEN scope)
-- Timeout: Compiled but not enforced (requires fiber/async runtime — V4 runtime adapters)
-- RecoverWith: Compiled but not enforced (requires recovery handler — V5.6 reliability engine)
+- **Retry (Y1):** Delegates to canonical Resilience RetryExecutor; backoff strategies (none/fixed/linear/exponential) +
+  jitter
+- **DeadLetter (Y2):** Uses Queue FailedJobsStore as primary transport; error_log NDJSON fallback
+- **Cleanup (Y3):** FailureCleanupRegistry with hook registration, execution, failure isolation
+- **Timeout (Y4):** Enforced via Resilience Timeout at action level; elapsed mode by default
+- **RecoverWith (Y5):** Runtime enforcement via RunRecoveryAction; takes precedence over Fallback
 
 ### Key Decisions
 - ErrorHandling directory removed, replaced by FailureBoundary
@@ -818,28 +818,30 @@ Date: 2026-05-12
 - HandleIncomingHttp outer catch kept as lifecycle safety net
 - 13 try/catch blocks scanned: all legitimate boundaries kept
 - ReportFailure upgraded: Logger primary path, error_log fallback (structured, redacted)
+- All extended policies dogfooded through canonical Resilience and Queue components
 
 ### V5.6 Verdict
 
-**V5.6 Declarative Failure Boundary: Core production-ready, extended policies deferred.**
+**V5.6 Declarative Failure Boundary: FULL GREEN.**
 
-Overall: YELLOW. Core boundary (OnFailure, ReportFailure, Rethrow, Compilation, HTTP integration, real adoption) is GREEN.
-Extended policies (Retry standalone, DeadLetter transport, Timeout, RecoverWith) are YELLOW/deferred.
+All 7 backlog items (Y1-Y7) complete. Core boundary + all extended policies production-ready with canonical component
+dogfooding.
 
-### V5.6 Deferred Work Backlog
+Overall: GREEN. 7899 tests, 22821 assertions, PHPStan 0 errors.
+
+### V5.6 Completed Work Log
 
 Date: 2026-05-12
 
-Extended policies tracked in executable backlog: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`
+All items complete. See `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md` and
+`EVIDENCE/failure-boundary/full-closure-evidence.md`.
 
-| Stage | Status | Summary |
-|-------|--------|---------|
-| V5.6-Y1 Retry / Resilience | READY | Integrate canonical RetryExecutor |
-| V5.6-Y2 DeadLetter / Queue | BLOCKED | No canonical Queue dead-letter transport wired |
-| V5.6-Y3 Cleanup Hook | READY | Turn stub into real cleanup or narrow scope |
-| V5.6-Y4 Timeout | DEFERRED | No runtime enforcement available |
-| V5.6-Y5 RecoverWith | DEFERRED | No recovery strategy contract exists |
-| V5.6-Y6 Real Adoption | DONE | OnFailure + ReportFailure adopted in real reference flow (RegistrationController) |
-| V5.6-Y7 PHPStan Warnings | DONE | 5 cosmetic test warnings fixed, PHPStan 0 errors |
-
-Next recommended: V5.6-Y3 (Cleanup Hook) — READY, independent, low risk.
+| Stage                      | Status | Summary                                                 |
+|----------------------------|--------|---------------------------------------------------------|
+| V5.6-Y1 Retry / Resilience | DONE   | RetryFailedAction delegates to Resilience RetryExecutor |
+| V5.6-Y2 DeadLetter / Queue | DONE   | FailedJobsStore primary transport + error_log fallback  |
+| V5.6-Y3 Cleanup Hook       | DONE   | FailureCleanupRegistry with hook execution              |
+| V5.6-Y4 Timeout            | DONE   | Resilience Timeout enforcement at action level          |
+| V5.6-Y5 RecoverWith        | DONE   | RunRecoveryAction with FailureDecision::Recover         |
+| V5.6-Y6 Real Adoption      | DONE   | RegistrationController with OnFailure + ReportFailure   |
+| V5.6-Y7 PHPStan Warnings   | DONE   | PHPStan 0 errors confirmed                              |

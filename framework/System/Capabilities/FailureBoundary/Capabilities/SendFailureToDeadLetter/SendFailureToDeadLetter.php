@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\SendFailureToDeadLetter;
 
+use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsStore;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureContext;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailurePipelineResult;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailurePolicy;
@@ -13,9 +14,8 @@ use Throwable;
  * SendFailureToDeadLetter — Sends a failure to a dead letter queue.
  *
  * Produces a structured dead-letter envelope.
- * Current transport: error_log as NDJSON (testable, observable).
- * When a real Queue/Messaging component is available, this class
- * should accept it via constructor and enqueue the envelope.
+ * Primary transport: Queue FailedJobsStore (canonical owner).
+ * Fallback transport: error_log as NDJSON when no store is configured.
  *
  * Envelope shape:
  * {
@@ -29,6 +29,10 @@ use Throwable;
  */
 final readonly class SendFailureToDeadLetter
 {
+    public function __construct(
+        private ?FailedJobsStore $failedJobsStore = null,
+    ) {}
+
     public function send(
         Throwable $failure,
         FailureContext $context,
@@ -54,9 +58,17 @@ final readonly class SendFailureToDeadLetter
             'timestamp' => date('c'),
         ];
 
-        // Transport: error_log as NDJSON.
-        // When Messaging/Queue component is available, enqueue the envelope instead.
-        error_log(json_encode($envelope, JSON_THROW_ON_ERROR));
+        if ($this->failedJobsStore !== null) {
+            $this->failedJobsStore->record(
+                queue   : $queue,
+                payload : $envelope,
+                reason  : $failure::class . ': ' . $failure->getMessage(),
+                failedAt: $envelope['timestamp'],
+            );
+        } else {
+            // Fallback transport: error_log as NDJSON.
+            error_log(json_encode($envelope, JSON_THROW_ON_ERROR));
+        }
 
         return FailurePipelineResult::deadLettered();
     }

@@ -7,13 +7,33 @@ namespace Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\Cleanu
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureContext;
 
 /**
- * CleanupAfterFailure — Always runs cleanup after a failure boundary execution.
+ * CleanupAfterFailure — Executes registered cleanup hooks after a failure boundary execution.
+ *
+ * This capability guarantees cleanup runs on every execution path:
+ * - success
+ * - mapped failure
+ * - unmapped failure (rethrown)
+ * - reporter failure
+ * - fallback failure
+ *
+ * The finally block in RunProtectedAction ensures this capability always executes.
  */
 final readonly class CleanupAfterFailure
 {
+    public function __construct(
+        private FailureCleanupRegistry $registry = new FailureCleanupRegistry(),
+    ) {}
+
     public function for(FailureContext $context): void
     {
-        // Cleanup hooks can be registered here in future versions.
-        // For now, this ensures the finally block always executes.
+        $this->registry->cleanup($context);
+    }
+
+    /**
+     * Access the underlying cleanup registry for hook registration.
+     */
+    public function registry() : FailureCleanupRegistry
+    {
+        return $this->registry;
     }
 }

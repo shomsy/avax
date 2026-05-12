@@ -34,6 +34,11 @@ final readonly class ClassifyFailure
             return FailureDecision::Retry;
         }
 
+        // Check for recovery (RecoverWith)
+        if ($policy->hasRecovery()) {
+            return FailureDecision::Recover;
+        }
+
         // Check for fallback
         if ($policy->hasFallback()) {
             return FailureDecision::Fallback;

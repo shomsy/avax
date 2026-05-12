@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\FailureBoundary\Foundation;
 
+use Throwable;
+
 /**
  * FailurePolicy — Compiled failure policy for a target method.
  */
@@ -23,7 +25,7 @@ final readonly class FailurePolicy
         public string|null $deadLetterQueue = null,
         public int|null $timeoutMs = null,
         public string|null $recoverWithClass = null,
-        /** @var class-string<\Throwable>[] */
+        /** @var class-string<Throwable>[] */
         public array $rethrowExcept = [],
     ) {
     }
@@ -43,8 +45,13 @@ final readonly class FailurePolicy
         return $this->deadLetterQueue !== null;
     }
 
+    public function hasRecovery() : bool
+    {
+        return $this->recoverWithClass !== null;
+    }
+
     /**
-     * @param class-string<\Throwable> $exceptionClass
+     * @param class-string<Throwable> $exceptionClass
      */
     public function findAction(string $exceptionClass): ?FailureAction
     {

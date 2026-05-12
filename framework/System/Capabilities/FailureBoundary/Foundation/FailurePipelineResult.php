@@ -32,6 +32,11 @@ final readonly class FailurePipelineResult
         return new self(decision: FailureDecision::Fallback, value: $value);
     }
 
+    public static function recovered(mixed $value) : self
+    {
+        return new self(decision: FailureDecision::Recover, value: $value);
+    }
+
     public static function mapped(mixed $value): self
     {
         return new self(decision: FailureDecision::MapToResult, value: $value);

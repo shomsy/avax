@@ -36,7 +36,7 @@ final readonly class RetryExecutor
                 $lastException = $e;
 
                 if ($attemptNumber < $this->retryOptions->attempts) {
-                    $this->sleep();
+                    $this->sleep($attemptNumber);
                 }
             }
         }
@@ -49,9 +49,25 @@ final readonly class RetryExecutor
         );
     }
 
-    private function sleep(): void
+    private function sleep(int $attempt) : void
     {
-        $delay = (int) ($this->retryOptions->backoffMs * (1 + random_int(0, 100) / 100));
+        $delay = $this->calculateDelay($attempt);
         usleep($delay * 1000);
+    }
+
+    private function calculateDelay(int $attempt) : int
+    {
+        $delayMs = match ($this->retryOptions->backoffStrategy) {
+            'exponential' => $this->retryOptions->backoffMs * (2 ** ($attempt - 1)),
+            'linear'      => $this->retryOptions->backoffMs * $attempt,
+            'none'        => 0,
+            default       => $this->retryOptions->backoffMs,
+        };
+
+        if ($this->retryOptions->jitter && $delayMs > 0) {
+            $delayMs = (int) ($delayMs * (0.5 + (mt_rand() / mt_getrandmax()) * 0.5));
+        }
+
+        return $delayMs;
     }
 }

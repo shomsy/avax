@@ -6,14 +6,16 @@ namespace Avax\Framework\System\Capabilities\FailureBoundary\Configuration;
 
 use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Components\Operations\Observability\System\Capabilities\Logging\Logger;
-use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\CleanupAfterFailure\CleanupAfterFailure;
+use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsStore;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\ClassifyFailure\ClassifyFailure;
+use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\CleanupAfterFailure\CleanupAfterFailure;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\MapFailureToResult\MapFailureToResult;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\ReportFailure\ReportFailure;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\ResolveFailurePolicy\ResolveFailurePolicy;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RetryFailedAction\RetryFailedAction;
-use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RunFallbackAction\RunFallbackAction;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RunFailurePipeline\RunFailurePipeline;
+use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RunFallbackAction\RunFallbackAction;
+use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RunRecoveryAction\RunRecoveryAction;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\SendFailureToDeadLetter\SendFailureToDeadLetter;
 use Avax\Framework\System\Capabilities\FailureBoundary\Flows\RunProtectedAction\RunProtectedAction;
 
@@ -25,7 +27,7 @@ final readonly class BuildFailureBoundary
     /**
      * @param array<string, mixed> $config
      */
-    public function build(array $config = [], ?Logger $logger = null): RunProtectedAction
+    public function build(array $config = [], ?Logger $logger = null, ?FailedJobsStore $failedJobsStore = null) : RunProtectedAction
     {
         $config = FailureBoundaryConfiguration::fromArray($config);
 
@@ -34,7 +36,8 @@ final readonly class BuildFailureBoundary
         $report = new ReportFailure($logger);
         $retry = new RetryFailedAction();
         $fallback = new RunFallbackAction();
-        $deadLetter = new SendFailureToDeadLetter();
+        $recovery = new RunRecoveryAction();
+        $deadLetter = new SendFailureToDeadLetter($failedJobsStore);
         $mapToResult = new MapFailureToResult(new ResponseFactory());
         $resolvePolicy = new ResolveFailurePolicy();
 
@@ -44,6 +47,7 @@ final readonly class BuildFailureBoundary
             report: $report,
             retry: $retry,
             fallback: $fallback,
+            recovery     : $recovery,
             mapToResult: $mapToResult,
             deadLetter: $deadLetter,
         );

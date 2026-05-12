@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RetryFailedAction;
 
+use Avax\Components\Operations\Resilience\System\Capabilities\Retry\RetryExecutor;
+use Avax\Components\Operations\Resilience\System\Capabilities\Retry\RetryOptions;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureContext;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailurePipelineResult;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailurePolicy;
@@ -11,7 +13,10 @@ use Closure;
 use Throwable;
 
 /**
- * RetryFailedAction — Executes a retry loop with configurable backoff.
+ * RetryFailedAction — Delegates retry execution to the canonical Resilience RetryExecutor.
+ *
+ * FailureBoundary owns the policy-to-options mapping.
+ * Resilience owns the retry loop, backoff calculation, and result tracking.
  */
 final readonly class RetryFailedAction
 {
@@ -22,45 +27,34 @@ final readonly class RetryFailedAction
         Closure $originalAction,
     ): mixed {
         $maxAttempts = $policy->retryMaxAttempts ?? 3;
-        $backoff = $policy->retryBackoff;
         $delayMs = $policy->retryDelayMs;
+        $backoff = $policy->retryBackoff;
         $jitter = $policy->retryJitter;
 
-        $lastException = $failure;
+        // retryMaxAttempts = total attempts including the original (already failed).
+        // RetryExecutor handles only the remaining retry attempts.
+        $remainingAttempts = max(1, $maxAttempts - 1);
 
-        for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
-            try {
-                $result = $originalAction();
-                return FailurePipelineResult::retried($result, $attempt);
-            } catch (Throwable $e) {
-                $lastException = $e;
+        $options = new RetryOptions(
+            attempts       : $remainingAttempts,
+            backoffMs      : $delayMs,
+            backoffStrategy: $backoff,
+            jitter         : $jitter,
+        );
 
-                if ($attempt < $maxAttempts) {
-                    $waitMs = $this->calculateDelay($backoff, $delayMs, $attempt, $jitter);
-                    if ($waitMs > 0) {
-                        usleep($waitMs * 1000);
-                    }
-                }
-            }
+        $executor = new RetryExecutor(
+            operation   : $originalAction,
+            retryOptions: $options,
+        );
+
+        $result = $executor->execute();
+
+        if ($result->success) {
+            // +1 for the original attempt that triggered the retry
+            return FailurePipelineResult::retried($result->result, $result->attempts + 1);
         }
 
-        // Retry exhausted — if dead letter is configured, send there
-        // Otherwise, the caller will handle via the pipeline decision
-        throw $lastException;
-    }
-
-    private function calculateDelay(string $backoff, int $baseDelayMs, int $attempt, bool $jitter): int
-    {
-        $delayMs = match ($backoff) {
-            'exponential' => $baseDelayMs * (2 ** ($attempt - 1)),
-            'linear' => $baseDelayMs * $attempt,
-            default => $baseDelayMs,
-        };
-
-        if ($jitter && $delayMs > 0) {
-            $delayMs = (int) ($delayMs * (0.5 + (mt_rand() / mt_getrandmax()) * 0.5));
-        }
-
-        return $delayMs;
+        // Retry exhausted — rethrow the last failure
+        throw $result->lastException ?? $failure;
     }
 }

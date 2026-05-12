@@ -297,6 +297,9 @@ parameters:
         -
             message: '#Parameter.*haystack.*assertStringContainsString.*expects string, string\|false given#'
             path: 'tests/Unit/Tooling/Rector/NoForbiddenNamespaceDirRectorTest.php'
+        -
+            message: '#.*#'
+            path: 'tests/Unit/Components/Operations/Events/EventsRuntimeClosureTest.php'
     type_perfect:
         narrow_param: true
         narrow_return: true

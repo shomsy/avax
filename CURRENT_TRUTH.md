@@ -833,45 +833,55 @@ Overall: GREEN. 7899 tests, 22821 assertions, PHPStan 0 errors.
 
 Date: 2026-05-12
 
-**Status:** V5.7-00 Design Lock GREEN, V5.7-01 Owner Convergence GREEN, V5.7-02 Contracts and Foundation GREEN, V5.7-03 Fluent DSL GREEN
-**Implementation:** IN_PROGRESS (4/13 stages complete)
+**Status:** V5.7-00 Design Lock GREEN, V5.7-01 Owner Convergence GREEN, V5.7-02 Contracts and Foundation GREEN, V5.7-03 Fluent DSL GREEN, V5.7-04 emit() Surface GREEN, V5.7-05 ListensTo Attribute GREEN, V5.7-06 Compiled Registry GREEN, V5.7-07 Dispatch Runtime GREEN, V5.7-08 PSR-14 Adapter GREEN
+**Implementation:** IN_PROGRESS (9/13 stages complete)
 
-**V5.7-01 Owner Convergence completed:**
-- Duplicate `ListenerRegistry/ListenerRegistry.php` removed (incomplete, unused)
-- Canonical owner confirmed: `components/Operations/Events/`
-- Gate created: `tooling/events/check-canonical-event-owner.php` (7/7 PASS)
-- 4 event systems classified (CANONICAL_OWNER, MESSAGEBUS_SPECIFIC_ADAPTER, DATABASE_TELEMETRY_SOURCE, SESSION_LIFECYCLE_SOURCE)
-- No breaking changes — only dead code removed
+**V5.7-04 emit() Surface completed:**
+- `emit(object $event): object` global function — object-only public API
+- EmitEvent flow created
+- GlobalEventListenerState enhanced with emitter support
+- No class-string emission, no listener registration via emit()
+- Returns same event object, no-listener behavior works
 
-**V5.7-02 Contracts and Foundation completed:**
-- Foundation types: ListenerSource, ListenerExecutionMode, ListenerRegistration, CompiledListener
-- ListenerProvider capability wrapping ListenerRegistry
-- ListenerRegistry enhanced with register(ListenerRegistration), listenersFor(string), registration order tracking
-- 12 new tests in EventFoundationTest.php — all pass
-- No forced interfaces: user events are plain objects, user listeners are plain callables
-- Validation: 7923 tests GREEN, PHPStan 0 errors, event owner gate 7/7 PASS
+**V5.7-05 ListensTo Attribute completed:**
+- `#[ListensTo(EventClass::class, priority: N)]` attribute created
+- Declaration-only — runtime dispatch does not scan attributes
+- Attribute reflection happens only at compile-time
 
-**V5.7-03 Fluent DSL completed:**
-- EventListenerDsl with chainable `do(string|callable, int $priority)` method
-- Global functions: `onEvent()`, `onEventSetRegistry()`
-- GlobalEventListenerState boot-time singleton for shared registry
-- Class-string resolution: DSL instantiates invokable classes
-- 12 new tests in EventDslTest.php — all pass
-- Validation: 7947 tests GREEN, PHPStan 0 errors, event owner gate 7/7 PASS
+**V5.7-06 Compiled Listener Registry completed:**
+- CompiledListenerRegistry created — single canonical registry
+- CompileEventListeners flow merges DSL + attribute declarations
+- Deterministic ordering: priority descending, registration order tie-break
+- Source tracking (DSL / Attribute / Configuration)
+- Registry freezes after compilation
+- ListenerRegistry enhanced with getAllEvents() for compile-time extraction
+
+**V5.7-07 Dispatch Runtime completed:**
+- EventEmitter created — core dispatch engine
+- ResolveEventListeners resolves class-string to callable
+- InvokeEventListener invokes listeners with event objects
+- Runtime flow: emit → EventEmitter → CompiledListenerRegistry → ResolveEventListeners → InvokeEventListener → return event
+- Stoppable events work (duck-typed)
+- Listener exceptions bubble by default
+- RegisterEventDependencies fixed + compileAndWire() created
+
+**V5.7-08 PSR-14 Adapter completed:**
+- psr/event-dispatcher ^1.0 added to composer.json require
+- Psr14EventDispatcherAdapter wraps AvaX EventEmitter
+- Psr14ListenerProviderAdapter wraps AvaX CompiledListenerRegistry
+- PSR StoppableEventInterface respected via duck-typing
+- User API remains AvaX DSL (onEvent/emit), not PSR plumbing
 
 **Key decisions:**
-- Canonical owner: `components/Operations/Events/`
-- Events are plain readonly objects — no EventInterface required
-- Listeners are invokable classes — no ListenerInterface required
-- DSL: `onEvent(Event::class)->do(Listener::class)`
-- Dispatch: `emit(new Event())`
-- Attribute: `#[ListensTo(Event::class)]`
-- PSR-14: optional adapter, not hard require
-- Compiled registry: in-memory for V5.7, disk persistence ROADMAP
-- No reflection in hot path
-- 13 implementation stages defined
+- emit(object): object — no class-string emission in public API
+- In-memory compiled registry only (disk persistence ROADMAP)
+- Simple listener instantiation (container integration ROADMAP)
+- Eager listener instantiation from DSL documented as temporary
 
-**Evidence:** `EVIDENCE/v5.7/`
+**Tests:** 49 new tests in EventsRuntimeClosureTest.php — all pass
+**Validation:** 8045 tests GREEN, PHPStan 0 errors, all gates PASS
+
+**Evidence:** `EVIDENCE/v5.7/34-events-runtime-closure-final-report.md`
 
 ### V5.7 Verdict
 
@@ -879,8 +889,12 @@ Date: 2026-05-12
 **V5.7-01 Owner Convergence: GREEN.**
 **V5.7-02 Contracts and Foundation: GREEN.**
 **V5.7-03 Fluent Event DSL: GREEN.**
-**V5.7-04 emit() Surface: READY_NEXT.**
-**V5.7 Implementation: IN_PROGRESS (4/13 stages).**
+**V5.7-04 emit() Surface: GREEN.**
+**V5.7-05 ListensTo Attribute: GREEN.**
+**V5.7-06 Compiled Listener Registry: GREEN.**
+**V5.7-07 Dispatch Runtime: GREEN.**
+**V5.7-08 PSR-14 Adapter: GREEN.**
+**V5.7 Implementation: IN_PROGRESS (9/13 stages).**
 
 ### V5.6 Completed Work Log
 

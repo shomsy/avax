@@ -1,11 +1,11 @@
-# AvaX Events — Fluent DSL & PSR-14 Interop
+# AvaX Events — Fluent DSL, Compiled Registry, Dispatch Runtime & PSR-14 Interop
 
-**Status:** V5.7 Design Lock — NOT YET IMPLEMENTED
+**Status:** V5.7-04 through V5.7-08 IMPLEMENTED / GREEN
 **Date:** 2026-05-12
 
 ## What Are Events?
 
-Events are **facts** that something already happened. They are plain readonly objects:
+Events are **facts** that something already happened. They are plain objects — no `EventInterface` required:
 
 ```php
 final readonly class UserRegistered
@@ -15,6 +15,18 @@ final readonly class UserRegistered
         public string $email,
         public DateTimeImmutable $registeredAt,
     ) {}
+}
+```
+
+Listeners are invokable classes — no `ListenerInterface` required:
+
+```php
+final readonly class SendWelcomeEmail
+{
+    public function __invoke(UserRegistered $event): void
+    {
+        // Send the welcome email
+    }
 }
 ```
 
@@ -188,6 +200,72 @@ This means:
 - Deterministic listener order
 - Testable compilation
 
+### Boot-Time Compilation
+
+```php
+use Avax\Components\Operations\Events\System\Capabilities\Registry\ListenerRegistry;
+use Avax\Components\Operations\Events\System\Configuration\RegisterEventDependencies;
+
+$registry = new ListenerRegistry();
+
+// DSL registrations
+onEventSetRegistry($registry);
+onEvent(UserRegistered::class)->do(SendWelcomeEmail::class);
+
+// Compile DSL + #[ListensTo] attributes into CompiledListenerRegistry
+RegisterEventDependencies::compileAndWire(
+    $registry,
+    listenerClasses: [SendWelcomeEmail::class, AuditListener::class],
+);
+
+// Now emit() uses the compiled registry
+emit(new UserRegistered($userId, $email, $clock->now()));
+```
+
+### Runtime Dispatch Flow
+
+```
+emit(new Event())
+  → EventEmitter
+  → CompiledListenerRegistry (frozen, no reflection)
+  → ResolveEventListeners (class-string → callable, once per listener)
+  → InvokeEventListener
+  → return event
+```
+
+### Source Tracking
+
+Each compiled listener tracks its source:
+
+- `ListenerSource::Dsl` — registered via `onEvent()->do()`
+- `ListenerSource::Attribute` — declared via `#[ListensTo]`
+- `ListenerSource::Configuration` — registered via configuration (future)
+
+Both sources appear in the same registry. Priority ordering works across sources.
+
+## PSR-14 Interop
+
+When `psr/event-dispatcher` is installed, AvaX provides PSR-14 adapters:
+
+```php
+// AvaX DSL works normally
+onEvent(UserRegistered::class)->do(SendWelcomeEmail::class);
+emit(new UserRegistered($userId));
+
+// PSR-14 adapter wraps AvaX internally
+// Users do not need to interact with PSR-14 directly
+```
+
+PSR-14 is **optional**. AvaX works without it. The adapter activates automatically when the package is available.
+
+### PSR-14 Adapters
+
+- `Psr14EventDispatcherAdapter` — implements `Psr\EventDispatcher\EventDispatcherInterface`, delegates to AvaX `EventEmitter`
+- `Psr14ListenerProviderAdapter` — implements `Psr\EventDispatcher\ListenerProviderInterface`, delegates to AvaX `CompiledListenerRegistry`
+- Stoppable events (`Psr\EventDispatcher\StoppableEventInterface`) are respected via duck-typing
+
+**Important:** AvaX users should use `emit()` and `onEvent()`, not PSR-14 plumbing. PSR-14 adapters exist for ecosystem interop.
+
 ## What Is NOT in V5.7
 
 These are ROADMAP items:
@@ -200,22 +278,23 @@ These are ROADMAP items:
 - **Event wildcards** (`onEvent('user.*')`) — future
 - **Listener groups/channels** — future
 - **Method-level `#[ListensTo]`** — future
+- **Disk-persisted compiled registry** — ROADMAP (in-memory only for V5.7)
+- **Container-based listener resolution** — ROADMAP (simple instantiation for V5.7)
+- **CQRS projection dogfooding** — not yet
+- **Event-history proof** — not yet
+- **SecureRegistrationApi event dogfooding** — not yet
 
-## Design Document
+## Implementation Evidence
 
-Full design: `EVIDENCE/v5.7/`
+V5.7-04 through V5.7-08 are implemented and validated.
 
-| Document                                  | Content                         |
-|-------------------------------------------|---------------------------------|
-| `01-existing-event-system-audit.md`       | Current event systems inventory |
-| `02-events-owner-decision.md`             | Canonical owner decision        |
-| `03-event-model-decision.md`              | Event/listener/command model    |
-| `04-events-fluent-dsl-design.md`          | DSL API design                  |
-| `05-listens-to-attribute-design.md`       | Attribute design                |
-| `06-compiled-listener-registry-design.md` | Compiled registry design        |
-| `07-psr14-interop-design.md`              | PSR-14 adapter design           |
-| `08-event-dispatch-semantics.md`          | Dispatch behavior rules         |
-| `09-future-compatibility-design.md`       | Future phase enablement         |
-| `10-events-tooling-gates-design.md`       | Governance gate design          |
-| `11-proposed-events-architecture-tree.md` | Proposed file tree              |
-| `12-v5.7-implementation-stage-plan.md`    | Implementation stages           |
+| Stage | Status | Evidence |
+|-------|--------|----------|
+| V5.7-04 emit() Surface | GREEN | 49 new tests, emit(object): object |
+| V5.7-05 ListensTo Attribute | GREEN | #[ListensTo] attribute + compile |
+| V5.7-06 Compiled Listener Registry | GREEN | DSL + attribute convergence |
+| V5.7-07 Dispatch Runtime | GREEN | EventEmitter → CompiledListenerRegistry → InvokeEventListener |
+| V5.7-08 PSR-14 Adapter | GREEN | psr/event-dispatcher adapters |
+
+Evidence files: `EVIDENCE/v5.7/34-` through `EVIDENCE/v5.7/42-`
+Tests: `tests/Unit/Components/Operations/Events/EventsRuntimeClosureTest.php` (49 tests)

@@ -32,10 +32,15 @@ flowchart LR
         D9["V5.7-01 Owner Convergence — GREEN"]
         D10["V5.7-02 Contracts & Foundation — GREEN"]
         D11["V5.7-03 Fluent Event DSL — GREEN"]
+        D12["V5.7-04 emit() Surface — GREEN"]
+        D13["V5.7-05 ListensTo Attribute — GREEN"]
+        D14["V5.7-06 Compiled Registry — GREEN"]
+        D15["V5.7-07 Dispatch Runtime — GREEN"]
+        D16["V5.7-08 PSR-14 Adapter — GREEN"]
     end
 
     subgraph Ready["Ready Next"]
-        R0["V5.7-04 emit() Surface — READY_NEXT"]
+        R0["V5.7-09 Stoppable Events — READY_NEXT"]
     end
 
     subgraph InProgress["In Progress"]

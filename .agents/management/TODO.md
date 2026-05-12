@@ -25,6 +25,51 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: V5.7-08
+- `created_at`: 2026-05-12
+- `updated_at`: 2026-05-12
+- `status`: done
+- `estimate`: medium
+- `outcome`: V5.7-08 PSR-14 Adapter — GREEN. Psr14EventDispatcherAdapter + Psr14ListenerProviderAdapter created. psr/event-dispatcher added to composer.json require. PSR dispatch delegates to AvaX. Stoppable events work. User API remains AvaX DSL. 49 new tests pass.
+- `acceptance`: PSR dispatch($event) returns event. PSR listener provider returns AvaX listeners. PSR stoppable stops propagation. AvaX works without PSR-14 (now installed). User DSL does not require PSR types. Evidence: EVIDENCE/v5.7/34.
+- `links`: `EVIDENCE/v5.7/34-events-runtime-closure-final-report.md`
+
+- `id`: V5.7-07
+- `created_at`: 2026-05-12
+- `updated_at`: 2026-05-12
+- `status`: done
+- `estimate`: large
+- `outcome`: V5.7-07 Dispatch Runtime — GREEN. EventEmitter + ResolveEventListeners + InvokeEventListener created. Full dispatch path: emit → EventEmitter → CompiledListenerRegistry → ResolveEventListeners → InvokeEventListener → return event. Stoppable events work. Listener failure bubbles. 49 new tests pass.
+- `acceptance`: emit(new Event()) invokes registered listeners. Priority ordering works. Returns same event. No-listener behavior works. Listener return values ignored. Listener failure bubbles. Stoppable events stop. No EventInterface/ListenerInterface required. No runtime reflection. Evidence: EVIDENCE/v5.7/34.
+- `links`: `EVIDENCE/v5.7/34-events-runtime-closure-final-report.md`
+
+- `id`: V5.7-06
+- `created_at`: 2026-05-12
+- `updated_at`: 2026-05-12
+- `status`: done
+- `estimate`: large
+- `outcome`: V5.7-06 Compiled Listener Registry — GREEN. CompiledListenerRegistry + CompileEventListeners created. DSL and attribute declarations converge into one frozen registry. Priority ordering, source tracking, registration order preserved. 49 new tests pass.
+- `acceptance`: DSL registration compiles into registry. ListensTo attribute compiles into registry. Both share one registry. Unknown event returns empty list. Priority descending sort. Same priority preserves registration order. Source tracking works. No runtime reflection. Registry freezes. Evidence: EVIDENCE/v5.7/34.
+- `links`: `EVIDENCE/v5.7/34-events-runtime-closure-final-report.md`
+
+- `id`: V5.7-05
+- `created_at`: 2026-05-12
+- `updated_at`: 2026-05-12
+- `status`: done
+- `estimate`: small
+- `outcome`: V5.7-05 ListensTo Attribute — GREEN. #[ListensTo(EventClass::class, priority: N)] attribute created. Declaration-only, attribute reflection at compile-time only.
+- `acceptance`: ListensTo attribute stores event class and priority. Default priority is 0. Targets classes only. Compiles into CompiledListenerRegistry. Evidence: EVIDENCE/v5.7/34.
+- `links`: `EVIDENCE/v5.7/34-events-runtime-closure-final-report.md`
+
+- `id`: V5.7-04
+- `created_at`: 2026-05-12
+- `updated_at`: 2026-05-12
+- `status`: done
+- `estimate`: small
+- `outcome`: V5.7-04 emit() Surface — GREEN. emit(object $event): object global function created. Object-only public API. EmitEvent flow created. Returns same event object.
+- `acceptance`: emit(new Event()) dispatches through EventEmitter. Returns the dispatched event. No-listener behavior returns event unchanged. Does not register listeners. Does not mutate GlobalEventListenerState beyond dispatch. Delegates to canonical EventEmitter. Does not require EventInterface/ListenerInterface. Evidence: EVIDENCE/v5.7/34.
+- `links`: `EVIDENCE/v5.7/34-events-runtime-closure-final-report.md`
+
 - `id`: V5.7-03
 - `created_at`: 2026-05-12
 - `updated_at`: 2026-05-12

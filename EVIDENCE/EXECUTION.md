@@ -140,13 +140,13 @@ V5.5 Benchmark Proof: CLOSED / GREEN (V5.5-00 through V5.5-12 complete)
 
 V5.6 Failure Boundary: CLOSED / FULL GREEN (Y1-Y7 complete, 90 tests, 4 gates GREEN)
 
-V5.7 Events DSL: V5.7-00 Design Lock GREEN, V5.7-01 Owner Convergence GREEN, V5.7-02 Contracts and Foundation GREEN, V5.7-03 Fluent DSL GREEN (implementation IN_PROGRESS)
+V5.7 Events DSL: V5.7-00 Design Lock GREEN, V5.7-01 Owner Convergence GREEN, V5.7-02 Contracts and Foundation GREEN, V5.7-03 Fluent DSL GREEN, V5.7-04 emit() Surface GREEN, V5.7-05 ListensTo Attribute GREEN, V5.7-06 Compiled Registry GREEN, V5.7-07 Dispatch Runtime GREEN, V5.7-08 PSR-14 Adapter GREEN (implementation IN_PROGRESS, 9/13 stages)
 
 Current Plan Lock: CLOSED / FULL GREEN
 
-Active stage: V5.7-03 Fluent Event DSL — COMPLETE
+Active stage: V5.7-08 PSR-14 Adapter — COMPLETE
 
-Next allowed stage: V5.7-04 — emit() Public Surface
+Next allowed stage: V5.7-09 — Stoppable Events refinement / Tooling Gates / Dogfooding
 
 This status is derived from CURRENT_TRUTH.md and EVIDENCE/current-plan-lock/final-current-plan-lock-report.md.
 

@@ -86,4 +86,15 @@ final class ListenerRegistry
 
         return array_sum(array_map(count(...), $this->listeners[$event]));
     }
+
+    /**
+     * Return all registered event class names.
+     * Used by CompileEventListeners to iterate over DSL registrations.
+     *
+     * @return list<string>
+     */
+    public function getAllEvents(): array
+    {
+        return array_keys($this->listeners);
+    }
 }

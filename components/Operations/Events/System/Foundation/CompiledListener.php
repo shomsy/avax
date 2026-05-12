@@ -8,11 +8,14 @@ namespace Avax\Components\Operations\Events\System\Foundation;
  * A pre-compiled listener ready for dispatch.
  *
  * Produced by compiling ListenerRegistration objects during boot.
- * Used in the hot path — no reflection, no container resolution needed.
+ * DSL-sourced listeners store the callable directly.
+ * Attribute-sourced listeners store the class-string (resolved at dispatch time).
  */
 final readonly class CompiledListener
 {
-    /** @param callable $listener */
+    /**
+     * @param callable|class-string $listener Callable for DSL sources, class-string for attribute sources.
+     */
     public function __construct(
         public string $eventClass,
         public mixed $listener,

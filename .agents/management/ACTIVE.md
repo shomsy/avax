@@ -28,10 +28,11 @@ flowchart LR
         D5["V5.5 Benchmarks — GREEN"]
         D6["V5.6 FailureBoundary — FULL GREEN"]
         D7["Current Plan Lock — FULL GREEN"]
+        D8["V5.7 Events Design Lock — GREEN"]
     end
 
     subgraph Ready["Ready Next"]
-        R0["V5.7 Events DSL — NOT_STARTED"]
+        R0["V5.7 Implementation — NOT_STARTED"]
     end
 
     subgraph InProgress["In Progress"]
@@ -48,4 +49,4 @@ flowchart LR
 ```
 
 All stages through V5.6 are COMPLETE. Current Plan Lock is FULL GREEN.
-V5.7 is READY_NEXT but NOT_STARTED. V5.8-V6.9 are PLANNED/LOCKED.
+V5.7 Design Lock is GREEN. V5.7 Implementation is READY_NEXT but NOT_STARTED. V5.8-V6.9 are PLANNED/LOCKED.

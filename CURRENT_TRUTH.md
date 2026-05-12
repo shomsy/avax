@@ -829,6 +829,34 @@ dogfooding.
 
 Overall: GREEN. 7899 tests, 22821 assertions, PHPStan 0 errors.
 
+## V5.7 Events Fluent DSL & PSR-14 Interop — Design Lock GREEN
+
+Date: 2026-05-12
+
+**Status:** DESIGN_LOCK_GREEN
+**Implementation:** NOT_STARTED
+
+**Key decisions:**
+
+- Canonical owner: `components/Operations/Events/`
+- 4 existing event systems audited (Operations/Events, MessageBus/EventBus, Database/Telemetry, Session/SessionEventBus)
+- Events are plain readonly objects — no EventInterface required
+- Listeners are invokable classes — no ListenerInterface required
+- DSL: `onEvent(Event::class)->do(Listener::class)`
+- Dispatch: `emit(new Event())`
+- Attribute: `#[ListensTo(Event::class)]`
+- PSR-14: optional adapter, not hard require
+- Compiled registry: in-memory for V5.7, disk persistence ROADMAP
+- No reflection in hot path
+- 13 implementation stages defined
+
+**Evidence:** `EVIDENCE/v5.7/`
+
+### V5.7 Verdict
+
+**V5.7 Design Lock: GREEN.**
+V5.7 Implementation: NOT_STARTED.
+
 ### V5.6 Completed Work Log
 
 Date: 2026-05-12

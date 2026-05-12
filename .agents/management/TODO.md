@@ -25,6 +25,24 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: V5.7-DESIGN
+- `created_at`: 2026-05-12
+- `updated_at`: 2026-05-12
+- `status`: done
+- `estimate`: medium
+- `outcome`: V5.7 Events Fluent DSL & PSR-14 Interop — Design Lock GREEN. 4 existing event systems audited. Canonical
+  owner chosen (Operations/Events). DSL, attribute, compiled registry, PSR-14, and dispatch semantics designed. 13
+  implementation stages defined. 0 human decisions required.
+- `acceptance`: All 14 design criteria met. See `EVIDENCE/v5.7/v5.7-design-lock-report.md`,
+  `EVIDENCE/v5.7/v5.7-stage-ledger.md`, `docs/events/fluent-events-dsl.md`.
+- `links`: `EVIDENCE/v5.7/00-baseline-validation.md`, `EVIDENCE/v5.7/01-existing-event-system-audit.md`,
+  `EVIDENCE/v5.7/02-events-owner-decision.md`, `EVIDENCE/v5.7/03-event-model-decision.md`,
+  `EVIDENCE/v5.7/04-events-fluent-dsl-design.md`, `EVIDENCE/v5.7/05-listens-to-attribute-design.md`,
+  `EVIDENCE/v5.7/06-compiled-listener-registry-design.md`, `EVIDENCE/v5.7/07-psr14-interop-design.md`,
+  `EVIDENCE/v5.7/08-event-dispatch-semantics.md`, `EVIDENCE/v5.7/09-future-compatibility-design.md`,
+  `EVIDENCE/v5.7/10-events-tooling-gates-design.md`, `EVIDENCE/v5.7/11-proposed-events-architecture-tree.md`,
+  `EVIDENCE/v5.7/12-v5.7-implementation-stage-plan.md`, `docs/events/fluent-events-dsl.md`
+
 - `id`: V5.6-PHASE
 - `created_at`: 2026-05-12
 - `updated_at`: 2026-05-12

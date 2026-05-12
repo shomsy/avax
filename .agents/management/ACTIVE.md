@@ -28,11 +28,12 @@ flowchart LR
         D5["V5.5 Benchmarks — GREEN"]
         D6["V5.6 FailureBoundary — FULL GREEN"]
         D7["Current Plan Lock — FULL GREEN"]
-        D8["V5.7 Events Design Lock — GREEN"]
+        D8["V5.7 Design Lock — GREEN"]
+        D9["V5.7-01 Owner Convergence — GREEN"]
     end
 
     subgraph Ready["Ready Next"]
-        R0["V5.7 Implementation — NOT_STARTED"]
+        R0["V5.7-02 Contracts & Foundation — READY_NEXT"]
     end
 
     subgraph InProgress["In Progress"]

@@ -25,6 +25,15 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: V5.7-01
+- `created_at`: 2026-05-12
+- `updated_at`: 2026-05-12
+- `status`: done
+- `estimate`: medium
+- `outcome`: V5.7-01 Owner Convergence — GREEN. Duplicate ListenerRegistry removed. Canonical owner confirmed (Operations/Events). Gate created (tooling/events/check-canonical-event-owner.php, 7/7 PASS). 4 event systems classified. No breaking changes. 7899 tests pass.
+- `acceptance`: Only one ListenerRegistry exists. No duplicate EventDispatcher outside Operations/Events. Event owner gate passes. All tests pass. Evidence: EVIDENCE/v5.7/13-17.
+- `links`: `EVIDENCE/v5.7/13-owner-convergence-baseline.md`, `EVIDENCE/v5.7/14-owner-convergence-classification.md`, `EVIDENCE/v5.7/15-canonical-owner-enforcement.md`, `EVIDENCE/v5.7/16-duplicate-event-owner-scan.md`, `EVIDENCE/v5.7/17-owner-convergence-gate-readiness.md`
+
 - `id`: V5.7-DESIGN
 - `created_at`: 2026-05-12
 - `updated_at`: 2026-05-12

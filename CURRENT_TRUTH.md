@@ -829,17 +829,22 @@ dogfooding.
 
 Overall: GREEN. 7899 tests, 22821 assertions, PHPStan 0 errors.
 
-## V5.7 Events Fluent DSL & PSR-14 Interop — Design Lock GREEN
+## V5.7 Events Fluent DSL & PSR-14 Interop — Implementation IN_PROGRESS
 
 Date: 2026-05-12
 
-**Status:** DESIGN_LOCK_GREEN
-**Implementation:** NOT_STARTED
+**Status:** V5.7-00 Design Lock GREEN, V5.7-01 Owner Convergence GREEN
+**Implementation:** IN_PROGRESS (2/13 stages complete)
+
+**V5.7-01 Owner Convergence completed:**
+- Duplicate `ListenerRegistry/ListenerRegistry.php` removed (incomplete, unused)
+- Canonical owner confirmed: `components/Operations/Events/`
+- Gate created: `tooling/events/check-canonical-event-owner.php` (7/7 PASS)
+- 4 event systems classified (CANONICAL_OWNER, MESSAGEBUS_SPECIFIC_ADAPTER, DATABASE_TELEMETRY_SOURCE, SESSION_LIFECYCLE_SOURCE)
+- No breaking changes — only dead code removed
 
 **Key decisions:**
-
 - Canonical owner: `components/Operations/Events/`
-- 4 existing event systems audited (Operations/Events, MessageBus/EventBus, Database/Telemetry, Session/SessionEventBus)
 - Events are plain readonly objects — no EventInterface required
 - Listeners are invokable classes — no ListenerInterface required
 - DSL: `onEvent(Event::class)->do(Listener::class)`
@@ -855,7 +860,9 @@ Date: 2026-05-12
 ### V5.7 Verdict
 
 **V5.7 Design Lock: GREEN.**
-V5.7 Implementation: NOT_STARTED.
+**V5.7-01 Owner Convergence: GREEN.**
+**V5.7-02 Contracts and Foundation: READY_NEXT.**
+**V5.7 Implementation: IN_PROGRESS (2/13 stages).**
 
 ### V5.6 Completed Work Log
 

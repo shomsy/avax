@@ -140,13 +140,13 @@ V5.5 Benchmark Proof: CLOSED / GREEN (V5.5-00 through V5.5-12 complete)
 
 V5.6 Failure Boundary: CLOSED / FULL GREEN (Y1-Y7 complete, 90 tests, 4 gates GREEN)
 
-V5.7 Events DSL: DESIGN_LOCK_GREEN (implementation NOT_STARTED)
+V5.7 Events DSL: V5.7-00 Design Lock GREEN, V5.7-01 Owner Convergence GREEN (implementation IN_PROGRESS)
 
 Current Plan Lock: CLOSED / FULL GREEN
 
-Active stage: None
+Active stage: V5.7-01 Canonical Owner Convergence — COMPLETE
 
-Next allowed stage: V5.7-01 — Canonical Owner Convergence (implementation)
+Next allowed stage: V5.7-02 — Event Contracts and Foundation
 
 This status is derived from CURRENT_TRUTH.md and EVIDENCE/current-plan-lock/final-current-plan-lock-report.md.
 

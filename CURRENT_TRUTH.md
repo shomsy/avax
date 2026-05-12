@@ -823,7 +823,7 @@ Date: 2026-05-12
 
 **V5.6 Declarative Failure Boundary: Core production-ready, extended policies deferred.**
 
-Overall: YELLOW. Core boundary (OnFailure, ReportFailure, Rethrow, Compilation, HTTP integration) is GREEN.
+Overall: YELLOW. Core boundary (OnFailure, ReportFailure, Rethrow, Compilation, HTTP integration, real adoption) is GREEN.
 Extended policies (Retry standalone, DeadLetter transport, Timeout, RecoverWith) are YELLOW/deferred.
 
 ### V5.6 Deferred Work Backlog
@@ -839,7 +839,7 @@ Extended policies tracked in executable backlog: `EVIDENCE/failure-boundary/v5.6
 | V5.6-Y3 Cleanup Hook | READY | Turn stub into real cleanup or narrow scope |
 | V5.6-Y4 Timeout | DEFERRED | No runtime enforcement available |
 | V5.6-Y5 RecoverWith | DEFERRED | No recovery strategy contract exists |
-| V5.6-Y6 Real Adoption | READY | Adopt beyond demo controller |
+| V5.6-Y6 Real Adoption | DONE | OnFailure + ReportFailure adopted in real reference flow (RegistrationController) |
 | V5.6-Y7 PHPStan Warnings | DONE | 5 cosmetic test warnings fixed, PHPStan 0 errors |
 
-Next recommended: V5.6-Y6 (Real Adoption) — READY, independent, low risk.
+Next recommended: V5.6-Y3 (Cleanup Hook) — READY, independent, low risk.

@@ -46,10 +46,10 @@ Canonical active implementation queue.
 - `id`: V5.6-Y6
 - `created_at`: 2026-05-12
 - `updated_at`: 2026-05-12
-- `status`: todo
+- `status`: done
 - `estimate`: medium
-- `outcome`: Adopt OnFailure/ReportFailure in real production/reference flow beyond demo controller
-- `acceptance`: At least one real route/action uses attributes with E2E proof. See `EVIDENCE/failure-boundary/deferred/V5.6-Y6-real-adoption.md`
+- `outcome`: OnFailure + ReportFailure adopted in real reference flow (RegistrationController). 9 E2E tests, 28 assertions. Domain exceptions mapped to HTTP status codes (422, 409, 503). FailureBoundary middleware wired into App pipeline.
+- `acceptance`: Real route uses attributes with E2E proof. See `EVIDENCE/failure-boundary/deferred/V5.6-Y6-real-adoption.md`
 - `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`, `EVIDENCE/failure-boundary/deferred/V5.6-Y6-real-adoption.md`
 
 - `id`: V5.6-Y3

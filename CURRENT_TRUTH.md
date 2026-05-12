@@ -825,3 +825,21 @@ Date: 2026-05-12
 
 Overall: YELLOW. Core boundary (OnFailure, ReportFailure, Rethrow, Compilation, HTTP integration) is GREEN.
 Extended policies (Retry standalone, DeadLetter transport, Timeout, RecoverWith) are YELLOW/deferred.
+
+### V5.6 Deferred Work Backlog
+
+Date: 2026-05-12
+
+Extended policies tracked in executable backlog: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`
+
+| Stage | Status | Summary |
+|-------|--------|---------|
+| V5.6-Y1 Retry / Resilience | READY | Integrate canonical RetryExecutor |
+| V5.6-Y2 DeadLetter / Queue | BLOCKED | No canonical Queue dead-letter transport wired |
+| V5.6-Y3 Cleanup Hook | READY | Turn stub into real cleanup or narrow scope |
+| V5.6-Y4 Timeout | DEFERRED | No runtime enforcement available |
+| V5.6-Y5 RecoverWith | DEFERRED | No recovery strategy contract exists |
+| V5.6-Y6 Real Adoption | READY | Adopt beyond demo controller |
+| V5.6-Y7 PHPStan Warnings | READY | Fix 5 cosmetic test warnings |
+
+Next recommended: V5.6-Y7 (PHPStan) or V5.6-Y6 (Real Adoption) — both READY, both independent, both low risk.

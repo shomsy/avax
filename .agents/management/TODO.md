@@ -32,7 +32,70 @@ Canonical active implementation queue.
 - `estimate`: multi-session
 - `outcome`: V5.6 Declarative Failure Boundary — Core production-ready, extended policies deferred (Overall YELLOW). ReportFailure upgraded to Observability Logger with structured context + redaction. DeadLetter produces structured envelope. 65 tests / 129 assertions. 14 evidence documents. 4 gates GREEN.
 - `acceptance`: 65 tests pass, PHPStan clean on FailureBoundary scope (5 pre-existing test warnings unrelated). OnFailure + ReportFailure adopted in real flow with E2E proof. Retry/Fallback/DeadLetter functional (Retry standalone, DeadLetter NDJSON transport). Timeout/RecoverWith deferred (DEFERRED_NOT_ENFORCED). See `EVIDENCE/failure-boundary/00-14-final-production-closure-report.md`, `EVIDENCE/failure-boundary/15-final-status-normalization.md`, `EVIDENCE/failure-boundary/final-acceptance-audit.md`.
-- `links`: `EVIDENCE/failure-boundary/00-current-implementation-inventory.md`, `EVIDENCE/failure-boundary/01-ownership-and-duplication-audit.md`, `EVIDENCE/failure-boundary/02-try-catch-finally-inventory.md`, `EVIDENCE/failure-boundary/03-http-pipeline-integration.md`, `EVIDENCE/failure-boundary/04-attribute-adoption-proof.md`, `EVIDENCE/failure-boundary/05-compiled-metadata-proof.md`, `EVIDENCE/failure-boundary/06-dogfooding-proof.md`, `EVIDENCE/failure-boundary/07-mvp-production-gaps.md`, `EVIDENCE/failure-boundary/08-retry-decision.md`, `EVIDENCE/failure-boundary/09-timeout-recoverwith-deferred.md`, `EVIDENCE/failure-boundary/10-rethrow-cleanup-proof.md`, `EVIDENCE/failure-boundary/11-test-coverage-report.md`, `EVIDENCE/failure-boundary/12-tooling-gates-report.md`, `EVIDENCE/failure-boundary/13-production-readiness-assessment.md`, `EVIDENCE/failure-boundary/14-final-production-closure-report.md`, `EVIDENCE/failure-boundary/15-final-status-normalization.md`, `EVIDENCE/failure-boundary/final-acceptance-audit.md`, `docs/failure-boundary/declarative-failure-boundary.md`
+- `links`: `EVIDENCE/failure-boundary/00-current-implementation-inventory.md`, `EVIDENCE/failure-boundary/01-ownership-and-duplication-audit.md`, `EVIDENCE/failure-boundary/02-try-catch-finally-inventory.md`, `EVIDENCE/failure-boundary/03-http-pipeline-integration.md`, `EVIDENCE/failure-boundary/04-attribute-adoption-proof.md`, `EVIDENCE/failure-boundary/05-compiled-metadata-proof.md`, `EVIDENCE/failure-boundary/06-dogfooding-proof.md`, `EVIDENCE/failure-boundary/07-mvp-production-gaps.md`, `EVIDENCE/failure-boundary/08-retry-decision.md`, `EVIDENCE/failure-boundary/09-timeout-recoverwith-deferred.md`, `EVIDENCE/failure-boundary/10-rethrow-cleanup-proof.md`, `EVIDENCE/failure-boundary/11-test-coverage-report.md`, `EVIDENCE/failure-boundary/12-tooling-gates-report.md`, `EVIDENCE/failure-boundary/13-production-readiness-assessment.md`, `EVIDENCE/failure-boundary/14-final-production-closure-report.md`, `EVIDENCE/failure-boundary/15-final-status-normalization.md`, `EVIDENCE/failure-boundary/final-acceptance-audit.md`, `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`, `docs/failure-boundary/declarative-failure-boundary.md`
+
+- `id`: V5.6-Y7
+- `created_at`: 2026-05-12
+- `updated_at`: 2026-05-12
+- `status`: todo
+- `estimate`: small
+- `outcome`: Fix 5 pre-existing PHPStan test warnings (cosmetic type hints)
+- `acceptance`: PHPStan 0 issues for full scope. See `EVIDENCE/failure-boundary/deferred/V5.6-Y7-phpstan-warnings.md`
+- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`, `EVIDENCE/failure-boundary/deferred/V5.6-Y7-phpstan-warnings.md`
+
+- `id`: V5.6-Y6
+- `created_at`: 2026-05-12
+- `updated_at`: 2026-05-12
+- `status`: todo
+- `estimate`: medium
+- `outcome`: Adopt OnFailure/ReportFailure in real production/reference flow beyond demo controller
+- `acceptance`: At least one real route/action uses attributes with E2E proof. See `EVIDENCE/failure-boundary/deferred/V5.6-Y6-real-adoption.md`
+- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`, `EVIDENCE/failure-boundary/deferred/V5.6-Y6-real-adoption.md`
+
+- `id`: V5.6-Y3
+- `created_at`: 2026-05-12
+- `updated_at`: 2026-05-12
+- `status`: todo
+- `estimate`: medium
+- `outcome`: Turn CleanupAfterFailure stub into real cleanup hook or narrow scope
+- `acceptance`: Cleanup hook invoked on all paths or documented as intentional extension point. See `EVIDENCE/failure-boundary/deferred/V5.6-Y3-cleanup-hook.md`
+- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`, `EVIDENCE/failure-boundary/deferred/V5.6-Y3-cleanup-hook.md`
+
+- `id`: V5.6-Y1
+- `created_at`: 2026-05-12
+- `updated_at`: 2026-05-12
+- `status`: todo
+- `estimate`: medium
+- `outcome`: Replace standalone retry with canonical Resilience RetryExecutor
+- `acceptance`: Retry dogfooded through Resilience. See `EVIDENCE/failure-boundary/deferred/V5.6-Y1-retry-resilience.md`
+- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`, `EVIDENCE/failure-boundary/deferred/V5.6-Y1-retry-resilience.md`
+
+- `id`: V5.6-Y2
+- `created_at`: 2026-05-12
+- `updated_at`: 2026-05-12
+- `status`: blocked
+- `estimate`: large
+- `outcome`: Replace NDJSON fallback with canonical Queue/DeadLetter transport
+- `acceptance`: DeadLetter uses canonical Queue transport. BLOCKED until transport boundary designed. See `EVIDENCE/failure-boundary/deferred/V5.6-Y2-deadletter-queue.md`
+- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`, `EVIDENCE/failure-boundary/deferred/V5.6-Y2-deadletter-queue.md`
+
+- `id`: V5.6-Y5
+- `created_at`: 2026-05-12
+- `updated_at`: 2026-05-12
+- `status`: todo
+- `estimate`: large
+- `outcome`: Define and enforce RecoverWith recovery strategy
+- `acceptance`: Recovery handler contract + enforcement. DEFERRED until design complete. See `EVIDENCE/failure-boundary/deferred/V5.6-Y5-recoverwith-enforcement.md`
+- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`, `EVIDENCE/failure-boundary/deferred/V5.6-Y5-recoverwith-enforcement.md`
+
+- `id`: V5.6-Y4
+- `created_at`: 2026-05-12
+- `updated_at`: 2026-05-12
+- `status`: todo
+- `estimate`: large
+- `outcome`: Implement Timeout runtime enforcement
+- `acceptance`: Timeout enforced via fiber/async. DEFERRED until runtime support. See `EVIDENCE/failure-boundary/deferred/V5.6-Y4-timeout-enforcement.md`
+- `links`: `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md`, `EVIDENCE/failure-boundary/deferred/V5.6-Y4-timeout-enforcement.md`
 
 - `id`: V5.5-PHASE
 - `created_at`: 2026-05-11

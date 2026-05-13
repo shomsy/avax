@@ -19,6 +19,12 @@ final class Transaction implements TransactionsInterface
     /** @var int How many bubbles deep are we currently? (0 = no transaction active). */
     private int $transactions = 0;
 
+    /** @var list<callable> afterCommit callbacks buffered for the outermost transaction. */
+    private array $afterCommitCallbacks = [];
+
+    /** @var list<callable> afterRollback callbacks buffered for the outermost transaction. */
+    private array $afterRollbackCallbacks = [];
+
     /**
      * @param  DatabaseConnection  $databaseConnection  The physical persistence gateway to use.
      */
@@ -33,7 +39,7 @@ final class Transaction implements TransactionsInterface
      */
     public static function on(DatabaseConnection $databaseConnection): self
     {
-        return new self(connection: $databaseConnection);
+        return new self(databaseConnection: $databaseConnection);
     }
 
     /**
@@ -107,6 +113,42 @@ final class Transaction implements TransactionsInterface
     }
 
     /**
+     * Register a callback to run after successful outermost commit.
+     *
+     * If no transaction is active, the callback runs immediately (no-transaction policy).
+     * Callbacks are discarded on rollback — they only run on successful commit.
+     */
+    public function afterCommit(callable $callback): void
+    {
+        if ($this->transactions === 0) {
+            // No active transaction — run immediately per design lock no-transaction policy.
+            $callback();
+
+            return;
+        }
+
+        $this->afterCommitCallbacks[] = $callback;
+    }
+
+    /**
+     * Register a callback to run after rollback.
+     *
+     * Callbacks only run on actual rollback, not on commit failure.
+     */
+    public function afterRollback(callable $callback): void
+    {
+        $this->afterRollbackCallbacks[] = $callback;
+    }
+
+    /**
+     * Get the current transaction nesting level.
+     */
+    public function getNestingLevel(): int
+    {
+        return $this->transactions;
+    }
+
+    /**
      * Access the connection being used for this transaction.
      */
     public function getConnection(): DatabaseConnection
@@ -136,6 +178,16 @@ final class Transaction implements TransactionsInterface
             }
 
             $this->transactions = max(0, $this->transactions - 1);
+
+            // Outermost commit — run afterCommit callbacks.
+            if ($this->transactions === 0) {
+                $callbacks = $this->afterCommitCallbacks;
+                $this->afterCommitCallbacks = [];
+
+                foreach ($callbacks as $callback) {
+                    $callback();
+                }
+            }
         } catch (Throwable $throwable) {
             throw new TransactionException(
                 message     : 'Failed to commit transaction: '.$throwable->getMessage(),
@@ -162,6 +214,16 @@ final class Transaction implements TransactionsInterface
 
             if ($this->transactions === 1) {
                 $this->databaseConnection->getConnection()->rollBack();
+
+                // Outermost rollback — clear afterCommit callbacks, run afterRollback.
+                $afterRollbackCallbacks = $this->afterRollbackCallbacks;
+                $this->afterCommitCallbacks = [];
+                $this->afterRollbackCallbacks = [];
+
+                foreach ($afterRollbackCallbacks as $callback) {
+                    $callback();
+                }
+
                 $this->transactions = 0;
             } else {
                 // Revert back to the inner bookmark.
@@ -171,6 +233,10 @@ final class Transaction implements TransactionsInterface
             }
         } catch (Throwable $throwable) {
             $this->transactions = 0;
+
+            // Clear callbacks on rollback failure too.
+            $this->afterCommitCallbacks = [];
+            $this->afterRollbackCallbacks = [];
 
             throw new TransactionException(
                 message     : 'Failed to rollback transaction: '.$throwable->getMessage(),

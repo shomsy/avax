@@ -7,6 +7,7 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Lifecycle;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\CompiledDatabaseLifecycleRegistry;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\EntityLifecyclePhase;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\EntityLifecycleRegistration;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\GlobalDatabaseLifecycleState;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleSource;
 
 /**
@@ -19,11 +20,12 @@ use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleSour
  *       ->updating(RecordUserAuditTrail::class);
  *
  * This is a declaration API only. No execution happens during registration.
+ *
+ * Registrations go into GlobalDatabaseLifecycleState — the same registry
+ * used by EntityPersister at runtime.
  */
 final class EntityLifecycleDsl
 {
-    private static CompiledDatabaseLifecycleRegistry|null $registry = null;
-
     public function __construct(
         private readonly string $entityClass,
     ) {
@@ -149,16 +151,7 @@ final class EntityLifecycleDsl
             source: LifecycleSource::Dsl,
         );
 
-        $this->registry()->registerEntity($registration);
-    }
-
-    private function registry(): CompiledDatabaseLifecycleRegistry
-    {
-        if (self::$registry === null) {
-            self::$registry = new CompiledDatabaseLifecycleRegistry();
-        }
-
-        return self::$registry;
+        GlobalDatabaseLifecycleState::registry()->registerEntity($registration);
     }
 
     /**
@@ -166,7 +159,7 @@ final class EntityLifecycleDsl
      */
     public static function setRegistry(CompiledDatabaseLifecycleRegistry $registry): void
     {
-        self::$registry = $registry;
+        GlobalDatabaseLifecycleState::setRegistry($registry);
     }
 
     /**
@@ -174,11 +167,7 @@ final class EntityLifecycleDsl
      */
     public static function getRegistry(): CompiledDatabaseLifecycleRegistry
     {
-        if (self::$registry === null) {
-            self::$registry = new CompiledDatabaseLifecycleRegistry();
-        }
-
-        return self::$registry;
+        return GlobalDatabaseLifecycleState::registry();
     }
 
     /**
@@ -186,6 +175,6 @@ final class EntityLifecycleDsl
      */
     public static function reset(): void
     {
-        self::$registry = null;
+        GlobalDatabaseLifecycleState::reset();
     }
 }

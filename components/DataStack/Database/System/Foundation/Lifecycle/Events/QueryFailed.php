@@ -11,7 +11,8 @@ use Throwable;
  * Event fired after SQL exception.
  *
  * Exception still bubbles — this event reports, it does not catch.
- * SQL and bindings are redacted by default for security.
+ * Bindings are redacted by default at the source (QueryOrchestrator).
+ * Sensitive keys (password, token, secret, etc.) and token-like values are masked.
  */
 final readonly class QueryFailed
 {

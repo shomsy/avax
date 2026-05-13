@@ -9,7 +9,8 @@ use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\QueryLifecycl
 /**
  * Event fired before SQL execution.
  *
- * SQL and bindings are redacted by default for security.
+ * Bindings are redacted by default at the source (QueryOrchestrator).
+ * Sensitive keys (password, token, secret, etc.) and token-like values are masked.
  */
 final readonly class QueryExecuting
 {

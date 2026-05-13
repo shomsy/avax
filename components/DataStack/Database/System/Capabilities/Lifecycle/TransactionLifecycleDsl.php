@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\Lifecycle;
 
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\CompiledDatabaseLifecycleRegistry;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\GlobalDatabaseLifecycleState;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleSource;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\TransactionLifecyclePhase;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\TransactionLifecycleRegistration;
@@ -19,11 +20,12 @@ use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\TransactionLi
  *       ->afterRollback(LogTransactionFailure::class);
  *
  * This is a declaration API only. No execution happens during registration.
+ *
+ * Registrations go into GlobalDatabaseLifecycleState — the same registry
+ * used by Transaction at runtime.
  */
 final class TransactionLifecycleDsl
 {
-    private static CompiledDatabaseLifecycleRegistry|null $registry = null;
-
     public function __construct()
     {
     }
@@ -97,16 +99,7 @@ final class TransactionLifecycleDsl
             source: LifecycleSource::Dsl,
         );
 
-        $this->registry()->registerTransaction($registration);
-    }
-
-    private function registry(): CompiledDatabaseLifecycleRegistry
-    {
-        if (self::$registry === null) {
-            self::$registry = new CompiledDatabaseLifecycleRegistry();
-        }
-
-        return self::$registry;
+        GlobalDatabaseLifecycleState::registry()->registerTransaction($registration);
     }
 
     /**
@@ -114,7 +107,7 @@ final class TransactionLifecycleDsl
      */
     public static function setRegistry(CompiledDatabaseLifecycleRegistry $registry): void
     {
-        self::$registry = $registry;
+        GlobalDatabaseLifecycleState::setRegistry($registry);
     }
 
     /**
@@ -122,11 +115,7 @@ final class TransactionLifecycleDsl
      */
     public static function getRegistry(): CompiledDatabaseLifecycleRegistry
     {
-        if (self::$registry === null) {
-            self::$registry = new CompiledDatabaseLifecycleRegistry();
-        }
-
-        return self::$registry;
+        return GlobalDatabaseLifecycleState::registry();
     }
 
     /**
@@ -134,6 +123,6 @@ final class TransactionLifecycleDsl
      */
     public static function reset(): void
     {
-        self::$registry = null;
+        GlobalDatabaseLifecycleState::reset();
     }
 }

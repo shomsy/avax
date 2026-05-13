@@ -9,7 +9,9 @@ declare(strict_types=1);
  * Verifies that QueryOrchestrator fires lifecycle events through the compiled registry.
  */
 
-$root = dirname(__DIR__, 2);
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\RedactBindings;
+
+$root     = dirname(__DIR__, 2);
 $exitCode = 0;
 
 echo "=== Gate 2: Query Lifecycle Wiring ===\n\n";
@@ -82,7 +84,40 @@ if (!file_exists($root . '/components/DataStack/Database/System/Capabilities/Lif
 }
 
 if ($exitCode === 0) {
-    echo "PASS: Query lifecycle wiring is complete.\n";
+    // Behavior checks: verify query binding redaction.
+    require_once $root . '/vendor/autoload.php';
+
+    // Verify RedactBindings can redact named bindings with sensitive keys.
+    $redacted = RedactBindings::redact(['password' => 'secret123', 'name' => 'Alice']);
+    if ($redacted['password'] !== '***') {
+        echo "BEHAVIOR FAIL: RedactBindings did not redact 'password' binding.\n";
+        $exitCode = 1;
+    } elseif ($redacted['name'] !== 'Alice') {
+        echo "BEHAVIOR FAIL: RedactBindings incorrectly redacted non-sensitive 'name' binding.\n";
+        $exitCode = 1;
+    } else {
+        echo "BEHAVIOR: RedactBindings redacts sensitive named bindings correctly.\n";
+    }
+
+    // Verify RedactBindings redacts positional Bearer tokens.
+    $positional = RedactBindings::redact([0 => 'Bearer abc123', 1 => 'normal']);
+    if ($positional[0] !== '***') {
+        echo "BEHAVIOR FAIL: RedactBindings did not redact Bearer token in positional binding.\n";
+        $exitCode = 1;
+    } else {
+        echo "BEHAVIOR: RedactBindings redacts Bearer tokens in positional bindings.\n";
+    }
+
+    // Verify QueryOrchestrator::buildQueryEvent() applies redaction.
+    $orchestratorContent = file_get_contents($orchestratorFile);
+    if (! str_contains($orchestratorContent ?? '', 'RedactBindings::redact')) {
+        echo "BEHAVIOR FAIL: QueryOrchestrator::buildQueryEvent() does not call RedactBindings::redact().\n";
+        $exitCode = 1;
+    } else {
+        echo "BEHAVIOR: QueryOrchestrator applies RedactBindings in buildQueryEvent().\n";
+    }
+
+    echo "PASS: Query lifecycle wiring is complete with behavior proof.\n";
 } else {
     echo "FAIL: Query lifecycle wiring has gaps.\n";
 }

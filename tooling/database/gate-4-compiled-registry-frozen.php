@@ -47,9 +47,13 @@ if (!str_contains($content ?? '', 'transactionListenersFor')) {
     $exitCode = 1;
 }
 
-// Check superset handling
-if (!str_contains($content ?? '', 'superset') && !str_contains($content ?? '', 'Saving') && !str_contains($content ?? '', 'Creating')) {
-    echo "WARNING: No evidence of superset handling (Saving includes Creating/Updating).\n";
+// Check exact lookup (no superset expansion in hot path).
+// Superset dispatch is handled by EntityPersister explicitly, not by the registry.
+if (! str_contains($content ?? '', 'entityListenersFor') || ! str_contains($content ?? '', 'return $this->entityListeners')) {
+    echo "MISSING: entityListenersFor() with exact lookup.\n";
+    $exitCode = 1;
+} else {
+    echo "BEHAVIOR: Registry uses exact lookup (no superset expansion in hot path).\n";
 }
 
 // Check priority sorting

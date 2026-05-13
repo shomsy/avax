@@ -9,7 +9,11 @@ declare(strict_types=1);
  * Verifies that EntityPersister fires lifecycle events through the compiled registry.
  */
 
-$root = dirname(__DIR__, 2);
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\CompiledDatabaseLifecycleRegistry;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\EntityLifecyclePhase;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\EntityLifecycleRegistration;
+
+$root     = dirname(__DIR__, 2);
 $exitCode = 0;
 
 echo "=== Gate 1: Entity Lifecycle Wiring ===\n\n";
@@ -108,7 +112,61 @@ if (!file_exists($root . '/components/DataStack/Database/System/Capabilities/Lif
 }
 
 if ($exitCode === 0) {
-    echo "PASS: Entity lifecycle wiring is complete.\n";
+    // Behavior checks: verify the registry does NOT do superset expansion.
+    require_once $root . '/vendor/autoload.php';
+
+    $registry = new CompiledDatabaseLifecycleRegistry();
+    $registry->registerEntity(new EntityLifecycleRegistration(
+                                  entityClass: 'App\\TestUser',
+                                  phase      : EntityLifecyclePhase::Creating,
+                                  listener   : 'CreatingListener',
+                              ));
+    $registry->registerEntity(new EntityLifecycleRegistration(
+                                  entityClass: 'App\\TestUser',
+                                  phase      : EntityLifecyclePhase::Saving,
+                                  listener   : 'SavingListener',
+                              ));
+
+    // Exact lookup: Creating phase should NOT include Saving listeners.
+    $creatingListeners = $registry->entityListenersFor('App\\TestUser', EntityLifecyclePhase::Creating);
+    if (count($creatingListeners) !== 1) {
+        echo "BEHAVIOR FAIL: Creating phase returned " . count($creatingListeners) . " listeners (expected 1, no superset expansion).\n";
+        $exitCode = 1;
+    } elseif ($creatingListeners[0]['listener'] !== 'CreatingListener') {
+        echo "BEHAVIOR FAIL: Creating phase returned wrong listener.\n";
+        $exitCode = 1;
+    } else {
+        echo "BEHAVIOR: Registry exact lookup — no superset expansion in hot path.\n";
+    }
+
+    // Saving phase should return only Saving listeners, not Creating.
+    $savingListeners = $registry->entityListenersFor('App\\TestUser', EntityLifecyclePhase::Saving);
+    if (count($savingListeners) !== 1) {
+        echo "BEHAVIOR FAIL: Saving phase returned " . count($savingListeners) . " listeners (expected 1).\n";
+        $exitCode = 1;
+    } else {
+        echo "BEHAVIOR: Saving phase returns only Saving listeners.\n";
+    }
+
+    // Check GlobalDatabaseLifecycleState exists (shared registry for DSL + runtime).
+    $globalStateFile = $root . '/components/DataStack/Database/System/Foundation/Lifecycle/GlobalDatabaseLifecycleState.php';
+    if (! file_exists($globalStateFile)) {
+        echo "BEHAVIOR FAIL: GlobalDatabaseLifecycleState.php missing (DSL + runtime must share registry).\n";
+        $exitCode = 1;
+    } else {
+        echo "BEHAVIOR: GlobalDatabaseLifecycleState provides shared DSL + runtime registry.\n";
+    }
+
+    // Check RedactBindings exists for query security.
+    $redactFile = $root . '/components/DataStack/Database/System/Foundation/Lifecycle/RedactBindings.php';
+    if (! file_exists($redactFile)) {
+        echo "BEHAVIOR FAIL: RedactBindings.php missing (query bindings must be redacted).\n";
+        $exitCode = 1;
+    } else {
+        echo "BEHAVIOR: RedactBindings provides query binding redaction.\n";
+    }
+
+    echo "PASS: Entity lifecycle wiring is complete with behavior proof.\n";
 } else {
     echo "FAIL: Entity lifecycle wiring has gaps.\n";
 }

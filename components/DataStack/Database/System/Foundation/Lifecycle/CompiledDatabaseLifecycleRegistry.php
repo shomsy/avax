@@ -118,32 +118,15 @@ final class CompiledDatabaseLifecycleRegistry
     /**
      * Resolve entity lifecycle listeners for a specific entity and phase.
      *
+     * Exact lookup only — no superset expansion.
+     * Superset dispatch (saving includes creating/updating, saved includes created/updated)
+     * is handled by EntityPersister which explicitly dispatches both phases.
+     *
      * @return list<array{listener: string, priority: int, source: LifecycleSource, mode: LifecycleExecutionMode, thresholdMs: ?int}>
      */
     public function entityListenersFor(string $entityClass, EntityLifecyclePhase $phase): array
     {
-        // Exact phase listeners.
-        $exact = $this->entityListeners[$entityClass][$phase->value] ?? [];
-
-        // Also include 'saving' listeners for creating/updating phases,
-        // and 'saved' listeners for created/updated phases.
-        $superset = match ($phase) {
-            EntityLifecyclePhase::Creating, EntityLifecyclePhase::Updating =>
-                $this->entityListeners[$entityClass][EntityLifecyclePhase::Saving->value] ?? [],
-            EntityLifecyclePhase::Created, EntityLifecyclePhase::Updated =>
-                $this->entityListeners[$entityClass][EntityLifecyclePhase::Saved->value] ?? [],
-            default => [],
-        };
-
-        if ($superset === []) {
-            return $exact;
-        }
-
-        // Merge and re-sort by priority.
-        $merged = [...$exact, ...$superset];
-        usort($merged, static fn (array $a, array $b): int => $b['priority'] <=> $a['priority']);
-
-        return $merged;
+        return $this->entityListeners[$entityClass][$phase->value] ?? [];
     }
 
     /**

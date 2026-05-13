@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Operations\Queue;
 
+use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsSchema;
-use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsStore;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\PdoFailedJobsStore;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\MemoryQueue\MemoryQueue;
+use Avax\Components\Operations\Queue\System\Capabilities\Queue\QueueBroker;
 use Avax\Components\Operations\Queue\System\Flows\RunWorkerLoop\RunWorkerLoop;
 use Avax\Framework\System\Capabilities\Queue\RegisterQueueCommands;
+use Closure;
 use PDO;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\WithoutMemoryLeak;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(RegisterQueueCommands::class)]
-#[CoversClass(FailedJobsStore::class)]
 final class QueueCommandsTest extends TestCase
 {
     private string $dbFile;
@@ -38,9 +38,33 @@ final class QueueCommandsTest extends TestCase
         }
     }
 
+    private function makeCommands(): array
+    {
+        $broker = new MemoryQueue();
+        $failedStore = new PdoFailedJobsStore($this->pdo);
+        $callableResolver = new ResolveCallable();
+
+        $createWorkerLoop = static function (QueueBroker $b, Closure $handler, int $sleep): RunWorkerLoop {
+            return new RunWorkerLoop(
+                broker: $b,
+                handler: $handler,
+                sleepMicroseconds: $sleep,
+            );
+        };
+
+        $register = new RegisterQueueCommands(
+            broker: $broker,
+            failedStore: $failedStore,
+            callableResolver: $callableResolver,
+            createWorkerLoop: $createWorkerLoop,
+        );
+
+        return $register();
+    }
+
     public function test_queue_work_once_processes_one_job(): void
     {
-        $commands = (new RegisterQueueCommands(dbPath: $this->dbFile))();
+        $commands = $this->makeCommands();
         self::assertArrayHasKey('queue:work', $commands);
 
         $workCommand = $commands['queue:work'];
@@ -52,7 +76,7 @@ final class QueueCommandsTest extends TestCase
 
     public function test_queue_failed_lists_no_failed_jobs(): void
     {
-        $commands = (new RegisterQueueCommands(dbPath: $this->dbFile))();
+        $commands = $this->makeCommands();
         $failedCommand = $commands['queue:failed'];
         $output = $failedCommand([]);
 
@@ -69,7 +93,7 @@ final class QueueCommandsTest extends TestCase
             failedAt: '2026-05-10 12:00:00',
         );
 
-        $commands = (new RegisterQueueCommands(dbPath: $this->dbFile))();
+        $commands = $this->makeCommands();
         $failedCommand = $commands['queue:failed'];
         $output = $failedCommand([]);
 
@@ -87,7 +111,7 @@ final class QueueCommandsTest extends TestCase
             failedAt: '2026-05-10 12:00:00',
         );
 
-        $commands = (new RegisterQueueCommands(dbPath: $this->dbFile))();
+        $commands = $this->makeCommands();
         $retryCommand = $commands['queue:retry'];
         $output = $retryCommand(['--id=1']);
 
@@ -97,7 +121,7 @@ final class QueueCommandsTest extends TestCase
 
     public function test_queue_retry_missing_id_fails_gracefully(): void
     {
-        $commands = (new RegisterQueueCommands(dbPath: $this->dbFile))();
+        $commands = $this->makeCommands();
         $retryCommand = $commands['queue:retry'];
         $output = $retryCommand(['--id=999']);
 
@@ -110,7 +134,7 @@ final class QueueCommandsTest extends TestCase
         $store->record('default', ['handler' => 'Job1'], 'Exception 1', '2026-05-10 12:00:00');
         $store->record('default', ['handler' => 'Job2'], 'Exception 2', '2026-05-10 12:01:00');
 
-        $commands = (new RegisterQueueCommands(dbPath: $this->dbFile))();
+        $commands = $this->makeCommands();
         $flushCommand = $commands['queue:flush-failed'];
         $output = $flushCommand([]);
 

@@ -17,6 +17,7 @@ use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;
+use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\ClassifyApplicationException\ClassifyApplicationException;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RenderApplicationError\RenderApplicationError;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
@@ -85,11 +86,24 @@ final class App
 
     private ResponseFactory|null $responseFactory = null;
 
+    private RenderApplicationError|null $errorRenderer = null;
+
     public function __construct(
         private readonly RuntimeInterface $runtime,
         private readonly ResetApplicationState $resetApplicationState,
         private readonly ?MetricsCollector $metricsCollector = null,
     ) {
+    }
+
+    /**
+     * Set a custom error renderer for exception handling.
+     */
+    public function withErrorRenderer(RenderApplicationError $errorRenderer): self
+    {
+        $self = clone $this;
+        $self->errorRenderer = $errorRenderer;
+
+        return $self;
     }
 
     /**
@@ -361,8 +375,9 @@ final class App
             }
         }
 
-        $renderer = new RenderApplicationError(
-            responseFactory: $this->responseFactory ?? new ResponseFactory(),
+        $renderer = $this->errorRenderer ?? new RenderApplicationError(
+            responseFactory: new ResponseFactory(),
+            classifier: new ClassifyApplicationException(),
         );
 
         $isProduction = $this->runtime->environment()->isProduction();

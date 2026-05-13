@@ -6,8 +6,13 @@ namespace Avax\Tests\Unit\Components\DataStack\Database;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\ReadConnection\ReadConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ReadConnection\ReadPdo;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ReadConnection\RememberConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ReadConnection\ResolveDefaultConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\RunWithConnection\RunWithConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Design\Table\Blueprint;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Schema\Schema as SchemaCapability;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\CreateBuilder\CreateBuilder;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\SQLiteGrammar;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Query;
 use Avax\Components\DataStack\Database\System\PublicSurface\Schema;
@@ -93,7 +98,7 @@ final class SchemaFacadeSqliteTest extends TestCase
      */
     private static function schemaForSqliteMemory(): array
     {
-        $readConnection = new ReadConnection(config: [
+        $config = [
             'default' => 'sqlite',
             'connections' => [
                 'sqlite' => [
@@ -106,13 +111,30 @@ final class SchemaFacadeSqliteTest extends TestCase
                     'charset' => 'utf8',
                 ],
             ],
-        ]);
+        ];
 
-        $connections = new Connections(readConnection: $readConnection);
+        $readConnection = new ReadConnection(
+            config: $config,
+            resolveDefaultConnection: new ResolveDefaultConnection(config: $config),
+            rememberConnection: new RememberConnection(),
+        );
+
+        $readPdo = new ReadPdo(readConnection: $readConnection);
+        $runWithConnection = new RunWithConnection(readConnection: $readConnection);
+
+        $connections = new Connections(
+            readConnection: $readConnection,
+            readPdo: $readPdo,
+            runWithConnection: $runWithConnection,
+        );
 
         $query = new Query(
             connections: $connections,
-            grammar    : new SQLiteGrammar(),
+            grammar: new SQLiteGrammar(),
+            createBuilder: new CreateBuilder(
+                connections: $connections,
+                grammar: new SQLiteGrammar(),
+            ),
         );
 
         return [

@@ -43,6 +43,17 @@ final class LazyProxy
     }
 
     /**
+     * Resets all proxied instances.
+     *
+     * Required for long-lived runtimes (RoadRunner, Swoole, FrankenPHP)
+     * and test isolation to prevent state leakage between requests/jobs.
+     */
+    public static function reset(): void
+    {
+        self::$instances = new WeakMap();
+    }
+
+    /**
      * Forwards one method call to the resolved service.
      */
     public function __call(string $name, array $arguments): mixed

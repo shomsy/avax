@@ -13,10 +13,10 @@ use Stringable;
 final class User implements Stringable, UserInterface
 {
     /** @var list<UserPermission> */
-    public array $permissions;
+    private array $permissions;
 
     /** @var list<UserRole> */
-    public array $roles;
+    private array $roles;
 
     public function __construct(
         public UserId    $id,
@@ -30,6 +30,72 @@ final class User implements Stringable, UserInterface
     {
         $this->roles       = array_values(array: $roles ?? []);
         $this->permissions = array_values(array: $permissions ?? []);
+    }
+
+    /**
+     * Returns a new User instance with the given role added.
+     */
+    public function withRole(UserRole $role) : self
+    {
+        if ($this->hasRole($role)) {
+            return $this;
+        }
+
+        $clone = clone $this;
+        $clone->roles = [...$this->roles, $role];
+
+        return $clone;
+    }
+
+    /**
+     * Returns a new User instance with the given role removed.
+     */
+    public function withoutRole(UserRole $role) : self
+    {
+        if (!$this->hasRole($role)) {
+            return $this;
+        }
+
+        $clone = clone $this;
+        $clone->roles = array_values(array_filter(
+            $this->roles,
+            static fn (UserRole $r) : bool => $r !== $role,
+        ));
+
+        return $clone;
+    }
+
+    /**
+     * Returns a new User instance with the given permission added.
+     */
+    public function withPermission(UserPermission $permission) : self
+    {
+        if ($this->hasPermission($permission)) {
+            return $this;
+        }
+
+        $clone = clone $this;
+        $clone->permissions = [...$this->permissions, $permission];
+
+        return $clone;
+    }
+
+    /**
+     * Returns a new User instance with the given permission removed.
+     */
+    public function withoutPermission(UserPermission $permission) : self
+    {
+        if (!$this->hasPermission($permission)) {
+            return $this;
+        }
+
+        $clone = clone $this;
+        $clone->permissions = array_values(array_filter(
+            $this->permissions,
+            static fn (UserPermission $p) : bool => !$p->equals(other: $permission),
+        ));
+
+        return $clone;
     }
 
     /**

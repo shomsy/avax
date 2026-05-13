@@ -37,7 +37,7 @@ final readonly class ObjectStorage
             return ObjectStorageResult::failure('Object not found.');
         }
 
-        return ObjectStorageResult::success();
+        return ObjectStorageResult::success(content: $content);
     }
 
     public function delete(string $key) : ObjectStorageResult

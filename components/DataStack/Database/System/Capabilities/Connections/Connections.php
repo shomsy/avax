@@ -17,15 +17,11 @@ use Throwable;
  */
 final readonly class Connections
 {
-    private ReadPdo $readPdo;
-
-    private RunWithConnection $runWithConnection;
-
     public function __construct(
-        private ReadConnection $readConnection, ReadPdo|null $readPdo = null, RunWithConnection|null $runWithConnection = null,
+        private ReadConnection  $readConnection,
+        private ReadPdo         $readPdo,
+        private RunWithConnection $runWithConnection,
     ) {
-        $this->readPdo = $readPdo ?? new ReadPdo(readConnection: $this->readConnection);
-        $this->runWithConnection = $runWithConnection ?? new RunWithConnection(readConnection: $this->readConnection);
     }
 
     /**
@@ -54,6 +50,10 @@ final readonly class Connections
 
     public function withScope(ExecutionScope $executionScope): self
     {
-        return new self(readConnection: $this->readConnection->withScope(executionScope: $executionScope));
+        return new self(
+            readConnection: $this->readConnection->withScope(executionScope: $executionScope),
+            readPdo: $this->readPdo,
+            runWithConnection: $this->runWithConnection,
+        );
     }
 }

@@ -14,9 +14,9 @@ use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\Ex
 final readonly class Telemetry
 {
     public function __construct(
-        private EventBus $eventBus,
-        private Config|null $config = null,
-        private ExecutionScope $executionScope = new ExecutionScope(correlationId: 'database'),
+        private EventBus       $eventBus,
+        private Config|null    $config = null,
+        private ExecutionScope|null $executionScope = null,
     ) {
     }
 
@@ -30,7 +30,7 @@ final readonly class Telemetry
         return $this->config;
     }
 
-    public function scope(): ExecutionScope
+    public function scope(): ExecutionScope|null
     {
         return $this->executionScope;
     }

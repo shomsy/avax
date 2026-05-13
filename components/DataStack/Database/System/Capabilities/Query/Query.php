@@ -20,20 +20,13 @@ use Throwable;
  */
 final readonly class Query
 {
-    private CreateBuilder $createBuilder;
-
     public function __construct(
-        private Connections $connections,
-        private EventBus|null       $eventBus = null,
-        private GrammarInterface $grammar = new MySQLGrammar(),
-        private ExecutionScope|null $executionScope = null, CreateBuilder|null $createBuilder = null,
+        private Connections    $connections,
+        private GrammarInterface $grammar,
+        private CreateBuilder  $createBuilder,
+        private EventBus|null  $eventBus = null,
+        private ExecutionScope|null $executionScope = null,
     ) {
-        $this->createBuilder = $createBuilder ?? new CreateBuilder(
-            connections: $this->connections,
-            grammar    : $this->grammar,
-            eventBus   : $this->eventBus,
-            executionScope: $this->executionScope,
-        );
     }
 
     /**

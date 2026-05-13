@@ -6,7 +6,7 @@ namespace Avax\Framework\System\Capabilities\Queue;
 
 use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsStore;
-use Avax\Components\Operations\Queue\System\Capabilities\Queue\QueueBroker\QueueBrokerInterface;
+use Avax\Components\Operations\Queue\System\Capabilities\Queue\QueueBroker;
 use Closure;
 
 /**
@@ -18,13 +18,13 @@ use Closure;
 final readonly class RegisterQueueCommands
 {
     /**
-     * @param Closure(QueueBrokerInterface, Closure, int): mixed $createWorkerLoop
+     * @param Closure(QueueBroker, Closure, int): mixed $createWorkerLoop
      */
     public function __construct(
-        private QueueBrokerInterface $broker,
-        private FailedJobsStore      $failedStore,
-        private ResolveCallable      $callableResolver,
-        private Closure              $createWorkerLoop,
+        private QueueBroker            $broker,
+        private FailedJobsStore        $failedStore,
+        private ResolveCallable        $callableResolver,
+        private Closure                $createWorkerLoop,
     ) {}
 
     /**

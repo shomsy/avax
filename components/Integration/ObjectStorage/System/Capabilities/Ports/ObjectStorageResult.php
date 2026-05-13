@@ -10,11 +10,12 @@ class ObjectStorageResult
         public readonly bool    $success,
         public readonly ?string $error = null,
         public readonly ?string $url = null,
+        public readonly ?string $content = null,
     ) {}
 
-    public static function success(string|null $url = null) : self
+    public static function success(string|null $url = null, ?string $content = null) : self
     {
-        return new self(true, null, $url);
+        return new self(true, null, $url, $content);
     }
 
     public static function failure(string $error) : self

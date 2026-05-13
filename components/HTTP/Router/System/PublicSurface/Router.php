@@ -26,6 +26,11 @@ final class Router implements RouterInterface, RouterRuntimeInterface
         private readonly ResolveCallable $callableResolver,
         private readonly RouteCollection $routeCollection,
         private readonly MatchRoute      $matchRoute,
+        /**
+         * Base URI for absolute URL generation.
+         * Configure this in production — the default is for development only.
+         */
+        private readonly string          $baseUri = 'http://localhost',
     ) {
     }
 
@@ -217,7 +222,7 @@ final class Router implements RouterInterface, RouterRuntimeInterface
         $url = $this->substituteRouteParams($route->uri(), $parameters, $name);
 
         if ($absolute) {
-            $url = 'http://localhost' . ($url[0] !== '/' ? '/' : '') . $url;
+            $url = $this->baseUri . ($url[0] !== '/' ? '/' : '') . $url;
         }
 
         return $url;

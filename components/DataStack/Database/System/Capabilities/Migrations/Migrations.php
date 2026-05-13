@@ -27,10 +27,10 @@ use Throwable;
 final readonly class Migrations
 {
     public function __construct(
-        private Query $query,
-        private Connections $connections,
-        private Transactions $transactions,
-        private Schema|null $schema = null,
+        private Query         $query,
+        private Connections   $connections,
+        private Transactions  $transactions,
+        private Schema        $schema,
     ) {
     }
 
@@ -40,12 +40,12 @@ final readonly class Migrations
      */
     public function create(string $table, callable $callback, string|null $connectionName = null) : void
     {
-        $this->schema()->create(table: $table, callback: $callback, connectionName: $connectionName);
+        $this->schema->create(table: $table, callback: $callback, connectionName: $connectionName);
     }
 
     public function schema(): Schema
     {
-        return $this->schema ?? new Schema(query: $this->query);
+        return $this->schema;
     }
 
     /**

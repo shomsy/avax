@@ -17,6 +17,6 @@ final readonly class ReadObject
             return ObjectStorageResult::failure('Object not found.');
         }
 
-        return ObjectStorageResult::success();
+        return ObjectStorageResult::success(content: $content);
     }
 }

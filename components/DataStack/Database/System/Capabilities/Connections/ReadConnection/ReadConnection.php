@@ -26,24 +26,16 @@ final class ReadConnection
     /** @var array<string, ConnectionPool> */
     private array $pools = [];
 
-    private readonly ?ExecutionScope $executionScope;
-
-    private readonly ResolveDefaultConnection $resolveDefaultConnection;
-
-    private readonly RememberConnection $rememberConnection;
-
     /**
      * @param  array<string, mixed>  $config
-     *
-     * @throws RandomException
      */
     public function __construct(
-        private readonly array $config,
-        private readonly ?EventBus $eventBus = null, ExecutionScope|null $executionScope = null, ResolveDefaultConnection|null $resolveDefaultConnection = null, RememberConnection|null $rememberConnection = null,
+        private readonly array                    $config,
+        private readonly ResolveDefaultConnection $resolveDefaultConnection,
+        private readonly RememberConnection       $rememberConnection,
+        private readonly ?EventBus                $eventBus = null,
+        private readonly ExecutionScope|null      $executionScope = null,
     ) {
-        $this->executionScope = $executionScope ?? ExecutionScope::fresh();
-        $this->resolveDefaultConnection = $resolveDefaultConnection ?? new ResolveDefaultConnection(config: $this->config);
-        $this->rememberConnection = $rememberConnection ?? new RememberConnection();
     }
 
     /**

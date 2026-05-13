@@ -22,7 +22,7 @@ final class EventBus implements EventBusInterface
      * @param  DispatchStrategyInterface  $dispatchStrategy  The logic for HOW to deliver the news (e.g., "Do it now" or "Queue
      *                                                       *                                            it").
      */
-    public function __construct(private readonly DispatchStrategyInterface $dispatchStrategy = new SyncDispatchStrategy())
+    public function __construct(private readonly DispatchStrategyInterface|null $dispatchStrategy = null)
     {
     }
 
@@ -39,7 +39,13 @@ final class EventBus implements EventBusInterface
         }
 
         // We hand the job over to the "Strategy" (e.g., our Delivery Driver).
-        $this->dispatchStrategy->handle(event: $event, listeners: $this->listeners[$name]);
+        if ($this->dispatchStrategy !== null) {
+            $this->dispatchStrategy->handle(event: $event, listeners: $this->listeners[$name]);
+        } else {
+            foreach ($this->listeners[$name] as $listener) {
+                $listener($event);
+            }
+        }
     }
 
     /**

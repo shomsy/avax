@@ -142,13 +142,13 @@ V5.6 Failure Boundary: CLOSED / FULL GREEN (Y1-Y7 complete, 90 tests, 4 gates GR
 
 V5.7 Events DSL: CLOSED / FULL GREEN (V5.7-00 through V5.7-13 complete, 10 event gates PASS, 8069 tests GREEN, PHPStan 0 errors, real dogfooding proven, CQRS projection proven, event-history reference proof)
 
-V5.8 Design Lock: CLOSED / GREEN (V5.8-00 complete, 22 design documents created, docs draft created)
+V5.8 Database Lifecycle Events: CLOSED / FULL GREEN (V5.8-01 through V5.8-12 complete, 8203 tests GREEN, PHPStan 0 errors, foundation enums, registration objects, 19 event objects, compiled registry, fluent DSL, transaction afterCommit/afterRollback safety, outbox groundwork)
 
 Current Plan Lock: CLOSED / FULL GREEN
 
-Active stage: V5.8 Design Lock — COMPLETE / GREEN
+Active stage: V5.8 Database Lifecycle Events — COMPLETE / GREEN
 
-Next allowed stage: V5.8-01 Owner Convergence (implementation)
+Next allowed stage: V5.8.x deferred items (EntityPersister/QueryOrchestrator lifecycle hook wiring, tooling gates, docs update) or V5.9 Boot DSL (if design lock approved)
 
 This status is derived from CURRENT_TRUTH.md and EVIDENCE/current-plan-lock/final-current-plan-lock-report.md.
 

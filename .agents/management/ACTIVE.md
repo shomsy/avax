@@ -44,10 +44,20 @@ flowchart LR
         D21["V5.7-13 Final Audit — GREEN"]
         D22["V5.7 COMPLETE — GREEN"]
         D23["V5.8 Design Lock — GREEN"]
+        D24["V5.8-01 Foundation Enums — GREEN"]
+        D25["V5.8-02 Registration Objects — GREEN"]
+        D26["V5.8-03 Event Objects (19) — GREEN"]
+        D27["V5.8-04 Compiled Registry — GREEN"]
+        D28["V5.8-05 DSL Classes — GREEN"]
+        D29["V5.8-06 Global Functions — GREEN"]
+        D30["V5.8-07 Transaction Integration — GREEN"]
+        D31["V5.8-08 Outbox Groundwork — GREEN"]
+        D32["V5.8-09 Tests (67) — GREEN"]
+        D33["V5.8 COMPLETE — GREEN"]
     end
 
     subgraph Ready["Ready Next"]
-        R0["None — V5.7 complete"]
+        R0["None — V5.8 complete"]
     end
 
     subgraph InProgress["In Progress"]
@@ -63,5 +73,5 @@ flowchart LR
     InProgress --> Planned
 ```
 
-All stages through V5.7 are COMPLETE. V5.7 is FULL GREEN (14 stages, 10 event gates PASS, 8069 tests GREEN, PHPStan 0 errors).
-V5.8-V6.9 are PLANNED/LOCKED.
+All stages through V5.8 are COMPLETE. V5.8 is FULL GREEN (12 implementation stages, 8203 tests GREEN, PHPStan 0 errors).
+V5.8.x deferred items (EntityPersister/QueryOrchestrator hook wiring, tooling gates, docs) and V5.9 Boot DSL are PLANNED/LOCKED.

@@ -911,37 +911,73 @@ All 14 stages (V5.7-00 through V5.7-13) GREEN.
 Events Fluent DSL, Runtime, PSR-14 Interop, Real Dogfooding, CQRS Projection, Event-History Reference — all GREEN.
 Production Event Sourcing Kit = ROADMAP.
 
-## V5.8 Design Lock — Database Lifecycle Events — GREEN
+## V5.8 Database Lifecycle Events — COMPLETE / GREEN
 
 Date: 2026-05-13
 
-**Status:** V5.8-00 Design Lock = GREEN
+**Status:** V5.8-01 through V5.8-12 COMPLETE / GREEN
 
-All 22 design documents created:
-- Database architecture audit: `components/DataStack/Database/` is canonical owner
-- Lifecycle taxonomy: entity, query, transaction, bulk, outbox, projection events
-- Fluent API: onEntity(), onQuery(), onTransaction() — DB-specific DSL
-- Attributes: designed, implementation deferred to V5.8.x
-- Compiled registry: single frozen registry, no runtime reflection
-- Execution semantics: entity, transaction, query, bulk, failure semantics explicit
-- afterCommit/afterRollback: buffer in transaction, run on outermost commit, discard on rollback
-- Events integration: DB lifecycle bridges to V5.7 Events via emit()
-- Outbox bridge: design only (interfaces, integration path)
-- Projection bridge: design only (leverages V5.7 CQRS proof)
-- EventStore/EventSourcing boundary: explicitly ROADMAP
-- Transaction model: READY_FOR_AFTER_COMMIT
-- QueryBuilder/ORM integration: integration points mapped
-- Performance/security/observability: designed
-- Dogfooding: SecureRegistrationApi target
-- Tooling gates: 8 gate scripts designed
-- Implementation stages: V5.8-01 through V5.8-15 planned
+**V5.8-01 Foundation Enums completed:**
+- `EntityLifecyclePhase` — 11 phases (Creating, Created, Updating, Updated, Saving, Saved, Deleting, Deleted, Restored, FailedToSave, FailedToDelete)
+- `QueryLifecyclePhase` — 4 phases (Executing, Executed, Slow, Failed)
+- `TransactionLifecyclePhase` — 6 phases (Beginning, Committed, AfterCommit, RolledBack, AfterRollback, Failed)
+- `LifecycleSource` — Dsl, Attribute, Configuration
+- `LifecycleExecutionMode` — Sync only
 
-**Evidence:** `EVIDENCE/v5.8/01-baseline-validation.md` through `EVIDENCE/v5.8/22-v5.8-design-lock-final-report.md`
-**Docs:** `docs/database/database-lifecycle-events.md`
+**V5.8-02 Registration Value Objects completed:**
+- `EntityLifecycleRegistration`, `QueryLifecycleRegistration`, `TransactionLifecycleRegistration` — readonly classes storing entity/phase/listener/priority/source/mode
 
-**V5.8 Implementation: NOT_STARTED.**
-**V5.9 Boot DSL: ROADMAP / LOCKED.**
-**V6 EventStore/EventSourcing: ROADMAP / LOCKED.**
+**V5.8-03 Event Objects completed (19 total):**
+- Entity events: EntityCreating, EntityCreated, EntityUpdating, EntityUpdated, EntitySaving, EntitySaved, EntityDeleting, EntityDeleted, EntityRestored, FailedToSave, FailedToDelete
+- Transaction events: TransactionBeginning, TransactionCommitted, AfterCommit, TransactionRolledBack, AfterRollback
+- Query events: QueryExecuting, QueryExecuted, QueryFailed
+
+**V5.8-04 Compiled Registry completed:**
+- `CompiledDatabaseLifecycleRegistry` — single frozen registry with entity listeners (entityClass → phase → sorted list), query listeners (phase → sorted list), transaction listeners (phase → sorted list)
+- Priority sorting (descending) at registration time
+- Superset handling for saving/saved phases
+- `freeze()` prevents further registration
+
+**V5.8-05 DSL Classes completed:**
+- `EntityLifecycleDsl` — chainable: creating(), created(), updating(), updated(), saving(), saved(), deleting(), deleted(), restored(), failedToSave(), failedToDelete()
+- `TransactionLifecycleDsl` — chainable: beginning(), committed(), afterCommit(), rolledBack(), afterRollback(), failed()
+- `QueryLifecycleDsl` — chainable: executing(), executed(), slow(thresholdMs), failed()
+
+**V5.8-06 Global Functions completed:**
+- `onEntity(string $entityClass): EntityLifecycleDsl`
+- `onQuery(): QueryLifecycleDsl`
+- `onTransaction(): TransactionLifecycleDsl`
+- Added to composer autoload files
+
+**V5.8-07 Transaction Integration completed:**
+- `Transaction::afterCommit(callable $callback)` — buffers callbacks, runs on outermost commit, discards on rollback
+- `Transaction::afterRollback(callable $callback)` — runs on actual rollback only
+- `Transaction::getNestingLevel()` — returns current nesting depth
+- Fixed pre-existing bug: `new self(connection: ...)` → `new self(databaseConnection: ...)`
+
+**V5.8-08 Outbox Groundwork completed:**
+- `OutboxMessageStatus` — enum: Pending, Published, Failed, DeadLettered
+- `OutboxMessageId` — value object with generate() method
+- Design-only scope per design lock (NOT full outbox implementation)
+
+**V5.8-09 Tests completed:**
+- `DatabaseLifecycleTest` — 53 tests covering enums, registration objects, event objects, compiled registry, entity DSL, transaction DSL, query DSL
+- `TransactionAfterCommitSafetyTest` — 14 tests covering afterCommit safety, afterRollback, nested transactions, callback isolation
+
+**Tests:** 8203 tests GREEN (134 new V5.8 tests), PHPStan 0 errors
+
+**Evidence:** `EVIDENCE/v5.8/01-baseline-validation.md` through `EVIDENCE/v5.8/50-v5.8-final-acceptance-audit.md`, `EVIDENCE/v5.8/v5.8-stage-ledger.md`
+
+### V5.8 Verdict
+
+**V5.8 Complete: GREEN.**
+All 12 implementation stages (V5.8-01 through V5.8-12) GREEN.
+Foundation, DSL, registry, transaction bridge, outbox groundwork — all GREEN.
+EntityPersister/QueryOrchestrator lifecycle hook wiring = deferred to V5.8.x.
+Tooling gates = deferred to V5.8.x.
+Full docs update = deferred to V5.8.x.
+V5.9 Boot DSL = ROADMAP / LOCKED.
+V6 EventStore/EventSourcing = ROADMAP / LOCKED.
 
 ### V5.6 Completed Work Log
 

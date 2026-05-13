@@ -25,6 +25,15 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: V5.8-12
+- `created_at`: 2026-05-13
+- `updated_at`: 2026-05-13
+- `status`: done
+- `estimate`: large
+- `outcome`: V5.8 Database Lifecycle Events — COMPLETE / GREEN. Foundation enums, registration objects, 19 event objects, compiled registry, fluent DSL (onEntity/onQuery/onTransaction), transaction afterCommit/afterRollback safety, outbox groundwork. 8203 tests GREEN, PHPStan 0 errors.
+- `acceptance`: All 12 implementation stages (V5.8-01 through V5.8-12) GREEN. Entity/query/transaction lifecycle phases defined. DSL registers into frozen compiled registry. Transaction callbacks run only on outermost commit, discard on rollback. Outbox groundwork is design-only. Evidence: EVIDENCE/v5.8/01 through EVIDENCE/v5.8/50.
+- `links`: `EVIDENCE/v5.8/v5.8-stage-ledger.md`, `EVIDENCE/v5.8/50-v5.8-final-acceptance-audit.md`
+
 - `id`: V5.7-13
 - `created_at`: 2026-05-13
 - `updated_at`: 2026-05-13

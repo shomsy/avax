@@ -911,6 +911,38 @@ All 14 stages (V5.7-00 through V5.7-13) GREEN.
 Events Fluent DSL, Runtime, PSR-14 Interop, Real Dogfooding, CQRS Projection, Event-History Reference — all GREEN.
 Production Event Sourcing Kit = ROADMAP.
 
+## V5.8 Design Lock — Database Lifecycle Events — GREEN
+
+Date: 2026-05-13
+
+**Status:** V5.8-00 Design Lock = GREEN
+
+All 22 design documents created:
+- Database architecture audit: `components/DataStack/Database/` is canonical owner
+- Lifecycle taxonomy: entity, query, transaction, bulk, outbox, projection events
+- Fluent API: onEntity(), onQuery(), onTransaction() — DB-specific DSL
+- Attributes: designed, implementation deferred to V5.8.x
+- Compiled registry: single frozen registry, no runtime reflection
+- Execution semantics: entity, transaction, query, bulk, failure semantics explicit
+- afterCommit/afterRollback: buffer in transaction, run on outermost commit, discard on rollback
+- Events integration: DB lifecycle bridges to V5.7 Events via emit()
+- Outbox bridge: design only (interfaces, integration path)
+- Projection bridge: design only (leverages V5.7 CQRS proof)
+- EventStore/EventSourcing boundary: explicitly ROADMAP
+- Transaction model: READY_FOR_AFTER_COMMIT
+- QueryBuilder/ORM integration: integration points mapped
+- Performance/security/observability: designed
+- Dogfooding: SecureRegistrationApi target
+- Tooling gates: 8 gate scripts designed
+- Implementation stages: V5.8-01 through V5.8-15 planned
+
+**Evidence:** `EVIDENCE/v5.8/01-baseline-validation.md` through `EVIDENCE/v5.8/22-v5.8-design-lock-final-report.md`
+**Docs:** `docs/database/database-lifecycle-events.md`
+
+**V5.8 Implementation: NOT_STARTED.**
+**V5.9 Boot DSL: ROADMAP / LOCKED.**
+**V6 EventStore/EventSourcing: ROADMAP / LOCKED.**
+
 ### V5.6 Completed Work Log
 
 Date: 2026-05-12

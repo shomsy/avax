@@ -43,6 +43,7 @@ flowchart LR
         D20["V5.7-12 Tooling Gates — GREEN"]
         D21["V5.7-13 Final Audit — GREEN"]
         D22["V5.7 COMPLETE — GREEN"]
+        D23["V5.8 Design Lock — GREEN"]
     end
 
     subgraph Ready["Ready Next"]

@@ -142,11 +142,13 @@ V5.6 Failure Boundary: CLOSED / FULL GREEN (Y1-Y7 complete, 90 tests, 4 gates GR
 
 V5.7 Events DSL: CLOSED / FULL GREEN (V5.7-00 through V5.7-13 complete, 10 event gates PASS, 8069 tests GREEN, PHPStan 0 errors, real dogfooding proven, CQRS projection proven, event-history reference proof)
 
+V5.8 Design Lock: CLOSED / GREEN (V5.8-00 complete, 22 design documents created, docs draft created)
+
 Current Plan Lock: CLOSED / FULL GREEN
 
-Active stage: V5.7 Events Fluent DSL — COMPLETE / GREEN
+Active stage: V5.8 Design Lock — COMPLETE / GREEN
 
-Next allowed stage: V5.8 (when planned)
+Next allowed stage: V5.8-01 Owner Convergence (implementation)
 
 This status is derived from CURRENT_TRUTH.md and EVIDENCE/current-plan-lock/final-current-plan-lock-report.md.
 

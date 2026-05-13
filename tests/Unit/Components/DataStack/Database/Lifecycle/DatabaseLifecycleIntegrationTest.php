@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Components\DataStack\Database\Lifecycle;
+namespace Avax\Tests\Unit\Components\DataStack\Database\Lifecycle;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\DTO\ExecutionResult;
@@ -35,6 +35,7 @@ use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\QueryLifecycl
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\TransactionLifecyclePhase;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\TransactionLifecycleRegistration;
 use PDO;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\GlobalDatabaseLifecycleState;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -51,6 +52,26 @@ use RuntimeException;
  */
 final class DatabaseLifecycleIntegrationTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        GlobalDatabaseLifecycleState::reset();
+        TestCreatingListener::$lastEvent = null;
+        TestCreatedListener::$lastEvent = null;
+        TestSavingListener::$invoked = false;
+        TestSavingListener::$lastEvent = null;
+        TestSavedListener::$lastEvent = null;
+        TestQueryExecutingListener::$lastEvent = null;
+        TestQueryExecutedListener::$lastEvent = null;
+        TestQueryFailedListener::$lastEvent = null;
+        TestSlowQueryListener::$invoked = false;
+        TestTransactionBeginningListener::$lastEvent = null;
+        TestTransactionCommittedListener::$lastEvent = null;
+        TestTransactionAfterCommitListener::$lastEvent = null;
+        TestTransactionRolledBackListener::$lastEvent = null;
+        TestTransactionAfterRollbackListener::$lastEvent = null;
+
+        parent::tearDown();
+    }
     // ===== QueryOrchestrator Lifecycle Wiring Tests =====
 
     #[Test]
@@ -302,20 +323,28 @@ final class DatabaseLifecycleIntegrationTest extends TestCase
         ));
         $registry->freeze();
 
-        // Verify registry resolves listeners correctly for each phase.
+        // Registry does exact lookup only — no superset expansion.
+        // Superset (saving includes creating/updating) is handled by EntityPersister
+        // dispatching both phases explicitly.
         $creating = $registry->entityListenersFor(TestUser::class, EntityLifecyclePhase::Creating);
-        $this->assertCount(2, $creating); // Creating + Saving superset
+        $this->assertCount(1, $creating);
+        $this->assertSame(TestCreatingListener::class, $creating[0]['listener']);
+
+        $saving = $registry->entityListenersFor(TestUser::class, EntityLifecyclePhase::Saving);
+        $this->assertCount(1, $saving);
+        $this->assertSame(TestSavingListener::class, $saving[0]['listener']);
 
         $created = $registry->entityListenersFor(TestUser::class, EntityLifecyclePhase::Created);
         $this->assertCount(1, $created);
-
-        $this->assertSame(TestCreatingListener::class, $creating[0]['listener']);
         $this->assertSame(TestCreatedListener::class, $created[0]['listener']);
     }
 
     #[Test]
-    public function entity_lifecycle_superset_handling_for_saving_and_saved(): void
+    public function entity_lifecycle_exact_lookup_no_superset_expansion(): void
     {
+        // Registry does exact lookup only — no superset expansion.
+        // Superset dispatch is EntityPersister responsibility: it dispatches
+        // both specific (Creating) and generic (Saving) phases explicitly.
         $registry = new CompiledDatabaseLifecycleRegistry();
         $registry->registerEntity(new EntityLifecycleRegistration(
             entityClass: TestUser::class,
@@ -329,15 +358,23 @@ final class DatabaseLifecycleIntegrationTest extends TestCase
         ));
         $registry->freeze();
 
-        // Creating should include Saving listeners (superset).
+        // Exact lookup: Creating returns nothing (only Saving registered).
         $creatingListeners = $registry->entityListenersFor(TestUser::class, EntityLifecyclePhase::Creating);
-        $this->assertCount(1, $creatingListeners);
-        $this->assertSame(TestSavingListener::class, $creatingListeners[0]['listener']);
+        $this->assertCount(0, $creatingListeners);
 
-        // Updated should include Saved listeners (superset).
+        // Exact lookup: Saving returns the Saving listener.
+        $savingListeners = $registry->entityListenersFor(TestUser::class, EntityLifecyclePhase::Saving);
+        $this->assertCount(1, $savingListeners);
+        $this->assertSame(TestSavingListener::class, $savingListeners[0]['listener']);
+
+        // Exact lookup: Updated returns nothing (only Saved registered).
         $updatedListeners = $registry->entityListenersFor(TestUser::class, EntityLifecyclePhase::Updated);
-        $this->assertCount(1, $updatedListeners);
-        $this->assertSame(TestSavedListener::class, $updatedListeners[0]['listener']);
+        $this->assertCount(0, $updatedListeners);
+
+        // Exact lookup: Saved returns the Saved listener.
+        $savedListeners = $registry->entityListenersFor(TestUser::class, EntityLifecyclePhase::Saved);
+        $this->assertCount(1, $savedListeners);
+        $this->assertSame(TestSavedListener::class, $savedListeners[0]['listener']);
     }
 
     // ===== Helpers =====

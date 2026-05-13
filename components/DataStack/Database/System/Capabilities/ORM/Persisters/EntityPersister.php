@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\ORM\Persisters;
 
+use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Hydration\Hydrator;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata\AttributeMetadataReader;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata\EntityMetadata;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata\FieldMetadata;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Query;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\CompiledDatabaseLifecycleRegistry;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\GlobalDatabaseLifecycleState;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\EntityLifecyclePhase;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntityCreated;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntityCreating;
@@ -43,9 +45,14 @@ final readonly class EntityPersister
         private Query $query,
         private AttributeMetadataReader $attributeMetadataReader,
         private Hydrator $hydrator,
-        private CompiledDatabaseLifecycleRegistry $registry = new CompiledDatabaseLifecycleRegistry(),
+        private CompiledDatabaseLifecycleRegistry|null $registry = null,
         private string $connectionName = 'default',
     ) {
+    }
+
+    private function getRegistry(): CompiledDatabaseLifecycleRegistry
+    {
+        return $this->registry ?? GlobalDatabaseLifecycleState::registry();
     }
 
     /**
@@ -375,7 +382,7 @@ final readonly class EntityPersister
         string $connection,
     ): void {
         foreach ($phases as $phase) {
-            $listeners = $this->registry->entityListenersFor($entityClass, $phase);
+            $listeners = $this->getRegistry()->entityListenersFor($entityClass, $phase);
             if ($listeners === []) {
                 continue;
             }
@@ -407,7 +414,7 @@ final readonly class EntityPersister
         string $lastInsertId = '',
     ): void {
         foreach ($phases as $phase) {
-            $listeners = $this->registry->entityListenersFor($entityClass, $phase);
+            $listeners = $this->getRegistry()->entityListenersFor($entityClass, $phase);
             if ($listeners === []) {
                 continue;
             }
@@ -438,7 +445,7 @@ final readonly class EntityPersister
         Throwable $exception,
         ?object $entity = null,
     ): void {
-        $listeners = $this->registry->entityListenersFor($entityClass, $phase);
+        $listeners = $this->getRegistry()->entityListenersFor($entityClass, $phase);
         if ($listeners === []) {
             return;
         }
@@ -539,7 +546,7 @@ final readonly class EntityPersister
     /**
      * Dispatch an entity lifecycle event through the registry.
      *
-     * Listeners are invoked via the compiled registry — no reflection in hot path.
+     * Listeners are resolved via the central ResolveCallable — no direct instantiation.
      * Listener failure bubbles by default.
      */
     private function dispatchEntityEvent(object $event): void
@@ -580,13 +587,12 @@ final readonly class EntityPersister
             return;
         }
 
-        $listeners = $this->registry->entityListenersFor($entityClass, $phase);
+        $listeners = $this->getRegistry()->entityListenersFor($entityClass, $phase);
 
+        $resolver = new ResolveCallable();
         foreach ($listeners as $entry) {
-            $listener = $entry['listener'];
-            $instance = new $listener();
-            // @phpstan-ignore-next-line
-            $instance($event);
+            $callable = $resolver->resolve($entry['listener']);
+            $callable($event);
         }
     }
 }

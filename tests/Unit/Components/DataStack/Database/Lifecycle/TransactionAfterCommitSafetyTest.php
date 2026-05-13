@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Components\DataStack\Database\Lifecycle;
+namespace Avax\Tests\Unit\Components\DataStack\Database\Lifecycle;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Transactions\RunTransaction\Transaction;

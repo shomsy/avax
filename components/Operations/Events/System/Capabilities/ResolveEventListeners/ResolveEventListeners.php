@@ -4,61 +4,40 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Events\System\Capabilities\ResolveEventListeners;
 
+use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\CallableResolutionFailed;
+use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 use Avax\Components\Operations\Events\System\Foundation\CompiledListener;
+use Psr\Container\ContainerInterface;
 
 /**
  * Resolves compiled listener entries into invokable callables.
  *
+ * Delegates class-string resolution to the central ResolveCallable,
+ * which supports optional PSR-11 container injection.
+ *
  * Handles both:
  * - Already-resolved callables (from DSL compilation)
  * - Class-string references (from attribute compilation)
- *
- * For class-string listeners, instantiates the listener with no-argument constructor.
- * If a container is available, it should be used — but for V5.7, simple instantiation
- * is used. Container integration is ROADMAP.
  */
 final class ResolveEventListeners
 {
+    private ResolveCallable $resolveCallable;
+
+    public function __construct(?ContainerInterface $container = null)
+    {
+        $this->resolveCallable = new ResolveCallable($container);
+    }
+
     /**
-     * Resolve a compiled listener into a callable.
+     * Resolve a compiled listener entry into an invokable callable.
      *
-     * @throws \RuntimeException If a class-string listener cannot be instantiated.
+     * @throws CallableResolutionFailed If a class-string listener cannot be resolved.
      */
     public function resolve(CompiledListener $compiled): callable
     {
         $listener = $compiled->listener;
 
-        // Class-string from attribute compilation.
-        if (is_string($listener)) {
-            return $this->instantiateListener($listener);
-        }
-
-        // Already a callable from DSL compilation.
-        return $listener;
-    }
-
-    /**
-     * Instantiate a listener class by its fully qualified class name.
-     */
-    private function instantiateListener(string $class): callable
-    {
-        if (! class_exists($class)) {
-            throw new \RuntimeException(sprintf('Listener class "%s" does not exist.', $class));
-        }
-
-        try {
-            $instance = new $class();
-        } catch (\Throwable $e) {
-            throw new \RuntimeException(
-                sprintf('Cannot instantiate listener class "%s". It may require constructor dependencies. Container integration is planned for a future release.', $class),
-                previous: $e,
-            );
-        }
-
-        if (! is_callable($instance)) {
-            throw new \RuntimeException(sprintf('Listener class "%s" is not invokable. It must implement __invoke().', $class));
-        }
-
-        return $instance;
+        // Delegate to central resolver — handles class-string and callable.
+        return $this->resolveCallable->resolve($listener);
     }
 }

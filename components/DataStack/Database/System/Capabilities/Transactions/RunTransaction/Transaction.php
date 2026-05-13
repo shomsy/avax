@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Transactions\RunTransaction;
 
+use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Contracts\TransactionsInterface;
 use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Exceptions\TransactionException;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\CompiledDatabaseLifecycleRegistry;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\GlobalDatabaseLifecycleState;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\AfterCommit;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\AfterRollback;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\TransactionBeginning;
@@ -48,9 +50,14 @@ final class Transaction implements TransactionsInterface
      */
     private function __construct(
         private readonly DatabaseConnection $databaseConnection,
-        private readonly CompiledDatabaseLifecycleRegistry $registry = new CompiledDatabaseLifecycleRegistry(),
+        private readonly CompiledDatabaseLifecycleRegistry|null $registry = null,
         private readonly string $connectionName = 'default',
     ) {
+    }
+
+    private function getRegistry(): CompiledDatabaseLifecycleRegistry
+    {
+        return $this->registry ?? GlobalDatabaseLifecycleState::registry();
     }
 
     /**
@@ -67,7 +74,7 @@ final class Transaction implements TransactionsInterface
     ): self {
         return new self(
             databaseConnection: $databaseConnection,
-            registry: $registry ?? new CompiledDatabaseLifecycleRegistry(),
+            registry: $registry,
             connectionName: $connectionName,
         );
     }
@@ -217,24 +224,14 @@ final class Transaction implements TransactionsInterface
             if ($this->transactions === 1) {
                 $this->databaseConnection->getConnection()->commit();
 
-                // Outermost commit — run afterCommit callbacks.
+                // DB commit succeeded. Clear callback queue before running.
                 $callbacks = $this->afterCommitCallbacks;
                 $this->afterCommitCallbacks = [];
 
-                foreach ($callbacks as $callback) {
-                    $callback();
-                }
-            } else {
-                // Remove the inner bookmark.
-                $savepointName = 'sp_'.($this->transactions - 1);
-                $this->databaseConnection->getConnection()->exec(statement: 'RELEASE SAVEPOINT '.$savepointName);
-            }
+                $this->transactions = max(0, $this->transactions - 1);
 
-            $this->transactions = max(0, $this->transactions - 1);
-            $durationMs = (microtime(as_float: true) - $start) * 1000;
-
-            // Fire committed lifecycle event on outermost commit.
-            if ($this->transactions === 0) {
+                // Fire committed lifecycle event on outermost commit.
+                $durationMs = (microtime(as_float: true) - $start) * 1000;
                 $this->dispatchTransactionLifecycle(
                     phase: TransactionLifecyclePhase::Committed,
                     nestingLevel: 0,
@@ -242,7 +239,32 @@ final class Transaction implements TransactionsInterface
                     reason: null,
                 );
 
-                // Fire afterCommit lifecycle event after callbacks have run.
+                // Run afterCommit callbacks. If a callback fails, the DB
+                // commit has already happened — this is NOT a DB commit failure.
+                foreach ($callbacks as $callback) {
+                    try {
+                        $callback();
+                    } catch (Throwable $callbackError) {
+                        // Fire afterCommit event even on callback failure so
+                        // observers know the afterCommit phase was reached.
+                        $this->dispatchTransactionLifecycle(
+                            phase: TransactionLifecyclePhase::AfterCommit,
+                            nestingLevel: 0,
+                            durationMs: $durationMs,
+                            reason: $callbackError,
+                        );
+
+                        $this->transactionId = null;
+
+                        throw new TransactionException(
+                            message     : 'AfterCommit callback failed: '.$callbackError->getMessage(),
+                            nestingLevel: 0,
+                            previous    : $callbackError,
+                        );
+                    }
+                }
+
+                // Fire afterCommit lifecycle event after callbacks succeed.
                 $this->dispatchTransactionLifecycle(
                     phase: TransactionLifecyclePhase::AfterCommit,
                     nestingLevel: 0,
@@ -251,6 +273,12 @@ final class Transaction implements TransactionsInterface
                 );
 
                 $this->transactionId = null;
+            } else {
+                // Remove the inner bookmark.
+                $savepointName = 'sp_'.($this->transactions - 1);
+                $this->databaseConnection->getConnection()->exec(statement: 'RELEASE SAVEPOINT '.$savepointName);
+
+                $this->transactions = max(0, $this->transactions - 1);
             }
         } catch (Throwable $throwable) {
             throw new TransactionException(
@@ -429,6 +457,7 @@ final class Transaction implements TransactionsInterface
      * Dispatch transaction lifecycle events through the compiled registry.
      *
      * No-listener path: registry returns empty list, zero overhead.
+     * Listeners resolved via central ResolveCallable — no direct instantiation.
      * Listener failure bubbles by default.
      */
     private function dispatchTransactionLifecycle(
@@ -437,7 +466,7 @@ final class Transaction implements TransactionsInterface
         float $durationMs,
         ?Throwable $reason,
     ): void {
-        $listeners = $this->registry->transactionListenersFor($phase);
+        $listeners = $this->getRegistry()->transactionListenersFor($phase);
         if ($listeners === []) {
             return;
         }
@@ -471,11 +500,10 @@ final class Transaction implements TransactionsInterface
             TransactionLifecyclePhase::Failed => throw new \RuntimeException('Failed phase should not be dispatched directly'),
         };
 
+        $resolver = new ResolveCallable();
         foreach ($listeners as $entry) {
-            $listener = $entry['listener'];
-            $instance = new $listener();
-            // @phpstan-ignore-next-line
-            $instance($event);
+            $callable = $resolver->resolve($entry['listener']);
+            $callable($event);
         }
     }
 }

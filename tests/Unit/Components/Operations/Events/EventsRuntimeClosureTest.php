@@ -841,7 +841,7 @@ final class EventsRuntimeClosureTest extends TestCase
         );
 
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Listener class "NonExistentListener" does not exist.');
+        $this->expectExceptionMessage('Cannot resolve class-string "NonExistentListener": class does not exist.');
 
         $resolver->resolve($compiled);
     }

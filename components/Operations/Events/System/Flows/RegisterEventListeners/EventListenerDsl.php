@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Events\System\Flows\RegisterEventListeners;
 
+use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 use Avax\Components\Operations\Events\System\Capabilities\Registry\ListenerRegistry;
+use Psr\Container\ContainerInterface;
 
 /**
  * Fluent DSL for registering event listeners.
@@ -16,10 +18,14 @@ use Avax\Components\Operations\Events\System\Capabilities\Registry\ListenerRegis
  */
 final class EventListenerDsl
 {
+    private ResolveCallable $resolveCallable;
+
     public function __construct(
         private readonly string $eventClass,
         private readonly ListenerRegistry $registry,
+        ?ContainerInterface $container = null,
     ) {
+        $this->resolveCallable = new ResolveCallable($container);
     }
 
     /**
@@ -30,8 +36,9 @@ final class EventListenerDsl
      */
     public function do(string|callable $listener, int $priority = 0): self
     {
+        // Use central resolver for class-string listeners.
         $callable = is_string($listener)
-            ? [new $listener(), '__invoke']
+            ? $this->resolveCallable->resolve($listener)
             : $listener;
 
         $this->registry->subscribe($this->eventClass, $callable, $priority); // @phpstan-ignore-line

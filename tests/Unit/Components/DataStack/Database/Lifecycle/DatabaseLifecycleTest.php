@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Components\DataStack\Database\Lifecycle;
+namespace Avax\Tests\Unit\Components\DataStack\Database\Lifecycle;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Lifecycle\EntityLifecycleDsl;
 use Avax\Components\DataStack\Database\System\Capabilities\Lifecycle\QueryLifecycleDsl;
@@ -36,6 +36,7 @@ use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\QueryLifecycl
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\QueryLifecycleRegistration;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\TransactionLifecyclePhase;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\TransactionLifecycleRegistration;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\GlobalDatabaseLifecycleState;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -467,6 +468,7 @@ final class DatabaseLifecycleTest extends TestCase
         EntityLifecycleDsl::reset();
         QueryLifecycleDsl::reset();
         TransactionLifecycleDsl::reset();
+        GlobalDatabaseLifecycleState::reset();
 
         parent::tearDown();
     }
@@ -643,8 +645,11 @@ final class DatabaseLifecycleTest extends TestCase
     public function test_transaction_dsl_no_execution_during_registration(): void
     {
         onTransaction()->afterCommit('PublishOutbox');
-        // Registration only — no execution.
-        $this->assertTrue(true);
+        $registry = TransactionLifecycleDsl::getRegistry();
+        // Prove registration happened without invoking any listener.
+        $listeners = $registry->transactionListenersFor(TransactionLifecyclePhase::AfterCommit);
+        $this->assertCount(1, $listeners);
+        $this->assertSame('PublishOutbox', $listeners[0]['listener']);
     }
 
     // ===== Query Lifecycle DSL Tests =====
@@ -699,7 +704,10 @@ final class DatabaseLifecycleTest extends TestCase
     public function test_query_dsl_no_execution_during_registration(): void
     {
         onQuery()->executed('RecordQuery');
-        // Registration only — no execution.
-        $this->assertTrue(true);
+        $registry = QueryLifecycleDsl::getRegistry();
+        // Prove registration happened without invoking any listener.
+        $listeners = $registry->queryListenersFor(QueryLifecyclePhase::Executed);
+        $this->assertCount(1, $listeners);
+        $this->assertSame('RecordQuery', $listeners[0]['listener']);
     }
 }

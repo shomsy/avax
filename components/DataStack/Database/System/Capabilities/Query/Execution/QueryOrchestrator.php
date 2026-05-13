@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Execution;
 
+use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\DTO\ExecutionResult;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\CompiledDatabaseLifecycleRegistry;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\GlobalDatabaseLifecycleState;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\QueryExecuted;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\QueryExecuting;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\QueryFailed;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\QueryLifecyclePhase;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\RedactBindings;
 use Random\RandomException;
 use RuntimeException;
 use Throwable;
@@ -40,7 +43,8 @@ final class QueryOrchestrator
      */
     public function __construct(
         private readonly ExecutorInterface $executor,
-        private readonly CompiledDatabaseLifecycleRegistry $registry = new CompiledDatabaseLifecycleRegistry(),
+        private readonly CompiledDatabaseLifecycleRegistry|null $registry
+        = null,
         private ExecutionScope|null $executionScope
         = null {
             get {
@@ -50,6 +54,11 @@ final class QueryOrchestrator
         private readonly string $connectionName = 'default',
     ) {
         $this->executionScope ??= ExecutionScope::fresh();
+    }
+
+    private function getRegistry(): CompiledDatabaseLifecycleRegistry
+    {
+        return $this->registry ?? GlobalDatabaseLifecycleState::registry();
     }
 
     public function __clone()
@@ -135,7 +144,8 @@ final class QueryOrchestrator
 
     private function logPretend(string $sql): void
     {
-        echo "\033[33m[DRY RUN]\033[0m SQL: {$sql}\n";
+        // Pretend mode is silent by default.
+        // To inspect pretend queries, wrap QueryOrchestrator with a logging decorator.
     }
 
     /**
@@ -218,6 +228,7 @@ final class QueryOrchestrator
      * Dispatch query lifecycle events through the compiled registry.
      *
      * No-listener path: registry returns empty list, zero overhead.
+     * Listeners resolved via central ResolveCallable — no direct instantiation.
      * Listener failure bubbles by default.
      *
      * @param array<mixed> $bindings
@@ -230,7 +241,7 @@ final class QueryOrchestrator
         int $rowCount,
         ?Throwable $exception,
     ): void {
-        $listeners = $this->registry->queryListenersFor($phase);
+        $listeners = $this->getRegistry()->queryListenersFor($phase);
         if ($listeners === []) {
             return;
         }
@@ -244,16 +255,18 @@ final class QueryOrchestrator
             exception: $exception,
         );
 
+        $resolver = new ResolveCallable();
         foreach ($listeners as $entry) {
-            $listener = $entry['listener'];
-            $instance = new $listener();
-            // @phpstan-ignore-next-line
-            $instance($event);
+            $callable = $resolver->resolve($entry['listener']);
+            $callable($event);
         }
     }
 
     /**
      * Check if query exceeded slow threshold and dispatch slow event.
+     *
+     * Slow query path uses the same redaction as normal executed/failed path.
+     * Listeners resolved via central ResolveCallable — no direct instantiation.
      *
      * @param array<mixed> $bindings
      */
@@ -263,27 +276,29 @@ final class QueryOrchestrator
         float $durationMs,
         int $rowCount,
     ): void {
-        $listeners = $this->registry->queryListenersFor(QueryLifecyclePhase::Slow);
+        $listeners = $this->getRegistry()->queryListenersFor(QueryLifecyclePhase::Slow);
         if ($listeners === []) {
             return;
         }
 
+        // Use redacted bindings — same path as normal executed/failed events.
+        $redactedBindings = RedactBindings::redact($bindings);
+
+        $resolver = new ResolveCallable();
         foreach ($listeners as $entry) {
             $thresholdMs = $entry['thresholdMs'] ?? 100;
             if ($durationMs >= $thresholdMs) {
                 $event = new QueryExecuted(
                     sql: $sql,
-                    bindings: $bindings,
+                    bindings: $redactedBindings,
                     connection: $this->connectionName,
                     durationMs: $durationMs,
                     rowCount: $rowCount,
                     phase: QueryLifecyclePhase::Slow->value,
                 );
 
-                $listener = $entry['listener'];
-                $instance = new $listener();
-                // @phpstan-ignore-next-line
-                $instance($event);
+                $callable = $resolver->resolve($entry['listener']);
+                $callable($event);
             }
         }
     }
@@ -301,16 +316,18 @@ final class QueryOrchestrator
         int $rowCount,
         ?Throwable $exception,
     ): object {
+        $redactedBindings = RedactBindings::redact($bindings);
+
         return match ($phase) {
             QueryLifecyclePhase::Executing => new QueryExecuting(
                 sql: $sql,
-                bindings: $bindings,
+                bindings: $redactedBindings,
                 connection: $this->connectionName,
                 startTime: microtime(as_float: true) - ($durationMs / 1000),
             ),
             QueryLifecyclePhase::Executed, QueryLifecyclePhase::Slow => new QueryExecuted(
                 sql: $sql,
-                bindings: $bindings,
+                bindings: $redactedBindings,
                 connection: $this->connectionName,
                 durationMs: $durationMs,
                 rowCount: $rowCount,
@@ -318,7 +335,7 @@ final class QueryOrchestrator
             ),
             QueryLifecyclePhase::Failed => new QueryFailed(
                 sql: $sql,
-                bindings: $bindings,
+                bindings: $redactedBindings,
                 connection: $this->connectionName,
                 exception: $exception ?? throw new RuntimeException('Exception must not be null for failed event'),
                 durationMs: $durationMs,

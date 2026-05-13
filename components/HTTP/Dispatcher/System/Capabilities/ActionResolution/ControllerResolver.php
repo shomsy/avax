@@ -4,28 +4,22 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Dispatcher\System\Capabilities\ActionResolution;
 
-use Psr\Container\ContainerInterface;
-use RuntimeException;
+use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 
 /**
- * ControllerResolver - Instantiates controller classes, preferably via DI container.
+ * ControllerResolver - Resolves controller instances through DI container or ResolveCallable.
+ *
+ * Never falls back to direct `new $className()` — uses ResolveCallable which
+ * provides proper diagnostics when constructor dependencies cannot be resolved.
  */
 final readonly class ControllerResolver
 {
     public function __construct(
-        private ContainerInterface $container,
+        private ResolveCallable $resolver,
     ) {}
 
-    public function resolve(string $className) : object
+    public function resolve(string $className) : callable
     {
-        if (! class_exists($className)) {
-            throw new RuntimeException(sprintf("Controller class '%s' does not exist.", $className));
-        }
-
-        if ($this->container->has($className)) {
-            return $this->container->get($className);
-        }
-
-        return new $className();
+        return $this->resolver->resolve($className);
     }
 }

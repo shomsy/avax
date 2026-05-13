@@ -18,8 +18,8 @@ use Throwable;
 final readonly class RenderApplicationError
 {
     public function __construct(
-        private ResponseFactory $responseFactory = new ResponseFactory(),
-        private ClassifyApplicationException $classifier = new ClassifyApplicationException(),
+        private ResponseFactory              $responseFactory,
+        private ClassifyApplicationException $classifier,
     ) {
     }
 

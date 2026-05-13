@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Router\System\PublicSurface;
 
+use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
@@ -18,17 +19,14 @@ use Override;
 
 final class Router implements RouterInterface, RouterRuntimeInterface
 {
-    private RouteCollection $routeCollection;
-
-    private MatchRoute $matchRoute;
-
     /** @var list<string|callable> */
     private array $globalMiddleware = [];
 
-    public function __construct()
-    {
-        $this->routeCollection = new RouteCollection();
-        $this->matchRoute      = new MatchRoute();
+    public function __construct(
+        private readonly ResolveCallable $callableResolver,
+        private readonly RouteCollection $routeCollection,
+        private readonly MatchRoute      $matchRoute,
+    ) {
     }
 
     #[Override]
@@ -319,10 +317,7 @@ final class Router implements RouterInterface, RouterRuntimeInterface
         $pipeline = $handler;
         foreach (array_reverse($allMiddleware) as $middleware) {
             if (is_string($middleware)) {
-                if (! class_exists($middleware)) {
-                    throw new RouterFailure(sprintf("Middleware class '%s' does not exist", $middleware));
-                }
-                $middleware = new $middleware();
+                $middleware = $this->resolveMiddleware($middleware);
             }
 
             if (! is_callable($middleware)) {
@@ -342,6 +337,14 @@ final class Router implements RouterInterface, RouterRuntimeInterface
         }
 
         return $pipeline($request);
+    }
+
+    /**
+     * Resolve middleware class-string through DI container via ResolveCallable.
+     */
+    private function resolveMiddleware(string $middlewareClass) : callable
+    {
+        return $this->callableResolver->resolve($middlewareClass);
     }
 
     /** @phpstan-return ResponseInterface */

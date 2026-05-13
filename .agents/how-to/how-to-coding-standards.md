@@ -1140,7 +1140,24 @@ For full modern PHP 8.0-8.5 adoption, attribute runtime, compiled metadata, DI/a
 
 ```text
 how-to-modern-php-attributes-di.md
+how-to-dependency-injection.md
 ```
+
+For dependency injection, ServiceProvider pattern, autowiring, fluent API design, and cheap code elimination, this is
+MANDATORY, see:
+
+```text
+how-to-dependency-injection.md
+```
+
+The key DI laws are:
+
+- new Class() is FORBIDDEN outside composition root, factory, or test
+- ?? new Fallback() is FORBIDDEN — register fallbacks in ServiceProvider
+- every component MUST have a ServiceProvider
+- method-level autowiring is MANDATORY for route handlers
+- static calls are allowed only for fluent API entry points and value object factories
+- fluent APIs must have immutable builders and terminal methods
 
 ---
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Framework\V4RuntimeApp;
 
+use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Framework\System\Capabilities\HealthCheck\CheckApplicationHealth;
 use Avax\Tests\TestCase;
 
@@ -14,7 +15,7 @@ final class CheckApplicationHealthTest extends TestCase
 {
     public function testHealthEndpointReturnsOk(): void
     {
-        $checker = new CheckApplicationHealth();
+        $checker = new CheckApplicationHealth(new ResponseFactory());
         $response = $checker->check();
 
         self::assertSame(200, $response->getStatusCode());
@@ -26,7 +27,7 @@ final class CheckApplicationHealthTest extends TestCase
 
     public function testHealthResponseIsJson(): void
     {
-        $checker = new CheckApplicationHealth();
+        $checker = new CheckApplicationHealth(new ResponseFactory());
         $response = $checker->check();
 
         $contentType = $response->getHeaderLine('Content-Type');

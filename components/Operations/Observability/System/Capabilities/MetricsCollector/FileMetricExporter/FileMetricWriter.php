@@ -22,10 +22,10 @@ final class FileMetricWriter
     private Filesystem $filesystem;
 
     public function __construct(
-        private string $filePath, Filesystem|null $filesystem = null,
+        private string $filePath, Filesystem $filesystem,
     )
     {
-        $this->filesystem = $filesystem ?? new Filesystem();
+        $this->filesystem = $filesystem;
     }
 
     /**

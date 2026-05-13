@@ -8,11 +8,10 @@ use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
 final class DeleteCompiledCacheFile
 {
-    private Filesystem $filesystem;
-
-    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory)
-    {
-        $this->filesystem = new Filesystem();
+    public function __construct(
+        private CompiledCacheDirectory $compiledCacheDirectory,
+        private Filesystem             $filesystem,
+    ) {
     }
 
     public function delete(CompiledCacheName $compiledCacheName): void

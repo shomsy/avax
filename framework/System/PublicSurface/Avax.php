@@ -4,8 +4,26 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\PublicSurface;
 
-use Avax\Framework\System\Flows\CreateApplication\CreateApplication;
+use Avax\Components\HTTP\Response\ResponseFactory;
+use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
+use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeState;
+use Avax\Framework\System\Capabilities\StateReset\StateResetReport;
 use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
+use Avax\Framework\System\Flows\BootApplication\BootApplication;
+use Avax\Framework\System\Flows\BootApplication\BuildApplicationState;
+use Avax\Framework\System\Flows\CreateApplication\CreateApplication;
+use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
+use Avax\Framework\System\Flows\ResetApplicationState\ResetApplicationState;
+use Avax\Framework\System\Flows\RunConsoleCommand\RunConsoleCommand;
+use Avax\Framework\System\PublicSurface\Console\ConsoleKernel;
+use Avax\Framework\System\PublicSurface\Console\ConsoleKernelInterface;
+use Avax\Framework\System\PublicSurface\Http\HttpKernel;
+use Avax\Framework\System\PublicSurface\Http\HttpKernelInterface;
+use Avax\Framework\System\PublicSurface\Runtime\RuntimeKernel;
+use Avax\Framework\System\PublicSurface\Runtime\RuntimeKernelInterface;
 
 /**
  * Avax — Framework entry point.
@@ -21,11 +39,11 @@ use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
 final readonly class Avax implements AvaxInterface
 {
     public function __construct(
-        private \Avax\Framework\System\Capabilities\Runtime\RuntimeInterface $runtime,
-        private \Avax\Framework\System\PublicSurface\Http\HttpKernelInterface $httpKernel,
-        private \Avax\Framework\System\PublicSurface\Console\ConsoleKernelInterface $consoleKernel,
-        private \Avax\Framework\System\PublicSurface\Runtime\RuntimeKernelInterface $runtimeKernel,
-        private \Avax\Framework\System\Flows\ResetApplicationState\ResetApplicationState $resetApplicationState,
+        private RuntimeInterface $runtime,
+        private HttpKernelInterface $httpKernel,
+        private ConsoleKernelInterface $consoleKernel,
+        private RuntimeKernelInterface $runtimeKernel,
+        private ResetApplicationState $resetApplicationState,
     ) {
     }
 
@@ -53,63 +71,65 @@ final readonly class Avax implements AvaxInterface
      */
     private static function bootInternal(ApplicationBuilder $builder): self
     {
-        $bootFlow = new \Avax\Framework\System\Flows\BootApplication\BootApplication(
-            buildApplicationState: new \Avax\Framework\System\Flows\BootApplication\BuildApplicationState(),
+        $bootFlow = new BootApplication(
+            buildApplicationState: new BuildApplicationState(),
         );
         $runtime = $bootFlow->boot(builder: $builder);
 
         return new self(
             runtime              : $runtime,
-            httpKernel           : new \Avax\Framework\System\PublicSurface\Http\HttpKernel(
+            httpKernel           : new HttpKernel(
                 runtime: $runtime,
-                handleIncomingHttp: new \Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp(),
+                handleIncomingHttp: new HandleIncomingHttp(
+                             responseFactory: new ResponseFactory(),
+                         ),
             ),
-            consoleKernel        : new \Avax\Framework\System\PublicSurface\Console\ConsoleKernel(
-                runConsoleCommand: new \Avax\Framework\System\Flows\RunConsoleCommand\RunConsoleCommand($runtime),
+            consoleKernel        : new ConsoleKernel(
+                runConsoleCommand: new RunConsoleCommand($runtime),
             ),
-            runtimeKernel        : new \Avax\Framework\System\PublicSurface\Runtime\RuntimeKernel(runtime: $runtime),
-            resetApplicationState: new \Avax\Framework\System\Flows\ResetApplicationState\ResetApplicationState(
+            runtimeKernel        : new RuntimeKernel(runtime: $runtime),
+            resetApplicationState: new ResetApplicationState(
                 stateResetRegistry: $runtime->stateResetRegistry(),
             ),
         );
     }
 
-    public function state(): \Avax\Framework\System\Capabilities\Runtime\RuntimeState
+    public function state(): RuntimeState
     {
         return $this->runtime->state();
     }
 
-    public function context(): \Avax\Framework\System\Capabilities\Runtime\RuntimeContext
+    public function context(): RuntimeContext
     {
         return $this->runtime->context();
     }
 
-    public function requestScopes(): \Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore
+    public function requestScopes(): RequestScopeStore
     {
         return $this->runtime->requestScopes();
     }
 
-    public function components(): \Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry
+    public function components(): ComponentRegistry
     {
         return $this->runtime->components();
     }
 
-    public function http(): \Avax\Framework\System\PublicSurface\Http\HttpKernelInterface
+    public function http(): HttpKernelInterface
     {
         return $this->httpKernel;
     }
 
-    public function console(): \Avax\Framework\System\PublicSurface\Console\ConsoleKernelInterface
+    public function console(): ConsoleKernelInterface
     {
         return $this->consoleKernel;
     }
 
-    public function runtime(): \Avax\Framework\System\PublicSurface\Runtime\RuntimeKernelInterface
+    public function runtime(): RuntimeKernelInterface
     {
         return $this->runtimeKernel;
     }
 
-    public function resetState(): \Avax\Framework\System\Capabilities\StateReset\StateResetReport
+    public function resetState(): StateResetReport
     {
         return $this->resetApplicationState->reset();
     }

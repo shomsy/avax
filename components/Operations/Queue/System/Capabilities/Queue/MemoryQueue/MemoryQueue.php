@@ -20,13 +20,11 @@ final class MemoryQueue implements QueueBroker
     /** @var array<string, list<array<string, mixed>>> */
     private array $queues = [];
 
-    private FailedJobsStore $failedJobsStore;
-
     public function __construct(
-        private readonly int $defaultMaxAttempts = 3, FailedJobsStore|null $failedJobsStore = null,
+        private readonly int             $defaultMaxAttempts = 3,
+        private readonly FailedJobsStore $failedJobsStore = new InMemoryFailedJobsStore(),
     )
     {
-        $this->failedJobsStore = $failedJobsStore ?? new InMemoryFailedJobsStore();
     }
 
     /**

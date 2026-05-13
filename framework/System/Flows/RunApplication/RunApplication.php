@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Flows\RunApplication;
 
+use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 use Avax\Components\Application\Container\System\Container;
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ActionResolution\ControllerResolver;
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ArgumentResolution\ArgumentResolver;
 use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedException;
 use Avax\Components\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
 use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;
@@ -45,26 +47,22 @@ final readonly class RunApplication
 
     private MatchHttpRoute $matchRoute;
 
-    private NormalizeControllerResult $normalizer;
-
-    private ResponseFactory $responseFactory;
-
     private ControllerResolver $controllerResolver;
 
     private ArgumentResolver $argumentResolver;
 
     public function __construct(
+        private ResponseFactory           $responseFactory,
+        private NormalizeControllerResult $normalizer,
         private MetricsCollector|null $metricsCollector = null,
     )
     {
         $this->readRequest = new ReadIncomingHttpRequest();
-        $this->matchRoute = new MatchHttpRoute();
-        $this->normalizer = new NormalizeControllerResult();
-        $this->responseFactory = new ResponseFactory();
+        $this->matchRoute = new MatchHttpRoute(new MatchRoute());
 
         // Build resolution pipeline
         $container = new RouteFacadeContainer();
-        $this->controllerResolver = new ControllerResolver(container: clone $container);
+        $this->controllerResolver = new ControllerResolver(resolver: new ResolveCallable(container: clone $container));
         $this->argumentResolver = new ArgumentResolver(container: clone $container);
     }
 
@@ -201,7 +199,7 @@ final readonly class RunApplication
     {
         $instance = $this->controllerResolver->resolve($controllerClass);
 
-        if (! is_callable($instance)) {
+        if (! method_exists($instance, '__invoke')) {
             throw new RuntimeException(sprintf("Controller class '%s' must be invokable.", $controllerClass));
         }
 

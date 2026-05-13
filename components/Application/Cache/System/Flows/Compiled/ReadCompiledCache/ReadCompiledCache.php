@@ -20,7 +20,12 @@ use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
 final readonly class ReadCompiledCache
 {
-    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private CompiledCacheManifest $compiledCacheManifest, private Clock $clock = new SystemClock())
+    public function __construct(
+        private CompiledCacheDirectory $compiledCacheDirectory,
+        private CompiledCacheManifest  $compiledCacheManifest,
+        private Filesystem             $filesystem,
+        private Clock                  $clock = new SystemClock(),
+    )
     {
     }
 
@@ -31,7 +36,7 @@ final readonly class ReadCompiledCache
     ): mixed {
         $compiledCacheName = new CompiledCacheName(name: $name);
 
-        $checkCompiledCacheIsFresh = new CheckCompiledCacheIsFresh($this->compiledCacheDirectory, $this->compiledCacheManifest);
+        $checkCompiledCacheIsFresh = new CheckCompiledCacheIsFresh($this->compiledCacheDirectory, $this->compiledCacheManifest, $this->filesystem);
         $compiledCacheFreshness = $checkCompiledCacheIsFresh->check($compiledCacheName, $compiledCacheSources);
 
         if ($compiledCacheFreshness === CompiledCacheFreshness::MISSING || $compiledCacheFreshness === CompiledCacheFreshness::STALE) {
@@ -49,6 +54,7 @@ final readonly class ReadCompiledCache
         $compileCache = new CompileCache(
             compiledCacheDirectory: $this->compiledCacheDirectory,
             compiledCacheManifest : $this->compiledCacheManifest,
+            filesystem            : $this->filesystem,
             clock                 : $this->clock,
         );
 
@@ -62,7 +68,7 @@ final readonly class ReadCompiledCache
         $resolveCompiledCachePath = new ResolveCompiledCachePath(compiledCacheDirectory: $this->compiledCacheDirectory);
         $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(compiledCacheName: $compiledCacheName);
 
-        if (! (new Filesystem())->exists($compiledCachePath->toString())) {
+        if (! $this->filesystem->exists($compiledCachePath->toString())) {
             throw new CompiledCacheCouldNotBeRead(name: $compiledCacheName->toString());
         }
 

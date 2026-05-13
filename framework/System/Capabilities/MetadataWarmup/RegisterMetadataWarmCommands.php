@@ -21,10 +21,10 @@ final readonly class RegisterMetadataWarmCommands
      * @param list<class-string> $classes
      */
     public function __construct(
-        private string          $cacheDir = '',
-        private string          $configHash = 'default',
-        private array           $classes = [],
-        private Filesystem|null $filesystem = null,
+        private Filesystem $filesystem,
+        private string     $cacheDir = '',
+        private string     $configHash = 'default',
+        private array      $classes = [],
     ) {}
 
     /**
@@ -49,7 +49,7 @@ final readonly class RegisterMetadataWarmCommands
             $output = "\033[33mMetadata Warm\033[0m\n\n";
 
             $resolvedCacheDir = $cacheDir !== '' ? $cacheDir : sys_get_temp_dir() . '/avax-metadata-cache';
-            $fs               = $filesystem ?? new Filesystem();
+            $fs = $filesystem;
 
             $compiler = new CompileClassAttributes($resolvedCacheDir, $configHash, $fs);
 
@@ -99,7 +99,7 @@ final readonly class RegisterMetadataWarmCommands
 
             $resolvedCacheDir = $cacheDir !== '' ? $cacheDir : sys_get_temp_dir() . '/avax-metadata-cache';
             $compiledDir      = $resolvedCacheDir . '/compiled-attributes';
-            $fs               = $filesystem ?? new Filesystem();
+            $fs = $filesystem;
 
             if (! $fs->isDirectory($compiledDir)) {
                 $output .= "No metadata cache found at {$compiledDir}\n";

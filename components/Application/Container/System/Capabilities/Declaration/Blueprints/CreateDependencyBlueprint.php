@@ -22,10 +22,10 @@ final readonly class CreateDependencyBlueprint
 {
     private BlueprintCache $blueprintCache;
 
-    public function __construct(BlueprintCache|null              $blueprintCache = null,
+    public function __construct(BlueprintCache $blueprintCache,
                                 private ResolveDependencies|null $resolveDependencies = null,
     ) {
-        $this->blueprintCache = $blueprintCache ?? new BlueprintCache();
+        $this->blueprintCache = $blueprintCache;
         $this->resolveDependencies ??= new ResolveDependencies();
     }
 

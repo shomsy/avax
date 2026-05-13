@@ -23,11 +23,11 @@ final class CompileDataShapeSchema
 
     public function __construct(
         string $cacheDir,
-        string $configHash, Filesystem|null $filesystem = null,
+        string $configHash, Filesystem $filesystem,
     ) {
         $this->cacheDir = rtrim($cacheDir, '/\\');
         $this->configHash = $configHash;
-        $this->filesystem = $filesystem ?? new Filesystem();
+        $this->filesystem = $filesystem;
     }
 
     /**

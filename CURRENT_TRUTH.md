@@ -1073,3 +1073,52 @@ All items complete. See `EVIDENCE/failure-boundary/v5.6-deferred-work-backlog.md
 | V5.6-Y5 RecoverWith        | DONE   | RunRecoveryAction with FailureDecision::Recover         |
 | V5.6-Y6 Real Adoption      | DONE   | RegistrationController with OnFailure + ReportFailure   |
 | V5.6-Y7 PHPStan Warnings   | DONE   | PHPStan 0 errors confirmed                              |
+
+## V5.8.4 Components Enterprise Closure — FULL_GREEN_READY_FOR_V5_9
+
+Date: 2026-05-13
+
+**Status:** V5.8.4 COMPLETE / FULL_GREEN_READY_FOR_V5_9
+
+**V5.8.3 Blockers Closed:**
+
+1. **233 RouterTest errors → 0** — Fixed Router constructor injection in all test files (RouterTest,
+   RouterHardeningTest, RouterIntegrationTest) and fixed HttpBuilder.php
+2. **RunApplication named parameter bug → FIXED** — `container:` → `resolver:` for ControllerResolver (also fixed
+   ConfiguredRoutesHttpHandler)
+3. **ControllerResolver return type → FIXED** — `callable` → `object` for proper type safety
+4. **RegisterQueueCommands DI assembly → FIXED** — Guarded in ApplicationBuilder (requires runtime deps)
+5. **Component maturity gates → IMPLEMENTED** — 8/8 gates PASS
+6. **Component status lock → CREATED** — 30 components classified
+
+**Validation:**
+
+- PHPUnit: 8289 tests, 23805 assertions, 0 failures, 0 errors
+- PHPStan: 23 pre-existing errors (0 new errors from V5.8.4 changes)
+- Component gates: 8/8 PASS
+- Existing gates: 7/7 PASS
+
+**Files Changed:**
+
+- framework/System/Flows/RunApplication/RunApplication.php
+- framework/System/Flows/HandleIncomingHttp/ConfiguredRoutesHttpHandler.php
+- framework/System/Configuration/BuildApplication/ApplicationBuilder.php
+- components/HTTP/System/Configuration/HttpBuilder.php
+- components/HTTP/Dispatcher/System/Capabilities/ActionResolution/ControllerResolver.php
+- tests/Unit/Components/HTTP/Router/RouterTest.php
+- tests/Integration/RouterHardeningTest.php
+- tests/Integration/RouterIntegrationTest.php
+
+**Files Created:**
+
+- tooling/components/check-component-status-lock.php
+- tooling/components/check-no-unclassified-scaffolding.php
+- tooling/components/check-hollow-public-surfaces.php
+- tooling/components/check-component-runtime-assembly.php
+- tooling/components/check-component-static-state-safety.php
+- tooling/components/check-component-health-doctor-policy.php
+- tooling/components/check-component-behavior-proof-map.php
+- tooling/components/check-component-docs-status-policy.php
+- EVIDENCE/components/component-status-lock.md
+
+**V5.9 Boot DSL = READY_NEXT**

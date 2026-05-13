@@ -15,6 +15,10 @@ use DirectoryIterator;
  */
 final class MigrationLoader
 {
+    public function __construct(
+        private Filesystem $filesystem,
+    ) {}
+
     /**
      * Calculate the checksum for a migration file.
      */
@@ -22,7 +26,7 @@ final class MigrationLoader
     {
         $file = rtrim(string: $path, characters: DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$name.'.php';
 
-        if (! (new Filesystem())->exists(path: $file)) {
+        if (! $this->filesystem->exists(path: $file)) {
             return '';
         }
 
@@ -44,7 +48,7 @@ final class MigrationLoader
 
     public function load(string $path): array
     {
-        if (! (new Filesystem())->isDirectory(path: $path)) {
+        if (! $this->filesystem->isDirectory(path: $path)) {
             return [];
         }
 

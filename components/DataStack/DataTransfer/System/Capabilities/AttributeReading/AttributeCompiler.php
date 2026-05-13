@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use RuntimeException;
 
 /**
@@ -34,6 +35,7 @@ final class AttributeCompiler
             $this->compiler   = new CompileClassAttributes(
                 cacheDir  : $cacheDir,
                 configHash: $configHash ?? 'default',
+                filesystem: new Filesystem(),
             );
             $this->configHash = $configHash ?? 'default';
         } else {

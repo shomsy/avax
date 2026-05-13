@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Operations\Observability;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\Operations\Observability\System\Capabilities\Logging\FileLogWriter;
 use Avax\Components\Operations\Observability\System\Capabilities\Logs\StructuredLogRecord;
 use PHPUnit\Framework\Attributes\Test;
@@ -16,11 +17,13 @@ use SplFileInfo;
 final class FileLogWriterTest extends TestCase
 {
     private string $tmpDir;
+    private Filesystem $filesystem;
 
     protected function setUp() : void
     {
         $this->tmpDir = sys_get_temp_dir() . '/avax_log_test_' . uniqid();
         mkdir($this->tmpDir, 0o755, true);
+        $this->filesystem = new Filesystem();
     }
 
     protected function tearDown() : void
@@ -46,7 +49,7 @@ final class FileLogWriterTest extends TestCase
     public function writes_log_record_as_ndjson() : void
     {
         $path = "{$this->tmpDir}/test.log";
-        $writer = new FileLogWriter($path);
+        $writer = new FileLogWriter($path, $this->filesystem);
 
         $record = new StructuredLogRecord('info', 'Hello world', ['user_id' => 42]);
         $writer->write($record);
@@ -68,7 +71,7 @@ final class FileLogWriterTest extends TestCase
     public function redacts_sensitive_data() : void
     {
         $path = "{$this->tmpDir}/test.log";
-        $writer = new FileLogWriter($path);
+        $writer = new FileLogWriter($path, $this->filesystem);
 
         $record = new StructuredLogRecord('info', 'Login', ['password' => 'secret123']);
         $writer->write($record);
@@ -86,7 +89,7 @@ final class FileLogWriterTest extends TestCase
     public function write_batch_writes_multiple_records() : void
     {
         $path = "{$this->tmpDir}/test.log";
-        $writer = new FileLogWriter($path);
+        $writer = new FileLogWriter($path, $this->filesystem);
 
         $records = [
             new StructuredLogRecord('info', 'First'),
@@ -107,7 +110,7 @@ final class FileLogWriterTest extends TestCase
     public function creates_directory_if_missing() : void
     {
         $path = "{$this->tmpDir}/subdir/nested/test.log";
-        $writer = new FileLogWriter($path);
+        $writer = new FileLogWriter($path, $this->filesystem);
 
         $writer->write(new StructuredLogRecord('info', 'test'));
         $writer->close();
@@ -119,7 +122,7 @@ final class FileLogWriterTest extends TestCase
     public function throws_when_closed() : void
     {
         $path = "{$this->tmpDir}/test.log";
-        $writer = new FileLogWriter($path);
+        $writer = new FileLogWriter($path, $this->filesystem);
         $writer->close();
 
         self::expectException(RuntimeException::class);
@@ -131,7 +134,7 @@ final class FileLogWriterTest extends TestCase
     public function isOpen_reflects_state() : void
     {
         $path = "{$this->tmpDir}/test.log";
-        $writer = new FileLogWriter($path);
+        $writer = new FileLogWriter($path, $this->filesystem);
 
         self::assertFalse($writer->isOpen());
 
@@ -148,7 +151,7 @@ final class FileLogWriterTest extends TestCase
     public function path_returns_configured_path() : void
     {
         $path = "{$this->tmpDir}/test.log";
-        $writer = new FileLogWriter($path);
+        $writer = new FileLogWriter($path, $this->filesystem);
 
         self::assertSame($path, $writer->path());
     }

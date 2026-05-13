@@ -131,6 +131,6 @@ final readonly class CompiledCacheManifestEntry
      */
     public function compiledFileExists(): bool
     {
-        return (new Filesystem())->exists($this->compiledPath);
+        return is_file($this->compiledPath);
     }
 }

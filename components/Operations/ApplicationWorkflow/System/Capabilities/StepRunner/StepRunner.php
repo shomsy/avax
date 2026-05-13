@@ -29,10 +29,10 @@ final class StepRunner
      */
     private array $failureLog = [];
 
-    public function __construct(IdempotencyStore|null $idempotencyStore = null, RetryPolicy|null $retryPolicy = null, SagaTimeout|null $sagaTimeout = null,
+    public function __construct(IdempotencyStore $idempotencyStore, RetryPolicy|null $retryPolicy = null, SagaTimeout|null $sagaTimeout = null,
     )
     {
-        $this->idempotencyStore = $idempotencyStore ?? new IdempotencyStore();
+        $this->idempotencyStore = $idempotencyStore;
         $this->retryPolicy      = $retryPolicy ?? RetryPolicy::none();
         $this->sagaTimeout      = $sagaTimeout ?? SagaTimeout::seconds(30);
     }

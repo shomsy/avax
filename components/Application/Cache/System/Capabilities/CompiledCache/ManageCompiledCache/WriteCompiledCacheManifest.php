@@ -9,11 +9,9 @@ use Random\RandomException;
 
 final class WriteCompiledCacheManifest
 {
-    private Filesystem $filesystem;
-
-    public function __construct()
-    {
-        $this->filesystem = new Filesystem();
+    public function __construct(
+        private Filesystem $filesystem,
+    ) {
     }
 
     /**

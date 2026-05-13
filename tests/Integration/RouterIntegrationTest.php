@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Integration;
 
+use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 use Avax\Components\HTTP\Request\System\Capabilities\Uri\RequestUri;
 use Avax\Components\HTTP\Request\System\Configuration\RequestBuilder;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\Responses;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
+use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\Foundation\Failure\RouterFailure;
 use Avax\Components\HTTP\Router\System\PublicSurface\Router;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
@@ -106,7 +109,7 @@ final class RouterIntegrationTest extends TestCase
 
         $this->responses = new Responses();
 
-        $router = new Router();
+        $router = new Router(new ResolveCallable(), new RouteCollection(), new MatchRoute());
         $router->get(path: '/', action: fn () => $this->textResponse(body: 'Router is Working!'));
         $router->get(path: '/health', action: fn () => $this->textResponse(body: 'ok'));
         $router->get(path: '/test', action: fn () => $this->textResponse(body: 'Enterprise Router Active!'));

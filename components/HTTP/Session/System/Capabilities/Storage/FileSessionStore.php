@@ -15,9 +15,9 @@ final readonly class FileSessionStore implements SessionStoreInterface
     /**
      * @param array<string, mixed> $config
      */
-    public function __construct(array $config = [], Filesystem|null $filesystem = null)
+    public function __construct(Filesystem $filesystem, array $config = [])
     {
-        $this->filesystem = $filesystem ?? new Filesystem();
+        $this->filesystem = $filesystem;
         $this->path = $config['path'] ?? sys_get_temp_dir() . '/avax-sessions';
 
         if (! $this->filesystem->exists($this->path)) {

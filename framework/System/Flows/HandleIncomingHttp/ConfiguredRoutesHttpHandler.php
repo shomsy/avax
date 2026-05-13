@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Flows\HandleIncomingHttp;
 
+use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ActionResolution\ControllerResolver;
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ArgumentResolution\ArgumentResolver;
 use Avax\Components\HTTP\Dispatcher\System\Flows\DispatchRouteAction\DispatchRouteAction;
 use Avax\Components\HTTP\Dispatcher\System\PublicSurface\ControllerDispatcher;
 use Avax\Components\HTTP\Response\ResponseFactory;
+use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedException;
 use Avax\Components\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
@@ -25,12 +27,14 @@ final readonly class ConfiguredRoutesHttpHandler
 
     private RunHttpRoute $runHttpRoute;
 
-    private ResponseFactory $responseFactory;
-
-    public function __construct(private RegisteredHttpRoutes $registeredHttpRoutes)
+    public function __construct(
+        private ResponseFactory      $responseFactory,
+        private RegisteredHttpRoutes $registeredHttpRoutes,
+    )
     {
         $container = new RouteFacadeContainer();
-        $controllerResolver = new ControllerResolver(container: clone $container);
+        $resolveCallable = new ResolveCallable(container: clone $container);
+        $controllerResolver = new ControllerResolver(resolver: $resolveCallable);
         $argumentResolver = new ArgumentResolver(container: clone $container);
         $dispatchRouteAction = new DispatchRouteAction(
             controllerResolver: $controllerResolver,
@@ -38,9 +42,8 @@ final readonly class ConfiguredRoutesHttpHandler
         );
         $controllerDispatcher = new ControllerDispatcher(dispatchRouteAction: $dispatchRouteAction);
         $this->readIncomingHttpRequest = new ReadIncomingHttpRequest();
-        $this->matchHttpRoute = new MatchHttpRoute();
+        $this->matchHttpRoute = new MatchHttpRoute(new MatchRoute());
         $this->runHttpRoute = new RunHttpRoute(controllerDispatcher: $controllerDispatcher);
-        $this->responseFactory = new ResponseFactory();
     }
 
     public static function fromRoutesFile(string $routesFile): self
@@ -81,6 +84,7 @@ final readonly class ConfiguredRoutesHttpHandler
         }
 
         return new self(
+            responseFactory     : new ResponseFactory(),
             registeredHttpRoutes: $frameworkRouteRegistrar->collectRoutes(),
         );
     }
@@ -91,6 +95,7 @@ final readonly class ConfiguredRoutesHttpHandler
         $routeDefinitions($frameworkRouteRegistrar);
 
         return new self(
+            responseFactory     : new ResponseFactory(),
             registeredHttpRoutes: $frameworkRouteRegistrar->collectRoutes(),
         );
     }

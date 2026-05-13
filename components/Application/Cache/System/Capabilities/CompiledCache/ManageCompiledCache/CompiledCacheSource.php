@@ -23,7 +23,7 @@ final readonly class CompiledCacheSource
             throw new InvalidArgumentException(message: 'Source path cannot be empty');
         }
 
-        if (! (new Filesystem())->exists($this->path)) {
+        if (! is_file($this->path)) {
             throw new InvalidArgumentException(message: sprintf('Source file does not exist: %s', $this->path));
         }
 
@@ -34,7 +34,7 @@ final readonly class CompiledCacheSource
 
     public static function fromPath(string $path): self
     {
-        if (! (new Filesystem())->exists($path)) {
+        if (! is_file($path)) {
             throw new InvalidArgumentException(message: sprintf('Source file does not exist: %s', $path));
         }
 

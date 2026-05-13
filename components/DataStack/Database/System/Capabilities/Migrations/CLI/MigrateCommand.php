@@ -13,7 +13,7 @@ final readonly class MigrateCommand
     private string $path;
 
     public function __construct(
-        private Filesystem|null $filesystem = null,
+        private Filesystem $filesystem,
     )
     {
         $this->path = dirname(__DIR__, 6).'/database/migrations';
@@ -48,13 +48,12 @@ final readonly class MigrateCommand
 
     private function getMigrations(): array
     {
-        $fs = $this->filesystem ?? new Filesystem();
-        if (! $fs->exists($this->path)) {
+        if (! $this->filesystem->exists($this->path)) {
             return [];
         }
 
         $path    = $this->path;
-        $entries = $fs->listDirectory($path);
+        $entries = $this->filesystem->listDirectory($path);
 
         return array_map(
             static fn (string $entry) => $path . '/' . $entry,
@@ -69,8 +68,7 @@ final readonly class MigrateCommand
 
     private function getMigrationClass(string $file): string
     {
-        $fs      = $this->filesystem ?? new Filesystem();
-        $content = $fs->read($file);
+        $content = $this->filesystem->read($file);
         preg_match('/class (\w+) extends/', $content, $match);
 
         return $match[1] ?? 'Migration';

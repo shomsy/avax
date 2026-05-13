@@ -6,12 +6,24 @@ namespace Avax\Tests\Unit\Operations\Observability;
 
 use Avax\Components\Operations\Observability\System\Capabilities\Correlation\CorrelationId;
 use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;
+use Avax\Components\Operations\Observability\System\Capabilities\Tracing\TraceTimeline;
 use Avax\Components\Operations\Observability\System\Flows\RecordObservability\RecordObservability;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 final class ObservabilityTelemetryTest extends TestCase
 {
+    private MetricsCollector    $metrics;
+    private TraceTimeline       $timeline;
+    private RecordObservability $obs;
+
+    protected function setUp() : void
+    {
+        $this->metrics  = new MetricsCollector();
+        $this->timeline = new TraceTimeline();
+        $this->obs      = new RecordObservability($this->metrics, $this->timeline);
+    }
+
     // -- MetricsCollector tests
 
     public function test_counter_increment() : void
@@ -100,9 +112,7 @@ final class ObservabilityTelemetryTest extends TestCase
 
     public function test_record_success() : void
     {
-        $obs = new RecordObservability();
-
-        $result = $obs->record(
+        $result = $this->obs->record(
             operation: 'getUser',
             callback: static fn () => ['id' => 1, 'name' => 'Alice'],
         );
@@ -112,23 +122,19 @@ final class ObservabilityTelemetryTest extends TestCase
 
     public function test_record_increments_counter() : void
     {
-        $obs = new RecordObservability();
-
-        $obs->record(
+        $this->obs->record(
             operation: 'testOp',
             callback: static fn () => null,
         );
 
-        self::assertSame(1.0, $obs->getMetrics()->getCounter('operations.total'));
-        self::assertSame(1.0, $obs->getMetrics()->getCounter('operations.testOp'));
+        self::assertSame(1.0, $this->obs->getMetrics()->getCounter('operations.total'));
+        self::assertSame(1.0, $this->obs->getMetrics()->getCounter('operations.testOp'));
     }
 
     public function test_record_error_increments_error_counter() : void
     {
-        $obs = new RecordObservability();
-
         try {
-            $obs->record(
+            $this->obs->record(
                 operation: 'failingOp',
                 callback: static fn () => throw new RuntimeException('boom'),
             );
@@ -136,29 +142,26 @@ final class ObservabilityTelemetryTest extends TestCase
             // Expected
         }
 
-        self::assertSame(1.0, $obs->getMetrics()->getCounter('operations.errors'));
+        self::assertSame(1.0, $this->obs->getMetrics()->getCounter('operations.errors'));
     }
 
     public function test_record_with_correlation() : void
     {
-        $obs = new RecordObservability();
         $corr = CorrelationId::fromString('test-corr-123');
 
-        $obs->record(
+        $this->obs->record(
             operation: 'correlated',
             callback: static fn () => 'done',
             correlationId: $corr,
         );
 
         // Verify span was added to timeline
-        self::assertCount(1, $obs->getTimeline()->toArray());
+        self::assertCount(1, $this->obs->getTimeline()->toArray());
     }
 
     public function test_log_with_redaction() : void
     {
-        $obs = new RecordObservability();
-
-        $log = $obs->log(
+        $log = $this->obs->log(
             level: 'info',
             message: 'User login',
             context: ['userId' => '123', 'password' => 'secret123'],
@@ -172,21 +175,18 @@ final class ObservabilityTelemetryTest extends TestCase
 
     public function test_log_increments_log_counter() : void
     {
-        $obs = new RecordObservability();
+        $this->obs->log(level: 'error', message: 'Something went wrong');
 
-        $obs->log(level: 'error', message: 'Something went wrong');
-
-        self::assertSame(1.0, $obs->getMetrics()->getCounter('logs.error'));
+        self::assertSame(1.0, $this->obs->getMetrics()->getCounter('logs.error'));
     }
 
     // -- Full composition test
 
     public function test_full_observability_composition() : void
     {
-        $obs = new RecordObservability();
         $corr = CorrelationId::generate();
 
-        $result = $obs->record(
+        $result = $this->obs->record(
             operation: 'processOrder',
             callback: static fn () => 'order-123',
             correlationId: $corr,
@@ -195,23 +195,23 @@ final class ObservabilityTelemetryTest extends TestCase
         self::assertEquals('order-123', $result);
 
         // Metrics recorded
-        self::assertSame(1.0, $obs->getMetrics()->getCounter('operations.total'));
-        self::assertSame(1.0, $obs->getMetrics()->getCounter('operations.processOrder'));
-        self::assertSame(0.0, $obs->getMetrics()->getCounter('operations.errors'));
+        self::assertSame(1.0, $this->obs->getMetrics()->getCounter('operations.total'));
+        self::assertSame(1.0, $this->obs->getMetrics()->getCounter('operations.processOrder'));
+        self::assertSame(0.0, $this->obs->getMetrics()->getCounter('operations.errors'));
 
         // Tracing recorded
-        $timeline = $obs->getTimeline()->toArray();
+        $timeline = $this->obs->getTimeline()->toArray();
         self::assertCount(1, $timeline);
         self::assertSame('processOrder', $timeline[0]['name']);
 
         // Log with redaction
-        $log = $obs->log(
+        $log = $this->obs->log(
             level: 'info',
             message: 'Order processed',
             context: ['orderId' => 'order-123', 'token' => 'abc123'],
         );
 
         self::assertSame('***', $log['context']['token']);
-        self::assertSame(1.0, $obs->getMetrics()->getCounter('logs.info'));
+        self::assertSame(1.0, $this->obs->getMetrics()->getCounter('logs.info'));
     }
 }

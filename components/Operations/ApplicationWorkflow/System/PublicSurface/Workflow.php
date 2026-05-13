@@ -20,9 +20,9 @@ final readonly class Workflow
 {
     private SagaStoreInterface $sagaStore;
 
-    public function __construct(SagaStoreInterface|null $sagaStore = null)
+    public function __construct(SagaStoreInterface $sagaStore)
     {
-        $this->sagaStore = $sagaStore ?? new InMemorySagaStore();
+        $this->sagaStore = $sagaStore;
     }
 
     /**

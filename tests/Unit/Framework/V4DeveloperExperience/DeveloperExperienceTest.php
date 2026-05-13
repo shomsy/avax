@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Framework\V4DeveloperExperience;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Framework\System\Capabilities\Doctor\CheckAutoload;
 use Avax\Framework\System\Capabilities\Doctor\CheckMemoryGuard;
 use Avax\Framework\System\Capabilities\Doctor\CheckRuntimeMode;
@@ -148,13 +149,14 @@ final class DeveloperExperienceTest extends TestCase
     {
         $tempDir = sys_get_temp_dir().'/avax-route-cache-test-'.time();
         $routeTable = ['GET /' => ['handler' => 'root']];
+        $filesystem = new Filesystem();
 
-        $cacheRouteTable = new CacheRouteTable(cacheDirectory: $tempDir);
+        $cacheRouteTable = new CacheRouteTable(filesystem: $filesystem, cacheDirectory: $tempDir);
         $cacheFile = $cacheRouteTable->write(routeTable: $routeTable);
 
         self::assertFileExists($cacheFile);
 
-        $loadCachedRoutes = new LoadCachedRoutes(cacheDirectory: $tempDir);
+        $loadCachedRoutes = new LoadCachedRoutes(filesystem: $filesystem, cacheDirectory: $tempDir);
         $loaded = $loadCachedRoutes->load();
 
         self::assertSame($routeTable, $loaded);
@@ -169,11 +171,12 @@ final class DeveloperExperienceTest extends TestCase
     {
         $tempDir = sys_get_temp_dir().'/avax-route-cache-clear-test-'.time();
         $routeTable = ['GET /test' => ['handler' => 'test']];
+        $filesystem = new Filesystem();
 
-        $cacheRouteTable = new CacheRouteTable(cacheDirectory: $tempDir);
+        $cacheRouteTable = new CacheRouteTable(filesystem: $filesystem, cacheDirectory: $tempDir);
         $cacheRouteTable->write(routeTable: $routeTable);
 
-        $loadCachedRoutes = new LoadCachedRoutes(cacheDirectory: $tempDir);
+        $loadCachedRoutes = new LoadCachedRoutes(filesystem: $filesystem, cacheDirectory: $tempDir);
 
         self::assertTrue($loadCachedRoutes->exists());
 

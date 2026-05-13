@@ -10,14 +10,12 @@ use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
 final class AtomicCompiledCacheWrite
 {
-    private Filesystem $filesystem;
-
     public function __construct(
         private CompiledCacheDirectory $compiledCacheDirectory,
+        private Filesystem $filesystem,
         private Clock                  $clock = new SystemClock(),
     )
     {
-        $this->filesystem = new Filesystem();
     }
 
     public function write(

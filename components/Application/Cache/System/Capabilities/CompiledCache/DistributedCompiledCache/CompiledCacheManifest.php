@@ -26,16 +26,16 @@ final class CompiledCacheManifest
 
     public function __construct(
         private readonly Clock $clock = new SystemClock(),
-        private Filesystem $filesystem = new Filesystem(),
+        private Filesystem $filesystem,
     ) {
     }
 
     /**
      * Create a new empty manifest.
      */
-    public static function empty(Clock|null $clock = null) : self
+    public static function empty(Clock|null $clock = null, Filesystem $filesystem) : self
     {
-        return new self(clock: $clock ?? new SystemClock());
+        return new self(clock: $clock ?? new SystemClock(), filesystem: $filesystem);
     }
 
     /**
@@ -43,10 +43,9 @@ final class CompiledCacheManifest
      *
      * @throws RuntimeException if the file exists but contains invalid JSON
      */
-    public static function load(string $path, Clock|null $clock = null) : self
+    public static function load(string $path, Clock|null $clock = null, Filesystem $filesystem) : self
     {
-        $filesystem = new Filesystem();
-        $manifest = new self(clock: $clock ?? new SystemClock());
+        $manifest = new self(clock: $clock ?? new SystemClock(), filesystem: $filesystem);
         $manifest->manifestPath = $path;
 
         if (! $filesystem->exists($path)) {

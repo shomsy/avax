@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Session\System\Capabilities\Storage;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
+
 final class SessionDriver
 {
     private static ?SessionStoreInterface $sessionStore = null;
@@ -43,7 +45,7 @@ final class SessionDriver
                 ? new DatabaseSessionStore(pdo: $config['database']['pdo'], table: $config['database']['table'] ?? 'sessions')
                 : new ArraySessionStore(),
             'array'    => new ArraySessionStore(),
-            default    => new FileSessionStore(config: $config['file'] ?? []),
+            default => new FileSessionStore(filesystem: new Filesystem(), config: $config['file'] ?? []),
         };
     }
 

@@ -12,8 +12,8 @@ use Psr\Http\Message\ServerRequestInterface;
 final readonly class RateLimitMiddleware
 {
     public function __construct(
-        private RedisRateLimiter $redisRateLimiter = new RedisRateLimiter(),
-        private ResponseFactory $responseFactory = new ResponseFactory(),
+        private RedisRateLimiter $redisRateLimiter,
+        private ResponseFactory  $responseFactory,
         private array $config = [],
     ) {
     }

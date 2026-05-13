@@ -8,17 +8,20 @@ use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
 final class SeederCommand
 {
+    public function __construct(
+        private Filesystem $filesystem,
+    ) {}
+
     public function run(): array
     {
         $ran = [];
         $path = dirname(__DIR__, 6).'/database/seeders';
-        $filesystem = new Filesystem();
 
-        if (! $filesystem->isDirectory($path)) {
+        if (! $this->filesystem->isDirectory($path)) {
             return ['status' => 'nothing', 'message' => 'No seeders found'];
         }
 
-        $files = $filesystem->listFilesByPattern($path . '/*Seeder.php');
+        $files = $this->filesystem->listFilesByPattern($path . '/*Seeder.php');
         foreach ($files as $file) {
             require_once $file;
             $className = str_replace([$path.'/', '.php'], '', $file);

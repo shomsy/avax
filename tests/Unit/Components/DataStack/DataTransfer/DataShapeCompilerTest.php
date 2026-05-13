@@ -14,6 +14,9 @@ use Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspecti
 use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConfig;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use ReflectionClass;
 
 final class DataShapeCompilerTest extends TestCase
 {
@@ -45,9 +48,9 @@ final class DataShapeCompilerTest extends TestCase
             return;
         }
 
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::CHILD_FIRST,
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST,
         );
 
         foreach ($iterator as $file) {
@@ -101,6 +104,7 @@ final class DataShapeCompilerTest extends TestCase
         $compiler = new CompileDataShapeSchema(
             cacheDir: $this->cacheDir,
             configHash: (string) spl_object_id($this->config),
+            filesystem: new Filesystem(),
         );
 
         $shapeCompiler = new DataShapeCompiler(
@@ -157,7 +161,7 @@ final class DataShapeCompilerTest extends TestCase
         $metadata = $diskCompiler->compile([CompilerTestDto::class], $this->inspector);
 
         // Touch the source file
-        $reflection = new \ReflectionClass(CompilerTestDto::class);
+        $reflection = new ReflectionClass(CompilerTestDto::class);
         $fileName = $reflection->getFileName();
         if ($fileName !== false) {
             touch($fileName, time() + 100);

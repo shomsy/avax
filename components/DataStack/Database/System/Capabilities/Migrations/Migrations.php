@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Migrations;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\CreateMigration\MigrationGenerator;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\ExportDatabase\DatabaseExporter;
@@ -148,7 +149,7 @@ final readonly class Migrations
 
     public function loader(): MigrationLoader
     {
-        return new MigrationLoader();
+        return new MigrationLoader(filesystem: new Filesystem());
     }
 
     /**

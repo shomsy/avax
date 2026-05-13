@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Framework\V4RuntimeApp;
 
-use Avax\Framework\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Components\HTTP\Response\ResponseFactory;
-use Psr\Http\Message\ResponseInterface;
-use Stringable;
+use Avax\Framework\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Tests\TestCase;
+use JsonSerializable;
+use Stringable;
 
 /**
  * @covers \Avax\Framework\System\Capabilities\ResponseNormalization\NormalizeControllerResult
@@ -16,11 +16,13 @@ use Avax\Tests\TestCase;
 final class NormalizeControllerResultTest extends TestCase
 {
     private NormalizeControllerResult $normalizer;
+    private ResponseFactory $factory;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->normalizer = new NormalizeControllerResult();
+        $this->factory    = new ResponseFactory();
+        $this->normalizer = new NormalizeControllerResult($this->factory);
     }
 
     public function testNormalizeNullReturnsEmptyResponse(): void
@@ -63,8 +65,7 @@ final class NormalizeControllerResultTest extends TestCase
 
     public function testNormalizeResponseInterfaceReturnsAsIs(): void
     {
-        $factory = new ResponseFactory();
-        $original = $factory->html(html: 'Direct response');
+        $original = $this->factory->html(html: 'Direct response');
 
         $response = $this->normalizer->normalize(result: $original);
 
@@ -74,7 +75,7 @@ final class NormalizeControllerResultTest extends TestCase
 
     public function testNormalizeJsonSerializableReturnsJson(): void
     {
-        $jsonSerializable = new class implements \JsonSerializable {
+        $jsonSerializable = new class implements JsonSerializable {
             /** @return array{json: 'serializable'} */
             public function jsonSerialize(): array
             {

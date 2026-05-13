@@ -98,8 +98,8 @@ final class CompileContainer
         $this->failClosedOnCorruption = $failClosedOnCorruption;
         $this->validateBeforeCompile = $validateBeforeCompile;
         $this->dependencyCompiler = $dependencyCompiler ?? new DependencyCompiler(
-            registrations: $this->dependencyRegistry,
-            blueprints   : $this->createDependencyBlueprint,
+            dependencyRegistry       : $this->dependencyRegistry,
+            createDependencyBlueprint: $this->createDependencyBlueprint,
         );
         $this->filesystem = $filesystem ?? new Filesystem();
     }

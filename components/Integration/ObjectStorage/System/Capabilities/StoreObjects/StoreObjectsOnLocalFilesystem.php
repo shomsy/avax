@@ -14,9 +14,9 @@ class StoreObjectsOnLocalFilesystem implements ObjectStoragePort
 
     private string $basePath;
 
-    public function __construct(string $basePath = '/tmp/avax-object-storage', Filesystem|null $filesystem = null)
+    public function __construct(string $basePath, Filesystem $filesystem)
     {
-        $this->filesystem = $filesystem ?? new Filesystem();
+        $this->filesystem = $filesystem;
         $this->basePath = $basePath;
         if (! $this->filesystem->exists($this->basePath)) {
             $this->filesystem->createDirectory($this->basePath, 0o755);

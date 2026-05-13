@@ -15,14 +15,12 @@ use DateTimeZone;
  */
 final readonly class RotatingFileWriter
 {
-    private Filesystem $filesystem;
-
     public function __construct(
         private string $baseLogPath,
+        private Filesystem $filesystem,
         private string $timezone = 'UTC',
-        private int $maxLogFiles = 30, Filesystem|null $filesystem = null,
+        private int        $maxLogFiles = 30,
     ) {
-        $this->filesystem = $filesystem ?? new Filesystem();
     }
 
     public function write(string $message, string $level = 'info', array $context = []): void

@@ -21,7 +21,7 @@ use Throwable;
 final readonly class HandleIncomingHttp
 {
     public function __construct(
-        private ResponseFactory   $responseFactory = new ResponseFactory(),
+        private ResponseFactory $responseFactory,
         private MetricsCollector|null $metricsCollector = null,
     ) {
     }

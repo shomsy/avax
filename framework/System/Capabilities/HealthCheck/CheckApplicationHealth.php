@@ -16,7 +16,7 @@ use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 final readonly class CheckApplicationHealth
 {
     public function __construct(
-        private ResponseFactory $responseFactory = new ResponseFactory(),
+        private ResponseFactory $responseFactory,
     ) {
     }
 

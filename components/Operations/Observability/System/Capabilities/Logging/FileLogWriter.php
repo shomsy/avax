@@ -37,10 +37,10 @@ final class FileLogWriter
     private bool $closed = false;
 
     public function __construct(
-        private readonly string $path, Filesystem|null $filesystem = null,
+        private readonly string $path, Filesystem $filesystem,
     )
     {
-        $this->filesystem = $filesystem ?? new Filesystem();
+        $this->filesystem = $filesystem;
     }
 
     public function write(StructuredLogRecord $record) : void

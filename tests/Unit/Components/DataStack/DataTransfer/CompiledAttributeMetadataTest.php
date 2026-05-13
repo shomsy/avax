@@ -26,6 +26,7 @@ use stdClass;
 final class CompiledAttributeMetadataTest extends TestCase
 {
     private string $cacheDir;
+    private Filesystem $filesystem;
 
     #[Test]
     public function constants_have_expected_values() : void
@@ -199,6 +200,7 @@ final class CompiledAttributeMetadataTest extends TestCase
         $compiler = new CompileClassAttributes(
             cacheDir  : $this->cacheDir,
             configHash: 'test',
+            filesystem: $this->filesystem,
         );
 
         $metadata = $compiler->compile(V08TestEntity::class);
@@ -213,6 +215,7 @@ final class CompiledAttributeMetadataTest extends TestCase
         $compiler = new CompileClassAttributes(
             cacheDir  : $this->cacheDir,
             configHash: 'test',
+            filesystem: $this->filesystem,
         );
 
         $metadata = $compiler->compile(V08TestEntity::class);
@@ -230,6 +233,7 @@ final class CompiledAttributeMetadataTest extends TestCase
         $compiler = new CompileClassAttributes(
             cacheDir  : $this->cacheDir,
             configHash: 'test',
+            filesystem: $this->filesystem,
         );
 
         $metadata = $compiler->compile(V08TestEntity::class);
@@ -246,6 +250,7 @@ final class CompiledAttributeMetadataTest extends TestCase
         $compiler = new CompileClassAttributes(
             cacheDir  : $this->cacheDir,
             configHash: 'test',
+            filesystem: $this->filesystem,
         );
 
         $compiler->compile(V08TestEntity::class);
@@ -259,6 +264,7 @@ final class CompiledAttributeMetadataTest extends TestCase
         $compiler = new CompileClassAttributes(
             cacheDir  : $this->cacheDir,
             configHash: 'test',
+            filesystem: $this->filesystem,
         );
 
         $compiler->compile(V08TestEntity::class);
@@ -274,6 +280,7 @@ final class CompiledAttributeMetadataTest extends TestCase
         $compiler = new CompileClassAttributes(
             cacheDir  : $this->cacheDir,
             configHash: 'test',
+            filesystem: $this->filesystem,
         );
 
         $this->assertNull($compiler->loadMetadata(stdClass::class));
@@ -285,12 +292,14 @@ final class CompiledAttributeMetadataTest extends TestCase
         $compiler1 = new CompileClassAttributes(
             cacheDir  : $this->cacheDir,
             configHash: 'hash-a',
+            filesystem: $this->filesystem,
         );
         $compiler1->compile(V08TestEntity::class);
 
         $compiler2 = new CompileClassAttributes(
             cacheDir  : $this->cacheDir,
             configHash: 'hash-b',
+            filesystem: $this->filesystem,
         );
 
         $this->assertNull($compiler2->loadMetadata(V08TestEntity::class));
@@ -302,6 +311,7 @@ final class CompiledAttributeMetadataTest extends TestCase
         $compiler = new CompileClassAttributes(
             cacheDir  : $this->cacheDir,
             configHash: 'test',
+            filesystem: $this->filesystem,
         );
 
         $result = $compiler->compileMany([V08TestEntity::class, V08SimpleDto::class]);
@@ -317,6 +327,7 @@ final class CompiledAttributeMetadataTest extends TestCase
         $compiler = new CompileClassAttributes(
             cacheDir  : $this->cacheDir,
             configHash: 'test',
+            filesystem: $this->filesystem,
         );
 
         $compiler->compile(V08TestEntity::class);
@@ -445,6 +456,7 @@ final class CompiledAttributeMetadataTest extends TestCase
     protected function setUp() : void
     {
         $this->cacheDir = sys_get_temp_dir() . '/avax-attr-test-' . uniqid();
+        $this->filesystem = new Filesystem();
     }
 
     // -- Compute checksum test --

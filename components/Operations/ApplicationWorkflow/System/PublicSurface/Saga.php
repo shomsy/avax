@@ -6,6 +6,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\PublicSurface;
 
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Compensation\CompensationExecutor;
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Idempotency\IdempotencyKey;
+use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Idempotency\IdempotencyStore;
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaState\SagaState;
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaState\SagaStep;
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaStore\InMemorySagaStore;
@@ -49,7 +50,7 @@ final class Saga
     {
         $this->id                   = $this->generateId();
         $this->sagaStore            = new InMemorySagaStore();
-        $this->stepRunner           = new StepRunner();
+        $this->stepRunner = new StepRunner(idempotencyStore: new IdempotencyStore());
         $this->compensationExecutor = new CompensationExecutor();
     }
 
@@ -307,7 +308,7 @@ final class Saga
     public function withStore(SagaStoreInterface $sagaStore) : self
     {
         $this->sagaStore            = $sagaStore;
-        $this->stepRunner           = new StepRunner();
+        $this->stepRunner = new StepRunner(idempotencyStore: new IdempotencyStore());
         $this->compensationExecutor = new CompensationExecutor();
 
         return $this;

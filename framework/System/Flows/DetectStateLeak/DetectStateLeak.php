@@ -7,11 +7,13 @@ namespace Avax\Framework\System\Flows\DetectStateLeak;
 use Avax\Framework\System\Capabilities\RuntimeSafety\RuntimeSafety;
 use Avax\Framework\System\Capabilities\RuntimeSafety\RuntimeSafetyFinding;
 
-final readonly class DetectStateLeak
+final class DetectStateLeak
 {
-    public function __construct(
-        private RuntimeSafety $runtimeSafety = new RuntimeSafety(),
-    ) {
+    private RuntimeSafety $runtimeSafety;
+
+    public function __construct(?RuntimeSafety $runtimeSafety = null)
+    {
+        $this->runtimeSafety = $runtimeSafety ?? RuntimeSafety::create();
     }
 
     /**

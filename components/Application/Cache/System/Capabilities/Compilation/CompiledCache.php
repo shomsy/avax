@@ -12,9 +12,9 @@ final class CompiledCache
 
     public function __construct(
         private string $path,
+        private Filesystem $filesystem,
     )
     {
-        $this->filesystem = new Filesystem();
     }
 
     public function compile(string $key, mixed $value): void

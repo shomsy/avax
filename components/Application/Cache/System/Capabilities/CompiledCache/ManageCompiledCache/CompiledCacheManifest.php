@@ -12,20 +12,19 @@ final class CompiledCacheManifest
     /** @var array<string, CompiledCacheManifestEntry> */
     private array $entries = [];
 
-    public function __construct(CompiledCacheManifestEntry|null $compiledCacheManifestEntry = null,
-        private Filesystem $filesystem = new Filesystem(),
+    public function __construct(
+        private Filesystem              $filesystem,
+        CompiledCacheManifestEntry|null $compiledCacheManifestEntry = null,
     ) {
         if ($compiledCacheManifestEntry instanceof CompiledCacheManifestEntry) {
             $this->entries[$compiledCacheManifestEntry->compiledCacheName->toString()] = $compiledCacheManifestEntry;
         }
     }
 
-    public static function load(string $path): self
+    public static function load(string $path, Filesystem $filesystem) : self
     {
-        $filesystem = new Filesystem();
-
         if (! $filesystem->exists($path)) {
-            return new self();
+            return new self(filesystem: $filesystem);
         }
 
         $data = require $path;
@@ -34,7 +33,7 @@ final class CompiledCacheManifest
             throw new RuntimeException(message: 'Invalid manifest file');
         }
 
-        $manifest = new self();
+        $manifest = new self(filesystem: $filesystem);
 
         foreach ($data as $entryData) {
             if (! is_array($entryData)) {
@@ -54,9 +53,9 @@ final class CompiledCacheManifest
         $this->entries[$compiledCacheManifestEntry->compiledCacheName->toString()] = $compiledCacheManifestEntry;
     }
 
-    public static function empty(): self
+    public static function empty(Filesystem $filesystem) : self
     {
-        return new self();
+        return new self(filesystem: $filesystem);
     }
 
     public function has(string $name): bool

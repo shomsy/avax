@@ -10,6 +10,7 @@ final readonly class MigrationEngine
 {
     public function __construct(
         private MigrationRepository $migrationRepository,
+        private Filesystem $filesystem,
         private string $migrationsPath,
     ) {
     }
@@ -18,7 +19,7 @@ final readonly class MigrationEngine
     {
         $this->migrationRepository->ensureTableExists();
         $ran = $this->migrationRepository->getRan();
-        $files = (new Filesystem())->listFilesByPattern($this->migrationsPath . '/*.php');
+        $files = $this->filesystem->listFilesByPattern($this->migrationsPath . '/*.php');
         $batch = $this->migrationRepository->getLastBatchNumber() + 1;
 
         foreach ($files as $file) {

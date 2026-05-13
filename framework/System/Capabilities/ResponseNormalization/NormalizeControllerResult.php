@@ -24,7 +24,7 @@ use Stringable;
 final readonly class NormalizeControllerResult
 {
     public function __construct(
-        private ResponseFactory $responseFactory = new ResponseFactory(),
+        private ResponseFactory $responseFactory,
     ) {
     }
 

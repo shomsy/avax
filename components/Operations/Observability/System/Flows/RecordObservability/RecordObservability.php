@@ -29,10 +29,11 @@ final class RecordObservability
             'access_token', 'refresh_token', 'private_key', 'secret_key',
         ];
 
-    public function __construct(MetricsCollector|null $metrics = null, TraceTimeline|null $timeline = null,
+    public function __construct(
+        MetricsCollector $metrics, TraceTimeline $timeline,
     ) {
-        $this->metrics = $metrics ?? new MetricsCollector();
-        $this->timeline = $timeline ?? new TraceTimeline();
+        $this->metrics  = $metrics;
+        $this->timeline = $timeline;
     }
 
     /**

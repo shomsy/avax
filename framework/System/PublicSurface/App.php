@@ -19,6 +19,7 @@ use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinit
 use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\ClassifyApplicationException\ClassifyApplicationException;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RenderApplicationError\RenderApplicationError;
+use Avax\Framework\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
@@ -312,8 +313,12 @@ final class App
     private function ensureInitialized(): void
     {
         if ($this->dispatcher === null) {
-            $this->dispatcher = new RunApplication(metricsCollector: $this->metricsCollector);
             $this->responseFactory = new ResponseFactory();
+            $this->dispatcher = new RunApplication(
+                responseFactory : $this->responseFactory,
+                normalizer      : new NormalizeControllerResult(responseFactory: $this->responseFactory),
+                metricsCollector: $this->metricsCollector,
+            );
         }
     }
 
@@ -375,8 +380,11 @@ final class App
             }
         }
 
-        $renderer = $this->errorRenderer ?? new RenderApplicationError(
-            responseFactory: new ResponseFactory(),
+        $this->ensureInitialized();
+        assert($this->responseFactory !== null);
+
+        $renderer = $this->errorRenderer ??= new RenderApplicationError(
+            responseFactory: $this->responseFactory,
             classifier: new ClassifyApplicationException(),
         );
 

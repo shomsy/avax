@@ -11,8 +11,8 @@ final readonly class CompiledCacheDirectory
 {
     public function __construct(
         public string $path,
+        private Filesystem $filesystem,
     ) {
-        $filesystem = new Filesystem();
         $this->validate($filesystem);
         $this->ensureExists($filesystem);
     }

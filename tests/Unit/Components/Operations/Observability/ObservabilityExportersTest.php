@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Operations\Observability;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\Operations\Observability\System\Capabilities\Audit\FileAuditWriter\FileAuditWriter;
-use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\InMemoryMetricExporter\InMemoryMetricExporter;
 use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\FileMetricExporter\FileMetricWriter;
+use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\InMemoryMetricExporter\InMemoryMetricExporter;
 use Avax\Components\Operations\Observability\System\Capabilities\Tracing\FileTraceExporter\FileTraceWriter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -18,10 +19,12 @@ use PHPUnit\Framework\TestCase;
 final class ObservabilityExportersTest extends TestCase
 {
     private string $tempFile;
+    private Filesystem $filesystem;
 
     protected function setUp(): void
     {
         $this->tempFile = sys_get_temp_dir().'/avax_observability_test_'.uniqid().'.ndjson';
+        $this->filesystem = new Filesystem();
     }
 
     protected function tearDown(): void
@@ -46,7 +49,7 @@ final class ObservabilityExportersTest extends TestCase
 
     public function test_file_metric_writer_writes_and_reads(): void
     {
-        $writer = new FileMetricWriter($this->tempFile);
+        $writer = new FileMetricWriter($this->tempFile, $this->filesystem);
         $metric = [
             'name' => 'http.requests',
             'type' => 'counter',
@@ -64,7 +67,7 @@ final class ObservabilityExportersTest extends TestCase
 
     public function test_file_metric_writer_batch(): void
     {
-        $writer = new FileMetricWriter($this->tempFile);
+        $writer = new FileMetricWriter($this->tempFile, $this->filesystem);
         $metrics = [
             ['name' => 'metric1', 'type' => 'counter', 'value' => 1.0, 'tags' => [], 'timestamp' => 1.0],
             ['name' => 'metric2', 'type' => 'gauge', 'value' => 2.0, 'tags' => [], 'timestamp' => 2.0],
@@ -78,7 +81,7 @@ final class ObservabilityExportersTest extends TestCase
 
     public function test_file_trace_writer_writes_and_reads(): void
     {
-        $writer = new FileTraceWriter($this->tempFile);
+        $writer = new FileTraceWriter($this->tempFile, $this->filesystem);
         $span = [
             'trace_id' => 'abc123',
             'span_id' => 'def456',
@@ -100,7 +103,7 @@ final class ObservabilityExportersTest extends TestCase
 
     public function test_file_audit_writer_writes_and_reads(): void
     {
-        $writer = new FileAuditWriter($this->tempFile);
+        $writer = new FileAuditWriter($this->tempFile, $this->filesystem);
         $audit = [
             'event' => 'user.login',
             'actor' => 'admin',
@@ -119,7 +122,7 @@ final class ObservabilityExportersTest extends TestCase
 
     public function test_redaction_applies_before_write(): void
     {
-        $writer = new FileMetricWriter($this->tempFile);
+        $writer = new FileMetricWriter($this->tempFile, $this->filesystem);
         $metric = [
             'name' => 'db.query',
             'type' => 'histogram',
@@ -136,7 +139,7 @@ final class ObservabilityExportersTest extends TestCase
 
     public function test_file_writer_clears(): void
     {
-        $writer = new FileMetricWriter($this->tempFile);
+        $writer = new FileMetricWriter($this->tempFile, $this->filesystem);
         $writer->write(['name' => 'test', 'type' => 'counter', 'value' => 1.0, 'tags' => [], 'timestamp' => 1.0]);
         self::assertCount(1, $writer->read());
 
@@ -146,7 +149,7 @@ final class ObservabilityExportersTest extends TestCase
 
     public function test_file_writer_returns_empty_for_missing_file(): void
     {
-        $writer = new FileMetricWriter('/nonexistent/path/file.ndjson');
+        $writer = new FileMetricWriter('/nonexistent/path/file.ndjson', $this->filesystem);
         self::assertSame([], $writer->read());
     }
 }

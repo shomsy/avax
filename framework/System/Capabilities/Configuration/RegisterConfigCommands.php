@@ -19,6 +19,10 @@ use Throwable;
  */
 final readonly class RegisterConfigCommands
 {
+    public function __construct(
+        private Filesystem $filesystem,
+    ) {}
+
     /**
      * @return array<string, Closure>
      */
@@ -96,8 +100,9 @@ final readonly class RegisterConfigCommands
 
     private function configPublishCommand(): Closure
     {
-        return static function (array $args): string {
-            $filesystem = new Filesystem();
+        $filesystem = $this->filesystem;
+
+        return static function (array $args) use ($filesystem) : string {
             $output = "\033[33mConfiguration Publish\033[0m\n\n";
 
             $projectRoot = dirname(__DIR__, 4);

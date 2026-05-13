@@ -15,17 +15,24 @@ use Avax\Framework\System\Capabilities\RuntimeSafety\StateLeakDetection\StateLea
  */
 final readonly class RuntimeSafety
 {
-    private StateLeakDetector $stateLeakDetector;
+    public function __construct(
+        private readonly StateLeakDetector  $stateLeakDetector,
+        private readonly StaticStateScanner $staticStateScanner,
+        private readonly ResetVerifier      $resetVerifier,
+    ) {}
 
-    private StaticStateScanner $staticStateScanner;
-
-    private ResetVerifier $resetVerifier;
-
-    public function __construct(StateLeakDetector|null $stateLeakDetector = null, StaticStateScanner|null $staticStateScanner = null, ResetVerifier|null $resetVerifier = null,
-    ) {
-        $this->stateLeakDetector = $stateLeakDetector ?? new StateLeakDetector();
-        $this->staticStateScanner = $staticStateScanner ?? new StaticStateScanner();
-        $this->resetVerifier = $resetVerifier ?? new ResetVerifier();
+    /**
+     * Creates a RuntimeSafety instance with default detectors.
+     * Intended for diagnostic flows, CLI doctor commands, and tooling.
+     * Production assembly should inject dependencies explicitly.
+     */
+    public static function create() : self
+    {
+        return new self(
+            stateLeakDetector : new StateLeakDetector(),
+            staticStateScanner: new StaticStateScanner(),
+            resetVerifier     : new ResetVerifier(),
+        );
     }
 
     /**

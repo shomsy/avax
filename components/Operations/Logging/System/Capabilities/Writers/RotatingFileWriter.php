@@ -25,14 +25,12 @@ final class RotatingFileWriter
             'session_id', 'PHPSESSID', 'cookie',
         ];
 
-    private Filesystem $filesystem;
-
     public function __construct(
         private string $baseLogPath,
+        private Filesystem $filesystem,
         private string $timezone = 'UTC',
-        private int $maxLogFiles = 30, Filesystem|null $filesystem = null,
+        private int        $maxLogFiles = 30,
     ) {
-        $this->filesystem = $filesystem ?? new Filesystem();
     }
 
     public function write(string $message, string $level = 'info', array $context = []): void
@@ -73,7 +71,7 @@ final class RotatingFileWriter
         $files = array_values(array_filter($entries, static function (string $entry) use ($directory, $suffix) : bool {
             $fullPath = $directory . '/' . $entry;
 
-            return (new Filesystem())->isFile($fullPath) && str_ends_with($entry, $suffix);
+            return is_file($fullPath) && str_ends_with($entry, $suffix);
         }));
 
         if (count($files) <= $this->maxLogFiles) {

@@ -15,12 +15,10 @@ use Avax\Framework\System\Capabilities\Routing\Types\RouteCacheFailed;
  */
 final readonly class CacheRouteTable
 {
-    private Filesystem $filesystem;
-
     public function __construct(
-        private string $cacheDirectory = '', Filesystem|null $filesystem = null,
+        private Filesystem $filesystem,
+        private string     $cacheDirectory = '',
     ) {
-        $this->filesystem = $filesystem ?? new Filesystem();
     }
 
     /**

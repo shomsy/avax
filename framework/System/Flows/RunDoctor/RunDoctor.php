@@ -7,11 +7,13 @@ namespace Avax\Framework\System\Flows\RunDoctor;
 use Avax\Framework\System\Capabilities\RuntimeSafety\RuntimeSafety;
 use Avax\Framework\System\Capabilities\RuntimeSafety\RuntimeSafetyFinding;
 
-final readonly class RunDoctor
+final class RunDoctor
 {
-    public function __construct(
-        private RuntimeSafety $runtimeSafety = new RuntimeSafety(),
-    ) {
+    private RuntimeSafety $runtimeSafety;
+
+    public function __construct(?RuntimeSafety $runtimeSafety = null)
+    {
+        $this->runtimeSafety = $runtimeSafety ?? RuntimeSafety::create();
     }
 
     public function handle(bool $workerMode = false): int

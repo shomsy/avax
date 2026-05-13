@@ -18,7 +18,7 @@ final readonly class ControllerResolver
         private ResolveCallable $resolver,
     ) {}
 
-    public function resolve(string $className) : callable
+    public function resolve(string $className) : object
     {
         return $this->resolver->resolve($className);
     }

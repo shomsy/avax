@@ -19,7 +19,7 @@ final class ClearCompiledCache
     public function __construct(
         private readonly CompiledCacheDirectory $compiledCacheDirectory,
         private CompiledCacheManifest           $compiledCacheManifest,
-        private Filesystem|null $filesystem = null,
+        private Filesystem $filesystem,
     )
     {
     }
@@ -28,7 +28,7 @@ final class ClearCompiledCache
     {
         $compiledCacheName = new CompiledCacheName(name: $name);
 
-        $deleteCompiledCacheFile = new DeleteCompiledCacheFile($this->compiledCacheDirectory);
+        $deleteCompiledCacheFile = new DeleteCompiledCacheFile($this->compiledCacheDirectory, $this->filesystem);
         $deleteCompiledCacheFile->delete($compiledCacheName);
 
         $this->compiledCacheManifest->remove($compiledCacheName->toString());
@@ -36,26 +36,24 @@ final class ClearCompiledCache
         $resolveCompiledCachePath = new ResolveCompiledCachePath($this->compiledCacheDirectory);
         $compiledCachePath = $resolveCompiledCachePath->resolveManifestPath();
 
-        $writeCompiledCacheManifest = new WriteCompiledCacheManifest();
+        $writeCompiledCacheManifest = new WriteCompiledCacheManifest($this->filesystem);
         $writeCompiledCacheManifest->write($this->compiledCacheManifest, $compiledCachePath);
     }
 
     public function clearAll(): void
     {
-        $fs = $this->filesystem ?? new Filesystem();
-
         foreach ($this->compiledCacheManifest->all() as $entry) {
-            $deleter = new DeleteCompiledCacheFile($this->compiledCacheDirectory);
+            $deleter = new DeleteCompiledCacheFile($this->compiledCacheDirectory, $this->filesystem);
             $deleter->delete($entry->name);
         }
 
-        $this->compiledCacheManifest = CompiledCacheManifest::empty();
+        $this->compiledCacheManifest = CompiledCacheManifest::empty($this->filesystem);
 
         $resolveCompiledCachePath = new ResolveCompiledCachePath($this->compiledCacheDirectory);
         $compiledCachePath = $resolveCompiledCachePath->resolveManifestPath();
 
-        if ($fs->exists($compiledCachePath->toString())) {
-            $fs->delete($compiledCachePath->toString());
+        if ($this->filesystem->exists($compiledCachePath->toString())) {
+            $this->filesystem->delete($compiledCachePath->toString());
         }
 
         $this->deleteOrphanedArtifacts();
@@ -63,14 +61,13 @@ final class ClearCompiledCache
 
     private function deleteOrphanedArtifacts(): void
     {
-        $fs = $this->filesystem ?? new Filesystem();
         $dir = $this->compiledCacheDirectory->toString();
 
-        if (! $fs->exists($dir)) {
+        if (! $this->filesystem->exists($dir)) {
             return;
         }
 
-        $files = $fs->listFilesByPattern($dir . '/*.php');
+        $files = $this->filesystem->listFilesByPattern($dir . '/*.php');
 
         if ($files === []) {
             return;
@@ -81,10 +78,10 @@ final class ClearCompiledCache
                 continue;
             }
 
-            $content = $fs->read($file);
+            $content = $this->filesystem->read($file);
 
             if (str_contains($content, self::GENERATED_HEADER)) {
-                $fs->delete($file);
+                $this->filesystem->delete($file);
             }
         }
     }

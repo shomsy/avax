@@ -6,11 +6,10 @@ namespace Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\MapFai
 
 use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureAction;
-use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureContext;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureBoundaryKind;
+use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureContext;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailurePipelineResult;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailurePolicy;
-use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
 /**
@@ -21,12 +20,9 @@ use Throwable;
  */
 final readonly class MapFailureToResult
 {
-    private ResponseFactory $responseFactory;
-
     public function __construct(
-        ?ResponseFactory $responseFactory = null,
+        private ResponseFactory $responseFactory,
     ) {
-        $this->responseFactory = $responseFactory ?? new ResponseFactory();
     }
 
     public function execute(

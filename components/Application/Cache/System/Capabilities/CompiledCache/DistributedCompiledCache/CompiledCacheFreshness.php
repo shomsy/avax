@@ -21,16 +21,16 @@ final class CompiledCacheFreshness
 
     public function __construct(
         private readonly Clock $clock = new SystemClock(),
-        private Filesystem $filesystem = new Filesystem(),
+        private Filesystem $filesystem,
     ) {
     }
 
     /**
      * Create a new freshness checker.
      */
-    public static function create(Clock|null $clock = null, Filesystem|null $filesystem = null) : self
+    public static function create(Clock|null $clock = null, Filesystem $filesystem) : self
     {
-        return new self(clock: $clock ?? new SystemClock(), filesystem: $filesystem ?? new Filesystem());
+        return new self(clock: $clock ?? new SystemClock(), filesystem: $filesystem);
     }
 
     /**

@@ -16,7 +16,9 @@ use Avax\Components\DataStack\DataTransfer\System\Capabilities\DataShapeInspecti
 use Avax\Components\DataStack\DataTransfer\System\Configuration\DataTransferConfig;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use ReflectionClass;
 
 final class CompileDataShapeSchemaTest extends TestCase
 {
@@ -46,9 +48,9 @@ final class CompileDataShapeSchemaTest extends TestCase
             return;
         }
 
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::CHILD_FIRST,
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST,
         );
 
         foreach ($iterator as $file) {
@@ -68,6 +70,7 @@ final class CompileDataShapeSchemaTest extends TestCase
         $compiler = new CompileDataShapeSchema(
             cacheDir: $this->cacheDir,
             configHash: 'test-hash',
+            filesystem: $this->filesystem,
         );
 
         $metadata = $compiler->compile(
@@ -89,6 +92,7 @@ final class CompileDataShapeSchemaTest extends TestCase
         $compiler = new CompileDataShapeSchema(
             cacheDir: $this->cacheDir,
             configHash: 'test-hash',
+            filesystem: $this->filesystem,
         );
 
         $metadata = $compiler->compile(
@@ -107,10 +111,12 @@ final class CompileDataShapeSchemaTest extends TestCase
         $compiler1 = new CompileDataShapeSchema(
             cacheDir: $this->cacheDir,
             configHash: 'hash-a',
+            filesystem: $this->filesystem,
         );
         $compiler2 = new CompileDataShapeSchema(
             cacheDir: $this->cacheDir,
             configHash: 'hash-b',
+            filesystem: $this->filesystem,
         );
 
         $metadata1 = $compiler1->compile([CompileTestDto::class], $this->inspector);
@@ -125,6 +131,7 @@ final class CompileDataShapeSchemaTest extends TestCase
         $compiler = new CompileDataShapeSchema(
             cacheDir: $this->cacheDir,
             configHash: 'test-hash',
+            filesystem: $this->filesystem,
         );
 
         $metadata = $compiler->compile([CompileTestDto::class], $this->inspector);
@@ -139,6 +146,7 @@ final class CompileDataShapeSchemaTest extends TestCase
         $compiler = new CompileDataShapeSchema(
             cacheDir: $this->cacheDir,
             configHash: 'test-hash',
+            filesystem: $this->filesystem,
         );
 
         $compiler->compile([CompileTestDto::class], $this->inspector);
@@ -156,6 +164,7 @@ final class CompileDataShapeSchemaTest extends TestCase
         $compiler = new CompileDataShapeSchema(
             cacheDir: $this->cacheDir,
             configHash: 'test-hash',
+            filesystem: $this->filesystem,
         );
 
         $this->assertNull($compiler->loadMetadata());
@@ -171,6 +180,7 @@ final class CompileDataShapeSchemaTest extends TestCase
         $compiler = new CompileDataShapeSchema(
             cacheDir: $this->cacheDir,
             configHash: 'test-hash',
+            filesystem: $this->filesystem,
         );
 
         $this->assertNull($compiler->loadMetadata());
@@ -187,6 +197,7 @@ final class CompileDataShapeSchemaTest extends TestCase
         $compiler = new CompileDataShapeSchema(
             cacheDir: $this->cacheDir,
             configHash: 'test-hash',
+            filesystem: $this->filesystem,
         );
 
         $this->assertNull($compiler->loadMetadata());
@@ -212,6 +223,7 @@ final class CompileDataShapeSchemaTest extends TestCase
         $compiler = new CompileDataShapeSchema(
             cacheDir: $this->cacheDir,
             configHash: 'test-hash',
+            filesystem: $this->filesystem,
         );
 
         $this->assertNull($compiler->loadMetadata());
@@ -223,6 +235,7 @@ final class CompileDataShapeSchemaTest extends TestCase
         $compiler = new CompileDataShapeSchema(
             cacheDir: $this->cacheDir,
             configHash: 'test-hash',
+            filesystem: $this->filesystem,
         );
 
         // First compile valid metadata
@@ -249,6 +262,7 @@ final class CompileDataShapeSchemaTest extends TestCase
         $compiler = new CompileDataShapeSchema(
             cacheDir: $this->cacheDir,
             configHash: 'test-hash',
+            filesystem: $this->filesystem,
         );
 
         $compiler->loadMetadata();
@@ -268,12 +282,13 @@ final class CompileDataShapeSchemaTest extends TestCase
         $compiler = new CompileDataShapeSchema(
             cacheDir: $this->cacheDir,
             configHash: 'test-hash',
+            filesystem: $this->filesystem,
         );
 
         $metadata = $compiler->compile([CompileTestDto::class], $this->inspector);
 
         // Touch the source file to change mtime
-        $reflection = new \ReflectionClass(CompileTestDto::class);
+        $reflection = new ReflectionClass(CompileTestDto::class);
         $fileName = $reflection->getFileName();
         if ($fileName !== false) {
             touch($fileName, time() + 100);
@@ -287,6 +302,7 @@ final class CompileDataShapeSchemaTest extends TestCase
         $compiler = new CompileDataShapeSchema(
             cacheDir: $this->cacheDir,
             configHash: 'test-hash',
+            filesystem: $this->filesystem,
         );
 
         $metadata = $compiler->compile([CompileTestDto::class], $this->inspector);
@@ -300,6 +316,7 @@ final class CompileDataShapeSchemaTest extends TestCase
         $compiler = new CompileDataShapeSchema(
             cacheDir: $this->cacheDir,
             configHash: 'test-hash',
+            filesystem: $this->filesystem,
         );
 
         $compiled = $compiler->compile([CompileTestDto::class], $this->inspector);

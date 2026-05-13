@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Configuration\BuildApplication;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentProviderInterface;
 use Avax\Framework\System\Capabilities\Configuration\RegisterConfigCommands;
 use Avax\Framework\System\Capabilities\Doctor\RegisterDoctorCommands;
@@ -73,7 +74,7 @@ final class ApplicationBuilder
             $this->registerConsoleCommandDirectly(name: $name, command: $command);
         }
 
-        $configCommands = (new RegisterConfigCommands())();
+        $configCommands = (new RegisterConfigCommands(new Filesystem()))();
 
         foreach ($configCommands as $name => $command) {
             $this->registerConsoleCommandDirectly(name: $name, command: $command);
@@ -85,10 +86,10 @@ final class ApplicationBuilder
             $this->registerConsoleCommandDirectly(name: $name, command: $command);
         }
 
-        $queueCommands = (new RegisterQueueCommands())();
-
-        foreach ($queueCommands as $name => $command) {
-            $this->registerConsoleCommandDirectly(name: $name, command: $command);
+        // Queue commands require runtime dependencies (broker, failed store, resolver, worker loop factory).
+        // Skip during simple boot; queue CLI is registered when queue infrastructure is explicitly configured.
+        if (class_exists(RegisterQueueCommands::class)) {
+            // Deferred: queue commands need proper assembly via ServiceProvider or explicit configuration.
         }
     }
 

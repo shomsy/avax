@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\Routing;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Framework\System\Capabilities\Routing\Types\RouteCacheFailed;
 use Closure;
 
@@ -36,7 +37,7 @@ final readonly class RegisterRouteCommands
             ];
 
             try {
-                $cacheRouteTable = new CacheRouteTable();
+                $cacheRouteTable = new CacheRouteTable(new Filesystem());
                 $cacheFile = $cacheRouteTable->write(routeTable: $routeTable);
 
                 $output .= "Route table compiled: ".count($routeTable)." routes\n";
@@ -56,7 +57,7 @@ final readonly class RegisterRouteCommands
             $output = "\033[33mRoute Clear\033[0m\n\n";
 
             try {
-                $loadCachedRoutes = new LoadCachedRoutes();
+                $loadCachedRoutes = new LoadCachedRoutes(new Filesystem());
 
                 if (!$loadCachedRoutes->exists()) {
                     $output .= "No route cache found to clear\n";

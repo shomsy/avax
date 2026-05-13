@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\Runtime\Worker;
 
+use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured;
@@ -73,7 +74,9 @@ final class WorkerLoop
         WorkerRuntimeInterface $workerRuntime,
         WorkerLifecycle $workerLifecycle,
     ): void {
-        $handleIncomingHttp = new HandleIncomingHttp();
+        $handleIncomingHttp = new HandleIncomingHttp(
+            responseFactory: new ResponseFactory(),
+        );
 
         while (($request = $workerRuntime->receive()) instanceof WorkerRequest) {
             $response = $handleIncomingHttp->handle(

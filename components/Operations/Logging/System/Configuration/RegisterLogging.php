@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Logging\System\Configuration;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\Operations\Logging\System\Capabilities\Writing\RotatingFileWriter;
 use Avax\Components\Operations\Logging\System\PublicSurface\Log;
 
@@ -19,6 +20,7 @@ final class RegisterLogging
         return new Log(
             writer: new RotatingFileWriter(
                 baseLogPath: $logPath,
+                filesystem : new Filesystem(),
                 timezone   : config('app.timezone', 'UTC'),
             ),
         );

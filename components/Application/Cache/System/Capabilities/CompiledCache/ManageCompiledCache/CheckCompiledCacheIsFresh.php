@@ -8,8 +8,11 @@ use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
 final readonly class CheckCompiledCacheIsFresh
 {
-    public function __construct(private CompiledCacheDirectory $compiledCacheDirectory, private CompiledCacheManifest $compiledCacheManifest)
-    {
+    public function __construct(
+        private CompiledCacheDirectory $compiledCacheDirectory,
+        private CompiledCacheManifest  $compiledCacheManifest,
+        private Filesystem             $filesystem,
+    ) {
     }
 
     public function requiresRebuild(CompiledCacheName $compiledCacheName, CompiledCacheSources $compiledCacheSources): bool
@@ -22,7 +25,7 @@ final readonly class CheckCompiledCacheIsFresh
         $resolveCompiledCachePath = new ResolveCompiledCachePath(compiledCacheDirectory: $this->compiledCacheDirectory);
         $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(compiledCacheName: $compiledCacheName);
 
-        if (! (new Filesystem())->exists($compiledCachePath->toString())) {
+        if (! $this->filesystem->exists($compiledCachePath->toString())) {
             return CompiledCacheFreshness::MISSING;
         }
 

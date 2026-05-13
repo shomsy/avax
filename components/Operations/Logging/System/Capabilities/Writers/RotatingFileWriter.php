@@ -68,10 +68,10 @@ final class RotatingFileWriter
         // Use Filesystem to list directory, then filter and sort by age
         $entries = $this->filesystem->listDirectory($directory);
 
-        $files = array_values(array_filter($entries, static function (string $entry) use ($directory, $suffix) : bool {
+        $files = array_values(array_filter($entries, function (string $entry) use ($directory, $suffix) : bool {
             $fullPath = $directory . '/' . $entry;
 
-            return is_file($fullPath) && str_ends_with($entry, $suffix);
+            return $this->filesystem->isFile($fullPath) && str_ends_with($entry, $suffix);
         }));
 
         if (count($files) <= $this->maxLogFiles) {
@@ -79,7 +79,12 @@ final class RotatingFileWriter
         }
 
         // Sort by modification time (oldest first)
-        usort($files, static fn (string $a, string $b) : int => filemtime($directory . '/' . $a) - filemtime($directory . '/' . $b));
+        usort($files, function (string $a, string $b) use ($directory) : int {
+            $leftMtime  = $this->filesystem->modificationTime($directory . '/' . $a);
+            $rightMtime = $this->filesystem->modificationTime($directory . '/' . $b);
+
+            return (int) $leftMtime <=> (int) $rightMtime;
+        });
 
         while (count($files) > $this->maxLogFiles) {
             $oldest = array_shift($files);

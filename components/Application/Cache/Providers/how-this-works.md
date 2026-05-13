@@ -52,7 +52,7 @@ Cache::put('key', $value, 3600);
 $routes = CompiledCache::read(
     'routes',
     fn () => ['GET /users' => ['controller' => UserController::class]],
-    CompiledCacheSources::fromPaths('routes/web.php')
+    CompiledCacheSources::fromPaths($filesystem, 'routes/web.php')
 );
 ```
 

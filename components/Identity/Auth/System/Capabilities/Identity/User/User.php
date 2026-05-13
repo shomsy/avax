@@ -103,9 +103,9 @@ final class User implements Stringable, UserInterface
      * @param list<UserPermission>|null $permissions
      */
     public static function create(
-        UserId    $userId,
+        UserId    $id,
         #[SensitiveParameter]
-        UserEmail $userEmail,
+        UserEmail $email,
         string    $username,
         #[SensitiveParameter]
         string $passwordHash, array|null $roles = null, array|null $permissions = null,
@@ -113,13 +113,13 @@ final class User implements Stringable, UserInterface
     ) : self
     {
         return new self(
-            roles        : $roles,
-            permissions  : $permissions,
-            _id          : $userId,
-            _email       : $userEmail,
-            _username    : $username,
-            _passwordHash: $passwordHash,
-            _isActive    : $isActive,
+            id          : $id,
+            email       : $email,
+            username    : $username,
+            passwordHash: $passwordHash,
+            roles       : $roles,
+            permissions : $permissions,
+            isActive    : $isActive,
         );
     }
 

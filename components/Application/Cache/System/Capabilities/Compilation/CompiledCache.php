@@ -8,8 +8,6 @@ use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
 final class CompiledCache
 {
-    private Filesystem $filesystem;
-
     public function __construct(
         private string $path,
         private Filesystem $filesystem,

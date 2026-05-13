@@ -115,14 +115,14 @@ final class ResolveCallable
      */
     private function parseMethodCallable(array|string $target) : array
     {
-        if (is_array($target) && count($target) === 2) {
+        if (is_array($target)) {
             [$classOrInstance, $method] = $target;
             $instance = is_object($classOrInstance) ? $classOrInstance : $this->resolveInstance($classOrInstance);
 
             return [$instance, $method];
         }
 
-        if (is_string($target) && str_contains($target, '@')) {
+        if (str_contains($target, '@')) {
             [$class, $method] = explode('@', $target, 2);
             $instance = $this->resolveInstance($class);
 
@@ -131,7 +131,7 @@ final class ResolveCallable
 
         throw new CallableResolutionFailed(sprintf(
                                                'Invalid method callable format. Expected [Class, method] or "Class@method", got: %s',
-                                               is_array($target) ? json_encode($target) : $target,
+                                               $target,
                                            ));
     }
 
@@ -193,7 +193,7 @@ final class ResolveCallable
      *
      * @throws CallableResolutionFailed
      */
-    private function resolveInstance(string $class) : object
+    public function resolveInstance(string $class) : object
     {
         if (! class_exists($class)) {
             throw new CallableResolutionFailed(sprintf(

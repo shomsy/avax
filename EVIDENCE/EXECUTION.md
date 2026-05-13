@@ -148,7 +148,17 @@ Current Plan Lock: CLOSED / FULL GREEN
 
 Active stage: V5.8 Database Lifecycle Events — COMPLETE / FULL GREEN
 
-Next allowed stage: V5.9 Boot DSL (if design lock approved) or V5.8.x deferred items (async listeners, lifecycle attributes, projection DSL)
+Next allowed stage: AvaX Full Enterprise Cleanup continuation.
+
+V5.9 Boot DSL is BLOCKED until `EVIDENCE/cleanup/13-final-whole-system-acceptance-audit.md` is GREEN.
+
+Current cleanup blockers:
+
+- Health/doctor policy for runtime-critical components.
+- Component status lock missing `Application/Cache`.
+- Broken-reference audit reports CRITICAL findings.
+- Planned gates missing: callable-resolution, truth-consistency, empty-production-class.
+- Raw-file design decisions and performance warnings remain unclassified.
 
 This status is derived from CURRENT_TRUTH.md and EVIDENCE/current-plan-lock/final-current-plan-lock-report.md.
 

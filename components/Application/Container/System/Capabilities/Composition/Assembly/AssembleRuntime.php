@@ -24,6 +24,7 @@ use Avax\Components\Application\Container\System\Capabilities\Runtime\Dependency
 use Avax\Components\Application\Container\System\Capabilities\Runtime\HotPathInliner;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ManageScopes;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeStore;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
 /**
  * Builds the runtime and compilation collaborators for one container instance.
@@ -42,13 +43,14 @@ final class AssembleRuntime
         );
         $resolveDependencies = new ResolveDependencies();
         $createDependencyBlueprint = new CreateDependencyBlueprint(
-            cache       : new BlueprintCache(
-                cacheDir    : $createContainerConfig->cacheDir,
-                cacheVersion: $createContainerConfig->cacheVersion,
-                debug       : $createContainerConfig->debug,
+            blueprintCache     : new BlueprintCache(
+                                     filesystem  : new Filesystem(),
+                                     cacheDir    : $createContainerConfig->cacheDir,
+                                     cacheVersion: $createContainerConfig->cacheVersion,
+                                     debug       : $createContainerConfig->debug,
                 resolutionMetrics: $observabilityAssembly->metrics,
             ),
-            dependencies: $resolveDependencies,
+            resolveDependencies: $resolveDependencies,
         );
         $resolveCallArguments = new ResolveCallArguments(dependencies: $resolveDependencies);
         $functionCaller = new FunctionCaller(arguments: $resolveCallArguments);
@@ -81,6 +83,7 @@ final class AssembleRuntime
                 registrations: $dependencyRegistry,
                 blueprints   : $createDependencyBlueprint,
             ),
+            filesystem            : new Filesystem(),
         );
         $resolveDependency = new ResolveDependency(
             registrations    : $dependencyRegistry,

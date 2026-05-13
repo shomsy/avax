@@ -117,20 +117,20 @@ final readonly class CompiledCacheManifestEntry
     /**
      * Get the modification time of the compiled file.
      */
-    public function getCompiledFileMtime(): int|false
+    public function getCompiledFileMtime(Filesystem $filesystem) : int|false
     {
-        if (! $this->compiledFileExists()) {
+        if (! $this->compiledFileExists(filesystem: $filesystem)) {
             return false;
         }
 
-        return filemtime($this->compiledPath);
+        return $filesystem->modificationTime($this->compiledPath);
     }
 
     /**
      * Check if the compiled file exists.
      */
-    public function compiledFileExists(): bool
+    public function compiledFileExists(Filesystem $filesystem) : bool
     {
-        return is_file($this->compiledPath);
+        return $filesystem->isFile($this->compiledPath);
     }
 }

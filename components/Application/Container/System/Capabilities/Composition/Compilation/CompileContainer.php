@@ -101,7 +101,12 @@ final class CompileContainer
             dependencyRegistry       : $this->dependencyRegistry,
             createDependencyBlueprint: $this->createDependencyBlueprint,
         );
-        $this->filesystem = $filesystem ?? new Filesystem();
+
+        if ($filesystem === null) {
+            throw new RuntimeException('CompileContainer requires Filesystem to be supplied by assembly.');
+        }
+
+        $this->filesystem = $filesystem;
     }
 
     /**

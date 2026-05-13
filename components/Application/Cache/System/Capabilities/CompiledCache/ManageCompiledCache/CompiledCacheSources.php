@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
+
 final class CompiledCacheSources
 {
     /** @var array<string, CompiledCacheSource> */
@@ -21,10 +23,10 @@ final class CompiledCacheSources
         return new self();
     }
 
-    public static function fromPaths(string ...$paths): self
+    public static function fromPaths(Filesystem $filesystem, string ...$paths) : self
     {
         $sources = array_map(
-            static fn (string $path): CompiledCacheSource => CompiledCacheSource::fromPath(path: $path),
+            static fn (string $path) : CompiledCacheSource => CompiledCacheSource::fromPath(path: $path, filesystem: $filesystem),
             $paths,
         );
 

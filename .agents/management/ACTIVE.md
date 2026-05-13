@@ -57,11 +57,11 @@ flowchart LR
     end
 
     subgraph Ready["Ready Next"]
-        R0["None — V5.8 complete"]
+        R0["Cleanup blockers before V5.9"]
     end
 
     subgraph InProgress["In Progress"]
-        P0["None"]
+        P0["CLEANUP-ENTERPRISE-001 | YELLOW blockers | updated 2026-05-13"]
     end
 
     subgraph Planned["Locked Roadmap"]
@@ -73,5 +73,5 @@ flowchart LR
     InProgress --> Planned
 ```
 
-All stages through V5.8 are COMPLETE. V5.8 is FULL GREEN (12 implementation stages, 8203 tests GREEN, PHPStan 0 errors).
-V5.8.x deferred items (EntityPersister/QueryOrchestrator hook wiring, tooling gates, docs) and V5.9 Boot DSL are PLANNED/LOCKED.
+All stages through V5.8 are COMPLETE historically. Current cleanup evidence supersedes V5.9 readiness.
+V5.9 Boot DSL is BLOCKED until `CLEANUP-ENTERPRISE-001` is GREEN.

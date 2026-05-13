@@ -325,10 +325,6 @@ final class Router implements RouterInterface, RouterRuntimeInterface
                 $middleware = $this->resolveMiddleware($middleware);
             }
 
-            if (! is_callable($middleware)) {
-                throw new RouterFailure('Middleware must be a callable or a class name');
-            }
-
             $next     = $pipeline;
             $mw       = $middleware;
             $pipeline = static function (RequestInterface $req) use ($mw, $next) : ResponseInterface {

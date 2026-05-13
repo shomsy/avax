@@ -40,7 +40,7 @@ final readonly class CompiledCacheDirectory
 
     public static function fromString(string $path): self
     {
-        return new self(path: $path);
+        return new self(path: $path, filesystem: new Filesystem());
     }
 
     public function toString(): string

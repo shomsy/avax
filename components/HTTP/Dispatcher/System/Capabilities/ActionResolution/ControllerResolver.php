@@ -20,6 +20,6 @@ final readonly class ControllerResolver
 
     public function resolve(string $className) : object
     {
-        return $this->resolver->resolve($className);
+        return $this->resolver->resolveInstance($className);
     }
 }

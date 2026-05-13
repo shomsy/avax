@@ -13,6 +13,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\RedisCacheStore;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
 final readonly class BuildCache
 {
@@ -49,8 +50,9 @@ final readonly class BuildCache
     public function file(string $basePath, CacheConfiguration|null $config = null) : AvaxCache
     {
         $fileCacheStore = new FileCacheStore(
-            basePath: $basePath,
-            clock   : $this->clock,
+            basePath  : $basePath,
+            filesystem: new Filesystem(),
+            clock     : $this->clock,
         );
 
         return $this->fromStore(store: $fileCacheStore, config: $config);

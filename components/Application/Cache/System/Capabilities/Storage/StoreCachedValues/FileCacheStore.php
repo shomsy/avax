@@ -27,15 +27,13 @@ final readonly class FileCacheStore implements CacheStore
 
     private JsonCacheSerializer $jsonCacheSerializer;
 
-    private Filesystem $filesystem;
-
     public function __construct(
         private string $basePath,
-        private Clock $clock = new SystemClock(), JsonCacheSerializer|null $jsonCacheSerializer = null, Filesystem $filesystem,
+        private Filesystem       $filesystem,
+        private Clock            $clock = new SystemClock(),
+        JsonCacheSerializer|null $jsonCacheSerializer = null,
     ) {
         $this->jsonCacheSerializer = $jsonCacheSerializer ?? new JsonCacheSerializer(clock: $this->clock);
-        $this->filesystem = $filesystem;
-
         $this->ensureDirectoryExists();
     }
 
@@ -44,6 +42,11 @@ final readonly class FileCacheStore implements CacheStore
         if (! $this->filesystem->exists($this->basePath)) {
             $this->filesystem->createDirectory($this->basePath, 0o755);
         }
+    }
+
+    private function serializer() : JsonCacheSerializer
+    {
+        return $this->jsonCacheSerializer;
     }
 
     /**
@@ -55,7 +58,7 @@ final readonly class FileCacheStore implements CacheStore
         $filePath = $this->getFilePath(cacheKey: $cacheKey);
         $this->ensureDirectoryExistsForKey(filePath: $filePath);
 
-        $serializedCachePayload = $this->jsonCacheSerializer->serialize(value: $storedCacheRecord->value);
+        $serializedCachePayload = $this->serializer()->serialize(value: $storedCacheRecord->value);
 
         $data = [
             'value' => $serializedCachePayload->data,
@@ -240,7 +243,7 @@ final readonly class FileCacheStore implements CacheStore
                 clock : $clock,
             );
 
-            $value = $this->jsonCacheSerializer->unserialize(serializedCachePayload: $valuePayload);
+            $value = $this->serializer()->unserialize(serializedCachePayload: $valuePayload);
 
             $serializedData = is_string($data['serializedData'] ?? null) ? $data['serializedData'] : null;
 

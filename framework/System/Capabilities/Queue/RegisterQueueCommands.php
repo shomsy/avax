@@ -6,7 +6,8 @@ namespace Avax\Framework\System\Capabilities\Queue;
 
 use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsStore;
-use Avax\Components\Operations\Queue\System\Capabilities\Queue\QueueBroker;
+use Avax\Components\Operations\Queue\System\Capabilities\Queue\MemoryQueue\MemoryQueue;
+use Avax\Components\Operations\Queue\System\Flows\RunWorkerLoop\RunWorkerLoop;
 use Closure;
 
 /**
@@ -18,10 +19,10 @@ use Closure;
 final readonly class RegisterQueueCommands
 {
     /**
-     * @param Closure(QueueBroker, Closure, int): mixed $createWorkerLoop
+     * @param Closure(MemoryQueue, Closure, int): RunWorkerLoop $createWorkerLoop
      */
     public function __construct(
-        private QueueBroker            $broker,
+        private MemoryQueue $broker,
         private FailedJobsStore        $failedStore,
         private ResolveCallable        $callableResolver,
         private Closure                $createWorkerLoop,
@@ -96,7 +97,7 @@ final readonly class RegisterQueueCommands
             }
 
             $handler = $resolver->resolve($handlerClass);
-            if (method_exists($handler, 'handle')) {
+            if (is_object($handler) && method_exists($handler, 'handle')) {
                 $handler->handle($job['payload'] ?? []);
             }
         };

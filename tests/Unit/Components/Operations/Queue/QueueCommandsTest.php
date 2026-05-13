@@ -8,7 +8,6 @@ use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\Re
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsSchema;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\PdoFailedJobsStore;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\MemoryQueue\MemoryQueue;
-use Avax\Components\Operations\Queue\System\Capabilities\Queue\QueueBroker;
 use Avax\Components\Operations\Queue\System\Flows\RunWorkerLoop\RunWorkerLoop;
 use Avax\Framework\System\Capabilities\Queue\RegisterQueueCommands;
 use Closure;
@@ -44,7 +43,7 @@ final class QueueCommandsTest extends TestCase
         $failedStore = new PdoFailedJobsStore($this->pdo);
         $callableResolver = new ResolveCallable();
 
-        $createWorkerLoop = static function (QueueBroker $b, Closure $handler, int $sleep): RunWorkerLoop {
+        $createWorkerLoop = static function (MemoryQueue $b, Closure $handler, int $sleep) : RunWorkerLoop {
             return new RunWorkerLoop(
                 broker: $b,
                 handler: $handler,

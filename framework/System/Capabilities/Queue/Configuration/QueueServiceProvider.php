@@ -10,7 +10,7 @@ use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsStore;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\PdoFailedJobsStore;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\MemoryQueue\MemoryQueue;
-use Avax\Components\Operations\Queue\System\Capabilities\Queue\QueueBroker\QueueBrokerInterface;
+use Avax\Components\Operations\Queue\System\Capabilities\Queue\QueueBroker;
 use Avax\Components\Operations\Queue\System\Flows\RunWorkerLoop\RunWorkerLoop;
 use Avax\Framework\System\Capabilities\Queue\RegisterQueueCommands;
 use Closure;
@@ -27,8 +27,9 @@ final class QueueServiceProvider implements ServiceProvider
     public function register(ContainerInterface $container) : void
     {
         // Queue broker — memory-based default, can be swapped for Redis/SQS etc.
-        $container->singleton(QueueBrokerInterface::class, static fn () : QueueBrokerInterface => new MemoryQueue(),
+        $container->singleton(MemoryQueue::class, static fn () : MemoryQueue => new MemoryQueue(),
         );
+        $container->alias(QueueBroker::class, MemoryQueue::class);
 
         // PDO connection — SQLite default, configurable through env
         $container->singleton(PDO::class, static fn () : PDO => new PDO('sqlite:' . ($_ENV['QUEUE_DB_PATH'] ?? ':memory:')),
@@ -43,12 +44,12 @@ final class QueueServiceProvider implements ServiceProvider
         );
 
         // Worker loop factory closure — creates RunWorkerLoop instances on demand
-        $container->singleton('queue.worker_loop_factory', static fn () : Closure => static fn (QueueBrokerInterface $broker, Closure $handler, int $sleep) : RunWorkerLoop => new RunWorkerLoop(broker: $broker, handler: $handler, sleepMicroseconds: $sleep),
+        $container->singleton('queue.worker_loop_factory', static fn () : Closure => static fn (MemoryQueue $broker, Closure $handler, int $sleep) : RunWorkerLoop => new RunWorkerLoop(broker: $broker, handler: $handler, sleepMicroseconds: $sleep),
         );
 
         // RegisterQueueCommands — all dependencies injected, no direct instantiation
         $container->singleton(RegisterQueueCommands::class, static fn (ContainerInterface $c) : RegisterQueueCommands => new RegisterQueueCommands(
-            broker          : $c->get(QueueBrokerInterface::class),
+            broker          : $c->get(MemoryQueue::class),
             failedStore     : $c->get(FailedJobsStore::class),
             callableResolver: $c->get(ResolveCallable::class),
             createWorkerLoop: $c->get('queue.worker_loop_factory'),

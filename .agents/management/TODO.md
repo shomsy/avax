@@ -25,6 +25,18 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: CLEANUP-ENTERPRISE-001
+- `created_at`: 2026-05-13
+- `updated_at`: 2026-05-13
+- `status`: blocked
+- `estimate`: large
+- `outcome`: AvaX Full Enterprise Cleanup Program is YELLOW_WITH_EXACT_BLOCKERS. Stage A
+  validation/PHPStan/PHPUnit/autoload are green, but V5.9 remains blocked.
+- `acceptance`: Health/doctor gate green with real checks, component status lock current, broken-ref audit
+  resolved/classified, missing gates implemented or formally accepted, raw-file/performance warnings classified, truth
+  consistency green.
+- `links`: `EVIDENCE/cleanup/13-final-whole-system-acceptance-audit.md`, `EVIDENCE/cleanup/skipped-work-ledger.md`
+
 - `id`: V5.8-12
 - `created_at`: 2026-05-13
 - `updated_at`: 2026-05-13

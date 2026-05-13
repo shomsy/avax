@@ -4,6 +4,27 @@ Date of Truth: 2026-05-13
 Branch: main
 Commit: V5.7 Final Acceptance — Events Fluent DSL, Dogfooding, CQRS Projection, Event-History Proof
 
+## Cleanup Program Override
+
+Date: 2026-05-13
+Evidence: `EVIDENCE/cleanup/13-final-whole-system-acceptance-audit.md`
+Status: YELLOW_WITH_EXACT_BLOCKERS
+
+V5.9 Boot DSL is BLOCKED until the AvaX Full Enterprise Cleanup Program is GREEN.
+
+Current validation is stronger than older V5.8/V5.8.x optimism:
+
+- Composer validate: GREEN.
+- Optimized autoload: GREEN, 9274 classes.
+- PHPUnit: GREEN, 8289 tests, 23805 assertions.
+- PHPStan over `framework components tests labs/SystemDesignKit`: GREEN, 0 errors.
+- Runtime assembly gate: GREEN, 3166 files scanned.
+- Health/doctor policy: RED, active runtime-critical components missing real health checks.
+- Broken-reference audit: RED_BY_CONTENT, 19 missing symbols, 6 CRITICAL while exit code is 0.
+- Stage lock: YELLOW_BY_CONTENT, Active Stage UNKNOWN.
+
+Next allowed action: continue cleanup Stage H/K/J blockers; do not start V5.9.
+
 ## Core Status
 
 V1 Kernel Green: PROVEN

@@ -21,6 +21,8 @@ use Avax\Components\Application\Filesystem\System\Flows\ListDirectory\ListDirect
 use Avax\Components\Application\Filesystem\System\Flows\ListFilesByPattern\ListFilesByPattern;
 use Avax\Components\Application\Filesystem\System\Flows\MoveFile\MoveFile;
 use Avax\Components\Application\Filesystem\System\Flows\ReadFile\ReadFile;
+use Avax\Components\Application\Filesystem\System\Flows\ReadFileSize\ReadFileSize;
+use Avax\Components\Application\Filesystem\System\Flows\ReadPathModificationTime\ReadPathModificationTime;
 use Avax\Components\Application\Filesystem\System\Flows\WriteFile\WriteFile;
 
 /**
@@ -109,6 +111,16 @@ final class Filesystem
     public function isReadable(string $path): bool
     {
         return (new CheckPathIsReadable())->execute($path);
+    }
+
+    public function modificationTime(string $path) : int|false
+    {
+        return (new ReadPathModificationTime())->execute($path);
+    }
+
+    public function size(string $path) : int|false
+    {
+        return (new ReadFileSize())->execute($path);
     }
 
     public function isWritable(string $path): bool

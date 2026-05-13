@@ -8,6 +8,7 @@ use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCo
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
 use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
 use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\CompiledCacheConfiguration;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Override;
 use PHPUnit\Framework\TestCase;
 
@@ -51,7 +52,7 @@ final class CompiledCacheIntegrationTest extends TestCase
         $name    = 'config';
         $builder = static fn () => require $sourceFile;
 
-        $compiledCacheSources = CompiledCacheSources::fromPaths($sourceFile);
+        $compiledCacheSources    = CompiledCacheSources::fromPaths(new Filesystem(), $sourceFile);
 
         $this->compiledCacheContract->compile(name: $name, build: $builder, sources: $compiledCacheSources);
 
@@ -61,7 +62,7 @@ final class CompiledCacheIntegrationTest extends TestCase
         file_put_contents($sourceFile, '<?php return ["version" => 2];');
 
         $builderNew              = static fn () => require $sourceFile;
-        $compiledCacheSourcesNew = CompiledCacheSources::fromPaths($sourceFile);
+        $compiledCacheSourcesNew = CompiledCacheSources::fromPaths(new Filesystem(), $sourceFile);
         $value                   = $this->compiledCacheContract->read(name: $name, build: $builderNew, sources: $compiledCacheSourcesNew);
 
         $this->assertSame(2, $value['version']);

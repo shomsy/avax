@@ -10,8 +10,7 @@ use RecursiveIteratorIterator;
 /**
  * check-no-unclassified-scaffolding.php
  *
- * Scans components/**/
-System/** for empty PublicSurface, Flows, Capabilities,
+ * Scans components/.../System/... for empty PublicSurface, Flows, Capabilities,
  * Configuration, Foundation folders. Fails if empty scaffold exists without
  * ROADMAP/SCAFFOLD/EVIDENCE_ONLY status.
  */
@@ -35,21 +34,25 @@ $canonicalFolders = ['PublicSurface', 'Flows', 'Capabilities', 'Configuration', 
 $violations       = [];
 $checked          = 0;
 
-$iterator = new RecursiveIteratorIterator(
-    new RecursiveDirectoryIterator($componentsDir, RecursiveDirectoryIterator::SKIP_DOTS),
-    RecursiveIteratorIterator::SELF_FIRST
-);
+$systems       = glob($componentsDir . '/*/System', GLOB_ONLYDIR);
+$nestedSystems = glob($componentsDir . '/*/*/System', GLOB_ONLYDIR);
 
-foreach ($iterator as $file) {
-    if (! $file->isDir() || $file->getFilename() !== 'System') {
+if ($systems === false) {
+    $systems = [];
+}
+
+if ($nestedSystems === false) {
+    $nestedSystems = [];
+}
+
+foreach ([...$systems, ...$nestedSystems] as $systemDir) {
+    $relativeSystem = str_replace($componentsDir . '/', '', $systemDir);
+
+    if (str_contains($relativeSystem, '/docs/') || str_contains($relativeSystem, '/tests/')) {
         continue;
     }
 
-    $systemDir     = $file->getPathname();
-    $componentDir  = dirname($systemDir);
-    $componentName = basename($componentDir);
-    $areaName      = basename(dirname($componentDir));
-    $fullKey       = "$areaName/$componentName";
+    $fullKey = str_replace('/System', '', $relativeSystem);
 
     foreach ($canonicalFolders as $folder) {
         $folderPath = $systemDir . '/' . $folder;
@@ -57,7 +60,7 @@ foreach ($iterator as $file) {
             continue;
         }
 
-        $phpFiles = glob($folderPath . '/*.php');
+        $phpFiles = phpFilesUnder($folderPath);
         if ($phpFiles === []) {
             // Empty folder
             if (! isset($classifiedComponents[$fullKey])) {
@@ -66,6 +69,25 @@ foreach ($iterator as $file) {
             $checked++;
         }
     }
+}
+
+/**
+ * @return list<string>
+ */
+function phpFilesUnder(string $folderPath) : array
+{
+    $phpFiles = [];
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($folderPath, RecursiveDirectoryIterator::SKIP_DOTS),
+    );
+
+    foreach ($iterator as $file) {
+        if ($file->isFile() && $file->getExtension() === 'php') {
+            $phpFiles[] = $file->getPathname();
+        }
+    }
+
+    return $phpFiles;
 }
 
 if ($violations !== []) {

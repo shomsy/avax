@@ -7,13 +7,15 @@ namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\Use
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\FileCacheStore;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
 final class L2DistributedCache
 {
     public static function withCapacity(Clock $clock, string $basePath, int $maxSize): TieredCache
     {
         $cacheTier = CacheTier::l2(maxSize: $maxSize);
-        $fileCacheStore = self::create(basePath: $basePath, clock: $clock);
+        $filesystem = new Filesystem();
+        $fileCacheStore = self::create(basePath: $basePath, filesystem: $filesystem, clock: $clock);
 
         $tieredCache = new TieredCache($clock, $cacheTier);
         $tieredCache->registerTier(cacheTier: $cacheTier, cacheStore: $fileCacheStore);
@@ -22,8 +24,8 @@ final class L2DistributedCache
     }
 
     public static function create(
-        string $basePath, Clock|null $clock = null,
+        string $basePath, Filesystem $filesystem, Clock|null $clock = null,
     ): FileCacheStore {
-        return new FileCacheStore(basePath: $basePath, clock: $clock ?? new SystemClock());
+        return new FileCacheStore(basePath: $basePath, filesystem: $filesystem, clock: $clock ?? new SystemClock());
     }
 }

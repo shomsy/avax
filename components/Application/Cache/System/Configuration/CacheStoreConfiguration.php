@@ -7,6 +7,7 @@ namespace Avax\Components\Application\Cache\System\Configuration;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\FileCacheStore;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use InvalidArgumentException;
 
 final readonly class CacheStoreConfiguration
@@ -47,7 +48,8 @@ final readonly class CacheStoreConfiguration
         return match ($this->type) {
             'memory' => new InMemoryCacheStore(),
             'file' => new FileCacheStore(
-                basePath: $basePath,
+                basePath  : $basePath,
+                filesystem: new Filesystem(),
             ),
             default => throw new InvalidArgumentException(message: 'Unknown store type: '.$this->type),
         };

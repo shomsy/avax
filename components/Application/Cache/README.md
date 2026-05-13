@@ -109,7 +109,7 @@ $value = Cache::read(RuntimeCacheTarget::key('user:123', store: 'redis'));
 $routes = Cache::read(CompiledCacheTarget::artifact(
     name: 'routes',
     builder: fn () => $routeCompiler->compile(),
-    sources: CompiledCacheSources::fromPaths('routes/web.php')
+    sources: CompiledCacheSources::fromPaths($filesystem, 'routes/web.php')
 ));
 ```
 
@@ -120,11 +120,14 @@ Separate subsystem for **framework-generated PHP artifacts**: routes, config, co
 ```php
 use Avax\Cache\CompiledCache;
 use Avax\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
+
+$filesystem = new Filesystem();
 
 $routes = CompiledCache::read(
     'routes',
     fn () => ['GET /users' => ['controller' => UserController::class]],
-    CompiledCacheSources::fromPaths('routes/web.php')
+    CompiledCacheSources::fromPaths($filesystem, 'routes/web.php')
 );
 
 CompiledCache::clear('routes');

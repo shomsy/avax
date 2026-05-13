@@ -29,6 +29,18 @@ interface FailedJobsStore
     public function list(string $queue = '') : array;
 
     /**
+     * Find a failed job by ID.
+     *
+     * @return array{id: string, queue: string, payload: string, exception: string, failed_at: string}|null
+     */
+    public function find(string $id) : array|null;
+
+    /**
+     * Remove a failed job by ID.
+     */
+    public function remove(string $id) : void;
+
+    /**
      * Count failed jobs for a queue, or all queues if empty.
      */
     public function count(string $queue = ''): int;

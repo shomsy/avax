@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\ORM\Repositories;
 
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\EntityManager;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -30,11 +31,25 @@ class EntityRepository
      */
     public function find(mixed $id, string|null $connectionName = null) : object|null
     {
-        return $this->entityManager->find(
+        $entity = $this->entityManager->find(
             entityClass   : $this->entityClass,
             id            : $id,
             connectionName: $connectionName,
         );
+
+        if ($entity === null) {
+            return null;
+        }
+
+        if (! $entity instanceof $this->entityClass) {
+            throw new RuntimeException(sprintf(
+                                           'Entity manager returned [%s] for repository [%s].',
+                                           $entity::class,
+                                           $this->entityClass,
+                                       ));
+        }
+
+        return $entity;
     }
 
     /**

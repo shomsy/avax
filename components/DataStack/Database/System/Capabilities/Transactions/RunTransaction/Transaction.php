@@ -7,10 +7,24 @@ namespace Avax\Components\DataStack\Database\System\Capabilities\Transactions\Ru
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Contracts\TransactionsInterface;
 use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Exceptions\TransactionException;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\CompiledDatabaseLifecycleRegistry;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\AfterCommit;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\AfterRollback;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\TransactionBeginning;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\TransactionCommitted;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\TransactionRolledBack;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\TransactionLifecyclePhase;
 use Throwable;
 
 /**
  * Transaction manager for atomic database operations including nesting and savepoints.
+ *
+ * Integrated with the compiled database lifecycle registry:
+ * - beginning: fires before BEGIN SQL
+ * - committed: fires after COMMIT SQL (before afterCommit callbacks)
+ * - afterCommit: fires after afterCommit callbacks run (outermost commit only)
+ * - rolledBack: fires after ROLLBACK SQL (before afterRollback callbacks)
+ * - afterRollback: fires after afterRollback callbacks run (outermost rollback only)
  *
  * @see /docs/Foundation/Database/DSL/Transactions.md
  */
@@ -25,21 +39,37 @@ final class Transaction implements TransactionsInterface
     /** @var list<callable> afterRollback callbacks buffered for the outermost transaction. */
     private array $afterRollbackCallbacks = [];
 
+    private ?string $transactionId = null;
+
     /**
      * @param  DatabaseConnection  $databaseConnection  The physical persistence gateway to use.
+     * @param  CompiledDatabaseLifecycleRegistry  $registry  Compiled lifecycle registry.
+     * @param  string  $connectionName  Connection identifier for lifecycle events.
      */
-    private function __construct(private readonly DatabaseConnection $databaseConnection)
-    {
+    private function __construct(
+        private readonly DatabaseConnection $databaseConnection,
+        private readonly CompiledDatabaseLifecycleRegistry $registry = new CompiledDatabaseLifecycleRegistry(),
+        private readonly string $connectionName = 'default',
+    ) {
     }
 
     /**
      * Initialize a transaction manager on a specific connection.
      *
      * @param  DatabaseConnection  $databaseConnection  Physical gateway.
+     * @param  CompiledDatabaseLifecycleRegistry|null  $registry  Optional compiled lifecycle registry.
+     * @param  string  $connectionName  Connection identifier for lifecycle events.
      */
-    public static function on(DatabaseConnection $databaseConnection): self
-    {
-        return new self(databaseConnection: $databaseConnection);
+    public static function on(
+        DatabaseConnection $databaseConnection,
+        ?CompiledDatabaseLifecycleRegistry $registry = null,
+        string $connectionName = 'default',
+    ): self {
+        return new self(
+            databaseConnection: $databaseConnection,
+            registry: $registry ?? new CompiledDatabaseLifecycleRegistry(),
+            connectionName: $connectionName,
+        );
     }
 
     /**
@@ -91,13 +121,26 @@ final class Transaction implements TransactionsInterface
      */
     public function begin(): self
     {
+        $start = microtime(as_float: true);
+
         try {
             if ($this->transactions === 0) {
+                $this->transactionId = 'txn_'.bin2hex(random_bytes(4));
                 $this->databaseConnection->getConnection()->beginTransaction();
             } else {
                 // Create a bookmark for the inner bubble.
                 $savepointName = 'sp_'.$this->transactions;
                 $this->databaseConnection->getConnection()->exec(statement: 'SAVEPOINT '.$savepointName);
+            }
+
+            // Fire beginning lifecycle event on outermost only.
+            if ($this->transactions === 0) {
+                $this->dispatchTransactionLifecycle(
+                    phase: TransactionLifecyclePhase::Beginning,
+                    nestingLevel: 0,
+                    durationMs: 0,
+                    reason: null,
+                );
             }
 
             $this->transactions++;
@@ -161,6 +204,8 @@ final class Transaction implements TransactionsInterface
      */
     public function commit(): self
     {
+        $start = microtime(as_float: true);
+
         try {
             if ($this->transactions === 0) {
                 throw new TransactionException(
@@ -171,6 +216,14 @@ final class Transaction implements TransactionsInterface
 
             if ($this->transactions === 1) {
                 $this->databaseConnection->getConnection()->commit();
+
+                // Outermost commit — run afterCommit callbacks.
+                $callbacks = $this->afterCommitCallbacks;
+                $this->afterCommitCallbacks = [];
+
+                foreach ($callbacks as $callback) {
+                    $callback();
+                }
             } else {
                 // Remove the inner bookmark.
                 $savepointName = 'sp_'.($this->transactions - 1);
@@ -178,15 +231,26 @@ final class Transaction implements TransactionsInterface
             }
 
             $this->transactions = max(0, $this->transactions - 1);
+            $durationMs = (microtime(as_float: true) - $start) * 1000;
 
-            // Outermost commit — run afterCommit callbacks.
+            // Fire committed lifecycle event on outermost commit.
             if ($this->transactions === 0) {
-                $callbacks = $this->afterCommitCallbacks;
-                $this->afterCommitCallbacks = [];
+                $this->dispatchTransactionLifecycle(
+                    phase: TransactionLifecyclePhase::Committed,
+                    nestingLevel: 0,
+                    durationMs: $durationMs,
+                    reason: null,
+                );
 
-                foreach ($callbacks as $callback) {
-                    $callback();
-                }
+                // Fire afterCommit lifecycle event after callbacks have run.
+                $this->dispatchTransactionLifecycle(
+                    phase: TransactionLifecyclePhase::AfterCommit,
+                    nestingLevel: 0,
+                    durationMs: $durationMs,
+                    reason: null,
+                );
+
+                $this->transactionId = null;
             }
         } catch (Throwable $throwable) {
             throw new TransactionException(
@@ -224,7 +288,24 @@ final class Transaction implements TransactionsInterface
                     $callback();
                 }
 
+                // Fire rolledBack lifecycle event.
+                $this->dispatchTransactionLifecycle(
+                    phase: TransactionLifecyclePhase::RolledBack,
+                    nestingLevel: 0,
+                    durationMs: 0,
+                    reason: null,
+                );
+
+                // Fire afterRollback lifecycle event after callbacks have run.
+                $this->dispatchTransactionLifecycle(
+                    phase: TransactionLifecyclePhase::AfterRollback,
+                    nestingLevel: 0,
+                    durationMs: 0,
+                    reason: null,
+                );
+
                 $this->transactions = 0;
+                $this->transactionId = null;
             } else {
                 // Revert back to the inner bookmark.
                 $savepointName = 'sp_'.($this->transactions - 1);
@@ -237,6 +318,23 @@ final class Transaction implements TransactionsInterface
             // Clear callbacks on rollback failure too.
             $this->afterCommitCallbacks = [];
             $this->afterRollbackCallbacks = [];
+
+            // Fire rolledBack lifecycle event even on rollback failure.
+            $this->dispatchTransactionLifecycle(
+                phase: TransactionLifecyclePhase::RolledBack,
+                nestingLevel: 0,
+                durationMs: 0,
+                reason: $throwable,
+            );
+
+            $this->dispatchTransactionLifecycle(
+                phase: TransactionLifecyclePhase::AfterRollback,
+                nestingLevel: 0,
+                durationMs: 0,
+                reason: $throwable,
+            );
+
+            $this->transactionId = null;
 
             throw new TransactionException(
                 message     : 'Failed to rollback transaction: '.$throwable->getMessage(),
@@ -325,5 +423,59 @@ final class Transaction implements TransactionsInterface
         }
 
         return $this;
+    }
+
+    /**
+     * Dispatch transaction lifecycle events through the compiled registry.
+     *
+     * No-listener path: registry returns empty list, zero overhead.
+     * Listener failure bubbles by default.
+     */
+    private function dispatchTransactionLifecycle(
+        TransactionLifecyclePhase $phase,
+        int $nestingLevel,
+        float $durationMs,
+        ?Throwable $reason,
+    ): void {
+        $listeners = $this->registry->transactionListenersFor($phase);
+        if ($listeners === []) {
+            return;
+        }
+
+        $event = match ($phase) {
+            TransactionLifecyclePhase::Beginning => new TransactionBeginning(
+                connection: $this->connectionName,
+                nestingLevel: $nestingLevel,
+                transactionId: $this->transactionId ?? '',
+            ),
+            TransactionLifecyclePhase::Committed => new TransactionCommitted(
+                connection: $this->connectionName,
+                nestingLevel: $nestingLevel,
+                transactionId: $this->transactionId ?? '',
+                durationMs: $durationMs,
+            ),
+            TransactionLifecyclePhase::AfterCommit => new AfterCommit(
+                connection: $this->connectionName,
+                transactionId: $this->transactionId ?? '',
+            ),
+            TransactionLifecyclePhase::RolledBack => new TransactionRolledBack(
+                connection: $this->connectionName,
+                nestingLevel: $nestingLevel,
+                transactionId: $this->transactionId ?? '',
+            ),
+            TransactionLifecyclePhase::AfterRollback => new AfterRollback(
+                connection: $this->connectionName,
+                transactionId: $this->transactionId ?? '',
+                reason: $reason,
+            ),
+            TransactionLifecyclePhase::Failed => throw new \RuntimeException('Failed phase should not be dispatched directly'),
+        };
+
+        foreach ($listeners as $entry) {
+            $listener = $entry['listener'];
+            $instance = new $listener();
+            // @phpstan-ignore-next-line
+            $instance($event);
+        }
     }
 }

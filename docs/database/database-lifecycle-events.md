@@ -1,8 +1,9 @@
 # Database Lifecycle Events
 
-**Status:** V5.8 Design Lock — NOT IMPLEMENTED YET
-**Version:** V5.8 Design Draft
+**Status:** V5.8 IMPLEMENTED — GREEN
+**Version:** V5.8
 **Date:** 2026-05-13
+**Last Updated:** 2026-05-13
 
 ## What Database Lifecycle Events Are
 
@@ -253,14 +254,56 @@ The following are NOT production-ready in V5.8:
 
 | Feature | Status |
 |---------|--------|
-| DB lifecycle events | DESIGN LOCK — implementation planned |
-| Entity lifecycle hooks | DESIGN LOCK |
-| Transaction afterCommit/afterRollback | DESIGN LOCK |
-| Query lifecycle hooks | DESIGN LOCK |
+| DB lifecycle events | **IMPLEMENTED** — 19 event objects, compiled registry, DSL |
+| Entity lifecycle hooks | **IMPLEMENTED** — wired into EntityPersister::insert/update/delete |
+| Transaction afterCommit/afterRollback | **IMPLEMENTED** — wired into Transaction::begin/commit/rollback |
+| Query lifecycle hooks | **IMPLEMENTED** — wired into QueryOrchestrator::query/execute |
 | Outbox bridge | DESIGN ONLY — interfaces defined |
-| Projection bridge | DESIGN ONLY |
+| Projection bridge | DESIGN ONLY — V5.7 event-driven projection path works |
 | EventStore | ROADMAP — future capability |
 | Event Sourcing Kit | ROADMAP — future capability |
 | Async lifecycle listeners | ROADMAP |
 | DB lifecycle attributes | DEFERRED to V5.8.x |
 | onProjection() DSL | DESIGN ONLY |
+
+## Runtime Integration
+
+V5.8 lifecycle events are fired at runtime through three integration points:
+
+### EntityPersister
+
+`EntityPersister::insert()` fires: `creating`, `saving` before SQL; `created`, `saved` after success; `failedToSave` on exception.
+
+`EntityPersister::update()` fires: `updating`, `saving` before SQL; `updated`, `saved` after success; `failedToSave` on exception.
+
+`EntityPersister::delete()` fires: `deleting` before SQL; `deleted` after success; `failedToDelete` on exception.
+
+Superset handling: `saving` includes `creating`/`updating`, `saved` includes `created`/`updated`.
+
+### QueryOrchestrator
+
+`QueryOrchestrator::query()` fires: `executing` before SQL; `executed` after success; `failed` on exception; `slow` when duration >= threshold.
+
+`QueryOrchestrator::execute()` fires: `executing` before SQL; `executed` after success; `failed` on exception.
+
+No-listener path: registry returns empty list immediately, zero overhead.
+
+### Transaction
+
+`Transaction::begin()` fires: `beginning` on outermost transaction.
+
+`Transaction::commit()` fires: `committed` and `afterCommit` on outermost commit (after callbacks run).
+
+`Transaction::rollback()` fires: `rolledBack` and `afterRollback` on outermost rollback (after callbacks run).
+
+Nested transactions (savepoints) do not fire lifecycle events — only the outermost boundary fires.
+
+### Exception Bubbling
+
+Listener failures do not swallow original exceptions. When persistence fails, `failedToSave`/`failedToDelete`/`failed` events fire, then the original exception re-throws.
+
+### Validation
+
+- 8231 tests pass (28 new lifecycle integration tests)
+- PHPStan clean on all lifecycle code
+- All 8 database lifecycle gates pass

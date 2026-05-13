@@ -960,22 +960,37 @@ Date: 2026-05-13
 - `OutboxMessageId` — value object with generate() method
 - Design-only scope per design lock (NOT full outbox implementation)
 
-**V5.8-09 Tests completed:**
-- `DatabaseLifecycleTest` — 53 tests covering enums, registration objects, event objects, compiled registry, entity DSL, transaction DSL, query DSL
-- `TransactionAfterCommitSafetyTest` — 14 tests covering afterCommit safety, afterRollback, nested transactions, callback isolation
+**V5.8-10 EntityPersister wiring completed:**
+- `EntityPersister::insert()` fires creating/saving before, created/saved after, failedToSave on exception
+- `EntityPersister::update()` fires updating/saving before, updated/saved after, failedToSave on exception
+- `EntityPersister::delete()` fires deleting before, deleted after, failedToDelete on exception
+- Superset handling: saving includes creating/updating, saved includes created/updated
 
-**Tests:** 8203 tests GREEN (134 new V5.8 tests), PHPStan 0 errors
+**V5.8-11 QueryOrchestrator wiring completed:**
+- `QueryOrchestrator::query()` fires executing before, executed after, failed on exception, slow when threshold met
+- `QueryOrchestrator::execute()` fires executing before, executed after, failed on exception
+- No-listener path has minimal overhead (registry returns empty list immediately)
 
-**Evidence:** `EVIDENCE/v5.8/01-baseline-validation.md` through `EVIDENCE/v5.8/50-v5.8-final-acceptance-audit.md`, `EVIDENCE/v5.8/v5.8-stage-ledger.md`
+**V5.8-12 Transaction lifecycle registry integration completed:**
+- `Transaction::begin()` fires TransactionBeginning on outermost
+- `Transaction::commit()` fires TransactionCommitted and AfterCommit on outermost
+- `Transaction::rollback()` fires TransactionRolledBack and AfterRollback on outermost
+
+**V5.8-13 Tooling gates completed:**
+- 8 database lifecycle gates implemented, all PASS
+
+**V5.8-14 Docs updated:**
+- `docs/database/database-lifecycle-events.md` updated to IMPLEMENTED status with runtime integration section
+
+**Tests:** 8231 tests GREEN (28 new lifecycle integration tests), PHPStan 0 errors
+
+**Evidence:** `EVIDENCE/v5.8/01-baseline-validation.md` through `EVIDENCE/v5.8/50-v5.8-final-acceptance-audit.md`, `EVIDENCE/v5.8/51-v5.8-deferred-closure-truth-check.md`, `EVIDENCE/v5.8/v5.8-stage-ledger.md`
 
 ### V5.8 Verdict
 
-**V5.8 Complete: GREEN.**
-All 12 implementation stages (V5.8-01 through V5.8-12) GREEN.
-Foundation, DSL, registry, transaction bridge, outbox groundwork — all GREEN.
-EntityPersister/QueryOrchestrator lifecycle hook wiring = deferred to V5.8.x.
-Tooling gates = deferred to V5.8.x.
-Full docs update = deferred to V5.8.x.
+**V5.8 Complete: FULL GREEN.**
+All implementation stages (V5.8-01 through V5.8-14) GREEN.
+Foundation, DSL, registry, transaction bridge, outbox groundwork, EntityPersister wiring, QueryOrchestrator wiring, Transaction lifecycle integration, tooling gates, docs — all GREEN.
 V5.9 Boot DSL = ROADMAP / LOCKED.
 V6 EventStore/EventSourcing = ROADMAP / LOCKED.
 

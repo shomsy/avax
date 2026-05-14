@@ -7,8 +7,8 @@ namespace Avax\Components\Application\Container\System\Configuration;
 use Avax\Components\Application\Container\System\Capabilities\HealthCheck\CheckContainerHealth;
 use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
-use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\Application\Container\System\PublicSurface\Container;
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 
 /**
  * ContainerServiceProvider — registers the container itself as a service.

@@ -10,7 +10,7 @@ use Avax\Components\Application\Container\System\Capabilities\Declaration\Provid
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDeferredDependency;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDependency;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
-use Avax\Components\Application\Container\System\ContainerInterface;
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use InvalidArgumentException;
 use Throwable;
 

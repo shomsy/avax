@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Avax\Components\Application\Config\System\PublicSurface\Config;
-use Avax\Components\Application\Container\System\ContainerInterface;
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\ConnectionPool;

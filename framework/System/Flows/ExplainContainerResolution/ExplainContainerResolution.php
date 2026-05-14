@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Flows\ExplainContainerResolution;
 
-use Avax\Components\Application\Container\System\ContainerInterface;
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Framework\System\Capabilities\ContainerIntelligence\ContainerAnalyzer;
 use Avax\Framework\System\Capabilities\ContainerIntelligence\ContainerDependencyExplanation;
 

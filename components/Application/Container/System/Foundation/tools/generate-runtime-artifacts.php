@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Avax\Components\Application\Container\System\ContainerInterface;
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 
 if ($argc < 3) {
     fwrite(stream: STDERR, data: "Usage: php tools/generate-runtime-artifacts.php <fixture> <output-dir>\n");

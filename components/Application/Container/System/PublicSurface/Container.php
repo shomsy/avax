@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\PublicSurface;
 
-use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Framework\System\Capabilities\StateReset\ResettableState;
 use RuntimeException;
 

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\Capabilities\HealthCheck;
 
-use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\Application\Container\System\PublicSurface\Container;
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Framework\System\Capabilities\Health\Foundation\HealthFinding;
 use Avax\Framework\System\Capabilities\Health\Foundation\HealthReport;
 use Avax\Framework\System\Capabilities\Health\Foundation\HealthStatus;

@@ -23,7 +23,7 @@ final class ResolveEventListeners
 {
     private ResolveCallable $resolveCallable;
 
-    public function __construct(?ContainerInterface $container = null)
+    public function __construct(ContainerInterface|null $container = null)
     {
         $this->resolveCallable = new ResolveCallable($container);
     }

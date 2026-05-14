@@ -89,7 +89,7 @@ final class SchemaGeneration
     /**
      * Replace the default assembly (for testing).
      */
-    public static function setAssembly(?SchemaGenerationAssembly $assembly) : void
+    public static function setAssembly(SchemaGenerationAssembly|null $assembly) : void
     {
         self::$assembly = $assembly;
     }

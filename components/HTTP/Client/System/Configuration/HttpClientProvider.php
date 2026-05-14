@@ -37,7 +37,10 @@ final class HttpClientProvider
     /**
      * @param array<string, mixed> $config Default configuration
      */
-    public function __construct(private array $config = []) {}
+    public function __construct(
+        private HttpTransportInterface $defaultTransport,
+        private array                  $config = [],
+    ) {}
 
     /**
      * Create a client optimized for API calls.
@@ -168,7 +171,7 @@ final class HttpClientProvider
         }
 
         $resolvedOptions   = $requestOptions ?? $this->resolveOptions();
-        $resolvedTransport = $httpTransport ?? new CurlTransport();
+        $resolvedTransport = $httpTransport ?? $this->defaultTransport;
 
         $httpClient = new HttpClient(
             baseUrl       : $baseUrl ?? $this->config['base_url'] ?? null,

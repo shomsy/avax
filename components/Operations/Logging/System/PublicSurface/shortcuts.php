@@ -7,7 +7,6 @@ declare(strict_types=1);
  */
 
 use Psr\Log\LoggerInterface;
-use Psr\Log\LoggerInterface;
 
 if (! function_exists('logger')) {
     /**
@@ -23,26 +22,6 @@ if (! function_exists('logger')) {
         }
 
         $logger->log($level, $message, $context);
-
-        return null;
-    }
-}
-<?
-php
-
-declare(strict_types=1);
-
-if (! function_exists('logger')) {
-    function logger(string|null $message = null, array|null $context = null, string $level = 'info') : LoggerInterface|null
-    {
-        // Assumes app() helper exists
-        $logger = app(LoggerInterface::class);
-
-        if ($message === null) {
-            return $logger;
-        }
-
-        $logger->log($level, $message, $context ?? []);
 
         return null;
     }

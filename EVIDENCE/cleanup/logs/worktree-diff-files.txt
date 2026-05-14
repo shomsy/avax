@@ -1,2 +1,3 @@
-.phpunit.cache/test-results
-avax.txt
+EVIDENCE/cleanup/logs/worktree-diff-files.txt
+EVIDENCE/cleanup/logs/worktree-diffstat.txt
+EVIDENCE/cleanup/logs/worktree-pre.txt

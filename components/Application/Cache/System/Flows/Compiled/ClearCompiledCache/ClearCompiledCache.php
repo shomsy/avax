@@ -10,6 +10,7 @@ use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCo
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\DeleteCompiledCacheFile;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\ResolveCompiledCachePath;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\WriteCompiledCacheManifest;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
 final class ClearCompiledCache
@@ -20,6 +21,7 @@ final class ClearCompiledCache
         private readonly CompiledCacheDirectory $compiledCacheDirectory,
         private CompiledCacheManifest           $compiledCacheManifest,
         private Filesystem $filesystem,
+        private Clock $clock,
     )
     {
     }
@@ -47,7 +49,7 @@ final class ClearCompiledCache
             $deleter->delete($entry->name);
         }
 
-        $this->compiledCacheManifest = CompiledCacheManifest::empty($this->filesystem);
+        $this->compiledCacheManifest = CompiledCacheManifest::empty($this->filesystem, $this->clock);
 
         $resolveCompiledCachePath = new ResolveCompiledCachePath($this->compiledCacheDirectory);
         $compiledCachePath = $resolveCompiledCachePath->resolveManifestPath();

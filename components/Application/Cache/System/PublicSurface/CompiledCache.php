@@ -8,7 +8,10 @@ use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCo
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
 use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
 /**
  * Stable public facade for compiled cache artifacts.
@@ -53,7 +56,10 @@ final class CompiledCache
 
     public static function configure(string $directory): void
     {
-        self::$compiledCacheContract = new BuildCompiledCache()->inDirectory(directory: $directory);
+        self::$compiledCacheContract = (new BuildCompiledCache(
+            clock     : new SystemClock(),
+            filesystem: new Filesystem(),
+        ))->inDirectory(directory: $directory);
     }
 
     public static function reset(): void

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Flows\RunApplication;
 
 use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
-use Avax\Components\Application\Container\System\Container;
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ActionResolution\ControllerResolver;
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ArgumentResolution\ArgumentResolver;
 use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
@@ -15,7 +14,6 @@ use Avax\Components\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedExc
 use Avax\Components\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
 use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;
-use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
 use Avax\Framework\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Flows\HandleIncomingHttp\MatchedHttpRoute;
@@ -43,27 +41,36 @@ use Throwable;
  */
 final readonly class RunApplication
 {
-    private ReadIncomingHttpRequest $readRequest;
-
-    private MatchHttpRoute $matchRoute;
-
-    private ControllerResolver $controllerResolver;
-
-    private ArgumentResolver $argumentResolver;
-
     public function __construct(
-        private ResponseFactory           $responseFactory,
+        private ResponseFactory         $responseFactory,
         private NormalizeControllerResult $normalizer,
+        private ReadIncomingHttpRequest $readRequest,
+        private MatchHttpRoute          $matchRoute,
+        private ControllerResolver      $controllerResolver,
+        private ArgumentResolver        $argumentResolver,
         private MetricsCollector|null $metricsCollector = null,
-    )
-    {
-        $this->readRequest = new ReadIncomingHttpRequest();
-        $this->matchRoute = new MatchHttpRoute(new MatchRoute());
+    ) {}
 
-        // Build resolution pipeline
-        $container = new RouteFacadeContainer();
-        $this->controllerResolver = new ControllerResolver(resolver: new ResolveCallable(container: clone $container));
-        $this->argumentResolver = new ArgumentResolver(container: clone $container);
+    public static function withDefaultResolutionPipeline(
+        ResponseFactory           $responseFactory,
+        NormalizeControllerResult $normalizer,
+        MetricsCollector|null     $metricsCollector = null,
+    ) : self
+    {
+        $container          = new RouteFacadeContainer();
+        $resolveCallable    = new ResolveCallable(container: clone $container);
+        $controllerResolver = new ControllerResolver(resolver: $resolveCallable);
+        $argumentResolver   = new ArgumentResolver(container: clone $container);
+
+        return new self(
+            responseFactory   : $responseFactory,
+            normalizer        : $normalizer,
+            readRequest       : new ReadIncomingHttpRequest(),
+            matchRoute        : new MatchHttpRoute(new MatchRoute()),
+            controllerResolver: $controllerResolver,
+            argumentResolver  : $argumentResolver,
+            metricsCollector  : $metricsCollector,
+        );
     }
 
     public function handle(

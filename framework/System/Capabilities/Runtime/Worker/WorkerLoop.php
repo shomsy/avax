@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\Runtime\Worker;
 
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
-use Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured;
 
 final class WorkerLoop
 {
     private bool $running = false;
 
     public function __construct(
-        private readonly ?RuntimeInterface $runtime = null,
-        private readonly ?WorkerRuntimeInterface $workerRuntime = null,
+        private readonly RuntimeInterface       $runtime,
+        private readonly WorkerRuntimeInterface $workerRuntime,
+        private readonly HandleIncomingHttp     $handleIncomingHttp,
     ) {
     }
 
@@ -38,12 +37,6 @@ final class WorkerLoop
     {
         $runtime = $this->runtime;
         $workerRuntime = $this->workerRuntime;
-
-        if (! $runtime instanceof RuntimeInterface || ! $workerRuntime instanceof WorkerRuntimeInterface) {
-            throw new FrameworkMisconfigured(
-                message: 'Worker loop requires runtime and worker runtime before it can run.',
-            );
-        }
 
         $this->start();
 
@@ -74,12 +67,8 @@ final class WorkerLoop
         WorkerRuntimeInterface $workerRuntime,
         WorkerLifecycle $workerLifecycle,
     ): void {
-        $handleIncomingHttp = new HandleIncomingHttp(
-            responseFactory: new ResponseFactory(),
-        );
-
         while (($request = $workerRuntime->receive()) instanceof WorkerRequest) {
-            $response = $handleIncomingHttp->handle(
+            $response = $this->handleIncomingHttp->handle(
                 runtime: $runtime,
                 runtimeRequest: $request->request(),
             );

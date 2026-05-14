@@ -23,7 +23,7 @@ final readonly class RunProtectedAction
     public function __construct(
         private RunFailurePipeline $pipeline,
         private CleanupAfterFailure $cleanup,
-        private EnforceTimeout $enforceTimeout = new EnforceTimeout(),
+        private EnforceTimeout $enforceTimeout,
     ) {
     }
 

@@ -6,12 +6,16 @@ namespace Avax\Components\DeveloperTools\CodeGeneration\System\Flows\GenerateCod
 
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
-final class GenerateCode
+final readonly class GenerateCode
 {
+    public function __construct(
+        private Filesystem $filesystem,
+    ) {}
+
     /**
      * @param array<string, string> $variables
      */
-    public function generate(string $template, array $variables, string $outputPath, Filesystem|null $filesystem = null) : bool
+    public function generate(string $template, array $variables, string $outputPath) : bool
     {
         $code = str_replace(
             array_map(fn ($k) => '{{' . $k . '}}', array_keys($variables)),
@@ -19,8 +23,6 @@ final class GenerateCode
             $template,
         );
 
-        $fs = $filesystem ?? new Filesystem();
-
-        return $fs->write($outputPath, $code);
+        return $this->filesystem->write($outputPath, $code);
     }
 }

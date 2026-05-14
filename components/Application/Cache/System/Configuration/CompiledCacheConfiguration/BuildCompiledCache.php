@@ -13,13 +13,14 @@ use Avax\Components\Application\Cache\System\Flows\Compiled\ClearCompiledCache\C
 use Avax\Components\Application\Cache\System\Flows\Compiled\CompileCache\CompileCache;
 use Avax\Components\Application\Cache\System\Flows\Compiled\ReadCompiledCache\ReadCompiledCache;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
-use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
 final readonly class BuildCompiledCache
 {
-    public function __construct(private Clock $clock = new SystemClock())
-    {
+    public function __construct(
+        private Clock      $clock,
+        private Filesystem $filesystem,
+    ) {
     }
 
     public function inDirectory(string $directory): CompiledCacheContract
@@ -29,23 +30,26 @@ final readonly class BuildCompiledCache
 
     public function fromConfiguration(CompiledCacheConfiguration $compiledCacheConfiguration): CompiledCacheContract
     {
-        return new readonly class ($compiledCacheConfiguration->directory, $this->clock) implements CompiledCacheContract {
+        $filesystem = $this->filesystem;
+        $clock      = $this->clock;
+
+        return new readonly class ($compiledCacheConfiguration->directory, $clock, $filesystem) implements CompiledCacheContract {
             public function __construct(
                 private string $directory,
                 private Clock $clock,
+                private Filesystem $filesystem,
             ) {
             }
 
             public function read(string $name, callable $build, CompiledCacheSources $sources): mixed
             {
-                $filesystem             = new Filesystem();
-                $compiledCacheDirectory = new CompiledCacheDirectory(path: $this->directory, filesystem: $filesystem);
-                $compiledCacheManifest  = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString(), filesystem: $filesystem);
+                $compiledCacheDirectory = new CompiledCacheDirectory(path: $this->directory, filesystem: $this->filesystem);
+                $compiledCacheManifest  = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString(), filesystem: $this->filesystem);
 
                 $readCompiledCache = new ReadCompiledCache(
                     compiledCacheDirectory: $compiledCacheDirectory,
                     compiledCacheManifest : $compiledCacheManifest,
-                    filesystem            : $filesystem,
+                    filesystem            : $this->filesystem,
                     clock                 : $this->clock,
                 );
 
@@ -54,14 +58,13 @@ final readonly class BuildCompiledCache
 
             public function compile(string $name, callable $build, CompiledCacheSources $sources): CompiledCacheArtifact
             {
-                $filesystem             = new Filesystem();
-                $compiledCacheDirectory = new CompiledCacheDirectory(path: $this->directory, filesystem: $filesystem);
-                $compiledCacheManifest  = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString(), filesystem: $filesystem);
+                $compiledCacheDirectory = new CompiledCacheDirectory(path: $this->directory, filesystem: $this->filesystem);
+                $compiledCacheManifest  = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString(), filesystem: $this->filesystem);
 
                 $compileCache = new CompileCache(
                     compiledCacheDirectory: $compiledCacheDirectory,
                     compiledCacheManifest : $compiledCacheManifest,
-                    filesystem            : $filesystem,
+                    filesystem            : $this->filesystem,
                     clock                 : $this->clock,
                 );
 
@@ -70,14 +73,14 @@ final readonly class BuildCompiledCache
 
             public function clear(string $name): void
             {
-                $filesystem             = new Filesystem();
-                $compiledCacheDirectory = new CompiledCacheDirectory(path: $this->directory, filesystem: $filesystem);
-                $compiledCacheManifest  = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString(), filesystem: $filesystem);
+                $compiledCacheDirectory = new CompiledCacheDirectory(path: $this->directory, filesystem: $this->filesystem);
+                $compiledCacheManifest  = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString(), filesystem: $this->filesystem);
 
                 $clearCompiledCache = new ClearCompiledCache(
                     compiledCacheDirectory: $compiledCacheDirectory,
                     compiledCacheManifest : $compiledCacheManifest,
-                    filesystem            : $filesystem,
+                    filesystem            : $this->filesystem,
+                    clock                 : $this->clock,
                 );
 
                 $clearCompiledCache->clear($name);
@@ -85,14 +88,14 @@ final readonly class BuildCompiledCache
 
             public function clearAll(): void
             {
-                $filesystem             = new Filesystem();
-                $compiledCacheDirectory = new CompiledCacheDirectory(path: $this->directory, filesystem: $filesystem);
-                $compiledCacheManifest  = CompiledCacheManifest::load(path: $compiledCacheDirectory->resolveManifestPath()->toString(), filesystem: $filesystem);
+                $compiledCacheDirectory = new CompiledCacheDirectory(path: $this->directory, filesystem: $this->filesystem);
+                $compiledCacheManifest  = CompiledCacheManifest::empty(filesystem: $this->filesystem);
 
                 $clearCompiledCache = new ClearCompiledCache(
                     compiledCacheDirectory: $compiledCacheDirectory,
                     compiledCacheManifest : $compiledCacheManifest,
-                    filesystem            : $filesystem,
+                    filesystem            : $this->filesystem,
+                    clock                 : $this->clock,
                 );
 
                 $clearCompiledCache->clearAll();

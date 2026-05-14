@@ -23,10 +23,10 @@ use Avax\Components\SystemDesign\System\Foundation\Failure\SchemaParseException;
  *
  * @experimental V3 labs
  */
-final class NativeYamlParser
+final readonly class NativeYamlParser
 {
     public function __construct(
-        private readonly ?Filesystem $filesystem = null,
+        private Filesystem $filesystem,
     ) {}
 
     /**
@@ -39,13 +39,11 @@ final class NativeYamlParser
      */
     public function parseFile(string $path) : array
     {
-        $fs = $this->filesystem ?? new Filesystem();
-
-        if (! $fs->isReadable($path)) {
+        if (! $this->filesystem->isReadable($path)) {
             throw new SchemaParseException("Cannot read YAML file: {$path}");
         }
 
-        $content = $fs->read($path);
+        $content = $this->filesystem->read($path);
 
         return $this->parse($content);
     }

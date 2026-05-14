@@ -8,6 +8,7 @@ use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCo
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
 use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
 use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\CompiledCacheConfiguration;
+use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Override;
 use PHPUnit\Framework\TestCase;
@@ -75,7 +76,10 @@ final class CompiledCacheIntegrationTest extends TestCase
         mkdir($this->tmpDir);
 
         $compiledCacheConfiguration = CompiledCacheConfiguration::inDirectory($this->tmpDir);
-        $buildCompiledCache         = new BuildCompiledCache();
+        $buildCompiledCache = new BuildCompiledCache(
+            clock     : new SystemClock(),
+            filesystem: new Filesystem(),
+        );
 
         $this->compiledCacheContract = $buildCompiledCache->fromConfiguration($compiledCacheConfiguration);
     }

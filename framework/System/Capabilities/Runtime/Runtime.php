@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\Runtime;
 
+use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
 use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
 use Avax\Framework\System\Capabilities\Runtime\Worker\WorkerLifecycle;
 use Avax\Framework\System\Capabilities\Runtime\Worker\WorkerLoop;
 use Avax\Framework\System\Capabilities\Runtime\Worker\WorkerRuntimeInterface;
 use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
+use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\Foundation\Paths\ProjectPath;
 use Avax\Framework\System\Foundation\Time\Clock;
@@ -92,9 +94,13 @@ final readonly class Runtime implements RuntimeInterface
 
     public function runWorker(WorkerRuntimeInterface $workerRuntime): WorkerLifecycle
     {
+        $handleIncomingHttp = new HandleIncomingHttp(
+            responseFactory: new ResponseFactory(),
+        );
         $workerLoop = new WorkerLoop(
-            runtime      : $this,
-            workerRuntime: $workerRuntime,
+            runtime           : $this,
+            workerRuntime     : $workerRuntime,
+            handleIncomingHttp: $handleIncomingHttp,
         );
 
         return $workerLoop->run();

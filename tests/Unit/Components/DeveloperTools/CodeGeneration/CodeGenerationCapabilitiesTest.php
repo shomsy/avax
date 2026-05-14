@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\DeveloperTools\CodeGeneration;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\DeveloperTools\CodeGeneration\System\Capabilities\Generators\EntityGenerator;
 use PHPUnit\Framework\TestCase;
 
@@ -14,8 +15,9 @@ final class CodeGenerationCapabilitiesTest extends TestCase
     public function test_entity_generator_produces_code() : void
     {
         $generator = new EntityGenerator(
+            filesystem      : new Filesystem(),
             baseDirectory   : $this->tempDir,
-            defaultNamespace: 'Avax\Generated'
+            defaultNamespace: 'Avax\Generated',
         );
 
         $path = $generator->generate('User', [

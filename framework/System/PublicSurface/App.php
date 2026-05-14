@@ -17,8 +17,6 @@ use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;
-use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\ClassifyApplicationException\ClassifyApplicationException;
-use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RenderApplicationError\RenderApplicationError;
 use Avax\Framework\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
@@ -85,26 +83,13 @@ final class App
 
     private RunApplication|null $dispatcher = null;
 
-    private ResponseFactory|null $responseFactory = null;
-
-    private RenderApplicationError|null $errorRenderer = null;
-
     public function __construct(
         private readonly RuntimeInterface $runtime,
         private readonly ResetApplicationState $resetApplicationState,
+        private readonly ResponseFactory           $responseFactory,
+        private readonly NormalizeControllerResult $normalizer,
         private readonly ?MetricsCollector $metricsCollector = null,
     ) {
-    }
-
-    /**
-     * Set a custom error renderer for exception handling.
-     */
-    public function withErrorRenderer(RenderApplicationError $errorRenderer): self
-    {
-        $self = clone $this;
-        $self->errorRenderer = $errorRenderer;
-
-        return $self;
     }
 
     /**
@@ -313,10 +298,9 @@ final class App
     private function ensureInitialized(): void
     {
         if ($this->dispatcher === null) {
-            $this->responseFactory = new ResponseFactory();
-            $this->dispatcher = new RunApplication(
+            $this->dispatcher = RunApplication::withDefaultResolutionPipeline(
                 responseFactory : $this->responseFactory,
-                normalizer      : new NormalizeControllerResult(responseFactory: $this->responseFactory),
+                normalizer      : $this->normalizer,
                 metricsCollector: $this->metricsCollector,
             );
         }
@@ -380,16 +364,13 @@ final class App
             }
         }
 
-        $this->ensureInitialized();
-        assert($this->responseFactory !== null);
-
-        $renderer = $this->errorRenderer ??= new RenderApplicationError(
-            responseFactory: $this->responseFactory,
-            classifier: new ClassifyApplicationException(),
-        );
-
         $isProduction = $this->runtime->environment()->isProduction();
+        $message = $isProduction ? 'Internal server error' : $e->getMessage();
+        $status = $isProduction ? 500 : 500;
 
-        return $renderer->render(e: $e, isProduction: $isProduction);
+        return $this->responseFactory->createErrorResponse(
+            message   : $message,
+            statusCode: $status,
+        );
     }
 }

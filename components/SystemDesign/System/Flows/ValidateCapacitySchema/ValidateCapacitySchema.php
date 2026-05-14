@@ -12,16 +12,12 @@ use Avax\Components\SystemDesign\System\Capabilities\SchemaValidation\SchemaVali
  *
  * @experimental V3 labs
  */
-final class ValidateCapacitySchema
+final readonly class ValidateCapacitySchema
 {
-    private SchemaValidator $validator;
-    private string          $schemaDir;
-
-    public function __construct(SchemaValidator|null $validator = null, string|null $schemaDir = null)
-    {
-        $this->validator = $validator ?? new SchemaValidator();
-        $this->schemaDir = $schemaDir ?? __DIR__ . '/../../../schemas';
-    }
+    public function __construct(
+        private SchemaValidator $validator,
+        private string          $schemaDir,
+    ) {}
 
     /**
      * Validate a capacity.yaml file.

@@ -9,6 +9,9 @@ use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCo
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
 use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
 use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\CompiledCacheConfiguration;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
 final class CompiledCache
 {
@@ -27,7 +30,10 @@ final class CompiledCache
             $directory = self::$defaultDirectory ?? sys_get_temp_dir().'/compiled_cache';
 
             $config = CompiledCacheConfiguration::inDirectory($directory);
-            $buildCompiledCache = new BuildCompiledCache();
+            $buildCompiledCache = new BuildCompiledCache(
+                clock     : new SystemClock(),
+                filesystem: new Filesystem(),
+            );
 
             self::$compiledCacheContract = $buildCompiledCache->fromConfiguration(configuration: $config);
         }

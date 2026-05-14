@@ -21,32 +21,16 @@ use Psr\Http\Message\ResponseInterface;
 
 final readonly class ConfiguredRoutesHttpHandler
 {
-    private ReadIncomingHttpRequest $readIncomingHttpRequest;
-
-    private MatchHttpRoute $matchHttpRoute;
-
-    private RunHttpRoute $runHttpRoute;
-
     public function __construct(
-        private ResponseFactory      $responseFactory,
+        private ResponseFactory         $responseFactory,
         private RegisteredHttpRoutes $registeredHttpRoutes,
-    )
-    {
-        $container = new RouteFacadeContainer();
-        $resolveCallable = new ResolveCallable(container: clone $container);
-        $controllerResolver = new ControllerResolver(resolver: $resolveCallable);
-        $argumentResolver = new ArgumentResolver(container: clone $container);
-        $dispatchRouteAction = new DispatchRouteAction(
-            controllerResolver: $controllerResolver,
-            argumentResolver  : $argumentResolver,
-        );
-        $controllerDispatcher = new ControllerDispatcher(dispatchRouteAction: $dispatchRouteAction);
-        $this->readIncomingHttpRequest = new ReadIncomingHttpRequest();
-        $this->matchHttpRoute = new MatchHttpRoute(new MatchRoute());
-        $this->runHttpRoute = new RunHttpRoute(controllerDispatcher: $controllerDispatcher);
+        private ReadIncomingHttpRequest $readIncomingHttpRequest,
+        private MatchHttpRoute          $matchHttpRoute,
+        private RunHttpRoute            $runHttpRoute,
+    ) {
     }
 
-    public static function fromRoutesFile(string $routesFile): self
+    public static function fromRoutesFile(string $routesFile, ResponseFactory $responseFactory) : self
     {
         if (! is_file(filename: $routesFile)) {
             throw new FrameworkMisconfigured(
@@ -66,11 +50,6 @@ final readonly class ConfiguredRoutesHttpHandler
             $previousContainer = null;
         }
 
-        // We bypass setting the RouteFacadeContainer into the global appInstance
-        // to avoid type mismatch, since it is not a full DIContainerInterface.
-        // Instead we assume that routing DSL just gets its bindings from somewhere,
-        // but for now we skip global assignment to avoid errors.
-
         try {
             $routeDefinitions = require $routesFile;
 
@@ -83,20 +62,44 @@ final readonly class ConfiguredRoutesHttpHandler
             }
         }
 
-        return new self(
-            responseFactory     : new ResponseFactory(),
+        return self::fromRegisteredRoutes(
+            responseFactory     : $responseFactory,
             registeredHttpRoutes: $frameworkRouteRegistrar->collectRoutes(),
         );
     }
 
-    public static function fromRouteDefinitions(callable $routeDefinitions): self
+    public static function fromRouteDefinitions(callable $routeDefinitions, ResponseFactory $responseFactory) : self
     {
         $frameworkRouteRegistrar = new FrameworkRouteRegistrar();
         $routeDefinitions($frameworkRouteRegistrar);
 
-        return new self(
-            responseFactory     : new ResponseFactory(),
+        return self::fromRegisteredRoutes(
+            responseFactory     : $responseFactory,
             registeredHttpRoutes: $frameworkRouteRegistrar->collectRoutes(),
+        );
+    }
+
+    public static function fromRegisteredRoutes(
+        ResponseFactory      $responseFactory,
+        RegisteredHttpRoutes $registeredHttpRoutes,
+    ) : self
+    {
+        $container            = new RouteFacadeContainer();
+        $resolveCallable      = new ResolveCallable(container: clone $container);
+        $controllerResolver   = new ControllerResolver(resolver: $resolveCallable);
+        $argumentResolver     = new ArgumentResolver(container: clone $container);
+        $dispatchRouteAction  = new DispatchRouteAction(
+            controllerResolver: $controllerResolver,
+            argumentResolver  : $argumentResolver,
+        );
+        $controllerDispatcher = new ControllerDispatcher(dispatchRouteAction: $dispatchRouteAction);
+
+        return new self(
+            responseFactory        : $responseFactory,
+            registeredHttpRoutes   : $registeredHttpRoutes,
+            readIncomingHttpRequest: new ReadIncomingHttpRequest(),
+            matchHttpRoute         : new MatchHttpRoute(new MatchRoute()),
+            runHttpRoute           : new RunHttpRoute(controllerDispatcher: $controllerDispatcher),
         );
     }
 

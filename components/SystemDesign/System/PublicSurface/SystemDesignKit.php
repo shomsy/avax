@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\SystemDesign\System\PublicSurface;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\SystemDesign\System\Capabilities\Capacity\CapacityModel;
 use Avax\Components\SystemDesign\System\Capabilities\Consistency\ConsistencyModel;
 use Avax\Components\SystemDesign\System\Capabilities\Messaging\MessagingModel;
 use Avax\Components\SystemDesign\System\Capabilities\SchemaValidation\NativeYamlParser;
+use Avax\Components\SystemDesign\System\Capabilities\SchemaValidation\SchemaValidator;
 use Avax\Components\SystemDesign\System\Flows\DetectConsistencyRisk\DetectConsistencyRisk;
 use Avax\Components\SystemDesign\System\Flows\DetectMessagingRisk\DetectMessagingRisk;
 use Avax\Components\SystemDesign\System\Flows\EstimateCacheEffectiveness\EstimateCacheEffectiveness;
@@ -39,28 +41,54 @@ use Avax\Components\SystemDesign\System\Flows\ValidateMessagingModel\ValidateMes
  * V3 does not just build applications.
  * V3 tests whether the architecture makes sense.
  */
-final class SystemDesignKit
+final readonly class SystemDesignKit
 {
+    private string $schemaDir;
+
+    public function __construct(
+        private Filesystem $filesystem = new Filesystem(),
+    )
+    {
+        $this->schemaDir = __DIR__ . '/../../schemas';
+    }
+
+    private function yamlParser() : NativeYamlParser
+    {
+        return new NativeYamlParser(filesystem: $this->filesystem);
+    }
+
+    private function schemaValidator() : SchemaValidator
+    {
+        return new SchemaValidator(yamlParser: $this->yamlParser());
+    }
+
+    private function validateCapacityModel() : ValidateCapacityModel
+    {
+        return new ValidateCapacityModel(
+            schemaValidator: $this->schemaValidator(),
+            schemaDir      : $this->schemaDir,
+            yamlParser     : $this->yamlParser(),
+        );
+    }
+
+    private function runScenariosFlow() : RunScenarios
+    {
+        return new RunScenarios(yamlParser: $this->yamlParser());
+    }
+
+    private function runArchitectureTestsFlow() : RunArchitectureTests
+    {
+        return new RunArchitectureTests(yamlParser: $this->yamlParser());
+    }
+
     /**
      * Validate a capacity.yaml file (schema + model validation).
      *
      * @return array{valid: bool, schema_errors: list<string>, model_errors?: list<string>, model: ?CapacityModel}
      */
-    public static function validateCapacity(string $capacityPath) : array
+    public function validateCapacity(string $capacityPath) : array
     {
-        $flow = new ValidateCapacityModel();
-
-        return $flow->execute($capacityPath);
-    }
-
-    /**
-     * Build a capacity model from config array.
-     *
-     * @param array<int|string, mixed> $config
-     */
-    public static function buildCapacityModel(array $config) : CapacityModel
-    {
-        return CapacityModel::fromConfig($config);
+        return $this->validateCapacityModel()->execute($capacityPath);
     }
 
     /**
@@ -77,7 +105,7 @@ final class SystemDesignKit
      *     backend_rps: float,
      * }
      */
-    public static function estimateTrafficLoad(CapacityModel $model) : array
+    public function estimateTrafficLoad(CapacityModel $model) : array
     {
         return (new EstimateTrafficLoad())->execute($model);
     }
@@ -94,7 +122,7 @@ final class SystemDesignKit
      *     yearly_growth_human: string,
      * }
      */
-    public static function estimateStorageGrowth(CapacityModel $model) : array
+    public function estimateStorageGrowth(CapacityModel $model) : array
     {
         return (new EstimateStorageGrowth())->execute($model);
     }
@@ -112,7 +140,7 @@ final class SystemDesignKit
      *     cache_savings_ratio: string,
      * }
      */
-    public static function estimateCacheEffectiveness(CapacityModel $model) : array
+    public function estimateCacheEffectiveness(CapacityModel $model) : array
     {
         return (new EstimateCacheEffectiveness())->execute($model);
     }
@@ -130,7 +158,7 @@ final class SystemDesignKit
      *     consumers_underprovisioned: bool,
      * }
      */
-    public static function estimateQueuePressure(CapacityModel $model) : array
+    public function estimateQueuePressure(CapacityModel $model) : array
     {
         return (new EstimateQueuePressure())->execute($model);
     }
@@ -147,7 +175,7 @@ final class SystemDesignKit
      *     budget_violations: list<string>,
      * }
      */
-    public static function estimateLatencyBudget(CapacityModel $model) : array
+    public function estimateLatencyBudget(CapacityModel $model) : array
     {
         return (new EstimateLatencyBudget())->execute($model);
     }
@@ -165,19 +193,9 @@ final class SystemDesignKit
      *     budget_exhausted_at_incidents: int,
      * }
      */
-    public static function estimateFailureBudget(CapacityModel $model) : array
+    public function estimateFailureBudget(CapacityModel $model) : array
     {
         return (new EstimateFailureBudget())->execute($model);
-    }
-
-    /**
-     * Build a consistency model from config array.
-     *
-     * @param array<int|string, mixed> $config
-     */
-    public static function buildConsistencyModel(array $config) : ConsistencyModel
-    {
-        return ConsistencyModel::fromConfig($config);
     }
 
     /**
@@ -187,7 +205,7 @@ final class SystemDesignKit
      *
      * @return array{valid: bool, errors: list<string>, model: ?ConsistencyModel}
      */
-    public static function validateConsistency(array $config) : array
+    public function validateConsistency(array $config) : array
     {
         return (new ValidateConsistencyModel())->execute($config);
     }
@@ -213,7 +231,7 @@ final class SystemDesignKit
      *     },
      * }
      */
-    public static function explainConsistencyTradeoff(ConsistencyModel $model) : array
+    public function explainConsistencyTradeoff(ConsistencyModel $model) : array
     {
         return (new ExplainConsistencyTradeoff())->execute($model);
     }
@@ -229,7 +247,7 @@ final class SystemDesignKit
      *     recommendation: string,
      * }>
      */
-    public static function detectConsistencyRisk(ConsistencyModel $model) : array
+    public function detectConsistencyRisk(ConsistencyModel $model) : array
     {
         return (new DetectConsistencyRisk())->execute($model);
     }
@@ -249,7 +267,7 @@ final class SystemDesignKit
      *     projection_count: int,
      * }
      */
-    public static function estimateProjectionLag(ConsistencyModel $model, int $freshnessThresholdMs = 1000) : array
+    public function estimateProjectionLag(ConsistencyModel $model, int $freshnessThresholdMs = 1000) : array
     {
         return (new EstimateProjectionLag())->execute($model, $freshnessThresholdMs);
     }
@@ -272,7 +290,7 @@ final class SystemDesignKit
      *     }>,
      * }
      */
-    public static function estimateReplicationLag(ConsistencyModel $model) : array
+    public function estimateReplicationLag(ConsistencyModel $model) : array
     {
         return (new EstimateReplicationLag())->execute($model);
     }
@@ -292,19 +310,9 @@ final class SystemDesignKit
      *     total_complexity_cost: string,
      * }
      */
-    public static function resolveConflict(ConsistencyModel $model) : array
+    public function resolveConflict(ConsistencyModel $model) : array
     {
         return (new ResolveConflict())->execute($model);
-    }
-
-    /**
-     * Build a messaging model from config array.
-     *
-     * @param array<int|string, mixed> $config
-     */
-    public static function buildMessagingModel(array $config) : MessagingModel
-    {
-        return MessagingModel::fromConfig($config);
     }
 
     /**
@@ -314,7 +322,7 @@ final class SystemDesignKit
      *
      * @return array{valid: bool, errors: list<string>, model: ?MessagingModel}
      */
-    public static function validateMessaging(array $config) : array
+    public function validateMessaging(array $config) : array
     {
         return (new ValidateMessagingModel())->execute($config);
     }
@@ -330,7 +338,7 @@ final class SystemDesignKit
      *     recommendation: string,
      * }>
      */
-    public static function detectMessagingRisk(MessagingModel $model) : array
+    public function detectMessagingRisk(MessagingModel $model) : array
     {
         return (new DetectMessagingRisk())->execute($model);
     }
@@ -351,9 +359,9 @@ final class SystemDesignKit
      *     }>,
      * }
      */
-    public static function runScenarios(string $scenariosPath, CapacityModel $model) : array
+    public function runScenarios(string $scenariosPath, CapacityModel $model) : array
     {
-        return (new RunScenarios())->execute($scenariosPath, $model);
+        return $this->runScenariosFlow()->execute($scenariosPath, $model);
     }
 
     /**
@@ -373,12 +381,13 @@ final class SystemDesignKit
      *     }>,
      * }
      */
-    public static function runArchitectureTests(
-        string          $testsPath,
-        CapacityModel $capacity, MessagingModel|null $messaging = null,
+    public function runArchitectureTests(
+        string              $testsPath,
+        CapacityModel       $capacity,
+        MessagingModel|null $messaging = null,
     ) : array
     {
-        return (new RunArchitectureTests())->execute($testsPath, $capacity, $messaging);
+        return $this->runArchitectureTestsFlow()->execute($testsPath, $capacity, $messaging);
     }
 
     /**
@@ -405,7 +414,7 @@ final class SystemDesignKit
      *     }>,
      * }
      */
-    public static function runFailureSimulations(CapacityModel $model, array|null $customFailures = null) : array
+    public function runFailureSimulations(CapacityModel $model, array|null $customFailures = null) : array
     {
         return (new RunFailureSimulations())->execute($model, $customFailures);
     }
@@ -432,19 +441,19 @@ final class SystemDesignKit
      *     overall_pass: bool,
      * }
      */
-    public static function validateReferenceArchitecture(string $referenceArchDir) : array
+    public function validateReferenceArchitecture(string $referenceArchDir) : array
     {
         $capacityPath     = $referenceArchDir . '/capacity.yaml';
         $scenariosPath    = $referenceArchDir . '/scenarios.yaml';
         $architecturePath = $referenceArchDir . '/architecture-tests.yaml';
 
         // Validate capacity
-        $capacityResult = self::validateCapacity($capacityPath);
+        $capacityResult = $this->validateCapacity($capacityPath);
         $capacityValid  = $capacityResult['valid'];
         $capacityModel  = $capacityResult['model'];
 
         // Parse messaging if available
-        $yamlParser     = new NativeYamlParser();
+        $yamlParser = $this->yamlParser();
         $capacityConfig = $yamlParser->parseFile($capacityPath);
         $messagingModel = isset($capacityConfig['messaging'])
             ? MessagingModel::fromConfig($capacityConfig)
@@ -454,21 +463,21 @@ final class SystemDesignKit
         $scenariosResult = ['total' => 0, 'passed' => 0, 'failed' => 0, 'scenarios' => []];
 
         if ($capacityModel !== null && file_exists($scenariosPath)) {
-            $scenariosResult = self::runScenarios($scenariosPath, $capacityModel);
+            $scenariosResult = $this->runScenarios($scenariosPath, $capacityModel);
         }
 
         // Run architecture tests
         $archTestsResult = ['total' => 0, 'passed' => 0, 'failed' => 0, 'critical_failures' => 0, 'tests' => []];
 
         if ($capacityModel !== null && file_exists($architecturePath)) {
-            $archTestsResult = self::runArchitectureTests($architecturePath, $capacityModel, $messagingModel);
+            $archTestsResult = $this->runArchitectureTests($architecturePath, $capacityModel, $messagingModel);
         }
 
         // Run failure simulations
         $failureResult = ['total' => 0, 'violations_detected' => 0, 'clean' => 0, 'simulations' => []];
 
         if ($capacityModel !== null) {
-            $failureResult = self::runFailureSimulations($capacityModel);
+            $failureResult = $this->runFailureSimulations($capacityModel);
         }
 
         $overallPass = $capacityValid

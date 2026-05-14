@@ -15,14 +15,11 @@ use Avax\Components\SystemDesign\System\Foundation\Failure\SchemaParseException;
  *
  * @experimental V3 labs
  */
-final class SchemaValidator
+final readonly class SchemaValidator
 {
-    private NativeYamlParser $yamlParser;
-
-    public function __construct(NativeYamlParser|null $yamlParser = null)
-    {
-        $this->yamlParser = $yamlParser ?? new NativeYamlParser();
-    }
+    public function __construct(
+        private NativeYamlParser $yamlParser,
+    ) {}
 
     public function yamlParser() : NativeYamlParser
     {

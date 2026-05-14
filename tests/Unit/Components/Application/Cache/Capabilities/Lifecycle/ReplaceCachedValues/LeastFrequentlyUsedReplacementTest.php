@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit\Components\Application\Cache\Capabilities\Lifecycle\ReplaceCachedValues;
 
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastFrequentlyUsedReplacement\FrequencyTracker;
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastFrequentlyUsedReplacement\LeastFrequentlyUsedReplacement;
 use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
@@ -16,9 +17,19 @@ final class LeastFrequentlyUsedReplacementTest extends TestCase
 {
     private FrozenClock $frozenClock;
 
+    private FrequencyTracker $frequencyTracker;
+
+    #[Override]
+    protected function setUp() : void
+    {
+        $this->frozenClock      = new FrozenClock(timestamp: Timestamp::now());
+        $this->frequencyTracker = new FrequencyTracker(clock: $this->frozenClock);
+    }
+
     public function test_chooses_least_frequently_accessed() : void
     {
-        $leastFrequentlyUsedReplacement = new LeastFrequentlyUsedReplacement(clock: $this->frozenClock);
+        $tracker                        = new FrequencyTracker(clock: $this->frozenClock);
+        $leastFrequentlyUsedReplacement = new LeastFrequentlyUsedReplacement(frequencyTracker: $tracker);
 
         $entries = [
             'key_1' => $this->makeLifecycle(),
@@ -49,7 +60,7 @@ final class LeastFrequentlyUsedReplacementTest extends TestCase
 
     public function test_returns_null_on_empty_entries() : void
     {
-        $leastFrequentlyUsedReplacement = new LeastFrequentlyUsedReplacement(clock: $this->frozenClock);
+        $leastFrequentlyUsedReplacement = new LeastFrequentlyUsedReplacement(frequencyTracker: new FrequencyTracker(clock: $this->frozenClock));
 
         $chosen = $leastFrequentlyUsedReplacement->choose(entries: []);
 
@@ -58,7 +69,7 @@ final class LeastFrequentlyUsedReplacementTest extends TestCase
 
     public function test_frequency_increments_on_each_access() : void
     {
-        $leastFrequentlyUsedReplacement = new LeastFrequentlyUsedReplacement(clock: $this->frozenClock);
+        $leastFrequentlyUsedReplacement = new LeastFrequentlyUsedReplacement(frequencyTracker: new FrequencyTracker(clock: $this->frozenClock));
 
         $this->assertEquals(0, $leastFrequentlyUsedReplacement->getFrequency(key: 'key_1'));
 
@@ -74,7 +85,7 @@ final class LeastFrequentlyUsedReplacementTest extends TestCase
 
     public function test_remove_clears_frequency() : void
     {
-        $leastFrequentlyUsedReplacement = new LeastFrequentlyUsedReplacement(clock: $this->frozenClock);
+        $leastFrequentlyUsedReplacement = new LeastFrequentlyUsedReplacement(frequencyTracker: new FrequencyTracker(clock: $this->frozenClock));
 
         $leastFrequentlyUsedReplacement->recordAccess(key: 'key_1');
         $leastFrequentlyUsedReplacement->recordAccess(key: 'key_1');
@@ -86,7 +97,7 @@ final class LeastFrequentlyUsedReplacementTest extends TestCase
 
     public function test_reset_clears_all_frequencies() : void
     {
-        $leastFrequentlyUsedReplacement = new LeastFrequentlyUsedReplacement(clock: $this->frozenClock);
+        $leastFrequentlyUsedReplacement = new LeastFrequentlyUsedReplacement(frequencyTracker: new FrequencyTracker(clock: $this->frozenClock));
 
         $leastFrequentlyUsedReplacement->recordAccess(key: 'key_1');
         $leastFrequentlyUsedReplacement->recordAccess(key: 'key_2');
@@ -105,7 +116,7 @@ final class LeastFrequentlyUsedReplacementTest extends TestCase
 
     public function test_all_same_frequency_returns_first() : void
     {
-        $leastFrequentlyUsedReplacement = new LeastFrequentlyUsedReplacement(clock: $this->frozenClock);
+        $leastFrequentlyUsedReplacement = new LeastFrequentlyUsedReplacement(frequencyTracker: new FrequencyTracker(clock: $this->frozenClock));
 
         $entries = [
             'key_1' => $this->makeLifecycle(),
@@ -122,7 +133,7 @@ final class LeastFrequentlyUsedReplacementTest extends TestCase
 
     public function test_unaccessed_key_is_chosen_first() : void
     {
-        $leastFrequentlyUsedReplacement = new LeastFrequentlyUsedReplacement(clock: $this->frozenClock);
+        $leastFrequentlyUsedReplacement = new LeastFrequentlyUsedReplacement(frequencyTracker: new FrequencyTracker(clock: $this->frozenClock));
 
         $entries = [
             'key_1' => $this->makeLifecycle(),
@@ -136,11 +147,5 @@ final class LeastFrequentlyUsedReplacementTest extends TestCase
         $chosen = $leastFrequentlyUsedReplacement->choose(entries: $entries);
 
         $this->assertEquals('key_3', $chosen);
-    }
-
-    #[Override]
-    protected function setUp() : void
-    {
-        $this->frozenClock = new FrozenClock(timestamp: Timestamp::now());
     }
 }

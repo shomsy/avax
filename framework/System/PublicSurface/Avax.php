@@ -18,6 +18,7 @@ use Avax\Framework\System\Flows\CreateApplication\CreateApplication;
 use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Flows\ResetApplicationState\ResetApplicationState;
 use Avax\Framework\System\Flows\RunConsoleCommand\RunConsoleCommand;
+use Avax\Framework\System\Foundation\Time\SystemClock;
 use Avax\Framework\System\PublicSurface\Console\ConsoleKernel;
 use Avax\Framework\System\PublicSurface\Console\ConsoleKernelInterface;
 use Avax\Framework\System\PublicSurface\Http\HttpKernel;
@@ -55,7 +56,7 @@ final readonly class Avax implements AvaxInterface
      */
     public static function create(string $environment = 'production'): App
     {
-        return (new CreateApplication())->make(environment: $environment);
+        return (new CreateApplication(clock: new SystemClock()))->make(environment: $environment);
     }
 
     /**
@@ -71,6 +72,8 @@ final readonly class Avax implements AvaxInterface
      */
     private static function bootInternal(ApplicationBuilder $builder): self
     {
+        $responseFactory    = new ResponseFactory();
+        $handleIncomingHttp = new HandleIncomingHttp(responseFactory: $responseFactory);
         $bootFlow = new BootApplication(
             buildApplicationState: new BuildApplicationState(),
         );
@@ -80,9 +83,7 @@ final readonly class Avax implements AvaxInterface
             runtime              : $runtime,
             httpKernel           : new HttpKernel(
                 runtime: $runtime,
-                handleIncomingHttp: new HandleIncomingHttp(
-                             responseFactory: new ResponseFactory(),
-                         ),
+                handleIncomingHttp: $handleIncomingHttp,
             ),
             consoleKernel        : new ConsoleKernel(
                 runConsoleCommand: new RunConsoleCommand($runtime),

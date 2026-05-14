@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Framework\V4RuntimeApp;
 
+use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Flows\CreateApplication\CreateApplication;
+use Avax\Framework\System\Foundation\Time\SystemClock;
 use Avax\Framework\System\PublicSurface\App;
-use Psr\Http\Message\ResponseInterface;
-use RuntimeException;
 use Avax\Tests\TestCase;
+use ReflectionClass;
 
 /**
  * @covers \Avax\Framework\System\PublicSurface\App
@@ -21,7 +22,7 @@ final class AppTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->app = (new CreateApplication())->make(environment: 'testing');
+        $this->app = (new CreateApplication(clock: new SystemClock()))->make(environment: 'testing');
     }
 
     public function testRegisterAndGetRoute(): void
@@ -207,7 +208,7 @@ final class AppTest extends TestCase
 
     public function testRunMethodExists(): void
     {
-        $reflection = new \ReflectionClass($this->app);
+        $reflection = new ReflectionClass($this->app);
         self::assertTrue($reflection->hasMethod('run'));
     }
 
@@ -233,7 +234,7 @@ final class AppTest extends TestCase
 
     public function testRouteClosureReceivesRequest(): void
     {
-        $this->app->get('/request', fn (\Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest $request) => $request->getUri()->getPath());
+        $this->app->get('/request', fn (ServerRequest $request) => $request->getUri()->getPath());
 
         $response = $this->app->handle(new RuntimeRequest(method: 'GET', uri: '/request'));
 

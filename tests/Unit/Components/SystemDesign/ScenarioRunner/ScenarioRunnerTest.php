@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\SystemDesign\ScenarioRunner;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\SystemDesign\System\Capabilities\Capacity\Availability\FailureBudget;
 use Avax\Components\SystemDesign\System\Capabilities\Capacity\Availability\Slo;
 use Avax\Components\SystemDesign\System\Capabilities\Capacity\Cache\CacheHitRatio;
@@ -18,6 +19,7 @@ use Avax\Components\SystemDesign\System\Capabilities\Capacity\Traffic\RequestsPe
 use Avax\Components\SystemDesign\System\Capabilities\ScenarioRunner\Scenario;
 use Avax\Components\SystemDesign\System\Capabilities\ScenarioRunner\ScenarioExpectation;
 use Avax\Components\SystemDesign\System\Capabilities\ScenarioRunner\ScenarioStep;
+use Avax\Components\SystemDesign\System\Capabilities\SchemaValidation\NativeYamlParser;
 use Avax\Components\SystemDesign\System\Flows\RunScenarios\RunScenarios;
 use PHPUnit\Framework\TestCase;
 
@@ -115,8 +117,9 @@ final class ScenarioRunnerTest extends TestCase
 
     public function test_run_scenarios_from_file() : void
     {
-        $flow   = new RunScenarios();
-        $result = $flow->execute(__DIR__ . '/../../../../../components/SystemDesign/reference-architectures/url-shortener/scenarios.yaml', $this->model);
+        $yamlParser = new NativeYamlParser(filesystem: new Filesystem());
+        $flow       = new RunScenarios(yamlParser: $yamlParser);
+        $result     = $flow->execute(__DIR__ . '/../../../../../components/SystemDesign/reference-architectures/url-shortener/scenarios.yaml', $this->model);
 
         self::assertGreaterThan(0, $result['total']);
         self::assertArrayHasKey('passed', $result);

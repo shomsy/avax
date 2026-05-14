@@ -22,12 +22,14 @@ abstract class CodeGenerator
     /** Default namespace for generated classes */
     protected string $defaultNamespace;
 
-    public function __construct(string|null             $baseDirectory = null, string|null $defaultNamespace = null,
-                                private Filesystem|null $filesystem = null,
+    public function __construct(
+        private Filesystem $filesystem,
+        string             $baseDirectory = '',
+        string             $defaultNamespace = 'App',
     )
     {
-        $this->baseDirectory    = $baseDirectory ?? $this->detectBaseDirectory();
-        $this->defaultNamespace = $defaultNamespace ?? 'App';
+        $this->baseDirectory    = $baseDirectory !== '' ? $baseDirectory : $this->detectBaseDirectory();
+        $this->defaultNamespace = $defaultNamespace;
     }
 
     /**
@@ -35,7 +37,6 @@ abstract class CodeGenerator
      */
     protected function detectBaseDirectory() : string
     {
-        $fs = $this->filesystem ?? new Filesystem();
         // Try common project root indicators
         $cwd        = getcwd() ?: '/tmp';
         $candidates = [
@@ -45,7 +46,7 @@ abstract class CodeGenerator
         ];
 
         foreach ($candidates as $candidate) {
-            if ($fs->exists($candidate)) {
+            if ($this->filesystem->exists($candidate)) {
                 return $candidate;
             }
         }
@@ -83,14 +84,13 @@ abstract class CodeGenerator
      */
     protected function writeFile(string $path, string $content) : void
     {
-        $fs  = $this->filesystem ?? new Filesystem();
         $dir = dirname($path) ?: '';
 
-        if (! $fs->exists($dir)) {
-            $fs->createDirectory($dir, 0o755);
+        if (! $this->filesystem->exists($dir)) {
+            $this->filesystem->createDirectory($dir, 0o755);
         }
 
-        $result = $fs->write($path, $content);
+        $result = $this->filesystem->write($path, $content);
 
         if ($result === false) {
             throw new RuntimeException('Failed to write file: ' . $path);
@@ -104,9 +104,7 @@ abstract class CodeGenerator
     {
         $path = $this->getFilePath($name, $subDir);
 
-        $fs = $this->filesystem ?? new Filesystem();
-
-        return $fs->exists($path);
+        return $this->filesystem->exists($path);
     }
 
     /**
@@ -117,11 +115,10 @@ abstract class CodeGenerator
      */
     protected function getFilePath(string $name, string $subDir) : string
     {
-        $fs = $this->filesystem ?? new Filesystem();
         $dir = rtrim($this->baseDirectory, '/') . '/' . ltrim($subDir, '/');
 
-        if (! $fs->exists($dir)) {
-            $fs->createDirectory($dir, 0o755);
+        if (! $this->filesystem->exists($dir)) {
+            $this->filesystem->createDirectory($dir, 0o755);
         }
 
         return rtrim($dir, '/') . '/' . $name . '.php';

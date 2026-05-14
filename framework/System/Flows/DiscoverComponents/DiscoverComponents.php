@@ -9,7 +9,7 @@ use Avax\Framework\System\Capabilities\ComponentManifest\ComponentDiscovery;
 final readonly class DiscoverComponents
 {
     public function __construct(
-        private ComponentDiscovery $componentDiscovery = new ComponentDiscovery(),
+        private ComponentDiscovery $componentDiscovery,
     ) {
     }
 

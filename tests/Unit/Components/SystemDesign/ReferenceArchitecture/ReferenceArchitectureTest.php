@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\SystemDesign\ReferenceArchitecture;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\SystemDesign\System\Capabilities\Capacity\CapacityModel;
 use Avax\Components\SystemDesign\System\Capabilities\Messaging\MessagingModel;
 use Avax\Components\SystemDesign\System\Capabilities\SchemaValidation\NativeYamlParser;
@@ -28,9 +29,19 @@ final class ReferenceArchitectureTest extends TestCase
     private string $urlShortenerDir;
     private string $eCommerceDir;
 
+    private function kit() : SystemDesignKit
+    {
+        return new SystemDesignKit(filesystem: new Filesystem());
+    }
+
+    private function yamlParser() : NativeYamlParser
+    {
+        return new NativeYamlParser(filesystem: new Filesystem());
+    }
+
     public function test_url_shortener_capacity_valid() : void
     {
-        $result = SystemDesignKit::validateCapacity($this->urlShortenerDir . '/capacity.yaml');
+        $result = $this->kit()->validateCapacity($this->urlShortenerDir . '/capacity.yaml');
 
         self::assertTrue($result['valid'], 'URL shortener capacity should be valid');
         self::assertNotNull($result['model']);
@@ -39,7 +50,7 @@ final class ReferenceArchitectureTest extends TestCase
 
     public function test_ecommerce_capacity_valid() : void
     {
-        $result = SystemDesignKit::validateCapacity($this->eCommerceDir . '/capacity.yaml');
+        $result = $this->kit()->validateCapacity($this->eCommerceDir . '/capacity.yaml');
 
         self::assertTrue($result['valid'], 'E-commerce capacity should be valid');
         self::assertNotNull($result['model']);
@@ -48,12 +59,12 @@ final class ReferenceArchitectureTest extends TestCase
 
     public function test_url_shortener_scenarios_run() : void
     {
-        $capacityResult = SystemDesignKit::validateCapacity($this->urlShortenerDir . '/capacity.yaml');
+        $capacityResult = $this->kit()->validateCapacity($this->urlShortenerDir . '/capacity.yaml');
         $model          = $capacityResult['model'];
 
         self::assertNotNull($model, 'Capacity model must be valid to run scenarios');
 
-        $result = SystemDesignKit::runScenarios($this->urlShortenerDir . '/scenarios.yaml', $model);
+        $result = $this->kit()->runScenarios($this->urlShortenerDir . '/scenarios.yaml', $model);
 
         self::assertGreaterThan(0, $result['total'], 'Should have at least 1 scenario');
         self::assertArrayHasKey('passed', $result);
@@ -68,12 +79,12 @@ final class ReferenceArchitectureTest extends TestCase
 
     public function test_ecommerce_scenarios_run() : void
     {
-        $capacityResult = SystemDesignKit::validateCapacity($this->eCommerceDir . '/capacity.yaml');
+        $capacityResult = $this->kit()->validateCapacity($this->eCommerceDir . '/capacity.yaml');
         $model          = $capacityResult['model'];
 
         self::assertNotNull($model);
 
-        $result = SystemDesignKit::runScenarios($this->eCommerceDir . '/scenarios.yaml', $model);
+        $result = $this->kit()->runScenarios($this->eCommerceDir . '/scenarios.yaml', $model);
 
         self::assertGreaterThan(0, $result['total']);
         self::assertArrayHasKey('passed', $result);
@@ -81,18 +92,18 @@ final class ReferenceArchitectureTest extends TestCase
 
     public function test_url_shortener_architecture_tests_run() : void
     {
-        $capacityResult = SystemDesignKit::validateCapacity($this->urlShortenerDir . '/capacity.yaml');
+        $capacityResult = $this->kit()->validateCapacity($this->urlShortenerDir . '/capacity.yaml');
         $model          = $capacityResult['model'];
 
         self::assertNotNull($model);
 
-        $messagingConfig = (new NativeYamlParser())
+        $messagingConfig = $this->yamlParser()
             ->parseFile($this->urlShortenerDir . '/capacity.yaml');
         $messagingModel  = isset($messagingConfig['messaging'])
             ? MessagingModel::fromConfig($messagingConfig)
             : null;
 
-        $result = SystemDesignKit::runArchitectureTests(
+        $result = $this->kit()->runArchitectureTests(
             $this->urlShortenerDir . '/architecture-tests.yaml',
             $model,
             $messagingModel,
@@ -114,18 +125,18 @@ final class ReferenceArchitectureTest extends TestCase
 
     public function test_ecommerce_architecture_tests_run() : void
     {
-        $capacityResult = SystemDesignKit::validateCapacity($this->eCommerceDir . '/capacity.yaml');
+        $capacityResult = $this->kit()->validateCapacity($this->eCommerceDir . '/capacity.yaml');
         $model          = $capacityResult['model'];
 
         self::assertNotNull($model);
 
-        $messagingConfig = (new NativeYamlParser())
+        $messagingConfig = $this->yamlParser()
             ->parseFile($this->eCommerceDir . '/capacity.yaml');
         $messagingModel  = isset($messagingConfig['messaging'])
             ? MessagingModel::fromConfig($messagingConfig)
             : null;
 
-        $result = SystemDesignKit::runArchitectureTests(
+        $result = $this->kit()->runArchitectureTests(
             $this->eCommerceDir . '/architecture-tests.yaml',
             $model,
             $messagingModel,
@@ -136,12 +147,12 @@ final class ReferenceArchitectureTest extends TestCase
 
     public function test_url_shortener_failure_simulations() : void
     {
-        $capacityResult = SystemDesignKit::validateCapacity($this->urlShortenerDir . '/capacity.yaml');
+        $capacityResult = $this->kit()->validateCapacity($this->urlShortenerDir . '/capacity.yaml');
         $model          = $capacityResult['model'];
 
         self::assertNotNull($model);
 
-        $result = SystemDesignKit::runFailureSimulations($model);
+        $result = $this->kit()->runFailureSimulations($model);
 
         self::assertGreaterThan(0, $result['total']);
         self::assertArrayHasKey('violations_detected', $result);
@@ -156,19 +167,19 @@ final class ReferenceArchitectureTest extends TestCase
 
     public function test_ecommerce_failure_simulations() : void
     {
-        $capacityResult = SystemDesignKit::validateCapacity($this->eCommerceDir . '/capacity.yaml');
+        $capacityResult = $this->kit()->validateCapacity($this->eCommerceDir . '/capacity.yaml');
         $model          = $capacityResult['model'];
 
         self::assertNotNull($model);
 
-        $result = SystemDesignKit::runFailureSimulations($model);
+        $result = $this->kit()->runFailureSimulations($model);
 
         self::assertGreaterThan(0, $result['total']);
     }
 
     public function test_url_shortener_full_validation_passes() : void
     {
-        $result = SystemDesignKit::validateReferenceArchitecture($this->urlShortenerDir);
+        $result = $this->kit()->validateReferenceArchitecture($this->urlShortenerDir);
 
         self::assertTrue($result['capacity_valid']);
         self::assertGreaterThan(0, $result['scenarios_total']);
@@ -179,7 +190,7 @@ final class ReferenceArchitectureTest extends TestCase
 
     public function test_ecommerce_full_validation_passes() : void
     {
-        $result = SystemDesignKit::validateReferenceArchitecture($this->eCommerceDir);
+        $result = $this->kit()->validateReferenceArchitecture($this->eCommerceDir);
 
         self::assertTrue($result['capacity_valid']);
         self::assertGreaterThan(0, $result['scenarios_total']);
@@ -190,8 +201,8 @@ final class ReferenceArchitectureTest extends TestCase
 
     public function test_both_reference_architectures_pass() : void
     {
-        $urlShortener = SystemDesignKit::validateReferenceArchitecture($this->urlShortenerDir);
-        $eCommerce    = SystemDesignKit::validateReferenceArchitecture($this->eCommerceDir);
+        $urlShortener = $this->kit()->validateReferenceArchitecture($this->urlShortenerDir);
+        $eCommerce    = $this->kit()->validateReferenceArchitecture($this->eCommerceDir);
 
         self::assertTrue($urlShortener['overall_pass'], 'URL shortener must pass');
         self::assertTrue($eCommerce['overall_pass'], 'E-commerce must pass');
@@ -238,7 +249,7 @@ final class ReferenceArchitectureTest extends TestCase
                                                                                                           ],
                                                                                                       ]);
 
-        $result = SystemDesignKit::runFailureSimulations($badModel);
+        $result = $this->kit()->runFailureSimulations($badModel);
 
         // This bad system should have multiple violations detected
         self::assertGreaterThan(0, $result['violations_detected'],
@@ -247,7 +258,7 @@ final class ReferenceArchitectureTest extends TestCase
 
     public function test_reference_architecture_has_at_least_3_failure_scenarios() : void
     {
-        $result = SystemDesignKit::validateReferenceArchitecture($this->urlShortenerDir);
+        $result = $this->kit()->validateReferenceArchitecture($this->urlShortenerDir);
 
         self::assertGreaterThanOrEqual(3, $result['failure_simulations_total'],
                                        'Must have at least 3 failure scenarios');
@@ -255,8 +266,8 @@ final class ReferenceArchitectureTest extends TestCase
 
     public function test_at_least_2_reference_architectures_validate() : void
     {
-        $urlShortener = SystemDesignKit::validateReferenceArchitecture($this->urlShortenerDir);
-        $eCommerce    = SystemDesignKit::validateReferenceArchitecture($this->eCommerceDir);
+        $urlShortener = $this->kit()->validateReferenceArchitecture($this->urlShortenerDir);
+        $eCommerce    = $this->kit()->validateReferenceArchitecture($this->eCommerceDir);
 
         $passingCount = 0;
 

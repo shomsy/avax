@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Configuration\BuildApplication;
 
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
+use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentProviderInterface;
 use Avax\Framework\System\Capabilities\Configuration\RegisterConfigCommands;
 use Avax\Framework\System\Capabilities\Doctor\RegisterDoctorCommands;
@@ -80,7 +81,7 @@ final class ApplicationBuilder
             $this->registerConsoleCommandDirectly(name: $name, command: $command);
         }
 
-        $routeCommands = (new RegisterRouteCommands())();
+        $routeCommands = (new RegisterRouteCommands(new Filesystem()))();
 
         foreach ($routeCommands as $name => $command) {
             $this->registerConsoleCommandDirectly(name: $name, command: $command);
@@ -157,6 +158,7 @@ final class ApplicationBuilder
         return $this->withHttpHandler(
             httpHandler: ConfiguredRoutesHttpHandler::fromRouteDefinitions(
                 routeDefinitions: $routeDefinitions,
+                responseFactory : new ResponseFactory(),
             ),
         );
     }
@@ -172,6 +174,7 @@ final class ApplicationBuilder
         return $this->withHttpHandler(
             httpHandler: ConfiguredRoutesHttpHandler::fromRoutesFile(
                 routesFile: $resolvedPath,
+                responseFactory: new ResponseFactory(),
             ),
         );
     }

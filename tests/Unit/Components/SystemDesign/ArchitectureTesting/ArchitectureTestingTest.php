@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\SystemDesign\ArchitectureTesting;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\SystemDesign\System\Capabilities\ArchitectureTesting\ArchitectureTest;
 use Avax\Components\SystemDesign\System\Capabilities\Capacity\Availability\FailureBudget;
 use Avax\Components\SystemDesign\System\Capabilities\Capacity\Availability\Slo;
@@ -22,6 +23,7 @@ use Avax\Components\SystemDesign\System\Capabilities\Messaging\Outbox\Outbox;
 use Avax\Components\SystemDesign\System\Capabilities\Messaging\Retry\RetryPolicy;
 use Avax\Components\SystemDesign\System\Capabilities\Messaging\Types\Message;
 use Avax\Components\SystemDesign\System\Capabilities\Messaging\Types\MessageType;
+use Avax\Components\SystemDesign\System\Capabilities\SchemaValidation\NativeYamlParser;
 use Avax\Components\SystemDesign\System\Flows\RunArchitectureTests\RunArchitectureTests;
 use PHPUnit\Framework\TestCase;
 
@@ -138,8 +140,9 @@ final class ArchitectureTestingTest extends TestCase
 
     public function test_run_architecture_tests_from_file() : void
     {
-        $flow   = new RunArchitectureTests();
-        $result = $flow->execute(
+        $yamlParser = new NativeYamlParser(filesystem: new Filesystem());
+        $flow       = new RunArchitectureTests(yamlParser: $yamlParser);
+        $result     = $flow->execute(
             __DIR__ . '/../../../../../components/SystemDesign/reference-architectures/url-shortener/architecture-tests.yaml',
             $this->capacity,
             $this->messaging,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\SystemDesign\Capacity;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\SystemDesign\System\Capabilities\SchemaValidation\NativeYamlParser;
 use Avax\Components\SystemDesign\System\Capabilities\SchemaValidation\SchemaValidationResult;
 use Avax\Components\SystemDesign\System\Capabilities\SchemaValidation\SchemaValidator;
@@ -18,9 +19,43 @@ final class SchemaValidationTest extends TestCase
     private string $schemasDir;
     private string $examplesDir;
 
+    private function newParser() : NativeYamlParser
+    {
+        return new NativeYamlParser(filesystem: new Filesystem());
+    }
+
+    private function newValidator() : SchemaValidator
+    {
+        return new SchemaValidator(yamlParser: $this->newParser());
+    }
+
+    private function newValidateCapacitySchema() : ValidateCapacitySchema
+    {
+        return new ValidateCapacitySchema(
+            validator: $this->newValidator(),
+            schemaDir: $this->schemasDir,
+        );
+    }
+
+    private function newValidateScenariosSchema() : ValidateScenariosSchema
+    {
+        return new ValidateScenariosSchema(
+            validator: $this->newValidator(),
+            schemaDir: $this->schemasDir,
+        );
+    }
+
+    private function newValidateArchitectureTestsSchema() : ValidateArchitectureTestsSchema
+    {
+        return new ValidateArchitectureTestsSchema(
+            validator: $this->newValidator(),
+            schemaDir: $this->schemasDir,
+        );
+    }
+
     public function testParserHandlesSimpleKeyValue() : void
     {
-        $parser = new NativeYamlParser();
+        $parser = $this->newParser();
         $result = $parser->parse("name: test\nvalue: 42\n");
 
         self::assertSame('test', $result['name']);
@@ -31,7 +66,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testParserHandlesNestedMaps() : void
     {
-        $parser = new NativeYamlParser();
+        $parser = $this->newParser();
         $yaml   = "parent:\n  child: value\n  other: 123\n";
         $result = $parser->parse($yaml);
 
@@ -42,7 +77,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testParserHandlesScalarTypes() : void
     {
-        $parser = new NativeYamlParser();
+        $parser = $this->newParser();
         $yaml   = "string_val: hello\nint_val: 42\nfloat_val: 3.14\nbool_true: true\nbool_false: false\nnull_val: null\n";
         $result = $parser->parse($yaml);
 
@@ -56,7 +91,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testParserHandlesSimpleLists() : void
     {
-        $parser = new NativeYamlParser();
+        $parser = $this->newParser();
         $yaml   = "items:\n  - apple\n  - banana\n  - cherry\n";
         $result = $parser->parse($yaml);
 
@@ -65,7 +100,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testParserHandlesListsOfMaps() : void
     {
-        $parser = new NativeYamlParser();
+        $parser = $this->newParser();
         $yaml   = "people:\n  - name: Alice\n    age: 30\n  - name: Bob\n    age: 25\n";
         $result = $parser->parse($yaml);
 
@@ -78,7 +113,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testParserHandlesInlineArrays() : void
     {
-        $parser = new NativeYamlParser();
+        $parser = $this->newParser();
         $result = $parser->parse("tags: [one, two, three]\n");
 
         self::assertSame(['one', 'two', 'three'], $result['tags']);
@@ -86,7 +121,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testParserHandlesQuotedStrings() : void
     {
-        $parser = new NativeYamlParser();
+        $parser = $this->newParser();
         $result = $parser->parse('greeting: "hello: world"');
 
         self::assertSame('hello: world', $result['greeting']);
@@ -94,7 +129,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testParserStripsComments() : void
     {
-        $parser = new NativeYamlParser();
+        $parser = $this->newParser();
         $result = $parser->parse("key: value # this is a comment\n");
 
         self::assertSame('value', $result['key']);
@@ -102,7 +137,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testValidatorAcceptsValidCapacity() : void
     {
-        $validator = new SchemaValidator();
+        $validator = $this->newValidator();
         $result    = $validator->validateFile(
             $this->schemasDir . '/capacity-schema.yaml',
             $this->examplesDir . '/valid-capacity.yaml',
@@ -116,7 +151,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testValidatorRejectsBadCapacityValues() : void
     {
-        $validator = new SchemaValidator();
+        $validator = $this->newValidator();
         $result    = $validator->validateFile(
             $this->schemasDir . '/capacity-schema.yaml',
             $this->examplesDir . '/invalid-capacity-bad-values.yaml',
@@ -128,7 +163,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testValidatorRejectsMissingCapacitySections() : void
     {
-        $validator = new SchemaValidator();
+        $validator = $this->newValidator();
         $result    = $validator->validateFile(
             $this->schemasDir . '/capacity-schema.yaml',
             $this->examplesDir . '/invalid-capacity-missing-sections.yaml',
@@ -146,7 +181,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testValidatorAcceptsValidScenarios() : void
     {
-        $validator = new SchemaValidator();
+        $validator = $this->newValidator();
         $result    = $validator->validateFile(
             $this->schemasDir . '/scenarios-schema.yaml',
             $this->examplesDir . '/valid-scenarios.yaml',
@@ -158,7 +193,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testValidatorRejectsBadScenarios() : void
     {
-        $validator = new SchemaValidator();
+        $validator = $this->newValidator();
         $result    = $validator->validateFile(
             $this->schemasDir . '/scenarios-schema.yaml',
             $this->examplesDir . '/invalid-scenarios-bad.yaml',
@@ -170,7 +205,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testValidatorAcceptsValidArchitectureTests() : void
     {
-        $validator = new SchemaValidator();
+        $validator = $this->newValidator();
         $result    = $validator->validateFile(
             $this->schemasDir . '/architecture-tests-schema.yaml',
             $this->examplesDir . '/valid-architecture-tests.yaml',
@@ -182,7 +217,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testValidatorRejectsBadArchitectureTests() : void
     {
-        $validator = new SchemaValidator();
+        $validator = $this->newValidator();
         $result    = $validator->validateFile(
             $this->schemasDir . '/architecture-tests-schema.yaml',
             $this->examplesDir . '/invalid-architecture-tests-bad.yaml',
@@ -194,7 +229,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testValidateCapacitySchemaFlowAcceptsValidFile() : void
     {
-        $flow   = new ValidateCapacitySchema();
+        $flow = $this->newValidateCapacitySchema();
         $result = $flow->execute($this->examplesDir . '/valid-capacity.yaml');
 
         self::assertTrue($result->valid);
@@ -205,7 +240,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testValidateCapacitySchemaFlowRejectsInvalidFile() : void
     {
-        $flow   = new ValidateCapacitySchema();
+        $flow = $this->newValidateCapacitySchema();
         $result = $flow->execute($this->examplesDir . '/invalid-capacity-bad-values.yaml');
 
         self::assertFalse($result->valid);
@@ -214,7 +249,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testValidateScenariosSchemaFlowAcceptsValidFile() : void
     {
-        $flow   = new ValidateScenariosSchema();
+        $flow = $this->newValidateScenariosSchema();
         $result = $flow->execute($this->examplesDir . '/valid-scenarios.yaml');
 
         self::assertTrue($result->valid);
@@ -223,7 +258,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testValidateScenariosSchemaFlowRejectsInvalidFile() : void
     {
-        $flow   = new ValidateScenariosSchema();
+        $flow = $this->newValidateScenariosSchema();
         $result = $flow->execute($this->examplesDir . '/invalid-scenarios-bad.yaml');
 
         self::assertFalse($result->valid);
@@ -232,7 +267,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testValidateArchitectureTestsSchemaFlowAcceptsValidFile() : void
     {
-        $flow   = new ValidateArchitectureTestsSchema();
+        $flow = $this->newValidateArchitectureTestsSchema();
         $result = $flow->execute($this->examplesDir . '/valid-architecture-tests.yaml');
 
         self::assertTrue($result->valid);
@@ -241,7 +276,7 @@ final class SchemaValidationTest extends TestCase
 
     public function testValidateArchitectureTestsSchemaFlowRejectsInvalidFile() : void
     {
-        $flow   = new ValidateArchitectureTestsSchema();
+        $flow = $this->newValidateArchitectureTestsSchema();
         $result = $flow->execute($this->examplesDir . '/invalid-architecture-tests-bad.yaml');
 
         self::assertFalse($result->valid);

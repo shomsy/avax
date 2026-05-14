@@ -10,6 +10,8 @@ use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCo
 use Avax\Components\Application\Cache\System\Configuration\BuildCache;
 use Avax\Components\Application\Cache\System\Configuration\CacheConfiguration;
 use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Cache\System\PublicSurface\Cache;
 use Avax\Components\Application\Cache\System\PublicSurface\CompiledCache;
 use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheFacade;
@@ -17,6 +19,7 @@ use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheRegistry;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\ReadFromCache;
 use Avax\Components\Application\Container\System\Capabilities\Providers\ServiceProvider;
 use Avax\Components\Application\Container\System\ContainerInterface;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use LogicException;
 
 final class CacheServiceProvider extends ServiceProvider
@@ -74,12 +77,15 @@ final class CacheServiceProvider extends ServiceProvider
         });
 
         if ($this->compiledCacheDirectory !== null) {
-            $this->container->singleton(abstract: CompiledCacheContract::class, concrete: function () {
+            $this->container->singleton(abstract: CompiledCacheContract::class, concrete: function (ContainerInterface $app) {
                 if ($this->compiledCacheDirectory === null) {
                     throw new LogicException('Compiled cache directory was not configured.');
                 }
 
-                return (new BuildCompiledCache())->inDirectory(directory: $this->compiledCacheDirectory);
+                $clock      = $app->has(id: Clock::class) ? $app->get(id: Clock::class) : new SystemClock();
+                $filesystem = $app->has(id: Filesystem::class) ? $app->get(id: Filesystem::class) : new Filesystem();
+
+                return (new BuildCompiledCache(clock: $clock, filesystem: $filesystem))->inDirectory(directory: $this->compiledCacheDirectory);
             });
         }
 

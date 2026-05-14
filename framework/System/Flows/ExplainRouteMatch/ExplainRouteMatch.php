@@ -10,7 +10,7 @@ use Avax\Framework\System\Capabilities\RouteIntelligence\RouteInfo;
 final readonly class ExplainRouteMatch
 {
     public function __construct(
-        private RouteAnalyzer $routeAnalyzer = new RouteAnalyzer(),
+        private RouteAnalyzer $routeAnalyzer,
     ) {
     }
 

@@ -11,7 +11,7 @@ use Avax\Framework\System\Capabilities\ConfigValidation\ConfigValidator;
 final readonly class ValidateConfig
 {
     public function __construct(
-        private ConfigValidator $configValidator = new ConfigValidator(),
+        private ConfigValidator $configValidator,
     ) {
     }
 

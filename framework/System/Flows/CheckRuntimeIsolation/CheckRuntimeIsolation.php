@@ -9,7 +9,7 @@ use Avax\Framework\System\Capabilities\RuntimeIsolation\RuntimeIsolationGuard;
 final readonly class CheckRuntimeIsolation
 {
     public function __construct(
-        private RuntimeIsolationGuard $runtimeIsolationGuard = new RuntimeIsolationGuard(),
+        private RuntimeIsolationGuard $runtimeIsolationGuard,
     ) {
     }
 

@@ -14,14 +14,11 @@ use Avax\Components\SystemDesign\System\Capabilities\SchemaValidation\NativeYaml
  *
  * @experimental V3 labs
  */
-final class RunArchitectureTests
+final readonly class RunArchitectureTests
 {
-    private NativeYamlParser $yamlParser;
-
-    public function __construct(NativeYamlParser|null $yamlParser = null)
-    {
-        $this->yamlParser = $yamlParser ?? new NativeYamlParser();
-    }
+    public function __construct(
+        private NativeYamlParser $yamlParser,
+    ) {}
 
     /**
      * Execute all architecture tests against capacity and messaging models.

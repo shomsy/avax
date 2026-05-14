@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\DistributedCompiledCache;
 
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
-use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use RuntimeException;
@@ -26,16 +25,16 @@ final class CompiledCacheManifest
 
     public function __construct(
         private Filesystem $filesystem,
-        private readonly Clock $clock = new SystemClock(),
+        private readonly Clock $clock,
     ) {
     }
 
     /**
      * Create a new empty manifest.
      */
-    public static function empty(Filesystem $filesystem, Clock|null $clock = null) : self
+    public static function empty(Filesystem $filesystem, Clock $clock) : self
     {
-        return new self(filesystem: $filesystem, clock: $clock ?? new SystemClock());
+        return new self(filesystem: $filesystem, clock: $clock);
     }
 
     /**
@@ -43,9 +42,9 @@ final class CompiledCacheManifest
      *
      * @throws RuntimeException if the file exists but contains invalid JSON
      */
-    public static function load(string $path, Filesystem $filesystem, Clock|null $clock = null) : self
+    public static function load(string $path, Filesystem $filesystem, Clock $clock) : self
     {
-        $manifest = new self(filesystem: $filesystem, clock: $clock ?? new SystemClock());
+        $manifest = new self(filesystem: $filesystem, clock: $clock);
         $manifest->manifestPath = $path;
 
         if (! $filesystem->exists($path)) {

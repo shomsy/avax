@@ -11,6 +11,7 @@ use Avax\Framework\System\Capabilities\Health\Foundation\HealthStatus;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Flows\CreateApplication\CreateApplication;
 use Avax\Framework\System\Flows\RegisterHealthRoutes\RegisterHealthRoutes;
+use Avax\Framework\System\Foundation\Time\SystemClock;
 use Avax\Framework\System\PublicSurface\App;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -22,7 +23,7 @@ final class V4HealthEndpointsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->app = (new CreateApplication())->make(environment: 'testing');
+        $this->app = (new CreateApplication(clock: new SystemClock()))->make(environment: 'testing');
     }
 
     #[Test]

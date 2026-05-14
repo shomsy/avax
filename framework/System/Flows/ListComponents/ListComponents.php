@@ -10,7 +10,7 @@ use Avax\Framework\System\Capabilities\ComponentManifest\ComponentManifest;
 final readonly class ListComponents
 {
     public function __construct(
-        private ComponentDiscovery $componentDiscovery = new ComponentDiscovery(),
+        private ComponentDiscovery $componentDiscovery,
     ) {
     }
 

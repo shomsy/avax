@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\SystemDesign\Capacity;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\SystemDesign\System\Capabilities\Capacity\Availability\FailureBudget;
 use Avax\Components\SystemDesign\System\Capabilities\Capacity\Availability\Slo;
 use Avax\Components\SystemDesign\System\Capabilities\Capacity\Cache\CacheHitRatio;
@@ -16,6 +17,8 @@ use Avax\Components\SystemDesign\System\Capabilities\Capacity\Storage\StorageGro
 use Avax\Components\SystemDesign\System\Capabilities\Capacity\Traffic\FanoutSize;
 use Avax\Components\SystemDesign\System\Capabilities\Capacity\Traffic\PeakTrafficMultiplier;
 use Avax\Components\SystemDesign\System\Capabilities\Capacity\Traffic\RequestsPerSecond;
+use Avax\Components\SystemDesign\System\Capabilities\SchemaValidation\NativeYamlParser;
+use Avax\Components\SystemDesign\System\Capabilities\SchemaValidation\SchemaValidator;
 use Avax\Components\SystemDesign\System\Flows\EstimateCacheEffectiveness\EstimateCacheEffectiveness;
 use Avax\Components\SystemDesign\System\Flows\EstimateFailureBudget\EstimateFailureBudget;
 use Avax\Components\SystemDesign\System\Flows\EstimateLatencyBudget\EstimateLatencyBudget;
@@ -330,10 +333,27 @@ final class CapacityModelTest extends TestCase
 
     // --- Public surface tests ---
 
+    private function kit() : SystemDesignKit
+    {
+        return new SystemDesignKit(filesystem: new Filesystem());
+    }
+
+    private function newValidateCapacityModel() : ValidateCapacityModel
+    {
+        $yamlParser = new NativeYamlParser(filesystem: new Filesystem());
+        $validator  = new SchemaValidator(yamlParser: $yamlParser);
+
+        return new ValidateCapacityModel(
+            schemaValidator: $validator,
+            schemaDir      : dirname(__DIR__, 5) . '/components/SystemDesign/schemas',
+            yamlParser     : $yamlParser,
+        );
+    }
+
     public function testSystemDesignKitValidateCapacityFile() : void
     {
-        $result = SystemDesignKit::validateCapacity(
-            'labs/SystemDesignKit/examples/valid-capacity.yaml',
+        $result = $this->kit()->validateCapacity(
+            dirname(__DIR__, 5) . '/components/SystemDesign/examples/valid-capacity.yaml',
         );
 
         self::assertTrue($result['valid']);
@@ -353,7 +373,7 @@ final class CapacityModelTest extends TestCase
             'availability' => ['slo' => 99.9, 'failure_budget_minutes_per_month' => 43.8],
         ];
 
-        $model = SystemDesignKit::buildCapacityModel($config);
+        $model = CapacityModel::fromConfig($config);
 
         self::assertInstanceOf(CapacityModel::class, $model);
         self::assertSame('test', $model->system);
@@ -371,24 +391,25 @@ final class CapacityModelTest extends TestCase
             'availability' => ['slo' => 99.9, 'failure_budget_minutes_per_month' => 43.8],
         ];
 
-        $model = SystemDesignKit::buildCapacityModel($config);
+        $model = CapacityModel::fromConfig($config);
+        $kit   = $this->kit();
 
-        $traffic = SystemDesignKit::estimateTrafficLoad($model);
+        $traffic = $kit->estimateTrafficLoad($model);
         self::assertSame(20000, $traffic['peak_rps']);
 
-        $storage = SystemDesignKit::estimateStorageGrowth($model);
+        $storage = $kit->estimateStorageGrowth($model);
         self::assertGreaterThan(0, $storage['daily_growth_bytes']);
 
-        $cache = SystemDesignKit::estimateCacheEffectiveness($model);
+        $cache = $kit->estimateCacheEffectiveness($model);
         self::assertSame(0.95, $cache['hit_ratio']);
 
-        $queue = SystemDesignKit::estimateQueuePressure($model);
+        $queue = $kit->estimateQueuePressure($model);
         self::assertTrue($queue['can_handle_load']);
 
-        $latency = SystemDesignKit::estimateLatencyBudget($model);
+        $latency = $kit->estimateLatencyBudget($model);
         self::assertTrue($latency['budget_valid']);
 
-        $failure = SystemDesignKit::estimateFailureBudget($model);
+        $failure = $kit->estimateFailureBudget($model);
         self::assertSame(99.9, $failure['slo_percentage']);
     }
 
@@ -396,8 +417,8 @@ final class CapacityModelTest extends TestCase
 
     public function testValidateCapacityModelFlowWithValidFile() : void
     {
-        $flow   = new ValidateCapacityModel();
-        $result = $flow->execute('labs/SystemDesignKit/examples/valid-capacity.yaml');
+        $flow   = $this->newValidateCapacityModel();
+        $result = $flow->execute(dirname(__DIR__, 5) . '/components/SystemDesign/examples/valid-capacity.yaml');
 
         self::assertTrue($result['valid']);
         self::assertSame([], $result['schema_errors']);
@@ -406,8 +427,8 @@ final class CapacityModelTest extends TestCase
 
     public function testValidateCapacityModelFlowWithInvalidFile() : void
     {
-        $flow   = new ValidateCapacityModel();
-        $result = $flow->execute('labs/SystemDesignKit/examples/invalid-capacity-bad-values.yaml');
+        $flow   = $this->newValidateCapacityModel();
+        $result = $flow->execute(dirname(__DIR__, 5) . '/components/SystemDesign/examples/invalid-capacity-bad-values.yaml');
 
         self::assertFalse($result['valid']);
         // Either schema errors or model errors (or both)

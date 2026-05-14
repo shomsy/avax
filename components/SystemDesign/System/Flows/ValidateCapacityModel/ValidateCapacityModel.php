@@ -14,18 +14,13 @@ use Avax\Components\SystemDesign\System\Capabilities\SchemaValidation\SchemaVali
  *
  * @experimental V3 labs
  */
-final class ValidateCapacityModel
+final readonly class ValidateCapacityModel
 {
-    private SchemaValidator $schemaValidator;
-    private string $schemaDir;
-    private NativeYamlParser $yamlParser;
-
-    public function __construct(SchemaValidator|null $schemaValidator = null, string|null $schemaDir = null, NativeYamlParser|null $yamlParser = null,
-    ) {
-        $this->schemaValidator = $schemaValidator ?? new SchemaValidator();
-        $this->schemaDir = $schemaDir ?? __DIR__ . '/../../../schemas';
-        $this->yamlParser = $yamlParser ?? new NativeYamlParser();
-    }
+    public function __construct(
+        private SchemaValidator  $schemaValidator,
+        private string           $schemaDir,
+        private NativeYamlParser $yamlParser,
+    ) {}
 
     /**
      * Full validation: schema + model.

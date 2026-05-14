@@ -5,47 +5,40 @@ declare(strict_types=1);
 namespace Avax\Components\Operations\ApplicationWorkflow\System\PublicSurface;
 
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Saga\SagaDefinition;
+use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaExecutor\SagaExecutor;
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaState\SagaState;
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaStore\InMemorySagaStore;
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaStore\SagaStoreInterface;
 use RuntimeException;
-use Throwable;
 
 /**
  * Workflow facade for saga orchestration.
  *
  * Provides high-level operations for starting, resuming, and canceling sagas.
+ * Delegates saga execution to the SagaExecutor capability.
  */
 final readonly class Workflow
 {
     private SagaStoreInterface $sagaStore;
 
+    private SagaExecutor $sagaExecutor;
+
     public function __construct(SagaStoreInterface $sagaStore)
     {
         $this->sagaStore = $sagaStore;
+        $this->sagaExecutor = new SagaExecutor();
     }
 
     /**
      * Run a saga definition (legacy compatibility method).
+     *
+     * Delegates execution to SagaExecutor which handles compensation on failure.
+     *
+     * @return list<string> Names of successfully completed steps
      */
-    public function runSaga(SagaDefinition $sagaDefinition) : void
+    public function runSaga(SagaDefinition $sagaDefinition): array
     {
-        $completed = [];
-
-        try {
-            foreach ($sagaDefinition->getSteps() as $step) {
-                ($step->action)();
-                $completed[] = $step;
-            }
-        } catch (Throwable $throwable) {
-            foreach (array_reverse($completed) as $step) {
-                if ($step->compensation) {
-                    ($step->compensation)();
-                }
-            }
-
-            throw $throwable;
-        }
+        return $this->sagaExecutor->execute($sagaDefinition);
     }
 
     /**

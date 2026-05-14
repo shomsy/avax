@@ -129,4 +129,18 @@ final class ExternalState
 
         return 'Unknown';
     }
+
+    /**
+     * Reset all external state adapters.
+     *
+     * Call this between requests in long-lived runtimes
+     * (RoadRunner, Swoole, FrankenPHP) to prevent state leakage.
+     */
+    public static function reset(): void
+    {
+        self::$session = null;
+        self::$cache = null;
+        self::$lock = null;
+        self::$rateLimit = null;
+    }
 }

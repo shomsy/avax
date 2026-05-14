@@ -48,6 +48,18 @@ abstract class Facade implements FacadeInterface
         static::$resolvedInstances = [];
     }
 
+    /**
+     * Reset all facade state for long-lived worker safety.
+     *
+     * Call this between requests in RoadRunner, Swoole, or FrankenPHP
+     * to prevent cached instances from leaking between requests.
+     */
+    public static function reset(): void
+    {
+        static::$resolvedInstances = [];
+        static::$container = null;
+    }
+
     public static function setContainer(ContainerInterface $container): void
     {
         static::$container = $container;

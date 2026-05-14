@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\PublicSurface;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\DatabaseConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Schema\SchemaBuilder;
 
 interface DatabaseInterface
 {

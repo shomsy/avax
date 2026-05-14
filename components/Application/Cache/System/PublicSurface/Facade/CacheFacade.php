@@ -6,7 +6,7 @@ namespace Avax\Components\Application\Cache\System\PublicSurface\Facade;
 
 use Avax\Components\Application\Cache\System\CacheContract;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
-use Avax\Components\Application\Cache\System\PublicSurface\Read\CacheReadTarget;
+use Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\ReadFromCache;
 use DateInterval;
 

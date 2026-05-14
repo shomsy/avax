@@ -6,12 +6,14 @@ namespace Avax\Tests\Unit\Components\Application\Cache;
 
 use Avax\Components\Application\Cache\System\AvaxCache;
 use Avax\Components\Application\Cache\System\CacheContract;
-use Avax\Components\Application\Cache\System\PublicSurface\CacheFacade;
-use Avax\Components\Application\Cache\System\PublicSurface\CacheRegistry;
+use Avax\Components\Application\Cache\System\PublicSurface\Cache;
+use Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget;
 use Avax\Components\Application\Cache\System\PublicSurface\CompiledCache;
-use Avax\Components\Application\Cache\System\PublicSurface\CompiledCacheTarget;
-use Avax\Components\Application\Cache\System\PublicSurface\ReadFromCache;
-use Avax\Components\Application\Cache\System\PublicSurface\RuntimeCacheTarget;
+use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheFacade;
+use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheRegistry;
+use Avax\Components\Application\Cache\System\PublicSurface\Read\CompiledCacheTarget;
+use Avax\Components\Application\Cache\System\PublicSurface\Read\ReadFromCache;
+use Avax\Components\Application\Cache\System\PublicSurface\Read\RuntimeCacheTarget;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\PublicSurface\Read;
 
+use Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget;
 use Override;
 
 readonly class RuntimeCacheTarget implements CacheReadTarget

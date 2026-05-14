@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\PublicSurface\Read;
 
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
+use Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget;
 use InvalidArgumentException;
 use Override;
 

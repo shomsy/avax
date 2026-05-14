@@ -11,6 +11,7 @@ use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteGroup\RouteGroupRegistrar;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchResult;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\Registrar;
@@ -103,101 +104,11 @@ final class Router implements RouterInterface, RouterRuntimeInterface
     {
         $prefix = rtrim($prefix, '/');
 
-        $groupFn(new class($this, $prefix, $middleware) implements RouterInterface {
-            public function __construct(
-                private readonly Router $router,
-                private readonly string $prefix,
-                private readonly mixed  $groupMiddleware,
-            ) {}
-
-            private function prefixPath(string $path) : string
-            {
-                $path = '/' . ltrim($path, '/');
-
-                return $path === '/' ? $this->prefix : $this->prefix . $path;
-            }
-
-            private function applyRegistrar(Registrar $registrar) : Registrar
-            {
-                if ($this->groupMiddleware !== null) {
-                    $registrar->middleware($this->groupMiddleware);
-                }
-
-                return $registrar;
-            }
-
-            #[Override]
-            public function get(string $path, mixed $action) : Registrar
-            {
-                return $this->applyRegistrar($this->router->get($this->prefixPath($path), $action));
-            }
-
-            #[Override]
-            public function post(string $path, mixed $action) : Registrar
-            {
-                return $this->applyRegistrar($this->router->post($this->prefixPath($path), $action));
-            }
-
-            #[Override]
-            public function put(string $path, mixed $action) : Registrar
-            {
-                return $this->applyRegistrar($this->router->put($this->prefixPath($path), $action));
-            }
-
-            #[Override]
-            public function patch(string $path, mixed $action) : Registrar
-            {
-                return $this->applyRegistrar($this->router->patch($this->prefixPath($path), $action));
-            }
-
-            #[Override]
-            public function delete(string $path, mixed $action) : Registrar
-            {
-                return $this->applyRegistrar($this->router->delete($this->prefixPath($path), $action));
-            }
-
-            #[Override]
-            public function options(string $path, mixed $action) : Registrar
-            {
-                return $this->applyRegistrar($this->router->options($this->prefixPath($path), $action));
-            }
-
-            #[Override]
-            public function head(string $path, mixed $action) : Registrar
-            {
-                return $this->applyRegistrar($this->router->head($this->prefixPath($path), $action));
-            }
-
-            #[Override]
-            public function any(string $path, mixed $action) : Registrar
-            {
-                return $this->applyRegistrar($this->router->any($this->prefixPath($path), $action));
-            }
-
-            #[Override]
-            public function group(string $prefix, callable $groupFn, string|array|callable|null $middleware = null) : void
-            {
-                $this->router->group($this->prefix . rtrim($prefix, '/'), $groupFn, $middleware);
-            }
-
-            #[Override]
-            public function fallback(mixed $handler) : void
-            {
-                $this->router->fallback($handler);
-            }
-
-            #[Override]
-            public function url(string $name, array $parameters = [], bool $absolute = false) : string
-            {
-                return $this->router->url($name, $parameters, $absolute);
-            }
-
-            #[Override]
-            public function dispatch(RequestInterface $request) : ResponseInterface
-            {
-                return $this->router->dispatch($request);
-            }
-        });
+        $groupFn(new RouteGroupRegistrar(
+            router: $this,
+            prefix: $prefix,
+            groupMiddleware: $middleware,
+        ));
     }
 
     #[Override]

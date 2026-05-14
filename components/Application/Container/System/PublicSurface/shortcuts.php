@@ -76,6 +76,20 @@ if (! function_exists('singleton')) {
     }
 }
 
+if (! function_exists('resetAppInstance')) {
+    /**
+     * Reset the global container instance.
+     *
+     * Call this between requests in long-lived runtimes
+     * (RoadRunner, Swoole, FrankenPHP) to prevent state leakage.
+     */
+    function resetAppInstance(): void
+    {
+        appInstance(null);
+        Container::resetState();
+    }
+}
+
 if (! function_exists('resolve')) {
     /**
      * Resolve a service from the container.

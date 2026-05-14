@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\DeveloperTools\Testing\System\Foundation\Failure;
+namespace Avax\Components\DeveloperTools\TestSupport\System\Foundation\Failure;
 
 use RuntimeException;
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\DeveloperTools\Testing\System\Capabilities\ContractTesting;
+namespace Avax\Components\DeveloperTools\TestSupport\System\Capabilities\ContractTesting;
 
-use Avax\Components\DeveloperTools\Testing\System\Capabilities\ContractTesting\Verification\BreakingChangeDetector;
-use Avax\Components\DeveloperTools\Testing\System\Capabilities\ContractTesting\Verification\ContractVerifier;
+use Avax\Components\DeveloperTools\TestSupport\System\Capabilities\ContractTesting\Verification\BreakingChangeDetector;
+use Avax\Components\DeveloperTools\TestSupport\System\Capabilities\ContractTesting\Verification\ContractVerifier;
 
 final readonly class ContractTesting
 {

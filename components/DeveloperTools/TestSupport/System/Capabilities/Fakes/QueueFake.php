@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\DeveloperTools\Testing\System\Capabilities\Fakes;
+namespace Avax\Components\DeveloperTools\TestSupport\System\Capabilities\Fakes;
 
 use Avax\Components\Operations\Queue\System\Capabilities\Job;
 use Avax\Components\Operations\Queue\System\Capabilities\QueueDriverInterface;

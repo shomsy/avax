@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\DeveloperTools\Testing\System\Configuration;
+namespace Avax\Components\DeveloperTools\TestSupport\System\Configuration;
 
 final readonly class TestingConfiguration
 {

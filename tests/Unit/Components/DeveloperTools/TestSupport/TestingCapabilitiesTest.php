@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Tests\Unit\Components\DeveloperTools\Testing;
+namespace Avax\Tests\Unit\Components\DeveloperTools\TestSupport;
 
-use Avax\Components\DeveloperTools\Testing\System\Capabilities\Fakes\EventFake;
+use Avax\Components\DeveloperTools\TestSupport\System\Capabilities\Fakes\EventFake;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 

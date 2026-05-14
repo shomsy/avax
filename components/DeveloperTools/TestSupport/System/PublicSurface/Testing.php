@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\DeveloperTools\Testing\System\PublicSurface;
+namespace Avax\Components\DeveloperTools\TestSupport\System\PublicSurface;
 
-use Avax\Components\DeveloperTools\Testing\System\Capabilities\ContractTesting\Verification\ContractVerifier;
+use Avax\Components\DeveloperTools\TestSupport\System\Capabilities\ContractTesting\Verification\ContractVerifier;
 
 final class Testing
 {

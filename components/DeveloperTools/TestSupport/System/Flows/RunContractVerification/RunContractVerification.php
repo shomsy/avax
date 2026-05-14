@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\DeveloperTools\Testing\System\Flows\RunContractVerification;
+namespace Avax\Components\DeveloperTools\TestSupport\System\Flows\RunContractVerification;
 
 final readonly class RunContractVerification
 {

@@ -86,11 +86,11 @@ final class RegisterAuthDependencies extends BaseRegisterDependency
     {
         if (! $this->container->has(id: Auth::class)) {
             $this->container->singleton(abstract: Auth::class, concrete: function () : Auth {
-                $authBuilder = $this->applyOptionalBindings(builder: DefaultAuth::configuration()
-                                                                         ->forUser(userSource: $this->container->get(id: UserSourceInterface::class))
-                                                                         ->withIdentity(identity: $this->container->get(id: IdentityInterface::class))
-                                                                         ->usingHasher(passwordHasher: $this->container->get(id: PasswordHasher::class))
-                                                                         ->usingIdGenerator(idGenerator: $this->container->get(id: IdGeneratorInterface::class)));
+                $authBuilder = DefaultAuth::configuration($this->container)
+                    ->forUser(userSource: $this->container->get(id: UserSourceInterface::class))
+                    ->withIdentity(identity: $this->container->get(id: IdentityInterface::class))
+                    ->usingHasher(passwordHasher: $this->container->get(id: PasswordHasher::class))
+                    ->usingIdGenerator(idGenerator: $this->container->get(id: IdGeneratorInterface::class));
 
                 $rateLimit = $this->resolveLoginRateLimit();
 
@@ -101,22 +101,6 @@ final class RegisterAuthDependencies extends BaseRegisterDependency
                 return $authBuilder->ready();
             });
         }
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    private function applyOptionalBindings(AuthBuilder $authBuilder) : AuthBuilder
-    {
-        if ($this->container->has(id: Clock::class)) {
-            $authBuilder->withClock(clock: $this->container->get(id: Clock::class));
-        }
-
-        if ($this->container->has(id: AuditLogInterface::class)) {
-            $authBuilder->withAuditLog(auditLog: $this->container->get(id: AuditLogInterface::class));
-        }
-
-        return $authBuilder;
     }
 
     /**

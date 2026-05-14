@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 require_once __DIR__.'/../../vendor/autoload.php';
 
+use Avax\Components\Application\Container\System\Foundation\SimpleContainer;
+use Avax\Components\Identity\Auth\System\Configuration\AuthBuilder;
+use Avax\Components\Identity\Auth\System\Configuration\AuthServiceProvider;
 use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentity;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
@@ -24,7 +27,13 @@ $userSource->create(user: User::create(
     email       : new UserEmail(value: 'user@example.com'),
 ));
 
-$auth = Auth::configuration()
+// Set up container with AuthServiceProvider defaults
+$engine = new SimpleContainer();
+$serviceProvider = new AuthServiceProvider();
+$serviceProvider->register($engine);
+
+$auth = (new AuthBuilder())
+    ->withContainer($engine)
     ->forUser(userSource: $userSource)
     ->withIdentityBackends(sessionIdentity: new SessionIdentity())
     ->usingHasher(passwordHasher: $passwordHasher)

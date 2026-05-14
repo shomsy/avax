@@ -77,6 +77,28 @@ final class ConfigurationException extends AuthException
         );
     }
 
+    public static function missingDependency(
+        string $dependency,
+        string $hint = '',
+        string $buildPath = 'AuthBuilder::ready()',
+    ) : self
+    {
+        $message = $buildPath . ' requires [' . $dependency . '].';
+        if ($hint !== '') {
+            $message .= ' Call ' . $hint . '.';
+        }
+
+        return new self(
+            message  : $message,
+            errorCode: 'auth.configuration.dependency_missing',
+            context  : [
+                           'build_path' => $buildPath,
+                           'dependency' => $dependency,
+                           'hint'       => $hint,
+                       ],
+        );
+    }
+
     public static function missingCapabilityDependency(
         string $capability,
         string $requirement,

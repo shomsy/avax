@@ -30,6 +30,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RotateToken\RotatedScimToken;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\SyncGroups\SyncScimGroupsData;
 use Avax\Components\Identity\Auth\System\Configuration\AuthBuilder;
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\BeginEmailChangeData;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\ConfirmEmailChangeData;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\EmailChangeChallenge;
@@ -142,9 +143,9 @@ final readonly class DefaultAuth implements Auth
     ) {
     }
 
-    public static function configuration(): AuthBuilder
+    public static function configuration(ContainerInterface $container): AuthBuilder
     {
-        return new AuthBuilder();
+        return (new AuthBuilder())->withContainer($container);
     }
 
     // ── Fast-path convenience methods (high-frequency, cross-cutting) ──

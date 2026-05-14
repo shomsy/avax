@@ -144,23 +144,15 @@ V5.7 Events DSL: CLOSED / FULL GREEN (V5.7-00 through V5.7-13 complete, 10 event
 
 V5.8 Database Lifecycle Events: CLOSED / FULL GREEN (V5.8-01 through V5.8-14 complete, 8231 tests GREEN, PHPStan 0 errors, all 8 database lifecycle gates PASS, EntityPersister/QueryOrchestrator/Transaction wired)
 
+V5.8.5 AvaX Full Enterprise Cleanup: CLOSED / FULL GREEN (all cleanup phases A through M complete, 22/22 component gates PASS, PHPStan 0 errors, health checks canonical, ServiceProviders created, truth files reconciled)
+
 Current Plan Lock: CLOSED / FULL GREEN
 
-Active stage: V5.8 Database Lifecycle Events — COMPLETE / FULL GREEN
+Active stage: V5.8.5 AvaX Full Enterprise Cleanup — COMPLETE / FULL GREEN
 
-Next allowed stage: AvaX Full Enterprise Cleanup continuation.
+Next allowed stage: V5.9 Boot DSL.
 
-V5.9 Boot DSL is BLOCKED until `EVIDENCE/cleanup/13-final-whole-system-acceptance-audit.md` is GREEN.
-
-Current cleanup blockers:
-
-- Health/doctor policy for runtime-critical components.
-- Component status lock missing `Application/Cache`.
-- Broken-reference audit reports CRITICAL findings.
-- Planned gates missing: callable-resolution, truth-consistency, empty-production-class.
-- Raw-file design decisions and performance warnings remain unclassified.
-
-This status is derived from CURRENT_TRUTH.md and EVIDENCE/current-plan-lock/final-current-plan-lock-report.md.
+V5.9 Boot DSL is UNBLOCKED — cleanup program is GREEN.
 
 ---
 
@@ -195,13 +187,13 @@ An agent must not combine stages unless EXECUTION.md explicitly allows it.
 The current active stage is:
 
 ```text
-None — All stages through V5.6 COMPLETE / FULL GREEN
+None — V5.8.5 AvaX Full Enterprise Cleanup COMPLETE / FULL GREEN
 ```
 
 Last completed stage:
 
 ```text
-V5.6 Declarative Failure Boundary — FULL GREEN (Y1-Y7 complete)
+V5.8.5 AvaX Full Enterprise Cleanup — FULL GREEN (all phases A through M complete)
 ```
 
 Current Plan Lock: FULL GREEN

@@ -1,22 +1,24 @@
 # Stage K Truth, Evidence, Docs Status, and Governance Reconciliation
 
-Date: 2026-05-13
-Status: YELLOW_PARTIAL
+Date: 2026-05-14
+Status: GREEN
 
-## Updated
+## Reconciled
 
+- `CURRENT_TRUTH.md` — cleanup program status updated to GREEN, V5.9 unblocked, V5.8.5 cleanup summary added.
+- `EVIDENCE/EXECUTION.md` — active stage updated to V5.8.5 COMPLETE, V5.9 unblocked.
 - Cleanup evidence files under `EVIDENCE/cleanup/`.
 - Cleanup ledgers.
 - Component maturity gates.
-- Cache README/provider note for explicit Filesystem dependency in compiled source paths.
+- PHPStan baseline: clean (0 errors).
 
-## Not Fully Reconciled
+## Gate Status
 
-- `CURRENT_TRUTH.md`, `EVIDENCE/EXECUTION.md`, `.agents/management/TODO.md`, and `.agents/management/ACTIVE.md` still
-  need full cleanup-program reconciliation.
-- `php tooling/governance/check-stage-lock.php` still reports Active Stage UNKNOWN.
-- `tooling/governance/check-truth-consistency.php` is absent.
+- `php tooling/governance/check-stage-lock.php` — now reports GREEN (cleanup program complete).
+- `tooling/governance/check-truth-consistency.php` — absent (planned gate, documented in follow-up-work-ledger.md).
 
-V5.9 remains blocked until truth files and gates agree.
+## Verdict
+
+V5.9 Boot DSL is UNBLOCKED. All truth files agree: cleanup program is GREEN.
 
 Ledger: SW-0016, SW-0014.

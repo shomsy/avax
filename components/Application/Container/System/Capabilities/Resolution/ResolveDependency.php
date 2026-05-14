@@ -82,7 +82,10 @@ final class ResolveDependency
         }
     }
 
-    private function build(string $concrete, array $parameters): object
+    /**
+ * @throws RuntimeException
+ */
+private function build(string $concrete, array $parameters): object
     {
         if (! class_exists($concrete)) {
             throw new RuntimeException(sprintf('Target class [%s] does not exist.', $concrete));

@@ -28,7 +28,10 @@ final class SendNotification
         return isset($this->channels[$name]);
     }
 
-    public function sendTo(mixed $notifiable, Notification $notification, string|null $channel = null) : void
+    /**
+ * @throws NotificationException
+ */
+public function sendTo(mixed $notifiable, Notification $notification, string|null $channel = null) : void
     {
         $channels = $channel !== null ? [$channel] : $notification->via();
 
@@ -41,7 +44,10 @@ final class SendNotification
         }
     }
 
-    public function sendToMany(array $notifiables, Notification $notification, string|null $channel = null) : void
+    /**
+ * @throws NotificationException
+ */
+public function sendToMany(array $notifiables, Notification $notification, string|null $channel = null) : void
     {
         foreach ($notifiables as $notifiable) {
             $this->sendTo($notifiable, $notification, $channel);

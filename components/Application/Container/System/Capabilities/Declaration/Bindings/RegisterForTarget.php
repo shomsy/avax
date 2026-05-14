@@ -24,7 +24,10 @@ final class RegisterForTarget
         return $this;
     }
 
-    public function give(mixed $implementation): void
+    /**
+ * @throws LogicException
+ */
+public function give(mixed $implementation): void
     {
         if ($this->needs === '') {
             throw new LogicException(

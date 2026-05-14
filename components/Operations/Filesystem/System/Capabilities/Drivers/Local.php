@@ -38,7 +38,10 @@ final readonly class Local implements StorageAdapter
         return $this->root.'/'.$this->normalize(path: $path);
     }
 
-    private function normalize(string $path): string
+    /**
+ * @throws RuntimeException
+ */
+private function normalize(string $path): string
     {
         $normalized = trim(string: str_replace(search: '\\', replace: '/', subject: $path), characters: '/');
 

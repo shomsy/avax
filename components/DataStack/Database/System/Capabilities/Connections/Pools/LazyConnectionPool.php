@@ -57,7 +57,10 @@ final class LazyConnectionPool implements ConnectionPoolInterface
         return $this->pool()->get();
     }
 
-    private function pool(): ConnectionPoolInterface
+    /**
+ * @throws InvalidArgumentException
+ */
+private function pool(): ConnectionPoolInterface
     {
         if (! $this->connectionPool instanceof ConnectionPoolInterface) {
             $pool = ($this->factory)();

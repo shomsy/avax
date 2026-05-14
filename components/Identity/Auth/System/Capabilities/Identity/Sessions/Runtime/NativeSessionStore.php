@@ -112,7 +112,10 @@ final class NativeSessionStore implements SessionStoreInterface
         return 'cli-session-' . str_replace(search: '.', replace: '', subject: uniqid(prefix: '', more_entropy: true));
     }
 
-    private function readNativeSessionId() : string
+    /**
+ * @throws RuntimeException
+ */
+private function readNativeSessionId() : string
     {
         $sessionId = session_id();
 

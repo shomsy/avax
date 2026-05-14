@@ -378,7 +378,10 @@ final class CompileContainer
         return rtrim(string: $this->cacheDir, characters: '/\\').'/container/'.rawurlencode(string: $this->cacheVersion);
     }
 
-    private function handleCorruption(string $reason): void
+    /**
+ * @throws ContainerException
+ */
+private function handleCorruption(string $reason): void
     {
         $this->resolutionMetrics?->increment(name: 'container_compiled_container_corrupt_total');
         $this->quarantineArtifacts();
@@ -941,7 +944,10 @@ final class CompileContainer
         }
     }
 
-    private function writeAtomically(string $path, string $body): void
+    /**
+ * @throws RuntimeException
+ */
+private function writeAtomically(string $path, string $body): void
     {
         $temp = $path.'.'.uniqid(prefix: 'tmp', more_entropy: true);
 

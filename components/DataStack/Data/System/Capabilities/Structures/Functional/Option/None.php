@@ -38,7 +38,10 @@ final class None extends Option implements ResettableState
     }
 
     #[Override]
-    public function unwrap(): mixed
+    /**
+ * @throws RuntimeException
+ */
+public function unwrap(): mixed
     {
         throw new RuntimeException('Cannot unwrap none value.');
     }

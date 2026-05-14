@@ -12,7 +12,10 @@ final readonly class MarkSagaAsUnrecoverable
         private SagaRecoveryAction $sagaRecoveryAction,
     ) {}
 
-    public function mark(array $sagaData, array $failureReasons) : SagaRecoveryResult
+    /**
+ * @throws InvalidArgumentException
+ */
+public function mark(array $sagaData, array $failureReasons) : SagaRecoveryResult
     {
         if ($failureReasons === []) {
             throw new InvalidArgumentException(message: 'Failure reasons cannot be empty.');

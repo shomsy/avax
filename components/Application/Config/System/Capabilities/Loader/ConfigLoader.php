@@ -30,7 +30,10 @@ final class ConfigLoader
         return $config;
     }
 
-    private function loadFile(string $file): array
+    /**
+ * @throws RuntimeException
+ */
+private function loadFile(string $file): array
     {
         if (! file_exists($file)) {
             throw new RuntimeException('Config file not found: '.$file);

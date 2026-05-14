@@ -30,7 +30,10 @@ final readonly class JsonCacheSerializer implements CacheSerializer
     }
 
     #[Override]
-    public function unserialize(SerializedCachePayload $serializedCachePayload): mixed
+    /**
+ * @throws CachePayloadCouldNotBeSerialized
+ */
+public function unserialize(SerializedCachePayload $serializedCachePayload): mixed
     {
         if (! $this->canUnserialize($serializedCachePayload)) {
             throw new CachePayloadCouldNotBeSerialized(

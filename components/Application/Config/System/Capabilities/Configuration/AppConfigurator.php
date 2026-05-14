@@ -97,7 +97,10 @@ abstract class AppConfigurator implements ConfiguratorInterface
      *
      * @return array<string, string> Associative array of configuration namespaces and file paths.
      */
-    abstract protected function getConfigurationPaths(): array;
+    abstract /**
+ * @throws RuntimeException
+ */
+protected function getConfigurationPaths(): array;
 
     /**
      * Retrieve a configuration value by dot-notated key.

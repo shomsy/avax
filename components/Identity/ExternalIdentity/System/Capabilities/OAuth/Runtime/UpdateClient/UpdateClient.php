@@ -17,7 +17,10 @@ final readonly class UpdateClient
 {
     public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function execute(UpdateClientData $updateClientData) : OAuthClient
+    /**
+ * @throws RuntimeException
+ */
+public function execute(UpdateClientData $updateClientData) : OAuthClient
     {
         $existing = $this->oAuthClientRegistry->find(clientId: $updateClientData->clientId);
 

@@ -18,7 +18,10 @@ final readonly class Money
     ) {
     }
 
-    public function add(Money $money): self
+    /**
+ * @throws InvalidArgumentException
+ */
+public function add(Money $money): self
     {
         if ($this->currency->code !== $money->currency->code) {
             throw new InvalidArgumentException('Currencies must match.');

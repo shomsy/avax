@@ -8,7 +8,10 @@ use Avax\Components\Operations\Filesystem\System\Foundation\Failure\FilesystemEx
 
 final readonly class ReadFile
 {
-    public function read(string $path) : string
+    /**
+ * @throws FilesystemException
+ */
+public function read(string $path) : string
     {
         $content = $this->readFileContents($path);
 

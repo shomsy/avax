@@ -23,7 +23,10 @@ final readonly class DispatchRouteAction
         private ArgumentResolver   $argumentResolver,
     ) {}
 
-    public function execute(callable|array|string $action, ServerRequestInterface $serverRequest) : ResponseInterface
+    /**
+ * @throws InvalidArgumentException
+ */
+public function execute(callable|array|string $action, ServerRequestInterface $serverRequest) : ResponseInterface
     {
         return match (true) {
             is_callable($action) => $this->dispatchCallable($action, $serverRequest),
@@ -57,7 +60,10 @@ final readonly class DispatchRouteAction
         return $result;
     }
 
-    private function dispatchControllerAndMethod(array $action, ServerRequestInterface $serverRequest) : ResponseInterface
+    /**
+ * @throws InvalidArgumentException
+ */
+private function dispatchControllerAndMethod(array $action, ServerRequestInterface $serverRequest) : ResponseInterface
     {
         if (count($action) !== 2) {
             throw new InvalidArgumentException('Controller action must be [Class, "method"]');
@@ -79,7 +85,10 @@ final readonly class DispatchRouteAction
         return $this->ensureResponse($result, sprintf('Method %s in %s', $method, $controllerClass));
     }
 
-    private function dispatchInvokableController(string $controllerClass, ServerRequestInterface $serverRequest) : ResponseInterface
+    /**
+ * @throws RuntimeException
+ */
+private function dispatchInvokableController(string $controllerClass, ServerRequestInterface $serverRequest) : ResponseInterface
     {
         $instance = $this->controllerResolver->resolve($controllerClass);
 

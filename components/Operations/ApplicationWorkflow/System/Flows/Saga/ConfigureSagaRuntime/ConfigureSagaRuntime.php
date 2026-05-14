@@ -17,7 +17,10 @@ final readonly class ConfigureSagaRuntime
         private RegisterSagaMessageBus $registerSagaMessageBus = new RegisterSagaMessageBus(),
     ) {}
 
-    public function configure(SagaRuntimeConfig $sagaRuntimeConfig) : SagaRuntime
+    /**
+ * @throws SagaRuntimeConfigurationFailure
+ */
+public function configure(SagaRuntimeConfig $sagaRuntimeConfig) : SagaRuntime
     {
         $validateSagaRuntimeConfig = new ValidateSagaRuntimeConfig(config: $sagaRuntimeConfig);
         if (! $validateSagaRuntimeConfig->isValid()) {

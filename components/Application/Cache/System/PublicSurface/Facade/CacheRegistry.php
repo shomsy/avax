@@ -24,7 +24,10 @@ class CacheRegistry
         }
     }
 
-    public function default(): CacheContract
+    /**
+ * @throws NotConfigured
+ */
+public function default(): CacheContract
     {
         if ($this->defaultName === null) {
             throw new NotConfigured(
@@ -35,7 +38,10 @@ class CacheRegistry
         return $this->caches[$this->defaultName];
     }
 
-    public function get(string $name): CacheContract
+    /**
+ * @throws NotFound
+ */
+public function get(string $name): CacheContract
     {
         if (! isset($this->caches[$name])) {
             throw new NotFound(

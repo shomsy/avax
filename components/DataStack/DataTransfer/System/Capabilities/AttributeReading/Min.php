@@ -12,7 +12,10 @@ final readonly class Min
 {
     public function __construct(public int|float $min) {}
 
-    public function validate(mixed $value, string $field) : void
+    /**
+ * @throws InvalidArgumentException
+ */
+public function validate(mixed $value, string $field) : void
     {
         if (is_string($value) && strlen($value) < $this->min) {
             throw new InvalidArgumentException(

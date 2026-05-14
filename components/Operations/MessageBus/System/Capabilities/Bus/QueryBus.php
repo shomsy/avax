@@ -20,7 +20,10 @@ final class QueryBus
         $this->middleware[] = $middleware;
     }
 
-    public function dispatch(object $query): mixed
+    /**
+ * @throws RuntimeException
+ */
+public function dispatch(object $query): mixed
     {
         $class = $query::class;
 

@@ -25,7 +25,10 @@ final readonly class ExchangeAuthorizationCode
         private DateInterval                    $refreshTokenTtl = new DateInterval(duration: 'P30D'),
     ) {}
 
-    public function execute(#[SensitiveParameter] string $code) : stdClass
+    /**
+ * @throws RuntimeException
+ */
+public function execute(#[SensitiveParameter] string $code) : stdClass
     {
         $now    = new DateTimeImmutable();
         $record = $this->authorizationCodeStore->consume(code: $code, moment: $now);

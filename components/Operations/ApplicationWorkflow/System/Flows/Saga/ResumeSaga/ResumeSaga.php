@@ -16,7 +16,10 @@ final readonly class ResumeSaga
         return [];
     }
 
-    public function resume(
+    /**
+ * @throws SagaRecoveryFailure
+ */
+public function resume(
         SagaInstance   $sagaInstance,
         SagaDefinition $sagaDefinition,
     ) : SagaInstance

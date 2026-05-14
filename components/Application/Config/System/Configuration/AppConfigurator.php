@@ -47,7 +47,10 @@ abstract class AppConfigurator implements ConfiguratorInterface
         return Collection::make(items: $configData);
     }
 
-    abstract protected function getConfigurationPaths(): array;
+    abstract /**
+ * @throws RuntimeException
+ */
+protected function getConfigurationPaths(): array;
 
     public function get(string $key, mixed $default = null): mixed
     {

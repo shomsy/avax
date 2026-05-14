@@ -340,7 +340,10 @@ final readonly class RegistrationMetadata
         return $this->copy(overrides: ['ownerLocked' => true]);
     }
 
-    public function withCategory(string $category): self
+    /**
+ * @throws LogicException
+ */
+public function withCategory(string $category): self
     {
         $normalized = RegistrationCategory::normalize(category: $category);
         if ($this->categoryLocked && $normalized !== $this->category) {
@@ -352,7 +355,10 @@ final readonly class RegistrationMetadata
         return $this->copy(overrides: ['category' => $category]);
     }
 
-    public function withOwnerSlice(string $ownerSlice): self
+    /**
+ * @throws LogicException
+ */
+public function withOwnerSlice(string $ownerSlice): self
     {
         $normalized = $this->normalizeSlice(slice: $ownerSlice);
         if ($this->ownerLocked && $normalized !== $this->ownerSlice) {

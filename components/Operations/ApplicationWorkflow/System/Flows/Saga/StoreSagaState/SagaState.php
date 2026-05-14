@@ -110,12 +110,18 @@ final readonly class SagaState implements ArrayAccess, Countable, IteratorAggreg
         return isset($this->data[$offset]);
     }
 
-    public function offsetSet(mixed $offset, mixed $value) : void
+    /**
+ * @throws RuntimeException
+ */
+public function offsetSet(mixed $offset, mixed $value) : void
     {
         throw new RuntimeException('SagaState is readonly.');
     }
 
-    public function offsetUnset(mixed $offset) : void
+    /**
+ * @throws RuntimeException
+ */
+public function offsetUnset(mixed $offset) : void
     {
         throw new RuntimeException('SagaState is readonly.');
     }

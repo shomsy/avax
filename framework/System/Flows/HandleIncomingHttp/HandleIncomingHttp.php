@@ -46,7 +46,10 @@ final readonly class HandleIncomingHttp
         }
     }
 
-    public function handleInCurrentScope(RuntimeInterface $runtime, RuntimeRequest $runtimeRequest): RuntimeResponse
+    /**
+ * @throws FrameworkMisconfigured
+ */
+public function handleInCurrentScope(RuntimeInterface $runtime, RuntimeRequest $runtimeRequest): RuntimeResponse
     {
         $httpHandler = $runtime->httpHandler();
 

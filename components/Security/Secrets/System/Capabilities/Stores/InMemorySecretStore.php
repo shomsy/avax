@@ -11,7 +11,10 @@ final class InMemorySecretStore implements SecretStore
     /** @var array<string, string> */
     private array $secrets = [];
 
-    public function get(string $key): string
+    /**
+ * @throws RuntimeException
+ */
+public function get(string $key): string
     {
         return $this->secrets[$key] ?? throw new RuntimeException(sprintf("Secret '%s' not found", $key));
     }

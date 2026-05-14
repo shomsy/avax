@@ -18,7 +18,10 @@ final class SessionTransaction
         private readonly SessionScope $sessionScope,
     ) {}
 
-    public function begin() : void
+    /**
+ * @throws RuntimeException
+ */
+public function begin() : void
     {
         if ($this->active) {
             throw new RuntimeException('Transaction already active');
@@ -28,7 +31,10 @@ final class SessionTransaction
         $this->active = true;
     }
 
-    public function commit() : void
+    /**
+ * @throws RuntimeException
+ */
+public function commit() : void
     {
         if (! $this->active) {
             throw new RuntimeException('No active transaction');
@@ -38,7 +44,10 @@ final class SessionTransaction
         $this->active = false;
     }
 
-    public function rollback() : void
+    /**
+ * @throws RuntimeException
+ */
+public function rollback() : void
     {
         if (! $this->active || $this->backup === null) {
             throw new RuntimeException('No active transaction');

@@ -14,7 +14,10 @@ use InvalidArgumentException;
  */
 final readonly class ObjectHash implements HashFunction
 {
-    public function hash(mixed $value) : string
+    /**
+ * @throws InvalidArgumentException
+ */
+public function hash(mixed $value) : string
     {
         if (! is_object(value: $value)) {
             throw new InvalidArgumentException(message: 'ObjectHash requires an object.');

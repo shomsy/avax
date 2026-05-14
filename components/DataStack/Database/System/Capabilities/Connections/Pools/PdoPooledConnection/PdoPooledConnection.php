@@ -28,7 +28,10 @@ final class PdoPooledConnection implements PooledConnection
         $this->lastUsedAt = $this->createdAt;
     }
 
-    public function getResource() : PDO
+    /**
+ * @throws RuntimeException
+ */
+public function getResource() : PDO
     {
         if ($this->closed || $this->pdo === null) {
             throw new RuntimeException('Cannot get resource from closed pooled connection');

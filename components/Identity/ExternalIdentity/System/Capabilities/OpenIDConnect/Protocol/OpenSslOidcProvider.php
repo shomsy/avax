@@ -207,7 +207,10 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         );
     }
 
-    public function readJsonWebKeySet() : OidcJsonWebKeySet
+    /**
+ * @throws RuntimeException
+ */
+public function readJsonWebKeySet() : OidcJsonWebKeySet
     {
         $details = openssl_pkey_get_details(key: $this->publicKey);
 

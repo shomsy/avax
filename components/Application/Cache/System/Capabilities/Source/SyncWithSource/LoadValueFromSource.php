@@ -13,7 +13,10 @@ final readonly class LoadValueFromSource
     ) {
     }
 
-    public function loadOrFail(CacheKey $cacheKey): mixed
+    /**
+ * @throws CacheSourceFailed
+ */
+public function loadOrFail(CacheKey $cacheKey): mixed
     {
         $cacheSourceKey = CacheSourceKey::create(key: $cacheKey->fullKey(), namespace: $cacheKey->namespace);
 

@@ -22,7 +22,10 @@ final readonly class TokenVerifier
         return AccessToken::fromPayload($payload);
     }
 
-    public function verifyPayload(string $token) : array
+    /**
+ * @throws RuntimeException
+ */
+public function verifyPayload(string $token) : array
     {
         try {
             $decoded = JWT::decode(

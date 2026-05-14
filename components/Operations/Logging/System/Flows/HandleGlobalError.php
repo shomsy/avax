@@ -34,7 +34,10 @@ final readonly class HandleGlobalError
         ]);
     }
 
-    public function convertErrorToException(int $severity, string $message, string $file, int $line): never
+    /**
+ * @throws ErrorException
+ */
+public function convertErrorToException(int $severity, string $message, string $file, int $line): never
     {
         throw new ErrorException($message, 0, $severity, $file, $line);
     }

@@ -9,7 +9,10 @@ use RuntimeException;
 
 final readonly class ReadFile
 {
-    public function execute(string $path) : string
+    /**
+ * @throws FileNotFound
+ */
+public function execute(string $path) : string
     {
         $cleanPath = $this->sanitizePath($path);
 

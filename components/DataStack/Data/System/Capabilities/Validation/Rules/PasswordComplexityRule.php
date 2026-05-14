@@ -10,7 +10,10 @@ use InvalidArgumentException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
 final readonly class PasswordComplexityRule
 {
-    public function validate(mixed $value, string $property): void
+    /**
+ * @throws InvalidArgumentException
+ */
+public function validate(mixed $value, string $property): void
     {
         if (! is_string(value: $value)) {
             throw new InvalidArgumentException(message: sprintf('Field "%s" must be a string.', $property));

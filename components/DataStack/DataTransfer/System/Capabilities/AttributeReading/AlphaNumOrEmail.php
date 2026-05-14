@@ -10,7 +10,10 @@ use InvalidArgumentException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
 final readonly class AlphaNumOrEmail
 {
-    public function validate(mixed $value, string $field) : void
+    /**
+ * @throws InvalidArgumentException
+ */
+public function validate(mixed $value, string $field) : void
     {
         $isAlphaNum = ctype_alnum((string) $value);
         $isEmail    = filter_var($value, FILTER_VALIDATE_EMAIL) !== false;

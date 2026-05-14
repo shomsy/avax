@@ -12,7 +12,10 @@ final readonly class ResolveDisk
         private RegisteredDisks $registry,
     ) {}
 
-    public function execute(string $name) : Disk
+    /**
+ * @throws DiskNotFound
+ */
+public function execute(string $name) : Disk
     {
         $disk = $this->registry->get($name);
 

@@ -105,7 +105,10 @@ final readonly class RecordSagaStarted
 
 final readonly class ScheduleFirstSagaStep
 {
-    public function schedule(SagaInstance $sagaInstance, SagaDefinition $sagaDefinition) : SagaInstance
+    /**
+ * @throws SagaStartFailure
+ */
+public function schedule(SagaInstance $sagaInstance, SagaDefinition $sagaDefinition) : SagaInstance
     {
         $firstStep = $sagaDefinition->getFirstStep();
 

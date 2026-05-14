@@ -29,7 +29,10 @@ final readonly class ErrorLogger implements LoggerInterface
         $this->log(LogLevel::EMERGENCY, $message, $context);
     }
 
-    public function log(mixed $level, Stringable|string $message, array $context = []): void
+    /**
+ * @throws InvalidArgumentException
+ */
+public function log(mixed $level, Stringable|string $message, array $context = []): void
     {
         if (! is_string($level)) {
             throw new InvalidArgumentException('Log level must be a string.');

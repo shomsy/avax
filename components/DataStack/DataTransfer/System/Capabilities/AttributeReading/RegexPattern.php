@@ -12,7 +12,10 @@ final readonly class RegexPattern
 {
     public function __construct(public string $pattern) {}
 
-    public function validate(mixed $value, string $field) : void
+    /**
+ * @throws InvalidArgumentException
+ */
+public function validate(mixed $value, string $field) : void
     {
         if (! preg_match($this->pattern, (string) $value)) {
             throw new InvalidArgumentException(

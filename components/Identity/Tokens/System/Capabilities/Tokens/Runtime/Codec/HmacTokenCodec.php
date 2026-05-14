@@ -154,7 +154,10 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
         return $decoded;
     }
 
-    private function base64UrlDecode(string $value) : string
+    /**
+ * @throws InvalidArgumentException
+ */
+private function base64UrlDecode(string $value) : string
     {
         $padding = (4 - (strlen(string: $value) % 4)) % 4;
         $decoded = base64_decode(

@@ -12,7 +12,10 @@ final readonly class Max
 {
     public function __construct(public int|float $max) {}
 
-    public function validate(mixed $value, string $field) : void
+    /**
+ * @throws InvalidArgumentException
+ */
+public function validate(mixed $value, string $field) : void
     {
         if (is_string($value) && strlen($value) > $this->max) {
             throw new InvalidArgumentException(

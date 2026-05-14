@@ -15,7 +15,10 @@ final readonly class ApproveClientRegistration
 {
     public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function execute(ApproveClientRegistrationData $approveClientRegistrationData) : OAuthClient
+    /**
+ * @throws RuntimeException
+ */
+public function execute(ApproveClientRegistrationData $approveClientRegistrationData) : OAuthClient
     {
         $client = $this->oAuthClientRegistry->approve(
             clientId  : $approveClientRegistrationData->clientId,

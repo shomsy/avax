@@ -17,7 +17,10 @@ final readonly class JsonSchemaDocument
         public array $schema,
     ) {}
 
-    public function toJson(int $flags = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) : string
+    /**
+ * @throws SchemaGenerationFailed
+ */
+public function toJson(int $flags = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) : string
     {
         $encoded = json_encode(value: $this->schema, flags: $flags);
 

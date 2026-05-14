@@ -16,7 +16,10 @@ final class MultiTenantPool implements ConnectionPool
     {
     }
 
-    public function getForTenant(string $tenantId): PDO
+    /**
+ * @throws RuntimeException
+ */
+public function getForTenant(string $tenantId): PDO
     {
         if (! isset($this->pools[$tenantId])) {
             $config = $this->tenantConfigs[$tenantId];
@@ -27,7 +30,10 @@ final class MultiTenantPool implements ConnectionPool
     }
 
     #[Override]
-    public function get(): PDO
+    /**
+ * @throws RuntimeException
+ */
+public function get(): PDO
     {
         throw new RuntimeException('Use getForTenant() for multi-tenant pool.');
     }

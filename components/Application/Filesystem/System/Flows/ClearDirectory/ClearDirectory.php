@@ -8,7 +8,10 @@ use Avax\Components\Application\Filesystem\System\Foundation\Failure\DirectoryNo
 
 final readonly class ClearDirectory
 {
-    public function execute(string $path) : bool
+    /**
+ * @throws DirectoryNotFound
+ */
+public function execute(string $path) : bool
     {
         $cleanPath = $this->sanitizePath($path);
 

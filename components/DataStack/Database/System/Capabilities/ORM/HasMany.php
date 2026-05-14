@@ -21,7 +21,10 @@ final class HasMany extends Relation
     }
 
     #[Override]
-    public function getResults(): array
+    /**
+ * @throws RuntimeException
+ */
+public function getResults(): array
     {
         if (! $this->loader instanceof Closure) {
             throw new RuntimeException('HasMany relation requires a loader before results can be read.');

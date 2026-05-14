@@ -9,7 +9,10 @@ use RuntimeException;
 
 class ConfigFileLoader implements ConfigLoaderInterface
 {
-    public function loadConfigFile(string $filePath): array
+    /**
+ * @throws RuntimeException
+ */
+public function loadConfigFile(string $filePath): array
     {
         $this->ensureFileExists(filePath: $filePath);
 
@@ -26,7 +29,10 @@ class ConfigFileLoader implements ConfigLoaderInterface
         return $config;
     }
 
-    private function ensureFileExists(string $filePath): void
+    /**
+ * @throws RuntimeException
+ */
+private function ensureFileExists(string $filePath): void
     {
         if (! file_exists(filename: $filePath)) {
             throw new RuntimeException(message: 'Configuration file not found: '.$filePath);
@@ -43,7 +49,10 @@ class ConfigFileLoader implements ConfigLoaderInterface
         return require $filePath;
     }
 
-    private function loadJsonFile(string $filePath): array
+    /**
+ * @throws RuntimeException
+ */
+private function loadJsonFile(string $filePath): array
     {
         $content = Filesystem::read($filePath);
         $config  = json_decode(json: $content, associative: true);
@@ -55,7 +64,10 @@ class ConfigFileLoader implements ConfigLoaderInterface
         return $config;
     }
 
-    private function ensureIsArray(mixed $config, string $filePath): void
+    /**
+ * @throws RuntimeException
+ */
+private function ensureIsArray(mixed $config, string $filePath): void
     {
         if (! is_array(value: $config)) {
             throw new RuntimeException(message: 'Invalid configuration format in file: '.$filePath);

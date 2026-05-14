@@ -15,7 +15,10 @@ final readonly class GenerateTemporaryStoredObjectUrl
         private Disk $disk,
     ) {}
 
-    public function execute(string $path, DateTimeInterface $expires) : string
+    /**
+ * @throws TemporaryUrlNotSupported
+ */
+public function execute(string $path, DateTimeInterface $expires) : string
     {
         if (! $this->disk->supportsTemporaryUrl()) {
             throw new TemporaryUrlNotSupported('local');

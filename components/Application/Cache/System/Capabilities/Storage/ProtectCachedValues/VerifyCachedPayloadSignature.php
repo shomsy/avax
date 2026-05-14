@@ -11,7 +11,10 @@ final readonly class VerifyCachedPayloadSignature
     ) {
     }
 
-    public function verifyOrFail(string $payload, string $signature): void
+    /**
+ * @throws CachePayloadWasTampered
+ */
+public function verifyOrFail(string $payload, string $signature): void
     {
         if (! $this->verify(payload: $payload, signature: $signature)) {
             throw new CachePayloadWasTampered(

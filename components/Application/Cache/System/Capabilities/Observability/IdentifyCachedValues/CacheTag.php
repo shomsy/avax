@@ -20,7 +20,10 @@ final readonly class CacheTag implements Stringable
         $this->validate(name: $name);
     }
 
-    private function validate(string $name): void
+    /**
+ * @throws InvalidArgumentException
+ */
+private function validate(string $name): void
     {
         $normalized = trim($name);
 

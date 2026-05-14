@@ -18,7 +18,10 @@ final readonly class CompiledCacheSource
         $this->validate();
     }
 
-    private function validate(): void
+    /**
+ * @throws InvalidArgumentException
+ */
+private function validate(): void
     {
         if ($this->path === '') {
             throw new InvalidArgumentException(message: 'Source path cannot be empty');

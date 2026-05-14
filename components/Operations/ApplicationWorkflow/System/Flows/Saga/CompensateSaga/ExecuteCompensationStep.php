@@ -13,7 +13,10 @@ final readonly class ExecuteCompensationStep
 {
     public function __construct(private object $compensationRunner) {}
 
-    public function execute(
+    /**
+ * @throws SagaCompensationFailure
+ */
+public function execute(
         SagaStepDefinition $sagaStepDefinition,
         array              $previousResult,
     ) : array

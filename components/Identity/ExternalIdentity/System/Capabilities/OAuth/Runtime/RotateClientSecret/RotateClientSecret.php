@@ -15,7 +15,10 @@ final readonly class RotateClientSecret
 {
     public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function execute(string $clientId) : RegisteredOAuthClient
+    /**
+ * @throws RuntimeException
+ */
+public function execute(string $clientId) : RegisteredOAuthClient
     {
         $registered = $this->oAuthClientRegistry->rotateSecret(clientId: $clientId);
 

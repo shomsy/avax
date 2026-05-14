@@ -18,7 +18,10 @@ final readonly class LocalDisk implements Disk
         private string     $root = '',
     ) {}
 
-    public function read(StoragePath $path) : string
+    /**
+ * @throws StoredObjectNotFound
+ */
+public function read(StoragePath $path) : string
     {
         $fullPath = $this->resolvePath($path);
 
@@ -83,7 +86,10 @@ final readonly class LocalDisk implements Disk
         return 'file://' . $this->resolvePath($path);
     }
 
-    public function temporaryUrl(StoragePath $path, DateTimeInterface $expires) : string
+    /**
+ * @throws TemporaryUrlNotSupported
+ */
+public function temporaryUrl(StoragePath $path, DateTimeInterface $expires) : string
     {
         throw new TemporaryUrlNotSupported('local');
     }

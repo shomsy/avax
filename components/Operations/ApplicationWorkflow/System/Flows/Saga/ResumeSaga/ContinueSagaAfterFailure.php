@@ -9,7 +9,10 @@ use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\StartSaga\S
 
 final readonly class ContinueSagaAfterFailure
 {
-    public function continue(
+    /**
+ * @throws SagaRecoveryFailure
+ */
+public function continue(
         SagaInstance $sagaInstance,
         array        $definition,
     ) : array

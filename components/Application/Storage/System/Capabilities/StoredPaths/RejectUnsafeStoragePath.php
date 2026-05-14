@@ -8,7 +8,10 @@ use Avax\Components\Application\Storage\System\Foundation\Failure\InvalidStorage
 
 final readonly class RejectUnsafeStoragePath
 {
-    public function execute(string $path) : void
+    /**
+ * @throws InvalidStoragePath
+ */
+public function execute(string $path) : void
     {
         if (str_contains($path, "\0")) {
             throw new InvalidStoragePath($path);

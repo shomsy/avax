@@ -13,7 +13,10 @@ use RuntimeException;
 final class PHPArrayFileLoader implements ConfigLoaderInterface
 {
     #[Override]
-    public function loadConfigFile(string $filePath): array
+    /**
+ * @throws RuntimeException
+ */
+public function loadConfigFile(string $filePath): array
     {
         if (! file_exists($filePath)) {
             throw new RuntimeException('Configuration file not found: '.$filePath);

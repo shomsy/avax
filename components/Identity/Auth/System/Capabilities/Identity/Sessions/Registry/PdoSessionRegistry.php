@@ -35,7 +35,10 @@ final readonly class PdoSessionRegistry implements PruneExpiredSessionsInterface
         return is_array(value: $row) ? $this->hydrate(row: $row) : null;
     }
 
-    private function prepare(string $query) : PDOStatement
+    /**
+ * @throws RuntimeException
+ */
+private function prepare(string $query) : PDOStatement
     {
         $statement = $this->pdo->prepare(query: $query);
 

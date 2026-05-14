@@ -125,7 +125,10 @@ final class DatabaseBuilder
         );
     }
 
-    private function assertHasConnections(): void
+    /**
+ * @throws InvalidArgumentException
+ */
+private function assertHasConnections(): void
     {
         if (! isset($this->config['connections']) || ! is_array($this->config['connections']) || $this->config['connections'] === []) {
             throw new InvalidArgumentException(message: 'Database configuration must contain at least one connection.');

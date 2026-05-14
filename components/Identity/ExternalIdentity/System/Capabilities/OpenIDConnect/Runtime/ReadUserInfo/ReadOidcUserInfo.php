@@ -19,7 +19,10 @@ final readonly class ReadOidcUserInfo
         private OidcProviderInterface|null $oidcProvider = null,
     ) {}
 
-    public function execute(#[SensitiveParameter] string $accessToken) : OidcUserInfo
+    /**
+ * @throws RuntimeException
+ */
+public function execute(#[SensitiveParameter] string $accessToken) : OidcUserInfo
     {
         $resolved = $this->jwtIdentity->resolve(token: $accessToken);
 

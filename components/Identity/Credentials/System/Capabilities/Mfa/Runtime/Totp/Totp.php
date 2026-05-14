@@ -74,7 +74,10 @@ final readonly class Totp implements TotpInterface
         return $encoded;
     }
 
-    public function provisioningUri(string $issuer, #[SensitiveParameter] string $accountLabel, #[SensitiveParameter] string $secret) : string
+    /**
+ * @throws InvalidArgumentException
+ */
+public function provisioningUri(string $issuer, #[SensitiveParameter] string $accountLabel, #[SensitiveParameter] string $secret) : string
     {
         $issuer       = trim(string: $issuer);
         $accountLabel = trim(string: $accountLabel);
@@ -180,7 +183,10 @@ final readonly class Totp implements TotpInterface
         return $bytes;
     }
 
-    private function hotp(#[SensitiveParameter] string $secret, int $counter) : string
+    /**
+ * @throws InvalidArgumentException
+ */
+private function hotp(#[SensitiveParameter] string $secret, int $counter) : string
     {
         $binaryCounter = pack('N2', ($counter >> 32) & 0xFFFFFFFF, $counter & 0xFFFFFFFF);
         $hash          = hash_hmac(algo: 'sha1', data: $binaryCounter, key: $secret, binary: true);
@@ -198,7 +204,10 @@ final readonly class Totp implements TotpInterface
         return str_pad(string: (string) ($value % $modulo), length: $this->digits, pad_string: '0', pad_type: STR_PAD_LEFT);
     }
 
-    public function codeAt(#[SensitiveParameter] string $secret, DateTimeImmutable $moment) : string
+    /**
+ * @throws InvalidArgumentException
+ */
+public function codeAt(#[SensitiveParameter] string $secret, DateTimeImmutable $moment) : string
     {
         $secretBytes = $this->base32Decode(secret: $secret);
 

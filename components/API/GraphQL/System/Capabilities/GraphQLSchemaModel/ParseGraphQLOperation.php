@@ -86,7 +86,13 @@ final class ParseGraphQLOperation
         return $this->tokens[$this->position] ?? null;
     }
 
-    private function consumeName(string $label) : string
+    /**
+ * @throws GraphQLOperationInvalid
+ */
+/**
+ * @throws GraphQLOperationInvalid
+ */
+private function consumeName(string $label) : string
     {
         $token = $this->consume();
 
@@ -97,7 +103,10 @@ final class ParseGraphQLOperation
         return $token;
     }
 
-    private function consume() : string
+    /**
+ * @throws GraphQLOperationInvalid
+ */
+private function consume() : string
     {
         $token = $this->peek();
 
@@ -136,7 +145,10 @@ final class ParseGraphQLOperation
         }
     }
 
-    private function expect(string $token) : void
+    /**
+ * @throws GraphQLOperationInvalid
+ */
+private function expect(string $token) : void
     {
         $actual = $this->consume();
 

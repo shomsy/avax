@@ -33,7 +33,10 @@ final class SimpleContainer implements ContainerInterface
         return $this->resolve($abstract, $parameters);
     }
 
-    public function get(string $id): mixed
+    /**
+ * @throws class
+ */
+public function get(string $id): mixed
     {
         if (! $this->has($id)) {
             throw new class('Entry ['.$id.'] is not in the container.') extends RuntimeException implements NotFoundExceptionInterface {};

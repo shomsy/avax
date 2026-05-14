@@ -56,7 +56,10 @@ final class BindingRegistry
         $this->instances[$abstract] = $instance;
     }
 
-    public function alias(string $alias, string $abstract): void
+    /**
+ * @throws LogicException
+ */
+public function alias(string $alias, string $abstract): void
     {
         if ($alias === $abstract) {
             throw new LogicException('Cannot alias a service to itself: '.$alias);

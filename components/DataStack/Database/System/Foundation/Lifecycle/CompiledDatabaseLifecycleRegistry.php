@@ -205,7 +205,10 @@ final class CompiledDatabaseLifecycleRegistry
         return $keys;
     }
 
-    private function assertNotFrozen(): void
+    /**
+ * @throws RuntimeException
+ */
+private function assertNotFrozen(): void
     {
         if ($this->frozen) {
             throw new RuntimeException(

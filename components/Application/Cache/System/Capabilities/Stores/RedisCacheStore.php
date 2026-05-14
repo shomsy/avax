@@ -24,7 +24,10 @@ final class RedisCacheStore implements CacheStoreInterface
         $this->connect();
     }
 
-    private function connect(): void
+    /**
+ * @throws RuntimeException
+ */
+private function connect(): void
     {
         $host = $this->config['host'] ?? '127.0.0.1';
         $port = $this->config['port'] ?? 6379;

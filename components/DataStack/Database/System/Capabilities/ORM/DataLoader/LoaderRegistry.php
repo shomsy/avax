@@ -18,7 +18,10 @@ final class LoaderRegistry
         return $this;
     }
 
-    public function get(string $relation): DataLoaderInterface
+    /**
+ * @throws RuntimeException
+ */
+public function get(string $relation): DataLoaderInterface
     {
         return $this->loaders[$relation]
             ?? throw new RuntimeException(message: 'No DataLoader registered for relation: '.$relation);

@@ -9,7 +9,10 @@ use Avax\Components\Application\Filesystem\System\Foundation\Failure\FilesystemO
 
 final readonly class MoveFile
 {
-    public function execute(string $source, string $destination) : bool
+    /**
+ * @throws FileNotFound
+ */
+public function execute(string $source, string $destination) : bool
     {
         $cleanSource = $this->sanitizePath($source);
         $cleanDest   = $this->sanitizePath($destination);

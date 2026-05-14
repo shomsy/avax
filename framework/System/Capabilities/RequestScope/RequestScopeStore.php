@@ -31,7 +31,10 @@ final class RequestScopeStore implements ResettableState
         return $this->requestScope instanceof RequestScope && $this->requestScope->isOpen();
     }
 
-    public function current(): RequestScope
+    /**
+ * @throws RequestScopeNotOpen
+ */
+public function current(): RequestScope
     {
         if (! $this->hasCurrent()) {
             throw new RequestScopeNotOpen(message: 'No request scope is currently open.');

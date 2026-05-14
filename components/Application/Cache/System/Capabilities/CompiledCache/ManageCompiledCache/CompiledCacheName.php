@@ -18,7 +18,10 @@ final readonly class CompiledCacheName
         $this->validate();
     }
 
-    private function validate(): void
+    /**
+ * @throws InvalidArgumentException
+ */
+private function validate(): void
     {
         if ($this->name === '') {
             throw new InvalidArgumentException(message: 'Compiled cache name cannot be empty');

@@ -41,7 +41,10 @@ readonly class ReadFromCache
         return $cache->get($runtimeCacheTarget->key, $runtimeCacheTarget->default);
     }
 
-    private function readCompiled(CompiledCacheTarget $compiledCacheTarget): mixed
+    /**
+ * @throws CompiledNotConfigured
+ */
+private function readCompiled(CompiledCacheTarget $compiledCacheTarget): mixed
     {
         if (! $this->compiledCacheContract instanceof CompiledCacheContract) {
             throw new CompiledNotConfigured();

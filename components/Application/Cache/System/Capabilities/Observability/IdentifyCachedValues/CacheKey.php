@@ -37,7 +37,10 @@ final readonly class CacheKey implements Stringable
         return strtolower($normalized);
     }
 
-    private function validate(string $key): void
+    /**
+ * @throws InvalidCacheKey
+ */
+private function validate(string $key): void
     {
         $length = strlen($key);
 

@@ -18,7 +18,10 @@ final class AtomicCompiledCacheWrite
     {
     }
 
-    public function write(
+    /**
+ * @throws CompiledCacheCouldNotBeWritten
+ */
+public function write(
         CompiledCacheName $compiledCacheName,
         string $payload,
     ): CompiledCacheArtifact {

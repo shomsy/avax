@@ -8,7 +8,10 @@ use Closure;
 
 final readonly class ValidateCompiledCachePayload
 {
-    public function validate(string $name, mixed $payload): void
+    /**
+ * @throws CompiledCachePayloadWasInvalid
+ */
+public function validate(string $name, mixed $payload): void
     {
         if ($payload instanceof Closure) {
             throw new CompiledCachePayloadWasInvalid(

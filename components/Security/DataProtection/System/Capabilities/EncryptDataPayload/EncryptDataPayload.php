@@ -12,7 +12,10 @@ final class EncryptDataPayload
         private readonly string $cipher = 'aes-256-gcm',
     ) {}
 
-    public function encrypt(string $data, string $key) : array
+    /**
+ * @throws RuntimeException
+ */
+public function encrypt(string $data, string $key) : array
     {
         $ivLength = openssl_cipher_iv_length(cipher_algo: $this->cipher);
 
@@ -48,7 +51,10 @@ final class EncryptDataPayload
         return $result;
     }
 
-    public function decrypt(string $ciphertext, string $key, string $iv, string|null $tag = null) : string
+    /**
+ * @throws RuntimeException
+ */
+public function decrypt(string $ciphertext, string $key, string $iv, string|null $tag = null) : string
     {
         $rawCiphertext = base64_decode(string: $ciphertext, strict: true);
         $rawIv         = base64_decode(string: $iv, strict: true);

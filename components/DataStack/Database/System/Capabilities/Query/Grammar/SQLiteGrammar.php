@@ -151,7 +151,10 @@ final class SQLiteGrammar extends BaseGrammar
         return $this->supportsReturning;
     }
 
-    public function compileWindowFunction(string $function, string|null $partitionBy = null, string $orderBy = '') : string
+    /**
+ * @throws RuntimeException
+ */
+public function compileWindowFunction(string $function, string|null $partitionBy = null, string $orderBy = '') : string
     {
         $partitionBy ??= '';
         if (! $this->supportsWindowFunctions) {
@@ -175,7 +178,10 @@ final class SQLiteGrammar extends BaseGrammar
         return $sql.')';
     }
 
-    public function compileWithRecursive(string $name, string $columns, string $initialQuery, string $recursiveQuery): string
+    /**
+ * @throws RuntimeException
+ */
+public function compileWithRecursive(string $name, string $columns, string $initialQuery, string $recursiveQuery): string
     {
         if (! $this->supportsCTE) {
             throw new RuntimeException(message: 'CTE requires SQLite 3.26.0+');

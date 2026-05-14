@@ -10,7 +10,10 @@ use InvalidArgumentException;
 #[Attribute(flags: Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
 final readonly class ArrayType
 {
-    public function validate(mixed $value, string $field) : void
+    /**
+ * @throws InvalidArgumentException
+ */
+public function validate(mixed $value, string $field) : void
     {
         if (! is_array($value)) {
             throw new InvalidArgumentException(

@@ -16,7 +16,10 @@ final readonly class RejectPathTraversal
             "\r",
         ];
 
-    public function execute(string $path) : void
+    /**
+ * @throws PathTraversalAttempt
+ */
+public function execute(string $path) : void
     {
         $cleanPath = str_replace(["\\", "//"], "/", $path);
 

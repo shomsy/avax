@@ -90,7 +90,10 @@ final class DeferredProviderRegistry
         $this->bootedProviders[$providerClass] = true;
     }
 
-    public function register(RegisterDependency $registerDependency, array $serviceIds, DependencyRegistry $dependencyRegistry, ResolutionMetrics|null $resolutionMetrics = null) : void
+    /**
+ * @throws ContainerException
+ */
+public function register(RegisterDependency $registerDependency, array $serviceIds, DependencyRegistry $dependencyRegistry, ResolutionMetrics|null $resolutionMetrics = null) : void
     {
         $providerClass = $registerDependency::class;
         $ids = array_map(

@@ -8,7 +8,10 @@ use Avax\Components\Application\Filesystem\System\Foundation\Failure\FilesystemO
 
 final readonly class AppendToFile
 {
-    public function execute(string $path, string $content) : bool
+    /**
+ * @throws FilesystemOperationFailed
+ */
+public function execute(string $path, string $content) : bool
     {
         $cleanPath = $this->sanitizePath($path);
         $directory = dirname($cleanPath);

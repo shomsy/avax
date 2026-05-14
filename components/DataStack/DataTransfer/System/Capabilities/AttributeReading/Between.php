@@ -15,7 +15,10 @@ final readonly class Between
         public int|float $max,
     ) {}
 
-    public function validate(mixed $value, string $field) : void
+    /**
+ * @throws InvalidArgumentException
+ */
+public function validate(mixed $value, string $field) : void
     {
         if (is_string($value)) {
             $length = strlen($value);

@@ -74,7 +74,10 @@ final class SecurityConfigurationStore
         return $this->readChange(requestId: $requestId);
     }
 
-    public function apply(string $requestId) : stdClass
+    /**
+ * @throws RuntimeException
+ */
+public function apply(string $requestId) : stdClass
     {
         $change = $this->change(requestId: $requestId);
 

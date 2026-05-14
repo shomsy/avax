@@ -39,7 +39,10 @@ final readonly class CacheStoreConfiguration
         ]);
     }
 
-    public function build(): CacheStore
+    /**
+ * @throws InvalidArgumentException
+ */
+public function build(): CacheStore
     {
         $basePath = is_string($this->options['base_path'] ?? null)
             ? $this->options['base_path']

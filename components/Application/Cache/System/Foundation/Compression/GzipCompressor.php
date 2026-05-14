@@ -15,7 +15,10 @@ final readonly class GzipCompressor implements CacheCompressor
     public const int LEVEL = -1;
 
     #[Override]
-    public function compress(string $data): CompressedCachePayload
+    /**
+ * @throws RuntimeException
+ */
+public function compress(string $data): CompressedCachePayload
     {
         $originalSize = strlen($data);
         $compressed = gzcompress($data, level: self::LEVEL);
@@ -33,7 +36,10 @@ final readonly class GzipCompressor implements CacheCompressor
     }
 
     #[Override]
-    public function decompress(CompressedCachePayload $compressedCachePayload): string
+    /**
+ * @throws InvalidArgumentException
+ */
+public function decompress(CompressedCachePayload $compressedCachePayload): string
     {
         if ($compressedCachePayload->algorithm !== self::ALGORITHM) {
             throw new InvalidArgumentException(

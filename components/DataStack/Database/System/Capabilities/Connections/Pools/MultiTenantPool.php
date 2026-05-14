@@ -18,7 +18,10 @@ final class MultiTenantPool
     ) {
     }
 
-    public function getForTenant(string $tenantId): ConnectionPoolInterface
+    /**
+ * @throws RuntimeException
+ */
+public function getForTenant(string $tenantId): ConnectionPoolInterface
     {
         if (! isset($this->pools[$tenantId])) {
             if (count(value: $this->pools) >= $this->maxTenants) {

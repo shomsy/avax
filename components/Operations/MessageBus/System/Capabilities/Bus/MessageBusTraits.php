@@ -24,7 +24,10 @@ final class MessageBusTraits
         $this->middleware[] = $middleware;
     }
 
-    public function dispatch(Command $command): mixed
+    /**
+ * @throws RuntimeException
+ */
+public function dispatch(Command $command): mixed
     {
         $class = $command::class;
 

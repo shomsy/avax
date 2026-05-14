@@ -27,7 +27,10 @@ final class ShardedPool
         return $this->getForKey(key: (string) $userId);
     }
 
-    public function getForKey(string $key): ConnectionPoolInterface
+    /**
+ * @throws RuntimeException
+ */
+public function getForKey(string $key): ConnectionPoolInterface
     {
         $shardIndex = abs(num: crc32(string: $key)) % $this->shardCount;
 

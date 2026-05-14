@@ -63,7 +63,10 @@ final readonly class ReadCompiledCache
         return $this->requireCompiledArtifact($compiledCacheName);
     }
 
-    private function requireCompiledArtifact(CompiledCacheName $compiledCacheName): mixed
+    /**
+ * @throws CompiledCacheCouldNotBeRead
+ */
+private function requireCompiledArtifact(CompiledCacheName $compiledCacheName): mixed
     {
         $resolveCompiledCachePath = new ResolveCompiledCachePath(compiledCacheDirectory: $this->compiledCacheDirectory);
         $compiledCachePath = $resolveCompiledCachePath->resolveArtifactPath(compiledCacheName: $compiledCacheName);

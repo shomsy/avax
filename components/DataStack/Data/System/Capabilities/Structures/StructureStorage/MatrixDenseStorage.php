@@ -48,7 +48,10 @@ final readonly class MatrixDenseStorage
         return new self(rows: array_fill(0, $rows, array_fill(0, $columns, $value)));
     }
 
-    public function get(int $row, int $column) : mixed
+    /**
+ * @throws IndexOutOfBounds
+ */
+public function get(int $row, int $column) : mixed
     {
         if ($row < 0 || $row >= $this->rowCount()) {
             throw new IndexOutOfBounds(message: "Row {$row} out of bounds [0, " . ($this->rowCount() - 1) . ']');

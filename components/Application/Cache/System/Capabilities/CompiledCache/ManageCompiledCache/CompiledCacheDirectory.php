@@ -17,7 +17,10 @@ final readonly class CompiledCacheDirectory
         $this->ensureExists($filesystem);
     }
 
-    private function validate(Filesystem $filesystem) : void
+    /**
+ * @throws InvalidArgumentException
+ */
+private function validate(Filesystem $filesystem) : void
     {
         if ($this->path === '') {
             throw new InvalidArgumentException(message: 'Compiled cache directory cannot be empty');

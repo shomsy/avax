@@ -28,7 +28,10 @@ final class BuildCompiledPhpPayload
             PHP;
     }
 
-    private function validate(mixed $payload): void
+    /**
+ * @throws CompiledCachePayloadWasInvalid
+ */
+private function validate(mixed $payload): void
     {
         if ($payload instanceof Closure) {
             throw new CompiledCachePayloadWasInvalid(
@@ -51,7 +54,10 @@ final class BuildCompiledPhpPayload
     /**
      * @param  array<array-key, mixed>  $data
      */
-    private function validateArray(array $data): void
+    /**
+ * @throws CompiledCachePayloadWasInvalid
+ */
+private function validateArray(array $data): void
     {
         foreach ($data as $key => $value) {
             if (is_string($key) && $key === '') {

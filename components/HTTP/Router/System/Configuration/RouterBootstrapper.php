@@ -100,7 +100,10 @@ final class RouterBootstrapper
         return $method . ' ' . $path;
     }
 
-    private function registerWithDsl(string $method, string $path, callable|array|string $handler) : Registrar
+    /**
+ * @throws InvalidArgumentException
+ */
+private function registerWithDsl(string $method, string $path, callable|array|string $handler) : Registrar
     {
         return match ($method) {
             'GET'     => $this->router->get(path: $path, action: $handler),

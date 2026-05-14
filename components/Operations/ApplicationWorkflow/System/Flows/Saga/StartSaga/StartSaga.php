@@ -23,7 +23,10 @@ final readonly class StartSaga
         private InspectSaga            $inspectSaga,
     ) {}
 
-    public function startWithIdempotency(
+    /**
+ * @throws SagaStartFailure
+ */
+public function startWithIdempotency(
         SagaDefinition   $sagaDefinition,
         SagaStartCommand $sagaStartCommand,
     ) : SagaInstance
@@ -47,7 +50,10 @@ final readonly class StartSaga
         return $sagaInstance;
     }
 
-    public function start(
+    /**
+ * @throws SagaStartFailure
+ */
+public function start(
         SagaDefinition   $sagaDefinition,
         SagaStartCommand $sagaStartCommand, callable|null $correlationIdGenerator = null,
     ) : SagaInstance

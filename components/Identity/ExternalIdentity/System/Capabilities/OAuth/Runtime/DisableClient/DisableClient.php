@@ -15,7 +15,10 @@ final readonly class DisableClient
 {
     public function __construct(private OAuthClientRegistryInterface $oAuthClientRegistry, private AuditLogInterface $auditLog, private Clock $clock) {}
 
-    public function execute(string $clientId) : OAuthClient
+    /**
+ * @throws RuntimeException
+ */
+public function execute(string $clientId) : OAuthClient
     {
         $client = $this->oAuthClientRegistry->deactivate(clientId: $clientId);
 

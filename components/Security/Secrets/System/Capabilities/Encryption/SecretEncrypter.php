@@ -13,7 +13,10 @@ final readonly class SecretEncrypter
     ) {
     }
 
-    public function encrypt(string $value): string
+    /**
+ * @throws RuntimeException
+ */
+public function encrypt(string $value): string
     {
         $iv = random_bytes(16);
         $encrypted = openssl_encrypt(
@@ -32,7 +35,10 @@ final readonly class SecretEncrypter
         return base64_encode($iv.$tag.$encrypted);
     }
 
-    public function decrypt(string $value): string
+    /**
+ * @throws RuntimeException
+ */
+public function decrypt(string $value): string
     {
         $data = base64_decode($value, strict: true);
 

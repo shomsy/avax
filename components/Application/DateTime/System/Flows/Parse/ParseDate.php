@@ -22,7 +22,10 @@ final class ParseDate
         }
     }
 
-    public function fromFormat(string $datetime, string $format, string|null $timezone = null) : DateTimeImmutable
+    /**
+ * @throws InvalidDateTimeString
+ */
+public function fromFormat(string $datetime, string $format, string|null $timezone = null) : DateTimeImmutable
     {
         $tz = $timezone ?? date_default_timezone_get();
         $date = DateTimeImmutable::createFromFormat($format, $datetime, new DateTimeZone($tz));
@@ -50,7 +53,10 @@ final class ParseDate
         }
     }
 
-    public function parseRelative(string $relative, string|null $timezone = null) : DateTimeImmutable
+    /**
+ * @throws InvalidDateTimeString
+ */
+public function parseRelative(string $relative, string|null $timezone = null) : DateTimeImmutable
     {
         $tz = $timezone ?? date_default_timezone_get();
 

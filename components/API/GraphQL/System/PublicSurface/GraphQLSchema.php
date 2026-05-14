@@ -6,6 +6,8 @@ namespace Avax\Components\API\GraphQL\System\PublicSurface;
 
 use Avax\Components\API\GraphQL\System\Capabilities\GraphQLSchemaModel\GraphQLField;
 use Avax\Components\API\GraphQL\System\Capabilities\GraphQLSchemaModel\GraphQLObjectType;
+use Avax\Components\API\GraphQL\System\Capabilities\SchemaFieldAssembly\AssembleFieldsFromMap;
+use Avax\Components\API\GraphQL\System\Capabilities\SchemaSerialization\SchemaToArray;
 
 final class GraphQLSchema
 {
@@ -24,6 +26,9 @@ final class GraphQLSchema
      */
     private array $types;
 
+    private AssembleFieldsFromMap $fieldAssembler;
+    private SchemaToArray         $schemaSerializer;
+
     /**
      * @param array<string, GraphQLField>      $queryFields
      * @param array<string, GraphQLField>      $mutationFields
@@ -36,9 +41,11 @@ final class GraphQLSchema
         array                  $types = [],
     )
     {
-        $this->queryFields    = $queryFields;
-        $this->mutationFields = $mutationFields;
-        $this->types          = $types;
+        $this->queryFields      = $queryFields;
+        $this->mutationFields   = $mutationFields;
+        $this->types            = $types;
+        $this->fieldAssembler   = new AssembleFieldsFromMap();
+        $this->schemaSerializer = new SchemaToArray();
     }
 
     public static function define(string $name = 'AvaX GraphQL API') : self
@@ -102,26 +109,10 @@ final class GraphQLSchema
         $schema               = clone $this;
         $schema->types[$name] = new GraphQLObjectType(
             name  : $name,
-            fields: $this->fieldsFromMap($fields),
+            fields: $this->fieldAssembler->assemble($fields),
         );
 
         return $schema;
-    }
-
-    /**
-     * @param array<string, string> $fields
-     *
-     * @return list<GraphQLField>
-     */
-    private function fieldsFromMap(array $fields) : array
-    {
-        $definitions = [];
-
-        foreach ($fields as $name => $type) {
-            $definitions[] = new GraphQLField(name: $name, type: $type);
-        }
-
-        return $definitions;
     }
 
     public function findType(string $name) : ?GraphQLObjectType
@@ -152,35 +143,11 @@ final class GraphQLSchema
      */
     public function toArray() : array
     {
-        return [
-            'name'      => $this->name,
-            'queries'   => array_map(
-                static fn (GraphQLField $field) : array => [
-                    'type'                => $field->type,
-                    'arguments'           => $field->arguments,
-                    'complexityCost'      => $field->complexityCost,
-                    'requiredPermissions' => $field->requiredPermissions,
-                ],
-                $this->queryFields,
-            ),
-            'mutations' => array_map(
-                static fn (GraphQLField $field) : array => [
-                    'type'                => $field->type,
-                    'arguments'           => $field->arguments,
-                    'complexityCost'      => $field->complexityCost,
-                    'requiredPermissions' => $field->requiredPermissions,
-                ],
-                $this->mutationFields,
-            ),
-            'types'     => array_map(
-                static fn (GraphQLObjectType $type) : array => [
-                    'fields' => array_map(
-                        static fn (GraphQLField $field) : string => $field->type,
-                        $type->fields,
-                    ),
-                ],
-                $this->types,
-            ),
-        ];
+        return $this->schemaSerializer->convert(
+            name          : $this->name,
+            queryFields   : $this->queryFields,
+            mutationFields: $this->mutationFields,
+            types         : $this->types,
+        );
     }
 }

@@ -9,7 +9,11 @@ use Avax\Components\HTTP\Request\System\Capabilities\Uri\RequestUri;
 use Avax\Components\HTTP\Request\System\Configuration\RequestBuilder;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\Responses;
+use Avax\Components\HTTP\Router\System\Capabilities\ErrorResponseBuilding\BuildErrorResponse;
+use Avax\Components\HTTP\Router\System\Capabilities\MiddlewarePipeline\BuildPipeline;
+use Avax\Components\HTTP\Router\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
+use Avax\Components\HTTP\Router\System\Capabilities\UrlBuilding\SubstituteRouteParameters;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\Foundation\Failure\RouterFailure;
 use Avax\Components\HTTP\Router\System\PublicSurface\Router;
@@ -25,7 +29,15 @@ final class RouterHardeningTest extends TestCase
 
     public function test_callable_returning_null_returns_empty_response() : void
     {
-        $router = new Router(new ResolveCallable(), new RouteCollection(), new MatchRoute());
+        $resolveCallable = new ResolveCallable();
+        $router          = new Router(
+            routeCollection   : new RouteCollection(),
+            matchRoute        : new MatchRoute(),
+            pipelineBuilder   : new BuildPipeline($resolveCallable),
+            errorResponse     : new BuildErrorResponse(),
+            urlBuilder        : new SubstituteRouteParameters(),
+            responseNormalizer: new NormalizeControllerResult(),
+        );
         $router->get(path: '/null-test', action: static fn () => null);
 
         $response = $router->resolve(request: $this->createRequest(path: '/null-test'));
@@ -118,7 +130,15 @@ final class RouterHardeningTest extends TestCase
 
         $this->responses = new Responses();
 
-        $router = new Router(new ResolveCallable(), new RouteCollection(), new MatchRoute());
+        $resolveCallable = new ResolveCallable();
+        $router          = new Router(
+            routeCollection   : new RouteCollection(),
+            matchRoute        : new MatchRoute(),
+            pipelineBuilder   : new BuildPipeline($resolveCallable),
+            errorResponse     : new BuildErrorResponse(),
+            urlBuilder        : new SubstituteRouteParameters(),
+            responseNormalizer: new NormalizeControllerResult(),
+        );
         $router->get(path: '/', action: fn () => $this->textResponse(body: 'Router is Working!'));
         $router->get(path: '/health', action: fn () => $this->textResponse(body: 'ok'));
         $router->get(path: '/test', action: fn () => $this->textResponse(body: 'Enterprise Router Active!'));

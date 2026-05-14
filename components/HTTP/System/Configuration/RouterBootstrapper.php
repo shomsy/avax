@@ -36,7 +36,7 @@ final class RouterBootstrapper
 
     private readonly RouterInterface $router;
 
-    private readonly ?RouterRuntimeInterface $routerRuntime;
+    private readonly RouterRuntimeInterface|null $routerRuntime;
 
     private array $routeMiddleware
         = [] {

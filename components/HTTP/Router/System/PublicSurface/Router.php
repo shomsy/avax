@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Router\System\PublicSurface;
 
-use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
-use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
+use Avax\Components\HTTP\Router\System\Capabilities\ErrorResponseBuilding\BuildErrorResponse;
+use Avax\Components\HTTP\Router\System\Capabilities\MiddlewarePipeline\BuildPipeline;
+use Avax\Components\HTTP\Router\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteGroup\RouteGroupRegistrar;
-use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchResult;
+use Avax\Components\HTTP\Router\System\Capabilities\UrlBuilding\SubstituteRouteParameters;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\Registrar;
 use Avax\Components\HTTP\Router\System\Foundation\Failure\RouterFailure;
@@ -24,14 +25,13 @@ final class Router implements RouterInterface, RouterRuntimeInterface
     private array $globalMiddleware = [];
 
     public function __construct(
-        private readonly ResolveCallable $callableResolver,
-        private readonly RouteCollection $routeCollection,
-        private readonly MatchRoute      $matchRoute,
-        /**
-         * Base URI for absolute URL generation.
-         * Configure this in production — the default is for development only.
-         */
-        private readonly string          $baseUri = 'http://localhost',
+        private readonly RouteCollection           $routeCollection,
+        private readonly MatchRoute                $matchRoute,
+        private readonly BuildPipeline             $pipelineBuilder,
+        private readonly BuildErrorResponse        $errorResponse,
+        private readonly SubstituteRouteParameters $urlBuilder,
+        private readonly NormalizeControllerResult $responseNormalizer,
+        private readonly string                    $baseUri = 'http://localhost',
     ) {
     }
 
@@ -130,46 +130,10 @@ final class Router implements RouterInterface, RouterRuntimeInterface
             throw new RouterFailure(sprintf("Route '%s' is not registered", $name));
         }
 
-        $url = $this->substituteRouteParams($route->uri(), $parameters, $name);
+        $url = $this->urlBuilder->substitute($route->uri(), $parameters, $name);
 
         if ($absolute) {
-            $url = $this->baseUri . ($url[0] !== '/' ? '/' : '') . $url;
-        }
-
-        return $url;
-    }
-
-    /** @param array<string, mixed> $parameters */
-    private function substituteRouteParams(string $uri, array $parameters, string $name) : string
-    {
-        $url = (string) preg_replace_callback(
-            '/\{(\w+)\}/',
-            static function (array $matches) use ($parameters, $name) : string {
-                $param = $matches[1];
-                if (! array_key_exists($param, $parameters)) {
-                    throw new RouterFailure(
-                        sprintf("Missing required parameter '%s' for route '%s'", $param, $name),
-                    );
-                }
-
-                return (string) $parameters[$param];
-            },
-            $uri,
-        );
-
-        // Append extra parameters as query string
-        $remaining = [];
-        foreach ($parameters as $key => $value) {
-            if (! preg_match('/\{' . $key . '\}/', $uri)) {
-                $remaining[$key] = $value;
-            }
-        }
-
-        if ($remaining !== []) {
-            $query = http_build_query($remaining);
-            if ($query !== '') {
-                $url .= '?' . $query;
-            }
+            $url = $this->urlBuilder->makeAbsolute($url);
         }
 
         return $url;
@@ -198,16 +162,16 @@ final class Router implements RouterInterface, RouterRuntimeInterface
         $match = $this->matchRoute->execute($this->routeCollection, $request);
 
         if ($match->isMethodNotAllowed()) {
-            return $this->createMethodNotAllowedResponse($match->allowedMethods);
+            return $this->errorResponse->methodNotAllowed($match->allowedMethods);
         }
 
         if ($match->isNotFound()) {
-            return $this->createNotFoundResponse();
+            return $this->errorResponse->notFound();
         }
 
         $route = $match->route;
         if ($route === null) {
-            return $this->createNotFoundResponse();
+            return $this->errorResponse->notFound();
         }
 
         $action        = $route->action();
@@ -218,83 +182,12 @@ final class Router implements RouterInterface, RouterRuntimeInterface
                 $params = $match->parameters ?? [];
                 $result = $action($req, ...array_values($params));
 
-                return $this->normalizeToResponse($result);
+                return $this->responseNormalizer->normalize($result);
             }
 
             throw new RouterFailure('Invalid route action');
         };
 
-        if ($allMiddleware === []) {
-            return $handler($request);
-        }
-
-        // Build the middleware pipeline from inside out.
-        // The last middleware wraps the handler, the first middleware is the outermost.
-        $pipeline = $handler;
-        foreach (array_reverse($allMiddleware) as $middleware) {
-            if (is_string($middleware)) {
-                $middleware = $this->resolveMiddleware($middleware);
-            }
-
-            $next     = $pipeline;
-            $mw       = $middleware;
-            $pipeline = static function (RequestInterface $req) use ($mw, $next) : ResponseInterface {
-                $result = $mw($req, $next);
-                if ($result instanceof ResponseInterface) {
-                    return $result;
-                }
-
-                return $next($req);
-            };
-        }
-
-        return $pipeline($request);
-    }
-
-    /**
-     * Resolve middleware class-string through DI container via ResolveCallable.
-     */
-    private function resolveMiddleware(string $middlewareClass) : callable
-    {
-        return $this->callableResolver->resolve($middlewareClass);
-    }
-
-    /** @phpstan-return ResponseInterface */
-    private function normalizeToResponse(mixed $result) : ResponseInterface
-    {
-        if ($result instanceof ResponseInterface) {
-            return $result;
-        }
-
-        if (is_string($result)) {
-            return Response::text($result);
-        }
-
-        if (is_array($result)) {
-            return Response::json($result);
-        }
-
-        return Response::text((string) $result);
-    }
-
-    /** @param list<RouteMethod> $allowedMethods */
-    private function createMethodNotAllowedResponse(array $allowedMethods) : ResponseInterface
-    {
-        $methods = array_map(
-            static fn (RouteMethod $m) => $m->value,
-            $allowedMethods,
-        );
-
-        $response = Response::json(
-            ['error' => 'Method Not Allowed', 'allowed' => $methods],
-            405,
-        );
-
-        return $response->withHeader('Allow', implode(', ', $methods));
-    }
-
-    private function createNotFoundResponse() : ResponseInterface
-    {
-        return Response::json(['error' => 'Not Found'], 404);
+        return $this->pipelineBuilder->build($handler, $allMiddleware)($request);
     }
 }

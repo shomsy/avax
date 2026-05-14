@@ -13,7 +13,11 @@ use Avax\Components\HTTP\Request\System\Capabilities\Headers\RequestHeaders;
 use Avax\Components\HTTP\Request\System\Capabilities\Uri\RequestUri;
 use Avax\Components\HTTP\Request\System\PublicSurface\Request;
 use Avax\Components\HTTP\Response\System\PublicSurface\Response;
+use Avax\Components\HTTP\Router\System\Capabilities\ErrorResponseBuilding\BuildErrorResponse;
+use Avax\Components\HTTP\Router\System\Capabilities\MiddlewarePipeline\BuildPipeline;
+use Avax\Components\HTTP\Router\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
+use Avax\Components\HTTP\Router\System\Capabilities\UrlBuilding\SubstituteRouteParameters;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\Foundation\Failure\RouterFailure;
 use Avax\Components\HTTP\Router\System\PublicSurface\Router;
@@ -447,6 +451,13 @@ final class RouterTest extends TestCase
         $routeCollection = new RouteCollection();
         $matchRoute      = new MatchRoute();
         $resolveCallable = new ResolveCallable();
-        $this->router    = new Router($resolveCallable, $routeCollection, $matchRoute);
+        $this->router = new Router(
+            routeCollection   : $routeCollection,
+            matchRoute        : $matchRoute,
+            pipelineBuilder   : new BuildPipeline($resolveCallable),
+            errorResponse     : new BuildErrorResponse(),
+            urlBuilder        : new SubstituteRouteParameters(),
+            responseNormalizer: new NormalizeControllerResult(),
+        );
     }
 }

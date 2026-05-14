@@ -2,16 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\HTTP\Client\System\Capabilities\Testing;
+namespace Avax\Tests\Support\Http\Client;
 
 use Throwable;
 
-/**
- * RecordedHttpResponse - A recorded HTTP response for testing.
- *
- * Used by FakeHttpClient to define expected responses for specific URLs.
- * Supports matching by URL and HTTP method.
- */
 final readonly class RecordedHttpResponse
 {
     /**
@@ -25,28 +19,20 @@ final readonly class RecordedHttpResponse
      * @param Throwable|null        $exception  Exception to throw instead of returning a response
      */
     public function __construct(
-        public string     $urlPattern,
-        public string     $method = '*',
-        public int        $statusCode = 200,
-        public array      $headers = [],
-        public string     $body = '',
-        public float      $delayMs = 0.0,
-        public bool       $useRegex = false,
+        public string         $urlPattern,
+        public string         $method = '*',
+        public int            $statusCode = 200,
+        public array          $headers = [],
+        public string         $body = '',
+        public float          $delayMs = 0.0,
+        public bool           $useRegex = false,
         public Throwable|null $exception = null,
     ) {}
 
     /**
-     * Create a successful response recording.
-     *
-     * @param string                $url     URL to match
-     * @param string                $body    Response body
-     * @param array<string, string> $headers Headers to include
+     * @param array<string, string> $headers
      */
-    public static function ok(
-        string $url,
-        string $body = '',
-        array  $headers = [],
-    ) : self
+    public static function ok(string $url, string $body = '', array $headers = []) : self
     {
         return new self(
             urlPattern: $url,
@@ -57,18 +43,7 @@ final readonly class RecordedHttpResponse
         );
     }
 
-    /**
-     * Create a JSON response recording.
-     *
-     * @param string $url    URL to match
-     * @param mixed  $data   Data to JSON encode
-     * @param int    $status HTTP status code
-     */
-    public static function json(
-        string $url,
-        mixed  $data = [],
-        int    $status = 200,
-    ) : self
+    public static function json(string $url, mixed $data = [], int $status = 200) : self
     {
         return new self(
             urlPattern: $url,
@@ -79,18 +54,7 @@ final readonly class RecordedHttpResponse
         );
     }
 
-    /**
-     * Create an error response recording.
-     *
-     * @param string $url     URL to match
-     * @param int    $status  HTTP status code
-     * @param string $message Error message in body
-     */
-    public static function error(
-        string $url,
-        int    $status = 500,
-        string $message = 'Internal Server Error',
-    ) : self
+    public static function error(string $url, int $status = 500, string $message = 'Internal Server Error') : self
     {
         return new self(
             urlPattern: $url,
@@ -100,12 +64,6 @@ final readonly class RecordedHttpResponse
         );
     }
 
-    /**
-     * Create a response recording that throws an exception.
-     *
-     * @param string    $url       URL to match
-     * @param Throwable $throwable Exception to throw
-     */
     public static function throws(string $url, Throwable $throwable) : self
     {
         return new self(
@@ -115,12 +73,6 @@ final readonly class RecordedHttpResponse
         );
     }
 
-    /**
-     * Create a response with an artificial delay.
-     *
-     * @param string $url     URL to match
-     * @param float  $delayMs Delay in milliseconds
-     */
     public static function delayed(string $url, float $delayMs) : self
     {
         return new self(
@@ -130,20 +82,12 @@ final readonly class RecordedHttpResponse
         );
     }
 
-    /**
-     * Check if this recorded response matches the given request.
-     *
-     * @param string $url    The request URL
-     * @param string $method The request HTTP method
-     */
     public function matches(string $url, string $method = 'GET') : bool
     {
-        // Check method match (* matches all)
         if ($this->method !== '*' && strtoupper($this->method) !== strtoupper($method)) {
             return false;
         }
 
-        // Check URL match
         if ($this->useRegex) {
             return (bool) preg_match($this->urlPattern, $url);
         }

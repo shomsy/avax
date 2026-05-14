@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Operations;
 
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Saga\SagaDefinition;
+use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaExecutor\SagaExecutor;
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaStore\InMemorySagaStore;
 use Avax\Components\Operations\ApplicationWorkflow\System\PublicSurface\Workflow;
 use Exception;
@@ -14,7 +15,7 @@ final class SagaTest extends TestCase
 {
     public function test_saga_executes_all_steps_on_success(): void
     {
-        $workflow = new Workflow(new InMemorySagaStore());
+        $workflow = new Workflow(new InMemorySagaStore(), new SagaExecutor());
         $def = new SagaDefinition();
 
         $steps = 0;
@@ -32,7 +33,7 @@ final class SagaTest extends TestCase
 
     public function test_saga_runs_compensations_on_failure(): void
     {
-        $workflow = new Workflow(new InMemorySagaStore());
+        $workflow = new Workflow(new InMemorySagaStore(), new SagaExecutor());
         $def = new SagaDefinition();
 
         $step1Done = false;

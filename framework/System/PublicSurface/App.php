@@ -88,7 +88,7 @@ final class App
         private readonly ResetApplicationState $resetApplicationState,
         private readonly ResponseFactory           $responseFactory,
         private readonly NormalizeControllerResult $normalizer,
-        private readonly ?MetricsCollector $metricsCollector = null,
+        private readonly MetricsCollector|null $metricsCollector = null,
     ) {
     }
 

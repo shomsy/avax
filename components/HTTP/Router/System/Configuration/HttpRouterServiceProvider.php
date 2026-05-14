@@ -8,7 +8,11 @@ use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\Re
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
 use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ActionResolution\ControllerResolver;
+use Avax\Components\HTTP\Router\System\Capabilities\ErrorResponseBuilding\BuildErrorResponse;
+use Avax\Components\HTTP\Router\System\Capabilities\MiddlewarePipeline\BuildPipeline;
+use Avax\Components\HTTP\Router\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
+use Avax\Components\HTTP\Router\System\Capabilities\UrlBuilding\SubstituteRouteParameters;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\PublicSurface\Router;
 
@@ -31,11 +35,23 @@ final class HttpRouterServiceProvider implements ServiceProvider
         $container->singleton(ResolveCallable::class, static fn (ContainerInterface $c) : ResolveCallable => new ResolveCallable(container: $c),
         );
 
-        // Router — uses injected dependencies, resolves middleware through ResolveCallable
-        $container->singleton(Router::class, static fn (ContainerInterface $c) : Router => new Router(
+        // Router-related capabilities
+        $container->singleton(BuildPipeline::class, static fn (ContainerInterface $c) : BuildPipeline => new BuildPipeline(
             callableResolver: $c->get(ResolveCallable::class),
-            routeCollection : $c->get(RouteCollection::class),
-            matchRoute      : $c->get(MatchRoute::class),
+        ),
+        );
+        $container->singleton(BuildErrorResponse::class, static fn () : BuildErrorResponse => new BuildErrorResponse());
+        $container->singleton(SubstituteRouteParameters::class, static fn () : SubstituteRouteParameters => new SubstituteRouteParameters());
+        $container->singleton(NormalizeControllerResult::class, static fn () : NormalizeControllerResult => new NormalizeControllerResult());
+
+        // Router — uses injected capabilities, resolves middleware through BuildPipeline
+        $container->singleton(Router::class, static fn (ContainerInterface $c) : Router => new Router(
+            routeCollection   : $c->get(RouteCollection::class),
+            matchRoute        : $c->get(MatchRoute::class),
+            pipelineBuilder   : $c->get(BuildPipeline::class),
+            errorResponse     : $c->get(BuildErrorResponse::class),
+            urlBuilder        : $c->get(SubstituteRouteParameters::class),
+            responseNormalizer: $c->get(NormalizeControllerResult::class),
         ),
         );
 

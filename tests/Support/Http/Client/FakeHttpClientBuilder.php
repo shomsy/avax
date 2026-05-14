@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\HTTP\Client\System\Capabilities\Testing;
+namespace Avax\Tests\Support\Http\Client;
 
-use Avax\Components\HTTP\Client\System\Foundation\Failure\HttpRequestFailed;
 use Throwable;
 
 final class FakeHttpClientBuilder

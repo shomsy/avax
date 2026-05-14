@@ -7,7 +7,6 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\PublicSurface;
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Saga\SagaDefinition;
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaExecutor\SagaExecutor;
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaState\SagaState;
-use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaStore\InMemorySagaStore;
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaStore\SagaStoreInterface;
 use RuntimeException;
 
@@ -19,14 +18,10 @@ use RuntimeException;
  */
 final readonly class Workflow
 {
-    private SagaStoreInterface $sagaStore;
-
-    private SagaExecutor $sagaExecutor;
-
-    public function __construct(SagaStoreInterface $sagaStore)
-    {
-        $this->sagaStore = $sagaStore;
-        $this->sagaExecutor = new SagaExecutor();
+    public function __construct(
+        private SagaStoreInterface $sagaStore,
+        private SagaExecutor       $sagaExecutor,
+    ) {
     }
 
     /**

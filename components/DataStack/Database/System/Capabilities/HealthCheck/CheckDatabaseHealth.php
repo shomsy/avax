@@ -4,53 +4,59 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\HealthCheck;
 
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\DatabaseConnection;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\CompiledDatabaseLifecycleRegistry;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\GlobalDatabaseLifecycleState;
-use Avax\Components\DataStack\Database\System\Capabilities\Connections\DatabaseConnection;
+use Avax\Framework\System\Capabilities\Health\Foundation\HealthFinding;
+use Avax\Framework\System\Capabilities\Health\Foundation\HealthReport;
+use Avax\Framework\System\Capabilities\Health\Foundation\HealthStatus;
+use ReflectionClass;
+use Throwable;
 
 /**
  * CheckDatabaseHealth
  *
  * Verifies database component runtime health:
- * - Lifecycle registry is assembled
- * - Connection policy exists
- * - Query redaction is configured
+ * - Lifecycle registry is accessible
+ * - Connection class is instantiable
+ * - Compiled lifecycle registry is loadable
  */
-final readonly class CheckDatabaseHealth
+final class CheckDatabaseHealth
 {
-    public function check(): DatabaseHealthReport
+    public function check() : HealthReport
     {
         $findings = [];
-        $healthy = true;
+        $overall = HealthStatus::Green;
 
-        // Check 1: Lifecycle registry exists and is accessible
+        // Check 1: Lifecycle registry accessible
         try {
             $registry = GlobalDatabaseLifecycleState::registry();
-            $findings[] = 'Lifecycle registry accessible';
-        } catch (\Throwable $e) {
-            $healthy = false;
-            $findings[] = 'Lifecycle registry unavailable: '.$e->getMessage();
+            $findings[] = new HealthFinding('database.lifecycle', HealthStatus::Green, 'Lifecycle registry accessible');
+        } catch (Throwable $e) {
+            $findings[] = new HealthFinding('database.lifecycle', HealthStatus::Red, sprintf('Lifecycle registry unavailable: %s', $e->getMessage()));
+
+            return new HealthReport(findings: $findings, overall: HealthStatus::Red);
         }
 
-        // Check 2: Compiled registry class exists (event wiring available)
+        // Check 2: DatabaseConnection is instantiable
+        try {
+            $class      = new ReflectionClass(DatabaseConnection::class);
+            $findings[] = new HealthFinding('database.connection', HealthStatus::Green, 'DatabaseConnection class is loadable');
+        } catch (Throwable $e) {
+            $findings[] = new HealthFinding('database.connection', HealthStatus::Red, sprintf('DatabaseConnection unavailable: %s', $e->getMessage()));
+            $overall    = HealthStatus::Red;
+        }
+
+        // Check 3: Compiled lifecycle registry class loadable
         if (class_exists(CompiledDatabaseLifecycleRegistry::class)) {
-            $findings[] = 'Compiled lifecycle registry available';
+            $findings[] = new HealthFinding('database.compiled', HealthStatus::Green, 'Compiled lifecycle registry available');
         } else {
-            $healthy = false;
-            $findings[] = 'Compiled lifecycle registry class not loaded';
+            $findings[] = new HealthFinding('database.compiled', HealthStatus::Yellow, 'Compiled lifecycle registry class not loaded');
+            if ($overall === HealthStatus::Green) {
+                $overall = HealthStatus::Yellow;
+            }
         }
 
-        // Check 3: DatabaseConnection class available
-        if (class_exists(DatabaseConnection::class)) {
-            $findings[] = 'Database connection class available';
-        } else {
-            $healthy = false;
-            $findings[] = 'Database connection class not loaded';
-        }
-
-        return new DatabaseHealthReport(
-            healthy: $healthy,
-            findings: $findings,
-        );
+        return new HealthReport(findings: $findings, overall: $overall);
     }
 }

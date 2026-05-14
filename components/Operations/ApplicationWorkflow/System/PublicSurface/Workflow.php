@@ -6,7 +6,7 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\PublicSurface;
 
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Saga\SagaDefinition;
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaExecutor\SagaExecutor;
-use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaState\SagaState;
+use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaLifecycle\ValidateSagaTransition;
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaStore\SagaStoreInterface;
 use RuntimeException;
 
@@ -19,8 +19,9 @@ use RuntimeException;
 final readonly class Workflow
 {
     public function __construct(
-        private SagaStoreInterface $sagaStore,
-        private SagaExecutor       $sagaExecutor,
+        private SagaStoreInterface   $sagaStore,
+        private SagaExecutor         $sagaExecutor,
+        private ValidateSagaTransition $validateSagaTransition = new ValidateSagaTransition(),
     ) {
     }
 
@@ -73,13 +74,7 @@ final readonly class Workflow
             );
         }
 
-        // Only running or failed sagas can be resumed
-        $sagaState = $saga->getStatus();
-        if ($sagaState !== SagaState::Running && $sagaState !== SagaState::Failed) {
-            throw new RuntimeException(
-                sprintf('Cannot resume saga in "%s" state', $sagaState->value),
-            );
-        }
+        $this->validateSagaTransition->assertResumable(saga: $saga, sagaId: $sagaId);
 
         // Re-execute from the current state
         return $saga->execute($saga->getContext());

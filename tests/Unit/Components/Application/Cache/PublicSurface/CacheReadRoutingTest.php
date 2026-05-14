@@ -4,20 +4,22 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Application\Cache\PublicSurface;
 
-use Avax\Components\Application\Cache\System\PublicSurface\AvaxCache;
-use Avax\Components\Application\Cache\System\PublicSurface\CacheContract;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Application\Cache\System\Configuration\BuildCache;
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Components\Application\Cache\System\PublicSurface\AvaxCache;
 use Avax\Components\Application\Cache\System\PublicSurface\Cache;
+use Avax\Components\Application\Cache\System\PublicSurface\CacheContract;
+use Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget;
 use Avax\Components\Application\Cache\System\PublicSurface\CompiledCache;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\InvalidTarget as CacheReadTargetWasNotSupported;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured as CacheNotConfigured;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured as CompiledNotConfigured;
-use Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\CacheReadKind;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\CompiledCacheTarget;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\RuntimeCacheTarget;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Tests\TestCase;
 use Override;
 use Psr\SimpleCache\InvalidArgumentException;
@@ -79,7 +81,7 @@ final class CacheReadRoutingTest extends TestCase
             return $t instanceof ReflectionNamedType ? $t->getName() : (string) $t;
         }, $types);
 
-        $this->assertContains(\Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget::class, $typeNames);
+        $this->assertContains(CacheReadTarget::class, $typeNames);
         $this->assertContains('string', $typeNames);
     }
 
@@ -203,7 +205,8 @@ final class CacheReadRoutingTest extends TestCase
 
         $this->frozenClock        = new FrozenClock();
         $this->inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock);
-        $this->cacheContract      = new AvaxCache(clock: $this->frozenClock, cacheStore: $this->inMemoryCacheStore);
+        $buildCache = new BuildCache(clock: $this->frozenClock, filesystem: new Filesystem());
+        $this->cacheContract = $buildCache->fromStore(store: $this->inMemoryCacheStore);
 
         Cache::use(cache: $this->cacheContract);
     }

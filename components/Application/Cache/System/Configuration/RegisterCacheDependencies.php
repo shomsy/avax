@@ -113,7 +113,10 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
      */
     private function buildNamedCache(string $name, array $config): AvaxCache
     {
-        $buildCache = new BuildCache();
+        $clock      = $this->container->has(id: Clock::class) ? $this->container->get(id: Clock::class) : new SystemClock();
+        $filesystem = $this->container->has(id: Filesystem::class) ? $this->container->get(id: Filesystem::class) : new Filesystem();
+
+        $buildCache = new BuildCache(clock: $clock, filesystem: $filesystem);
         $cacheConfiguration = new CacheConfiguration(
             name: $name,
             defaultTtl: is_int($config['ttl'] ?? null) ? $config['ttl'] : 3600,

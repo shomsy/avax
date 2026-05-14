@@ -10,62 +10,56 @@ use Avax\Components\Operations\MessageBus\System\Capabilities\Bus\QueryBus;
 
 final class MessageBus
 {
-    private static CommandBus $commandBus;
+    private static ?self $instance = null;
 
-    private static QueryBus $queryBus;
-
-    private static EventBus $eventBus;
+    public function __construct(
+        private readonly CommandBus $commandBus,
+        private readonly QueryBus   $queryBus,
+        private readonly EventBus   $eventBus,
+    )
+    {
+        self::$instance = $this;
+    }
 
     public static function query(object $query): mixed
     {
-        return self::queryBus()->dispatch($query);
+        return self::instance()->queryBus->dispatch($query);
     }
 
     public static function dispatch(object $command): mixed
     {
-        return self::commandBus()->dispatch($command);
-    }
-
-    private static function commandBus(): CommandBus
-    {
-        if (! isset(self::$commandBus)) {
-            self::$commandBus = new CommandBus();
-        }
-
-        return self::$commandBus;
-    }
-
-    private static function queryBus(): QueryBus
-    {
-        if (! isset(self::$queryBus)) {
-            self::$queryBus = new QueryBus();
-        }
-
-        return self::$queryBus;
+        return self::instance()->commandBus->dispatch($command);
     }
 
     public static function publish(object $event): void
     {
-        self::eventBus()->dispatch($event);
-    }
-
-    private static function eventBus(): EventBus
-    {
-        if (! isset(self::$eventBus)) {
-            self::$eventBus = new EventBus();
-        }
-
-        return self::$eventBus;
+        self::instance()->eventBus->dispatch($event);
     }
 
     public static function listen(string $messageClass, object $handler): void
     {
+        $instance = self::instance();
+
         if (is_a($messageClass, Command::class, true)) {
-            self::commandBus()->register($messageClass, $handler);
+            $instance->commandBus->register($messageClass, $handler);
         } elseif (is_a($messageClass, Query::class, true)) {
-            self::queryBus()->register($messageClass, $handler);
+            $instance->queryBus->register($messageClass, $handler);
         } elseif (is_a($messageClass, DomainEvent::class, true)) {
-            self::eventBus()->register($messageClass, $handler);
+            $instance->eventBus->register($messageClass, $handler);
         }
+    }
+
+    private static function instance() : self
+    {
+        if (self::$instance === null) {
+            // Fallback for non-booted environments (e.g. tests without full container)
+            self::$instance = new self(
+                commandBus: new CommandBus(),
+                queryBus  : new QueryBus(),
+                eventBus  : new EventBus(),
+            );
+        }
+
+        return self::$instance;
     }
 }

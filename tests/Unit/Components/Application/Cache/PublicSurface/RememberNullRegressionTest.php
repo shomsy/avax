@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Application\Cache\PublicSurface;
 
-use Avax\Components\Application\Cache\System\PublicSurface\AvaxCache;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Application\Cache\System\Configuration\BuildCache;
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Application\Cache\System\PublicSurface\AvaxCache;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Tests\TestCase;
 use Override;
 use Psr\SimpleCache\InvalidArgumentException;
@@ -74,9 +76,7 @@ final class RememberNullRegressionTest extends TestCase
         $this->inMemoryCacheStore = new InMemoryCacheStore(
             clock: $this->frozenClock,
         );
-        $this->avaxCache          = new AvaxCache(
-            clock     : $this->frozenClock,
-            cacheStore: $this->inMemoryCacheStore,
-        );
+        $buildCache = new BuildCache(clock: $this->frozenClock, filesystem: new Filesystem());
+        $this->avaxCache = $buildCache->fromStore(store: $this->inMemoryCacheStore);
     }
 }

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Application\Cache\Capabilities\Storage\StoreCachedValues;
 
-use Avax\Components\Application\Cache\System\PublicSurface\AvaxCache;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Application\Cache\System\Configuration\BuildCache;
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
+use Avax\Components\Application\Cache\System\PublicSurface\AvaxCache;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use PHPUnit\Framework\TestCase;
 
 final class InMemoryCacheStoreTest extends TestCase
@@ -17,7 +19,8 @@ final class InMemoryCacheStoreTest extends TestCase
         $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
-        $avaxCache = new AvaxCache(clock: $frozenClock, cacheStore: $inMemoryCacheStore);
+        $buildCache = new BuildCache(clock: $frozenClock, filesystem: new Filesystem());
+        $avaxCache  = $buildCache->fromStore(store: $inMemoryCacheStore);
 
         $avaxCache->set(key: 'key', value: 'value');
 
@@ -29,7 +32,8 @@ final class InMemoryCacheStoreTest extends TestCase
         $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
-        $avaxCache = new AvaxCache(clock: $frozenClock, cacheStore: $inMemoryCacheStore);
+        $buildCache = new BuildCache(clock: $frozenClock, filesystem: new Filesystem());
+        $avaxCache  = $buildCache->fromStore(store: $inMemoryCacheStore);
 
         $this->assertSame('default', $avaxCache->get(key: 'missing', default: 'default'));
     }
@@ -39,7 +43,8 @@ final class InMemoryCacheStoreTest extends TestCase
         $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
-        $avaxCache = new AvaxCache(clock: $frozenClock, cacheStore: $inMemoryCacheStore);
+        $buildCache = new BuildCache(clock: $frozenClock, filesystem: new Filesystem());
+        $avaxCache  = $buildCache->fromStore(store: $inMemoryCacheStore);
 
         $avaxCache->set(key: 'null-key', value: null);
 
@@ -52,7 +57,8 @@ final class InMemoryCacheStoreTest extends TestCase
         $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
-        $avaxCache = new AvaxCache(clock: $frozenClock, cacheStore: $inMemoryCacheStore);
+        $buildCache = new BuildCache(clock: $frozenClock, filesystem: new Filesystem());
+        $avaxCache  = $buildCache->fromStore(store: $inMemoryCacheStore);
 
         $avaxCache->set(key: 'delete-key', value: 'value');
         $this->assertTrue($avaxCache->has(key: 'delete-key'));
@@ -66,7 +72,8 @@ final class InMemoryCacheStoreTest extends TestCase
         $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
-        $avaxCache = new AvaxCache(clock: $frozenClock, cacheStore: $inMemoryCacheStore);
+        $buildCache = new BuildCache(clock: $frozenClock, filesystem: new Filesystem());
+        $avaxCache  = $buildCache->fromStore(store: $inMemoryCacheStore);
 
         $avaxCache->set(key: 'key1', value: 'value1');
         $avaxCache->set(key: 'key2', value: 'value2');
@@ -82,7 +89,8 @@ final class InMemoryCacheStoreTest extends TestCase
         $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
-        $avaxCache = new AvaxCache(clock: $frozenClock, cacheStore: $inMemoryCacheStore);
+        $buildCache = new BuildCache(clock: $frozenClock, filesystem: new Filesystem());
+        $avaxCache  = $buildCache->fromStore(store: $inMemoryCacheStore);
 
         $result = $avaxCache->remember(key: 'compute-key', ttl: 3600, loader: static fn () : string => 'computed');
 
@@ -95,7 +103,8 @@ final class InMemoryCacheStoreTest extends TestCase
         $frozenClock        = new FrozenClock(timestamp: Timestamp::now());
         $inMemoryCacheStore = new InMemoryCacheStore(clock: $frozenClock);
 
-        $avaxCache = new AvaxCache(clock: $frozenClock, cacheStore: $inMemoryCacheStore);
+        $buildCache = new BuildCache(clock: $frozenClock, filesystem: new Filesystem());
+        $avaxCache  = $buildCache->fromStore(store: $inMemoryCacheStore);
         $avaxCache->set(key: 'existing', value: 'original');
 
         $loadCount = 0;

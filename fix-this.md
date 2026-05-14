@@ -706,14 +706,14 @@ File: `components/Identity/Auth/System/Configuration/AuthBuilder.php`
 
 After DI cleanup, map every ACTIVE_GREEN core component assembly:
 
-- [ ] **AM-1** For each component, answer:
+- [x] **AM-1** For each component, answer:
     - ServiceProvider exists?
     - Configuration/Build* assembly exists?
     - Container bindings exist?
     - PublicSurface assembly path exists?
     - Does runtime execution instantiate dependencies manually?
 
-- [ ] **AM-2** Required components to map:
+- [x] **AM-2** Required components to map:
     - Application/Container
     - DataStack/Database
     - HTTP/Router
@@ -729,7 +729,7 @@ After DI cleanup, map every ACTIVE_GREEN core component assembly:
     - Operations/Queue (if active)
     - Framework/FailureBoundary
 
-- [ ] **AM-3** Record map in `EVIDENCE/cleanup/service-provider-assembly-map.md`
+- [x] **AM-3** Record map in `EVIDENCE/cleanup/service-provider-assembly-map.md`
 
 ---
 
@@ -743,27 +743,27 @@ Rule: `AGENTS.md` Section 2 — hollow shells with no real behavior must be remo
   vraća `false`. Fix: ili implementirati pravu proveru kroz konekciju, ili obrisati klasu.
 - [x] **D-A.02** `components/DeveloperTools/Testing/System/PublicSurface/Testing.php` — `verifyContracts()` samo vraća
   input bez verifikacije. Fix: implementirati pravu contract verification ili dokumentovati kao placeholder.
-- [ ] **D-A.03** `components/Operations/MessageBus/System/PublicSurface/Command.php` — potpuno prazan marker interface.
+- [x] **D-A.03** `components/Operations/MessageBus/System/PublicSurface/Command.php` — potpuno prazan marker interface.
   Fix: dodati dokumentaciju šta marker znači, ili spojiti sa interfejsom koji proširuje.
-- [ ] **D-A.04** `components/Operations/MessageBus/System/PublicSurface/DomainEvent.php` — potpuno prazan marker
+- [x] **D-A.04** `components/Operations/MessageBus/System/PublicSurface/DomainEvent.php` — potpuno prazan marker
   interface. Fix: isto.
-- [ ] **D-A.05** `components/Operations/MessageBus/System/PublicSurface/Query.php` — potpuno prazan marker interface.
+- [x] **D-A.05** `components/Operations/MessageBus/System/PublicSurface/Query.php` — potpuno prazan marker interface.
   Fix: isto.
-- [ ] **D-A.06** `components/HTTP/Response/System/PublicSurface/ResponseInterface.php` — prazan marker koji samo
+- [x] **D-A.06** `components/HTTP/Response/System/PublicSurface/ResponseInterface.php` — prazan marker koji samo
   extend-uje PSR interfejs bez dodavanja. Fix: dokumentovati ili ukloniti.
-- [ ] **D-A.07** `components/Application/Cache/System/PublicSurface/Read/CacheReadTarget.php` — prazan marker interface.
+- [x] **D-A.07** `components/Application/Cache/System/PublicSurface/Read/CacheReadTarget.php` — prazan marker interface.
   Fix: dokumentovati ili ukloniti.
-- [ ] **D-A.08** `components/Application/Cache/System/PublicSurface/CacheFacade.php` — prazan re-export (
+- [x] **D-A.08** `components/Application/Cache/System/PublicSurface/CacheFacade.php` — prazan re-export (
   `extends Facade\CacheFacade {}`, 0 dodato). Fix: ukloniti i koristiti `Facade\CacheFacade` direktno.
-- [ ] **D-A.09** `components/Application/Cache/System/PublicSurface/CacheRegistry.php` — prazan re-export. Fix:
+- [x] **D-A.09** `components/Application/Cache/System/PublicSurface/CacheRegistry.php` — prazan re-export. Fix:
   ukloniti.
-- [ ] **D-A.10** `components/Application/Cache/System/PublicSurface/CompiledCacheTarget.php` — prazan re-export. Fix:
+- [x] **D-A.10** `components/Application/Cache/System/PublicSurface/CompiledCacheTarget.php` — prazan re-export. Fix:
   ukloniti.
-- [ ] **D-A.11** `components/Application/Cache/System/PublicSurface/ReadFromCache.php` — prazan re-export. Fix:
+- [x] **D-A.11** `components/Application/Cache/System/PublicSurface/ReadFromCache.php` — prazan re-export. Fix:
   ukloniti.
-- [ ] **D-A.12** `components/Application/Cache/System/PublicSurface/RuntimeCacheTarget.php` — prazan re-export. Fix:
+- [x] **D-A.12** `components/Application/Cache/System/PublicSurface/RuntimeCacheTarget.php` — prazan re-export. Fix:
   ukloniti.
-- [ ] **D-A.13** `components/HTTP/Middleware/System/PublicSurface/Middleware.php` — jedini metod je `abstract`, ne
+- [x] **D-A.13** `components/HTTP/Middleware/System/PublicSurface/Middleware.php` — jedini metod je `abstract`, ne
   dodaje vrednost naspram `MiddlewareInterface`. Fix: ukloniti klasu.
 
 ### D-B: PublicSurface Sadrži Poslovnu Logiku

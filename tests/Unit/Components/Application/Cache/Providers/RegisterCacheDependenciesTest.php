@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Application\Cache\Providers;
 
-use Avax\Components\Application\Cache\System\PublicSurface\AvaxCache;
-use Avax\Components\Application\Cache\System\PublicSurface\CacheContract;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Application\Cache\System\Configuration\BuildCache;
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
+use Avax\Components\Application\Cache\System\PublicSurface\AvaxCache;
 use Avax\Components\Application\Cache\System\PublicSurface\Cache;
+use Avax\Components\Application\Cache\System\PublicSurface\CacheContract;
 use Avax\Components\Application\Cache\System\PublicSurface\CompiledCache;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured as CacheNotConfigured;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Override;
 use PHPUnit\Framework\TestCase;
 
@@ -83,10 +85,8 @@ final class RegisterCacheDependenciesTest extends TestCase
         $this->frozenClock        = new FrozenClock();
         $this->inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock);
 
-        $this->cacheContract = new AvaxCache(
-            clock     : $this->frozenClock,
-            cacheStore: $this->inMemoryCacheStore,
-        );
+        $buildCache          = new BuildCache(clock: $this->frozenClock, filesystem: new Filesystem());
+        $this->cacheContract = $buildCache->fromStore(store: $this->inMemoryCacheStore);
     }
 
     #[Override]

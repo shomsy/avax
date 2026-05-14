@@ -9,6 +9,7 @@ use Avax\Components\Application\Container\System\PublicSurface\ContainerInterfac
 use Avax\Components\Operations\MessageBus\System\Capabilities\Bus\CommandBus;
 use Avax\Components\Operations\MessageBus\System\Capabilities\Bus\EventBus;
 use Avax\Components\Operations\MessageBus\System\Capabilities\Bus\QueryBus;
+use Avax\Components\Operations\MessageBus\System\PublicSurface\MessageBus;
 
 /**
  * MessageBusServiceProvider — registers message bus component dependencies.
@@ -25,10 +26,18 @@ final class MessageBusServiceProvider implements ServiceProvider
 
         // Event bus — dispatches events to multiple listeners
         $container->singleton(EventBus::class, static fn () : EventBus => new EventBus());
+
+        // MessageBus PublicSurface
+        $container->singleton(MessageBus::class, static fn (ContainerInterface $c) : MessageBus => new MessageBus(
+            commandBus: $c->get(CommandBus::class),
+            queryBus  : $c->get(QueryBus::class),
+            eventBus  : $c->get(EventBus::class),
+        ));
     }
 
     public function boot(ContainerInterface $container) : void
     {
-        // No boot wiring needed — MessageBus uses static state internally
+        // Wire the global static state
+        $container->get(MessageBus::class);
     }
 }

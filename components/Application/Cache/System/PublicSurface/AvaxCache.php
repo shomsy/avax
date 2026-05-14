@@ -22,7 +22,6 @@ use Avax\Components\Application\Cache\System\Flows\Protection\ProtectCacheSource
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Duration;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
-use Avax\Components\Application\Cache\System\PublicSurface\CacheContract;
 use DateInterval;
 use Override;
 use Throwable;
@@ -30,45 +29,19 @@ use Traversable;
 
 final class AvaxCache implements CacheContract
 {
-    private readonly CacheTtl $cacheTtl;
-
-    private readonly DecideStaleValueCanBeServed $decideStaleValueCanBeServed;
-
-    private readonly ShouldRefreshCachedValue $shouldRefreshCachedValue;
-
-    private AcquireCacheStampedeLock|null $acquireCacheStampedeLock = null;
-
     private bool $stampedeProtectionEnabled;
 
     public function __construct(
-        private readonly CacheStore $cacheStore,
-        private readonly Clock $clock = new SystemClock(),
-        private readonly ?CacheMetrics $cacheMetrics = null, StaleValuePolicy|null $staleValuePolicy = null, RefreshPolicy|null $refreshPolicy = null, CacheLockStore|null $cacheLockStore = null,
-        bool $stampedeProtection = false,
-        private readonly int $lockWaitTimeoutSeconds = 5,
-        private readonly int $lockTtlSeconds = 30,
-        private readonly int $refreshAheadWindowSeconds = 60,
+        private readonly CacheStore                  $cacheStore,
+        private readonly Clock                       $clock,
+        private readonly CacheTtl                    $cacheTtl,
+        private readonly DecideStaleValueCanBeServed $decideStaleValueCanBeServed,
+        private readonly ShouldRefreshCachedValue    $shouldRefreshCachedValue,
+        private readonly ?CacheMetrics               $cacheMetrics = null,
+        private readonly ?AcquireCacheStampedeLock   $acquireCacheStampedeLock = null,
+        bool                                         $stampedeProtection = false,
     ) {
-        $this->cacheTtl = new CacheTtl(clock: $this->clock);
-        $this->decideStaleValueCanBeServed = new DecideStaleValueCanBeServed(
-            staleValuePolicy: $staleValuePolicy ?? StaleValuePolicy::DO_NOT_SERVE_STALE,
-        );
-        $this->shouldRefreshCachedValue = new ShouldRefreshCachedValue(
-            clock                    : $this->clock,
-            refreshPolicy            : $refreshPolicy ?? RefreshPolicy::DO_NOT_REFRESH,
-            refreshAheadWindowSeconds: $this->refreshAheadWindowSeconds,
-        );
-
-        if ($stampedeProtection && $cacheLockStore instanceof CacheLockStore) {
-            $this->acquireCacheStampedeLock = new AcquireCacheStampedeLock(
-                cacheLockStore    : $cacheLockStore,
-                waitTimeoutSeconds: $this->lockWaitTimeoutSeconds,
-                lockTtlSeconds    : $this->lockTtlSeconds,
-            );
-            $this->stampedeProtectionEnabled = true;
-        } else {
-            $this->stampedeProtectionEnabled = $stampedeProtection;
-        }
+        $this->stampedeProtectionEnabled = $stampedeProtection && $this->acquireCacheStampedeLock !== null;
     }
 
     #[Override]

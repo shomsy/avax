@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Configuration;
 
-use Avax\Components\Application\Cache\System\PublicSurface\AvaxCache;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ExpireCachedValues\CacheTtl;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ExpireCachedValues\DecideStaleValueCanBeServed;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ExpireCachedValues\StaleValuePolicy;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\RefreshCachedValues\RefreshPolicy;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\RefreshCachedValues\ShouldRefreshCachedValue;
 use Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\ChainCacheStore;
@@ -12,12 +16,15 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\RedisCacheStore;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
+use Avax\Components\Application\Cache\System\PublicSurface\AvaxCache;
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
 final readonly class BuildCache
 {
-    public function __construct(private Clock $clock)
-    {
+    public function __construct(
+        private Clock      $clock,
+        private Filesystem $filesystem,
+    ) {
     }
 
     public function inMemory(CacheConfiguration|null $config = null) : AvaxCache
@@ -34,10 +41,20 @@ final readonly class BuildCache
         $metrics = $config->enableMetrics ? new CacheMetrics() : null;
 
         return new AvaxCache(
-            cacheStore      : $store,
-            clock           : $this->clock,
-            cacheMetrics    : $metrics,
-            staleValuePolicy: $config->staleValuePolicy,
+            cacheStore                 : $store,
+            clock                      : $this->clock,
+            cacheTtl                   : new CacheTtl(clock: $this->clock),
+            decideStaleValueCanBeServed: new DecideStaleValueCanBeServed(
+                                             staleValuePolicy: $config->staleValuePolicy ?? StaleValuePolicy::DO_NOT_SERVE_STALE,
+                                         ),
+            shouldRefreshCachedValue   : new ShouldRefreshCachedValue(
+                                             clock                    : $this->clock,
+                                             refreshPolicy            : $config->refreshPolicy ?? RefreshPolicy::DO_NOT_REFRESH,
+                                             refreshAheadWindowSeconds: $config->refreshAheadWindowSeconds ?? 60,
+                                         ),
+            cacheMetrics               : $metrics,
+            acquireCacheStampedeLock   : null,
+            stampedeProtection         : false,
         );
     }
 
@@ -50,7 +67,7 @@ final readonly class BuildCache
     {
         $fileCacheStore = new FileCacheStore(
             basePath  : $basePath,
-            filesystem: new Filesystem(),
+            filesystem: $this->filesystem,
             clock     : $this->clock,
         );
 

@@ -8,6 +8,9 @@ use InvalidArgumentException;
 
 final readonly class ParseUriString
 {
+    /**
+     * @throws InvalidArgumentException When the URI is invalid
+     */
     public static function parse(string $uri) : Uri
     {
         $parts = parse_url($uri);

@@ -29,6 +29,9 @@ final class UriBuilder implements Stringable
 
     private string|null $password = null;
 
+    /**
+     * @throws InvalidArgumentException When the URI is invalid
+     */
     public static function createFromString(string $uri) : self
     {
         $parts = parse_url($uri);

@@ -185,6 +185,8 @@ final class App
      *
      * Builds a RuntimeRequest from PHP superglobals, matches routes,
      * dispatches through the controller pipeline, and returns the response.
+     *
+     * @throws RuntimeException When app is already running
      */
     public function run(): ResponseInterface
     {

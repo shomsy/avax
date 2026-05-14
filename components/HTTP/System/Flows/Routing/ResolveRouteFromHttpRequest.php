@@ -21,6 +21,9 @@ readonly class ResolveRouteFromHttpRequest implements RequestHandlerInterface
 {
     public function __construct(private RouterRuntimeInterface $routerRuntime) {}
 
+    /**
+     * @throws RuntimeException When request is not a ServerRequest instance
+     */
     public function handle(RequestInterface $request) : ResponseInterface
     {
         if (! $request instanceof ServerRequest) {

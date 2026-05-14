@@ -21,6 +21,9 @@ final class RuntimeContext implements ResettableState
         return $this->runtimeRequest instanceof RuntimeRequest;
     }
 
+    /**
+     * @throws FrameworkMisconfigured When runtime context already has an active request
+     */
     public function startRequest(RequestScopeId $requestScopeId, RuntimeRequest $runtimeRequest): void
     {
         if ($this->hasActiveRequest()) {

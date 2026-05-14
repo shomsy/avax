@@ -11,6 +11,9 @@ use Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured;
  */
 final readonly class Version
 {
+    /**
+     * @throws FrameworkMisconfigured When version is not a valid semantic version
+     */
     private function __construct(private string $value)
     {
         if (preg_match('/^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/', $this->value) !== 1) {
@@ -20,6 +23,9 @@ final readonly class Version
         }
     }
 
+    /**
+     * @throws FrameworkMisconfigured When version is not a valid semantic version
+     */
     public static function from(string $value): self
     {
         return new self(value: trim(string: $value));

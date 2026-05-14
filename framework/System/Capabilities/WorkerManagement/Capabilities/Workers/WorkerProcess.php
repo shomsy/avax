@@ -56,6 +56,9 @@ final class WorkerProcess
         $this->running = false;
     }
 
+    /**
+     * @throws RuntimeException When unable to resolve current process ID
+     */
     public function start(): void
     {
         $pid = getmypid();

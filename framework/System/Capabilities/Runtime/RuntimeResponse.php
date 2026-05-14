@@ -11,6 +11,8 @@ final readonly class RuntimeResponse
 {
     /**
      * @param  array<string, list<string>>  $headers
+     *
+     * @throws FrameworkMisconfigured When status code is invalid
      */
     public function __construct(
         private int $statusCode,

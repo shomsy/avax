@@ -6,6 +6,9 @@ namespace Avax\Framework\System\Capabilities\Security\FeatureFlags\Foundation;
 
 final readonly class FeatureFlagName
 {
+    /**
+     * @throws \InvalidArgumentException When feature flag name is empty
+     */
     public function __construct(
         public string $value,
     ) {

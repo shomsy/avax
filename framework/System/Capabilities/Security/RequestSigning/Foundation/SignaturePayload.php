@@ -29,6 +29,8 @@ final readonly class SignaturePayload
 
     /**
      * @param array<string, string|list<string>> $headers
+     *
+     * @throws \InvalidArgumentException When required signature headers are missing
      */
     public static function fromHeaders(array $headers): self
     {

@@ -25,6 +25,9 @@ final class ComponentRegistry
      */
     private array $instances = [];
 
+    /**
+     * @throws FrameworkMisconfigured When the component is already registered
+     */
     public function register(ComponentDefinition $definition): void
     {
         if ($this->has(name: $definition->name())) {
@@ -43,6 +46,9 @@ final class ComponentRegistry
         }
     }
 
+    /**
+     * @throws FrameworkMisconfigured When the component is not found in registry
+     */
     public function get(string $name): mixed
     {
         if (! isset($this->instances[$name])) {

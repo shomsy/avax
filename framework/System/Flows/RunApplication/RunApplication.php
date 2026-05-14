@@ -181,6 +181,8 @@ final readonly class RunApplication
 
     /**
      * @param list<mixed> $action
+     *
+     * @throws RuntimeException When controller action format is invalid, method not found, or controller not invokable
      */
     private function invokeControllerAndMethod(array $action, ServerRequest $serverRequest): mixed
     {
@@ -202,6 +204,9 @@ final readonly class RunApplication
         return $reflectionMethod->invokeArgs($instance, $arguments);
     }
 
+    /**
+     * @throws RuntimeException When controller class is not invokable
+     */
     private function invokeController(string $controllerClass, ServerRequest $serverRequest): mixed
     {
         $instance = $this->controllerResolver->resolve($controllerClass);

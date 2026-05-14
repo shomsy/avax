@@ -6,6 +6,9 @@ namespace Avax\Framework\System\Capabilities\Security\RequestSigning\Foundation;
 
 final readonly class SignatureKeyId
 {
+    /**
+     * @throws \InvalidArgumentException When signature key ID is empty
+     */
     public function __construct(
         public string $value,
     ) {

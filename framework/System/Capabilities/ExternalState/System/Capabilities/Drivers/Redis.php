@@ -47,6 +47,9 @@ final readonly class Redis implements State
         return @unserialize((string) $value, ['allowed_classes' => false]);
     }
 
+    /**
+     * @throws InvalidArgumentException When callable values are stored directly
+     */
     public function set(string $key, mixed $value, int $ttl = 0): void
     {
         // Use JSON encoding instead of serialize() for security

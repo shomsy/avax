@@ -15,6 +15,8 @@ final readonly class RuntimeRequest
     /**
      * @param  array<string, list<string>>  $headers
      * @param  array<string, mixed>  $attributes
+     *
+     * @throws FrameworkMisconfigured When method or URI is empty
      */
     public function __construct(
         string $method,

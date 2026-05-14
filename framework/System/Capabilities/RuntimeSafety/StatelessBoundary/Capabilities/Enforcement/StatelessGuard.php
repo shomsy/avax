@@ -8,6 +8,9 @@ use RuntimeException;
 
 final readonly class StatelessGuard
 {
+    /**
+     * @throws RuntimeException When session access is violated in stateless route
+     */
     public static function enforce(): void
     {
         if (session_status() === PHP_SESSION_ACTIVE) {

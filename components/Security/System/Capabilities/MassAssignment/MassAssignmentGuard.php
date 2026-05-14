@@ -12,6 +12,8 @@ final readonly class MassAssignmentGuard
      * @param  array<string, mixed>  $input
      * @param  list<string>  $fillable
      * @return array<string, mixed>
+     *
+     * @throws InvalidArgumentException When non-fillable keys are present
      */
     public function onlyFillable(array $input, array $fillable): array
     {

@@ -43,6 +43,9 @@ final readonly class EvaluatePolicy
         return $lastMatchingDecision ?? PolicyDecision::deny('No matching policy rule. Default deny.');
     }
 
+    /**
+     * @throws PolicyDeniedException When the policy decision is not allowed
+     */
     public function evaluateOrFail(
         DefinePolicy $policy,
         PolicySubject $subject,

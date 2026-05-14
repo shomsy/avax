@@ -40,6 +40,9 @@ final readonly class Server
         return ServerResult::error(sprintf('Failed to start server on %s:%d', $host, $port));
     }
 
+    /**
+     * @throws RuntimeException When no router file is found
+     */
     public static function findRouterFile(): string
     {
         $candidates = [

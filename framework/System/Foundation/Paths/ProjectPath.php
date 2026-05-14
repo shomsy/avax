@@ -10,6 +10,9 @@ final readonly class ProjectPath
 {
     private string $value;
 
+    /**
+     * @throws FrameworkMisconfigured When path is empty or does not exist
+     */
     public function __construct(string $value)
     {
         $normalizedPath = rtrim(string: trim(string: $value), characters: '/');

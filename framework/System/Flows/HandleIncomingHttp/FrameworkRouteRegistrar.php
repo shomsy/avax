@@ -87,6 +87,9 @@ final class FrameworkRouteRegistrar implements RouterInterface
         // This method exists only to satisfy the interface contract.
     }
 
+    /**
+     * @throws RuntimeException Always, as URL generation is not supported
+     */
     public function url(string $name, array $parameters = [], bool $absolute = false) : string
     {
         throw new RuntimeException('URL generation is not supported through FrameworkRouteRegistrar.');
@@ -125,6 +128,9 @@ final class FrameworkRouteRegistrar implements RouterInterface
         return new Registrar(new RouteCollection(), $definition);
     }
 
+    /**
+     * @throws RuntimeException Always, as dispatching is not supported
+     */
     public function dispatch(RequestInterface $request): ResponseInterface
     {
         throw new RuntimeException('FrameworkRouteRegistrar is purely for configuration and does not support dispatching directly.');

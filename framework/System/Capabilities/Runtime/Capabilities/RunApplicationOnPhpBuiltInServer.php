@@ -73,6 +73,9 @@ echo "<p>Create routes/web.php to get started.</p>";
         return in_array('--daemon', $argv, true) || in_array('-d', $argv, true);
     }
 
+    /**
+     * @throws RuntimeException When port is already in use or failed to start server
+     */
     private static function startBackground(string $command, int $port): void
     {
         if (self::isPortInUse($port)) {

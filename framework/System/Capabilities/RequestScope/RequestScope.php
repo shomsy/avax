@@ -73,6 +73,9 @@ final class RequestScope implements RequestScopeInterface
         $this->values = [];
     }
 
+    /**
+     * @throws RequestScopeAlreadyClosed When the scope is already closed
+     */
     private function guardOpen(): void
     {
         if (! $this->open) {

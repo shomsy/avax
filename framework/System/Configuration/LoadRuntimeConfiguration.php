@@ -21,6 +21,10 @@ final readonly class LoadRuntimeConfiguration
     ) {
     }
 
+    /**
+     * @throws ConfigurationLoadFailed When configuration file fails to load
+     * @throws InvalidConfiguration When configuration file does not return an array
+     */
     public function load(): RuntimeConfiguration
     {
         $file = $this->resolveConfigFile();

@@ -19,6 +19,9 @@ use Throwable;
  */
 final readonly class RunRecoveryAction
 {
+    /**
+     * @throws RuntimeException When no recovery class is configured, class not found, or class lacks __invoke
+     */
     public function execute(
         Throwable      $failure,
         FailureContext $context,

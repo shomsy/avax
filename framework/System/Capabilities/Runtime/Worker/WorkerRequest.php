@@ -9,6 +9,9 @@ use Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured;
 
 final readonly class WorkerRequest
 {
+    /**
+     * @throws FrameworkMisconfigured When worker request ID is empty
+     */
     public function __construct(
         private string $id,
         private RuntimeRequest $runtimeRequest,

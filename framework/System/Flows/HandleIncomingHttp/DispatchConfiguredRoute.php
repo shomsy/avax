@@ -30,6 +30,9 @@ final readonly class DispatchConfiguredRoute
     ) {
     }
 
+    /**
+     * @throws FrameworkMisconfigured When routes file does not exist
+     */
     public static function fromRoutesFile(string $routesFile, ResponseFactory $responseFactory) : self
     {
         if (! is_file(filename: $routesFile)) {

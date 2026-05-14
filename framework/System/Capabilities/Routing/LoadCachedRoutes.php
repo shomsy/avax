@@ -20,6 +20,8 @@ final readonly class LoadCachedRoutes
 
     /**
      * @return array<string, mixed>
+     *
+     * @throws RouteCacheFailed When cache file is not readable, fails to load, or is not an array
      */
     public function load(): array
     {

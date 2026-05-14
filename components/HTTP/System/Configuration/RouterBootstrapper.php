@@ -121,6 +121,9 @@ final class RouterBootstrapper
         return $method . ' ' . $path;
     }
 
+    /**
+     * @throws InvalidArgumentException When unsupported HTTP method is used
+     */
     private function registerWithDsl(string $method, string $path, callable|array|string $handler) : Registrar
     {
         return match ($method) {
@@ -231,6 +234,8 @@ final class RouterBootstrapper
 
     /**
      * Apply middleware group to current routes.
+     *
+     * @throws InvalidArgumentException When middleware group is not defined
      */
     public function useGroup(string $name) : self
     {
@@ -286,6 +291,8 @@ final class RouterBootstrapper
 
     /**
      * Bootstrap the router with registered routes.
+     *
+     * @throws LogicException When runtime router instance is not available
      */
     public function bootstrap(): RouterRuntimeInterface
     {

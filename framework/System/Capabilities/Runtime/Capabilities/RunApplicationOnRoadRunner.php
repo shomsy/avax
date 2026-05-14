@@ -51,6 +51,9 @@ final readonly class RunApplicationOnRoadRunner implements WorkerRuntimeInterfac
     {
     }
 
+    /**
+     * @throws RuntimeException Always, as this is not implemented
+     */
     public function getContext(): RuntimeContext
     {
         throw new RuntimeException('Not implemented');

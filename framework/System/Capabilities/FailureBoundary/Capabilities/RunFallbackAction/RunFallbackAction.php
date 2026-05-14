@@ -14,6 +14,9 @@ use Throwable;
  */
 final readonly class RunFallbackAction
 {
+    /**
+     * @throws \RuntimeException When no fallback class is configured, class not found, or class lacks __invoke
+     */
     public function execute(
         Throwable $failure,
         FailureContext $context,

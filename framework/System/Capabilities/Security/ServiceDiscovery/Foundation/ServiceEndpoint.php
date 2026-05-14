@@ -6,6 +6,11 @@ namespace Avax\Framework\System\Capabilities\Security\ServiceDiscovery\Foundatio
 
 final readonly class ServiceEndpoint
 {
+    /**
+     * @param array<string, string> $metadata
+     *
+     * @throws \InvalidArgumentException When the URL is invalid
+     */
     public function __construct(
         public string $url,
         /** @var array<string, string> $metadata */

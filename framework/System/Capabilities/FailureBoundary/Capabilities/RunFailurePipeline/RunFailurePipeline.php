@@ -36,6 +36,10 @@ final readonly class RunFailurePipeline
     ) {
     }
 
+    /**
+     * @throws Throwable When the failure decision is to rethrow
+     * @throws UnhandledFailure When the failure decision is report-only
+     */
     public function for(Throwable $failure, FailureContext $context, Closure $originalAction): mixed
     {
         $policy = $this->resolvePolicy->for($context);

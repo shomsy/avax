@@ -10,6 +10,9 @@ final readonly class RuntimePath
 {
     private string $value;
 
+    /**
+     * @throws FrameworkMisconfigured When runtime path is empty
+     */
     public function __construct(
         string $value,
         ProjectPath $projectPath,

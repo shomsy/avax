@@ -6,6 +6,9 @@ namespace Avax\Framework\System\Capabilities\Security\ServiceDiscovery\Foundatio
 
 final readonly class ServiceName
 {
+    /**
+     * @throws \InvalidArgumentException When service name is empty
+     */
     public function __construct(
         public string $value,
     ) {

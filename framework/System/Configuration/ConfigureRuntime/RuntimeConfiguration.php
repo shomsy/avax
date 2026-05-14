@@ -60,6 +60,9 @@ final class RuntimeConfiguration
         return $this->options;
     }
 
+    /**
+     * @throws RuntimeException When adapter is unknown, or required options are missing
+     */
     public function createRuntime(): object
     {
         return match ($this->adapter) {
@@ -81,6 +84,9 @@ final class RuntimeConfiguration
         };
     }
 
+    /**
+     * @throws RuntimeException When httpKernel option is missing
+     */
     private function httpKernel(): HttpKernelInterface
     {
         $httpKernel = $this->options['httpKernel'] ?? null;
@@ -92,6 +98,9 @@ final class RuntimeConfiguration
         return $httpKernel;
     }
 
+    /**
+     * @throws RuntimeException When consoleKernel option is missing
+     */
     private function consoleKernel(): ConsoleKernelInterface
     {
         $consoleKernel = $this->options['consoleKernel'] ?? null;

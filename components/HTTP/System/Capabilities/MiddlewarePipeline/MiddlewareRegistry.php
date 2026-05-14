@@ -33,6 +33,8 @@ final class MiddlewareRegistry
 
     /**
      * Create a middleware instance from an alias.
+     *
+     * @throws InvalidArgumentException When middleware alias is not registered
      */
     public static function create(string $alias, array $args = []): MiddlewareInterface
     {

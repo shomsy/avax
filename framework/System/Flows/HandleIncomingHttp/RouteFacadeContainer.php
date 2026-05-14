@@ -16,6 +16,9 @@ final readonly class RouteFacadeContainer implements ContainerInterface
     {
     }
 
+    /**
+     * @throws RuntimeException When service is not available in the container
+     */
     public function get(string $id): mixed
     {
         if (! $this->has(id: $id)) {

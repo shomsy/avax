@@ -157,6 +157,9 @@ final readonly class RateLimiterMiddleware implements MiddlewareInterface
                             return true;
                         }
 
+                        /**
+                         * @throws RuntimeException When invalid seek mode or negative position
+                         */
                         public function seek(int $offset, int $whence = SEEK_SET) : void
                         {
                             $target = match ($whence) {

@@ -20,6 +20,10 @@ final readonly class MatchHttpRoute
         $this->matchRoute = $matchRoute;
     }
 
+    /**
+     * @throws MethodNotAllowedException When the HTTP method is not allowed
+     * @throws RouteNotFoundException When the route is not found
+     */
     public function match(RegisteredHttpRoutes $registeredHttpRoutes, ServerRequest $serverRequest): MatchedHttpRoute
     {
         $routeCollection = new RouteCollection();

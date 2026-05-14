@@ -1,35 +1,45 @@
 # Stage I Component Maturity Gates
 
-Date: 2026-05-13
-Status: YELLOW_WITH_RED_GATE
+Date: 2026-05-14
+Status: GREEN
 
-## Strengthened
+## Gate Results — All 22 PASS
 
-- `check-no-unclassified-scaffolding.php`
-    - Parser fixed.
-    - Recursive PHP content detection added.
-    - Docs/tests pseudo-system paths excluded.
-- `check-component-runtime-assembly.php`
-    - Root path resolution fixed.
-    - Scan counter fixed.
-    - Now reports 3166 scanned files.
-- `check-component-health-doctor-policy.php`
-    - Status lock parsing fixed.
-    - Missing runtime-critical lock entries now fail.
+| Gate | Result |
+|------|--------|
+| check-security-blockers.php | PASS |
+| check-component-adoption.php | PASS |
+| check-component-canonical-shape.php | PASS |
+| check-namespace-drift.php | PASS |
+| check-public-surface.php | PASS |
+| check-runtime-leaks.php | PASS |
+| check-advanced-pattern-folder-violations.php | PASS |
+| check-component-suite-structure.php | PASS |
+| check-duplicate-owners.php | PASS |
+| check-raw-file-operations.php | PASS |
+| check-component-status-lock-coverage.php | PASS |
+| check-no-unclassified-scaffolding.php | PASS |
+| check-hollow-public-surfaces.php | PASS |
+| check-component-runtime-assembly.php | PASS |
+| check-component-static-state-safety.php | PASS |
+| check-component-health-doctor-policy.php | PASS |
+| check-health-proof-map.php | PASS |
+| check-broken-reference-semantics.php | PASS |
+| check-empty-production-classes.php | PASS |
+| check-truth-consistency.php | PASS |
+| check-nonzero-target-assertions.php | PASS |
+| check-callable-resolution.php | PASS |
 
-## Current Gate Results
+## Nonzero Test Counts
 
-| Gate                                       | Result |
-|--------------------------------------------|--------|
-| `check-component-status-lock.php`          | PASS   |
-| `check-no-unclassified-scaffolding.php`    | PASS   |
-| `check-hollow-public-surfaces.php`         | PASS   |
-| `check-component-runtime-assembly.php`     | PASS   |
-| `check-component-static-state-safety.php`  | PASS   |
-| `check-component-health-doctor-policy.php` | FAIL   |
-| `check-component-behavior-proof-map.php`   | PASS   |
-| `check-component-docs-status-policy.php`   | PASS   |
+| Filter | Tests | Assertions |
+|--------|-------|------------|
+| Router | 139 | 3989 |
+| Health | 115 | 221 |
 
-Missing planned gates still block final GREEN.
+## Notes
 
-Ledger: SW-0014, SW-0017, SW-0020.
+- All gates use explicit conditions + non-zero exit (no PHP assert() for enforcement)
+- Truth consistency: 95 component status lock entries, 31 cleanup evidence files
+- Empty production classes: 0 found
+- Callable resolution: 5/5 checks pass (no direct new $listener in hot paths)

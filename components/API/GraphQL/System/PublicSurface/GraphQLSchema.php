@@ -35,17 +35,19 @@ final class GraphQLSchema
      * @param array<string, GraphQLObjectType> $types
      */
     public function __construct(
-        public readonly string $name,
-        array                  $queryFields = [],
-        array                  $mutationFields = [],
-        array                  $types = [],
+        public readonly string     $name,
+        array                      $queryFields = [],
+        array                      $mutationFields = [],
+        array                      $types = [],
+        AssembleFieldsFromMap|null $fieldAssembler = null,
+        SchemaToArray|null         $schemaSerializer = null,
     )
     {
         $this->queryFields      = $queryFields;
         $this->mutationFields   = $mutationFields;
         $this->types            = $types;
-        $this->fieldAssembler   = new AssembleFieldsFromMap();
-        $this->schemaSerializer = new SchemaToArray();
+        $this->fieldAssembler   = $fieldAssembler ?? new AssembleFieldsFromMap();
+        $this->schemaSerializer = $schemaSerializer ?? new SchemaToArray();
     }
 
     public static function define(string $name = 'AvaX GraphQL API') : self

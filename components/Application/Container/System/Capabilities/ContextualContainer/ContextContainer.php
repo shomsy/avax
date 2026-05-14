@@ -23,7 +23,7 @@ use Avax\Components\Application\Container\System\Capabilities\Runtime\LazyProxy;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeInterface;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeKind;
 use Avax\Components\Application\Container\System\ContainerInterface;
-use Avax\Components\Application\Container\System\Flows\DescribeContainerService\DescribeContainerService;
+use Avax\Components\Application\Container\System\Flows\DescribeDependency\DescribeDependency;
 use Avax\Components\Application\Container\System\Flows\ExportGraph\ExportGraph;
 use Avax\Components\Application\Container\System\Flows\ValidateComposition\ValidateComposition;
 use Avax\Components\Application\Container\System\Foundation\Container as FoundationContainer;
@@ -165,9 +165,9 @@ readonly class ContextContainer implements ContainerInterface
         return $this->explainService()->describe(id: $id, context: $this->context);
     }
 
-    private function explainService(): DescribeContainerService
+    private function explainService(): DescribeDependency
     {
-        return new DescribeContainerService(resolver: $this->resolveDependency);
+        return new DescribeDependency(resolver: $this->resolveDependency);
     }
 
     /**

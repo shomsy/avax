@@ -11,7 +11,7 @@ use Avax\Components\Application\Container\System\Capabilities\Resolution\Resolve
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ServiceResolver;
 use Throwable;
 
-final readonly class AssembleContainerService
+final readonly class BuildServiceInstance
 {
     private ResolveDependencies $dependencies;
 

@@ -11,7 +11,7 @@ use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindin
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\BlueprintCache;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints\CreateDependencyBlueprint;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\DeferredProviderRegistry;
-use Avax\Components\Application\Container\System\Capabilities\Execution\AssembleContainerService;
+use Avax\Components\Application\Container\System\Capabilities\Execution\BuildServiceInstance;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Invocation\FunctionCaller;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Invocation\ResolveCallArguments;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Methods\InjectMethods;
@@ -88,7 +88,7 @@ final class AssembleRuntime
         $resolveDependency = new ResolveDependency(
             registrations    : $dependencyRegistry,
             scopes           : $manageScopes,
-            builder          : new AssembleContainerService(
+            builder          : new BuildServiceInstance(
                 blueprints  : $createDependencyBlueprint,
                 dependencies: $resolveDependencies,
             ),

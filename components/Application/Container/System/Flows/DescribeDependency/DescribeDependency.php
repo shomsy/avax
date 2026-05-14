@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Container\System\Flows\DescribeContainerService;
+namespace Avax\Components\Application\Container\System\Flows\DescribeDependency;
 
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ServiceResolver;
 use ReflectionException;
 
-final readonly class DescribeContainerService
+final readonly class DescribeDependency
 {
     private ServiceResolver $resolver;
 

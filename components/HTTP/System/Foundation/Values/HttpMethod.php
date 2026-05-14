@@ -23,7 +23,7 @@ enum HttpMethod: string
      * Try to create an HttpMethod from a string.
      * Returns null if the method is not recognized.
      */
-    public static function tryFromName(string $name) : ?self
+    public static function tryFromName(string $name) : self|null
     {
         return self::tryFrom(strtoupper($name));
     }

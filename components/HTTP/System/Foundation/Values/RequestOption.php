@@ -59,7 +59,7 @@ enum RequestOption: string
      * Try to create a RequestOption from an option name string.
      * Returns null if the option name is not recognized.
      */
-    public static function tryFromName(string $name) : ?self
+    public static function tryFromName(string $name) : self|null
     {
         return self::tryFrom(strtolower(trim($name)));
     }

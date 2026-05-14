@@ -21,7 +21,7 @@ final readonly class EnforceTimeout
      * @param Closure(): mixed $action
      * @param int|null         $timeoutMs Timeout in milliseconds. Null means no timeout.
      */
-    public function run(Closure $action, ?int $timeoutMs) : mixed
+    public function run(Closure $action, int|null $timeoutMs) : mixed
     {
         if ($timeoutMs === null || $timeoutMs <= 0) {
             return $action();

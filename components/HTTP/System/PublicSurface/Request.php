@@ -29,7 +29,7 @@ final readonly class Request
         return $this->server['REQUEST_URI'] ?? '/';
     }
 
-    public function header(string $name) : ?string
+    public function header(string $name) : string|null
     {
         $key = 'HTTP_' . str_replace('-', '_', strtoupper($name));
 

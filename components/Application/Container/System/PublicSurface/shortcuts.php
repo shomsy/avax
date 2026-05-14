@@ -6,7 +6,7 @@ declare(strict_types=1);
  * Container shortcuts for global access.
  */
 
-use Avax\Components\Application\Container\System\Container;
+use Avax\Components\Application\Container\System\PublicSurface\Container;
 use Avax\Components\Application\Container\System\ContainerInterface;
 
 if (! function_exists('appInstance')) {

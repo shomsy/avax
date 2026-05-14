@@ -1,27 +1,40 @@
-# Stage B Component Status Lock and Scaffold Honesty
+# Stage B Component Status Lock and Folder Structure Cleanup
 
-Date: 2026-05-13
-Status: YELLOW_BLOCKED
+Date: 2026-05-14
+Status: GREEN
 
-## What Was Checked
+## What Was Done
 
-- Existing `EVIDENCE/components/component-status-lock.md` validates 30 known statuses.
-- `tooling/components/check-no-unclassified-scaffolding.php` now parses, checks recursive PHP content, ignores
-  docs/tests pseudo-systems, and passes.
-- Empty scaffold directories removed:
-    - `components/DataStack/DataTransfer/System/Foundation`
-    - `components/DeveloperTools/Dx/System/Flows/**`
-    - `components/HTTP/SecureRequest/System/Flows`
-    - `components/HTTP/SecureRequest/System/Configuration`
-    - `components/Operations/ApplicationWorkflow/System/Configuration`
-    - `components/Operations/ApplicationWorkflow/System/Foundation/**`
-    - `components/Operations/Scheduler/System/Configuration`
-    - `components/Operations/Scheduler/System/Foundation/**`
+- B-A: Component status lock verified — 76/76 components locked (gate passes)
+- B-B: All 19 forbidden folder names inside System/ already resolved (gate: GREEN)
+- B-C: Governance exceptions created for API/Contracts, DeveloperTools/Diagnostics, Operations/Events
+  (GE-001, GE-002, GE-003 in `.agents/GOVERNANCE_EXCEPTIONS.md`)
+- B-C.4/B-C.5: Identity/Auth/docs/ and Identity/Auth/tests/ already gone
+- B-D: All files outside System/ already moved (gate: PASS)
+- B-E: All subdirectories outside System/ with PHP content moved into System/:
+  - Cache Examples/Providers/examples → `System/Configuration/` and `examples/`
+  - Config Configurator → `System/Configuration/`
+  - Container tools → `System/Foundation/tools/`
+  - Filesystem Configuration → `System/Configuration/`
+  - HTTP ServerRequest → `System/Capabilities/IncomingRequest/`
+  - Auth Integrations → `System/Capabilities/Integrations/`
+  - Auth examples → `examples/Auth/`
+- B-F: framework/Foundation/ already gone
+- B-G: All gates pass, PHPUnit 8293 tests (23811 assertions), commit created
 
-## Blockers
+## Validation
 
-- Full Stage B inventory was not completed.
-- `Application/Cache` has active behavior/tests but is missing from the status lock.
-- Worktree copies under `.qoder/worktrees/**` are counted by audits but have no status taxonomy.
-
-Ledger: SW-0019, SW-0021.
+| Gate | Result |
+|------|--------|
+| `composer validate` | GREEN |
+| `composer dump-autoload -o` | GREEN (9278 classes) |
+| `vendor/bin/phpunit --no-coverage` | GREEN (8293 tests, 23811 assertions) |
+| `check-advanced-pattern-folder-violations.php` | GREEN |
+| `check-component-canonical-shape.php` | GREEN |
+| `check-namespace-drift.php` | PASS |
+| `check-runtime-leaks.php` | PASS |
+| `check-public-surface.php` | PASS |
+| `check-component-runtime-assembly.php` | PASS |
+| `check-component-suite-structure.php` | PASS |
+| `check-duplicate-owners.php` | PASS |
+| `check-hollow-public-surfaces.php` | PASS |

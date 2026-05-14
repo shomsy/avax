@@ -97,7 +97,7 @@ $classAliases = [
     RouterRuntimeInterface::class => RouterRuntimeInterface::class,
 
     'Avax\\Database\\Database' => 'Avax\\Components\\DataStack\\Database\\System\\PublicSurface\\Database',
-    'Avax\\Database\\EntityManager' => 'Avax\\Components\\DataStack\\Database\\System\\PublicSurface\\EntityManager',
+    'Avax\\Database\\EntityManager' => 'Avax\\Components\\DataStack\\Database\\System\\PublicSurface\\ManageEntityPersistence',
     'Avax\\Database\\Migrations' => 'Avax\\Components\\DataStack\\Database\\System\\PublicSurface\\Migrations',
     'Avax\\Database\\Query' => 'Avax\\Components\\DataStack\\Database\\System\\PublicSurface\\Query',
     'Avax\\Database\\Schema' => 'Avax\\Components\\DataStack\\Database\\System\\PublicSurface\\Schema',
@@ -123,7 +123,7 @@ $classAliases = [
     'Avax\\HTTP\\Request\\Request' => 'Avax\\Components\\HTTP\\Request\\System\\PublicSurface\\RequestInterface',
     'Avax\\Cache\\Cache' => 'Avax\\Components\\Application\\Cache\\System\\PublicSurface\\Cache',
 
-    'Avax\\Components\\Application\\Container\\System\\PublicSurface\\Container' => 'Avax\\Components\\Application\\Container\\System\\Container',
+    'Avax\\Components\\Application\\Container\\System\\Container' => 'Avax\\Components\\Application\\Container\\System\\PublicSurface\\Container',
     HttpKernel::class => HttpKernel::class,
     AppKernel::class => AppKernel::class,
     ResolveRouteFromHttpRequest::class => ResolveRouteFromHttpRequest::class,

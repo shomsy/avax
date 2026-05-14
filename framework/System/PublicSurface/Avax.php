@@ -10,6 +10,7 @@ use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeState;
+use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
 use Avax\Framework\System\Capabilities\StateReset\StateResetReport;
 use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
 use Avax\Framework\System\Flows\BootApplication\BootApplication;
@@ -75,7 +76,12 @@ final readonly class Avax implements AvaxInterface
         $responseFactory    = new ResponseFactory();
         $handleIncomingHttp = new HandleIncomingHttp(responseFactory: $responseFactory);
         $bootFlow = new BootApplication(
-            buildApplicationState: new BuildApplicationState(),
+            buildApplicationState: new BuildApplicationState(
+                componentRegistry : new ComponentRegistry(),
+                requestScopeStore : new RequestScopeStore(),
+                runtimeContext    : new RuntimeContext(),
+                stateResetRegistry: new StateResetRegistry(),
+            ),
         );
         $runtime = $bootFlow->boot(builder: $builder);
 

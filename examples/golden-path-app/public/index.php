@@ -5,8 +5,10 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
+use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\Foundation\Paths\ProjectPath;
+use Avax\Framework\System\Foundation\Time\SystemClock;
 use Avax\Framework\System\PublicSurface\Avax;
 
 // 1. Build the Application Configuration
@@ -17,6 +19,8 @@ if ($projectRealPath === false) {
 $builder = new ApplicationBuilder(
     projectPath    : new ProjectPath($projectRealPath),
     environmentName: new EnvironmentName('development'),
+    clock          : new SystemClock(),
+    runDoctor      : new RunDoctor(),
 );
 
 // 2. Boot the Framework

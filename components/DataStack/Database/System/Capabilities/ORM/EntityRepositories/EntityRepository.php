@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\ORM\EntityRepositories;
 
-use Avax\Components\DataStack\Database\System\Capabilities\ORM\EntityManager;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\ManageEntityPersistence;
 use RuntimeException;
 use Throwable;
 
@@ -19,7 +19,7 @@ class EntityRepository
      * @param  class-string<TEntity>  $entityClass
      */
     public function __construct(
-        protected readonly EntityManager $entityManager,
+        protected readonly ManageEntityPersistence $entityManager,
         protected readonly string $entityClass,
     ) {
     }

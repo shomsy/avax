@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\Security\DataProtection\System\Flows\RotateEncryptionKey;
 
-use Avax\Components\Security\DataProtection\System\Capabilities\KeyManager\KeyManager;
+use Avax\Components\Security\DataProtection\System\Capabilities\ManageKeys\ManageKeys;
 
 final readonly class RotateEncryptionKey
 {
     public function __construct(
-        private KeyManager $keyManager = new KeyManager(),
+        private ManageKeys $keyManager = new ManageKeys(),
     ) {}
 
     /**

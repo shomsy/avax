@@ -19,11 +19,11 @@ foreach ($files as $file) {
     $content = file_get_contents($file);
     $changed = false;
 
-    // Fix PublicSurface\Container to System\Container
-    if (str_contains($content, 'Avax\Components\Application\Container\System\PublicSurface\Container')) {
+    // Fix System\Container to PublicSurface\Container
+    if (str_contains($content, 'Avax\Components\Application\Container\System\Container;')) {
         $content = str_replace(
-            'Avax\Components\Application\Container\System\PublicSurface\Container',
-            'Avax\Components\Application\Container\System\Container',
+            'Avax\Components\Application\Container\System\Container;',
+            'Avax\Components\Application\Container\System\PublicSurface\Container;',
             $content
         );
         $changed = true;

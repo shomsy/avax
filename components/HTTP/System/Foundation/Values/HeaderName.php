@@ -132,7 +132,7 @@ enum HeaderName: string
      * Try to create a HeaderName from a header string (case-insensitive).
      * Returns null if the header name is not recognized.
      */
-    public static function tryFromName(string $name) : ?self
+    public static function tryFromName(string $name) : self|null
     {
         $normalized = ucwords(strtolower(trim($name)), '-');
 

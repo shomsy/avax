@@ -1,3 +1,8 @@
 EVIDENCE/cleanup/logs/worktree-diff-files.txt
 EVIDENCE/cleanup/logs/worktree-diffstat.txt
 EVIDENCE/cleanup/logs/worktree-pre.txt
+components/Application/Cache/System/PublicSurface/CacheFacade.php
+components/Application/Cache/System/PublicSurface/CacheRegistry.php
+components/Application/Cache/System/PublicSurface/CompiledCacheTarget.php
+components/Application/Cache/System/PublicSurface/ReadFromCache.php
+components/Application/Cache/System/PublicSurface/RuntimeCacheTarget.php

@@ -9,6 +9,7 @@ use Avax\Components\Operations\Observability\System\Capabilities\Logging\Logger;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsStore;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\ClassifyFailure\ClassifyFailure;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\CleanupAfterFailure\CleanupAfterFailure;
+use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\CleanupAfterFailure\FailureCleanupRegistry;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\EnforceTimeout\EnforceTimeout;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\MapFailureToResult\MapFailureToResult;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\ReportFailure\ReportFailure;
@@ -32,7 +33,7 @@ final readonly class BuildFailureBoundary
     {
         $config = FailureBoundaryConfiguration::fromArray($config);
 
-        $cleanup = new CleanupAfterFailure();
+        $cleanup = new CleanupAfterFailure(registry: new FailureCleanupRegistry());
         $classify = new ClassifyFailure();
         $report = new ReportFailure($logger);
         $retry = new RetryFailedAction();

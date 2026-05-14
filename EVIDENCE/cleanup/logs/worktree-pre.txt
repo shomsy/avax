@@ -1,1 +1,6 @@
  M EVIDENCE/cleanup/logs/worktree-pre.txt
+ D components/Application/Cache/System/PublicSurface/CacheFacade.php
+ D components/Application/Cache/System/PublicSurface/CacheRegistry.php
+ D components/Application/Cache/System/PublicSurface/CompiledCacheTarget.php
+ D components/Application/Cache/System/PublicSurface/ReadFromCache.php
+ D components/Application/Cache/System/PublicSurface/RuntimeCacheTarget.php

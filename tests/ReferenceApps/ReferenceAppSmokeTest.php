@@ -20,6 +20,7 @@ use Avax\Framework\System\Capabilities\Security\FeatureFlags\InMemoryFeatureFlag
 use Avax\Framework\System\Capabilities\Security\PolicyEngine\DefinePolicy;
 use Avax\Framework\System\Capabilities\Security\PolicyEngine\EvaluatePolicy;
 use Avax\Framework\System\Capabilities\Security\PolicyEngine\Foundation\PolicyAction;
+use Avax\Framework\System\Capabilities\Security\PolicyEngine\Foundation\PolicyContext;
 use Avax\Framework\System\Capabilities\Security\PolicyEngine\Foundation\PolicyResource;
 use Avax\Framework\System\Capabilities\Security\PolicyEngine\Foundation\PolicySubject;
 use Avax\Framework\System\Capabilities\Security\RequestSigning\Foundation\SignatureKeyId;
@@ -252,6 +253,7 @@ final class ReferenceAppSmokeTest extends TestCase
             new PolicySubject('user-1'),
             new PolicyAction('read'),
             new PolicyResource('data', 'item-1'),
+            new PolicyContext(),
         );
 
         self::assertTrue($decision->isAllowed());

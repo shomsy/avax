@@ -98,14 +98,14 @@ Rules:
 
 Before any phase, verify worktree state:
 
-- [ ] **WH-1** Run:
+- [x] **WH-1** Run:
   ```bash
   git status --short > EVIDENCE/cleanup/logs/worktree-pre.txt
   git diff --stat > EVIDENCE/cleanup/logs/worktree-diffstat.txt
   git diff --name-only > EVIDENCE/cleanup/logs/worktree-diff-files.txt
   ```
 
-- [ ] **WH-2** Record in `EVIDENCE/cleanup/worktree-hygiene.md`:
+- [x] **WH-2** Record in `EVIDENCE/cleanup/worktree-hygiene.md`:
     - pre-existing dirty files (with classification)
     - files changed by this pass
     - files that must not be touched (protected)
@@ -113,7 +113,7 @@ Before any phase, verify worktree state:
     - `.qoder/worktrees/**` status (evidence-only vs active)
     - whether dirty files are: evidence, generated, local tool state, or source
 
-- [ ] **WH-3** Rule:
+- [x] **WH-3** Rule:
   No commit may include unrelated dirty work unless explicitly classified in `worktree-hygiene.md`.
 
 ---
@@ -122,36 +122,36 @@ Before any phase, verify worktree state:
 
 Before any phase, verify scope boundaries:
 
-- [ ] **SI-1** Verify `EVIDENCE/**` is NOT in production autoload:
+- [x] **SI-1** Verify `EVIDENCE/**` is NOT in production autoload:
   ```bash
   grep -r "EVIDENCE" composer.json
   ```
 
-- [ ] **SI-2** Verify `recovery-staging/**` is NOT in production autoload:
+- [x] **SI-2** Verify `recovery-staging/**` is NOT in production autoload:
   ```bash
   ls recovery-staging/ 2>/dev/null && grep -r "recovery-staging" composer.json || echo "No recovery-staging dir"
   ```
 
-- [ ] **SI-3** Verify `labs/**` are NOT production claims unless explicitly marked:
+- [x] **SI-3** Verify `labs/**` are NOT production claims unless explicitly marked:
   ```bash
   grep -r "labs" composer.json
   ```
 
-- [ ] **SI-4** Verify generated/cache files are NOT treated as hand-maintained truth:
+- [x] **SI-4** Verify generated/cache files are NOT treated as hand-maintained truth:
   ```bash
   ls var/cache/ 2>/dev/null && echo "WARNING: var/cache/ exists" || true
   ```
 
-- [ ] **SI-5** Record scope isolation findings in `EVIDENCE/cleanup/scope-isolation.md`
+- [x] **SI-5** Record scope isolation findings in `EVIDENCE/cleanup/scope-isolation.md`
 
-- [ ] **SI-6** Rule: Historical/evidence code may exist, but it must NOT poison active runtime, gates, autoload, or AI
+- [x] **SI-6** Rule: Historical/evidence code may exist, but it must NOT poison active runtime, gates, autoload, or AI
   examples.
 
 ---
 
 ## Phase 0: Preflight + Baseline Capture
 
-- [ ] **0.1** Run full initial validation:
+- [x] **0.1** Run full initial validation:
   ```bash
   composer validate --no-check-publish
   composer dump-autoload -o
@@ -159,13 +159,13 @@ Before any phase, verify scope boundaries:
   vendor/bin/phpstan analyse framework components tests labs/SystemDesignKit --memory-limit=1G --error-format=raw 2>&1 | tail -10
   ```
 
-- [ ] **0.2** Record worktree hygiene (see Worktree Hygiene section above)
+- [x] **0.2** Record worktree hygiene (see Worktree Hygiene section above)
 
-- [ ] **0.3** Record scope isolation (see Active Scope Isolation section above)
+- [x] **0.3** Record scope isolation (see Active Scope Isolation section above)
 
-- [ ] **0.4** Update `EVIDENCE/cleanup/00-cleanup-control-lock.md` with fresh branch, commit, dates
+- [x] **0.4** Update `EVIDENCE/cleanup/00-cleanup-control-lock.md` with fresh branch, commit, dates
 
-- [ ] **0.5** Run all gates:
+- [x] **0.5** Run all gates:
   ```bash
   for gate in \
     tooling/security/check-security-blockers.php \
@@ -200,9 +200,9 @@ Before any phase, verify scope boundaries:
   done
   ```
 
-- [ ] **0.6** Save all gate outputs with result classification to `EVIDENCE/cleanup/logs/`
+- [x] **0.6** Save all gate outputs with result classification to `EVIDENCE/cleanup/logs/`
 
-- [ ] **0.7** Update `EVIDENCE/cleanup/01-baseline-validation.md` with fresh output
+- [x] **0.7** Update `EVIDENCE/cleanup/01-baseline-validation.md` with fresh output
 
 ---
 
@@ -210,7 +210,7 @@ Before any phase, verify scope boundaries:
 
 ### B-A: Status Lock
 
-- [ ] **B-A.1** Find active components missing from status lock:
+- [x] **B-A.1** Find active components missing from status lock:
   ```bash
   for dir in components/*/*/System; do
     name=$(echo "$dir" | sed 's|components/||; s|/System||')
@@ -218,12 +218,12 @@ Before any phase, verify scope boundaries:
   done
   ```
 
-- [ ] **B-A.2** Add missing components to `EVIDENCE/components/component-status-lock.md`:
+- [x] **B-A.2** Add missing components to `EVIDENCE/components/component-status-lock.md`:
   ```
   | Application/Cache | ACTIVE_GREEN | HEALTH_GREEN | NO |
   ```
 
-- [ ] **B-A.3** Verify status lock consistency:
+- [x] **B-A.3** Verify status lock consistency:
   ```bash
   php tooling/components/check-component-status-lock-coverage.php
   ```
@@ -235,43 +235,43 @@ Rule: `how-to-design-components.md` Section 6.7 — `Contracts`, `Events`, `Diag
 
 **20 violations found:**
 
-- [ ] **B-B.01** `components/Application/Container/System/Capabilities/Diagnostics` → rename `Diagnostics` to
+- [x] **B-B.01** `components/Application/Container/System/Capabilities/Diagnostics` → rename `Diagnostics` to
   `CheckContainerHealth` or merge into existing HealthCheck capability
-- [ ] **B-B.02** `components/CLI/Console/System/Capabilities/Commands` → rename `Commands` to `DefineConsoleInput` or
+- [x] **B-B.02** `components/CLI/Console/System/Capabilities/Commands` → rename `Commands` to `DefineConsoleInput` or
   `RegisterConsoleActions`
-- [ ] **B-B.03** `components/DataStack/Database/System/Capabilities/Connections/Contracts` → rename `Contracts` to
+- [x] **B-B.03** `components/DataStack/Database/System/Capabilities/Connections/Contracts` → rename `Contracts` to
   `ConnectionInterfaceDefinitions` or `DatabaseConnectorContracts`
-- [ ] **B-B.04** `components/DataStack/Database/System/Capabilities/Connections/Pools/Contracts` → rename to
+- [x] **B-B.04** `components/DataStack/Database/System/Capabilities/Connections/Pools/Contracts` → rename to
   `ConnectionPoolInterfaces`
-- [ ] **B-B.05** `components/DataStack/Database/System/Capabilities/Connections/ValueObjects` → rename `ValueObjects` to
+- [x] **B-B.05** `components/DataStack/Database/System/Capabilities/Connections/ValueObjects` → rename `ValueObjects` to
   `ConnectionConfiguration` or `ConnectionParameters`
-- [ ] **B-B.06** `components/DataStack/Database/System/Capabilities/ORM/Repositories` → rename `Repositories` to
+- [x] **B-B.06** `components/DataStack/Database/System/Capabilities/ORM/Repositories` → rename `Repositories` to
   `StoreEntityData` or `PersistDomainModels`
-- [ ] **B-B.07** `components/DataStack/Database/System/Capabilities/Query/ValueObjects` → rename to
+- [x] **B-B.07** `components/DataStack/Database/System/Capabilities/Query/ValueObjects` → rename to
   `QueryParameterTypes` or `QueryExpressionTypes`
-- [ ] **B-B.08** `components/DataStack/Database/System/Capabilities/Telemetry/Events` → rename `Events` to
+- [x] **B-B.08** `components/DataStack/Database/System/Capabilities/Telemetry/Events` → rename `Events` to
   `EmitQueryTelemetryEvents` or `DispatchQueryLifecycle`
-- [ ] **B-B.09** `components/DataStack/Database/System/Capabilities/Telemetry/Events/Contracts` → rename to
+- [x] **B-B.09** `components/DataStack/Database/System/Capabilities/Telemetry/Events/Contracts` → rename to
   `QueryTelemetryContracts`
-- [ ] **B-B.10** `components/DataStack/Database/System/Capabilities/Transactions/Contracts` → rename to
+- [x] **B-B.10** `components/DataStack/Database/System/Capabilities/Transactions/Contracts` → rename to
   `TransactionContractDefinitions`
-- [ ] **B-B.11** `components/DataStack/Database/System/Foundation/Lifecycle/Events` → rename to
+- [x] **B-B.11** `components/DataStack/Database/System/Foundation/Lifecycle/Events` → rename to
   `Foundation/Lifecycle/LifecycleNotifications` or `Foundation/Lifecycle/EmitLifetimeHooks`
-- [ ] **B-B.12** `components/DataStack/Persistence/System/Capabilities/Diagnostics` → rename to `CheckPersistenceHealth`
+- [x] **B-B.12** `components/DataStack/Persistence/System/Capabilities/Diagnostics` → rename to `CheckPersistenceHealth`
   or `DiagnosePersistenceConfiguration`
-- [ ] **B-B.13** `components/DataStack/Persistence/System/Capabilities/Repositories` → rename to `StorePersistentData`
+- [x] **B-B.13** `components/DataStack/Persistence/System/Capabilities/Repositories` → rename to `StorePersistentData`
   or `PersistentEntityStorage`
-- [ ] **B-B.14** `components/DeveloperTools/Dx/System/Capabilities/Commands` → rename to `RegisterDeveloperCommands` or
+- [x] **B-B.14** `components/DeveloperTools/Dx/System/Capabilities/Commands` → rename to `RegisterDeveloperCommands` or
   `DefineCliActions`
-- [ ] **B-B.15** `components/HTTP/Session/System/Capabilities/Events` → rename to `EmitSessionLifecycleNotifications` or
+- [x] **B-B.15** `components/HTTP/Session/System/Capabilities/Events` → rename to `EmitSessionLifecycleNotifications` or
   `DispatchSessionEvents`
-- [ ] **B-B.16** `components/Identity/Auth/System/Capabilities/Diagnostics` → rename to `CheckAuthConfiguration` or
+- [x] **B-B.16** `components/Identity/Auth/System/Capabilities/Diagnostics` → rename to `CheckAuthConfiguration` or
   `DiagnoseAuthState`
-- [ ] **B-B.17** `components/Operations/Filesystem/System/Capabilities/Adapters` → rename to `StorageBackends` or
+- [x] **B-B.17** `components/Operations/Filesystem/System/Capabilities/Adapters` → rename to `StorageBackends` or
   `FilesystemDrivers`
-- [ ] **B-B.18** `components/Security/Cryptography/System/PublicSurface/Contracts` → move `StringEncrypterInterface.php`
+- [x] **B-B.18** `components/Security/Cryptography/System/PublicSurface/Contracts` → move `StringEncrypterInterface.php`
   up to `PublicSurface/` directly, remove `Contracts/` folder
-- [ ] **B-B.19** `components/SystemDesign/System/Capabilities/Messaging/Cqrs` → rename `Cqrs` to
+- [x] **B-B.19** `components/SystemDesign/System/Capabilities/Messaging/Cqrs` → rename `Cqrs` to
   `CommandQuerySeparation` or `HandleCommandQuery`
 
 ### B-C: Component Names on Forbidden List
@@ -279,90 +279,90 @@ Rule: `how-to-design-components.md` Section 6.7 — `Contracts`, `Events`, `Diag
 Rule: `AGENTS.md` Section 8 — if a word from the forbidden list is truly domain language, it must be explicitly
 justified via governance exception.
 
-- [ ] **B-C.1** `components/API/Contracts` — "Contracts" is forbidden. Either rename to `API/ApiContractManagement` or
+- [x] **B-C.1** `components/API/Contracts` — "Contracts" is forbidden. Either rename to `API/ApiContractManagement` or
   create governance exception in `.agents/GOVERNANCE_EXCEPTIONS.md`
-- [ ] **B-C.2** `components/DeveloperTools/Diagnostics` — "Diagnostics" is forbidden. Either rename to
+- [x] **B-C.2** `components/DeveloperTools/Diagnostics` — "Diagnostics" is forbidden. Either rename to
   `DeveloperTools/HealthCheck` or create governance exception
-- [ ] **B-C.3** `components/Operations/Events` — "Events" is forbidden. Either rename to `Operations/EventDispatch` or
+- [x] **B-C.3** `components/Operations/Events` — "Events" is forbidden. Either rename to `Operations/EventDispatch` or
   create governance exception
-- [ ] **B-C.4** `components/Identity/Auth/docs/` — "Docs" is forbidden inside component. Move documentation to
+- [x] **B-C.4** `components/Identity/Auth/docs/` — "Docs" is forbidden inside component. Move documentation to
   project-level `docs/`
-- [ ] **B-C.5** `components/Identity/Auth/tests/` — "Tests" is forbidden inside component. Move tests to central
+- [x] **B-C.5** `components/Identity/Auth/tests/` — "Tests" is forbidden inside component. Move tests to central
   `tests/` tree
 
 ### B-D: Files Outside System/
 
 Rule: `AGENTS.md` Section 7 — all production code must live inside `System/`.
 
-- [ ] **B-D.01** `components/Application/Cache/Cache.php` → move to `System/PublicSurface/Cache.php`
-- [ ] **B-D.02** `components/Application/Cache/CompiledCache.php` → move to `System/PublicSurface/CompiledCache.php`
-- [ ] **B-D.03** `components/Application/Config/AuthConfig.php` → move to `System/Configuration/AuthConfig.php`
-- [ ] **B-D.04** `components/Application/Config/functions.php` → move to `System/Foundation/functions.php`
-- [ ] **B-D.05** `components/Application/Text/functions.php` → move to `System/Foundation/functions.php`
-- [ ] **B-D.06** `components/DataStack/Persistence/AccessPersistentData.php` → move to
+- [x] **B-D.01** `components/Application/Cache/Cache.php` → move to `System/PublicSurface/Cache.php`
+- [x] **B-D.02** `components/Application/Cache/CompiledCache.php` → move to `System/PublicSurface/CompiledCache.php`
+- [x] **B-D.03** `components/Application/Config/AuthConfig.php` → move to `System/Configuration/AuthConfig.php`
+- [x] **B-D.04** `components/Application/Config/functions.php` → move to `System/Foundation/functions.php`
+- [x] **B-D.05** `components/Application/Text/functions.php` → move to `System/Foundation/functions.php`
+- [x] **B-D.06** `components/DataStack/Persistence/AccessPersistentData.php` → move to
   `System/Flows/AccessPersistentData/AccessPersistentData.php`
-- [ ] **B-D.07** `components/DataStack/Persistence/CommitDataChanges.php` → move to
+- [x] **B-D.07** `components/DataStack/Persistence/CommitDataChanges.php` → move to
   `System/Flows/CommitDataChanges/CommitDataChanges.php`
-- [ ] **B-D.08** `components/DataStack/Persistence/DataLayer.php` → move to `System/PublicSurface/DataLayer.php`
-- [ ] **B-D.09** `components/DataStack/Persistence/DataLayerConfig.php` → move to
+- [x] **B-D.08** `components/DataStack/Persistence/DataLayer.php` → move to `System/PublicSurface/DataLayer.php`
+- [x] **B-D.09** `components/DataStack/Persistence/DataLayerConfig.php` → move to
   `System/Configuration/DataLayerConfig.php`
-- [ ] **B-D.10** `components/DataStack/Persistence/RegisterDataLayerRuntime.php` → move to
+- [x] **B-D.10** `components/DataStack/Persistence/RegisterDataLayerRuntime.php` → move to
   `System/Configuration/RegisterDataLayerRuntime.php`
-- [ ] **B-D.11** `components/HTTP/Middleware/` (8 files: IpRestrictionMiddleware, MiddlewareInterface,
+- [x] **B-D.11** `components/HTTP/Middleware/` (8 files: IpRestrictionMiddleware, MiddlewareInterface,
   MiddlewareRegistry, RateLimiterInterface, RateLimiterMiddleware, RequestHandlerInterface, RequestLoggerMiddleware,
   SessionLifecycleMiddleware) → move each to `System/Capabilities/<CapabilityName>/`
-- [ ] **B-D.12** `components/HTTP/Response/ResponseFactory.php` → move to
+- [x] **B-D.12** `components/HTTP/Response/ResponseFactory.php` → move to
   `System/Capabilities/ResponseBuilding/ResponseFactory.php`
-- [ ] **B-D.13** `components/HTTP/Client/shortcuts.php`, `components/HTTP/Context/shortcuts.php`,
+- [x] **B-D.13** `components/HTTP/Client/shortcuts.php`, `components/HTTP/Context/shortcuts.php`,
   `components/HTTP/Security/shortcuts.php`, `components/Operations/Logging/shortcuts.php` → move each to
   `System/PublicSurface/shortcuts.php`
-- [ ] **B-D.14** `components/HTTP/Session/NullSession.php` → move to
+- [x] **B-D.14** `components/HTTP/Session/NullSession.php` → move to
   `System/Capabilities/SessionStorage/NullSession.php`
-- [ ] **B-D.15** `components/Identity/Auth/phpVersion.php`, `components/Identity/Auth/rector.php` → move to project root
+- [x] **B-D.15** `components/Identity/Auth/phpVersion.php`, `components/Identity/Auth/rector.php` → move to project root
   or `tooling/`
-- [ ] **B-D.16** `components/Presentation/View/BladeTemplateEngine.php`, `TemplateEngine.php` → move to
+- [x] **B-D.16** `components/Presentation/View/BladeTemplateEngine.php`, `TemplateEngine.php` → move to
   `System/Capabilities/BladeRendering/`
-- [ ] **B-D.17** `components/HTTP/Configuration.php` → move to `components/HTTP/System/Configuration/Configuration.php`
-- [ ] **B-D.18** `components/compat.php` → evaluate necessity, move to `framework/System/Foundation/compat.php` or
+- [x] **B-D.17** `components/HTTP/Configuration.php` → move to `components/HTTP/System/Configuration/Configuration.php`
+- [x] **B-D.18** `components/compat.php` → evaluate necessity, move to `framework/System/Foundation/compat.php` or
   remove
 
 ### B-E: Subdirectories Outside System/ With PHP Content
 
-- [ ] **B-E.1** `components/Application/Cache/Examples/`, `examples/`, `Providers/` → move content into `System/`
-- [ ] **B-E.2** `components/Application/Config/Configurator/` → move into `System/Configuration/`
-- [ ] **B-E.3** `components/Application/Container/tools/` → move into `System/Foundation/tools/` or remove
-- [ ] **B-E.4** `components/Application/Filesystem/Configuration/` → move into `System/Configuration/`
-- [ ] **B-E.5** `components/DataStack/Persistence/AccessPersistentData/`, `CommitDataChanges/`, `ConfigureDataLayer/` →
+- [x] **B-E.1** `components/Application/Cache/Examples/`, `examples/`, `Providers/` → move content into `System/`
+- [x] **B-E.2** `components/Application/Config/Configurator/` → move into `System/Configuration/`
+- [x] **B-E.3** `components/Application/Container/tools/` → move into `System/Foundation/tools/` or remove
+- [x] **B-E.4** `components/Application/Filesystem/Configuration/` → move into `System/Configuration/`
+- [x] **B-E.5** `components/DataStack/Persistence/AccessPersistentData/`, `CommitDataChanges/`, `ConfigureDataLayer/` →
   move each into `System/Flows/`
-- [ ] **B-E.6** `components/DeveloperTools/Documentation/Api/` → move into `System/Capabilities/`
-- [ ] **B-E.7** `components/HTTP/Request/ServerRequest/` → move into `System/Capabilities/`
-- [ ] **B-E.8** `components/Identity/Auth/Integrations/` → move into `System/Capabilities/Integrations/`
-- [ ] **B-E.9** `components/Identity/Auth/examples/` → move to project-level `examples/`
-- [ ] **B-E.10** `components/Identity/Auth/tests/` → move to central `tests/` tree
+- [x] **B-E.6** `components/DeveloperTools/Documentation/Api/` → move into `System/Capabilities/`
+- [x] **B-E.7** `components/HTTP/Request/ServerRequest/` → move into `System/Capabilities/`
+- [x] **B-E.8** `components/Identity/Auth/Integrations/` → move into `System/Capabilities/Integrations/`
+- [x] **B-E.9** `components/Identity/Auth/examples/` → move to project-level `examples/`
+- [x] **B-E.10** `components/Identity/Auth/tests/` → move to central `tests/` tree
 
 ### B-F: framework/Foundation/ Outside System/
 
-- [ ] **B-F.1** `framework/Foundation/Exception/NotImplementedException.php` → move to
+- [x] **B-F.1** `framework/Foundation/Exception/NotImplementedException.php` → move to
   `framework/System/Foundation/Exception/NotImplementedException.php`
 
 ### B-G: Validate
 
-- [ ] **B-G.1** Verify all moves preserved autoload integrity:
+- [x] **B-G.1** Verify all moves preserved autoload integrity:
   ```bash
   composer dump-autoload -o
   ```
-- [ ] **B-G.2** Verify all moves pass PHPStan:
+- [x] **B-G.2** Verify all moves pass PHPStan:
   ```bash
   vendor/bin/phpstan analyse framework components --memory-limit=1G --error-format=raw
   ```
-- [ ] **B-G.3** Verify advanced folder gate passes:
+- [x] **B-G.3** Verify advanced folder gate passes:
   ```bash
   php tooling/refactor/check-advanced-pattern-folder-violations.php
   php tooling/refactor/check-component-canonical-shape.php
   php tooling/refactor/check-namespace-drift.php
   ```
 
-- [ ] **B-G.4** Commit:
+- [x] **B-G.4** Commit:
   ```bash
   git add -A && git commit -m "cleanup: phase B — status lock rebuild, forbidden folder renames, files moved into System/ hierarchy"
   ```
@@ -377,54 +377,54 @@ These are the most dangerous: infrastructure dependencies instantiated inline in
 
 **`new ResponseFactory()` violations:**
 
-- [ ] **C-A.01** `framework/System/Flows/HandleIncomingHttp/ConfiguredRoutesHttpHandler.php:87` —
+- [x] **C-A.01** `framework/System/Flows/HandleIncomingHttp/ConfiguredRoutesHttpHandler.php:87` —
   `responseFactory: new ResponseFactory()`. Fix: inject `ResponseFactory` via constructor, remove static `fromCache()`
   factory.
-- [ ] **C-A.02** `framework/System/Flows/HandleIncomingHttp/ConfiguredRoutesHttpHandler.php:98` —
+- [x] **C-A.02** `framework/System/Flows/HandleIncomingHttp/ConfiguredRoutesHttpHandler.php:98` —
   `responseFactory: new ResponseFactory()`. Fix: same — remove `fromRouteDefinitions()` static factory or make it
   delegate to DI-resolved builder.
-- [ ] **C-A.03** `framework/System/Capabilities/Runtime/Worker/WorkerLoop.php:78` —
+- [x] **C-A.03** `framework/System/Capabilities/Runtime/Worker/WorkerLoop.php:78` —
   `responseFactory: new ResponseFactory()`. Fix: inject `ResponseFactory` into `WorkerLoop` constructor.
-- [ ] **C-A.04** `framework/System/PublicSurface/App.php:316` — `new ResponseFactory()`. Fix: inject via constructor.
-- [ ] **C-A.05** `framework/System/PublicSurface/Avax.php:81` — `new ResponseFactory()`. Fix: inject via constructor.
+- [x] **C-A.04** `framework/System/PublicSurface/App.php:316` — `new ResponseFactory()`. Fix: inject via constructor.
+- [x] **C-A.05** `framework/System/PublicSurface/Avax.php:81` — `new ResponseFactory()`. Fix: inject via constructor.
 
 **`new Filesystem()` violations:**
 
-- [ ] **C-A.06** `framework/System/Capabilities/Routing/RegisterRouteCommands.php:40` —
+- [x] **C-A.06** `framework/System/Capabilities/Routing/RegisterRouteCommands.php:40` —
   `new CacheRouteTable(new Filesystem())`. Fix: inject `Filesystem` through closure's `use` or register proper command
   classes.
-- [ ] **C-A.07** `framework/System/Capabilities/Routing/RegisterRouteCommands.php:60` —
+- [x] **C-A.07** `framework/System/Capabilities/Routing/RegisterRouteCommands.php:60` —
   `new LoadCachedRoutes(new Filesystem())`. Fix: same pattern.
-- [ ] **C-A.08** `components/DeveloperTools/CodeGeneration/System/Flows/GenerateCode/GenerateCode.php:22` —
+- [x] **C-A.08** `components/DeveloperTools/CodeGeneration/System/Flows/GenerateCode/GenerateCode.php:22` —
   `$fs = $filesystem ?? new Filesystem()`. Fix: make `Filesystem` required constructor parameter.
-- [ ] **C-A.09**
+- [x] **C-A.09**
   `components/DeveloperTools/CodeGeneration/System/Capabilities/Generators/CodeGenerator.php:38,86,107,120` —
   `$this->filesystem ?? new Filesystem()` (4x). Fix: make `Filesystem` required constructor parameter, remove all 4
   fallbacks.
-- [ ] **C-A.10** `components/SystemDesign/System/Capabilities/SchemaValidation/NativeYamlParser.php:42` —
+- [x] **C-A.10** `components/SystemDesign/System/Capabilities/SchemaValidation/NativeYamlParser.php:42` —
   `$fs = $this->filesystem ?? new Filesystem()`. Fix: make `Filesystem` required constructor parameter.
-- [ ] **C-A.11** `components/DataStack/Database/System/PublicSurface/Migrations.php:152` (verifikovati) —
+- [x] **C-A.11** `components/DataStack/Database/System/PublicSurface/Migrations.php:152` (verifikovati) —
   `new Filesystem()`. Fix: inject through constructor.
 
 **`new SystemClock()` violations:**
 
-- [ ] **C-A.12** `framework/System/Flows/CreateApplication/CreateApplication.php:42` — `$clock = new SystemClock()`.
+- [x] **C-A.12** `framework/System/Flows/CreateApplication/CreateApplication.php:42` — `$clock = new SystemClock()`.
   Fix: inject `Clock` through constructor.
-- [ ] **C-A.13**
+- [x] **C-A.13**
   `components/Application/Cache/System/Capabilities/Lifecycle/ReplaceCachedValues/LeastFrequentlyUsedReplacement/LeastFrequentlyUsedReplacement.php:20` —
   `$clock ?? new SystemClock()`. Fix: make `Clock` required constructor parameter.
-- [ ] **C-A.14** `components/Application/Cache/System/Capabilities/Compilation/CompiledCacheFreshness.php:33` —
+- [x] **C-A.14** `components/Application/Cache/System/Capabilities/Compilation/CompiledCacheFreshness.php:33` —
   `$clock ?? new SystemClock()`. Fix: make `Clock` required.
-- [ ] **C-A.15**
+- [x] **C-A.15**
   `components/Application/Cache/System/Capabilities/Distribution/UseCacheTiers/L2DistributedCache.php:29` —
   `$clock ?? new SystemClock()`. Fix: make `Clock` required.
-- [ ] **C-A.16**
+- [x] **C-A.16**
   `components/Application/Cache/System/Capabilities/CompiledCache/DistributedCompiledCache/CompiledCacheManifest.php:38,48` —
   `$clock ?? new SystemClock()` (2x). Fix: make `Clock` required.
-- [ ] **C-A.17**
+- [x] **C-A.17**
   `components/Application/Cache/System/Capabilities/Storage/StoreCachedValues/CacheHealthDetector.php:213` —
   `$clock ?? new SystemClock()`. Fix: make `Clock` required.
-- [ ] **C-A.18** `components/Application/Cache/System/Capabilities/Storage/StoreCachedValues/L1MemoryCache.php:26` —
+- [x] **C-A.18** `components/Application/Cache/System/Capabilities/Storage/StoreCachedValues/L1MemoryCache.php:26` —
   `$clock ?? new SystemClock()`. Fix: make `Clock` required.
 
 ### C-B: framework/System/Flows/ — Direct `new` With Default Constructor Values
@@ -432,35 +432,35 @@ These are the most dangerous: infrastructure dependencies instantiated inline in
 Rule: `how-to-dependency-injection.md` Section 5.1 — `= new ClassName()` as a constructor default is the
 `?? new Fallback` anti-pattern. Dependencies MUST be required constructor parameters.
 
-- [ ] **C-B.01** `framework/System/Flows/HandleRuntimeFailure/HandleRuntimeFailure.php:17` —
+- [x] **C-B.01** `framework/System/Flows/HandleRuntimeFailure/HandleRuntimeFailure.php:17` —
   `private ConvertPhpErrorToThrowable $convertPhpErrorToThrowable = new ConvertPhpErrorToThrowable()`. Fix: make
   required constructor parameter.
-- [ ] **C-B.02** `framework/System/Flows/HandleRuntimeFailure/HandleRuntimeFailure.php:18` —
+- [x] **C-B.02** `framework/System/Flows/HandleRuntimeFailure/HandleRuntimeFailure.php:18` —
   `private ReportRuntimeFailure $reportRuntimeFailure = new ReportRuntimeFailure()`. Fix: required.
-- [ ] **C-B.03** `framework/System/Flows/HandleRuntimeFailure/HandleRuntimeFailure.php:19` —
+- [x] **C-B.03** `framework/System/Flows/HandleRuntimeFailure/HandleRuntimeFailure.php:19` —
   `private RenderRuntimeFailure $renderRuntimeFailure = new RenderRuntimeFailure()`. Fix: required.
-- [ ] **C-B.04** `framework/System/Flows/ValidateConfig/ValidateConfig.php:14` —
+- [x] **C-B.04** `framework/System/Flows/ValidateConfig/ValidateConfig.php:14` —
   `private ConfigValidator $configValidator = new ConfigValidator()`. Fix: required.
-- [ ] **C-B.05** `framework/System/Flows/CheckRuntimeIsolation/CheckRuntimeIsolation.php:12` —
+- [x] **C-B.05** `framework/System/Flows/CheckRuntimeIsolation/CheckRuntimeIsolation.php:12` —
   `private RuntimeIsolationGuard $runtimeIsolationGuard = new RuntimeIsolationGuard()`. Fix: required.
-- [ ] **C-B.06** `framework/System/Flows/DiscoverComponents/DiscoverComponents.php:12` —
+- [x] **C-B.06** `framework/System/Flows/DiscoverComponents/DiscoverComponents.php:12` —
   `private ComponentDiscovery $componentDiscovery = new ComponentDiscovery()`. Fix: required.
-- [ ] **C-B.07** `framework/System/Flows/ListComponents/ListComponents.php:13` —
+- [x] **C-B.07** `framework/System/Flows/ListComponents/ListComponents.php:13` —
   `private ComponentDiscovery $componentDiscovery = new ComponentDiscovery()`. Fix: required.
-- [ ] **C-B.08** `framework/System/Flows/ExplainConfig/ExplainConfig.php:13` —
+- [x] **C-B.08** `framework/System/Flows/ExplainConfig/ExplainConfig.php:13` —
   `private ConfigExplainer $configExplainer = new ConfigExplainer()`. Fix: required.
-- [ ] **C-B.09** `framework/System/Flows/ListRoutes/ListRoutes.php:13` —
+- [x] **C-B.09** `framework/System/Flows/ListRoutes/ListRoutes.php:13` —
   `private RouteAnalyzer $routeAnalyzer = new RouteAnalyzer()`. Fix: required.
-- [ ] **C-B.10** `framework/System/Flows/ExplainRouteMatch/ExplainRouteMatch.php:13` —
+- [x] **C-B.10** `framework/System/Flows/ExplainRouteMatch/ExplainRouteMatch.php:13` —
   `private RouteAnalyzer $routeAnalyzer = new RouteAnalyzer()`. Fix: required.
-- [ ] **C-B.11** `framework/System/Flows/DetectRouteConflict/DetectRouteConflict.php:13` —
+- [x] **C-B.11** `framework/System/Flows/DetectRouteConflict/DetectRouteConflict.php:13` —
   `private RouteAnalyzer $routeAnalyzer = new RouteAnalyzer()`. Fix: required.
-- [ ] **C-B.12** `framework/System/Flows/BootApplication/BootApplication.php:14` —
+- [x] **C-B.12** `framework/System/Flows/BootApplication/BootApplication.php:14` —
   `private BuildApplicationState $buildApplicationState = new BuildApplicationState()`. Fix: required.
-- [ ] **C-B.13**
+- [x] **C-B.13**
   `framework/System/Capabilities/FailureBoundary/Capabilities/CleanupAfterFailure/CleanupAfterFailure.php:24` —
   `private FailureCleanupRegistry $registry = new FailureCleanupRegistry()`. Fix: required.
-- [ ] **C-B.14** `framework/System/Capabilities/FailureBoundary/Flows/RunProtectedAction/RunProtectedAction.php:26` —
+- [x] **C-B.14** `framework/System/Capabilities/FailureBoundary/Flows/RunProtectedAction/RunProtectedAction.php:26` —
   `private EnforceTimeout $enforceTimeout = new EnforceTimeout()`. Fix: required.
 
 ### C-C: framework/System/Flows/ — Composition Root in Flow (Architecture Violation)
@@ -468,43 +468,43 @@ Rule: `how-to-dependency-injection.md` Section 5.1 — `= new ClassName()` as a 
 Rule: `how-to-dependency-injection.md` Section 3.4 — composition belongs in ServiceProvider/Configuration/Build*, not in
 Flows. These flows act as hidden composition roots.
 
-- [ ] **C-C.01** `framework/System/Flows/CreateApplication/CreateApplication.php` — 11 `new` calls constructing the
+- [x] **C-C.01** `framework/System/Flows/CreateApplication/CreateApplication.php` — 11 `new` calls constructing the
   entire application (ProjectPath, SystemClock, ComponentRegistry, RequestScopeStore, RuntimeContext,
   StateResetRegistry, RuntimeState, Runtime, App, ResetApplicationState). Fix: extract into `BuildApplication` builder
   or Configuration flow.
-- [ ] **C-C.02** `framework/System/Flows/BootApplication/BuildApplicationState.php` — 6 `new` calls (ComponentRegistry,
+- [x] **C-C.02** `framework/System/Flows/BootApplication/BuildApplicationState.php` — 6 `new` calls (ComponentRegistry,
   RequestScopeStore, RuntimeContext, StateResetRegistry, RuntimeState, Runtime). Fix: inject these as dependencies or
   use a builder.
-- [ ] **C-C.03** `framework/System/Flows/HandleIncomingHttp/ConfiguredRoutesHttpHandler.php:35-46` — 8 `new` calls (
+- [x] **C-C.03** `framework/System/Flows/HandleIncomingHttp/ConfiguredRoutesHttpHandler.php:35-46` — 8 `new` calls (
   RouteFacadeContainer, ResolveCallable, ControllerResolver, ArgumentResolver, ReadIncomingHttpRequest, MatchHttpRoute,
   RunHttpRoute). Fix: inject all via constructor.
-- [ ] **C-C.04** `framework/System/Flows/RunApplication/RunApplication.php:60-66` — 5 `new` calls (
+- [x] **C-C.04** `framework/System/Flows/RunApplication/RunApplication.php:60-66` — 5 `new` calls (
   ReadIncomingHttpRequest, MatchHttpRoute, RouteFacadeContainer, ControllerResolver, ArgumentResolver). Fix: inject all
   via constructor.
-- [ ] **C-C.05** `framework/System/Flows/HandleIncomingHttp/HandleIncomingHttp.php:34-38` — 2 `new` calls (
+- [x] **C-C.05** `framework/System/Flows/HandleIncomingHttp/HandleIncomingHttp.php:34-38` — 2 `new` calls (
   OpenHttpRequestScope, CloseHttpRequestScope). Fix: inject via constructor.
-- [ ] **C-C.06** `framework/System/Flows/RunConsoleCommand/RunConsoleCommand.php:152-155` — 2 `new` calls (
+- [x] **C-C.06** `framework/System/Flows/RunConsoleCommand/RunConsoleCommand.php:152-155` — 2 `new` calls (
   PreCommitConfig, PreCommit). Fix: inject `PreCommit` as constructor dependency.
-- [ ] **C-C.07** `framework/System/Flows/ExplainContainerResolution/ExplainContainerResolution.php:39-59` — 3
+- [x] **C-C.07** `framework/System/Flows/ExplainContainerResolution/ExplainContainerResolution.php:39-59` — 3
   `new ContainerAnalyzer(...)`. Fix: inject `ContainerAnalyzer` in constructor.
-- [ ] **C-C.08** `framework/System/Flows/ExplainContainerService/ExplainContainerService.php:39-59` — 3
+- [x] **C-C.08** `framework/System/Flows/ExplainContainerService/ExplainContainerService.php:39-59` — 3
   `new ContainerAnalyzer(...)`. Fix: inject in constructor.
-- [ ] **C-C.09** `framework/System/Flows/AuditContainerScope/AuditContainerScope.php:48` — 1
+- [x] **C-C.09** `framework/System/Flows/AuditContainerScope/AuditContainerScope.php:48` — 1
   `new ContainerAnalyzer(...)`. Fix: inject in constructor.
 
 ### C-D: framework/System/Capabilities/ — Direct `new` in Closures/Commands
 
-- [ ] **C-D.01** `framework/System/Capabilities/Configuration/RegisterConfigCommands.php` — 6 `new` calls inside runtime
+- [x] **C-D.01** `framework/System/Capabilities/Configuration/RegisterConfigCommands.php` — 6 `new` calls inside runtime
   closures: `(new LoadApplicationConfiguration())->load()`, `(new LoadRuntimeConfiguration())->load()`,
   `(new ValidateApplicationConfiguration())`, `(new ValidateRuntimeConfiguration())`. Fix: register proper command
   classes with injected dependencies.
-- [ ] **C-D.02** `framework/System/Capabilities/MetadataWarmup/RegisterMetadataWarmCommands.php:54` —
+- [x] **C-D.02** `framework/System/Capabilities/MetadataWarmup/RegisterMetadataWarmCommands.php:54` —
   `$compiler = new CompileClassAttributes(...)` inside runtime closure. Fix: inject via constructor.
-- [ ] **C-D.03** `framework/System/Capabilities/PreCommit/PreCommit.php:56` —
+- [x] **C-D.03** `framework/System/Capabilities/PreCommit/PreCommit.php:56` —
   `$this->preCommitConfig = $preCommitConfig ?? new PreCommitConfig()`. Fix: required constructor parameter.
-- [ ] **C-D.04** `framework/System/Capabilities/TracingTimeline/Tracing.php:16` —
+- [x] **C-D.04** `framework/System/Capabilities/TracingTimeline/Tracing.php:16` —
   `$this->runtimeTimeline = new RuntimeTimeline()`. Fix: inject via constructor.
-- [ ] **C-D.05** `framework/System/Capabilities/Runtime/Worker/WorkerLoop.php:77` —
+- [x] **C-D.05** `framework/System/Capabilities/Runtime/Worker/WorkerLoop.php:77` —
   `$handleIncomingHttp = new HandleIncomingHttp(...)`. Fix: inject `HandleIncomingHttp` in constructor.
 
 ### C-E: components/*/System/PublicSurface/ — Static Facades Instantiating Services
@@ -512,190 +512,190 @@ Flows. These flows act as hidden composition roots.
 Rule: `how-to-dependency-injection.md` Section 3.4 — `new Class()` in PublicSurface is FORBIDDEN. These are the worst
 pattern: every method creates new service instances.
 
-- [ ] **C-E.01** `components/API/GraphQL/System/PublicSurface/GraphQL.php` — 6 static methods, all `new Service()`. Fix:
+- [x] **C-E.01** `components/API/GraphQL/System/PublicSurface/GraphQL.php` — 6 static methods, all `new Service()`. Fix:
   convert to instance class with constructor DI. Inject `BuildGraphQLSchema`, `GraphQLExecutor`,
   `ValidateGraphQLOperation`, `GraphQLConfiguration`, `DataLoader` via constructor.
-- [ ] **C-E.02** `components/API/OpenAPI/System/PublicSurface/OpenAPI.php` — 5 static methods, all `new Service()`. Fix:
+- [x] **C-E.02** `components/API/OpenAPI/System/PublicSurface/OpenAPI.php` — 5 static methods, all `new Service()`. Fix:
   inject `ExportOpenApiDocument`, `BuildOpenApiDocument`, `ValidateOpenApiDocument`, `CompareOpenApiDocuments`,
   `RenderOpenApiJson`, `RenderOpenApiYaml`, `OpenApiConfiguration` via constructor.
-- [ ] **C-E.03** `components/API/Contracts/System/PublicSurface/ApiContracts.php` — 6 static methods, all
+- [x] **C-E.03** `components/API/Contracts/System/PublicSurface/ApiContracts.php` — 6 static methods, all
   `new Service()`. Fix: inject `EndpointRegistry`, `DeprecationTracker`, `DetectBreakingChange`, `CompatibilityChecker`,
   `ValidateApiContract`, `RegisterApiVersion`, `ApiContractsConfiguration` via constructor.
-- [ ] **C-E.04** `components/Operations/Tasks/System/PublicSurface/Tasks.php` — 7 static methods, all `new Service()`.
+- [x] **C-E.04** `components/Operations/Tasks/System/PublicSurface/Tasks.php` — 7 static methods, all `new Service()`.
   Fix: inject `TaskRunner`, `TaskQueue`, `TaskScheduler`, `ExecuteTask`, `ScheduleTask`, `RetryTask`, `CancelTask`,
   `TaskRetryPolicy` via constructor.
-- [ ] **C-E.05** `components/Application/Storage/System/PublicSurface/Storage.php` — 8 methods with `new Flow()`. Fix:
+- [x] **C-E.05** `components/Application/Storage/System/PublicSurface/Storage.php` — 8 methods with `new Flow()`. Fix:
   inject `WriteStoredObject`, `ReadStoredObject`, `CheckStoredObject`, `DeleteStoredObject`, `CopyStoredObject`,
   `MoveStoredObject`, `GenerateStoredObjectUrl`, `GenerateTemporaryStoredObjectUrl`, `RegisteredDisks` via constructor.
-- [ ] **C-E.06** `components/DataStack/Database/System/PublicSurface/Database.php` — 7 `new` in class body or methods.
+- [x] **C-E.06** `components/DataStack/Database/System/PublicSurface/Database.php` — 7 `new` in class body or methods.
   Fix: inject `Query`, `Entities`, `Schema`, `Migrations`, `Transactions`, `Telemetry`, `DatabaseBuilder` via
   constructor.
-- [ ] **C-E.07** `components/DataStack/Database/System/PublicSurface/EntityManager.php:27-35` — 5 `new` (
+- [x] **C-E.07** `components/DataStack/Database/System/PublicSurface/EntityManager.php:27-35` — 5 `new` (
   AttributeMetadataReader, IdentityMap, Hydrator, EntityPersister, OrmEntityManager). Fix: inject `OrmEntityManager` via
   constructor.
-- [ ] **C-E.08** `components/Security/Redaction/System/PublicSurface/Redaction.php` — 8 static methods, all
+- [x] **C-E.08** `components/Security/Redaction/System/PublicSurface/Redaction.php` — 8 static methods, all
   `new Service()`. Fix: inject `PolicyEngine`, `DataClassifier`, `PatternMatcher`, `RedactionEngine`, `RedactLogData`,
   `ApplyRedactionPolicy`, `ClassifySensitiveData` via constructor.
-- [ ] **C-E.09** `components/Operations/Events/System/PublicSurface/Events.php:31-32` — `new ListenerRegistry()`,
+- [x] **C-E.09** `components/Operations/Events/System/PublicSurface/Events.php:31-32` — `new ListenerRegistry()`,
   `new EventDispatcher()`. Fix: inject via constructor.
-- [ ] **C-E.10** `components/Operations/MessageBus/System/PublicSurface/MessageBus.php:32-55` — `new CommandBus()`,
+- [x] **C-E.10** `components/Operations/MessageBus/System/PublicSurface/MessageBus.php:32-55` — `new CommandBus()`,
   `new QueryBus()`, `new EventBus()`. Fix: inject via constructor.
-- [ ] **C-E.11** `components/Operations/Concurrency/System/PublicSurface/Concurrency.php` — 4 `new Flow()`. Fix: inject
+- [x] **C-E.11** `components/Operations/Concurrency/System/PublicSurface/Concurrency.php` — 4 `new Flow()`. Fix: inject
   `RunConcurrentTasks`, `RaceTasks`, `StartTask`, `WaitForTask` via constructor.
-- [ ] **C-E.12** `components/Operations/Resilience/System/PublicSurface/Resilience.php:15,20` — `new RetryBuilder()`,
+- [x] **C-E.12** `components/Operations/Resilience/System/PublicSurface/Resilience.php:15,20` — `new RetryBuilder()`,
   `new CircuitBreaker()`. Fix: inject via constructor.
-- [ ] **C-E.13** `components/Operations/Scheduler/System/PublicSurface/Scheduler.php:19-45` — `new ScheduledTask()`,
+- [x] **C-E.13** `components/Operations/Scheduler/System/PublicSurface/Scheduler.php:19-45` — `new ScheduledTask()`,
   `new TaskRunner()`. Fix: inject via constructor.
-- [ ] **C-E.14** `components/HTTP/SecureRequest/System/PublicSurface/SecureRequest.php:80-102` —
+- [x] **C-E.14** `components/HTTP/SecureRequest/System/PublicSurface/SecureRequest.php:80-102` —
   `new CreateDataObject()`, `new DataTransferViolations()`, `new ValidationContext()`. Fix: inject `CreateDataObject`
   via constructor.
-- [ ] **C-E.15** `components/Foundation/CallableSerialization/System/PublicSurface/CallableSerialization.php:28-64` — 3
+- [x] **C-E.15** `components/Foundation/CallableSerialization/System/PublicSurface/CallableSerialization.php:28-64` — 3
   `new BuildCallableSerialization()`. Fix: inject via constructor.
-- [ ] **C-E.16** `components/HTTP/AfterResponse/System/PublicSurface/AfterResponse.php:17,23` —
+- [x] **C-E.16** `components/HTTP/AfterResponse/System/PublicSurface/AfterResponse.php:17,23` —
   `new AfterResponseTask()`, `new AfterResponseQueue()`. Fix: inject via constructor.
-- [ ] **C-E.17** `components/Application/FeatureFlags/System/PublicSurface/FeatureFlags.php:26` —
+- [x] **C-E.17** `components/Application/FeatureFlags/System/PublicSurface/FeatureFlags.php:26` —
   `new InMemoryFlagStore()`. Fix: inject via static setter only, no fallback in PublicSurface.
-- [ ] **C-E.18** `components/Application/Pipeline/System/PublicSurface/Pipeline.php:21` — `new HookRegistry()`. Fix:
+- [x] **C-E.18** `components/Application/Pipeline/System/PublicSurface/Pipeline.php:21` — `new HookRegistry()`. Fix:
   inject via static setter.
-- [ ] **C-E.19** `components/Operations/Mail/System/PublicSurface/Mailer.php:15,31` — `new Envelope(...)` as default,
+- [x] **C-E.19** `components/Operations/Mail/System/PublicSurface/Mailer.php:15,31` — `new Envelope(...)` as default,
   `new RawMailBuilder(...)`. Fix: remove default `new`, inject via constructor.
-- [ ] **C-E.20** `framework/System/PublicSurface/App.php` — 15+ `new` calls constructing entire application. Fix:
+- [x] **C-E.20** `framework/System/PublicSurface/App.php` — 15+ `new` calls constructing entire application. Fix:
   refactor into `Configuration/BuildApp.php` or inject all via constructor.
-- [ ] **C-E.21** `framework/System/PublicSurface/Avax.php:74-94` — 8 `new` calls (BootApplication,
+- [x] **C-E.21** `framework/System/PublicSurface/Avax.php:74-94` — 8 `new` calls (BootApplication,
   BuildApplicationState, HttpKernel, HandleIncomingHttp, ResponseFactory, ConsoleKernel, RunConsoleCommand,
   RuntimeKernel, ResetApplicationState). Fix: inject via constructor.
 
 ### C-F: components/*/System/Flows/ and Capabilities/ — `?? new` Fallback Pattern
 
-- [ ] **C-F.01** `components/Application/Cache/System/Flows/Lifecycle/RememberCachedValue/RememberCachedValue.php:31` —
+- [x] **C-F.01** `components/Application/Cache/System/Flows/Lifecycle/RememberCachedValue/RememberCachedValue.php:31` —
   `$this->readCachedValue ?? new ReadCachedValue(...)`. Fix: make `ReadCachedValue` required constructor parameter.
-- [ ] **C-F.02** `components/Application/Cache/System/Flows/Lifecycle/RememberCachedValue/RememberCachedValue.php:32` —
+- [x] **C-F.02** `components/Application/Cache/System/Flows/Lifecycle/RememberCachedValue/RememberCachedValue.php:32` —
   `$this->storeCachedValue ?? new StoreCachedValue(...)`. Fix: make `StoreCachedValue` required.
-- [ ] **C-F.03** `components/Application/Cache/System/Capabilities/Storage/StoreCachedValues/FileCacheStore.php:36` —
+- [x] **C-F.03** `components/Application/Cache/System/Capabilities/Storage/StoreCachedValues/FileCacheStore.php:36` —
   `$this->jsonCacheSerializer = $jsonCacheSerializer ?? new JsonCacheSerializer(...)`. Fix: make required.
-- [ ] **C-F.04** `components/DataStack/Persistence/System/Flows/ExplainDataQuery/ExplainDataQuery.php:25` —
+- [x] **C-F.04** `components/DataStack/Persistence/System/Flows/ExplainDataQuery/ExplainDataQuery.php:25` —
   `$this->compileDataQuery = $compileDataQuery ?? new CompileDataQuery()`. Fix: make required.
-- [ ] **C-F.05** `components/SystemDesign/System/Flows/ValidateCapacitySchema/ValidateCapacitySchema.php:22` —
+- [x] **C-F.05** `components/SystemDesign/System/Flows/ValidateCapacitySchema/ValidateCapacitySchema.php:22` —
   `$this->validator = $validator ?? new SchemaValidator()`. Fix: make required.
-- [ ] **C-F.06** `components/SystemDesign/System/Flows/ValidateCapacityModel/ValidateCapacityModel.php:25` —
+- [x] **C-F.06** `components/SystemDesign/System/Flows/ValidateCapacityModel/ValidateCapacityModel.php:25` —
   `$this->schemaValidator = $schemaValidator ?? new SchemaValidator()`. Fix: make required.
-- [ ] **C-F.07** `components/SystemDesign/System/Flows/ValidateCapacityModel/ValidateCapacityModel.php:27` —
+- [x] **C-F.07** `components/SystemDesign/System/Flows/ValidateCapacityModel/ValidateCapacityModel.php:27` —
   `$this->yamlParser = $yamlParser ?? new NativeYamlParser()`. Fix: make required.
-- [ ] **C-F.08** `components/SystemDesign/System/Flows/RunArchitectureTests/RunArchitectureTests.php:23` —
+- [x] **C-F.08** `components/SystemDesign/System/Flows/RunArchitectureTests/RunArchitectureTests.php:23` —
   `$this->yamlParser = $yamlParser ?? new NativeYamlParser()`. Fix: make required.
-- [ ] **C-F.09** `components/SystemDesign/System/Flows/RunScenarios/RunScenarios.php:22` —
+- [x] **C-F.09** `components/SystemDesign/System/Flows/RunScenarios/RunScenarios.php:22` —
   `$this->yamlParser = $yamlParser ?? new NativeYamlParser()`. Fix: make required.
-- [ ] **C-F.10** `components/SystemDesign/System/Flows/ValidateScenariosSchema/ValidateScenariosSchema.php:22` —
+- [x] **C-F.10** `components/SystemDesign/System/Flows/ValidateScenariosSchema/ValidateScenariosSchema.php:22` —
   `$this->validator = $validator ?? new SchemaValidator()`. Fix: make required.
-- [ ] **C-F.11**
+- [x] **C-F.11**
   `components/SystemDesign/System/Flows/ValidateArchitectureTestsSchema/ValidateArchitectureTestsSchema.php:22` —
   `$this->validator = $validator ?? new SchemaValidator()`. Fix: make required.
-- [ ] **C-F.12** `components/SystemDesign/System/Capabilities/SchemaValidation/SchemaValidator.php:24` —
+- [x] **C-F.12** `components/SystemDesign/System/Capabilities/SchemaValidation/SchemaValidator.php:24` —
   `$this->yamlParser = $yamlParser ?? new NativeYamlParser()`. Fix: make required.
-- [ ] **C-F.13** `components/HTTP/Session/System/PublicSurface/Session.php:225` —
+- [x] **C-F.13** `components/HTTP/Session/System/PublicSurface/Session.php:225` —
   `return $this->sessionEventBus ?? new SessionEventBus()`. Fix: make `SessionEventBus` required constructor parameter.
-- [ ] **C-F.14** `components/DataStack/Database/System/Capabilities/Transactions/DeadlockDetector.php:115` —
+- [x] **C-F.14** `components/DataStack/Database/System/Capabilities/Transactions/DeadlockDetector.php:115` —
   `$this->deadlockDetectorConfig = $deadlockDetectorConfig ?? new DeadlockDetectorConfig()`. Fix: make required.
-- [ ] **C-F.15** `components/DataStack/Database/System/Capabilities/Query/IR/IRBuilder.php:19` —
+- [x] **C-F.15** `components/DataStack/Database/System/Capabilities/Query/IR/IRBuilder.php:19` —
   `$this->queryNode = $queryNode ?? new QueryNode()`. Fix: make required.
-- [ ] **C-F.16** `components/DataStack/Database/System/Capabilities/Query/Execution/QueryOrchestrator.php:258,287` —
+- [x] **C-F.16** `components/DataStack/Database/System/Capabilities/Query/Execution/QueryOrchestrator.php:258,287` —
   `$resolver = new ResolveCallable()` (2x). Fix: inject `ResolveCallable` in constructor.
-- [ ] **C-F.17** `components/DataStack/Database/System/Capabilities/ORM/Persisters/EntityPersister.php:592` —
+- [x] **C-F.17** `components/DataStack/Database/System/Capabilities/ORM/Persisters/EntityPersister.php:592` —
   `$resolver = new ResolveCallable()`. Fix: inject in constructor.
-- [ ] **C-F.18** `components/DataStack/Database/System/Capabilities/Transactions/RunTransaction/Transaction.php:503` —
+- [x] **C-F.18** `components/DataStack/Database/System/Capabilities/Transactions/RunTransaction/Transaction.php:503` —
   `$resolver = new ResolveCallable()`. Fix: inject in constructor.
-- [ ] **C-F.19** `components/Operations/Queue/System/Capabilities/Queue/State/QueueState.php:84` —
+- [x] **C-F.19** `components/Operations/Queue/System/Capabilities/Queue/State/QueueState.php:84` —
   `return $this->failedJobsStore ??= new InMemoryFailedJobsStore()`. Fix: inject `FailedJobsStore` via constructor.
 
 ### C-G: AuthBuilder — 32 `?? new` Fallbacks (Largest Single Concentration)
 
 File: `components/Identity/Auth/System/Configuration/AuthBuilder.php`
 
-- [ ] **C-G.01** `AuthBuilder.php:665` — `$passwordHasher = $this->passwordHasher ?? new PasswordHasher()`. Fix:
+- [x] **C-G.01** `AuthBuilder.php:665` — `$passwordHasher = $this->passwordHasher ?? new PasswordHasher()`. Fix:
   required parameter.
-- [ ] **C-G.02** `AuthBuilder.php:666` — `$auditLog = $this->auditLog ?? new NullAuditLog()`. Fix: required.
-- [ ] **C-G.03** `AuthBuilder.php:675` — `$clock = $this->clock ?? new Clock()`. Fix: required.
-- [ ] **C-G.04** `AuthBuilder.php:676` —
+- [x] **C-G.02** `AuthBuilder.php:666` — `$auditLog = $this->auditLog ?? new NullAuditLog()`. Fix: required.
+- [x] **C-G.03** `AuthBuilder.php:675` — `$clock = $this->clock ?? new Clock()`. Fix: required.
+- [x] **C-G.04** `AuthBuilder.php:676` —
   `$oAuthClientRegistry = $this->oAuthClientRegistry ?? new InMemoryOAuthClientRegistry(...)`. Fix: required.
-- [ ] **C-G.05** `AuthBuilder.php:677` —
+- [x] **C-G.05** `AuthBuilder.php:677` —
   `$authorizationCodeStore = $this->authorizationCodeStore ?? new InMemoryAuthorizationCodeStore()`. Fix: required.
-- [ ] **C-G.06** `AuthBuilder.php:678` — `$lifecycleStore = $this->lifecycleStore ?? new InMemoryLifecycleStore()`. Fix:
+- [x] **C-G.06** `AuthBuilder.php:678` — `$lifecycleStore = $this->lifecycleStore ?? new InMemoryLifecycleStore()`. Fix:
   required.
-- [ ] **C-G.07** `AuthBuilder.php:679` —
+- [x] **C-G.07** `AuthBuilder.php:679` —
   `$adminElevationStore = $this->adminElevationStore ?? new InMemoryAdminElevationStore()`. Fix: required.
-- [ ] **C-G.08** `AuthBuilder.php:680-684` —
+- [x] **C-G.08** `AuthBuilder.php:680-684` —
   `$riskEngine = $this->deterministicRiskEngine ?? new DeterministicRiskEngine(...)`. Fix: required.
-- [ ] **C-G.09** `AuthBuilder.php:685` —
+- [x] **C-G.09** `AuthBuilder.php:685` —
   `$passkeyCredentialStore = $this->passkeyCredentialStore ?? new InMemoryPasskeyCredentialStore()`. Fix: required.
-- [ ] **C-G.10** `AuthBuilder.php:686` —
+- [x] **C-G.10** `AuthBuilder.php:686` —
   `$passkeyChallengeStore = $this->passkeyChallengeStore ?? new InMemoryPasskeyChallengeStore()`. Fix: required.
-- [ ] **C-G.11** `AuthBuilder.php:687` —
+- [x] **C-G.11** `AuthBuilder.php:687` —
   `$federationConnectionStore = $this->federationConnectionStore ?? new InMemoryFederationConnectionStore()`. Fix:
   required.
-- [ ] **C-G.12** `AuthBuilder.php:688` —
+- [x] **C-G.12** `AuthBuilder.php:688` —
   `$federatedIdentityLinkStore = $this->federatedIdentityLinkStore ?? new InMemoryFederatedIdentityLinkStore()`. Fix:
   required.
-- [ ] **C-G.13** `AuthBuilder.php:690` —
+- [x] **C-G.13** `AuthBuilder.php:690` —
   `$passwordResetStore = $this->passwordResetStore ?? new InMemoryPasswordResetStore()`. Fix: required.
-- [ ] **C-G.14** `AuthBuilder.php:691` —
+- [x] **C-G.14** `AuthBuilder.php:691` —
   `$emailVerificationStore = $this->emailVerificationStore ?? new InMemoryEmailVerificationStore()`. Fix: required.
-- [ ] **C-G.15** `AuthBuilder.php:692` —
+- [x] **C-G.15** `AuthBuilder.php:692` —
   `$emailChangeStore = $this->emailChangeStore ?? new InMemoryEmailChangeStore()`. Fix: required.
-- [ ] **C-G.16** `AuthBuilder.php:693` —
+- [x] **C-G.16** `AuthBuilder.php:693` —
   `$emailVerificationState = $this->emailVerificationStateStore ?? new InMemoryEmailVerificationStateStore()`. Fix:
   required.
-- [ ] **C-G.17** `AuthBuilder.php:694` — `$mfaStore = $this->mfaStore ?? new InMemoryMfaStore()`. Fix: required.
-- [ ] **C-G.18** `AuthBuilder.php:695` —
+- [x] **C-G.17** `AuthBuilder.php:694` — `$mfaStore = $this->mfaStore ?? new InMemoryMfaStore()`. Fix: required.
+- [x] **C-G.18** `AuthBuilder.php:695` —
   `$mfaChallengeStore = $this->mfaChallengeStore ?? new InMemoryMfaChallengeStore()`. Fix: required.
-- [ ] **C-G.19** `AuthBuilder.php:696` — `$totp = $this->totp ?? new Totp()`. Fix: required.
-- [ ] **C-G.20** `AuthBuilder.php:697-700` — `$mfaAttemptLimit = $this->limitMfaAttempts ?? new LimitMfaAttempts(...)`.
+- [x] **C-G.19** `AuthBuilder.php:696` — `$totp = $this->totp ?? new Totp()`. Fix: required.
+- [x] **C-G.20** `AuthBuilder.php:697-700` — `$mfaAttemptLimit = $this->limitMfaAttempts ?? new LimitMfaAttempts(...)`.
   Fix: required.
-- [ ] **C-G.21** `AuthBuilder.php:701-706` —
+- [x] **C-G.21** `AuthBuilder.php:701-706` —
   `$passwordResetThrottle = $this->passwordResetThrottle ?? new AttemptThrottle(...)`. Fix: required.
-- [ ] **C-G.22** `AuthBuilder.php:707-712` —
+- [x] **C-G.22** `AuthBuilder.php:707-712` —
   `$mfaRecoveryThrottle = $this->mfaRecoveryThrottle ?? new AttemptThrottle(...)`. Fix: required.
-- [ ] **C-G.23** `AuthBuilder.php:713-718` — `$scimThrottle = $this->scimThrottle ?? new AttemptThrottle(...)`. Fix:
+- [x] **C-G.23** `AuthBuilder.php:713-718` — `$scimThrottle = $this->scimThrottle ?? new AttemptThrottle(...)`. Fix:
   required.
-- [ ] **C-G.24** `AuthBuilder.php:802` — `$this->oidcRequestObjectStore ?? new InMemoryOidcRequestObjectStore()`. Fix:
+- [x] **C-G.24** `AuthBuilder.php:802` — `$this->oidcRequestObjectStore ?? new InMemoryOidcRequestObjectStore()`. Fix:
   required.
-- [ ] **C-G.25** `AuthBuilder.php:902` —
+- [x] **C-G.25** `AuthBuilder.php:902` —
   `$scimDirectoryStore = $this->scimDirectoryStore ?? new InMemoryScimDirectoryStore(...)`. Fix: required.
-- [ ] **C-G.26** `AuthBuilder.php:903` —
+- [x] **C-G.26** `AuthBuilder.php:903` —
   `$scimProvisionedIdentityStore = $this->scimProvisionedIdentityStore ?? new InMemoryScimProvisionedIdentityStore()`.
   Fix: required.
-- [ ] **C-G.27** `AuthBuilder.php:904` — `$tenantStore = $this->tenantStore ?? new InMemoryTenantStore()`. Fix:
+- [x] **C-G.27** `AuthBuilder.php:904` — `$tenantStore = $this->tenantStore ?? new InMemoryTenantStore()`. Fix:
   required.
-- [ ] **C-G.28** `AuthBuilder.php:905` —
+- [x] **C-G.28** `AuthBuilder.php:905` —
   `$tenantSecurityConfigurationStore = $this->tenantSecurityConfigurationStore ?? new InMemoryTenantSecurityConfigurationStore()`.
   Fix: required.
-- [ ] **C-G.29** `AuthBuilder.php:906` —
+- [x] **C-G.29** `AuthBuilder.php:906` —
   `$tenantSecurityChangeRequestStore = $this->tenantSecurityChangeRequestStore ?? new InMemoryTenantSecurityChangeRequestStore()`.
   Fix: required.
-- [ ] **C-G.30** `AuthBuilder.php:979,1119,1461` — `idGenerator: $this->idGenerator ?? new IdGenerator()` (3x). Fix:
+- [x] **C-G.30** `AuthBuilder.php:979,1119,1461` — `idGenerator: $this->idGenerator ?? new IdGenerator()` (3x). Fix:
   make `IdGenerator` required.
 
 ### C-H: HttpClientProvider `?? new`
 
-- [ ] **C-H.01** `components/HTTP/Client/System/Configuration/HttpClientProvider.php:171` —
+- [x] **C-H.01** `components/HTTP/Client/System/Configuration/HttpClientProvider.php:171` —
   `$resolvedTransport = $httpTransport ?? new CurlTransport()`. Fix: make `HttpTransportInterface` required parameter.
 
 ### C-I: Validate
 
-- [ ] **C-I.1** Run DI assembly gate:
+- [x] **C-I.1** Run DI assembly gate:
   ```bash
   php tooling/components/check-component-runtime-assembly.php
   ```
-- [ ] **C-I.2** Run PHPStan:
+- [x] **C-I.2** Run PHPStan:
   ```bash
   vendor/bin/phpstan analyse --memory-limit=1G --level=max
   ```
-- [ ] **C-I.3** Run PHPUnit:
+- [x] **C-I.3** Run PHPUnit:
   ```bash
   vendor/bin/phpunit --no-coverage
   ```
-- [ ] **C-I.4** Update `EVIDENCE/cleanup/04-di-runtime-assembly-cleanup.md` with results
-- [ ] **C-I.5** Update `skipped-work-ledger.md`: mark SW-0005, SW-0006, SW-0008, SW-0012 as FIXED_NOW
-- [ ] **C-I.6** Commit:
+- [x] **C-I.4** Update `EVIDENCE/cleanup/04-di-runtime-assembly-cleanup.md` with results
+- [x] **C-I.5** Update `skipped-work-ledger.md`: mark SW-0005, SW-0006, SW-0008, SW-0012 as FIXED_NOW
+- [x] **C-I.6** Commit:
   ```bash
   git add -A && git commit -m "cleanup: phase C — remove 190+ runtime infrastructure new-construction leaks, fix ?? new fallbacks, convert static facades to DI"
   ```

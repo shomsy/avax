@@ -16,7 +16,7 @@ use Avax\Components\Application\Container\System\Capabilities\Resolution\Lifetim
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\ResolutionPolicy;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ResettableInterface;
-use Avax\Components\Application\Container\System\Container;
+use Avax\Components\Application\Container\System\PublicSurface\Container;
 use Avax\Components\Application\Container\System\ContainerInterface;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 use ReflectionException;

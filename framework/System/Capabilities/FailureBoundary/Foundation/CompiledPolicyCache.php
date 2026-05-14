@@ -15,7 +15,7 @@ final class CompiledPolicyCache
     /** @var array<string, CompiledMethodPolicy> */
     private static array $policies = [];
 
-    public static function get(string $key): ?CompiledMethodPolicy
+    public static function get(string $key): CompiledMethodPolicy|null
     {
         if (!isset(self::$policies[$key])) {
             return null;

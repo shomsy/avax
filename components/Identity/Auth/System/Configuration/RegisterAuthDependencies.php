@@ -12,7 +12,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
-use Avax\Components\Identity\Auth\System\DefaultAuth;
+use Avax\Components\Identity\Auth\System\Capabilities\Authentication\DefaultAuth;
 use Avax\Components\Identity\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
 use Avax\Components\Identity\Auth\System\Flows\Login\RateLimit\LoginRateLimitStorageInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;

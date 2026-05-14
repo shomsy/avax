@@ -8,7 +8,7 @@ use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResult;
-use Avax\Framework\System\Capabilities\Runtime\StateResetManager;
+use Avax\Framework\System\Capabilities\Runtime\ResetApplicationState;
 use Avax\Framework\System\Capabilities\StateReset\ResettableState;
 use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
 use Avax\Framework\System\Flows\HandleIncomingHttp\CloseHttpRequestScope;
@@ -258,7 +258,7 @@ final class RuntimeSafetyFeatureTest extends TestCase
     public function runtime_safety_detects_transaction_leaks(): void
     {
         $stateResetRegistry = new StateResetRegistry();
-        $runtimeSafety = new StateResetManager(
+        $runtimeSafety = new ResetApplicationState(
             stateResetRegistry: $stateResetRegistry,
         );
 

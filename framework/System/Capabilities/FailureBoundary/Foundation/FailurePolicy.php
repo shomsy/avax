@@ -53,7 +53,7 @@ final readonly class FailurePolicy
     /**
      * @param class-string<Throwable> $exceptionClass
      */
-    public function findAction(string $exceptionClass): ?FailureAction
+    public function findAction(string $exceptionClass): FailureAction|null
     {
         foreach ($this->actions as $action) {
             if ($exceptionClass === $action->exceptionClass || is_subclass_of($exceptionClass, $action->exceptionClass)) {

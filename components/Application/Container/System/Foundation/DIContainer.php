@@ -25,11 +25,11 @@ use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\Application\Container\System\Flows\BootProviders\BootProviders;
 use Avax\Components\Application\Container\System\Flows\CallFunction\CallFunction;
 use Avax\Components\Application\Container\System\Flows\CloseScope\CloseScope;
-use Avax\Components\Application\Container\System\Flows\ExplainService\ExplainService;
+use Avax\Components\Application\Container\System\Flows\DescribeContainerService\DescribeContainerService;
 use Avax\Components\Application\Container\System\Flows\ExportGraph\ExportGraph;
 use Avax\Components\Application\Container\System\Flows\OpenScope\OpenScope;
 use Avax\Components\Application\Container\System\Flows\RegisterDependencies\RegisterDependencies;
-use Avax\Components\Application\Container\System\Flows\ResolveService\ResolveService;
+use Avax\Components\Application\Container\System\Flows\ResolveContainerService\ResolveContainerService;
 use Avax\Components\Application\Container\System\Flows\ValidateComposition\ValidateComposition;
 use Closure;
 use ReflectionException;
@@ -52,9 +52,9 @@ final readonly class DIContainer implements ContainerInterface
         return $this->resolveService()->get(id: $id);
     }
 
-    private function resolveService(): ResolveService
+    private function resolveService(): ResolveContainerService
     {
-        return new ResolveService(resolver: $this->resolveDependency);
+        return new ResolveContainerService(resolver: $this->resolveDependency);
     }
 
     public function has(string $id): bool
@@ -153,9 +153,9 @@ final readonly class DIContainer implements ContainerInterface
         return $this->explainService()->describe(id: $id);
     }
 
-    private function explainService(): ExplainService
+    private function explainService(): DescribeContainerService
     {
-        return new ExplainService(resolver: $this->resolveDependency);
+        return new DescribeContainerService(resolver: $this->resolveDependency);
     }
 
     /**

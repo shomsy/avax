@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\PublicSurface\Facade;
 
-use Avax\Components\Application\Cache\System\CacheContract;
+use Avax\Components\Application\Cache\System\PublicSurface\CacheContract;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotFound;
 

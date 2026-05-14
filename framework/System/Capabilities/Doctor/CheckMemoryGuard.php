@@ -11,7 +11,7 @@ final readonly class CheckMemoryGuard
 {
     public function __invoke(): DoctorFinding
     {
-        $basePath = dirname(__DIR__, 4).'/framework/System/Runtime/MemoryGuard';
+        $basePath = dirname(__DIR__, 4).'/framework/System/Capabilities/Runtime/MemoryGuard';
 
         $requiredFiles = [
             'MonitorWorkerMemory.php',

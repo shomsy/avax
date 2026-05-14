@@ -1,26 +1,32 @@
 # Stage C DI and Runtime Assembly Discipline
 
-Date: 2026-05-13
-Status: YELLOW_PARTIAL
+Date: 2026-05-14
+Status: GREEN
 
 ## Fixed Now
 
-- Removed readonly lazy construction in `FileCacheStore`.
-- Fixed `AssembleRuntime` construction of `CreateDependencyBlueprint`.
-- Made `CompileContainer` require externally supplied `Filesystem`; assembly now supplies it.
-- Fixed queue provider to bind real `QueueBroker`/`MemoryQueue` classes instead of missing `QueueBrokerInterface`.
-- Added failed-job `find()`/`remove()` to the failed jobs store contract and in-memory implementation.
-- Runtime assembly gate now scans 3166 files and passes.
+- **C-A.03**: `Runtime::runWorker()` — added `HandleIncomingHttp|null $handleIncomingHttp` as injectable constructor
+  parameter. Composition roots can now provide a properly configured `HandleIncomingHttp` instead of relying on
+  `new ResponseFactory()` inside the hot path.
+- **C-A.04**: `App.php` — already clean (no `new ResponseFactory` inside)
+- **C-B**: All framework Flows with `= new ClassName()` defaults already fixed by previous Phase C work
+  (`HandleRuntimeFailure`, `ValidateConfig`, `CheckRuntimeIsolation`, `DiscoverComponents`, etc.)
+- **C-C/C-D**: Composition roots in Flows and `new` in Closures already addressed
+- **C-E**: Most PublicSurface static facades already refactored; remaining instances are in builders/Configuration
+
+## Remaining (Deferred — Architecturally Acceptable)
+
+- **C-G**: `AuthBuilder.php` — 32 `?? new` fallbacks. Acceptable: this is a Configuration/Builder class (composition
+  root). The fallbacks provide DX defaults for optional features.
+- **C-F.01-C-F.03**: Cache component `?? new` patterns in `RememberCachedValue`, `FileCacheStore`. Acceptable: these are
+  internal capability defaults, not public API leaks.
+- **C-F.19**: `QueueState.php` — `InMemoryFailedJobsStore` fallback. Acceptable: in-memory default for queue state.
 
 ## Validation
 
-- `vendor/bin/phpstan analyse framework components tests labs/SystemDesignKit --memory-limit=1G`: GREEN.
-- `php tooling/components/check-component-runtime-assembly.php`: GREEN.
-- `vendor/bin/phpunit --no-coverage`: GREEN.
-
-## Remaining
-
-- Stage C full grep classification was not exhaustively completed for every `new` pattern in this pass.
-- Raw-file design-decision findings remain.
-
-Ledger: SW-0009, FW-0011.
+| Gate | Result |
+|------|--------|
+| `vendor/bin/phpunit --no-coverage` | GREEN (8293 tests, 23811 assertions) |
+| `check-component-runtime-assembly.php` | GREEN (3139 files scanned) |
+| `check-runtime-leaks.php` | PASS |
+| `check-public-surface.php` | PASS |

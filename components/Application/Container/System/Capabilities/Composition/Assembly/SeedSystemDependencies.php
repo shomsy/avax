@@ -18,7 +18,7 @@ use Avax\Components\Application\Container\System\Capabilities\Runtime\Dependency
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ManageScopes;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeInterface;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeStore;
-use Avax\Components\Application\Container\System\Container;
+use Avax\Components\Application\Container\System\PublicSurface\Container;
 use Avax\Components\Application\Container\System\ContainerInterface;
 use Avax\Components\Application\Container\System\Foundation\Time\Clock;
 use Psr\Container\ContainerInterface as PsrContainerInterface;

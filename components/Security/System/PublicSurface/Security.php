@@ -16,7 +16,9 @@ use DateInterval;
 
 final class Security
 {
-    private static ?SecurityAuditLog $securityAuditLog = null;
+    public function __construct(
+        private SecurityAuditLog $securityAuditLog,
+    ) {}
 
     public static function generateCsrfToken(): string
     {
@@ -28,10 +30,10 @@ final class Security
         return CsrfToken::rotate();
     }
 
-    public static function verifyCsrfToken(string $token, string|null $sessionToken = null) : bool
+    public function verifyCsrfToken(string $token, string|null $sessionToken = null) : bool
     {
         $valid = CsrfVerifier::verify(token: $token, sessionToken: $sessionToken);
-        self::audit(event: $valid ? 'csrf.accepted' : 'csrf.rejected');
+        $this->audit(event: $valid ? 'csrf.accepted' : 'csrf.rejected');
 
         return $valid;
     }
@@ -98,25 +100,16 @@ final class Security
     /**
      * @param  array<string, mixed>  $context
      */
-    public static function audit(string $event, array $context = []): void
+    public function audit(string $event, array $context = []): void
     {
-        self::auditLog()->record(event: $event, context: $context);
+        $this->securityAuditLog->record(event: $event, context: $context);
     }
 
     /**
      * @return list<array{event:string,context:array<string,mixed>,recorded_at:string}>
      */
-    public static function auditEvents(): array
+    public function auditEvents(): array
     {
-        return self::auditLog()->all();
-    }
-
-    private static function auditLog(): SecurityAuditLog
-    {
-        if (! self::$securityAuditLog instanceof SecurityAuditLog) {
-            self::$securityAuditLog = new SecurityAuditLog();
-        }
-
-        return self::$securityAuditLog;
+        return $this->securityAuditLog->all();
     }
 }

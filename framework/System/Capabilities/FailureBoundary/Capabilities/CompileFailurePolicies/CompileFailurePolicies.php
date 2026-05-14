@@ -75,7 +75,7 @@ final readonly class CompileFailurePolicies
         string $methodName,
         \ReflectionClass $classRef,
         int $mtime,
-    ): ?CompiledMethodPolicy {
+    ): CompiledMethodPolicy|null {
         if (!$classRef->hasMethod($methodName)) {
             return null;
         }

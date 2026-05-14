@@ -128,7 +128,7 @@ final class CleanupAfterFailureTest extends TestCase
 
     public function testCleanupRegistryIsAccessibleFromCleanupCapability() : void
     {
-        $cleanup  = new CleanupAfterFailure();
+        $cleanup  = new CleanupAfterFailure(registry: new FailureCleanupRegistry());
         $registry = $cleanup->registry();
         // Verify the registry is the same instance returned by the capability
         self::assertSame(0, $registry->count());

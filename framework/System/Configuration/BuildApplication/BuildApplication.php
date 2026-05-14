@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Configuration\BuildApplication;
 
+use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\Foundation\Paths\ProjectPath;
+use Avax\Framework\System\Foundation\Time\SystemClock;
 
 final readonly class BuildApplication
 {
@@ -14,8 +16,10 @@ final readonly class BuildApplication
         string $environment = 'production',
     ): ApplicationBuilder {
         return new ApplicationBuilder(
-            projectPath: new ProjectPath(value: $projectPath),
+            projectPath    : new ProjectPath(value: $projectPath),
             environmentName: EnvironmentName::fromString($environment),
+            clock          : new SystemClock(),
+            runDoctor      : new RunDoctor(),
         );
     }
 }

@@ -12,8 +12,10 @@ use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
 use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
+use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\Foundation\Paths\ProjectPath;
+use Avax\Framework\System\Foundation\Time\SystemClock;
 use Avax\Framework\System\PublicSurface\Avax;
 use Avax\Tests\TestCase;
 
@@ -26,7 +28,10 @@ final class AvaxKernelTest extends TestCase
         // 1. Setup Application Builder with routes
         $builder = (new ApplicationBuilder(
             new ProjectPath(__DIR__ . '/../../'),
-            EnvironmentName::Testing
+            EnvironmentName::Testing,
+            new SystemClock(),
+            new RunDoctor(),
+            'avax',
         ))->withHttpRouteDefinitions(function (RouterInterface $router) use ($responses) {
             $router->get('/', fn () => $responses->send('Hello from Avax Kernel!'));
         });
@@ -53,7 +58,10 @@ final class AvaxKernelTest extends TestCase
     {
         $builder = new ApplicationBuilder(
             new ProjectPath(__DIR__ . '/../../'),
-            EnvironmentName::Testing
+            EnvironmentName::Testing,
+            new SystemClock(),
+            new RunDoctor(),
+            'avax',
         );
         $avax    = Avax::boot($builder);
 

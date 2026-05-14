@@ -78,7 +78,7 @@ enum HttpStatusCode: int
      * Try to create an HttpStatusCode from an integer status code.
      * Returns null if the code is not recognized.
      */
-    public static function tryFromCode(int $code) : ?self
+    public static function tryFromCode(int $code) : self|null
     {
         return self::tryFrom($code);
     }

@@ -74,7 +74,7 @@ final readonly class FailureSimulation
      *     mitigation: string,
      * }|null
      */
-    private function detectViolation(CapacityModel $model) : ?array
+    private function detectViolation(CapacityModel $model) : array|null
     {
         return match ($this->failureMode) {
             'cache_outage' => $this->simulateCacheOutage($model),
@@ -90,7 +90,7 @@ final readonly class FailureSimulation
     /**
      * @return array{type: string, severity: string, description: string, impact: string, mitigation: string}|null
      */
-    private function simulateCacheOutage(CapacityModel $model) : ?array
+    private function simulateCacheOutage(CapacityModel $model) : array|null
     {
         if (! $model->cacheStampede->protectionRequired) {
             return [
@@ -120,7 +120,7 @@ final readonly class FailureSimulation
     /**
      * @return array{type: string, severity: string, description: string, impact: string, mitigation: string}|null
      */
-    private function simulateQueueFlood(CapacityModel $model) : ?array
+    private function simulateQueueFlood(CapacityModel $model) : array|null
     {
         if (! $model->canHandleWriteLoad()) {
             return [
@@ -150,7 +150,7 @@ final readonly class FailureSimulation
     /**
      * @return array{type: string, severity: string, description: string, impact: string, mitigation: string}|null
      */
-    private function simulateDatabaseSlow(CapacityModel $model) : ?array
+    private function simulateDatabaseSlow(CapacityModel $model) : array|null
     {
         if ($model->latencyBudget->p99Ms > 5000) {
             return [
@@ -178,7 +178,7 @@ final readonly class FailureSimulation
     /**
      * @return array{type: string, severity: string, description: string, impact: string, mitigation: string}|null
      */
-    private function simulateTrafficOverload(CapacityModel $model) : ?array
+    private function simulateTrafficOverload(CapacityModel $model) : array|null
     {
         $peakRps = $model->estimatedPeakRps();
         $maxQueueDepth = $model->queueDepth->maxDepth;
@@ -210,7 +210,7 @@ final readonly class FailureSimulation
     /**
      * @return array{type: string, severity: string, description: string, impact: string, mitigation: string}|null
      */
-    private function simulateReplicationLagSpike(CapacityModel $model) : ?array
+    private function simulateReplicationLagSpike(CapacityModel $model) : array|null
     {
         if ($model->latencyBudget->p99Ms > 2000) {
             return [
@@ -228,7 +228,7 @@ final readonly class FailureSimulation
     /**
      * @return array{type: string, severity: string, description: string, impact: string, mitigation: string}|null
      */
-    private function simulateSloBudgetExhausted(CapacityModel $model) : ?array
+    private function simulateSloBudgetExhausted(CapacityModel $model) : array|null
     {
         $monthlyDowntimeMinutes = $model->slo->monthlyDowntimeMinutes();
 

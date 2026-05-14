@@ -212,6 +212,7 @@ final class V4SecurityPolicyTest extends TestCase
             new PolicySubject('user-1'),
             new PolicyAction('read'),
             new PolicyResource('document', 'doc-1'),
+            new PolicyContext(),
         );
 
         self::assertFalse($decision->isAllowed());
@@ -235,6 +236,7 @@ final class V4SecurityPolicyTest extends TestCase
             new PolicySubject('admin-1', 'user', ['role' => 'admin']),
             new PolicyAction('delete'),
             new PolicyResource('user', 'user-2'),
+            new PolicyContext(),
         );
 
         self::assertTrue($decision->isAllowed());
@@ -257,6 +259,7 @@ final class V4SecurityPolicyTest extends TestCase
             new PolicySubject('user-1'),
             new PolicyAction('delete'),
             new PolicyResource('document', 'doc-1'),
+            new PolicyContext(),
         );
 
         self::assertFalse($decision->isAllowed());
@@ -278,6 +281,7 @@ final class V4SecurityPolicyTest extends TestCase
             new PolicySubject('user-1'),
             new PolicyAction('read'),
             new PolicyResource('document', 'doc-1'),
+            new PolicyContext(),
         );
     }
 
@@ -587,6 +591,7 @@ final class V4SecurityPolicyTest extends TestCase
             new PolicySubject('user-1'),
             new PolicyAction('read'),
             new PolicyResource('document', 'doc-1'),
+            new PolicyContext(),
         );
         self::assertTrue($allowResult->isAllowed());
 
@@ -596,6 +601,7 @@ final class V4SecurityPolicyTest extends TestCase
             new PolicySubject('user-1'),
             new PolicyAction('read'),
             new PolicyResource('secret', 'secret-1'),
+            new PolicyContext(),
         );
         self::assertFalse($denyResult->isAllowed());
     }

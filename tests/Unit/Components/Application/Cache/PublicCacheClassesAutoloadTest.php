@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Application\Cache;
 
-use Avax\Components\Application\Cache\System\AvaxCache;
-use Avax\Components\Application\Cache\System\CacheContract;
+use Avax\Components\Application\Cache\System\PublicSurface\AvaxCache;
+use Avax\Components\Application\Cache\System\PublicSurface\CacheContract;
 use Avax\Components\Application\Cache\System\PublicSurface\Cache;
 use Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget;
 use Avax\Components\Application\Cache\System\PublicSurface\CompiledCache;

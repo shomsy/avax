@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Configuration;
 
-use Avax\Components\Application\Cache\System\AvaxCache;
+use Avax\Components\Application\Cache\System\PublicSurface\AvaxCache;
 use Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\ChainCacheStore;

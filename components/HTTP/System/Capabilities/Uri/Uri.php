@@ -34,7 +34,7 @@ final readonly class Uri implements Stringable
         return $this->path;
     }
 
-    public function getPort() : ?int
+    public function getPort() : int|null
     {
         return $this->port;
     }

@@ -12,8 +12,8 @@ final readonly class PhpFpmRuntime
 {
     public function __construct(
         private HttpKernelInterface $httpKernel,
-        private PhpFpmRequestReader $phpFpmRequestReader = new PhpFpmRequestReader(),
-        private PhpFpmResponseSender $phpFpmResponseSender = new PhpFpmResponseSender(),
+        private PhpFpmRequestReader $phpFpmRequestReader,
+        private PhpFpmResponseSender $phpFpmResponseSender,
     ) {
     }
 

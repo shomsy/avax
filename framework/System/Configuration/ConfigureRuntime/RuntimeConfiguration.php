@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Configuration\ConfigureRuntime;
 
+use Avax\Framework\System\Capabilities\Runtime\Cli\CliInputReader;
+use Avax\Framework\System\Capabilities\Runtime\Cli\CliOutputWriter;
 use Avax\Framework\System\Capabilities\Runtime\Cli\CliRuntime;
+use Avax\Framework\System\Capabilities\Runtime\PhpFpm\PhpFpmRequestReader;
+use Avax\Framework\System\Capabilities\Runtime\PhpFpm\PhpFpmResponseSender;
 use Avax\Framework\System\Capabilities\Runtime\PhpFpm\PhpFpmRuntime;
 use Avax\Framework\System\Capabilities\Runtime\RunApplication\FrankenPhp\FrankenPhpRuntime;
 use Avax\Framework\System\Capabilities\Runtime\RunApplication\RoadRunner\RoadRunnerRuntime;
@@ -59,8 +63,16 @@ final class RuntimeConfiguration
     public function createRuntime(): object
     {
         return match ($this->adapter) {
-            'php-fpm' => new PhpFpmRuntime(httpKernel: $this->httpKernel()),
-            'cli' => new CliRuntime(consoleKernel: $this->consoleKernel()),
+            'php-fpm' => new PhpFpmRuntime(
+                httpKernel: $this->httpKernel(),
+                phpFpmRequestReader: new PhpFpmRequestReader(),
+                phpFpmResponseSender: new PhpFpmResponseSender(),
+            ),
+            'cli' => new CliRuntime(
+                consoleKernel: $this->consoleKernel(),
+                cliInputReader: new CliInputReader(),
+                cliOutputWriter: new CliOutputWriter(),
+            ),
             'roadrunner' => new RoadRunnerRuntime(receiver: $this->receiver(), sender: $this->sender()),
             'frankenphp' => new FrankenPhpRuntime(receiver: $this->receiver(), sender: $this->sender()),
             'swoole' => new SwooleRuntime(receiver: $this->receiver(), sender: $this->sender()),

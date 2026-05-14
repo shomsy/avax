@@ -71,7 +71,7 @@ enum ContentType: string
      * Try to create a ContentType from a MIME type string.
      * Returns null if the MIME type is not recognized.
      */
-    public static function tryFromMimeType(string $mimeType) : ?self
+    public static function tryFromMimeType(string $mimeType) : self|null
     {
         $normalized = strtolower(trim($mimeType));
 
@@ -131,7 +131,7 @@ enum ContentType: string
      * Get the default charset for this content type, if applicable.
      * Returns null for binary or charset-irrelevant content types.
      */
-    public function charset() : ?string
+    public function charset() : string|null
     {
         return match ($this) {
             self::APPLICATION_JSON,

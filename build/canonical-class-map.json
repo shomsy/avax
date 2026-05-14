@@ -4688,11 +4688,11 @@
     "status": "canonical"
   },
   {
-    "fqcn": "Avax\\Components\\Identity\\Auth\\System\\DefaultAuth",
-    "file": "components/Identity/Auth/System/DefaultAuth.php",
+    "fqcn": "Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Authentication\\DefaultAuth",
+    "file": "components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php",
     "suite": "Identity",
     "component": "Auth",
-    "lane": "SystemRoot",
+    "lane": "Capabilities",
     "status": "canonical"
   },
   {
@@ -18200,11 +18200,11 @@
     "status": "canonical"
   },
   {
-    "fqcn": "Avax\\Components\\Application\\Container\\System\\Container",
-    "file": "components/Application/Container/System/Container.php",
+    "fqcn": "Avax\\Components\\Application\\Container\\System\\PublicSurface\\Container",
+    "file": "components/Application/Container/System/PublicSurface/Container.php",
     "suite": "Application",
     "component": "Container",
-    "lane": "SystemRoot",
+    "lane": "PublicSurface",
     "status": "canonical"
   },
   {
@@ -20064,19 +20064,19 @@
     "status": "canonical"
   },
   {
-    "fqcn": "Avax\\Components\\Application\\Cache\\System\\AvaxCache",
-    "file": "components/Application/Cache/System/AvaxCache.php",
+    "fqcn": "Avax\\Components\\Application\\Cache\\System\\PublicSurface\\AvaxCache",
+    "file": "components/Application/Cache/System/PublicSurface/AvaxCache.php",
     "suite": "Application",
     "component": "Cache",
-    "lane": "SystemRoot",
+    "lane": "PublicSurface",
     "status": "canonical"
   },
   {
-    "fqcn": "Avax\\Components\\Application\\Cache\\System\\CacheContract",
-    "file": "components/Application/Cache/System/CacheContract.php",
+    "fqcn": "Avax\\Components\\Application\\Cache\\System\\PublicSurface\\CacheContract",
+    "file": "components/Application/Cache/System/PublicSurface/CacheContract.php",
     "suite": "Application",
     "component": "Cache",
-    "lane": "SystemRoot",
+    "lane": "PublicSurface",
     "status": "canonical"
   },
   {
@@ -20216,11 +20216,11 @@
     "status": "canonical"
   },
   {
-    "fqcn": "Avax\\Components\\Application\\Cache\\System\\CacheFailure",
-    "file": "components/Application/Cache/System/CacheFailure.php",
+    "fqcn": "Avax\\Components\\Application\\Cache\\System\\Foundation\\CacheFailure",
+    "file": "components/Application/Cache/System/Foundation/CacheFailure.php",
     "suite": "Application",
     "component": "Cache",
-    "lane": "SystemRoot",
+    "lane": "Foundation",
     "status": "canonical"
   },
   {
@@ -20296,11 +20296,11 @@
     "status": "canonical"
   },
   {
-    "fqcn": "Avax\\Components\\Application\\Cache\\System\\CacheResult",
-    "file": "components/Application/Cache/System/CacheResult.php",
+    "fqcn": "Avax\\Components\\Application\\Cache\\System\\Foundation\\CacheResult",
+    "file": "components/Application/Cache/System/Foundation/CacheResult.php",
     "suite": "Application",
     "component": "Cache",
-    "lane": "SystemRoot",
+    "lane": "Foundation",
     "status": "canonical"
   },
   {

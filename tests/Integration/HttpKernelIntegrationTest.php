@@ -7,7 +7,9 @@ namespace Avax\Tests\Integration;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
+use Avax\Components\HTTP\System\Capabilities\Kernel\BootHttpKernel;
 use Avax\Components\HTTP\System\Capabilities\Kernel\HttpKernel;
+use Avax\Components\HTTP\System\Capabilities\Kernel\TerminateHttpKernel;
 use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\MiddlewareInterface;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -24,7 +26,11 @@ final class HttpKernelIntegrationTest extends TestCase
     protected function setUp(): void
     {
         $this->router = $this->createMock(RouterInterface::class);
-        $this->kernel = new HttpKernel(router: $this->router);
+        $this->kernel = new HttpKernel(
+            router: $this->router,
+            bootHttpKernel: new BootHttpKernel(),
+            terminateHttpKernel: new TerminateHttpKernel(),
+        );
     }
 
     #[Test]

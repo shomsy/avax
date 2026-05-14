@@ -2975,43 +2975,43 @@ parameters:
 			message: '#^Method Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Bindings\\DependencyRegistryContract\:\:bind\(\) invoked with 3 parameters, 1\-2 required\.$#'
 			identifier: arguments.count
 			count: 1
-			path: components/Application/Container/System/Container.php
+			path: components/Application/Container/System/PublicSurface/Container.php
 
 		-
 			message: '#^Method Avax\\Components\\Application\\Container\\System\\Container\:\:call\(\) has parameter \$parameters with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: components/Application/Container/System/Container.php
+			path: components/Application/Container/System/PublicSurface/Container.php
 
 		-
 			message: '#^Method Avax\\Components\\Application\\Container\\System\\Container\:\:engine\(\) should return Avax\\Components\\Application\\Container\\System\\ContainerInterface but returns Avax\\Components\\Application\\Container\\System\\ContainerInterface\|null\.$#'
 			identifier: return.type
 			count: 1
-			path: components/Application/Container/System/Container.php
+			path: components/Application/Container/System/PublicSurface/Container.php
 
 		-
 			message: '#^Method Avax\\Components\\Application\\Container\\System\\Container\:\:make\(\) has parameter \$parameters with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: components/Application/Container/System/Container.php
+			path: components/Application/Container/System/PublicSurface/Container.php
 
 		-
 			message: '#^Method Avax\\Components\\Application\\Container\\System\\Container\:\:tag\(\) has parameter \$abstracts with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: components/Application/Container/System/Container.php
+			path: components/Application/Container/System/PublicSurface/Container.php
 
 		-
 			message: '#^Method Avax\\Components\\Application\\Container\\System\\Container\:\:tag\(\) has parameter \$tags with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: components/Application/Container/System/Container.php
+			path: components/Application/Container/System/PublicSurface/Container.php
 
 		-
 			message: '#^Method Avax\\Components\\Application\\Container\\System\\Container\:\:tagged\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: components/Application/Container/System/Container.php
+			path: components/Application/Container/System/PublicSurface/Container.php
 
 		-
 			message: '#^Method Avax\\Components\\Application\\Container\\System\\ContainerInterface\:\:grouped\(\) return type has no value type specified in iterable type array\.$#'
@@ -3029,463 +3029,463 @@ parameters:
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\:\:callInContext\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\:\:debugSliceInContext\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\:\:getInContext\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\:\:groupedInContext\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\:\:hasInContext\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\:\:injectIntoInContext\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\:\:lazyInContext\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\:\:makeInContext\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\:\:registrations\(\)\.$#'
 			identifier: method.notFound
 			count: 4
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\:\:sliceBoundaryMode\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\:\:taggedInContext\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:alias\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:bind\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:bootProviders\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:canInject\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:closeScope\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:compileContainer\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:compileReport\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:decorate\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:defer\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:env\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:exportMetrics\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:extend\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:flush\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:flushCompiled\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:hasAlias\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:inspectInjection\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:instance\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:isCompiled\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:isDeferred\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:isLazy\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:isWarmedUp\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:openScope\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:rebuildCompiled\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:reset\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:runtimeReport\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:scoped\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:scopes\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:singleton\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:tag\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:warmCompiled\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Foundation\\Container\:\:when\(\)\.$#'
 			identifier: method.notFound
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Method Avax\\Components\\Application\\Container\\System\\ContextContainer\:\:grouped\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Method Avax\\Components\\Application\\Container\\System\\ContextContainer\:\:tag\(\) has parameter \$abstracts with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Method Avax\\Components\\Application\\Container\\System\\ContextContainer\:\:tag\(\) has parameter \$tags with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Method Avax\\Components\\Application\\Container\\System\\ContextContainer\:\:tagged\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Missing parameter \$dependencyRegistration \(Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Bindings\\DependencyRegistration\) in call to method Avax\\Components\\Application\\Container\\System\\ContextContainer\:\:applySliceMetadata\(\)\.$#'
 			identifier: argument.missing
 			count: 5
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Missing parameter \$foundationContainer \(Avax\\Components\\Application\\Container\\System\\Foundation\\Container\) in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\CapabilitySliceView constructor\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Missing parameter \$foundationContainer \(Avax\\Components\\Application\\Container\\System\\Foundation\\Container\) in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\ConfigurationSliceView constructor\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Missing parameter \$foundationContainer \(Avax\\Components\\Application\\Container\\System\\Foundation\\Container\) in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\FlowSliceView constructor\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Missing parameter \$foundationContainer \(Avax\\Components\\Application\\Container\\System\\Foundation\\Container\) in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\FoundationSliceView constructor\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Missing parameter \$foundationContainer \(Avax\\Components\\Application\\Container\\System\\Foundation\\Container\) in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\RootCompositionView constructor\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Missing parameter \$foundationContainer \(Avax\\Components\\Application\\Container\\System\\Foundation\\Container\) in call to Avax\\Components\\Application\\Container\\System\\ContextContainer constructor\.$#'
 			identifier: argument.missing
 			count: 2
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Missing parameter \$resolveDependency \(Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\) in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\CapabilitySliceView constructor\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Missing parameter \$resolveDependency \(Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\) in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\ConfigurationSliceView constructor\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Missing parameter \$resolveDependency \(Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\) in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\FlowSliceView constructor\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Missing parameter \$resolveDependency \(Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\) in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\FoundationSliceView constructor\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Missing parameter \$resolveDependency \(Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\) in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\RootCompositionView constructor\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Missing parameter \$resolveDependency \(Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\) in call to Avax\\Components\\Application\\Container\\System\\ContextContainer constructor\.$#'
 			identifier: argument.missing
 			count: 2
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Missing parameter \$resolveDependency \(Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\) in call to Avax\\Components\\Application\\Container\\System\\Flows\\ExportGraph\\ExportGraph constructor\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Missing parameter \$resolveDependency \(Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\) in call to Avax\\Components\\Application\\Container\\System\\Flows\\ValidateComposition\\ValidateComposition constructor\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Parameter \$resolver of class Avax\\Components\\Application\\Container\\System\\Flows\\ExplainService\\ExplainService constructor expects Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ServiceResolver, Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency given\.$#'
 			identifier: argument.type
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Unknown parameter \$base in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\CapabilitySliceView constructor\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Unknown parameter \$base in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\ConfigurationSliceView constructor\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Unknown parameter \$base in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\FlowSliceView constructor\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Unknown parameter \$base in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\FoundationSliceView constructor\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Unknown parameter \$base in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\RootCompositionView constructor\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Unknown parameter \$base in call to Avax\\Components\\Application\\Container\\System\\ContextContainer constructor\.$#'
 			identifier: argument.unknown
 			count: 2
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Unknown parameter \$registration in call to method Avax\\Components\\Application\\Container\\System\\ContextContainer\:\:applySliceMetadata\(\)\.$#'
 			identifier: argument.unknown
 			count: 5
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Unknown parameter \$resolver in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\CapabilitySliceView constructor\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Unknown parameter \$resolver in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\ConfigurationSliceView constructor\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Unknown parameter \$resolver in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\FlowSliceView constructor\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Unknown parameter \$resolver in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\FoundationSliceView constructor\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Unknown parameter \$resolver in call to Avax\\Components\\Application\\Container\\System\\Capabilities\\Declaration\\Ownership\\Views\\RootCompositionView constructor\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Unknown parameter \$resolver in call to Avax\\Components\\Application\\Container\\System\\ContextContainer constructor\.$#'
 			identifier: argument.unknown
 			count: 2
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Unknown parameter \$resolver in call to Avax\\Components\\Application\\Container\\System\\Flows\\ExportGraph\\ExportGraph constructor\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Unknown parameter \$resolver in call to Avax\\Components\\Application\\Container\\System\\Flows\\ValidateComposition\\ValidateComposition constructor\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Application/Container/System/ContextContainer.php
+			path: components/Application/Container/System/Capabilities/ContextualContainer/ContextContainer.php
 
 		-
 			message: '#^Call to an undefined method Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency\:\:registerDeferredProvider\(\)\.$#'
@@ -14567,577 +14567,577 @@ parameters:
 			message: '#^Missing parameter \$acceptTenantInviteData \(Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Runtime\\Tenant\\AcceptInvite\\AcceptTenantInviteData\) in call to method Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Tenants\\Tenants\:\:acceptTenantInvite\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$approveClientRegistrationData \(Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\Runtime\\ApproveClientRegistration\\ApproveClientRegistrationData\) in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\OAuth\:\:approveClientRegistration\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$authenticationRequest \(Avax\\Components\\Identity\\Auth\\System\\Flows\\CheckAuthentication\\AuthenticateRequest\\AuthenticationRequest\) in call to method Avax\\Components\\Identity\\Access\\System\\Capabilities\\Access\:\:authenticateRequest\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$authorizeCodeData \(Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\Runtime\\AuthorizeCode\\AuthorizeCodeData\) in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\OAuth\:\:authorizeCode\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$beginEmailChangeData \(Avax\\Components\\Identity\\Auth\\System\\Flows\\ChangeEmail\\BeginEmailChangeData\) in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Identity\\IdentityOwners\\Account\:\:beginEmailChange\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$beginEmailVerificationData \(Avax\\Components\\Identity\\Auth\\System\\Flows\\VerifyIdentity\\EmailVerification\\BeginEmailVerificationData\) in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Identity\\IdentityOwners\\Verification\:\:beginEmailVerification\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$beginMfaRecoveryData \(Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Mfa\\Runtime\\Recover\\BeginMfaRecoveryData\) in call to method Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Mfa\\Mfa\:\:beginMfaRecovery\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$beginPasskeyAuthenticationData \(Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Passkey\\Runtime\\BeginAuthentication\\BeginPasskeyAuthenticationData\) in call to method Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Passkey\\Passkey\:\:beginPasskeyAuthentication\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$beginPasswordResetData \(Avax\\Components\\Identity\\Auth\\System\\Flows\\RecoverAccess\\PasswordReset\\BeginPasswordResetData\) in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Identity\\IdentityOwners\\Recovery\:\:beginPasswordReset\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$beginTenantSecurityChangeData \(Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Runtime\\TenantSecurity\\BeginChange\\BeginTenantSecurityChangeData\) in call to method Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Security\\Security\:\:beginChange\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$buildJarmResponseData \(Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OpenIDConnect\\Runtime\\JarmResponse\\BuildJarmResponseData\) in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OpenIDConnect\\OpenIDConnect\:\:buildJarmResponse\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$changePasswordData \(Avax\\Components\\Identity\\Auth\\System\\Flows\\ChangePassword\\ChangePasswordData\) in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Identity\\IdentityOwners\\Account\:\:changePassword\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$completeFederatedLoginData \(Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\SingleSignOn\\FederationRuntime\\CompleteFederatedLogin\\CompleteFederatedLoginData\) in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\SingleSignOn\\SingleSignOn\:\:completeFederatedLogin\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$completePasskeyAuthenticationData \(Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Passkey\\Runtime\\CompleteAuthentication\\CompletePasskeyAuthenticationData\) in call to method Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Passkey\\Passkey\:\:completePasskeyAuthentication\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$completePasskeyRegistrationData \(Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Passkey\\Runtime\\CompleteRegistration\\CompletePasskeyRegistrationData\) in call to method Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Passkey\\Passkey\:\:completePasskeyRegistration\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$confirmEmailChangeData \(Avax\\Components\\Identity\\Auth\\System\\Flows\\ChangeEmail\\ConfirmEmailChangeData\) in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Identity\\IdentityOwners\\Account\:\:confirmEmailChange\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$confirmMfaEnrollmentData \(Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Mfa\\Runtime\\Enroll\\ConfirmMfaEnrollmentData\) in call to method Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Mfa\\Mfa\:\:confirmMfaEnrollment\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$confirmMfaRecoveryData \(Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Mfa\\Runtime\\Recover\\ConfirmMfaRecoveryData\) in call to method Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Mfa\\Mfa\:\:confirmMfaRecovery\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$createTenantData \(Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Runtime\\Tenant\\CreateTenant\\CreateTenantData\) in call to method Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Tenants\\Tenants\:\:createTenant\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$deleteScimUserData \(Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\Runtime\\DeleteUser\\DeleteScimUserData\) in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\SCIM\:\:deleteUser\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$exchangeAuthorizationCodeData \(Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\Runtime\\ExchangeAuthorizationCode\\ExchangeAuthorizationCodeData\) in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\OAuth\:\:exchangeAuthorizationCode\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$exchangeClientCredentialsData \(Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\Runtime\\ExchangeClientCredentials\\ExchangeClientCredentialsData\) in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\OAuth\:\:exchangeClientCredentials\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$exchangeRefreshTokenData \(Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\Runtime\\ExchangeRefreshToken\\ExchangeRefreshTokenData\) in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\OAuth\:\:exchangeRefreshToken\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$introspectTokenData \(Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\Runtime\\IntrospectToken\\IntrospectTokenData\) in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\OAuth\:\:introspectToken\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$inviteTenantMemberData \(Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Runtime\\Tenant\\InviteMember\\InviteTenantMemberData\) in call to method Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Tenants\\Tenants\:\:inviteTenantMember\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$logoutData \(Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OpenIDConnect\\Runtime\\Logout\\LogoutData\) in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OpenIDConnect\\OpenIDConnect\:\:logout\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$markScimDirectoryOutageData \(Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\Runtime\\MarkOutage\\MarkScimDirectoryOutageData\) in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\SCIM\:\:markDirectoryOutage\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$provisionScimUserData \(Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\Runtime\\ProvisionUser\\ProvisionScimUserData\) in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\SCIM\:\:provisionUser\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$pushAuthorizationRequestData \(Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OpenIDConnect\\Runtime\\PushAuthorizationRequest\\PushAuthorizationRequestData\) in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OpenIDConnect\\OpenIDConnect\:\:pushAuthorizationRequest\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$recoverScimDirectoryOutageData \(Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\Runtime\\RecoverOutage\\RecoverScimDirectoryOutageData\) in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\SCIM\:\:recoverDirectoryOutage\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$refreshAuthenticationRequest \(Avax\\Components\\Identity\\Tokens\\System\\Capabilities\\Tokens\\Runtime\\Flow\\RefreshAuthenticationRequest\) in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Identity\\IdentityOwners\\Authentication\:\:refresh\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$registerClientData \(Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\Runtime\\RegisterClient\\RegisterClientData\) in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\OAuth\:\:registerClient\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$registerFederationConnectionData \(Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\SingleSignOn\\FederationRuntime\\RegisterConnection\\RegisterFederationConnectionData\) in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\SingleSignOn\\SingleSignOn\:\:registerConnection\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$registerScimDirectoryData \(Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\Runtime\\RegisterDirectory\\RegisterScimDirectoryData\) in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\SCIM\:\:registerDirectory\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$registrationData \(Avax\\Components\\Identity\\Auth\\System\\Flows\\Register\\RegistrationData\) in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Identity\\IdentityOwners\\Account\:\:register\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$removeTenantMemberData \(Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Runtime\\Tenant\\RemoveMember\\RemoveTenantMemberData\) in call to method Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Tenants\\Tenants\:\:removeTenantMember\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$renamePasskeyData \(Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Passkey\\Runtime\\RenamePasskey\\RenamePasskeyData\) in call to method Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Passkey\\Passkey\:\:renamePasskey\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$resetPasswordData \(Avax\\Components\\Identity\\Auth\\System\\Flows\\RecoverAccess\\PasswordReset\\ResetPasswordData\) in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Identity\\IdentityOwners\\Recovery\:\:resetPassword\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$revokeTokenData \(Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\Runtime\\RevokeToken\\RevokeTokenData\) in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\OAuth\:\:revokeToken\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$scimBulkRequest \(Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\Runtime\\Bulk\\ScimBulkRequest\) in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\SCIM\:\:runBulk\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$startFederatedLoginData \(Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\SingleSignOn\\FederationRuntime\\StartFederatedLogin\\StartFederatedLoginData\) in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\SingleSignOn\\SingleSignOn\:\:startFederatedLogin\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$suspendTenantMemberData \(Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Runtime\\Tenant\\SuspendMember\\SuspendTenantMemberData\) in call to method Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Tenants\\Tenants\:\:suspendTenantMember\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$syncScimGroupsData \(Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\Runtime\\SyncGroups\\SyncScimGroupsData\) in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\SCIM\:\:syncGroups\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$transferTenantOwnershipData \(Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Runtime\\Tenant\\TransferOwnership\\TransferTenantOwnershipData\) in call to method Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Tenants\\Tenants\:\:transferTenantOwnership\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$updateClientData \(Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\Runtime\\UpdateClient\\UpdateClientData\) in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\OAuth\:\:updateClient\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$verifyEmailData \(Avax\\Components\\Identity\\Auth\\System\\Flows\\VerifyIdentity\\EmailVerification\\VerifyEmailData\) in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Identity\\IdentityOwners\\Verification\:\:verifyEmail\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$verifyFederationDomainData \(Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\SingleSignOn\\FederationRuntime\\VerifyDomain\\VerifyFederationDomainData\) in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\SingleSignOn\\SingleSignOn\:\:verifyDomain\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$verifyMfaChallengeData \(Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Mfa\\Runtime\\Data\\VerifyMfaChallengeData\) in call to method Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Mfa\\Mfa\:\:verifyMfaChallenge\(\)\.$#'
 			identifier: argument.missing
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\SCIM\:\:deleteUser\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\SCIM\:\:markDirectoryOutage\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\SCIM\:\:provisionUser\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\SCIM\:\:recoverDirectoryOutage\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\SCIM\:\:registerDirectory\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\SCIM\:\:runBulk\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\IdentitySync\\SCIM\\SCIM\:\:syncGroups\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Identity\\IdentityOwners\\Account\:\:beginEmailChange\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Identity\\IdentityOwners\\Account\:\:changePassword\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Identity\\IdentityOwners\\Account\:\:confirmEmailChange\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Identity\\IdentityOwners\\Account\:\:register\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Identity\\IdentityOwners\\Recovery\:\:beginPasswordReset\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Identity\\IdentityOwners\\Recovery\:\:resetPassword\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Identity\\IdentityOwners\\Verification\:\:beginEmailVerification\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Identity\\IdentityOwners\\Verification\:\:verifyEmail\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Mfa\\Mfa\:\:beginMfaRecovery\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Mfa\\Mfa\:\:confirmMfaEnrollment\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Mfa\\Mfa\:\:confirmMfaRecovery\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Mfa\\Mfa\:\:verifyMfaChallenge\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Passkey\\Passkey\:\:beginPasskeyAuthentication\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Passkey\\Passkey\:\:completePasskeyAuthentication\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Passkey\\Passkey\:\:completePasskeyRegistration\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Credentials\\System\\Capabilities\\Passkey\\Passkey\:\:renamePasskey\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\OAuth\:\:approveClientRegistration\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\OAuth\:\:authorizeCode\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\OAuth\:\:exchangeAuthorizationCode\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\OAuth\:\:exchangeClientCredentials\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\OAuth\:\:exchangeRefreshToken\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\OAuth\:\:introspectToken\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\OAuth\:\:registerClient\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\OAuth\:\:revokeToken\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OAuth\\OAuth\:\:updateClient\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OpenIDConnect\\OpenIDConnect\:\:buildJarmResponse\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OpenIDConnect\\OpenIDConnect\:\:logout\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\OpenIDConnect\\OpenIDConnect\:\:pushAuthorizationRequest\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\SingleSignOn\\SingleSignOn\:\:completeFederatedLogin\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\SingleSignOn\\SingleSignOn\:\:registerConnection\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\SingleSignOn\\SingleSignOn\:\:startFederatedLogin\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\ExternalIdentity\\System\\Capabilities\\SingleSignOn\\SingleSignOn\:\:verifyDomain\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Security\\Security\:\:beginChange\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Tenants\\Tenants\:\:acceptTenantInvite\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Tenants\\Tenants\:\:createTenant\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Tenants\\Tenants\:\:inviteTenantMember\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Tenants\\Tenants\:\:removeTenantMember\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Tenants\\Tenants\:\:suspendTenantMember\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$data in call to method Avax\\Components\\Identity\\Tenancy\\System\\Capabilities\\Tenants\\Tenants\:\:transferTenantOwnership\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$request in call to method Avax\\Components\\Identity\\Access\\System\\Capabilities\\Access\:\:authenticateRequest\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Unknown parameter \$request in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Identity\\IdentityOwners\\Authentication\:\:refresh\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
-			path: components/Identity/Auth/System/DefaultAuth.php
+			path: components/Identity/Auth/System/Capabilities/Authentication/DefaultAuth.php
 
 		-
 			message: '#^Missing parameter \$auditEvent \(Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Diagnostics\\Audit\\AuditEvent\) in call to method Avax\\Components\\Identity\\Auth\\System\\Capabilities\\Diagnostics\\Audit\\AuditLogInterface\:\:record\(\)\.$#'

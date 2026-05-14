@@ -6,7 +6,7 @@ namespace Avax\Components\Security\Privacy\System\PublicSurface;
 
 use Avax\Components\Security\Privacy\System\Capabilities\DataDeleter\DataDeleter;
 use Avax\Components\Security\Privacy\System\Capabilities\DataExporter\DataExporter;
-use Avax\Components\Security\Privacy\System\Capabilities\RetentionPolicyManager\RetentionPolicyManager;
+use Avax\Components\Security\Privacy\System\Capabilities\EnforceRetentionPolicy\EnforceRetentionPolicy;
 use Avax\Components\Security\Privacy\System\Configuration\PrivacyConfiguration;
 use Avax\Components\Security\Privacy\System\Flows\ApplyRetentionPolicy\ApplyRetentionPolicy;
 use Avax\Components\Security\Privacy\System\Flows\DeleteUserData\DeleteUserData;
@@ -24,9 +24,9 @@ final class Privacy
         return new DataDeleter();
     }
 
-    public static function retentionManager(int $retentionDays = 365) : RetentionPolicyManager
+    public static function retentionManager(int $retentionDays = 365) : EnforceRetentionPolicy
     {
-        return new RetentionPolicyManager(retentionDays: $retentionDays);
+        return new EnforceRetentionPolicy(retentionDays: $retentionDays);
     }
 
     /**
@@ -54,12 +54,12 @@ final class Privacy
      */
     public static function applyRetention(array $records, int $retentionDays = 365, string $dateField = 'created_at') : array
     {
-        return (new ApplyRetentionPolicy(policyManager: new RetentionPolicyManager(retentionDays: $retentionDays)))
+        return (new ApplyRetentionPolicy(policyManager: new EnforceRetentionPolicy(retentionDays: $retentionDays)))
             ->execute(records: $records, dateField: $dateField);
     }
 
     public static function isExpired(string $date, int $retentionDays = 365) : bool
     {
-        return (new RetentionPolicyManager(retentionDays: $retentionDays))->isExpired(date: $date);
+        return (new EnforceRetentionPolicy(retentionDays: $retentionDays))->isExpired(date: $date);
     }
 }

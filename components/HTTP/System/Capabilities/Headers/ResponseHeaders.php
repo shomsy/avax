@@ -26,7 +26,7 @@ final class ResponseHeaders
     /**
      * @return list<string>|null
      */
-    public function get(string $name) : ?array
+    public function get(string $name) : array|null
     {
         return $this->headers[$name] ?? null;
     }

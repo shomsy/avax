@@ -21,7 +21,7 @@ use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureContext
 final readonly class CleanupAfterFailure
 {
     public function __construct(
-        private FailureCleanupRegistry $registry = new FailureCleanupRegistry(),
+        private FailureCleanupRegistry $registry,
     ) {}
 
     public function for(FailureContext $context): void

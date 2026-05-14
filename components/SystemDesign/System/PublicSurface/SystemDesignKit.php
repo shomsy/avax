@@ -46,7 +46,7 @@ final readonly class SystemDesignKit
     private string $schemaDir;
 
     public function __construct(
-        private Filesystem $filesystem = new Filesystem(),
+        private Filesystem $filesystem,
     )
     {
         $this->schemaDir = __DIR__ . '/../../schemas';

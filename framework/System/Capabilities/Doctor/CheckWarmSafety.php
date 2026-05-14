@@ -11,7 +11,7 @@ final readonly class CheckWarmSafety
 {
     public function __invoke(): DoctorFinding
     {
-        $basePath = dirname(__DIR__, 4).'/framework/System/Runtime/WarmApplication';
+        $basePath = dirname(__DIR__, 4).'/framework/System/Capabilities/Runtime/WarmApplication';
 
         $requiredFiles = [
             'WarmStateContract.php',

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\API\ApiBlueprint\System\Flows\HandleRestRequest;
 
-use Avax\Components\API\ApiBlueprint\System\Capabilities\RestApi\FilterHandler;
-use Avax\Components\API\ApiBlueprint\System\Capabilities\RestApi\PaginationHandler;
-use Avax\Components\API\ApiBlueprint\System\Capabilities\RestApi\SortHandler;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\RestApi\ApplyFilterParameter;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\RestApi\ApplyPagination;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\RestApi\ApplySortParameter;
 use Avax\Components\API\ApiBlueprint\System\PublicSurface\RestResponse;
 
 final readonly class HandleRestRequest
@@ -20,13 +20,13 @@ final readonly class HandleRestRequest
         $uri    = $request['uri'] ?? '/';
         $query  = $request['query'] ?? [];
 
-        $pagination = new PaginationHandler(
+        $pagination = new ApplyPagination(
             page   : (int) ($query['page'] ?? 1),
             perPage: (int) ($query['per_page'] ?? 15),
         );
 
-        $filters = new FilterHandler($query['filter'] ?? []);
-        $sorts   = new SortHandler($query['sort'] ?? []);
+        $filters = new ApplyFilterParameter($query['filter'] ?? []);
+        $sorts   = new ApplySortParameter($query['sort'] ?? []);
 
         return new RestResponse(
             data: [

@@ -14,12 +14,11 @@ use Avax\Framework\System\Capabilities\Routing\RegisterRouteCommands;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
-use Avax\Framework\System\Flows\HandleIncomingHttp\ConfiguredRoutesHttpHandler;
+use Avax\Framework\System\Flows\HandleIncomingHttp\DispatchConfiguredRoute;
 use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\Foundation\Paths\ProjectPath;
 use Avax\Framework\System\Foundation\Time\Clock;
-use Avax\Framework\System\Foundation\Time\SystemClock;
 use Closure;
 
 final class ApplicationBuilder
@@ -39,14 +38,15 @@ final class ApplicationBuilder
     public function __construct(
         private ProjectPath $projectPath,
         private EnvironmentName $environmentName,
-        private Clock $clock = new SystemClock(),
+        private Clock $clock,
+        private RunDoctor $runDoctor,
         private string $runtimeName = 'avax',
     ) {
+        $doctor = $this->runDoctor;
         $this->registerConsoleCommandDirectly(
             name   : 'runtime:doctor',
-            command: static function (array $args): string {
+            command: static function (array $args) use ($doctor): string {
                 $workerMode = in_array('--worker', $args, true);
-                $runDoctor = new RunDoctor();
                 $exitCode = $runDoctor->handle(workerMode: $workerMode);
 
                 return $exitCode === 0 ? "Runtime doctor passed\n" : "Runtime doctor failed\n";
@@ -141,12 +141,12 @@ final class ApplicationBuilder
     }
 
     /**
-     * @param  callable(RuntimeRequest, RuntimeInterface):RuntimeResponse|ConfiguredRoutesHttpHandler  $httpHandler
+     * @param  callable(RuntimeRequest, RuntimeInterface):RuntimeResponse|DispatchConfiguredRoute  $httpHandler
      */
-    public function withHttpHandler(callable|ConfiguredRoutesHttpHandler $httpHandler): self
+    public function withHttpHandler(callable|DispatchConfiguredRoute $httpHandler): self
     {
         $clone = clone $this;
-        $clone->httpHandler = $httpHandler instanceof ConfiguredRoutesHttpHandler
+        $clone->httpHandler = $httpHandler instanceof DispatchConfiguredRoute
             ? $httpHandler->__invoke(...)
             : Closure::fromCallable($httpHandler);
 
@@ -156,7 +156,7 @@ final class ApplicationBuilder
     public function withHttpRouteDefinitions(callable $routeDefinitions): self
     {
         return $this->withHttpHandler(
-            httpHandler: ConfiguredRoutesHttpHandler::fromRouteDefinitions(
+            httpHandler: DispatchConfiguredRoute::fromRouteDefinitions(
                 routeDefinitions: $routeDefinitions,
                 responseFactory : new ResponseFactory(),
             ),
@@ -172,7 +172,7 @@ final class ApplicationBuilder
         }
 
         return $this->withHttpHandler(
-            httpHandler: ConfiguredRoutesHttpHandler::fromRoutesFile(
+            httpHandler: DispatchConfiguredRoute::fromRoutesFile(
                 routesFile: $resolvedPath,
                 responseFactory: new ResponseFactory(),
             ),

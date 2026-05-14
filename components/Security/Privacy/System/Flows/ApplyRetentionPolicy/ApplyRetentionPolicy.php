@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\Security\Privacy\System\Flows\ApplyRetentionPolicy;
 
-use Avax\Components\Security\Privacy\System\Capabilities\RetentionPolicyManager\RetentionPolicyManager;
+use Avax\Components\Security\Privacy\System\Capabilities\EnforceRetentionPolicy\EnforceRetentionPolicy;
 
 final readonly class ApplyRetentionPolicy
 {
     public function __construct(
-        private RetentionPolicyManager $policyManager = new RetentionPolicyManager(retentionDays: 365),
+        private EnforceRetentionPolicy $policyManager = new EnforceRetentionPolicy(retentionDays: 365),
     ) {}
 
     /**

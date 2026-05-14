@@ -24,7 +24,7 @@ final readonly class EvaluatePolicy
         PolicySubject $subject,
         PolicyAction $action,
         PolicyResource $resource,
-        PolicyContext $context = new PolicyContext(),
+        PolicyContext $context,
     ): PolicyDecision {
         $lastMatchingDecision = null;
 
@@ -48,7 +48,7 @@ final readonly class EvaluatePolicy
         PolicySubject $subject,
         PolicyAction $action,
         PolicyResource $resource,
-        PolicyContext $context = new PolicyContext(),
+        PolicyContext $context,
     ): PolicyDecision {
         $decision = $this->evaluate($policy, $subject, $action, $resource, $context);
 

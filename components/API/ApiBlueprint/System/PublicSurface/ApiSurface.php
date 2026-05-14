@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Components\API\ApiBlueprint\System\PublicSurface;
 
-use Avax\Components\API\ApiBlueprint\System\Capabilities\RestApi\FilterHandler;
-use Avax\Components\API\ApiBlueprint\System\Capabilities\RestApi\PaginationHandler;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\RestApi\ApplyFilterParameter;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\RestApi\ApplyPagination;
+use Avax\Components\API\ApiBlueprint\System\Capabilities\RestApi\ApplySortParameter;
 use Avax\Components\API\ApiBlueprint\System\Capabilities\RestApi\ResourceTransformer;
 use Avax\Components\API\ApiBlueprint\System\Capabilities\RestApi\RouteRegistrar;
-use Avax\Components\API\ApiBlueprint\System\Capabilities\RestApi\SortHandler;
 use Avax\Components\API\ApiBlueprint\System\Flows\BuildRestResponse\BuildRestResponse;
 use Avax\Components\API\ApiBlueprint\System\Flows\HandleRestRequest\HandleRestRequest;
 
@@ -24,25 +24,25 @@ final readonly class ApiSurface
         return new ResourceTransformer();
     }
 
-    public static function pagination(int|null $page = 1, int|null $perPage = 15) : PaginationHandler
+    public static function pagination(int|null $page = 1, int|null $perPage = 15) : ApplyPagination
     {
-        return new PaginationHandler(page: $page ?? 1, perPage: $perPage ?? 15);
+        return new ApplyPagination(page: $page ?? 1, perPage: $perPage ?? 15);
     }
 
     /**
      * @param array<string, mixed> $filters
      */
-    public static function filter(array $filters) : FilterHandler
+    public static function filter(array $filters) : ApplyFilterParameter
     {
-        return new FilterHandler($filters);
+        return new ApplyFilterParameter($filters);
     }
 
     /**
      * @param array<string, string> $sorts
      */
-    public static function sort(array $sorts) : SortHandler
+    public static function sort(array $sorts) : ApplySortParameter
     {
-        return new SortHandler($sorts);
+        return new ApplySortParameter($sorts);
     }
 
     /**

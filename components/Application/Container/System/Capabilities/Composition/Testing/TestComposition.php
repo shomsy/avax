@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Container\System\Capabilities\Composition\Testing;
 
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistration;
-use Avax\Components\Application\Container\System\Container;
+use Avax\Components\Application\Container\System\PublicSurface\Container;
 use Avax\Components\Application\Container\System\Flows\CreateContainer\CreateContainer;
 
 /**

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Components\Security\DataProtection\System\Flows\EncryptData;
 
-use Avax\Components\Security\DataProtection\System\Capabilities\EncryptionService\EncryptionService;
-use Avax\Components\Security\DataProtection\System\Capabilities\KeyManager\KeyManager;
+use Avax\Components\Security\DataProtection\System\Capabilities\EncryptDataPayload\EncryptDataPayload;
+use Avax\Components\Security\DataProtection\System\Capabilities\ManageKeys\ManageKeys;
 
 final readonly class EncryptData
 {
     public function __construct(
-        private EncryptionService $encryption = new EncryptionService(),
-        private KeyManager        $keyManager = new KeyManager(),
+        private EncryptDataPayload $encryption = new EncryptDataPayload(),
+        private ManageKeys        $keyManager = new ManageKeys(),
     ) {}
 
     /**

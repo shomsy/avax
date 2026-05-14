@@ -257,7 +257,7 @@ function classifyViolation(string $relativePath, string $line, string $func) : s
     }
 
     // Framework HTTP handler with config routes — bootstrap
-    if (str_contains($relativePath, 'System/Flows/HandleIncomingHttp/ConfiguredRoutesHttpHandler')) {
+    if (str_contains($relativePath, 'System/Flows/HandleIncomingHttp/DispatchConfiguredRoute')) {
         return 'ALLOWED_BOOTSTRAP';
     }
 

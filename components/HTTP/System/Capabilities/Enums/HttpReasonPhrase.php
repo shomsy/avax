@@ -31,7 +31,7 @@ enum HttpReasonPhrase: string
     case SERVICE_UNAVAILABLE   = 'Service Unavailable';
     case GATEWAY_TIMEOUT       = 'Gateway Timeout';
 
-    public static function fromStatusCode(int $code) : ?self
+    public static function fromStatusCode(int $code) : self|null
     {
         return match ($code) {
             200     => self::OK,

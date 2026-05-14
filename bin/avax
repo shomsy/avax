@@ -3,6 +3,8 @@
 
 declare(strict_types=1);
 
+use Avax\Framework\System\Capabilities\Runtime\Cli\CliInputReader;
+use Avax\Framework\System\Capabilities\Runtime\Cli\CliOutputWriter;
 use Avax\Framework\System\Capabilities\Runtime\Cli\CliRuntime;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResult;
 use Avax\Framework\System\Configuration\BuildApplication\BuildApplication;
@@ -41,7 +43,11 @@ try {
                )
     );
 
-    $cliRuntime = new CliRuntime(consoleKernel: $application->console());
+    $cliRuntime = new CliRuntime(
+        consoleKernel: $application->console(),
+        cliInputReader: new CliInputReader(),
+        cliOutputWriter: new CliOutputWriter(),
+    );
     $result     = $cliRuntime->run(argv: $argv);
 
     fwrite(stream: STDOUT, data: $cliRuntime->render(runtimeResult: $result));

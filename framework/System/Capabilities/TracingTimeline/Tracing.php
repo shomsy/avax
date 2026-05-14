@@ -9,7 +9,9 @@ namespace Avax\Framework\System\Capabilities\TracingTimeline;
  */
 final class Tracing
 {
-    private RuntimeTimeline|null $runtimeTimeline = null;
+    public function __construct(
+        private RuntimeTimeline $runtimeTimeline,
+    ) {}
 
     public function start(): RuntimeTimeline
     {
@@ -27,7 +29,7 @@ final class Tracing
         string $name, float|null $durationMS = null, string|null $category = null,
         array $metadata = [],
     ): void {
-        $this->runtimeTimeline?->record(
+        $this->runtimeTimeline->record(
             name      : $name,
             durationMS: $durationMS,
             category  : $category,
@@ -42,19 +44,19 @@ final class Tracing
 
     public function begin(string $name, string|null $category = null) : TraceSpan
     {
-        return $this->runtimeTimeline?->begin(
+        return $this->runtimeTimeline->begin(
             name    : $name,
             category: $category,
-        ) ?? new TraceSpan(name: $name);
+        );
     }
 
     public function finish(): void
     {
-        $this->runtimeTimeline?->finish();
+        $this->runtimeTimeline->finish();
     }
 
     public function export(): string
     {
-        return $this->runtimeTimeline?->exportText() ?? 'No active timeline';
+        return $this->runtimeTimeline->exportText();
     }
 }

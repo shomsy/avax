@@ -25,8 +25,8 @@ final class HttpKernel implements HttpInterface
 
     public function __construct(
         private readonly RouterInterface     $router,
-        private readonly BootHttpKernel      $bootHttpKernel = new BootHttpKernel(),
-        private readonly TerminateHttpKernel $terminateHttpKernel = new TerminateHttpKernel(),
+        private readonly BootHttpKernel      $bootHttpKernel,
+        private readonly TerminateHttpKernel $terminateHttpKernel,
     ) {}
 
     /**

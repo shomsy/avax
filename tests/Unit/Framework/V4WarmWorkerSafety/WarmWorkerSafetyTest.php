@@ -8,21 +8,21 @@ use Avax\Framework\System\Capabilities\RequestScope\RequestScope;
 use Avax\Framework\System\Capabilities\RequestScope\RequestScopeId;
 use Avax\Framework\System\Capabilities\StateReset\ResettableState;
 use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
-use Avax\Framework\System\Runtime\MemoryGuard\CalculateMemoryGrowthRate;
-use Avax\Framework\System\Runtime\MemoryGuard\CheckMemoryThreshold;
-use Avax\Framework\System\Runtime\MemoryGuard\MonitorWorkerMemory;
-use Avax\Framework\System\Runtime\MemoryGuard\RecordMemorySnapshot;
-use Avax\Framework\System\Runtime\MemoryGuard\RecycleReason;
-use Avax\Framework\System\Runtime\MemoryGuard\RequestWorkerRecycle;
-use Avax\Framework\System\Runtime\ReactPhp\RunReactHttpServer;
-use Avax\Framework\System\Runtime\WarmApplication\AllowedWarmState;
-use Avax\Framework\System\Runtime\WarmApplication\DetectLeakedState;
-use Avax\Framework\System\Runtime\WarmApplication\FlushScopedInstances;
-use Avax\Framework\System\Runtime\WarmApplication\HandleWarmRequest;
-use Avax\Framework\System\Runtime\WarmApplication\MustResetState;
-use Avax\Framework\System\Runtime\WarmApplication\ResetWarmRequestState;
-use Avax\Framework\System\Runtime\WarmApplication\RuntimeStateLeak;
-use Avax\Framework\System\Runtime\WarmApplication\WarmStateContract;
+use Avax\Framework\System\Capabilities\Runtime\MemoryGuard\CalculateMemoryGrowthRate;
+use Avax\Framework\System\Capabilities\Runtime\MemoryGuard\CheckMemoryThreshold;
+use Avax\Framework\System\Capabilities\Runtime\MemoryGuard\MonitorWorkerMemory;
+use Avax\Framework\System\Capabilities\Runtime\MemoryGuard\RecordMemorySnapshot;
+use Avax\Framework\System\Capabilities\Runtime\MemoryGuard\RecycleReason;
+use Avax\Framework\System\Capabilities\Runtime\MemoryGuard\RequestWorkerRecycle;
+use Avax\Framework\System\Capabilities\Runtime\ReactPhp\RunReactHttpServer;
+use Avax\Framework\System\Capabilities\Runtime\WarmApplication\AllowedWarmState;
+use Avax\Framework\System\Capabilities\Runtime\WarmApplication\DetectLeakedState;
+use Avax\Framework\System\Capabilities\Runtime\WarmApplication\FlushScopedInstances;
+use Avax\Framework\System\Capabilities\Runtime\WarmApplication\HandleWarmRequest;
+use Avax\Framework\System\Capabilities\Runtime\WarmApplication\MustResetState;
+use Avax\Framework\System\Capabilities\Runtime\WarmApplication\ResetWarmRequestState;
+use Avax\Framework\System\Capabilities\Runtime\WarmApplication\RuntimeStateLeak;
+use Avax\Framework\System\Capabilities\Runtime\WarmApplication\WarmStateContract;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use GuzzleHttp\Psr7\ServerRequest as GuzzleServerRequest;
 use PHPUnit\Framework\TestCase;
@@ -609,8 +609,8 @@ final class WarmWorkerSafetyTest extends TestCase
 
     public function testWarmWorkerSafetyUsesExistingRuntime(): void
     {
-        $warmCode = (string) file_get_contents(__DIR__ . '/../../../../framework/System/Runtime/WarmApplication/HandleWarmRequest.php');
-        $flushCode = (string) file_get_contents(__DIR__ . '/../../../../framework/System/Runtime/WarmApplication/FlushScopedInstances.php');
+        $warmCode = (string) file_get_contents(__DIR__ . '/../../../../framework/System/Capabilities/Runtime/WarmApplication/HandleWarmRequest.php');
+        $flushCode = (string) file_get_contents(__DIR__ . '/../../../../framework/System/Capabilities/Runtime/WarmApplication/FlushScopedInstances.php');
 
         // Must use existing StateResetRegistry
         self::assertStringContainsString('StateResetRegistry', $flushCode);
@@ -621,7 +621,7 @@ final class WarmWorkerSafetyTest extends TestCase
 
     public function testMemoryGuardDoesNotDependOnReactPhpDirectly(): void
     {
-        $memoryGuardDir = __DIR__ . '/../../../../framework/System/Runtime/MemoryGuard/';
+        $memoryGuardDir = __DIR__ . '/../../../../framework/System/Capabilities/Runtime/MemoryGuard/';
         $files = glob("{$memoryGuardDir}/*.php");
         if ($files === false) {
             self::fail('Could not list MemoryGuard files');
@@ -635,7 +635,7 @@ final class WarmWorkerSafetyTest extends TestCase
 
     public function testReactPhpRuntimeDependsOnWarmApplication(): void
     {
-        $reactCode = (string) file_get_contents(__DIR__ . '/../../../../framework/System/Runtime/ReactPhp/RunReactHttpServer.php');
+        $reactCode = (string) file_get_contents(__DIR__ . '/../../../../framework/System/Capabilities/Runtime/ReactPhp/RunReactHttpServer.php');
 
         self::assertStringContainsString('HandleWarmRequest', $reactCode);
         self::assertStringContainsString('setWarmHandler', $reactCode);

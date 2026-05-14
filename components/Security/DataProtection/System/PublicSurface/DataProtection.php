@@ -5,22 +5,22 @@ declare(strict_types=1);
 namespace Avax\Components\Security\DataProtection\System\PublicSurface;
 
 use Avax\Components\Security\DataProtection\System\Capabilities\DataIntegrityChecker\DataIntegrityChecker;
-use Avax\Components\Security\DataProtection\System\Capabilities\EncryptionService\EncryptionService;
-use Avax\Components\Security\DataProtection\System\Capabilities\KeyManager\KeyManager;
+use Avax\Components\Security\DataProtection\System\Capabilities\EncryptDataPayload\EncryptDataPayload;
+use Avax\Components\Security\DataProtection\System\Capabilities\ManageKeys\ManageKeys;
 use Avax\Components\Security\DataProtection\System\Flows\DecryptData\DecryptData;
 use Avax\Components\Security\DataProtection\System\Flows\EncryptData\EncryptData;
 use Avax\Components\Security\DataProtection\System\Flows\RotateEncryptionKey\RotateEncryptionKey;
 
 final class DataProtection
 {
-    public static function keyManager() : KeyManager
+    public static function keyManager() : ManageKeys
     {
-        return new KeyManager();
+        return new ManageKeys();
     }
 
-    public static function encryptionService(string $cipher = 'aes-256-gcm') : EncryptionService
+    public static function encryptionService(string $cipher = 'aes-256-gcm') : EncryptDataPayload
     {
-        return new EncryptionService(cipher: $cipher);
+        return new EncryptDataPayload(cipher: $cipher);
     }
 
     public static function integrityChecker() : DataIntegrityChecker

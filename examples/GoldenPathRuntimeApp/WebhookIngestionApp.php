@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Avax\Examples\GoldenPathRuntimeApp;
 
 use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
+use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\Foundation\Paths\ProjectPath;
+use Avax\Framework\System\Foundation\Time\SystemClock;
 
 /**
  * Assembles the Webhook Ingestion Pipeline application.
@@ -24,6 +26,8 @@ final class WebhookIngestionApp
         return (new ApplicationBuilder(
             projectPath    : $projectPath,
             environmentName: $environmentName,
+            clock          : new SystemClock(),
+            runDoctor      : new RunDoctor(),
         ))->withHttpRoutes(__DIR__ . '/config/routes.php');
     }
 }

@@ -16,7 +16,7 @@ final readonly class ReadCompiledFailurePolicies
     ) {
     }
 
-    public function read(string $targetClass, string $targetMethod): ?CompiledMethodPolicy
+    public function read(string $targetClass, string $targetMethod): CompiledMethodPolicy|null
     {
         $key = $targetClass . '::' . $targetMethod;
         $safeKey = str_replace(['\\', '::'], ['_', '__'], $key);

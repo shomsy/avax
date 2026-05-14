@@ -42,7 +42,7 @@ final class CheckComponentSuiteStructure
 
     private array $allowedFramework
         = [
-            'Adapters',      // Server moved to framework/System/Runtime/Adapters (2026-05-03)
+            'Adapters',      // Server moved to framework/System/Capabilities/Runtime/Adapters (2026-05-03, moved to Capabilities/Runtime 2026-05-14)
         ];
 
     private array $allowedBridges

@@ -34,6 +34,7 @@ final readonly class Runtime implements RuntimeInterface
         private string $runtimeName,
         private Closure|null $httpHandler = null,
         private array $consoleCommands = [],
+        private HandleIncomingHttp|null $handleIncomingHttp = null,
     ) {
     }
 
@@ -94,13 +95,12 @@ final readonly class Runtime implements RuntimeInterface
 
     public function runWorker(WorkerRuntimeInterface $workerRuntime): WorkerLifecycle
     {
-        $handleIncomingHttp = new HandleIncomingHttp(
-            responseFactory: new ResponseFactory(),
-        );
         $workerLoop = new WorkerLoop(
             runtime           : $this,
             workerRuntime     : $workerRuntime,
-            handleIncomingHttp: $handleIncomingHttp,
+            handleIncomingHttp: $this->handleIncomingHttp ?? new HandleIncomingHttp(
+                responseFactory: new ResponseFactory(),
+            ),
         );
 
         return $workerLoop->run();

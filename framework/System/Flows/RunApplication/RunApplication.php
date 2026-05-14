@@ -7,7 +7,7 @@ namespace Avax\Framework\System\Flows\RunApplication;
 use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ActionResolution\ControllerResolver;
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ArgumentResolution\ArgumentResolver;
-use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\Components\HTTP\Request\System\Capabilities\IncomingRequest\ServerRequest;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedException;

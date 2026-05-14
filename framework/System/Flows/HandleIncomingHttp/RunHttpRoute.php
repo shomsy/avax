@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Flows\HandleIncomingHttp;
 
 use Avax\Components\HTTP\Dispatcher\System\PublicSurface\ControllerDispatcher;
-use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\Components\HTTP\Request\System\Capabilities\IncomingRequest\ServerRequest;
 use Closure;
 use Psr\Http\Message\ResponseInterface;
 

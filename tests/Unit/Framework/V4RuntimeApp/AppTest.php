@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Framework\V4RuntimeApp;
 
-use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\Components\HTTP\Request\System\Capabilities\IncomingRequest\ServerRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Flows\CreateApplication\CreateApplication;
 use Avax\Framework\System\Foundation\Time\SystemClock;

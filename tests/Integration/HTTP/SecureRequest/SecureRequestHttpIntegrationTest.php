@@ -13,7 +13,7 @@ use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\
 use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\Required;
 use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\StringType;
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ArgumentResolution\ArgumentResolver;
-use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\Components\HTTP\Request\System\Capabilities\IncomingRequest\ServerRequest;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\Flows\CreateJsonResponse\CreateJsonResponse;
 use Avax\Components\HTTP\SecureRequest\System\Capabilities\SecureRequestValidation\ValidationContext;

@@ -32,7 +32,7 @@ $replacements = [
     'DatabaseServiceProvider' => 'RegisterDatabaseDependencies',
     'DatabaseRegistrar' => 'RegisterDatabaseDependencies',
 
-    'CacheServiceProvider' => 'RegisterCacheDependencies',
+    'Avax\Components\Application\Cache\System\Configuration\CacheServiceProvider' => 'RegisterCacheDependencies',
     'CacheRegistrar' => 'RegisterCacheDependencies',
 
     'RegisterSecurityServices' => 'RegisterSecurityDependencies',

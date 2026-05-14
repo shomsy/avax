@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Flows\HandleIncomingHttp;
 
-use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\Components\HTTP\Request\System\Capabilities\IncomingRequest\ServerRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Utils;

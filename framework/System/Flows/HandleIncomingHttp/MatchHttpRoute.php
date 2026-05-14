@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Flows\HandleIncomingHttp;
 
-use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
+use Avax\Components\HTTP\Request\System\Capabilities\IncomingRequest\ServerRequest;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;

@@ -9,7 +9,7 @@ namespace Avax\Components\Application\Container\System\Capabilities\ContainerObs
  */
 final readonly class ResolutionTelemetry
 {
-    public function __construct(private ResolutionMetrics $resolutionMetrics = new ResolutionMetrics(), private ResolutionTimeline $resolutionTimeline = new ResolutionTimeline())
+    public function __construct(private ResolutionMetrics $resolutionMetrics, private ResolutionTimeline $resolutionTimeline)
     {
     }
 

@@ -31,6 +31,8 @@ final readonly class RunConsoleCommand
     {
         return new self(
             runtime         : $this->runtime,
+            preCommitConfig : $this->preCommitConfig,
+            preCommit       : $this->preCommit,
             commandOverrides: $commands,
         );
     }

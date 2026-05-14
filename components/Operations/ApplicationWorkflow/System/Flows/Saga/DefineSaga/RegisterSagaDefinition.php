@@ -12,11 +12,19 @@ final class RegisterSagaDefinition
     /** @var array<string, SagaDefinition> */
     private array $definitions = [];
 
-    public function __construct(private readonly ValidateSagaDefinition $validateSagaDefinition = new ValidateSagaDefinition()) {}
+    public function __construct(private readonly ValidateSagaDefinition $validateSagaDefinition) {}
 
+    /**
+     * @throws InvalidSagaDefinitionException when saga definition validation fails
+     */
     public function register(SagaDefinition $sagaDefinition) : SagaDefinition
     {
-        $this->validateSagaDefinition->validate();
+        $result = $this->validateSagaDefinition->validate(sagaDefinition: $sagaDefinition);
+
+        if (! $result->isValid()) {
+            throw new InvalidSagaDefinitionException(errors: $result->errors);
+        }
+
         $this->definitions[$sagaDefinition->name] = $sagaDefinition;
 
         return $sagaDefinition;

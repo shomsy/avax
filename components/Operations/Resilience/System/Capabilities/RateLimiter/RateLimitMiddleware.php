@@ -51,7 +51,7 @@ final readonly class RateLimitMiddleware
 
     private function decision(ServerRequestInterface $serverRequest): RateLimitDecision
     {
-        return new RateLimiter(limiter: $this->redisRateLimiter)->attempt(
+        return new RateLimiter(redisRateLimiter: $this->redisRateLimiter)->attempt(
             key         : $this->keyFor(request: $serverRequest),
             maxAttempts : $this->config['max_attempts'] ?? 60,
             decaySeconds: $this->config['decay_seconds'] ?? 60,

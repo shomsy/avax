@@ -145,14 +145,14 @@ final readonly class SagaDefinition implements IteratorAggregate
         return $this->validate()->isValid();
     }
 
-    public function validate() : ValidateSagaDefinition
+    public function validate() : SagaValidationResult
     {
-        return new ValidateSagaDefinition(definition: $this);
+        return (new ValidateSagaDefinition())->validate(sagaDefinition: $this);
     }
 
     public function getValidationErrors() : array
     {
-        return $this->validate()->getErrors();
+        return $this->validate()->errors;
     }
 
     public function getStep(string $name) : ?SagaStepDefinition

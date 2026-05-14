@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Foundation\Serialization;
 
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
-use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Override;
 
 final readonly class PhpCacheSerializer implements CacheSerializer
 {
     public const string FORMAT = 'php-serialized';
 
-    public function __construct(private Clock $clock = new SystemClock())
+    public function __construct(private Clock $clock)
     {
     }
 

@@ -10,17 +10,31 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\Defin
 final readonly class DefineSaga
 {
     public function __construct(
-        private ValidateSagaDefinition $validateSagaDefinition = new ValidateSagaDefinition(),
-        private RegisterSagaDefinition $registerSagaDefinition = new RegisterSagaDefinition(),
+        private ValidateSagaDefinition $validateSagaDefinition,
+        private RegisterSagaDefinition $registerSagaDefinition,
     ) {}
 
-    public function validate() : void
+    /**
+     * @throws InvalidSagaDefinitionException when saga definition validation fails
+     */
+    public function validate(SagaDefinition $sagaDefinition) : SagaValidationResult
     {
-        $this->validateSagaDefinition->validate();
+        $result = $this->validateSagaDefinition->validate(sagaDefinition: $sagaDefinition);
+
+        if (! $result->isValid()) {
+            throw new InvalidSagaDefinitionException(errors: $result->errors);
+        }
+
+        return $result;
     }
 
+    /**
+     * @throws InvalidSagaDefinitionException when saga definition validation fails
+     */
     public function register(SagaDefinition $sagaDefinition) : SagaDefinition
     {
+        $this->validate(sagaDefinition: $sagaDefinition);
+
         return $this->registerSagaDefinition->register(definition: $sagaDefinition);
     }
 }

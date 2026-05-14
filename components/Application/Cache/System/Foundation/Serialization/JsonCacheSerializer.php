@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Foundation\Serialization;
 
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
-use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Override;
 
 final readonly class JsonCacheSerializer implements CacheSerializer
@@ -14,7 +13,7 @@ final readonly class JsonCacheSerializer implements CacheSerializer
 
     private const ENCODING_OPTIONS = JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE | JSON_PRESERVE_ZERO_FRACTION;
 
-    public function __construct(private Clock $clock = new SystemClock())
+    public function __construct(private Clock $clock)
     {
     }
 

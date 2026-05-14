@@ -17,7 +17,7 @@ use ReflectionFunction;
  */
 final readonly class DependencyCompiler
 {
-    public function __construct(private DependencyRegistry $dependencyRegistry, private CreateDependencyBlueprint $createDependencyBlueprint, private MethodEmitter $methodEmitter = new MethodEmitter())
+    public function __construct(private DependencyRegistry $dependencyRegistry, private CreateDependencyBlueprint $createDependencyBlueprint, private MethodEmitter $methodEmitter)
     {
     }
 

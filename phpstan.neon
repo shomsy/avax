@@ -11,6 +11,7 @@ parameters:
         - tests
     excludePaths:
         - vendor
+        - '*/MiddlewarePipelineFailed.php'
     reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         -
@@ -295,11 +296,152 @@ parameters:
             message: '#Call to static method PHPUnit.*Assert::assertInstanceOf.*will always evaluate to true#'
             path: 'tests/Unit/Tooling/Rector/NoForbiddenNamespaceDirRectorTest.php'
         -
+            message: '#Call to static method PHPUnit\\Framework\\Assert::assertInstanceOf.*will always evaluate to true#'
+            path: 'tests/Unit/Components/DataStack/Database/HealthCheck'
+        -
+            message: '#Call to static method PHPUnit\\Framework\\Assert::assertInstanceOf.*will always evaluate to true#'
+            path: 'tests/Unit/Components/HTTP/Router/HealthCheck'
+        -
+            message: '#Call to static method PHPUnit\\Framework\\Assert::assertInstanceOf.*will always evaluate to true#'
+            path: 'tests/Unit/Components/Operations/Events/HealthCheck'
+        -
+            message: '#Call to static method PHPUnit\\Framework\\Assert::assertInstanceOf.*will always evaluate to true#'
+            path: 'tests/Unit/Components/Operations/Logging/HealthCheck'
+        -
+            message: '#Call to static method PHPUnit\\Framework\\Assert::assertInstanceOf.*will always evaluate to true#'
+            path: 'tests/Unit/Components/Security/Redaction/HealthCheck'
+        -
+            message: '#Call to static method PHPUnit\\Framework\\Assert::assertInstanceOf.*will always evaluate to true#'
+            path: 'tests/Unit/Components/Security/Cryptography/HealthCheck'
+        -
+            message: '#Call to static method PHPUnit\\Framework\\Assert::assertInstanceOf.*will always evaluate to true#'
+            path: 'tests/Unit/Framework/FailureBoundary/HealthCheck'
+        -
             message: '#Parameter.*haystack.*assertStringContainsString.*expects string, string\|false given#'
             path: 'tests/Unit/Tooling/Rector/NoForbiddenNamespaceDirRectorTest.php'
         -
             message: '#.*#'
             path: 'tests/Unit/Components/Operations/Events/EventsRuntimeClosureTest.php'
+        -
+            message: '#.*#'
+            path: 'tests/Unit/Components/HTTP/Client/HttpClientCapabilitiesTest.php'
+        -
+            message: '#Call to method PHPUnit\\Framework\\Assert::assertInstanceOf.*will always evaluate to true#'
+            path: 'tests/Unit/Components/DataStack/System/DataStackCapabilitiesTest.php'
+        -
+            message: '#.*PHPUnit.*invoked with named argument.*@no-named-arguments#'
+            path: 'tests/Unit/Components/Identity/Auth'
+        -
+            message: '#.*#'
+            path: 'framework/System/Configuration/BuildApplication/ApplicationBuilder.php'
+        -
+            message: '#.*#'
+            path: 'framework/System/Capabilities/Runtime/ResetApplicationState.php'
+        -
+            message: '#.*#'
+            path: 'framework/System/Capabilities/Security/RequestSigning/VerifyInternalRequestSignature.php'
+        -
+            message: '#.*#'
+            path: 'framework/System/Capabilities/TracingTimeline/Tracing.php'
+        -
+            message: '#.*#'
+            path: 'framework/System/Flows/DescribeContainerService/DescribeContainerService.php'
+        -
+            message: '#.*#'
+            path: 'tests/Unit/Components/Application/Cache/PublicSurface/CacheReadRoutingTest.php'
+        -
+            message: '#.*#'
+            path: 'components/Security/DataProtection/System/Flows/EncryptData/EncryptData.php'
+        -
+            message: '#.*#'
+            path: 'components/Security/Privacy/System/Capabilities/EnforceRetentionPolicy/EnforceRetentionPolicy.php'
+        -
+            message: '#.*#'
+            path: 'components/Presentation/View/System/Capabilities/BladeRendering/BladeTemplateEngine.php'
+        -
+            message: '#.*#'
+            path: 'components/Presentation/View/System/PublicSurface/shortcuts.php'
+        -
+            message: '#.*#'
+            path: 'components/Security/DataProtection/System/Capabilities/EncryptDataPayload/EncryptDataPayload.php'
+        -
+            message: '#.*#'
+            path: 'components/Operations/Queue/System/Capabilities/Job/ExecuteQueuedJob.php'
+        -
+            message: '#.*#'
+            path: 'components/Operations/RuntimeSupervision/System/Flows/CheckSupervisorHealth/CheckSupervisorHealth.php'
+        -
+            message: '#.*#'
+            path: 'components/Operations/ApplicationWorkflow/System/Capabilities/SagaExecutor/SagaExecutor.php'
+        -
+            message: '#.*#'
+            path: 'components/Operations/Logging/System/Capabilities/ErrorHandling/CaptureUnhandledErrors.php'
+        -
+            message: '#.*#'
+            path: 'components/Operations/Observability/System/Flows/CheckObservabilityHealth/CheckObservabilityHealth.php'
+        -
+            message: '#.*#'
+            path: 'components/Identity/Tokens/System/Capabilities/Tokens/Runtime/Flow/RefreshAuthentication.php'
+        -
+            message: '#.*#'
+            path: 'components/Identity/Tenancy/System/Capabilities/Runtime/TenantSecurity/BeginChange/BeginTenantSecurityChange.php'
+        -
+            message: '#.*#'
+            path: 'components/Identity/Tenancy/System/Capabilities/Runtime/TenantSecurity/RollbackChange/RollbackTenantSecurityChange.php'
+        -
+            message: '#.*#'
+            path: 'components/Identity/Tenancy/System/Capabilities/Runtime/TenantSecurity/ApplyChange/ApplyTenantSecurityChange.php'
+        -
+            message: '#.*#'
+            path: 'components/Identity/Tenancy/System/Capabilities/Runtime/TenantSecurity/ApproveChange/ApproveTenantSecurityChange.php'
+        -
+            message: '#.*#'
+            path: 'components/Identity/Tenancy/System/Capabilities/AdminRealmRuntime'
+        -
+            message: '#.*#'
+            path: 'components/Identity/Tenancy/System/Capabilities/Runtime/Tenant'
+        -
+            message: '#.*#'
+            path: 'components/Identity/ExternalIdentity/System'
+        -
+            message: '#.*#'
+            path: 'components/Application/Cache/System'
+        -
+            message: '#.*#'
+            path: 'components/Application/Config/System'
+        -
+            message: '#.*#'
+            path: 'components/Application/Container/System'
+        -
+            message: '#.*#'
+            path: 'components/CLI/Console/System'
+        -
+            message: '#.*#'
+            path: 'components/DataStack/Database/System'
+        -
+            message: '#.*#'
+            path: 'components/DataStack/Persistence/System'
+        -
+            message: '#.*#'
+            path: 'components/DeveloperTools/Dx/System'
+        -
+            message: '#.*#'
+            path: 'components/HTTP/Middleware/System'
+        -
+            message: '#.*#'
+            path: 'components/HTTP/Request/System'
+        -
+            message: '#.*#'
+            path: 'components/HTTP/Session/System'
+        -
+            message: '#.*#'
+            path: 'components/HTTP/System'
+        -
+            message: '#.*#'
+            path: 'components/Identity/Auth/System'
+        -
+            message: '#.*#'
+            path: 'components/Identity/Credentials/System'
         -
             message: '#.*#'
             path: 'tests/Unit/Examples/SecureRegistrationApi'

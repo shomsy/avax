@@ -42,19 +42,36 @@ final class ContractVerifier
             );
         }
 
+        if (! class_exists($componentClass) && ! interface_exists($componentClass)) {
+            return new ComponentContractResult(
+                component: $componentClass,
+                passed   : false,
+                checks   : [],
+                error    : sprintf('Class or interface [%s] not found', $componentClass),
+            );
+        }
+
         $checks = [];
+        $overallPassed = true;
 
         foreach ($contract['methods'] ?? [] as $method) {
+            $methodName = $method['name'];
+            $exists     = method_exists($componentClass, $methodName);
+
+            if (! $exists) {
+                $overallPassed = false;
+            }
+
             $checks[] = [
-                'method'    => $method['name'],
+                'method' => $methodName,
                 'signature' => $method['signature'] ?? null,
-                'passed'    => true,
+                'passed' => $exists,
             ];
         }
 
         return new ComponentContractResult(
             component: $componentClass,
-            passed   : true,
+            passed   : $overallPassed,
             checks   : $checks,
         );
     }

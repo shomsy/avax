@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\Foundation;
 
+use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistration;
 use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Closure;
 use Psr\Container\ContainerExceptionInterface;
@@ -55,21 +56,29 @@ public function get(string $id): mixed
         return $callback(...$parameters);
     }
 
-    public function bind(string $abstract, mixed $concrete = null, bool $shared = false): void
+    public function bind(string $abstract, mixed $concrete = null) : DependencyRegistration
     {
         $concrete ??= $abstract;
         $this->bindings[$abstract] = $concrete;
-        $this->singletons[$abstract] = $shared;
+        $this->singletons[$abstract] = false;
+
+        return new DependencyRegistration(abstract: $abstract);
     }
 
-    public function singleton(string $abstract, mixed $concrete = null): void
+    public function singleton(string $abstract, mixed $concrete = null) : DependencyRegistration
     {
-        $this->bind($abstract, $concrete, shared: true);
+        $this->bind($abstract, $concrete);
+        $this->singletons[$abstract] = true;
+
+        return new DependencyRegistration(abstract: $abstract);
     }
 
-    public function scoped(string $abstract, mixed $concrete = null): void
+    public function scoped(string $abstract, mixed $concrete = null) : DependencyRegistration
     {
-        $this->bind($abstract, $concrete, shared: false);
+        $this->bind($abstract, $concrete);
+        $this->singletons[$abstract] = false;
+
+        return new DependencyRegistration(abstract: $abstract);
     }
 
     public function instance(string $abstract, object $instance): void
@@ -92,6 +101,11 @@ public function get(string $id): mixed
     public function tag(string|array $abstracts, string|array $tags): void
     {
         // Not supported in SimpleContainer
+    }
+
+    public function debugGraph(string $id = '') : array
+    {
+        return [];
     }
 
     public function tagged(string $tag): array

@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\PublicSurface;
 
-use Avax\Components\DataStack\Database\System\Capabilities\Connections\DatabaseConnection;
-use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Schema\SchemaBuilder;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ConnectionContracts\DatabaseConnection;
 
 interface DatabaseInterface
 {
     public function connection(string $name = 'default'): DatabaseConnection;
 
-    public function transactions(): bool;
+    public function transactions() : Transactions;
 
-    public function schema(): SchemaBuilder;
+    public function schema() : Schema;
 }

@@ -119,8 +119,8 @@ final readonly class Migrations
     public function repository(string|null $connectionName = null) : MigrationRepository
     {
         return new MigrationRepository(
-            schema : $this->schema(),
-            builder: $this->builder(connectionName: $connectionName),
+            queryBuilder: $this->builder(connectionName: $connectionName),
+            schema      : $this->schema(),
         );
     }
 

@@ -5,20 +5,21 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Auth\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\Providers\BaseRegisterDependency;
-use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
 use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Authentication\DefaultAuth;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\Authentication\DefaultAuth;
 use Avax\Components\Identity\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
 use Avax\Components\Identity\Auth\System\Flows\Login\RateLimit\LoginRateLimitStorageInterface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Auth\System\Foundation\Exceptions\ConfigurationException;
 use Avax\Components\Identity\Auth\System\Foundation\IdGenerator;
 use Avax\Components\Identity\Auth\System\Foundation\IdGeneratorInterface;
+use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
+use Avax\Components\Identity\Auth\System\PublicSurface\AuthInterface;
 use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 use Override;
 use ReflectionException;
@@ -84,8 +85,8 @@ final class RegisterAuthDependencies extends BaseRegisterDependency
 
     private function registerAuth() : void
     {
-        if (! $this->container->has(id: Auth::class)) {
-            $this->container->singleton(abstract: Auth::class, concrete: function () : Auth {
+        if (! $this->container->has(id: AuthInterface::class)) {
+            $this->container->singleton(abstract: AuthInterface::class, concrete: function () : Auth {
                 $authBuilder = DefaultAuth::configuration($this->container)
                     ->forUser(userSource: $this->container->get(id: UserSourceInterface::class))
                     ->withIdentity(identity: $this->container->get(id: IdentityInterface::class))
@@ -98,7 +99,10 @@ final class RegisterAuthDependencies extends BaseRegisterDependency
                     $authBuilder->protectFromBruteForce(rateLimit: $rateLimit);
                 }
 
-                return $authBuilder->ready();
+                $auth = $authBuilder->ready();
+                $this->container->alias(abstract: AuthInterface::class, alias: Auth::class);
+
+                return $auth;
             });
         }
     }

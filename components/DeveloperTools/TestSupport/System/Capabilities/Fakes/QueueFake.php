@@ -74,6 +74,9 @@ class QueueFake implements QueueDriverInterface
         }
     }
 
+    /**
+     * @param array<mixed> $data
+     */
     public function push(string $job, array $data = []) : string
     {
         if (! isset($this->pushed[$job])) {
@@ -111,7 +114,7 @@ class QueueFake implements QueueDriverInterface
      */
     public function hasPushed(string $job) : bool
     {
-        return isset($this->pushed[$job]) && (isset($this->pushed[$job]) && $this->pushed[$job] !== []);
+        return isset($this->pushed[$job]) && $this->pushed[$job] !== [];
     }
 
     /**
@@ -151,6 +154,8 @@ class QueueFake implements QueueDriverInterface
 
     /**
      * Assert that a job was pushed with specific data.
+     *
+     * @param array<mixed> $expectedData
      */
     public function assertPushedWith(string $job, array $expectedData) : void
     {
@@ -162,6 +167,8 @@ class QueueFake implements QueueDriverInterface
 
     /**
      * Check if a job was pushed with specific data.
+     *
+     * @param array<mixed> $expectedData
      */
     public function hasPushedWith(string $job, array $expectedData) : bool
     {
@@ -205,13 +212,13 @@ class QueueFake implements QueueDriverInterface
      */
     public function hasPushedLater(string $job) : bool
     {
-        return isset($this->pushedLater[$job]) && (isset($this->pushedLater[$job]) && $this->pushedLater[$job] !== []);
+        return isset($this->pushedLater[$job]) && $this->pushedLater[$job] !== [];
     }
 
     /**
      * Get all pushed jobs.
      *
-     * @return array<string, list<array{job: string, data: array}>>
+     * @return array<string, list<array{job: string, data: array<mixed>}>>
      */
     public function pushed() : array
     {

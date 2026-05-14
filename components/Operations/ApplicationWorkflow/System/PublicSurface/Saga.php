@@ -4,16 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\ApplicationWorkflow\System\PublicSurface;
 
-use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Compensation\CompensationExecutor;
-use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Idempotency\IdempotencyKey;
-use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\Idempotency\IdempotencyStore;
-use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaState\SagaState;
-use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaState\SagaStep;
+use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaOrchestration\SagaOrchestrator;
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaStore\InMemorySagaStore;
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\SagaStore\SagaStoreInterface;
 use Avax\Components\Operations\ApplicationWorkflow\System\Capabilities\StepRunner\StepRunner;
 use Closure;
-use Throwable;
 
 /**
  * Saga - Static DSL for defining and executing sagas with compensation support.
@@ -30,28 +25,36 @@ final class Saga
      * @var array<string, mixed>
      */
     protected array $stepResults = [];
+
     /**
      * @var array<SagaStep>
      */
     private array           $steps     = [];
     private readonly string $id;
     private SagaState       $sagaState = SagaState::Running;
+
     /**
      * @var array<string, mixed>
      */
-    private array              $context = [];
+    private array            $context       = [];
+    private string|null      $failureReason = null;
     private SagaStoreInterface $sagaStore;
-
-    private StepRunner $stepRunner;
-
-    private CompensationExecutor $compensationExecutor;
+    private SagaOrchestrator $orchestrator;
 
     private function __construct(private readonly string $name)
     {
-        $this->id                   = $this->generateId();
-        $this->sagaStore            = new InMemorySagaStore();
-        $this->stepRunner = new StepRunner(idempotencyStore: new IdempotencyStore());
-        $this->compensationExecutor = new CompensationExecutor();
+        $this->id           = $this->generateId();
+        $this->sagaStore    = new InMemorySagaStore();
+        $this->orchestrator = $this->createOrchestrator($this->sagaStore);
+    }
+
+    private function createOrchestrator(SagaStoreInterface $store) : SagaOrchestrator
+    {
+        return new SagaOrchestrator(
+            stepRunner          : new StepRunner(idempotencyStore: new IdempotencyStore()),
+            compensationExecutor: new CompensationExecutor(),
+            sagaStore           : $store,
+        );
     }
 
     /**
@@ -106,7 +109,8 @@ final class Saga
      */
     public function fail(string $reason) : SagaResult
     {
-        $this->sagaState = SagaState::Failed;
+        $this->sagaState     = SagaState::Failed;
+        $this->failureReason = $reason;
         $this->sagaStore->save($this);
 
         return new SagaResult(
@@ -123,27 +127,13 @@ final class Saga
     {
         $this->sagaState = SagaState::Compensating;
 
-        $compensationResult = $this->compensationExecutor->execute(
-            steps         : $this->steps,
-            completedSteps: array_keys($this->stepResults),
-            context       : $this->context,
-        );
-
-        if ($compensationResult->success) {
-            $this->sagaState = SagaState::Compensated;
-        } else {
-            $this->sagaState = SagaState::Failed;
-        }
-
-        $this->sagaStore->save($this);
-
-        return new SagaResult(
-            success       : $compensationResult->success,
-            sagaId        : $this->id,
-            data          : $this->context,
-            completedSteps: array_keys($this->stepResults),
-            stepResults   : $this->stepResults,
-            failureReason : $compensationResult->failureReason,
+        return $this->orchestrator->compensate(
+            sagaId            : $this->id,
+            steps             : $this->steps,
+            completedStepNames: array_keys($this->stepResults),
+            context           : $this->context,
+            stepResults       : $this->stepResults,
+            saveStateCallback : $this->saveState(...),
         );
     }
 
@@ -158,68 +148,28 @@ final class Saga
     {
         $this->context = is_array($context) ? $context : ['value' => $context];
 
-        try {
-            foreach ($this->steps as $index => $step) {
-                $idempotencyKey = IdempotencyKey::generate($this->id, $step->name, (string) $index);
-
-                $result = $this->stepRunner->execute(
-                    context       : $this->context,
-                    idempotencyKey: $idempotencyKey,
-                    step          : $step,
-                );
-
-                $this->stepResults[$step->name] = $result;
-
-                // Update context with step result for next steps
-                if (is_array($result)) {
-                    $this->context = array_merge($this->context, $result);
-                }
-            }
-
-            $this->sagaState = SagaState::Completed;
-            $this->sagaStore->save($this);
-
-            return new SagaResult(
-                success       : true,
-                sagaId        : $this->id,
-                data          : $this->context,
-                completedSteps: $this->completedSteps,
-                stepResults   : $this->stepResults,
-            );
-        } catch (Throwable $throwable) {
-            return $this->handleFailure($throwable);
-        }
+        return $this->orchestrator->execute(
+            sagaId           : $this->id,
+            steps            : $this->steps,
+            context          : $this->context,
+            saveStateCallback: $this->saveState(...),
+        );
     }
 
     /**
-     * Handle a failure during saga execution.
+     * Internal callback for orchestrator to update saga state.
+     *
+     * @param array<string, mixed> $context
+     * @param array<string, mixed> $stepResults
      */
-    private function handleFailure(Throwable $throwable) : SagaResult
+    private function saveState(SagaState $state, array $context, array $stepResults, string|null $failureReason = null) : void
     {
-        $this->sagaState     = SagaState::Failed;
-        $this->failureReason = $throwable->getMessage();
-
-        // Run compensation for completed steps in reverse order
-        $compensationResult = $this->compensationExecutor->execute(
-            steps         : $this->steps,
-            completedSteps: $this->completedSteps,
-            context       : $this->context,
-        );
-
-        if ($compensationResult->success) {
-            $this->sagaState = SagaState::Compensated;
-        }
+        $this->sagaState     = $state;
+        $this->context       = $context;
+        $this->stepResults   = $stepResults;
+        $this->failureReason = $failureReason;
 
         $this->sagaStore->save($this);
-
-        return new SagaResult(
-            success       : false,
-            sagaId        : $this->id,
-            data          : $this->context,
-            completedSteps: $this->completedSteps,
-            stepResults   : $this->stepResults,
-            failureReason : $throwable->getMessage(),
-        );
     }
 
     /**
@@ -271,7 +221,7 @@ final class Saga
      */
     public function getCompletedSteps() : array
     {
-        return $this->completedSteps;
+        return array_keys($this->stepResults);
     }
 
     /**
@@ -307,9 +257,8 @@ final class Saga
      */
     public function withStore(SagaStoreInterface $sagaStore) : self
     {
-        $this->sagaStore            = $sagaStore;
-        $this->stepRunner = new StepRunner(idempotencyStore: new IdempotencyStore());
-        $this->compensationExecutor = new CompensationExecutor();
+        $this->sagaStore    = $sagaStore;
+        $this->orchestrator = $this->createOrchestrator($sagaStore);
 
         return $this;
     }

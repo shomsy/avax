@@ -21,7 +21,7 @@ final readonly class Workflow
     public function __construct(
         private SagaStoreInterface   $sagaStore,
         private SagaExecutor         $sagaExecutor,
-        private ValidateSagaTransition $validateSagaTransition = new ValidateSagaTransition(),
+        private ValidateSagaTransition $validateSagaTransition,
     ) {
     }
 

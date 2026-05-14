@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\HTTP\Router\System\Capabilities\RouteExecution;
 
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
-use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
+use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 use Avax\Components\HTTP\Router\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Components\HTTP\Router\System\Foundation\Failure\RouterFailure;
 
@@ -22,7 +22,7 @@ final readonly class InvokeRouteAction
     /**
      * @param  array<string, mixed>  $parameters
      */
-    public function invoke(mixed $action, RequestInterface $request, array $parameters): ResponseInterface
+    public function invoke(mixed $action, RequestInterface $request, array $parameters) : Response
     {
         if (! is_callable($action)) {
             throw new RouterFailure('Invalid route action');

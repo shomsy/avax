@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\Migrations\CLI;
 
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
-use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Schema\SchemaBuilder;
+use Avax\Components\DataStack\Database\System\PublicSurface\Database;
 use PDO;
 
 final readonly class MigrateCommand
@@ -14,6 +14,7 @@ final readonly class MigrateCommand
 
     public function __construct(
         private Filesystem $filesystem,
+        private Database $database,
     )
     {
         $this->path = dirname(__DIR__, 6).'/database/migrations';
@@ -61,9 +62,9 @@ final readonly class MigrateCommand
         );
     }
 
-    private function getConnection(): PDO
+    private function getConnection() : PDO
     {
-        return new PDO('sqlite::memory:');
+        return $this->database->connections()->pdo();
     }
 
     private function getMigrationClass(string $file): string

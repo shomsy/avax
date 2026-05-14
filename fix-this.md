@@ -739,9 +739,9 @@ After DI cleanup, map every ACTIVE_GREEN core component assembly:
 
 Rule: `AGENTS.md` Section 2 — hollow shells with no real behavior must be removed or marked SCAFFOLD.
 
-- [ ] **D-A.01** `components/DataStack/Database/System/PublicSurface/SchemaBuilder.php` — jedini metod `hasTable()` uvek
+- [x] **D-A.01** `components/DataStack/Database/System/PublicSurface/SchemaBuilder.php` — jedini metod `hasTable()` uvek
   vraća `false`. Fix: ili implementirati pravu proveru kroz konekciju, ili obrisati klasu.
-- [ ] **D-A.02** `components/DeveloperTools/Testing/System/PublicSurface/Testing.php` — `verifyContracts()` samo vraća
+- [x] **D-A.02** `components/DeveloperTools/Testing/System/PublicSurface/Testing.php` — `verifyContracts()` samo vraća
   input bez verifikacije. Fix: implementirati pravu contract verification ili dokumentovati kao placeholder.
 - [ ] **D-A.03** `components/Operations/MessageBus/System/PublicSurface/Command.php` — potpuno prazan marker interface.
   Fix: dodati dokumentaciju šta marker znači, ili spojiti sa interfejsom koji proširuje.
@@ -771,7 +771,7 @@ Rule: `AGENTS.md` Section 2 — hollow shells with no real behavior must be remo
 Rule: `how-to-design-components.md` Section 6.2 — PublicSurface RECEIVES and DELEGATES. Ne sme da sadrži petlje,
 kondicionalnu biznis logiku, ili orchestration.
 
-- [ ] **D-B.01** `components/HTTP/Router/System/PublicSurface/Router.php` — sadrži:
+- [x] **D-B.01** `components/HTTP/Router/System/PublicSurface/Router.php` — sadrži:
     - Anonymous class sa kompletnom router implementacijom (linije 106-201)
     - `preg_replace_callback` za URL parametre (234-265)
     - `foreach` middleware pipeline assembly (322-338)
@@ -779,13 +779,13 @@ kondicionalnu biznis logiku, ili orchestration.
       Fix: izvući anonimnu klasu u imenovanu `Capabilities/RouterCore/` klasu, URL building u
       `Capabilities/UrlBuilder/`, middleware pipeline u `Capabilities/Pipeline/`.
 
-- [ ] **D-B.02** `components/API/GraphQL/System/PublicSurface/GraphQLSchema.php` — sadrži:
+- [x] **D-B.02** `components/API/GraphQL/System/PublicSurface/GraphQLSchema.php` — sadrži:
     - `foreach` petlju za field definitions building (118-125)
     - `match` izraze za operation type routing (132-148)
     - Nested `array_map` u `toArray()` (153-185)
       Fix: schema assembly izvući u `Capabilities/SchemaAssembly/`. PublicSurface neka sadrži samo immutable accessor-e.
 
-- [ ] **D-B.03** `components/Operations/ApplicationWorkflow/System/PublicSurface/Workflow.php` — sadrži:
+- [x] **D-B.03** `components/Operations/ApplicationWorkflow/System/PublicSurface/Workflow.php` — sadrži:
     - `foreach` petlju kroz saga steps sa try/catch compensation (36-48)
     - `resume()` sa state checking i re-execution (80-98)
     - Saga lookup i compensation dispatch u `cancel()` (109-120)

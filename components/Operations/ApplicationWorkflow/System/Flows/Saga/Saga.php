@@ -7,6 +7,8 @@ namespace Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\CompensateSaga\CompensateSaga;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\CompleteSaga\CompleteSaga;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\DefineSaga;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\RegisterSagaDefinition;
+use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\DefineSaga\ValidateSagaDefinition;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\InspectSaga\InspectSaga;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\ProtectSagaIdempotency\ProtectSagaIdempotency;
 use Avax\Components\Operations\ApplicationWorkflow\System\Flows\Saga\ResumeSaga\ResumeSaga;
@@ -37,8 +39,10 @@ final readonly class Saga
         $protectSagaIdempotency = new ProtectSagaIdempotency();
         $inspectSaga            = new InspectSaga();
 
+        $validateSagaDefinition = new ValidateSagaDefinition();
+
         return new self(
-            defineSaga            : new DefineSaga(),
+            defineSaga            : new DefineSaga($validateSagaDefinition, new RegisterSagaDefinition($validateSagaDefinition)),
             startSaga             : new StartSaga(storeSagaState: $storeSagaState, protectSagaIdempotency: $protectSagaIdempotency, inspectSaga: $inspectSaga),
             runSagaStep           : new RunSagaStep(storeSagaState: $storeSagaState, inspectSaga: $inspectSaga),
             completeSaga          : new CompleteSaga(storeSagaState: $storeSagaState, inspectSaga: $inspectSaga),

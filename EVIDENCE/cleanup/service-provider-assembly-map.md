@@ -20,26 +20,30 @@ Source: Phase 3C — Remaining Components Ledger
 
 ## Components WITH ServiceProvider (GREEN)
 
-| Component | Provider File | Status |
-|---|---|---|
-| Application/Cache | CacheServiceProvider.php | Converted to canonical interface |
-| Application/Container | ContainerServiceProvider.php | Already conforming |
-| Application/Filesystem | FilesystemServiceProvider.php | Already conforming |
-| DataStack/Database | DatabaseServiceProvider.php | Already conforming |
-| HTTP/Client | HttpClientServiceProvider.php | NEW — thin ServiceProvider |
-| HTTP/Middleware | MiddlewareServiceProvider.php | NEW — SCAFFOLD, empty but registered |
-| HTTP/Response | ResponseServiceProvider.php | NEW — registers response builders |
-| HTTP/Router | HttpRouterServiceProvider.php | Already conforming |
-| HTTP/Session | SessionServiceProvider.php | NEW — converted from ComponentProviderInterface |
-| HTTP/System | HttpServiceProvider.php | NEW — registers HTTP kernels, middleware |
-| Identity/Auth | AuthServiceProvider.php | NEW — registers Identity + Auth |
-| Operations/Events | EventsServiceProvider.php | Already conforming |
-| Operations/Logging | LoggingServiceProvider.php | Already conforming |
-| Security/Cryptography | CryptographyServiceProvider.php | Already conforming |
-| Security/Redaction | RedactionServiceProvider.php | Already conforming |
-| Framework/FailureBoundary | FailureBoundaryServiceProvider.php | Already conforming |
-| Framework/Queue | QueueServiceProvider.php | Already conforming |
-| Framework (root) | FrameworkServiceProvider.php | NEW — registers runtime safety, config repo |
+| Component                 | Provider File                      | Status                                          |
+|---------------------------|------------------------------------|-------------------------------------------------|
+| Application/Cache         | CacheServiceProvider.php           | Converted to canonical interface                |
+| Application/Config        | ConfigServiceProvider.php          | NEW — registers configuration repository        |
+| Application/Container     | ContainerServiceProvider.php       | Already conforming                              |
+| Application/Filesystem    | FilesystemServiceProvider.php      | Already conforming                              |
+| DataStack/Database        | DatabaseServiceProvider.php        | Already conforming                              |
+| HTTP/Client               | HttpClientServiceProvider.php      | NEW — thin ServiceProvider                      |
+| HTTP/Middleware           | MiddlewareServiceProvider.php      | NEW — SCAFFOLD, empty but registered            |
+| HTTP/Response             | ResponseServiceProvider.php        | NEW — registers response builders               |
+| HTTP/Router               | HttpRouterServiceProvider.php      | Already conforming                              |
+| HTTP/Session              | SessionServiceProvider.php         | NEW — converted from ComponentProviderInterface |
+| HTTP/System               | HttpServiceProvider.php            | NEW — registers HTTP kernels, middleware        |
+| Identity/Access           | AccessServiceProvider.php          | NEW — registers authorization engine            |
+| Identity/Auth             | AuthServiceProvider.php            | NEW — registers Identity + Auth                 |
+| Integration/ObjectStorage | ObjectStorageServiceProvider.php   | NEW — registers in-memory object store          |
+| Operations/Events         | EventsServiceProvider.php          | Already conforming                              |
+| Operations/Logging        | LoggingServiceProvider.php         | Already conforming                              |
+| Operations/Observability  | ObservabilityServiceProvider.php   | NEW — registers observability primitives        |
+| Security/Cryptography     | CryptographyServiceProvider.php    | Already conforming                              |
+| Security/Redaction        | RedactionServiceProvider.php       | Already conforming                              |
+| Framework/FailureBoundary | FailureBoundaryServiceProvider.php | Already conforming                              |
+| Framework/Queue           | QueueServiceProvider.php           | Already conforming                              |
+| Framework (root)          | FrameworkServiceProvider.php       | NEW — registers runtime safety, config repo     |
 
 ---
 
@@ -120,19 +124,12 @@ Source: Phase 3C — Remaining Components Ledger
 
 | Component | Status | Classification | Reason | Blocks V5.9? |
 |---|---|---|---|---:|
-| Identity/Access | ACTIVE_YELLOW | ACTIVE_YELLOW_PROVIDER_REQUIRED | Access control needs assembly entrypoint | NO |
-| Identity/Credentials | SCAFFOLD | SCAFFOLD_PROVIDER_DEFERRED | SCAFFOLD component | NO |
-| Identity/ExternalIdentity | ACTIVE_GREEN | SCAFFOLD_PROVIDER_DEFERRED | Health check is SCAFFOLD — external identity adapter | NO |
-| Identity/Security | ACTIVE_GREEN | SCAFFOLD_PROVIDER_DEFERRED | Health check is SCAFFOLD — identity security rules | NO |
-| Identity/System | ACTIVE_GREEN | SCAFFOLD_PROVIDER_DEFERRED | System-level identity — covered by AuthServiceProvider | NO |
-| Identity/Tenancy | ACTIVE_GREEN | SCAFFOLD_PROVIDER_DEFERRED | Health check is SCAFFOLD — tenancy rules | NO |
 | Identity/Tokens | ACTIVE_GREEN | SCAFFOLD_PROVIDER_DEFERRED | Health check is SCAFFOLD — token primitives | NO |
 
 ### Integration Area
 
 | Component | Status | Classification | Reason | Blocks V5.9? |
 |---|---|---|---|---:|
-| Integration/ObjectStorage | ACTIVE_YELLOW | ACTIVE_YELLOW_PROVIDER_REQUIRED | External I/O component needs assembly entrypoint | NO |
 
 ### Operations Area (remaining)
 
@@ -145,9 +142,7 @@ Source: Phase 3C — Remaining Components Ledger
 | Operations/Filesystem | ACTIVE_GREEN | SCAFFOLD_PROVIDER_DEFERRED | Covered by Application/Filesystem Service Provider | NO |
 | Operations/Mail | SCAFFOLD | SCAFFOLD_PROVIDER_DEFERRED | SCAFFOLD component | NO |
 | Operations/MemoryLifecycle | ACTIVE_GREEN | SCAFFOLD_PROVIDER_DEFERRED | Health check is HEALTH_PRESENT — memory management | NO |
-| Operations/MessageBus | ACTIVE_GREEN | SCAFFOLD_PROVIDER_DEFERRED | Health check is SCAFFOLD — message bus rules | NO |
 | Operations/Notifications | ACTIVE_GREEN | SCAFFOLD_PROVIDER_DEFERRED | Health check is SCAFFOLD — notification rules | NO |
-| Operations/Observability | ACTIVE_GREEN | SCAFFOLD_PROVIDER_DEFERRED | Health check is HEALTH_PRESENT — observability rules | NO |
 | Operations/Parallelism | ACTIVE_GREEN | SCAFFOLD_PROVIDER_DEFERRED | Health check is SCAFFOLD — parallelism primitives | NO |
 | Operations/Queue | SCAFFOLD | SCAFFOLD_PROVIDER_DEFERRED | SCAFFOLD — covered by framework QueueServiceProvider | NO |
 | Operations/Realtime | ACTIVE_GREEN | SCAFFOLD_PROVIDER_DEFERRED | Health check is SCAFFOLD — realtime rules | NO |
@@ -191,21 +186,18 @@ These components are ACTIVE_YELLOW and should get real ServiceProviders in a fol
 
 | Component | Owner | Target Stage | Blocks V5.9? |
 |---|---|---|---:|
-| Application/Config | TBD | V5.10 | NO |
 | DeveloperTools/Diagnostics | TBD | V5.10 | NO |
-| Identity/Access | TBD | V5.10 | NO |
-| Integration/ObjectStorage | TBD | V5.10 | NO |
 
 ---
 
 ## Summary
 
-| Classification | Count |
-|---|---|
-| HAS_SERVICE_PROVIDER | 18 |
-| ACTIVE_GREEN_PROVIDER_REQUIRED | 3 |
-| ACTIVE_YELLOW_PROVIDER_REQUIRED | 4 |
-| SCAFFOLD_PROVIDER_DEFERRED | 56 |
-| ROADMAP_PROVIDER_DEFERRED | 3 |
-| PURE_FOUNDATION_PROVIDER_NOT_REQUIRED | 6 |
-| EVIDENCE_ONLY_PROVIDER_NOT_REQUIRED | 4 |
+| Classification                        | Count |
+|---------------------------------------|-------|
+| HAS_SERVICE_PROVIDER                  | 22    |
+| ACTIVE_GREEN_PROVIDER_REQUIRED        | 2     |
+| ACTIVE_YELLOW_PROVIDER_REQUIRED       | 1     |
+| SCAFFOLD_PROVIDER_DEFERRED            | 53    |
+| ROADMAP_PROVIDER_DEFERRED             | 3     |
+| PURE_FOUNDATION_PROVIDER_NOT_REQUIRED | 6     |
+| EVIDENCE_ONLY_PROVIDER_NOT_REQUIRED   | 4     |

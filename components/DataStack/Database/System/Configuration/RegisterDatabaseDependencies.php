@@ -16,6 +16,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Migrations\RunMigrati
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\RunMigrations\MigrationRunner;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Avax\Components\DataStack\Database\System\PublicSurface\Database;
+use Avax\Components\DataStack\Database\System\PublicSurface\DatabaseInterface;
 use Avax\Components\DataStack\Database\System\PublicSurface\Entities;
 use Avax\Components\DataStack\Database\System\PublicSurface\Migrations;
 use Avax\Components\DataStack\Database\System\PublicSurface\Query;
@@ -40,7 +41,8 @@ final readonly class RegisterDatabaseDependencies implements RegisterDependency
 
     public function register(): void
     {
-        $this->container->singleton(abstract: Database::class, concrete: fn (): Database => $this->buildDatabase());
+        $this->container->singleton(abstract: DatabaseInterface::class, concrete: fn () : Database => $this->buildDatabase());
+        $this->container->alias(abstract: DatabaseInterface::class, alias: Database::class);
 
         $this->container->singleton(abstract: Connections::class, concrete: fn () => $this->container->get(id: Database::class)->connections());
 

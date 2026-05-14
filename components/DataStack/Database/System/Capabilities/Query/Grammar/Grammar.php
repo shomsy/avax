@@ -458,6 +458,14 @@ abstract class Grammar implements GrammarInterface
     }
 
     /**
+     * Build the command to check if a table exists.
+     */
+    public function compileTableExists(string $table) : string
+    {
+        throw new RuntimeException(message: 'Table existence check is not supported by this database dialect.');
+    }
+
+    /**
      * Build the command to delete a table if it exists.
      */
     public function compileDropIfExists(string $table): string

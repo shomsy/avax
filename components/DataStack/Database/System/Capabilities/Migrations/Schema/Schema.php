@@ -16,7 +16,23 @@ use Throwable;
 final readonly class Schema
 {
     public function __construct(private Query $query)
+    {}
+
+    /**
+     * @throws Throwable
+     */
+    public function hasTable(string $table, string|null $connectionName = null) : bool
     {
+        $grammar = $this->grammar(connectionName: $connectionName);
+        $sql     = $grammar->compileTableExists(table: $table);
+
+        try {
+            $result = $this->builder(connectionName: $connectionName)->select(sql: $sql);
+
+            return count(value: $result) > 0;
+        } catch (Throwable) {
+            return false;
+        }
     }
 
     /**

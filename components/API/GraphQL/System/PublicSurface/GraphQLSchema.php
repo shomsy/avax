@@ -7,6 +7,7 @@ namespace Avax\Components\API\GraphQL\System\PublicSurface;
 use Avax\Components\API\GraphQL\System\Capabilities\GraphQLSchemaModel\GraphQLField;
 use Avax\Components\API\GraphQL\System\Capabilities\GraphQLSchemaModel\GraphQLObjectType;
 use Avax\Components\API\GraphQL\System\Capabilities\SchemaFieldAssembly\AssembleFieldsFromMap;
+use Avax\Components\API\GraphQL\System\Capabilities\SchemaRouting\SchemaRouter;
 use Avax\Components\API\GraphQL\System\Capabilities\SchemaSerialization\SchemaToArray;
 
 final class GraphQLSchema
@@ -28,6 +29,7 @@ final class GraphQLSchema
 
     private AssembleFieldsFromMap $fieldAssembler;
     private SchemaToArray         $schemaSerializer;
+    private SchemaRouter $schemaRouter;
 
     /**
      * @param array<string, GraphQLField>      $queryFields
@@ -41,6 +43,7 @@ final class GraphQLSchema
         array                      $types = [],
         AssembleFieldsFromMap|null $fieldAssembler = null,
         SchemaToArray|null         $schemaSerializer = null,
+        SchemaRouter|null $schemaRouter = null,
     )
     {
         $this->queryFields      = $queryFields;
@@ -48,6 +51,7 @@ final class GraphQLSchema
         $this->types            = $types;
         $this->fieldAssembler   = $fieldAssembler ?? new AssembleFieldsFromMap();
         $this->schemaSerializer = $schemaSerializer ?? new SchemaToArray();
+        $this->schemaRouter = $schemaRouter ?? new SchemaRouter();
     }
 
     public static function define(string $name = 'AvaX GraphQL API') : self
@@ -124,20 +128,21 @@ final class GraphQLSchema
 
     public function findRootField(string $operationType, string $fieldName) : GraphQLField|null
     {
-        return match ($operationType) {
-            'query'    => $this->queryFields[$fieldName] ?? null,
-            'mutation' => $this->mutationFields[$fieldName] ?? null,
-            default    => null,
-        };
+        return $this->schemaRouter->findRootField(
+            operationType : $operationType,
+            fieldName     : $fieldName,
+            queryFields   : $this->queryFields,
+            mutationFields: $this->mutationFields,
+        );
     }
 
     public function rootTypeForOperation(string $operationType) : GraphQLObjectType
     {
-        return match ($operationType) {
-            'query'    => new GraphQLObjectType('Query', array_values($this->queryFields)),
-            'mutation' => new GraphQLObjectType('Mutation', array_values($this->mutationFields)),
-            default    => new GraphQLObjectType('Unknown'),
-        };
+        return $this->schemaRouter->rootTypeForOperation(
+            operationType : $operationType,
+            queryFields   : $this->queryFields,
+            mutationFields: $this->mutationFields,
+        );
     }
 
     /**

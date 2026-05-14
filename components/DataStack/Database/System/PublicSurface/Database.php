@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\PublicSurface;
 
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ConnectionContracts\DatabaseConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Migrations as MigrationsCapability;
 use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Schema\Schema as SchemaCapability;
@@ -17,7 +18,7 @@ use Avax\Components\DataStack\Database\System\Configuration\DatabaseBuilder;
 /**
  * Public surface for the Database component.
  */
-final readonly class Database
+final readonly class Database implements DatabaseInterface
 {
     public function __construct(
         private Connections $connections,
@@ -38,6 +39,11 @@ final readonly class Database
     public function connections(): Connections
     {
         return $this->connections;
+    }
+
+    public function connection(string $name = 'default') : DatabaseConnection
+    {
+        return $this->connections->connection(name: $name);
     }
 
     public function query(): Query

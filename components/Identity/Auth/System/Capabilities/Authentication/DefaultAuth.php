@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\Authentication;
 
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\Identity\Access\System\Capabilities\Access;
 use Avax\Components\Identity\Access\System\Capabilities\AccessInterface;
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\RiskDecision;
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\RiskSignal;
-use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
 use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Diagnostics;
 use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Explainability\AuthIssueExplanation;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
@@ -30,7 +30,6 @@ use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RotateToken\RotatedScimToken;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\SyncGroups\SyncScimGroupsData;
 use Avax\Components\Identity\Auth\System\Configuration\AuthBuilder;
-use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\BeginEmailChangeData;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\ConfirmEmailChangeData;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\EmailChangeChallenge;
@@ -52,6 +51,9 @@ use Avax\Components\Identity\Auth\System\Flows\Register\RegistrationResult;
 use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\BeginEmailVerificationData;
 use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\EmailVerificationChallenge;
 use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\VerifyEmailData;
+use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
+use Avax\Components\Identity\Auth\System\PublicSurface\AuthInterface;
+use Avax\Components\Identity\Auth\System\PublicSurface\User;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Backup\BackupCodeSet;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Data\VerifyMfaChallengeData;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Enroll\ConfirmMfaEnrollmentData;
@@ -130,7 +132,7 @@ use SensitiveParameter;
  *   $auth->externalIdentity()->registerOAuthClient($data);
  *   $auth->tenancy()->createTenant($data);
  */
-final readonly class DefaultAuth implements Auth
+final readonly class DefaultAuth implements AuthInterface
 {
     public function __construct(
         #[SensitiveParameter]
@@ -174,9 +176,16 @@ final readonly class DefaultAuth implements Auth
         return $this->access->check();
     }
 
-    public function user() : AuthenticatedUser|null
+    public function user() : User|null
     {
-        return $this->access->user();
+        $entity = $this->identity->authentication()->user();
+
+        return $entity ? User::fromEntity($entity) : null;
+    }
+
+    public function guest() : bool
+    {
+        return ! $this->check();
     }
 
     /**

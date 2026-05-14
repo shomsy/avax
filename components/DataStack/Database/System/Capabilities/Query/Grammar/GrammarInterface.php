@@ -101,6 +101,15 @@ interface GrammarInterface
     public function compileTruncate(string $table): string;
 
     /**
+     * Coordinate the technical generation of a check if table exists SQL statement.
+     *
+     * @param string $table THE physical technical identifier of the database table.
+     *
+     * @return string THE compiled dialect-specific SQL check string.
+     */
+    public function compileTableExists(string $table) : string;
+
+    /**
      * Coordinate the technical generation of a DROP TABLE IF EXISTS SQL statement.
      *
      * -- intent:

@@ -41,6 +41,9 @@ final readonly class DescribeDependency
         return $containerAnalyzer->why($id);
     }
 
+    /**
+     * @return list<string>
+     */
     public function whoUses(): array
     {
         $containerAnalyzer = new ContainerAnalyzer($this->container);
@@ -48,6 +51,9 @@ final readonly class DescribeDependency
         return $containerAnalyzer->whoUses();
     }
 
+    /**
+     * @return list<string>
+     */
     public function whatBreaksIf(): array
     {
         $containerAnalyzer = new ContainerAnalyzer($this->container);

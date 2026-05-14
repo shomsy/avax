@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\Runtime;
 
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
 use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
 use Avax\Framework\System\Capabilities\Runtime\Worker\WorkerLifecycle;
@@ -32,6 +31,7 @@ final readonly class Runtime implements RuntimeInterface
         private EnvironmentName $environmentName,
         private Clock $clock,
         private string $runtimeName,
+        private HandleIncomingHttp $handleIncomingHttp,
         private Closure|null $httpHandler = null,
         private array $consoleCommands = [],
     ) {
@@ -97,9 +97,7 @@ final readonly class Runtime implements RuntimeInterface
         $workerLoop = new WorkerLoop(
             runtime           : $this,
             workerRuntime     : $workerRuntime,
-            handleIncomingHttp: new HandleIncomingHttp(
-                responseFactory: new ResponseFactory(),
-            ),
+            handleIncomingHttp: $this->handleIncomingHttp,
         );
 
         return $workerLoop->run();

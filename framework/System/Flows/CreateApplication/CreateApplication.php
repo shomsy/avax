@@ -13,6 +13,7 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeState;
 use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
 use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
+use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Flows\ResetApplicationState\ResetApplicationState;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\Foundation\Paths\ProjectPath;
@@ -37,12 +38,13 @@ final readonly class CreateApplication
 {
     public function __construct(
         private Clock                   $clock,
-        private ProjectPath|null        $projectPath = null,
-        private ComponentRegistry|null  $componentRegistry = null,
-        private RequestScopeStore|null  $requestScopeStore = null,
-        private RuntimeContext|null     $runtimeContext = null,
-        private StateResetRegistry|null $stateResetRegistry = null,
-        private ResponseFactory|null    $responseFactory = null,
+        private ProjectPath             $projectPath,
+        private ComponentRegistry       $componentRegistry,
+        private RequestScopeStore       $requestScopeStore,
+        private RuntimeContext          $runtimeContext,
+        private StateResetRegistry      $stateResetRegistry,
+        private ResponseFactory         $responseFactory,
+        private HandleIncomingHttp      $handleIncomingHttp,
     ) {}
 
     /**
@@ -52,22 +54,21 @@ final readonly class CreateApplication
      */
     public function make(string $environment = 'production'): App
     {
-        $projectPath = $this->projectPath ?? new ProjectPath(value: getcwd() ?: __DIR__ . '/../../../..');
         $envName = EnvironmentName::fromString($environment);
-        $clock       = $this->clock;
+        $clock = $this->clock;
 
-        $componentRegistry  = $this->componentRegistry ?? new ComponentRegistry();
-        $requestScopeStore  = $this->requestScopeStore ?? new RequestScopeStore();
-        $runtimeContext     = $this->runtimeContext ?? new RuntimeContext();
-        $stateResetRegistry = $this->stateResetRegistry ?? new StateResetRegistry();
-        $runtimeState       = new RuntimeState(runtimeName: 'avax');
+        $componentRegistry = $this->componentRegistry;
+        $requestScopeStore = $this->requestScopeStore;
+        $runtimeContext = $this->runtimeContext;
+        $stateResetRegistry = $this->stateResetRegistry;
+        $runtimeState = new RuntimeState(runtimeName: 'avax');
 
         $stateResetRegistry->register(name: 'request-scopes', state: $requestScopeStore);
         $stateResetRegistry->register(name: 'runtime-context', state: $runtimeContext);
 
         $runtimeState->markBooted(bootedAt: $clock->now());
 
-        $responseFactory = $this->responseFactory ?? new ResponseFactory();
+        $responseFactory = $this->responseFactory;
 
         // Build runtime (no httpHandler — App manages routes directly)
         $runtime = new Runtime(
@@ -76,10 +77,11 @@ final readonly class CreateApplication
             requestScopeStore : $requestScopeStore,
             stateResetRegistry: $stateResetRegistry,
             componentRegistry : $componentRegistry,
-            projectPath       : $projectPath,
+            projectPath       : $this->projectPath,
             environmentName   : $envName,
             clock             : $clock,
             runtimeName       : 'avax',
+            handleIncomingHttp: $this->handleIncomingHttp,
             httpHandler       : null,
             consoleCommands   : [],
         );
@@ -97,10 +99,10 @@ final readonly class CreateApplication
     /**
      * Create from an ApplicationBuilder for more control.
      */
-    public static function fromBuilder(ApplicationBuilder $builder, Clock $clock) : App
+    public static function fromBuilder(ApplicationBuilder $builder, Clock $clock): App
     {
-        $projectPath  = $builder->projectPath();
-        $envName      = $builder->environment();
+        $projectPath = $builder->projectPath();
+        $envName = $builder->environment();
 
         $componentRegistry = new ComponentRegistry();
         $requestScopeStore = new RequestScopeStore();
@@ -125,6 +127,7 @@ final readonly class CreateApplication
             environmentName: $envName,
             clock: $clock,
             runtimeName: $builder->runtimeName(),
+            handleIncomingHttp: $builder->handleIncomingHttp(),
             httpHandler: null,
             consoleCommands: [],
         );

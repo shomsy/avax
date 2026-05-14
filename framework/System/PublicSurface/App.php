@@ -17,6 +17,8 @@ use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;
+use Avax\Framework\System\Capabilities\PreCommit\Configuration\PreCommitConfig;
+use Avax\Framework\System\Capabilities\PreCommit\PreCommit;
 use Avax\Framework\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
@@ -272,7 +274,11 @@ final class App
     public function asConsoleKernel(): ConsoleKernel
     {
         return new ConsoleKernel(
-            runConsoleCommand: new RunConsoleCommand($this->runtime),
+            runConsoleCommand: new RunConsoleCommand(
+                runtime: $this->runtime,
+                preCommitConfig: new PreCommitConfig(),
+                preCommit: new PreCommit(preCommitConfig: new PreCommitConfig()),
+            ),
         );
     }
 

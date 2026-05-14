@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
+use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
+use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\Foundation\Paths\ProjectPath;
@@ -17,10 +19,11 @@ if ($projectRealPath === false) {
     throw new RuntimeException('Could not resolve project path');
 }
 $builder = new ApplicationBuilder(
-    projectPath    : new ProjectPath($projectRealPath),
-    environmentName: new EnvironmentName('development'),
-    clock          : new SystemClock(),
-    runDoctor      : new RunDoctor(),
+    projectPath       : new ProjectPath($projectRealPath),
+    environmentName   : new EnvironmentName('development'),
+    clock             : new SystemClock(),
+    runDoctor         : new RunDoctor(),
+    handleIncomingHttp: new HandleIncomingHttp(responseFactory: new ResponseFactory()),
 );
 
 // 2. Boot the Framework

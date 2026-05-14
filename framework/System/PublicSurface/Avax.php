@@ -6,6 +6,8 @@ namespace Avax\Framework\System\PublicSurface;
 
 use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
+use Avax\Framework\System\Capabilities\PreCommit\Configuration\PreCommitConfig;
+use Avax\Framework\System\Capabilities\PreCommit\PreCommit;
 use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
@@ -19,6 +21,7 @@ use Avax\Framework\System\Flows\CreateApplication\CreateApplication;
 use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Flows\ResetApplicationState\ResetApplicationState;
 use Avax\Framework\System\Flows\RunConsoleCommand\RunConsoleCommand;
+use Avax\Framework\System\Foundation\Paths\ProjectPath;
 use Avax\Framework\System\Foundation\Time\SystemClock;
 use Avax\Framework\System\PublicSurface\Console\ConsoleKernel;
 use Avax\Framework\System\PublicSurface\Console\ConsoleKernelInterface;
@@ -57,7 +60,18 @@ final readonly class Avax implements AvaxInterface
      */
     public static function create(string $environment = 'production'): App
     {
-        return (new CreateApplication(clock: new SystemClock()))->make(environment: $environment);
+        $responseFactory = new ResponseFactory();
+
+        return (new CreateApplication(
+            clock: new SystemClock(),
+            projectPath: new ProjectPath(value: getcwd() ?: __DIR__ . '/../../..'),
+            componentRegistry: new ComponentRegistry(),
+            requestScopeStore: new RequestScopeStore(),
+            runtimeContext: new RuntimeContext(),
+            stateResetRegistry: new StateResetRegistry(),
+            responseFactory: $responseFactory,
+            handleIncomingHttp: new HandleIncomingHttp(responseFactory: $responseFactory),
+        ))->make(environment: $environment);
     }
 
     /**
@@ -92,7 +106,13 @@ final readonly class Avax implements AvaxInterface
                 handleIncomingHttp: $handleIncomingHttp,
             ),
             consoleKernel        : new ConsoleKernel(
-                runConsoleCommand: new RunConsoleCommand($runtime),
+                runConsoleCommand: new RunConsoleCommand(
+                    runtime: $runtime,
+                    preCommitConfig: new PreCommitConfig(),
+                    preCommit: new PreCommit(
+                        preCommitConfig: new PreCommitConfig(),
+                    ),
+                ),
             ),
             runtimeKernel        : new RuntimeKernel(runtime: $runtime),
             resetApplicationState: new ResetApplicationState(

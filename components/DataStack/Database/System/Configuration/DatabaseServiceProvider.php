@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
-use Avax\Components\Application\Container\System\ContainerInterface;
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\DataStack\Database\System\Capabilities\HealthCheck\CheckDatabaseHealth;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\QueryEvents\EventBus;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\CompiledDatabaseLifecycleRegistry;

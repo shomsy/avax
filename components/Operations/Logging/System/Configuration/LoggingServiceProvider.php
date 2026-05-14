@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Operations\Logging\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
-use Avax\Components\Application\Container\System\ContainerInterface;
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\Operations\Logging\System\Capabilities\HealthCheck\CheckLoggingHealth;
 use Avax\Components\Operations\Logging\System\Capabilities\Logger\Logger;
 use Psr\Log\LoggerInterface;

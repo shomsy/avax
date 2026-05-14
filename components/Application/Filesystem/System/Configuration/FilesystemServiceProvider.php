@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Filesystem\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
-use Avax\Components\Application\Container\System\ContainerInterface;
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\Application\Filesystem\System\Capabilities\HealthCheck\CheckFilesystemHealth;
 use Avax\Components\Application\Filesystem\System\Flows\ReadFile\ReadFile;
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;

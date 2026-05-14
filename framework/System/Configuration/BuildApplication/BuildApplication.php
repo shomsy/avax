@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Configuration\BuildApplication;
 
+use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\Foundation\Paths\ProjectPath;
@@ -16,10 +17,11 @@ final readonly class BuildApplication
         string $environment = 'production',
     ): ApplicationBuilder {
         return new ApplicationBuilder(
-            projectPath    : new ProjectPath(value: $projectPath),
-            environmentName: EnvironmentName::fromString($environment),
-            clock          : new SystemClock(),
-            runDoctor      : new RunDoctor(),
+            projectPath       : new ProjectPath(value: $projectPath),
+            environmentName   : EnvironmentName::fromString($environment),
+            clock             : new SystemClock(),
+            runDoctor         : new RunDoctor(),
+            handleIncomingHttp: new HandleIncomingHttp(responseFactory: new \Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory()),
         );
     }
 }

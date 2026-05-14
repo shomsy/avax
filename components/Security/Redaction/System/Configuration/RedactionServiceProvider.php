@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Security\Redaction\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
-use Avax\Components\Application\Container\System\ContainerInterface;
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\Security\Redaction\System\Capabilities\HealthCheck\CheckRedactionHealth;
 use Avax\Components\Security\Redaction\System\Capabilities\PatternMatcher\PatternMatcher;
 use Avax\Components\Security\Redaction\System\Capabilities\RedactionEngine\RedactionEngine;

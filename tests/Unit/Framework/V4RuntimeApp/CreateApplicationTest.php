@@ -4,8 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Framework\V4RuntimeApp;
 
+use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
+use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
+use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
+use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Framework\System\Flows\CreateApplication\CreateApplication;
+use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
+use Avax\Framework\System\Foundation\Paths\ProjectPath;
 use Avax\Framework\System\Foundation\Time\SystemClock;
 use Avax\Framework\System\PublicSurface\App;
 use Avax\Tests\TestCase;
@@ -17,21 +24,21 @@ final class CreateApplicationTest extends TestCase
 {
     public function testMakeReturnsAppInstance(): void
     {
-        $factory = new CreateApplication(clock: new SystemClock());
+        $factory = $this->createFactory();
         $app = $factory->make(environment: 'testing');
         self::assertSame('testing', $app->runtime()->environment()->value);
     }
 
     public function testMakeInitializesRuntime(): void
     {
-        $factory = new CreateApplication(clock: new SystemClock());
+        $factory = $this->createFactory();
         $app = $factory->make(environment: 'testing');
         self::assertSame('testing', $app->runtime()->environment()->value);
     }
 
     public function testMakeSetsUpStateReset(): void
     {
-        $factory = new CreateApplication(clock: new SystemClock());
+        $factory = $this->createFactory();
         $app = $factory->make(environment: 'testing');
         $report = $app->resetState();
         // @phpstan-ignore-next-line — assertion proves state reset flow works
@@ -40,7 +47,7 @@ final class CreateApplicationTest extends TestCase
 
     public function testMakeWithDifferentEnvironments(): void
     {
-        $factory = new CreateApplication(clock: new SystemClock());
+        $factory = $this->createFactory();
 
         foreach (['testing', 'production', 'development', 'staging'] as $env) {
             $app = $factory->make(environment: $env);
@@ -52,7 +59,7 @@ final class CreateApplicationTest extends TestCase
     {
         // V4-01 defers full DI Container initialization
         // The App should work with RouteFacadeContainer for route dispatch
-        $factory = new CreateApplication(clock: new SystemClock());
+        $factory = $this->createFactory();
         $app = $factory->make(environment: 'testing');
 
         // App should be usable for route registration
@@ -66,5 +73,19 @@ final class CreateApplicationTest extends TestCase
         );
 
         self::assertSame(200, $response->getStatusCode());
+    }
+
+    private function createFactory(): CreateApplication
+    {
+        return new CreateApplication(
+            clock: new SystemClock(),
+            projectPath: new ProjectPath(value: __DIR__ . '/../../../../..'),
+            componentRegistry: new ComponentRegistry(),
+            requestScopeStore: new RequestScopeStore(),
+            runtimeContext: new RuntimeContext(),
+            stateResetRegistry: new StateResetRegistry(),
+            responseFactory: new ResponseFactory(),
+            handleIncomingHttp: new HandleIncomingHttp(responseFactory: new ResponseFactory()),
+        );
     }
 }

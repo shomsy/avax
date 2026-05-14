@@ -11,6 +11,7 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeState;
 use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
 use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
+use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 
 final readonly class BuildApplicationState
 {
@@ -48,6 +49,7 @@ final readonly class BuildApplicationState
             environmentName  : $builder->environment(),
             clock            : $builder->clock(),
             runtimeName      : $builder->runtimeName(),
+            handleIncomingHttp: $builder->handleIncomingHttp(),
             httpHandler      : $builder->httpHandler(),
             consoleCommands  : $builder->consoleCommands(),
         );

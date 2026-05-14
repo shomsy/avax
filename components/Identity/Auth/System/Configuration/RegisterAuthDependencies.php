@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Auth\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\Providers\BaseRegisterDependency;
-use Avax\Components\Identity\Auth\System\Auth;
+use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
 use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;

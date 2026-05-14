@@ -9,9 +9,11 @@ use Avax\Components\HTTP\Request\System\Configuration\RequestBuilder;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\Responses;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
+use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
 use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
+use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\Foundation\Paths\ProjectPath;
@@ -31,6 +33,7 @@ final class AvaxKernelTest extends TestCase
             EnvironmentName::Testing,
             new SystemClock(),
             new RunDoctor(),
+            new HandleIncomingHttp(responseFactory: new ResponseFactory()),
             'avax',
         ))->withHttpRouteDefinitions(function (RouterInterface $router) use ($responses) {
             $router->get('/', fn () => $responses->send('Hello from Avax Kernel!'));
@@ -61,6 +64,7 @@ final class AvaxKernelTest extends TestCase
             EnvironmentName::Testing,
             new SystemClock(),
             new RunDoctor(),
+            new HandleIncomingHttp(responseFactory: new ResponseFactory()),
             'avax',
         );
         $avax    = Avax::boot($builder);

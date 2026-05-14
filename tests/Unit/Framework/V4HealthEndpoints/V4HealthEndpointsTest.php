@@ -4,13 +4,20 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Framework\V4HealthEndpoints;
 
+use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
 use Avax\Framework\System\Capabilities\Health\CheckLiveness;
 use Avax\Framework\System\Capabilities\Health\CheckReadiness;
 use Avax\Framework\System\Capabilities\Health\Foundation\HealthFinding;
 use Avax\Framework\System\Capabilities\Health\Foundation\HealthStatus;
+use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
+use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
+use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
+use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Framework\System\Flows\CreateApplication\CreateApplication;
+use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Flows\RegisterHealthRoutes\RegisterHealthRoutes;
+use Avax\Framework\System\Foundation\Paths\ProjectPath;
 use Avax\Framework\System\Foundation\Time\SystemClock;
 use Avax\Framework\System\PublicSurface\App;
 use PHPUnit\Framework\Attributes\Test;
@@ -23,7 +30,7 @@ final class V4HealthEndpointsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->app = (new CreateApplication(clock: new SystemClock()))->make(environment: 'testing');
+        $this->app = $this->createFactory()->make(environment: 'testing');
     }
 
     #[Test]
@@ -167,5 +174,19 @@ final class V4HealthEndpointsTest extends TestCase
         );
 
         $registerer->register($this->app);
+    }
+
+    private function createFactory(): CreateApplication
+    {
+        return new CreateApplication(
+            clock: new SystemClock(),
+            projectPath: new ProjectPath(value: __DIR__ . '/../../../../..'),
+            componentRegistry: new ComponentRegistry(),
+            requestScopeStore: new RequestScopeStore(),
+            runtimeContext: new RuntimeContext(),
+            stateResetRegistry: new StateResetRegistry(),
+            responseFactory: new ResponseFactory(),
+            handleIncomingHttp: new HandleIncomingHttp(responseFactory: new ResponseFactory()),
+        );
     }
 }

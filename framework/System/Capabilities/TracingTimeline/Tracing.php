@@ -15,8 +15,6 @@ final class Tracing
 
     public function start(): RuntimeTimeline
     {
-        $this->runtimeTimeline = new RuntimeTimeline();
-
         $this->runtimeTimeline->record(name: 'request.received');
 
         return $this->runtimeTimeline;

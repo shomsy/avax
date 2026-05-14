@@ -9,7 +9,7 @@ use Avax\Components\Identity\Access\System\Capabilities\AccessInterface;
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\RiskDecision;
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\RiskSignal;
-use Avax\Components\Identity\Auth\System\Auth;
+use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
 use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Diagnostics;
 use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Explainability\AuthIssueExplanation;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;

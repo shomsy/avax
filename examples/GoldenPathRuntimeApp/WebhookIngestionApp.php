@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Examples\GoldenPathRuntimeApp;
 
+use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
+use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\Foundation\Paths\ProjectPath;
@@ -24,10 +26,11 @@ final class WebhookIngestionApp
     public static function createBuilder(ProjectPath $projectPath, EnvironmentName $environmentName) : ApplicationBuilder
     {
         return (new ApplicationBuilder(
-            projectPath    : $projectPath,
-            environmentName: $environmentName,
-            clock          : new SystemClock(),
-            runDoctor      : new RunDoctor(),
+            projectPath       : $projectPath,
+            environmentName   : $environmentName,
+            clock             : new SystemClock(),
+            runDoctor         : new RunDoctor(),
+            handleIncomingHttp: new HandleIncomingHttp(responseFactory: new ResponseFactory()),
         ))->withHttpRoutes(__DIR__ . '/config/routes.php');
     }
 }

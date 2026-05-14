@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Security\Cryptography\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
-use Avax\Components\Application\Container\System\ContainerInterface;
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\Security\Cryptography\System\Capabilities\Encryption\Encrypter;
 use Avax\Components\Security\Cryptography\System\Capabilities\Encryption\EncrypterInterface;
 use Avax\Components\Security\Cryptography\System\Capabilities\HealthCheck\CheckCryptographyHealth;

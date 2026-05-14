@@ -18,9 +18,9 @@ final readonly class RunConsoleCommand
      */
     public function __construct(
         private RuntimeInterface $runtime,
+        private PreCommitConfig $preCommitConfig,
+        private PreCommit $preCommit,
         private array $commandOverrides = [],
-        private PreCommitConfig|null $preCommitConfig = null,
-        private PreCommit|null $preCommit = null,
     ) {
     }
 
@@ -151,11 +151,9 @@ final readonly class RunConsoleCommand
         $dryRun = ! in_array('--fix', $args, true);
         $full = in_array('--full', $args, true);
 
-        $config = $this->preCommitConfig ?? new PreCommitConfig();
-        $config->setDryRun($dryRun);
+        $this->preCommitConfig->setDryRun($dryRun);
 
-        $preCommit = $this->preCommit ?? new PreCommit($config, [], ! $full);
-        $result = $preCommit->run();
+        $result = $this->preCommit->run();
 
         return $result->getSummaryText();
     }

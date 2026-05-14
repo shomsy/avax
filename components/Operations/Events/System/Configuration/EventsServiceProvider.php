@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Operations\Events\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
-use Avax\Components\Application\Container\System\ContainerInterface;
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\Operations\Events\System\Capabilities\HealthCheck\CheckEventsHealth;
 use Avax\Components\Operations\Events\System\Capabilities\InvokeEventListener\InvokeEventListener;
 use Avax\Components\Operations\Events\System\Capabilities\Registry\ListenerRegistry;

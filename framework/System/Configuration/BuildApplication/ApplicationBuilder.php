@@ -15,6 +15,7 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
 use Avax\Framework\System\Flows\HandleIncomingHttp\DispatchConfiguredRoute;
+use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\Foundation\Paths\ProjectPath;
@@ -40,6 +41,7 @@ final class ApplicationBuilder
         private EnvironmentName $environmentName,
         private Clock $clock,
         private RunDoctor $runDoctor,
+        private HandleIncomingHttp $handleIncomingHttp,
         private string $runtimeName = 'avax',
     ) {
         $doctor = $this->runDoctor;
@@ -214,5 +216,10 @@ final class ApplicationBuilder
     public function httpHandler() : Closure|null
     {
         return $this->httpHandler;
+    }
+
+    public function handleIncomingHttp(): HandleIncomingHttp
+    {
+        return $this->handleIncomingHttp;
     }
 }

@@ -12,6 +12,7 @@ use Avax\Components\HTTP\Router\System\Capabilities\ErrorResponseBuilding\BuildE
 use Avax\Components\HTTP\Router\System\Capabilities\MiddlewarePipeline\BuildPipeline;
 use Avax\Components\HTTP\Router\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteExecution\InvokeRouteAction;
 use Avax\Components\HTTP\Router\System\Capabilities\UrlBuilding\SubstituteRouteParameters;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\PublicSurface\Router;
@@ -44,15 +45,18 @@ final class HttpRouterServiceProvider implements ServiceProvider
         $container->singleton(BuildErrorResponse::class, static fn () : BuildErrorResponse => new BuildErrorResponse());
         $container->singleton(SubstituteRouteParameters::class, static fn () : SubstituteRouteParameters => new SubstituteRouteParameters());
         $container->singleton(NormalizeControllerResult::class, static fn () : NormalizeControllerResult => new NormalizeControllerResult());
+        $container->singleton(InvokeRouteAction::class, static fn (ContainerInterface $c) : InvokeRouteAction => new InvokeRouteAction(
+            responseNormalizer: $c->get(NormalizeControllerResult::class),
+        ));
 
         // Router — uses injected capabilities, resolves middleware through BuildPipeline
         $container->singleton(Router::class, static fn (ContainerInterface $c) : Router => new Router(
-            routeCollection   : $c->get(RouteCollection::class),
-            matchRoute        : $c->get(MatchRoute::class),
-            pipelineBuilder   : $c->get(BuildPipeline::class),
-            errorResponse     : $c->get(BuildErrorResponse::class),
-            urlBuilder        : $c->get(SubstituteRouteParameters::class),
-            responseNormalizer: $c->get(NormalizeControllerResult::class),
+            routeCollection : $c->get(RouteCollection::class),
+            matchRoute      : $c->get(MatchRoute::class),
+            pipelineBuilder : $c->get(BuildPipeline::class),
+            errorResponse   : $c->get(BuildErrorResponse::class),
+            urlBuilder      : $c->get(SubstituteRouteParameters::class),
+            invokeRouteAction: $c->get(InvokeRouteAction::class),
         ),
         );
 

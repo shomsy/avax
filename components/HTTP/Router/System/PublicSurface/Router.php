@@ -8,11 +8,11 @@ use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Components\HTTP\Router\System\Capabilities\ErrorResponseBuilding\BuildErrorResponse;
 use Avax\Components\HTTP\Router\System\Capabilities\MiddlewarePipeline\BuildPipeline;
-use Avax\Components\HTTP\Router\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteGroup\RouteGroupRegistrar;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteExecution\InvokeRouteAction;
 use Avax\Components\HTTP\Router\System\Capabilities\UrlBuilding\SubstituteRouteParameters;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\Registrar;
@@ -30,7 +30,7 @@ final class Router implements RouterInterface, RouterRuntimeInterface
         private readonly BuildPipeline             $pipelineBuilder,
         private readonly BuildErrorResponse        $errorResponse,
         private readonly SubstituteRouteParameters $urlBuilder,
-        private readonly NormalizeControllerResult $responseNormalizer,
+        private readonly InvokeRouteAction         $invokeRouteAction,
         private readonly string                    $baseUri = 'http://localhost',
     ) {
     }
@@ -178,14 +178,11 @@ final class Router implements RouterInterface, RouterRuntimeInterface
         $allMiddleware = [...$this->globalMiddleware, ...$route->middleware()];
 
         $handler = function (RequestInterface $req) use ($action, $match) : ResponseInterface {
-            if (is_callable($action)) {
-                $params = $match->parameters ?? [];
-                $result = $action($req, ...array_values($params));
-
-                return $this->responseNormalizer->normalize($result);
-            }
-
-            throw new RouterFailure('Invalid route action');
+            return $this->invokeRouteAction->invoke(
+                action    : $action,
+                request   : $req,
+                parameters: $match->parameters ?? [],
+            );
         };
 
         return $this->pipelineBuilder->build($handler, $allMiddleware)($request);

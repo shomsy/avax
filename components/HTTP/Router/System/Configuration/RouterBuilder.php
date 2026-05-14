@@ -9,6 +9,7 @@ use Avax\Components\HTTP\Router\System\Capabilities\ErrorResponseBuilding\BuildE
 use Avax\Components\HTTP\Router\System\Capabilities\MiddlewarePipeline\BuildPipeline;
 use Avax\Components\HTTP\Router\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteExecution\InvokeRouteAction;
 use Avax\Components\HTTP\Router\System\Capabilities\UrlBuilding\SubstituteRouteParameters;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\PublicSurface\Router;
@@ -88,6 +89,7 @@ final class RouterBuilder
         $routeCollection = new RouteCollection();
         $matchRoute = new MatchRoute();
         $resolveCallable = new ResolveCallable();
+        $responseNormalizer = new NormalizeControllerResult();
 
         return new Router(
             routeCollection   : $routeCollection,
@@ -95,7 +97,7 @@ final class RouterBuilder
             pipelineBuilder   : new BuildPipeline($resolveCallable),
             errorResponse     : new BuildErrorResponse(),
             urlBuilder        : new SubstituteRouteParameters(),
-            responseNormalizer: new NormalizeControllerResult(),
+            invokeRouteAction : new InvokeRouteAction($responseNormalizer),
         );
     }
 

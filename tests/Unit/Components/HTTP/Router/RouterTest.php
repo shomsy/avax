@@ -17,6 +17,7 @@ use Avax\Components\HTTP\Router\System\Capabilities\ErrorResponseBuilding\BuildE
 use Avax\Components\HTTP\Router\System\Capabilities\MiddlewarePipeline\BuildPipeline;
 use Avax\Components\HTTP\Router\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteExecution\InvokeRouteAction;
 use Avax\Components\HTTP\Router\System\Capabilities\UrlBuilding\SubstituteRouteParameters;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\Foundation\Failure\RouterFailure;
@@ -448,16 +449,17 @@ final class RouterTest extends TestCase
 
     protected function setUp() : void
     {
-        $routeCollection = new RouteCollection();
-        $matchRoute      = new MatchRoute();
-        $resolveCallable = new ResolveCallable();
+        $routeCollection    = new RouteCollection();
+        $matchRoute         = new MatchRoute();
+        $resolveCallable    = new ResolveCallable();
+        $responseNormalizer = new NormalizeControllerResult();
         $this->router = new Router(
             routeCollection   : $routeCollection,
             matchRoute        : $matchRoute,
             pipelineBuilder   : new BuildPipeline($resolveCallable),
             errorResponse     : new BuildErrorResponse(),
             urlBuilder        : new SubstituteRouteParameters(),
-            responseNormalizer: new NormalizeControllerResult(),
+            invokeRouteAction : new InvokeRouteAction($responseNormalizer),
         );
     }
 }

@@ -13,6 +13,7 @@ use Avax\Components\HTTP\Router\System\Capabilities\ErrorResponseBuilding\BuildE
 use Avax\Components\HTTP\Router\System\Capabilities\MiddlewarePipeline\BuildPipeline;
 use Avax\Components\HTTP\Router\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollection;
+use Avax\Components\HTTP\Router\System\Capabilities\RouteExecution\InvokeRouteAction;
 use Avax\Components\HTTP\Router\System\Capabilities\UrlBuilding\SubstituteRouteParameters;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\Foundation\Failure\RouterFailure;
@@ -36,7 +37,7 @@ final class RouterHardeningTest extends TestCase
             pipelineBuilder   : new BuildPipeline($resolveCallable),
             errorResponse     : new BuildErrorResponse(),
             urlBuilder        : new SubstituteRouteParameters(),
-            responseNormalizer: new NormalizeControllerResult(),
+            invokeRouteAction : new InvokeRouteAction(new NormalizeControllerResult()),
         );
         $router->get(path: '/null-test', action: static fn () => null);
 
@@ -137,7 +138,7 @@ final class RouterHardeningTest extends TestCase
             pipelineBuilder   : new BuildPipeline($resolveCallable),
             errorResponse     : new BuildErrorResponse(),
             urlBuilder        : new SubstituteRouteParameters(),
-            responseNormalizer: new NormalizeControllerResult(),
+            invokeRouteAction : new InvokeRouteAction(new NormalizeControllerResult()),
         );
         $router->get(path: '/', action: fn () => $this->textResponse(body: 'Router is Working!'));
         $router->get(path: '/health', action: fn () => $this->textResponse(body: 'ok'));

@@ -17,25 +17,43 @@ use Avax\Components\Application\Cache\System\PublicSurface\CompiledCache;
 use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheFacade;
 use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheRegistry;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\ReadFromCache;
-use Avax\Components\Application\Container\System\Capabilities\Providers\ServiceProvider;
-use Avax\Components\Application\Container\System\ContainerInterface;
+use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use LogicException;
 
-final class CacheServiceProvider extends ServiceProvider
+/**
+ * CacheServiceProvider — registers cache component dependencies.
+ *
+ * Supports fluent configuration before registration:
+ *   $provider = new CacheServiceProvider();
+ *   $provider->defaultStore('redis', ['host' => '127.0.0.1']);
+ *   $provider->compiledCacheDirectory('/tmp/cache');
+ */
+final class CacheServiceProvider implements ServiceProvider
 {
     /** @var array<string, array<string, mixed>> */
     private array $namedCaches = [];
 
     private string|null $compiledCacheDirectory = null;
 
-    public function register(): void
+    public function register(ContainerInterface $container) : void
     {
         if ($this->namedCaches === []) {
             $this->namedCaches['default'] = ['store' => 'in_memory'];
         }
 
-        $this->container->singleton(abstract: CacheRegistry::class, concrete: function () {
+        // Register default Clock if not already bound — composition root exception
+        if (! $container->has(Clock::class)) {
+            $container->singleton(Clock::class, static fn () : SystemClock => new SystemClock());
+        }
+
+        // Register default Filesystem if not already bound — composition root exception
+        if (! $container->has(Filesystem::class)) {
+            $container->singleton(Filesystem::class, static fn () : Filesystem => new Filesystem());
+        }
+
+        $container->singleton(CacheRegistry::class, function () use ($container) : CacheRegistry {
             $registry = new CacheRegistry();
 
             foreach ($this->namedCaches as $name => $config) {
@@ -45,51 +63,53 @@ final class CacheServiceProvider extends ServiceProvider
             return $registry;
         });
 
-        $this->container->singleton(abstract: CacheFacade::class, concrete: function (ContainerInterface $app) {
+        $container->singleton(CacheFacade::class, function (ContainerInterface $app) : CacheFacade {
             /** @var CacheRegistry $cacheRegistry */
-            $cacheRegistry = $app->get(id: CacheRegistry::class);
+            $cacheRegistry = $app->get(CacheRegistry::class);
 
             /** @var CompiledCacheContract|null $compiledCache */
             $compiledCache = $this->compiledCacheDirectory !== null
-                ? $app->get(id: CompiledCacheContract::class)
+                ? $app->get(CompiledCacheContract::class)
                 : null;
 
             return new CacheFacade($cacheRegistry, $compiledCache);
         });
 
-        $this->container->singleton(abstract: ReadFromCache::class, concrete: function (ContainerInterface $app) {
+        $container->singleton(ReadFromCache::class, function (ContainerInterface $app) : ReadFromCache {
             /** @var CacheRegistry $cacheRegistry */
-            $cacheRegistry = $app->get(id: CacheRegistry::class);
+            $cacheRegistry = $app->get(CacheRegistry::class);
 
             /** @var CompiledCacheContract|null $compiledCache */
             $compiledCache = $this->compiledCacheDirectory !== null
-                ? $app->get(id: CompiledCacheContract::class)
+                ? $app->get(CompiledCacheContract::class)
                 : null;
 
             return new ReadFromCache($cacheRegistry, $compiledCache);
         });
 
-        $this->container->singleton(abstract: CacheContract::class, concrete: static function (ContainerInterface $app) {
+        $container->singleton(CacheContract::class, static function (ContainerInterface $app) : CacheContract {
             /** @var CacheRegistry $cacheRegistry */
-            $cacheRegistry = $app->get(id: CacheRegistry::class);
+            $cacheRegistry = $app->get(CacheRegistry::class);
 
             return $cacheRegistry->default();
         });
 
         if ($this->compiledCacheDirectory !== null) {
-            $this->container->singleton(abstract: CompiledCacheContract::class, concrete: function (ContainerInterface $app) {
-                if ($this->compiledCacheDirectory === null) {
-                    throw new LogicException('Compiled cache directory was not configured.');
-                }
-
-                $clock      = $app->has(id: Clock::class) ? $app->get(id: Clock::class) : new SystemClock();
-                $filesystem = $app->has(id: Filesystem::class) ? $app->get(id: Filesystem::class) : new Filesystem();
+            $container->singleton(CompiledCacheContract::class, function (ContainerInterface $app) : CompiledCacheContract {
+                $clock      = $app->get(Clock::class);
+                $filesystem = $app->get(Filesystem::class);
 
                 return (new BuildCompiledCache(clock: $clock, filesystem: $filesystem))->inDirectory(directory: $this->compiledCacheDirectory);
             });
         }
 
-        $cacheContract = $this->container->get(id: CacheContract::class);
+        // Wire static facades for backward compatibility — boot-time behavior, deferred to boot()
+    }
+
+    public function boot(ContainerInterface $container) : void
+    {
+        // Wire static facades after all registrations are complete
+        $cacheContract = $container->get(CacheContract::class);
 
         if (! $cacheContract instanceof CacheContract) {
             throw new LogicException('Cache contract registration did not resolve to a cache contract.');
@@ -98,7 +118,7 @@ final class CacheServiceProvider extends ServiceProvider
         Cache::use(cache: $cacheContract);
 
         if ($this->compiledCacheDirectory !== null) {
-            $compiledCacheContract = $this->container->get(id: CompiledCacheContract::class);
+            $compiledCacheContract = $container->get(CompiledCacheContract::class);
 
             if (! $compiledCacheContract instanceof CompiledCacheContract) {
                 throw new LogicException('Compiled cache registration did not resolve to a compiled cache contract.');
@@ -111,7 +131,7 @@ final class CacheServiceProvider extends ServiceProvider
     /**
      * @param  array<string, mixed>  $config
      */
-    private function buildNamedCache(string $name, array $config): AvaxCache
+    private function buildNamedCache(string $name, array $config) : AvaxCache
     {
         $builder = new BuildCache();
         $cacheConfiguration = new CacheConfiguration(
@@ -120,11 +140,9 @@ final class CacheServiceProvider extends ServiceProvider
         );
 
         return match ($config['store']) {
-            'in_memory' => $builder->inMemory(
-                config: $cacheConfiguration,
-            ),
+            'in_memory' => $builder->inMemory(config: $cacheConfiguration),
             'file' => $builder->inDirectory(
-                directory: is_string($config['directory'] ?? null) ? $config['directory'] : sys_get_temp_dir().'/cache_'.$name,
+                directory: is_string($config['directory'] ?? null) ? $config['directory'] : sys_get_temp_dir() . '/cache_' . $name,
                 config   : $cacheConfiguration,
             ),
             'redis' => $builder->redis(
@@ -137,9 +155,11 @@ final class CacheServiceProvider extends ServiceProvider
     }
 
     /**
+     * Configure the default cache store.
+     *
      * @param  array<string, mixed>  $options
      */
-    public function defaultStore(string $store = 'in_memory', array $options = []): self
+    public function defaultStore(string $store = 'in_memory', array $options = []) : self
     {
         $this->namedCaches['default'] = array_merge(['store' => $store], $options);
 
@@ -147,16 +167,21 @@ final class CacheServiceProvider extends ServiceProvider
     }
 
     /**
+     * Configure a named cache store.
+     *
      * @param  array<string, mixed>  $options
      */
-    public function store(string $name, string $store = 'in_memory', array $options = []): self
+    public function store(string $name, string $store = 'in_memory', array $options = []) : self
     {
         $this->namedCaches[$name] = array_merge(['store' => $store], $options);
 
         return $this;
     }
 
-    public function compiledCacheDirectory(string $directory): self
+    /**
+     * Configure the compiled cache directory.
+     */
+    public function compiledCacheDirectory(string $directory) : self
     {
         $this->compiledCacheDirectory = $directory;
 

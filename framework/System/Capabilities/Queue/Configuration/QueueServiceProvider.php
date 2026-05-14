@@ -6,7 +6,7 @@ namespace Avax\Framework\System\Capabilities\Queue\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
-use Avax\Components\Application\Container\System\ContainerInterface;
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsStore;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\PdoFailedJobsStore;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\MemoryQueue\MemoryQueue;

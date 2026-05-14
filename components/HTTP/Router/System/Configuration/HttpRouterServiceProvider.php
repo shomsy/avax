@@ -15,6 +15,7 @@ use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteCollect
 use Avax\Components\HTTP\Router\System\Capabilities\UrlBuilding\SubstituteRouteParameters;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\PublicSurface\Router;
+use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 
 /**
  * HttpRouterServiceProvider — registers HTTP routing and dispatching dependencies.
@@ -54,6 +55,9 @@ final class HttpRouterServiceProvider implements ServiceProvider
             responseNormalizer: $c->get(NormalizeControllerResult::class),
         ),
         );
+
+        // RouterInterface alias — allows other components to depend on the interface
+        $container->alias(RouterInterface::class, Router::class);
 
         // ControllerResolver — delegates to ResolveCallable, never uses new $className()
         $container->singleton(ControllerResolver::class, static fn (ContainerInterface $c) : ControllerResolver => new ControllerResolver(

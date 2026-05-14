@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\PublicSurface;
 
-interface ContainerInterface
+use Psr\Container\ContainerInterface as PsrContainerInterface;
+
+interface ContainerInterface extends PsrContainerInterface
 {
     public function make(string $abstract, array $parameters = []): mixed;
 

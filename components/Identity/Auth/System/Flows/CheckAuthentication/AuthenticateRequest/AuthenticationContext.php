@@ -90,42 +90,42 @@ final readonly class AuthenticationContext
         return $this->authenticationMode;
     }
 
-    public function user() : ?AuthenticatedUser
+    public function user() : AuthenticatedUser|null
     {
         return $this->authenticatedUser;
     }
 
-    public function reason() : ?string
+    public function reason() : string|null
     {
         return $this->reason;
     }
 
-    public function sessionId() : ?string
+    public function sessionId() : string|null
     {
         return $this->sessionId;
     }
 
-    public function accessTokenId() : ?string
+    public function accessTokenId() : string|null
     {
         return $this->accessTokenId;
     }
 
-    public function accessTokenExpiresAt() : ?DateTimeImmutable
+    public function accessTokenExpiresAt() : DateTimeImmutable|null
     {
         return $this->accessTokenExpiresAt;
     }
 
-    public function refreshTokenId() : ?string
+    public function refreshTokenId() : string|null
     {
         return $this->refreshTokenId;
     }
 
-    public function refreshTokenFamilyId() : ?string
+    public function refreshTokenFamilyId() : string|null
     {
         return $this->refreshTokenFamilyId;
     }
 
-    public function mfaVerifiedAt() : ?DateTimeImmutable
+    public function mfaVerifiedAt() : DateTimeImmutable|null
     {
         return $this->mfaVerifiedAt;
     }

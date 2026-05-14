@@ -18,7 +18,7 @@ interface OidcRequestObjectStoreInterface
         bool $signatureVerified = false, string|null $signingAlgorithm = null, string|null $signingClientId = null,
     ) : OidcRequestObject;
 
-    public function find(string $requestUri) : ?OidcRequestObject;
+    public function find(string $requestUri) : OidcRequestObject|null;
 
-    public function consume(string $requestUri) : ?OidcRequestObject;
+    public function consume(string $requestUri) : OidcRequestObject|null;
 }

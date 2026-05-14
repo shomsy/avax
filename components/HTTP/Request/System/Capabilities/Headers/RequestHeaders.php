@@ -25,7 +25,7 @@ final class RequestHeaders
         return isset($this->headers[strtolower($name)]);
     }
 
-    public function get(string $name) : ?HeaderValue
+    public function get(string $name) : HeaderValue|null
     {
         return $this->headers[strtolower($name)] ?? null;
     }

@@ -78,7 +78,7 @@ final class Saga
     /**
      * Create a saga from an existing store (for resuming).
      */
-    public static function fromStore(SagaStoreInterface $sagaStore, string $sagaId) : ?self
+    public static function fromStore(SagaStoreInterface $sagaStore, string $sagaId) : self|null
     {
         return $sagaStore->findById($sagaId);
     }
@@ -287,7 +287,7 @@ final class Saga
     /**
      * Get the failure reason if any.
      */
-    public function getFailureReason() : ?string
+    public function getFailureReason() : string|null
     {
         return $this->failureReason;
     }
@@ -340,7 +340,7 @@ final readonly class SagaResult
     /**
      * Get the failure reason if the saga failed.
      */
-    public function getFailureReason() : ?string
+    public function getFailureReason() : string|null
     {
         return $this->failureReason;
     }

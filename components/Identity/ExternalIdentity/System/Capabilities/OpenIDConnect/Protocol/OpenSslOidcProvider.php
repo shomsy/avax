@@ -230,7 +230,7 @@ public function readJsonWebKeySet() : OidcJsonWebKeySet
                                            ]);
     }
 
-    public function resolveIdToken(#[SensitiveParameter] string $idToken) : ?array
+    public function resolveIdToken(#[SensitiveParameter] string $idToken) : array|null
     {
         $claims = $this->resolveJwt(jwt: $idToken);
 
@@ -241,7 +241,7 @@ public function readJsonWebKeySet() : OidcJsonWebKeySet
         return $claims;
     }
 
-    public function resolveJwt(#[SensitiveParameter] string $jwt) : ?array
+    public function resolveJwt(#[SensitiveParameter] string $jwt) : array|null
     {
         $segments = explode(separator: '.', string: $jwt);
 
@@ -295,7 +295,7 @@ public function readJsonWebKeySet() : OidcJsonWebKeySet
         return $claims;
     }
 
-    private function base64UrlDecode(string $value) : ?string
+    private function base64UrlDecode(string $value) : string|null
     {
         $padding = strlen(string: $value) % 4;
 

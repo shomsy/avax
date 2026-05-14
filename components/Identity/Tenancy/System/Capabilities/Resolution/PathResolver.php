@@ -8,7 +8,7 @@ use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 
 final readonly class PathResolver
 {
-    public static function resolve(RequestInterface $request) : ?string
+    public static function resolve(RequestInterface $request) : string|null
     {
         $path  = $request->getUri()->getPath();
         $parts = explode('/', $path);

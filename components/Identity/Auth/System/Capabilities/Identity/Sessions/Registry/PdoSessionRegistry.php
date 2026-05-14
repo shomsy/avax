@@ -22,7 +22,7 @@ final readonly class PdoSessionRegistry implements PruneExpiredSessionsInterface
     /**
      * @throws DateMalformedStringException
      */
-    public function find(#[SensitiveParameter] string $sessionId) : ?SessionRecord
+    public function find(#[SensitiveParameter] string $sessionId) : SessionRecord|null
     {
         /** @noinspection SqlNoDataSourceInspection */
         $pdoStatement = $this->prepare(

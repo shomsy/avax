@@ -242,7 +242,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         return $normalized;
     }
 
-    private function normalizeTenantSlug(string|null $tenantSlug) : ?string
+    private function normalizeTenantSlug(string|null $tenantSlug) : string|null
     {
         $normalized = trim(string: (string) $tenantSlug);
 
@@ -254,7 +254,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         $this->clients[$oAuthClient->clientId] = $oAuthClient;
     }
 
-    public function deactivate(string $clientId) : ?OAuthClient
+    public function deactivate(string $clientId) : OAuthClient|null
     {
         $client = $this->find(clientId: $clientId);
 
@@ -290,12 +290,12 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         return $oAuthClient;
     }
 
-    public function find(string $clientId) : ?OAuthClient
+    public function find(string $clientId) : OAuthClient|null
     {
         return $this->clients[$clientId] ?? null;
     }
 
-    public function approve(string $clientId, string $approvedBy) : ?OAuthClient
+    public function approve(string $clientId, string $approvedBy) : OAuthClient|null
     {
         $client = $this->find(clientId: $clientId);
 
@@ -334,7 +334,7 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
     /**
      * @throws RandomException
      */
-    public function rotateSecret(string $clientId) : ?RegisteredOAuthClient
+    public function rotateSecret(string $clientId) : RegisteredOAuthClient|null
     {
         $client = $this->find(clientId: $clientId);
 

@@ -11,7 +11,7 @@ interface TenantStoreInterface
 {
     public function saveTenant(Tenant $tenant) : void;
 
-    public function findTenantBySlug(string $slug) : ?Tenant;
+    public function findTenantBySlug(string $slug) : Tenant|null;
 
     /**
      * @return list<Tenant>
@@ -20,7 +20,7 @@ interface TenantStoreInterface
 
     public function saveMember(TenantMember $tenantMember) : void;
 
-    public function findMember(string $tenantId, int $userId) : ?TenantMember;
+    public function findMember(string $tenantId, int $userId) : TenantMember|null;
 
     /**
      * @return list<TenantMember>
@@ -31,9 +31,9 @@ interface TenantStoreInterface
 
     public function saveInvite(TenantInvite $tenantInvite) : void;
 
-    public function findInviteById(string $inviteId) : ?TenantInvite;
+    public function findInviteById(string $inviteId) : TenantInvite|null;
 
-    public function findInviteByToken(#[SensitiveParameter] string $plainToken) : ?TenantInvite;
+    public function findInviteByToken(#[SensitiveParameter] string $plainToken) : TenantInvite|null;
 
     public function markInviteAccepted(string $inviteId, int $acceptedByUserId, DateTimeImmutable $acceptedAt) : void;
 }

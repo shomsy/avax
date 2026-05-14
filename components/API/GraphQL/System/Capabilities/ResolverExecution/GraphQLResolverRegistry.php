@@ -29,7 +29,7 @@ final class GraphQLResolverRegistry
     /**
      * @return (Closure(mixed, array<string, mixed>, GraphQLResolverContext): mixed)|null
      */
-    public function resolverFor(string $typeName, string $fieldName) : ?Closure
+    public function resolverFor(string $typeName, string $fieldName) : Closure|null
     {
         return $this->resolvers[$this->key(typeName: $typeName, fieldName: $fieldName)] ?? null;
     }

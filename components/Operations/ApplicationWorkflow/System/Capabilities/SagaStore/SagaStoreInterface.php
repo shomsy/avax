@@ -20,7 +20,7 @@ interface SagaStoreInterface
     /**
      * Find a saga instance by its ID.
      */
-    public function findById(string $id) : ?Saga;
+    public function findById(string $id) : Saga|null;
 
     /**
      * Update the status of a saga instance.

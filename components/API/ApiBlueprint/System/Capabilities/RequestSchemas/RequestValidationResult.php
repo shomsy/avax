@@ -29,7 +29,7 @@ final class RequestValidationResult
         return new self(false, $errors);
     }
 
-    public function toException() : ?ApiBlueprintInvalid
+    public function toException() : ApiBlueprintInvalid|null
     {
         if ($this->valid) {
             return null;

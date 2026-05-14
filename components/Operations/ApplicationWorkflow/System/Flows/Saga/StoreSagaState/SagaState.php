@@ -95,7 +95,7 @@ final readonly class SagaState implements ArrayAccess, Countable, IteratorAggreg
         return $this->stepResults;
     }
 
-    public function getStepResult(string $stepName) : ?array
+    public function getStepResult(string $stepName) : array|null
     {
         return $this->stepResults[$stepName] ?? null;
     }

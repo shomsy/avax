@@ -38,7 +38,7 @@ final class RequestUri implements UriInterface
         return $this->host;
     }
 
-    public function getPort() : ?int
+    public function getPort() : int|null
     {
         return $this->port;
     }

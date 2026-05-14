@@ -90,7 +90,7 @@ final class WorkerLifecycle
         return $this->workers;
     }
 
-    public function find(string $id) : ?WorkerRecord
+    public function find(string $id) : WorkerRecord|null
     {
         return $this->workers[$id] ?? null;
     }

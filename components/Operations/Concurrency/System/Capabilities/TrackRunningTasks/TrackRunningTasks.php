@@ -23,7 +23,7 @@ final class TrackRunningTasks
         unset($this->tasks[$key]);
     }
 
-    public function get(TaskId|string|int $id) : ?ConcurrentTask
+    public function get(TaskId|string|int $id) : ConcurrentTask|null
     {
         $key = $id instanceof TaskId ? $id->value : $id;
 

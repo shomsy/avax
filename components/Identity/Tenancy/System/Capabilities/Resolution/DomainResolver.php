@@ -8,7 +8,7 @@ use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 
 final readonly class DomainResolver
 {
-    public static function resolve(RequestInterface $request) : ?string
+    public static function resolve(RequestInterface $request) : string|null
     {
         $host  = $request->getUri()->getHost();
         $parts = explode('.', $host);

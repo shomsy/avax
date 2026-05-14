@@ -45,7 +45,7 @@ final class MemoryQueue implements QueueBroker
     /**
      * @return array<string, mixed>|null
      */
-    public function pop(string $queue) : ?array
+    public function pop(string $queue) : array|null
     {
         if (!isset($this->queues[$queue]) || $this->queues[$queue] === []) {
             return null;

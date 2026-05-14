@@ -177,7 +177,7 @@ final readonly class PushAuthorizationRequest
     /**
      * @return array<string, mixed>|null
      */
-    private function decodeJson(string $base64Url) : ?array
+    private function decodeJson(string $base64Url) : array|null
     {
         $decoded = $this->base64UrlDecode(value: $base64Url);
 
@@ -194,7 +194,7 @@ final readonly class PushAuthorizationRequest
         return is_array(value: $payload) ? $payload : null;
     }
 
-    private function base64UrlDecode(string $value) : ?string
+    private function base64UrlDecode(string $value) : string|null
     {
         $padding = strlen(string: $value) % 4;
 
@@ -207,7 +207,7 @@ final readonly class PushAuthorizationRequest
         return $decoded === false ? null : $decoded;
     }
 
-    private function readStringValue(mixed $value) : ?string
+    private function readStringValue(mixed $value) : string|null
     {
         if (! is_string(value: $value)) {
             return null;
@@ -228,7 +228,7 @@ final readonly class PushAuthorizationRequest
         #[SensitiveParameter]
         string $clientSecret,
         string $algorithm,
-    ) : ?array
+    ) : array|null
     {
         if ($clientSecret === '' || ! $this->oAuthClientRegistry?->verifySecret(clientId: $clientId, plainTextSecret: $clientSecret)) {
             return null;
@@ -242,7 +242,7 @@ final readonly class PushAuthorizationRequest
     /**
      * @return array<string, mixed>|null
      */
-    private function verifyRsaRequestObject(#[SensitiveParameter] string $jwt, #[SensitiveParameter] ?string $publicKeyPem) : ?array
+    private function verifyRsaRequestObject(#[SensitiveParameter] string $jwt, #[SensitiveParameter] ?string $publicKeyPem) : array|null
     {
         if ($publicKeyPem === null || trim(string: $publicKeyPem) === '') {
             return null;
@@ -367,7 +367,7 @@ final readonly class PushAuthorizationRequest
         return $parts === false ? [] : $parts;
     }
 
-    private function normalizeCodeChallengeMethod(string|null $value) : ?PkceMethod
+    private function normalizeCodeChallengeMethod(string|null $value) : PkceMethod|null
     {
         if ($value === null || trim(string: $value) === '') {
             return null;

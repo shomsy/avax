@@ -42,7 +42,7 @@ final readonly class DatabaseQueue implements QueueBroker
     /**
      * @return array<string, mixed>|null
      */
-    public function pop(string $queue) : ?array
+    public function pop(string $queue) : array|null
     {
         $stmt = $this->pdo->prepare(
             "SELECT id, payload, attempts, max_attempts FROM {$this->table}

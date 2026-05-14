@@ -24,7 +24,7 @@ final readonly class MultiKeyHmacTokenCodec implements TokenCodecInterface
         return $this->tokenCodec->encode(claims: $claims);
     }
 
-    public function decode(#[SensitiveParameter] string $token) : ?array
+    public function decode(#[SensitiveParameter] string $token) : array|null
     {
         $decoded = $this->tokenCodec->decode(token: $token);
 

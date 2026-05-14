@@ -30,7 +30,7 @@ final class RegisterSagaDefinition
         return $sagaDefinition;
     }
 
-    public function read(string $name) : ?SagaDefinition
+    public function read(string $name) : SagaDefinition|null
     {
         return $this->definitions[$name] ?? null;
     }

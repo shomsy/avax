@@ -6,7 +6,7 @@ namespace Avax\Components\Application\Filesystem\System\Capabilities\LocalPermis
 
 final readonly class CheckPathPermissions
 {
-    public function execute(string $path) : ?int
+    public function execute(string $path) : int|null
     {
         if (! file_exists($path)) {
             return null;

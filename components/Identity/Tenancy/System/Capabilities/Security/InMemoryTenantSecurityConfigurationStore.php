@@ -14,7 +14,7 @@ final class InMemoryTenantSecurityConfigurationStore implements TenantSecurityCo
         $this->configurations[$tenantSecurityConfiguration->tenantSlug] = $tenantSecurityConfiguration;
     }
 
-    public function find(string $tenantSlug) : ?TenantSecurityConfiguration
+    public function find(string $tenantSlug) : TenantSecurityConfiguration|null
     {
         return $this->configurations[$tenantSlug] ?? null;
     }

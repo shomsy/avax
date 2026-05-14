@@ -18,6 +18,7 @@ final class Security
 {
     public function __construct(
         private SecurityAuditLog $securityAuditLog,
+        private MassAssignmentGuard $massAssignmentGuard,
     ) {}
 
     public static function generateCsrfToken(): string
@@ -58,9 +59,9 @@ final class Security
      * @param  list<string>  $fillable
      * @return array<string, mixed>
      */
-    public static function fillable(array $input, array $fillable): array
+    public function fillable(array $input, array $fillable): array
     {
-        return new MassAssignmentGuard()->onlyFillable(input: $input, fillable: $fillable);
+        return $this->massAssignmentGuard->onlyFillable(input: $input, fillable: $fillable);
     }
 
     public static function applySecurityHeaders(ResponseFormatter $responseFormatter): ResponseFormatter

@@ -52,7 +52,7 @@ final readonly class LoadSagaInstance
 {
     public function __construct(private object $store) {}
 
-    public function load(string $sagaId) : ?SagaInstance
+    public function load(string $sagaId) : SagaInstance|null
     {
         $data = $this->store->get('saga_' . $sagaId);
         if ($data === null) {
@@ -137,7 +137,7 @@ final readonly class ChooseNextSagaStep
     public function choose(
         SagaInstance $sagaInstance,
         array        $definition,
-    ) : ?SagaStepDefinition
+    ) : SagaStepDefinition|null
     {
         $currentIndex = $sagaInstance->currentStepIndex;
         $nextIndex    = $currentIndex + 1;

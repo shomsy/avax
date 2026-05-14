@@ -23,7 +23,7 @@ final readonly class SagaResult
         return $this->success;
     }
 
-    public function getFailureReason() : ?string
+    public function getFailureReason() : string|null
     {
         return $this->failureReason;
     }

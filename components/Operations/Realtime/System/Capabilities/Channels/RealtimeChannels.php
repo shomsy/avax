@@ -22,7 +22,7 @@ final class RealtimeChannels
         return $channel;
     }
 
-    public function get(string $name) : ?Channel
+    public function get(string $name) : Channel|null
     {
         return $this->channels[$name] ?? null;
     }

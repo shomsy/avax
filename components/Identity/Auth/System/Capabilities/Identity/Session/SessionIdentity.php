@@ -71,7 +71,7 @@ final class SessionIdentity implements SessionIdentityInterface
     public function issue(
         int $userId, DateTimeImmutable|null $mfaVerifiedAt = null,
         bool               $phishingResistant = false,
-    ) : ?string
+    ) : string|null
     {
         $sessionId = $this->sessionStore->regenerate();
         $now       = $this->clock->now();
@@ -134,7 +134,7 @@ final class SessionIdentity implements SessionIdentityInterface
         $this->sessionRegistry->save(record: $record->withClientMetadata(ipAddress: $ipAddress, userAgent: $userAgent));
     }
 
-    public function currentSessionId() : ?string
+    public function currentSessionId() : string|null
     {
         return $this->sessionStore->id();
     }
@@ -142,7 +142,7 @@ final class SessionIdentity implements SessionIdentityInterface
     /**
      * @throws DateMalformedStringException
      */
-    public function resolveUserId() : ?int
+    public function resolveUserId() : int|null
     {
         if (! $this->isSessionActive()) {
             return null;
@@ -252,7 +252,7 @@ final class SessionIdentity implements SessionIdentityInterface
         $this->clear();
     }
 
-    private function readDate(string $key) : ?DateTimeImmutable
+    private function readDate(string $key) : DateTimeImmutable|null
     {
         $stored = $this->sessionStore->get(key: $key);
 
@@ -293,7 +293,7 @@ final class SessionIdentity implements SessionIdentityInterface
     /**
      * @throws DateMalformedStringException
      */
-    public function resolveMfaVerifiedAt() : ?DateTimeImmutable
+    public function resolveMfaVerifiedAt() : DateTimeImmutable|null
     {
         if (! $this->isSessionActive()) {
             return null;

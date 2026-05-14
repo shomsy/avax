@@ -23,7 +23,7 @@ final readonly class Port
         }
     }
 
-    public function value() : ?int
+    public function value() : int|null
     {
         return $this->port;
     }

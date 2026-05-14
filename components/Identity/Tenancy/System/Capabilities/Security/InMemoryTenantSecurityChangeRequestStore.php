@@ -14,7 +14,7 @@ final class InMemoryTenantSecurityChangeRequestStore implements TenantSecurityCh
         $this->changeRequests[$tenantSecurityChangeRequest->changeId] = $tenantSecurityChangeRequest;
     }
 
-    public function find(string $changeId) : ?TenantSecurityChangeRequest
+    public function find(string $changeId) : TenantSecurityChangeRequest|null
     {
         return $this->changeRequests[$changeId] ?? null;
     }

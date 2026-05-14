@@ -8,7 +8,7 @@ final readonly class DetectDuplicateSagaCommand
 {
     public function __construct(private ProtectSagaIdempotency $protectSagaIdempotency) {}
 
-    public function detect(string $key) : ?SagaCommandResult
+    public function detect(string $key) : SagaCommandResult|null
     {
         return $this->protectSagaIdempotency->check(key: $key);
     }
@@ -49,14 +49,14 @@ final readonly class ReadPreviousSagaCommandResult
 {
     public function __construct(private ProtectSagaIdempotency $protectSagaIdempotency) {}
 
-    public function maybeReplay(string $key) : ?array
+    public function maybeReplay(string $key) : array|null
     {
         $result = $this->read(key: $key);
 
         return $result?->output ?? null;
     }
 
-    public function read(string $key) : ?SagaCommandResult
+    public function read(string $key) : SagaCommandResult|null
     {
         return $this->protectSagaIdempotency->check(key: $key);
     }

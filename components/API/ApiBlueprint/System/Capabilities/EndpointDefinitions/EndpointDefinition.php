@@ -41,7 +41,7 @@ final class EndpointDefinition
         return $this->requiredPermissions !== [];
     }
 
-    public function getErrorResponse(int $statusCode) : ?ErrorResponseSchema
+    public function getErrorResponse(int $statusCode) : ErrorResponseSchema|null
     {
         foreach ($this->errorResponses as $response) {
             if ($response->statusCode === $statusCode) {

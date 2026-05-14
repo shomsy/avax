@@ -44,12 +44,12 @@ final readonly class Authority implements Stringable
         return $this->host;
     }
 
-    public function port() : ?Port
+    public function port() : Port|null
     {
         return $this->port;
     }
 
-    public function userInfo() : ?UserInfo
+    public function userInfo() : UserInfo|null
     {
         return $this->userInfo;
     }

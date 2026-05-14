@@ -19,7 +19,7 @@ final class InMemoryScimProvisionedIdentityStore implements ScimProvisionedIdent
         return $directoryId . ':' . strtolower(string: trim(string: $externalId));
     }
 
-    public function find(string $directoryId, string $externalId) : ?ScimProvisionedIdentity
+    public function find(string $directoryId, string $externalId) : ScimProvisionedIdentity|null
     {
         return $this->identities[$this->key(directoryId: $directoryId, externalId: $externalId)] ?? null;
     }

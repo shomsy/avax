@@ -21,7 +21,7 @@ final class InMemoryMfaChallengeStore implements MfaChallengeStoreInterface, Pru
         $this->records[$mfaChallengeRecord->challengeId] = $mfaChallengeRecord;
     }
 
-    public function find(string $challengeId) : ?MfaChallengeRecord
+    public function find(string $challengeId) : MfaChallengeRecord|null
     {
         return $this->records[$challengeId] ?? null;
     }

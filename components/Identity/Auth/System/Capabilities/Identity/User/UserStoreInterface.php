@@ -9,9 +9,9 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\User;
  */
 interface UserStoreInterface
 {
-    public function findById(string $userId) : ?User;
+    public function findById(string $userId) : User|null;
 
-    public function findByEmail(string $email) : ?User;
+    public function findByEmail(string $email) : User|null;
 
     public function save(User $user) : void;
 }

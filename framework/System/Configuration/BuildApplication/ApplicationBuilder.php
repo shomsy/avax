@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Configuration\BuildApplication;
 
-use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentProviderInterface;
 use Avax\Framework\System\Capabilities\Configuration\RegisterConfigCommands;
 use Avax\Framework\System\Capabilities\Doctor\RegisterDoctorCommands;
@@ -42,6 +42,8 @@ final class ApplicationBuilder
         private Clock $clock,
         private RunDoctor $runDoctor,
         private HandleIncomingHttp $handleIncomingHttp,
+        private Filesystem $filesystem,
+        private ResponseFactory $responseFactory,
         private string $runtimeName = 'avax',
     ) {
         $doctor = $this->runDoctor;
@@ -77,13 +79,13 @@ final class ApplicationBuilder
             $this->registerConsoleCommandDirectly(name: $name, command: $command);
         }
 
-        $configCommands = (new RegisterConfigCommands(new Filesystem()))();
+        $configCommands = (new RegisterConfigCommands($this->filesystem))();
 
         foreach ($configCommands as $name => $command) {
             $this->registerConsoleCommandDirectly(name: $name, command: $command);
         }
 
-        $routeCommands = (new RegisterRouteCommands(new Filesystem()))();
+        $routeCommands = (new RegisterRouteCommands($this->filesystem))();
 
         foreach ($routeCommands as $name => $command) {
             $this->registerConsoleCommandDirectly(name: $name, command: $command);
@@ -160,7 +162,7 @@ final class ApplicationBuilder
         return $this->withHttpHandler(
             httpHandler: DispatchConfiguredRoute::fromRouteDefinitions(
                 routeDefinitions: $routeDefinitions,
-                responseFactory : new ResponseFactory(),
+                responseFactory : $this->responseFactory,
             ),
         );
     }
@@ -176,7 +178,7 @@ final class ApplicationBuilder
         return $this->withHttpHandler(
             httpHandler: DispatchConfiguredRoute::fromRoutesFile(
                 routesFile: $resolvedPath,
-                responseFactory: new ResponseFactory(),
+                responseFactory: $this->responseFactory,
             ),
         );
     }

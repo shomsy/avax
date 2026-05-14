@@ -16,7 +16,7 @@ final class InMemoryLifecycleStore implements LifecycleStoreInterface
         $this->records[$lifecycleRecord->userId] = $lifecycleRecord;
     }
 
-    public function find(UserId $userId) : ?LifecycleRecord
+    public function find(UserId $userId) : LifecycleRecord|null
     {
         return $this->records[$userId->value] ?? null;
     }

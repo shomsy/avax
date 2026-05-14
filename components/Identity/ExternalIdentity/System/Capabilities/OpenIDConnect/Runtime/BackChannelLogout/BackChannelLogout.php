@@ -88,7 +88,7 @@ final readonly class BackChannelLogout
     /**
      * @param array<string, mixed>|null $claims
      */
-    private function resolveClientFromClaims(array|null $claims) : ?OAuthClient
+    private function resolveClientFromClaims(array|null $claims) : OAuthClient|null
     {
         if ($claims === null || ! $this->oAuthClientRegistry instanceof OAuthClientRegistryInterface) {
             return null;

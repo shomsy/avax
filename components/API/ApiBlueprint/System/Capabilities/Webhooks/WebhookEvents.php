@@ -30,7 +30,7 @@ final class WebhookEvents
         return isset($this->events[$event]);
     }
 
-    public function description(string $event) : ?string
+    public function description(string $event) : string|null
     {
         return $this->events[$event] ?? null;
     }

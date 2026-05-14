@@ -33,7 +33,7 @@ final readonly class ConcurrentFailure
         return $this->code;
     }
 
-    public function getPrevious() : ?Throwable
+    public function getPrevious() : Throwable|null
     {
         return $this->previous;
     }

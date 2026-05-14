@@ -23,7 +23,7 @@ final class InMemoryTenantStore implements TenantStoreInterface
         $this->tenantsBySlug[strtolower(string: $tenant->slug)] = $tenant;
     }
 
-    public function findTenantBySlug(string $slug) : ?Tenant
+    public function findTenantBySlug(string $slug) : Tenant|null
     {
         return $this->tenantsBySlug[strtolower(string: trim(string: $slug))] ?? null;
     }
@@ -43,7 +43,7 @@ final class InMemoryTenantStore implements TenantStoreInterface
         return $tenantId . ':' . $userId;
     }
 
-    public function findMember(string $tenantId, int $userId) : ?TenantMember
+    public function findMember(string $tenantId, int $userId) : TenantMember|null
     {
         return $this->members[$this->memberKey(tenantId: $tenantId, userId: $userId)] ?? null;
     }
@@ -66,12 +66,12 @@ final class InMemoryTenantStore implements TenantStoreInterface
         $this->invites[$tenantInvite->inviteId] = $tenantInvite;
     }
 
-    public function findInviteById(string $inviteId) : ?TenantInvite
+    public function findInviteById(string $inviteId) : TenantInvite|null
     {
         return $this->invites[$inviteId] ?? null;
     }
 
-    public function findInviteByToken(#[SensitiveParameter] string $plainToken) : ?TenantInvite
+    public function findInviteByToken(#[SensitiveParameter] string $plainToken) : TenantInvite|null
     {
         $tokenHash = hash(algo: 'sha256', data: $plainToken);
 

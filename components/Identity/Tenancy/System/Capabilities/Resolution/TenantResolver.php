@@ -25,17 +25,17 @@ final readonly class TenantResolver
         return 'default';
     }
 
-    private static function resolveFromDomain(RequestInterface $request) : ?string
+    private static function resolveFromDomain(RequestInterface $request) : string|null
     {
         return DomainResolver::resolve($request);
     }
 
-    private static function resolveFromHeader(RequestInterface $request) : ?string
+    private static function resolveFromHeader(RequestInterface $request) : string|null
     {
         return HeaderResolver::resolve($request);
     }
 
-    private static function resolveFromPath(RequestInterface $request) : ?string
+    private static function resolveFromPath(RequestInterface $request) : string|null
     {
         return PathResolver::resolve($request);
     }
@@ -43,7 +43,7 @@ final readonly class TenantResolver
 
 final readonly class DomainResolver
 {
-    public static function resolve(RequestInterface $request) : ?string
+    public static function resolve(RequestInterface $request) : string|null
     {
         $host  = $request->getUri()->getHost();
         $parts = explode('.', $host);
@@ -58,7 +58,7 @@ final readonly class DomainResolver
 
 final readonly class HeaderResolver
 {
-    public static function resolve(RequestInterface $request) : ?string
+    public static function resolve(RequestInterface $request) : string|null
     {
         return $request->getHeaderLine('X-Tenant-ID') ?: null;
     }
@@ -66,7 +66,7 @@ final readonly class HeaderResolver
 
 final readonly class PathResolver
 {
-    public static function resolve(RequestInterface $request) : ?string
+    public static function resolve(RequestInterface $request) : string|null
     {
         $path  = $request->getUri()->getPath();
         $parts = explode('/', $path);

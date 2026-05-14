@@ -112,7 +112,7 @@ final class MaterializedView implements MaterializedViewInterface
     /**
      * @return T|null
      */
-    public function data() : ?array
+    public function data() : array|null
     {
         return $this->data;
     }

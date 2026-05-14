@@ -8,7 +8,7 @@ use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\MiddlewareInterf
 
 final class ResolveNextMiddleware
 {
-    public function resolve(array $stack, int $index) : ?MiddlewareInterface
+    public function resolve(array $stack, int $index) : MiddlewareInterface|null
     {
         return $stack[$index] ?? null;
     }

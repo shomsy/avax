@@ -12,7 +12,7 @@ use Avax\Components\Foundation\CallableSerialization\System\Foundation\Values\Ca
  */
 final readonly class RejectUnsafeCallable
 {
-    public function check(CallablePayload $payload) : ?CallablePayloadFailure
+    public function check(CallablePayload $payload) : CallablePayloadFailure|null
     {
         if ($payload->signature === '') {
             return new CallablePayloadFailure(

@@ -19,13 +19,13 @@ interface MfaStoreInterface
 
     public function isEnabled(UserId $userId) : bool;
 
-    public function findMethod(UserId $userId) : ?MfaMethodRecord;
+    public function findMethod(UserId $userId) : MfaMethodRecord|null;
 
     public function saveMethod(MfaMethodRecord $mfaMethodRecord) : void;
 
     public function disable(UserId $userId) : void;
 
-    public function findPendingEnrollment(UserId $userId) : ?MfaEnrollmentRecord;
+    public function findPendingEnrollment(UserId $userId) : MfaEnrollmentRecord|null;
 
     public function startEnrollment(MfaEnrollmentRecord $mfaEnrollmentRecord) : void;
 
@@ -33,7 +33,7 @@ interface MfaStoreInterface
 
     public function saveRecovery(MfaRecoveryRecord $mfaRecoveryRecord) : void;
 
-    public function findRecovery(string $tokenHash) : ?MfaRecoveryRecord;
+    public function findRecovery(string $tokenHash) : MfaRecoveryRecord|null;
 
     public function forgetRecovery(string $tokenHash) : void;
 

@@ -91,7 +91,7 @@ class RedisSessionRegistry implements PruneExpiredSessionsInterface, SessionRegi
     /**
      * @throws DateMalformedStringException
      */
-    public function find(#[SensitiveParameter] string $sessionId) : ?SessionRecord
+    public function find(#[SensitiveParameter] string $sessionId) : SessionRecord|null
     {
         $key  = self::KEY_PREFIX . $sessionId;
         $data = $this->redis->hGetAll(key: $key);

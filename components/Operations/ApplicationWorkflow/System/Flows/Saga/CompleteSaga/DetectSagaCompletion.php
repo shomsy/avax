@@ -30,7 +30,7 @@ final readonly class DetectSagaCompletion
     public function getNextStep(
         SagaInstance $sagaInstance,
         array        $definition,
-    ) : ?string
+    ) : string|null
     {
         $nextIndex = $sagaInstance->currentStepIndex + 1;
         $stepOrder = $definition['stepOrder'] ?? [];

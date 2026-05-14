@@ -117,12 +117,12 @@ final class GraphQLSchema
         return $schema;
     }
 
-    public function findType(string $name) : ?GraphQLObjectType
+    public function findType(string $name) : GraphQLObjectType|null
     {
         return $this->types[$name] ?? null;
     }
 
-    public function findRootField(string $operationType, string $fieldName) : ?GraphQLField
+    public function findRootField(string $operationType, string $fieldName) : GraphQLField|null
     {
         return match ($operationType) {
             'query'    => $this->queryFields[$fieldName] ?? null,

@@ -122,7 +122,7 @@ final readonly class SingleSignOn
         return $this->evaluateFederationBreakGlassBypass ?? throw ExternalIdentityCapabilityUnavailable::sso(operation: 'evaluate_break_glass_bypass');
     }
 
-    public function discoverConnection(#[SensitiveParameter] string $email) : ?FederationConnection
+    public function discoverConnection(#[SensitiveParameter] string $email) : FederationConnection|null
     {
         return $this->discoverConnectionOrFail()->execute(email: $email);
     }

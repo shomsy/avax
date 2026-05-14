@@ -145,7 +145,7 @@ final readonly class AuthenticateRequest
     }
 
     private function latestMfaMoment(DateTimeImmutable|null $left, DateTimeImmutable|null $right,
-    ) : ?DateTimeImmutable
+    ) : DateTimeImmutable|null
     {
         if (! $left instanceof DateTimeImmutable) {
             return $right;

@@ -135,7 +135,7 @@ final class MatchRoute
      *
      * @return array{pattern: string, regex: string, paramNames: list<string>}|null
      */
-    private function compilePattern(string $pattern) : ?array
+    private function compilePattern(string $pattern) : array|null
     {
         if (isset($this->compiledPatterns[$pattern])) {
             return $this->compiledPatterns[$pattern];

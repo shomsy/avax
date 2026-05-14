@@ -24,7 +24,7 @@ interface AuthorizationCodeStoreInterface
         bool               $phishingResistant = false,
     ) : IssuedAuthorizationCode;
 
-    public function find(string $plainCode) : ?AuthorizationCodeRecord;
+    public function find(string $plainCode) : AuthorizationCodeRecord|null;
 
     public function markUsed(string $codeId, DateTimeImmutable $usedAt) : void;
 }

@@ -20,7 +20,7 @@ final readonly class UserInfo implements Stringable
         return $this->user;
     }
 
-    public function password() : ?string
+    public function password() : string|null
     {
         return $this->password;
     }

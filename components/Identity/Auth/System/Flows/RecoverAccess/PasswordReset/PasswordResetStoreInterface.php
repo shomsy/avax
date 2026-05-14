@@ -14,5 +14,5 @@ interface PasswordResetStoreInterface
 {
     public function issue(UserId $userId, DateTimeImmutable $expiresAt) : PasswordResetChallenge;
 
-    public function consume(string $token, DateTimeImmutable $now) : ?UserId;
+    public function consume(string $token, DateTimeImmutable $now) : UserId|null;
 }

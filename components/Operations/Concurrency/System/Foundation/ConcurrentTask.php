@@ -47,7 +47,7 @@ final class ConcurrentTask
         return $this->result;
     }
 
-    public function getError() : ?Throwable
+    public function getError() : Throwable|null
     {
         return $this->error;
     }

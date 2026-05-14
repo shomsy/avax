@@ -91,7 +91,7 @@ final readonly class PdoFailedJobsStore implements FailedJobsStore
      *
      * @return array{id: string, queue: string, payload: string, exception: string, failed_at: string}|null
      */
-    public function find(string $id) : ?array
+    public function find(string $id) : array|null
     {
         $this->ensureTable();
 

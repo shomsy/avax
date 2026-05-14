@@ -85,7 +85,7 @@ final readonly class RunSagaStep
         );
     }
 
-    public function chooseNext(SagaInstance $sagaInstance, SagaDefinition $sagaDefinition) : ?SagaStepDefinition
+    public function chooseNext(SagaInstance $sagaInstance, SagaDefinition $sagaDefinition) : SagaStepDefinition|null
     {
         $currentIndex = $sagaInstance->currentStepIndex;
         $nextIndex    = $currentIndex + 1;

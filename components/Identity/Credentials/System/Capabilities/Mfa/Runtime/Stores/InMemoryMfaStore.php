@@ -43,7 +43,7 @@ final class InMemoryMfaStore implements MfaStoreInterface
         return isset($this->methods[$userId->value]);
     }
 
-    public function findMethod(UserId $userId) : ?MfaMethodRecord
+    public function findMethod(UserId $userId) : MfaMethodRecord|null
     {
         return $this->methods[$userId->value] ?? null;
     }
@@ -69,7 +69,7 @@ final class InMemoryMfaStore implements MfaStoreInterface
         }
     }
 
-    public function findPendingEnrollment(UserId $userId) : ?MfaEnrollmentRecord
+    public function findPendingEnrollment(UserId $userId) : MfaEnrollmentRecord|null
     {
         return $this->pendingEnrollments[$userId->value] ?? null;
     }
@@ -90,7 +90,7 @@ final class InMemoryMfaStore implements MfaStoreInterface
         $this->recoveryTokens[$mfaRecoveryRecord->tokenHash] = $mfaRecoveryRecord;
     }
 
-    public function findRecovery(#[SensitiveParameter] string $tokenHash) : ?MfaRecoveryRecord
+    public function findRecovery(#[SensitiveParameter] string $tokenHash) : MfaRecoveryRecord|null
     {
         return $this->recoveryTokens[$tokenHash] ?? null;
     }

@@ -58,7 +58,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         return $this->resolve(token: $token) instanceof ResolvedToken;
     }
 
-    public function resolve(#[SensitiveParameter] string $token) : ?ResolvedToken
+    public function resolve(#[SensitiveParameter] string $token) : ResolvedToken|null
     {
         try {
             $claims = $this->tokenCodec->decode(token: $token);
@@ -212,7 +212,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
     public function resolveWorkloadToken(
         #[SensitiveParameter]
         string $token, string|null $expectedAudience = null, string|null $expectedIssuer = null,
-    ) : ?ResolvedWorkloadToken
+    ) : ResolvedWorkloadToken|null
     {
         try {
             $claims = $this->tokenCodec->decode(token: $token);
@@ -304,7 +304,7 @@ final readonly class JwtIdentity implements JwtIdentityInterface
         User  $user, DateTimeImmutable|null $issuedAt = null,
         bool  $phishingResistant = false, string|null $audience = null,
         array $scopes = [], OAuthSenderConstraint|null $oAuthSenderConstraint = null,
-    ) : ?IssuedRefreshToken
+    ) : IssuedRefreshToken|null
     {
         if (! $this->refreshTokenStore instanceof RefreshTokenStoreInterface) {
             return null;

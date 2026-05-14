@@ -32,7 +32,7 @@ final class TaskQueue
         usort($this->tasks, fn (array $a, array $b) : int => $b['priority'] <=> $a['priority']);
     }
 
-    public function pop() : ?callable
+    public function pop() : callable|null
     {
         $item = array_shift($this->tasks);
 

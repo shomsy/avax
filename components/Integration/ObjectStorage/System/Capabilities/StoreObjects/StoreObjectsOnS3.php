@@ -51,7 +51,7 @@ class StoreObjectsOnS3 implements ObjectStoragePort
         }
     }
 
-    public function read(string $key) : ?string
+    public function read(string $key) : string|null
     {
         try {
             $result = $this->client->getObject([

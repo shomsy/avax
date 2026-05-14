@@ -24,7 +24,7 @@ class StoreObjectsInMemory implements ObjectStoragePort
         return ObjectStorageResult::success();
     }
 
-    public function read(string $key) : ?string
+    public function read(string $key) : string|null
     {
         return $this->storage[$key] ?? null;
     }

@@ -8,5 +8,5 @@ interface TenantSecurityConfigurationStoreInterface
 {
     public function save(TenantSecurityConfiguration $tenantSecurityConfiguration) : void;
 
-    public function find(string $tenantSlug) : ?TenantSecurityConfiguration;
+    public function find(string $tenantSlug) : TenantSecurityConfiguration|null;
 }

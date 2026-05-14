@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Integration;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\HTTP\Request\System\Capabilities\Uri\RequestUri;
 use Avax\Components\HTTP\Request\System\Configuration\RequestBuilder;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
@@ -34,6 +35,8 @@ final class AvaxKernelTest extends TestCase
             new SystemClock(),
             new RunDoctor(),
             new HandleIncomingHttp(responseFactory: new ResponseFactory()),
+            new Filesystem(),
+            new ResponseFactory(),
             'avax',
         ))->withHttpRouteDefinitions(function (RouterInterface $router) use ($responses) {
             $router->get('/', fn () => $responses->send('Hello from Avax Kernel!'));
@@ -65,6 +68,8 @@ final class AvaxKernelTest extends TestCase
             new SystemClock(),
             new RunDoctor(),
             new HandleIncomingHttp(responseFactory: new ResponseFactory()),
+            new Filesystem(),
+            new ResponseFactory(),
             'avax',
         );
         $avax    = Avax::boot($builder);

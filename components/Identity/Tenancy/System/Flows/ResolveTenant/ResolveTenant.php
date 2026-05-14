@@ -11,7 +11,7 @@ final readonly class ResolveTenant
      *
      * @return array<string, mixed>|null
      */
-    public function resolve(string $identifier, array $tenants) : ?array
+    public function resolve(string $identifier, array $tenants) : array|null
     {
         return $tenants[$identifier] ?? null;
     }

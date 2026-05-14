@@ -16,12 +16,12 @@ final readonly class SessionMetadata
             && $this->getUserAgent() === $expectedUserAgent;
     }
 
-    public function getIp() : ?string
+    public function getIp() : string|null
     {
         return $this->server['REMOTE_ADDR'] ?? null;
     }
 
-    public function getUserAgent() : ?string
+    public function getUserAgent() : string|null
     {
         return $this->server['HTTP_USER_AGENT'] ?? null;
     }

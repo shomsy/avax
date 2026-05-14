@@ -59,7 +59,7 @@ final class Translator implements TranslatorInterface
         return [$namespace, $group, $item];
     }
 
-    private function getLine(string $locale, string $group, string $item, string|null $namespace) : ?string
+    private function getLine(string $locale, string $group, string $item, string|null $namespace) : string|null
     {
         $this->load($locale, $group, $namespace);
 

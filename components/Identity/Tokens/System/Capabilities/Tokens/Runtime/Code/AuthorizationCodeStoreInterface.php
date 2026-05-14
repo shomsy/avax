@@ -18,5 +18,5 @@ interface AuthorizationCodeStoreInterface
         array             $scopes = [], string|null $redirectUri = null, string|null $state = null,
     ) : AuthorizationCodeRecord;
 
-    public function consume(#[SensitiveParameter] string $code, DateTimeImmutable $moment) : ?AuthorizationCodeRecord;
+    public function consume(#[SensitiveParameter] string $code, DateTimeImmutable $moment) : AuthorizationCodeRecord|null;
 }

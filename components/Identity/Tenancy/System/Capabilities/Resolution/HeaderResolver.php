@@ -8,7 +8,7 @@ use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 
 final readonly class HeaderResolver
 {
-    public static function resolve(RequestInterface $request) : ?string
+    public static function resolve(RequestInterface $request) : string|null
     {
         return $request->getHeaderLine('X-Tenant-ID') ?: null;
     }

@@ -29,7 +29,7 @@ final readonly class StopWorkerProcess
         return ! $process->isRunning();
     }
 
-    public function getPid(Process $process) : ?int
+    public function getPid(Process $process) : int|null
     {
         return $process->getPid();
     }

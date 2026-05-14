@@ -81,7 +81,7 @@ final class ParseGraphQLOperation
         return $tokens;
     }
 
-    private function peek() : ?string
+    private function peek() : string|null
     {
         return $this->tokens[$this->position] ?? null;
     }

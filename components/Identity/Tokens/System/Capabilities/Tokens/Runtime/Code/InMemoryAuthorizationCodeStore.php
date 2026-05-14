@@ -40,7 +40,7 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         return $authorizationCodeRecord;
     }
 
-    public function consume(#[SensitiveParameter] string $code, DateTimeImmutable $moment) : ?AuthorizationCodeRecord
+    public function consume(#[SensitiveParameter] string $code, DateTimeImmutable $moment) : AuthorizationCodeRecord|null
     {
         $record = $this->codes[$code] ?? null;
         unset($this->codes[$code]);

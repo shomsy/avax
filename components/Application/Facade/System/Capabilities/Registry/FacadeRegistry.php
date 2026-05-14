@@ -16,7 +16,7 @@ final class FacadeRegistry
         self::$registry[$name] = $instance;
     }
 
-    public static function get(string $name) : ?object
+    public static function get(string $name) : object|null
     {
         return self::$registry[$name] ?? null;
     }

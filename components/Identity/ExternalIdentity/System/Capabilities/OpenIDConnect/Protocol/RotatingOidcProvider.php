@@ -71,7 +71,7 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
         return $this->oidcProvider->subjectIdentifier(user: $user, clientId: $clientId);
     }
 
-    public function resolveIdToken(#[SensitiveParameter] string $idToken) : ?array
+    public function resolveIdToken(#[SensitiveParameter] string $idToken) : array|null
     {
         foreach ($this->providers() as $oidcProvider) {
             $claims = $oidcProvider->resolveIdToken(idToken: $idToken);
@@ -84,7 +84,7 @@ final readonly class RotatingOidcProvider implements OidcProviderInterface
         return null;
     }
 
-    public function resolveJwt(#[SensitiveParameter] string $jwt) : ?array
+    public function resolveJwt(#[SensitiveParameter] string $jwt) : array|null
     {
         foreach ($this->providers() as $oidcProvider) {
             $claims = $oidcProvider->resolveJwt(jwt: $jwt);

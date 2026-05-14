@@ -35,7 +35,7 @@ final class QueueState
      *
      * @return array<string, mixed>|null
      */
-    public function pop(string $queue, int $now) : ?array
+    public function pop(string $queue, int $now) : array|null
     {
         foreach ($this->queues[$queue] ?? [] as $jobId => $job) {
             if (($job['run_at'] ?? 0) > $now) {

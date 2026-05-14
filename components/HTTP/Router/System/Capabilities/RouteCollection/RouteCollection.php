@@ -31,7 +31,7 @@ final class RouteCollection
         return $this->routes;
     }
 
-    public function getByName(string $name) : ?RouteDefinition
+    public function getByName(string $name) : RouteDefinition|null
     {
         return $this->namedRoutes[$name] ?? null;
     }
@@ -52,7 +52,7 @@ final class RouteCollection
         $this->fallback = $route;
     }
 
-    public function getFallback() : ?RouteDefinition
+    public function getFallback() : RouteDefinition|null
     {
         return $this->fallback;
     }

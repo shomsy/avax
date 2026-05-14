@@ -23,7 +23,7 @@ final readonly class ProtectSagaIdempotency
         $this->commandKeys[$key] = $sagaCommandResult;
     }
 
-    public function check(string $key) : ?SagaCommandResult
+    public function check(string $key) : SagaCommandResult|null
     {
         return $this->commandKeys[$key] ?? null;
     }

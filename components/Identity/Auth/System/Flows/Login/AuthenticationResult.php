@@ -42,7 +42,7 @@ final readonly class AuthenticationResult
         );
     }
 
-    public function user() : ?AuthenticatedUser
+    public function user() : AuthenticatedUser|null
     {
         return $this->authenticatedUser;
     }
@@ -70,22 +70,22 @@ final readonly class AuthenticationResult
         return $this->authenticationContext;
     }
 
-    public function accessToken() : ?string
+    public function accessToken() : string|null
     {
         return $this->accessToken;
     }
 
-    public function refreshToken() : ?string
+    public function refreshToken() : string|null
     {
         return $this->refreshToken;
     }
 
-    public function mfaChallenge() : ?MfaChallenge
+    public function mfaChallenge() : MfaChallenge|null
     {
         return $this->mfaChallenge;
     }
 
-    public function mfaChallengeId() : ?string
+    public function mfaChallengeId() : string|null
     {
         return $this->mfaChallenge?->challengeId;
     }

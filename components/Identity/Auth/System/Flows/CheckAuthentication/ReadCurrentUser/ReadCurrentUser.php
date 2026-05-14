@@ -20,7 +20,7 @@ final readonly class ReadCurrentUser
         private CurrentAuthentication $currentAuthentication,
     ) {}
 
-    public function execute() : ?AuthenticatedUser
+    public function execute() : AuthenticatedUser|null
     {
         return $this->currentAuthentication->read()->user();
     }

@@ -10,7 +10,7 @@ final class TenantContext
 {
     private static ?string $current = null;
 
-    public static function current() : ?string
+    public static function current() : string|null
     {
         return self::$current;
     }

@@ -42,7 +42,7 @@ final class InMemoryScimDirectoryStore implements ScimDirectoryStoreInterface
         return $this->passwordHasher->verify(password: $plainTextToken, hash: $directory->tokenHash);
     }
 
-    public function find(string $directoryId) : ?ScimDirectory
+    public function find(string $directoryId) : ScimDirectory|null
     {
         return $this->directories[$directoryId] ?? null;
     }

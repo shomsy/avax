@@ -229,7 +229,7 @@ final class SagaExecution
         return $this->stepResults;
     }
 
-    public function getFailureReason() : ?string
+    public function getFailureReason() : string|null
     {
         return $this->failureReason;
     }

@@ -19,7 +19,7 @@ interface AuthInterface
 
     public function logout() : void;
 
-    public function user() : ?User;
+    public function user() : User|null;
 
     public function check() : bool;
 

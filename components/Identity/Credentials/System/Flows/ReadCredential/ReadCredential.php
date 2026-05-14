@@ -11,7 +11,7 @@ final readonly class ReadCredential
      *
      * @return array<string, mixed>|null
      */
-    public function read(string $userId, array $store) : ?array
+    public function read(string $userId, array $store) : array|null
     {
         return $store[$userId] ?? null;
     }

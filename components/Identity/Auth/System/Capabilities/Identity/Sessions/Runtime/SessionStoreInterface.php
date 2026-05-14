@@ -13,7 +13,7 @@ interface SessionStoreInterface
 
     public function regenerate() : string;
 
-    public function id() : ?string;
+    public function id() : string|null;
 
     public function get(string $key) : mixed;
 

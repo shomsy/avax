@@ -90,7 +90,7 @@ final readonly class HmacTokenCodec implements TokenCodecInterface
     /**
      * @return array<string, mixed>|null
      */
-    public function decode(#[SensitiveParameter] string $token) : ?array
+    public function decode(#[SensitiveParameter] string $token) : array|null
     {
         try {
             $parts = explode(separator: '.', string: $token);

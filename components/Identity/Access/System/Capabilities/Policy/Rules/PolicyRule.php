@@ -19,7 +19,7 @@ final readonly class PolicyRule
         return $this->action === $action;
     }
 
-    public function evaluate(string $action, object $resource, array $context) : ?PolicyDecision
+    public function evaluate(string $action, object $resource, array $context) : PolicyDecision|null
     {
         $result = ($this->condition)($resource, $context);
 

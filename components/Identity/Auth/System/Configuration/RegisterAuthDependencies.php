@@ -106,7 +106,7 @@ final class RegisterAuthDependencies extends BaseRegisterDependency
     /**
      * @throws ReflectionException
      */
-    private function resolveLoginRateLimit() : ?LoginRateLimit
+    private function resolveLoginRateLimit() : LoginRateLimit|null
     {
         if ($this->container->has(id: LoginRateLimit::class)) {
             return $this->container->get(id: LoginRateLimit::class);

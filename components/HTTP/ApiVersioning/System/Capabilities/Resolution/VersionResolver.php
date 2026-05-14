@@ -22,7 +22,7 @@ final readonly class VersionResolver
         );
     }
 
-    private static function readVersion(RequestInterface $request) : ?int
+    private static function readVersion(RequestInterface $request) : int|null
     {
         $headerVersion = self::positiveInt(value: $request->getHeaderLine('X-API-Version'));
 
@@ -48,7 +48,7 @@ final readonly class VersionResolver
         return self::positiveInt(value: $queryVersion);
     }
 
-    private static function positiveInt(mixed $value) : ?int
+    private static function positiveInt(mixed $value) : int|null
     {
         if (is_int(value: $value)) {
             return $value > 0 ? $value : null;
@@ -63,7 +63,7 @@ final readonly class VersionResolver
         return $version > 0 ? $version : null;
     }
 
-    private static function readAcceptVersion(string $accept) : ?int
+    private static function readAcceptVersion(string $accept) : int|null
     {
         if (preg_match(pattern: '/(?:v|version=)(\d+)/i', subject: $accept, matches: $matches) !== 1) {
             return null;

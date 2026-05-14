@@ -139,14 +139,14 @@ final readonly class Identity implements IdentityInterface
         }
     }
 
-    public function sessionIdentity() : ?SessionIdentityInterface
+    public function sessionIdentity() : SessionIdentityInterface|null
     {
         return $this->sessionIdentity;
     }
 
     // ── Fast-path convenience (high-frequency auth operations) ──
 
-    public function jwtIdentity() : ?JwtIdentityInterface
+    public function jwtIdentity() : JwtIdentityInterface|null
     {
         return $this->jwtIdentity;
     }

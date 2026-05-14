@@ -8,7 +8,7 @@ interface SagaStoreInterface
 {
     public function save(string $sagaId, string $status, array $context) : void;
 
-    public function get(string $sagaId) : ?array;
+    public function get(string $sagaId) : array|null;
 
     public function updateStatus(string $sagaId, string $status) : void;
 }

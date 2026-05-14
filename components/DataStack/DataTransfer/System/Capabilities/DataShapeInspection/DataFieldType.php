@@ -78,7 +78,7 @@ final readonly class DataFieldType
         return $this->primaryName() === 'mixed';
     }
 
-    public function primaryName() : ?string
+    public function primaryName() : string|null
     {
         return $this->names[0] ?? null;
     }

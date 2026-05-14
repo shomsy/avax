@@ -8,7 +8,7 @@ interface ScimProvisionedIdentityStoreInterface
 {
     public function save(ScimProvisionedIdentity $scimProvisionedIdentity) : void;
 
-    public function find(string $directoryId, string $externalId) : ?ScimProvisionedIdentity;
+    public function find(string $directoryId, string $externalId) : ScimProvisionedIdentity|null;
 
     /**
      * @return list<ScimProvisionedIdentity>

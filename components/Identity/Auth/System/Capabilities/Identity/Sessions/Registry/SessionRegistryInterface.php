@@ -14,7 +14,7 @@ interface SessionRegistryInterface
 {
     public function track(SessionRecord $sessionRecord) : void;
 
-    public function find(string $sessionId) : ?SessionRecord;
+    public function find(string $sessionId) : SessionRecord|null;
 
     public function save(SessionRecord $sessionRecord) : void;
 

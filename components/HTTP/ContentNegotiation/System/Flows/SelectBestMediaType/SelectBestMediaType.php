@@ -9,7 +9,7 @@ final readonly class SelectBestMediaType
     /**
      * @param list<string> $offerings
      */
-    public function select(string $accept, array $offerings) : ?string
+    public function select(string $accept, array $offerings) : string|null
     {
         $types = array_map('trim', explode(',', $accept));
 

@@ -11,7 +11,7 @@ interface ApiDocumentationSource
 {
     public function registerEndpoint(EndpointDefinition $endpoint) : void;
 
-    public function findEndpoint(string $path, string $method) : ?EndpointDefinition;
+    public function findEndpoint(string $path, string $method) : EndpointDefinition|null;
 
     /**
      * @return list<EndpointDefinition>

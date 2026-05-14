@@ -54,7 +54,7 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
         );
     }
 
-    public function find(#[SensitiveParameter] string $plainToken) : ?RefreshTokenRecord
+    public function find(#[SensitiveParameter] string $plainToken) : RefreshTokenRecord|null
     {
         return $this->tokens[$plainToken] ?? null;
     }

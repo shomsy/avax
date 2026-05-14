@@ -34,10 +34,10 @@ interface OidcProviderInterface
     /**
      * @return array<string, mixed>|null
      */
-    public function resolveIdToken(#[SensitiveParameter] string $idToken) : ?array;
+    public function resolveIdToken(#[SensitiveParameter] string $idToken) : array|null;
 
     /**
      * @return array<string, mixed>|null
      */
-    public function resolveJwt(#[SensitiveParameter] string $jwt) : ?array;
+    public function resolveJwt(#[SensitiveParameter] string $jwt) : array|null;
 }

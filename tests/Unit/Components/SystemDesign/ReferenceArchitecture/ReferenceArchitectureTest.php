@@ -8,6 +8,7 @@ use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\SystemDesign\System\Capabilities\Capacity\CapacityModel;
 use Avax\Components\SystemDesign\System\Capabilities\Messaging\MessagingModel;
 use Avax\Components\SystemDesign\System\Capabilities\SchemaValidation\NativeYamlParser;
+use Avax\Components\SystemDesign\System\Capabilities\SchemaValidation\SchemaValidator;
 use Avax\Components\SystemDesign\System\PublicSurface\SystemDesignKit;
 use PHPUnit\Framework\TestCase;
 
@@ -31,7 +32,12 @@ final class ReferenceArchitectureTest extends TestCase
 
     private function kit() : SystemDesignKit
     {
-        return new SystemDesignKit(filesystem: new Filesystem());
+        $yamlParser = new NativeYamlParser(filesystem: new Filesystem());
+
+        return new SystemDesignKit(
+            yamlParser     : $yamlParser,
+            schemaValidator: new SchemaValidator(yamlParser: $yamlParser),
+        );
     }
 
     private function yamlParser() : NativeYamlParser

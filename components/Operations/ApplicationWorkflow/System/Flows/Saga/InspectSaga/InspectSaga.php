@@ -47,7 +47,7 @@ final class InspectSaga implements Countable, IteratorAggregate
         );
     }
 
-    public function traceFailure(string $sagaId) : ?SagaTimeline
+    public function traceFailure(string $sagaId) : SagaTimeline|null
     {
         foreach (array_reverse($this->getEvents(sagaId: $sagaId)) as $event) {
             if ($event->type === 'step_failed' || $event->type === 'saga_failed') {

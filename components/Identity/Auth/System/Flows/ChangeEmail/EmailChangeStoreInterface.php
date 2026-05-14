@@ -11,5 +11,5 @@ interface EmailChangeStoreInterface
 {
     public function issue(UserId $userId, string $newEmail, DateTimeImmutable $expiresAt) : EmailChangeChallenge;
 
-    public function consume(string $token, DateTimeImmutable $now) : ?EmailChangeRecord;
+    public function consume(string $token, DateTimeImmutable $now) : EmailChangeRecord|null;
 }

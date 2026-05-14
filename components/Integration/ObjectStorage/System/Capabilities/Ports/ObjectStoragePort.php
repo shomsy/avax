@@ -11,7 +11,7 @@ interface ObjectStoragePort
      */
     public function store(string $key, string $content, array $options = []) : ObjectStorageResult;
 
-    public function read(string $key) : ?string;
+    public function read(string $key) : string|null;
 
     public function delete(string $key) : bool;
 

@@ -8,9 +8,9 @@ interface FederationConnectionStoreInterface
 {
     public function save(FederationConnection $federationConnection) : void;
 
-    public function find(string $connectionId) : ?FederationConnection;
+    public function find(string $connectionId) : FederationConnection|null;
 
-    public function findByDomain(string $domain) : ?FederationConnection;
+    public function findByDomain(string $domain) : FederationConnection|null;
 
     /**
      * @return list<FederationConnection>

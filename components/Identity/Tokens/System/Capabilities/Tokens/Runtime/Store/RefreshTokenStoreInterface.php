@@ -26,7 +26,7 @@ interface RefreshTokenStoreInterface
         array             $scopes = [], OAuthSenderConstraint|null $oAuthSenderConstraint = null,
     ) : IssuedRefreshToken;
 
-    public function find(#[SensitiveParameter] string $plainToken) : ?RefreshTokenRecord;
+    public function find(#[SensitiveParameter] string $plainToken) : RefreshTokenRecord|null;
 
     public function markRotated(#[SensitiveParameter] string $tokenId, #[SensitiveParameter] string $replacementTokenId) : void;
 

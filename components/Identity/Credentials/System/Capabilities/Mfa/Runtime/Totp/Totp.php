@@ -142,7 +142,7 @@ public function provisioningUri(string $issuer, #[SensitiveParameter] string $ac
         return TotpVerification::invalid();
     }
 
-    private function base32Decode(#[SensitiveParameter] string $secret) : ?string
+    private function base32Decode(#[SensitiveParameter] string $secret) : string|null
     {
         $alphabet   = array_flip(array: str_split(string: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'));
         $normalized = strtoupper(string: preg_replace(pattern: '/[^A-Z2-7]/', replacement: '', subject: $secret) ?? '');

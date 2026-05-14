@@ -16,7 +16,7 @@ final class Tenancy
         return TenantResolver::resolve($request);
     }
 
-    public static function getTenantId() : ?string
+    public static function getTenantId() : string|null
     {
         return TenantContext::current();
     }

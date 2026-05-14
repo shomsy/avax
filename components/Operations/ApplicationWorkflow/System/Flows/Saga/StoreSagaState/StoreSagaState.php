@@ -27,7 +27,7 @@ final readonly class StoreSagaState
         return $this->stores[$name] ?? [];
     }
 
-    public function load(string $id) : ?SagaInstance
+    public function load(string $id) : SagaInstance|null
     {
         $store = $this->getStore(name: 'default');
 

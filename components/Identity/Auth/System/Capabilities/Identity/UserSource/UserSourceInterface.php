@@ -13,11 +13,11 @@ use Avax\Components\Identity\Auth\System\Flows\Login\Credentials;
  */
 interface UserSourceInterface
 {
-    public function findByCredentials(Credentials $credentials) : ?User;
+    public function findByCredentials(Credentials $credentials) : User|null;
 
-    public function findById(UserId $userId) : ?User;
+    public function findById(UserId $userId) : User|null;
 
-    public function findByEmail(string $email) : ?User;
+    public function findByEmail(string $email) : User|null;
 
     public function create(User $user) : User;
 

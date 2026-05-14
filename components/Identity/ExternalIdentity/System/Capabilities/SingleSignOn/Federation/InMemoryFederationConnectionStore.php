@@ -14,12 +14,12 @@ final class InMemoryFederationConnectionStore implements FederationConnectionSto
         $this->connections[$federationConnection->connectionId] = $federationConnection;
     }
 
-    public function find(string $connectionId) : ?FederationConnection
+    public function find(string $connectionId) : FederationConnection|null
     {
         return $this->connections[$connectionId] ?? null;
     }
 
-    public function findByDomain(string $domain) : ?FederationConnection
+    public function findByDomain(string $domain) : FederationConnection|null
     {
         $normalized = strtolower(string: trim(string: $domain));
 

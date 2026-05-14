@@ -35,7 +35,7 @@ final readonly class SessionIdentity
         return $this->session->id();
     }
 
-    public function resolveUserId() : ?int
+    public function resolveUserId() : int|null
     {
         if (! $this->isSessionActive()) {
             return null;
@@ -80,7 +80,7 @@ final readonly class SessionIdentity
         return true;
     }
 
-    private function readDate(string $key) : ?DateTimeImmutable
+    private function readDate(string $key) : DateTimeImmutable|null
     {
         $stored = $this->session->get($key);
         if (! $stored) {
@@ -104,7 +104,7 @@ final readonly class SessionIdentity
         $this->session->put($this->lastSeenAtKey, new DateTimeImmutable()->format(DATE_ATOM));
     }
 
-    public function resolveMfaVerifiedAt() : ?DateTimeImmutable
+    public function resolveMfaVerifiedAt() : DateTimeImmutable|null
     {
         return $this->readDate($this->mfaVerifiedAtKey);
     }

@@ -22,7 +22,7 @@ final class Credentials
     /**
      * @return array<string, mixed>|null
      */
-    public static function read(string $userId) : ?array
+    public static function read(string $userId) : array|null
     {
         return self::$store[$userId] ?? null;
     }

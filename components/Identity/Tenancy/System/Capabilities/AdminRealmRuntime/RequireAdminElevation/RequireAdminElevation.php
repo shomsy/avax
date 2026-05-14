@@ -53,7 +53,7 @@ final readonly class RequireAdminElevation
         }
     }
 
-    private function bindingId(AuthenticationContext $authenticationContext) : ?string
+    private function bindingId(AuthenticationContext $authenticationContext) : string|null
     {
         return $authenticationContext->sessionId()
             ?? $authenticationContext->accessTokenId()

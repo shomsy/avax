@@ -65,7 +65,7 @@ final readonly class SecureRequestInputBuilder
      *
      * @return array<string, mixed>|null
      */
-    private function parseJsonBody(ServerRequestInterface $request) : ?array
+    private function parseJsonBody(ServerRequestInterface $request) : array|null
     {
         $contentType = $request->getHeaderLine('Content-Type');
         if (! str_contains($contentType, 'application/json')) {

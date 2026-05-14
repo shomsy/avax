@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\SystemDesign\System\PublicSurface;
 
-use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\SystemDesign\System\Capabilities\Capacity\CapacityModel;
 use Avax\Components\SystemDesign\System\Capabilities\Consistency\ConsistencyModel;
 use Avax\Components\SystemDesign\System\Capabilities\Messaging\MessagingModel;
@@ -46,39 +45,29 @@ final readonly class SystemDesignKit
     private string $schemaDir;
 
     public function __construct(
-        private Filesystem $filesystem,
-    )
-    {
+        private NativeYamlParser $yamlParser,
+        private SchemaValidator $schemaValidator,
+    ) {
         $this->schemaDir = __DIR__ . '/../../schemas';
-    }
-
-    private function yamlParser() : NativeYamlParser
-    {
-        return new NativeYamlParser(filesystem: $this->filesystem);
-    }
-
-    private function schemaValidator() : SchemaValidator
-    {
-        return new SchemaValidator(yamlParser: $this->yamlParser());
     }
 
     private function validateCapacityModel() : ValidateCapacityModel
     {
         return new ValidateCapacityModel(
-            schemaValidator: $this->schemaValidator(),
+            schemaValidator: $this->schemaValidator,
             schemaDir      : $this->schemaDir,
-            yamlParser     : $this->yamlParser(),
+            yamlParser     : $this->yamlParser,
         );
     }
 
     private function runScenariosFlow() : RunScenarios
     {
-        return new RunScenarios(yamlParser: $this->yamlParser());
+        return new RunScenarios(yamlParser: $this->yamlParser);
     }
 
     private function runArchitectureTestsFlow() : RunArchitectureTests
     {
-        return new RunArchitectureTests(yamlParser: $this->yamlParser());
+        return new RunArchitectureTests(yamlParser: $this->yamlParser);
     }
 
     /**
@@ -453,8 +442,7 @@ final readonly class SystemDesignKit
         $capacityModel  = $capacityResult['model'];
 
         // Parse messaging if available
-        $yamlParser = $this->yamlParser();
-        $capacityConfig = $yamlParser->parseFile($capacityPath);
+        $capacityConfig = $this->yamlParser->parseFile($capacityPath);
         $messagingModel = isset($capacityConfig['messaging'])
             ? MessagingModel::fromConfig($capacityConfig)
             : null;

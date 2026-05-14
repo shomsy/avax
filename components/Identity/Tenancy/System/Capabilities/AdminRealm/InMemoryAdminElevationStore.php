@@ -14,7 +14,7 @@ final class InMemoryAdminElevationStore implements AdminElevationStoreInterface
         $this->records[$adminElevationRecord->bindingId] = $adminElevationRecord;
     }
 
-    public function find(string $bindingId) : ?AdminElevationRecord
+    public function find(string $bindingId) : AdminElevationRecord|null
     {
         return $this->records[$bindingId] ?? null;
     }

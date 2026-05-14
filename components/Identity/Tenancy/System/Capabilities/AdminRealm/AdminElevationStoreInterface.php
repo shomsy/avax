@@ -8,7 +8,7 @@ interface AdminElevationStoreInterface
 {
     public function start(AdminElevationRecord $adminElevationRecord) : void;
 
-    public function find(string $bindingId) : ?AdminElevationRecord;
+    public function find(string $bindingId) : AdminElevationRecord|null;
 
     public function revoke(string $bindingId) : void;
 

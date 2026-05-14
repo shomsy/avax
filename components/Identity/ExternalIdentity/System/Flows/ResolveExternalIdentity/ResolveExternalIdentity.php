@@ -11,7 +11,7 @@ final readonly class ResolveExternalIdentity
      *
      * @return array<string, mixed>|null
      */
-    public function resolve(string $userId, string $provider, array $links) : ?array
+    public function resolve(string $userId, string $provider, array $links) : array|null
     {
         return $links[$userId][$provider] ?? null;
     }

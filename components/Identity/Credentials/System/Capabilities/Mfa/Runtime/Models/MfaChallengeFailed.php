@@ -69,7 +69,7 @@ final class MfaChallengeFailed extends RuntimeException
         return $this->mfaChallengeFailure;
     }
 
-    public function retryAfter() : ?int
+    public function retryAfter() : int|null
     {
         return $this->retryAfter;
     }

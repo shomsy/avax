@@ -22,7 +22,7 @@ final class ExternalIdentity
     /**
      * @return array<string, mixed>|null
      */
-    public static function resolve(string $userId, string $provider) : ?array
+    public static function resolve(string $userId, string $provider) : array|null
     {
         return self::$links[$userId][$provider] ?? null;
     }

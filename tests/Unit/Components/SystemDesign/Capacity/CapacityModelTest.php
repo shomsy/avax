@@ -335,7 +335,12 @@ final class CapacityModelTest extends TestCase
 
     private function kit() : SystemDesignKit
     {
-        return new SystemDesignKit(filesystem: new Filesystem());
+        $yamlParser = new NativeYamlParser(filesystem: new Filesystem());
+
+        return new SystemDesignKit(
+            yamlParser     : $yamlParser,
+            schemaValidator: new SchemaValidator(yamlParser: $yamlParser),
+        );
     }
 
     private function newValidateCapacityModel() : ValidateCapacityModel

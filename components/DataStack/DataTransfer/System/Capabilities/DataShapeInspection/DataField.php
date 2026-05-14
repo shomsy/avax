@@ -55,7 +55,7 @@ final readonly class DataField
         return $this->hasAttribute(attributeClass: Hidden::class);
     }
 
-    public function listItemClass() : ?string
+    public function listItemClass() : string|null
     {
         $attribute = $this->firstAttribute(attributeClass: ListOf::class);
 
@@ -82,7 +82,7 @@ final readonly class DataField
         return null;
     }
 
-    public function firstAttribute(string $attributeClass) : ?object
+    public function firstAttribute(string $attributeClass) : object|null
     {
         foreach ($this->attributes as $attribute) {
             if ($attribute instanceof $attributeClass) {
@@ -93,7 +93,7 @@ final readonly class DataField
         return null;
     }
 
-    public function casterClass() : ?string
+    public function casterClass() : string|null
     {
         $attribute = $this->firstAttribute(attributeClass: CastWith::class);
 

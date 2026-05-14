@@ -37,7 +37,7 @@ final class InMemoryEmailChangeStore implements EmailChangeStoreInterface
     /**
      * @throws DateMalformedStringException
      */
-    public function consume(#[SensitiveParameter] string $token, DateTimeImmutable $now) : ?EmailChangeRecord
+    public function consume(#[SensitiveParameter] string $token, DateTimeImmutable $now) : EmailChangeRecord|null
     {
         $key    = hash(algo: 'sha256', data: $token);
         $record = $this->records[$key] ?? null;

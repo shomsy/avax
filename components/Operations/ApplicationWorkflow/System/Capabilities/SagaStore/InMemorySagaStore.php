@@ -22,7 +22,7 @@ final class InMemorySagaStore implements SagaStoreInterface
         $this->sagas[$saga->getId()] = $saga;
     }
 
-    public function findById(string $id) : ?Saga
+    public function findById(string $id) : Saga|null
     {
         return $this->sagas[$id] ?? null;
     }

@@ -33,7 +33,7 @@ final class InMemoryOidcRequestObjectStore implements OidcRequestObjectStoreInte
         return $oidcRequestObject;
     }
 
-    public function consume(string $requestUri) : ?OidcRequestObject
+    public function consume(string $requestUri) : OidcRequestObject|null
     {
         $object = $this->find(requestUri: $requestUri);
 
@@ -46,7 +46,7 @@ final class InMemoryOidcRequestObjectStore implements OidcRequestObjectStoreInte
         return $object;
     }
 
-    public function find(string $requestUri) : ?OidcRequestObject
+    public function find(string $requestUri) : OidcRequestObject|null
     {
         $object = $this->objects[$requestUri] ?? null;
 

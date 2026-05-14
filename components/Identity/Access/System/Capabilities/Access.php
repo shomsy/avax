@@ -57,7 +57,7 @@ final readonly class Access
         return $this->checkAuthentication->execute();
     }
 
-    public function user() : ?AuthenticatedUser
+    public function user() : AuthenticatedUser|null
     {
         return $this->readCurrentUser->execute();
     }
@@ -89,7 +89,7 @@ final readonly class Access
         $this->requireAdminElevation->execute();
     }
 
-    public function assessCurrentRisk(#[SensitiveParameter] ?string $ipAddress = null, string|null $userAgent = null) : ?RiskDecision
+    public function assessCurrentRisk(#[SensitiveParameter] ?string $ipAddress = null, string|null $userAgent = null) : RiskDecision|null
     {
         return $this->assessCurrentRisk->execute(ipAddress: $ipAddress, userAgent: $userAgent);
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Examples\GoldenPathRuntimeApp;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
 use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
@@ -31,6 +32,8 @@ final class WebhookIngestionApp
             clock             : new SystemClock(),
             runDoctor         : new RunDoctor(),
             handleIncomingHttp: new HandleIncomingHttp(responseFactory: new ResponseFactory()),
+            filesystem        : new Filesystem(),
+            responseFactory   : new ResponseFactory(),
         ))->withHttpRoutes(__DIR__ . '/config/routes.php');
     }
 }

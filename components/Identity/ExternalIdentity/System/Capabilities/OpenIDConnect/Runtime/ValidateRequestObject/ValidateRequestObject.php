@@ -58,7 +58,7 @@ final readonly class ValidateRequestObject
         );
     }
 
-    private function readStringValue(mixed $value) : ?string
+    private function readStringValue(mixed $value) : string|null
     {
         if (! is_string(value: $value)) {
             return null;
@@ -119,7 +119,7 @@ final readonly class ValidateRequestObject
         return $parts === false ? [] : $parts;
     }
 
-    private function normalizeCodeChallengeMethod(string|null $value) : ?PkceMethod
+    private function normalizeCodeChallengeMethod(string|null $value) : PkceMethod|null
     {
         if ($value === null || trim(string: $value) === '') {
             return null;

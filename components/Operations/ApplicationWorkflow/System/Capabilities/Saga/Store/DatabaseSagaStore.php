@@ -16,7 +16,7 @@ final readonly class DatabaseSagaStore implements SagaStoreInterface
         $stmt->execute([$sagaId, $status, json_encode($context)]);
     }
 
-    public function get(string $sagaId) : ?array
+    public function get(string $sagaId) : array|null
     {
         $stmt = $this->pdo->prepare('SELECT * FROM sagas WHERE id = ?');
         $stmt->execute([$sagaId]);

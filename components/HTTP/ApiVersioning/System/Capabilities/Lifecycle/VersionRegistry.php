@@ -69,7 +69,7 @@ final class VersionRegistry
         return isset($this->deprecatedVersions[$version]);
     }
 
-    public function sunset(int $version) : ?DateTimeInterface
+    public function sunset(int $version) : DateTimeInterface|null
     {
         return $this->deprecatedVersions[$version] ?? null;
     }

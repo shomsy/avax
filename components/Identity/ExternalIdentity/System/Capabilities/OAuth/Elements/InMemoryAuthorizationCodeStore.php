@@ -67,7 +67,7 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         return hash(algo: 'sha256', data: $plainCode);
     }
 
-    public function find(#[SensitiveParameter] string $plainCode) : ?AuthorizationCodeRecord
+    public function find(#[SensitiveParameter] string $plainCode) : AuthorizationCodeRecord|null
     {
         $codeId = $this->hashToCodeId[$this->hash(plainCode: $plainCode)] ?? null;
 

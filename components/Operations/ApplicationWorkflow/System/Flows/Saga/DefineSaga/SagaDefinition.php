@@ -155,12 +155,12 @@ final readonly class SagaDefinition implements IteratorAggregate
         return $this->validate()->errors;
     }
 
-    public function getStep(string $name) : ?SagaStepDefinition
+    public function getStep(string $name) : SagaStepDefinition|null
     {
         return $this->steps[$name] ?? null;
     }
 
-    public function getFirstStep() : ?SagaStepDefinition
+    public function getFirstStep() : SagaStepDefinition|null
     {
         $name = $this->stepOrder[0] ?? null;
 

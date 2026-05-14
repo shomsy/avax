@@ -13,7 +13,7 @@ interface MfaChallengeStoreInterface
 {
     public function issue(MfaChallengeRecord $mfaChallengeRecord) : void;
 
-    public function find(string $challengeId) : ?MfaChallengeRecord;
+    public function find(string $challengeId) : MfaChallengeRecord|null;
 
     public function save(MfaChallengeRecord $mfaChallengeRecord) : void;
 

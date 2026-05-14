@@ -36,7 +36,7 @@ class QueueFake implements QueueDriverInterface
         return 'fake-later-' . uniqid('', true);
     }
 
-    public function pop() : ?Job
+    public function pop() : Job|null
     {
         return null; // Never pop anything in fake
     }

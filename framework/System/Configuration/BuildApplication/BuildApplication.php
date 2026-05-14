@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Configuration\BuildApplication;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
+use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
@@ -21,7 +23,9 @@ final readonly class BuildApplication
             environmentName   : EnvironmentName::fromString($environment),
             clock             : new SystemClock(),
             runDoctor         : new RunDoctor(),
-            handleIncomingHttp: new HandleIncomingHttp(responseFactory: new \Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory()),
+            handleIncomingHttp: new HandleIncomingHttp(responseFactory: new ResponseFactory()),
+            filesystem        : new Filesystem(),
+            responseFactory   : new ResponseFactory(),
         );
     }
 }

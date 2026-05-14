@@ -41,7 +41,7 @@ final class CompileClassAttributes
      *
      * @param class-string $class
      */
-    public function loadMetadata(string $class) : ?CompiledAttributeMetadata
+    public function loadMetadata(string $class) : CompiledAttributeMetadata|null
     {
         $path = $this->metadataPathForClass($class);
 

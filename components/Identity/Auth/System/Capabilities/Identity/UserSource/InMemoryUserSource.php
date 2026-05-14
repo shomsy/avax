@@ -20,12 +20,12 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
     /** @var array<int, User> */
     private array $users = [];
 
-    public function findById(UserId $userId) : ?User
+    public function findById(UserId $userId) : User|null
     {
         return $this->users[$userId->value] ?? null;
     }
 
-    public function findByCredentials(#[SensitiveParameter] Credentials $credentials) : ?User
+    public function findByCredentials(#[SensitiveParameter] Credentials $credentials) : User|null
     {
         $identifier = strtolower(string: $credentials->identifier);
 
@@ -49,7 +49,7 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
         return array_any(array: $this->users, callback: static fn ($user) : bool => strtolower(string: (string) $user->getEmail()->value) === strtolower(string: $email));
     }
 
-    public function findByEmail(#[SensitiveParameter] string $email) : ?User
+    public function findByEmail(#[SensitiveParameter] string $email) : User|null
     {
         foreach ($this->users as $user) {
             if (strtolower(string: $user->getEmail()->value) === strtolower(string: $email)) {

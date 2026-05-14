@@ -144,7 +144,7 @@ final readonly class OutboundRequest
     /**
      * Get a specific header value.
      */
-    public function getHeader(string $name) : ?string
+    public function getHeader(string $name) : string|null
     {
         return $this->headers[$name] ?? null;
     }

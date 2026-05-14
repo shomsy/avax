@@ -82,7 +82,7 @@ final readonly class CsrfTokens
     /**
      * @param array<string, int> $tokens
      */
-    private function readMostRecentToken(array $tokens) : ?string
+    private function readMostRecentToken(array $tokens) : string|null
     {
         if ($tokens === []) {
             return null;

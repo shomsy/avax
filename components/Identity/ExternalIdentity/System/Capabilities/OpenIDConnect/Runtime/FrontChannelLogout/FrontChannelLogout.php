@@ -86,7 +86,7 @@ final readonly class FrontChannelLogout
         );
     }
 
-    private function resolveClientFromIdTokenHint(#[SensitiveParameter] ?string $idTokenHint) : ?OAuthClient
+    private function resolveClientFromIdTokenHint(#[SensitiveParameter] ?string $idTokenHint) : OAuthClient|null
     {
         if ($idTokenHint === null || trim(string: $idTokenHint) === '' || ! $this->oidcProvider instanceof OidcProviderInterface || ! $this->oAuthClientRegistry instanceof OAuthClientRegistryInterface) {
             return null;

@@ -10,11 +10,11 @@ interface ObjectStorageConfiguration
 
     public function getRegion() : string;
 
-    public function getEndpoint() : ?string;
+    public function getEndpoint() : string|null;
 
-    public function getAccessKey() : ?string;
+    public function getAccessKey() : string|null;
 
-    public function getSecretKey() : ?string;
+    public function getSecretKey() : string|null;
 
     public function isPublic() : bool;
 }

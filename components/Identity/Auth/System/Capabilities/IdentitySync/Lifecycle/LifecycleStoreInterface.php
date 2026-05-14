@@ -10,5 +10,5 @@ interface LifecycleStoreInterface
 {
     public function save(LifecycleRecord $lifecycleRecord) : void;
 
-    public function find(UserId $userId) : ?LifecycleRecord;
+    public function find(UserId $userId) : LifecycleRecord|null;
 }

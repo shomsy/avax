@@ -34,12 +34,12 @@ final readonly class Security
         private RollbackTenantSecurityChange     $rollbackTenantSecurityChange,
     ) {}
 
-    public function readConfiguration(string $tenantSlug) : ?TenantSecurityConfiguration
+    public function readConfiguration(string $tenantSlug) : TenantSecurityConfiguration|null
     {
         return $this->readTenantSecurityConfiguration->execute(tenantSlug: $tenantSlug);
     }
 
-    public function readChangeRequest(string $changeId) : ?TenantSecurityChangeRequest
+    public function readChangeRequest(string $changeId) : TenantSecurityChangeRequest|null
     {
         return $this->readTenantSecurityChangeRequest->execute(changeId: $changeId);
     }

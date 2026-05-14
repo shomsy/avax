@@ -11,7 +11,7 @@ final readonly class ReadTenantSecurityChangeRequest
 {
     public function __construct(private TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore) {}
 
-    public function execute(string $changeId) : ?TenantSecurityChangeRequest
+    public function execute(string $changeId) : TenantSecurityChangeRequest|null
     {
         return $this->tenantSecurityChangeRequestStore->find(changeId: $changeId);
     }

@@ -7,39 +7,17 @@ namespace Avax\Framework\System\Capabilities\Runtime\Worker;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 
-final class WorkerLoop
+final readonly class WorkerLoop
 {
-    private bool $running = false;
-
     public function __construct(
-        private readonly RuntimeInterface       $runtime,
-        private readonly WorkerRuntimeInterface $workerRuntime,
-        private readonly HandleIncomingHttp     $handleIncomingHttp,
+        private RuntimeInterface $runtime,
+        private HandleIncomingHttp $handleIncomingHttp,
     ) {
     }
 
-    public function start(): void
-    {
-        $this->running = true;
-    }
-
-    public function isRunning(): bool
-    {
-        return $this->running;
-    }
-
-    public function stop(): void
-    {
-        $this->running = false;
-    }
-
-    public function run(): WorkerLifecycle
+    public function run(WorkerRuntimeInterface $workerRuntime): WorkerLifecycle
     {
         $runtime = $this->runtime;
-        $workerRuntime = $this->workerRuntime;
-
-        $this->start();
-
         $workerLifecycle = new WorkerLifecycle(
             runtimeName: $workerRuntime->name(),
             startedAt  : $runtime->clock()->now(),
@@ -52,7 +30,6 @@ final class WorkerLoop
                 workerLifecycle: $workerLifecycle,
             );
         } finally {
-            $this->stop();
             $workerRuntime->stop();
             $runtime->stateResetRegistry()->resetAll();
             $runtime->state()->markShutdown(shutdownAt: $runtime->clock()->now());

@@ -19,7 +19,7 @@ final class InMemoryApiDocumentationSource implements ApiDocumentationSource
         $this->endpoints[] = $endpoint;
     }
 
-    public function findEndpoint(string $path, string $method) : ?EndpointDefinition
+    public function findEndpoint(string $path, string $method) : EndpointDefinition|null
     {
         foreach ($this->endpoints as $endpoint) {
             if ($endpoint->path === $path && $endpoint->method === $method) {

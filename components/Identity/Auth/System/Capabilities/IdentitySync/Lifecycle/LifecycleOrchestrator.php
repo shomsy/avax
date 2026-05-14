@@ -89,7 +89,7 @@ final readonly class LifecycleOrchestrator
         return $this->transition(userId: $userId, reason: $reason, target: LifecycleState::DEPROVISIONED, source: $lifecycleSource);
     }
 
-    public function read(UserId $userId) : ?LifecycleRecord
+    public function read(UserId $userId) : LifecycleRecord|null
     {
         return $this->lifecycleStore->find(userId: $userId);
     }

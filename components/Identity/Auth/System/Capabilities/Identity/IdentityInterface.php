@@ -22,7 +22,7 @@ interface IdentityInterface
 
     public function clear(AuthenticationContext|null $authenticationContext = null) : void;
 
-    public function sessionIdentity() : ?SessionIdentityInterface;
+    public function sessionIdentity() : SessionIdentityInterface|null;
 
-    public function jwtIdentity() : ?JwtIdentityInterface;
+    public function jwtIdentity() : JwtIdentityInterface|null;
 }

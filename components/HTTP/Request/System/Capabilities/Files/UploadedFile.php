@@ -31,7 +31,7 @@ final class UploadedFile implements UploadedFileInterface
         }
     }
 
-    public function getSize() : ?int
+    public function getSize() : int|null
     {
         return $this->size;
     }
@@ -41,12 +41,12 @@ final class UploadedFile implements UploadedFileInterface
         return $this->error;
     }
 
-    public function getClientFilename() : ?string
+    public function getClientFilename() : string|null
     {
         return $this->clientFilename;
     }
 
-    public function getClientMediaType() : ?string
+    public function getClientMediaType() : string|null
     {
         return $this->clientMediaType;
     }

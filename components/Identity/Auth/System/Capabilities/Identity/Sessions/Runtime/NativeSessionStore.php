@@ -126,7 +126,7 @@ private function readNativeSessionId() : string
         return $sessionId;
     }
 
-    public function id() : ?string
+    public function id() : string|null
     {
         $this->start();
 

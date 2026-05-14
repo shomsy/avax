@@ -90,7 +90,7 @@ final class MiddlewareBuilder
     /**
      * Get the fallback handler.
      */
-    public function fallback() : ?MiddlewareInterface
+    public function fallback() : MiddlewareInterface|null
     {
         return $this->fallback;
     }

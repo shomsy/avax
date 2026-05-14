@@ -84,7 +84,7 @@ final readonly class BeginAdminElevation
         );
     }
 
-    private function bindingId(AuthenticationContext $authenticationContext) : ?string
+    private function bindingId(AuthenticationContext $authenticationContext) : string|null
     {
         return $authenticationContext->sessionId()
             ?? $authenticationContext->accessTokenId()

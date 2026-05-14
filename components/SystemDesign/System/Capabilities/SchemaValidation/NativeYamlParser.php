@@ -270,7 +270,7 @@ final readonly class NativeYamlParser
     /**
      * Find the position of the key-separator colon (not inside a string).
      */
-    private function findKeyColon(string $line) : ?int
+    private function findKeyColon(string $line) : int|null
     {
         $pos = strpos($line, ':');
         if ($pos === false) {

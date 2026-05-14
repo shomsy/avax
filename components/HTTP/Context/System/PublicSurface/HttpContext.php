@@ -27,7 +27,7 @@ final readonly class HttpContext implements HttpContextInterface
         return new self(null, new PhpGlobalsProvider());
     }
 
-    public function request() : ?ServerRequestInterface
+    public function request() : ServerRequestInterface|null
     {
         return $this->serverRequest;
     }
@@ -75,7 +75,7 @@ final readonly class HttpContext implements HttpContextInterface
         return $server['HTTP_HOST'] ?? $server['SERVER_NAME'] ?? 'localhost';
     }
 
-    private function port() : ?int
+    private function port() : int|null
     {
         $uri = $this->serverRequest?->getUri();
         if ($uri instanceof UriInterface && ($port = $uri->getPort()) !== null) {
@@ -98,7 +98,7 @@ final readonly class HttpContext implements HttpContextInterface
         return $this->scheme() === 'https';
     }
 
-    public function clientIp() : ?string
+    public function clientIp() : string|null
     {
         $server = $this->serverParams();
 
@@ -108,14 +108,14 @@ final readonly class HttpContext implements HttpContextInterface
             ?? null;
     }
 
-    public function userAgent() : ?string
+    public function userAgent() : string|null
     {
         return $this->serverRequest?->getHeaderLine('User-Agent')
             ?? $this->serverParams()['HTTP_USER_AGENT']
             ?? null;
     }
 
-    public function authHeader() : ?string
+    public function authHeader() : string|null
     {
         return $this->serverRequest?->getHeaderLine('Authorization')
             ?? $this->serverParams()['HTTP_AUTHORIZATION']

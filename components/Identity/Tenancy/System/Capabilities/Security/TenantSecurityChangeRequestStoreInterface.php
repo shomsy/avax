@@ -8,7 +8,7 @@ interface TenantSecurityChangeRequestStoreInterface
 {
     public function save(TenantSecurityChangeRequest $tenantSecurityChangeRequest) : void;
 
-    public function find(string $changeId) : ?TenantSecurityChangeRequest;
+    public function find(string $changeId) : TenantSecurityChangeRequest|null;
 
     /**
      * @return list<TenantSecurityChangeRequest>

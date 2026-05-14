@@ -45,7 +45,7 @@ final readonly class DataShape
         );
     }
 
-    public function field(string $name) : ?DataField
+    public function field(string $name) : DataField|null
     {
         return $this->fields[$name] ?? null;
     }

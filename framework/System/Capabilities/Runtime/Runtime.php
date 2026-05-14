@@ -94,12 +94,13 @@ final readonly class Runtime implements RuntimeInterface
 
     public function runWorker(WorkerRuntimeInterface $workerRuntime): WorkerLifecycle
     {
+        // WorkerLoop is an internal capability owned by Runtime — it only uses
+        // Runtime's own state and the already-injected HandleIncomingHttp.
         $workerLoop = new WorkerLoop(
-            runtime           : $this,
-            workerRuntime     : $workerRuntime,
+            runtime: $this,
             handleIncomingHttp: $this->handleIncomingHttp,
         );
 
-        return $workerLoop->run();
+        return $workerLoop->run(workerRuntime: $workerRuntime);
     }
 }

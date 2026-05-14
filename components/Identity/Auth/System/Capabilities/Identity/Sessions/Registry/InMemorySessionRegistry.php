@@ -21,7 +21,7 @@ final class InMemorySessionRegistry implements PruneExpiredSessionsInterface, Se
         $this->records[$sessionRecord->sessionId] = $sessionRecord;
     }
 
-    public function find(#[SensitiveParameter] string $sessionId) : ?SessionRecord
+    public function find(#[SensitiveParameter] string $sessionId) : SessionRecord|null
     {
         return $this->records[$sessionId] ?? null;
     }

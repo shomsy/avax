@@ -17,7 +17,7 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
         $this->credentials[$passkeyCredential->credentialId] = $passkeyCredential;
     }
 
-    public function find(#[SensitiveParameter] string $credentialId) : ?PasskeyCredential
+    public function find(#[SensitiveParameter] string $credentialId) : PasskeyCredential|null
     {
         return $this->credentials[$credentialId] ?? null;
     }

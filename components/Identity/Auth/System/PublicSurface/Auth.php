@@ -31,7 +31,7 @@ final readonly class Auth implements AuthInterface
         $this->identity->logout();
     }
 
-    public function user() : ?User
+    public function user() : User|null
     {
         $entity = $this->identity->authentication()->user();
 

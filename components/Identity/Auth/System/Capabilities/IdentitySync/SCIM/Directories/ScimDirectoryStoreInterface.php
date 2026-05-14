@@ -10,7 +10,7 @@ interface ScimDirectoryStoreInterface
 {
     public function save(ScimDirectory $scimDirectory) : void;
 
-    public function find(string $directoryId) : ?ScimDirectory;
+    public function find(string $directoryId) : ScimDirectory|null;
 
     /**
      * @return list<ScimDirectory>

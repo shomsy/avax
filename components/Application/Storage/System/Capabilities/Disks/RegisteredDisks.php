@@ -16,7 +16,7 @@ final class RegisteredDisks
         $this->disks[$name->name] = $disk;
     }
 
-    public function get(string $name) : ?Disk
+    public function get(string $name) : Disk|null
     {
         return $this->disks[$name] ?? null;
     }

@@ -38,13 +38,13 @@ interface OAuthClientRegistryInterface
 
     public function replace(OAuthClient $oAuthClient) : void;
 
-    public function deactivate(string $clientId) : ?OAuthClient;
+    public function deactivate(string $clientId) : OAuthClient|null;
 
-    public function approve(string $clientId, string $approvedBy) : ?OAuthClient;
+    public function approve(string $clientId, string $approvedBy) : OAuthClient|null;
 
-    public function rotateSecret(string $clientId) : ?RegisteredOAuthClient;
+    public function rotateSecret(string $clientId) : RegisteredOAuthClient|null;
 
-    public function find(string $clientId) : ?OAuthClient;
+    public function find(string $clientId) : OAuthClient|null;
 
     /**
      * @return list<OAuthClient>

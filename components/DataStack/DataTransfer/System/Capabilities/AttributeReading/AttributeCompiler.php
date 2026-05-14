@@ -110,7 +110,7 @@ final class AttributeCompiler
      * @template T of object
      * @param class-string<T> $class
      */
-    public function resolve(string $class) : ?CompiledAttributeMetadata
+    public function resolve(string $class) : CompiledAttributeMetadata|null
     {
         $cacheKey = $class . ':' . $this->configHash;
 

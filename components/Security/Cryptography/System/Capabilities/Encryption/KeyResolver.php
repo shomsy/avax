@@ -60,7 +60,7 @@ final class KeyResolver
      *
      * @return EncryptionKey|null The encryption key or null if not found
      */
-    public function getKeyByVersion(string $version) : ?EncryptionKey
+    public function getKeyByVersion(string $version) : EncryptionKey|null
     {
         return $this->keys[$version] ?? null;
     }

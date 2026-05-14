@@ -143,7 +143,7 @@ final readonly class ClientResponse
     /**
      * Get the response content type.
      */
-    public function getContentType() : ?string
+    public function getContentType() : string|null
     {
         $contentType = $this->getHeaderLine('Content-Type');
         if ($contentType === '') {

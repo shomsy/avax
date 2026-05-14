@@ -39,7 +39,7 @@ final readonly class StorageConfiguration
     /**
      * @return array{driver: string, root?: string}|null
      */
-    public function getDiskConfig(string $name) : ?array
+    public function getDiskConfig(string $name) : array|null
     {
         return $this->disks[$name] ?? null;
     }

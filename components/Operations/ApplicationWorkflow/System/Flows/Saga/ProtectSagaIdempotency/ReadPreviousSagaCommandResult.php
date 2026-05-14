@@ -12,7 +12,7 @@ final readonly class ReadPreviousSagaCommandResult
     /**
      * @param array<string, SagaCommandResult> $results
      */
-    public function read(array $results, SagaCommandKey $sagaCommandKey) : ?SagaCommandResult
+    public function read(array $results, SagaCommandKey $sagaCommandKey) : SagaCommandResult|null
     {
         return $results[$sagaCommandKey->value] ?? null;
     }

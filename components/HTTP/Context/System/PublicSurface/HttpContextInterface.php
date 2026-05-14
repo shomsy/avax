@@ -17,7 +17,7 @@ interface HttpContextInterface
     /**
      * Get the underlying PSR-7 server request (if available).
      */
-    public function request() : ?ServerRequestInterface;
+    public function request() : ServerRequestInterface|null;
 
     /**
      * Get the request scheme (http or https).
@@ -42,17 +42,17 @@ interface HttpContextInterface
     /**
      * Get the client IP address (supports forwarded headers).
      */
-    public function clientIp() : ?string;
+    public function clientIp() : string|null;
 
     /**
      * Get the User-Agent header value.
      */
-    public function userAgent() : ?string;
+    public function userAgent() : string|null;
 
     /**
      * Get the Authorization header value.
      */
-    public function authHeader() : ?string;
+    public function authHeader() : string|null;
 
     /**
      * Get mockable access to $_COOKIE.

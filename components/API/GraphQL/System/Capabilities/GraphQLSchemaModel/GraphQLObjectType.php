@@ -34,7 +34,7 @@ final readonly class GraphQLObjectType
         $this->fields = $indexed;
     }
 
-    public function findField(string $name) : ?GraphQLField
+    public function findField(string $name) : GraphQLField|null
     {
         return $this->fields[$name] ?? null;
     }

@@ -35,7 +35,7 @@ final class InMemoryEmailVerificationStore implements EmailVerificationStoreInte
         );
     }
 
-    public function consume(#[SensitiveParameter] string $token, DateTimeImmutable $now) : ?UserId
+    public function consume(#[SensitiveParameter] string $token, DateTimeImmutable $now) : UserId|null
     {
         $key    = hash(algo: 'sha256', data: $token);
         $record = $this->records[$key] ?? null;

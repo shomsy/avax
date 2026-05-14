@@ -12,6 +12,7 @@ use Avax\Framework\System\Capabilities\Runtime\Runtime;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeState;
 use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
+use Avax\Framework\System\Capabilities\StateReset\StaticStateReset;
 use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
 use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Flows\ResetApplicationState\ResetApplicationState;
@@ -65,6 +66,7 @@ final readonly class CreateApplication
 
         $stateResetRegistry->register(name: 'request-scopes', state: $requestScopeStore);
         $stateResetRegistry->register(name: 'runtime-context', state: $runtimeContext);
+        $stateResetRegistry->register(name: 'static-state', state: new StaticStateReset());
 
         $runtimeState->markBooted(bootedAt: $clock->now());
 
@@ -112,6 +114,7 @@ final readonly class CreateApplication
 
         $stateResetRegistry->register(name: 'request-scopes', state: $requestScopeStore);
         $stateResetRegistry->register(name: 'runtime-context', state: $runtimeContext);
+        $stateResetRegistry->register(name: 'static-state', state: new StaticStateReset());
 
         $runtimeState->markBooted(bootedAt: $clock->now());
 

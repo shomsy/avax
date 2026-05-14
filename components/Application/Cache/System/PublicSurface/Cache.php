@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\PublicSurface;
 
-use Avax\Components\Application\Cache\System\PublicSurface\CacheContract;
+use Avax\Components\Application\Cache\System\Capabilities\HealthCheck\CheckCacheHealth;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\InvalidTarget;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\CompiledCacheTarget;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\RuntimeCacheTarget;
+use Avax\Framework\System\Capabilities\Health\Foundation\HealthReport;
 use DateInterval;
 
 /**
@@ -100,5 +101,10 @@ final class Cache
         }
 
         return self::default();
+    }
+
+    public static function check() : HealthReport
+    {
+        return (new CheckCacheHealth())->check();
     }
 }

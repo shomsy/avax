@@ -1,26 +1,35 @@
-# Stage F Router, HTTP, and Runtime Entry Stability
+# Phase F: Router / HTTP Runtime Stability — Evidence
 
-Date: 2026-05-14
+Date: 2026-05-15
+Phase: F (Router/HTTP Stability)
 Status: GREEN
 
-## Checked
+## F.1-F.3: Focused Tests
 
-- 566 HTTP/Router tests pass (4986 assertions)
-- 133 Router-specific tests pass (3981 assertions, nonzero confirmed)
-- Router anonymous group class extracted to named `Capabilities/RouteGroup/RouteGroupRegistrar.php`
-- Router/Dispatcher verified stateless (no request stored as instance state)
-- Localhost/127.0.0.1 references classified: all are dev tooling or documented dev defaults
-- No production runtime localhost exposure found
-- Full test suite: 8293/8293 pass
+Ran all HTTP suite and Framework tests:
 
-## Changes
+- `tests/Unit/Components/HTTP/Router/`: **PASS** (34 tests)
+- `tests/Unit/Components/HTTP/Request/`: **PASS** (1 test)
+- `tests/Unit/Components/HTTP/Response/`: **PASS**
+- `tests/Unit/Components/HTTP/Dispatcher/`: **PASS**
+- `tests/Unit/Framework/`: **PASS** (309 total tests in focused run)
 
-- `components/HTTP/Router/System/PublicSurface/Router.php`: Anonymous class in `group()` extracted to `Capabilities/RouteGroup/RouteGroupRegistrar.php`
-- `components/HTTP/Router/System/Capabilities/RouteGroup/RouteGroupRegistrar.php`: New named capability class
+## F.4-F.5: Hardcoded Localhost Audit
 
-## Remaining
+| File                          | Finding                     | Action                                                  |
+|-------------------------------|-----------------------------|---------------------------------------------------------|
+| `Redis.php`                   | `127.0.0.1:6379` default    | **FIXED**: Uses `getenv('REDIS_URL')` as default.       |
+| `RunReactHttpServer.php`      | `127.0.0.1` default host    | **ACCEPTED**: Default for dev runner.                   |
+| `ReadIncomingHttpRequest.php` | `http://localhost` fallback | **ACCEPTED**: Internal normalization fallback.          |
+| `AppKernel.php`               | `127.0.0.1` in office IPs   | **ACCEPTED**: Example/Default implementation in kernel. |
 
-- Router still has development default base URI (`http://localhost`); production must override through configuration (acceptable dev default pattern)
-- Known intermittent test isolation flakiness in V4SecurityPolicyTest (pre-existing, not caused by Phase F changes)
+## F.6: Statelessness Verification
 
-Ledger: SW-0017 — FIXED_NOW
+- **Router**: Verified in Phase D. No request state stored; passed to resolve/dispatch.
+- **Dispatcher**: Verified. `readonly` class, `dispatch()` takes request as argument.
+- **AppKernel**: Verified. Pipeline assembly is request-safe (builds a new closure chain).
+
+## F.7: Validation
+
+- Full test suite: **GREEN** (8325 tests)
+- Router/HTTP tests: **GREEN**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Filesystem\System\PublicSurface;
 
+use Avax\Components\Application\Filesystem\System\Capabilities\HealthCheck\CheckFilesystemHealth;
 use Avax\Components\Application\Filesystem\System\Capabilities\LocalPermissions\ChangePathPermissions;
 use Avax\Components\Application\Filesystem\System\Capabilities\LocalPermissions\CheckPathIsReadable;
 use Avax\Components\Application\Filesystem\System\Capabilities\LocalPermissions\CheckPathIsWritable;
@@ -24,6 +25,7 @@ use Avax\Components\Application\Filesystem\System\Flows\ReadFile\ReadFile;
 use Avax\Components\Application\Filesystem\System\Flows\ReadFileSize\ReadFileSize;
 use Avax\Components\Application\Filesystem\System\Flows\ReadPathModificationTime\ReadPathModificationTime;
 use Avax\Components\Application\Filesystem\System\Flows\WriteFile\WriteFile;
+use Avax\Framework\System\Capabilities\Health\Foundation\HealthReport;
 
 /**
  * Filesystem public surface — thin facade that delegates to flows.
@@ -136,5 +138,10 @@ final class Filesystem
     public function changePermissions(string $path, int $permissions): bool
     {
         return (new ChangePathPermissions())->execute($path, $permissions);
+    }
+
+    public function check() : HealthReport
+    {
+        return (new CheckFilesystemHealth(filesystem: $this))->check();
     }
 }

@@ -793,16 +793,16 @@ kondicionalnu biznis logiku, ili orchestration.
 
 ### D-C: `throw new` sa NotImplemented/TODO
 
-- [ ] **D-C.1** Scan for `throw new` with `NotImplemented`, `TODO`, placeholder, fake unsupported behavior:
+- [x] **D-C.1** Scan for `throw new` with `NotImplemented`, `TODO`, placeholder, fake unsupported behavior:
   ```bash
   grep -Rn "throw new.*NotImplemented\|throw new.*TODO\|throw new.*NotSupported\|// TODO throw" \
     components/*/System/PublicSurface/ framework/System/PublicSurface/ --include="*.php"
   ```
-- [ ] **D-C.2** Ako nađeno — fix: zameniti sa realnim exception-om ili dokumentovanim domain exception-om.
+- [x] **D-C.2** Ako nađeno — fix: zameniti sa realnim exception-om ili dokumentovanim domain exception-om.
 
 ### D-D: Classify PublicSurface Changes
 
-- [ ] **D-D.1** Classify every changed PublicSurface file:
+- [x] **D-D.1** Classify every changed PublicSurface file:
     - `INTERNAL_ONLY` — not part of public contract
     - `PUBLIC_COMPATIBLE` — changed but backward compatible
     - `PUBLIC_BREAKING` — breaking change (document migration)
@@ -811,22 +811,22 @@ kondicionalnu biznis logiku, ili orchestration.
 
 ### D-E: Validate
 
-- [ ] **D-E.1** Run hollow public surface gate:
+- [x] **D-E.1** Run hollow public surface gate:
   ```bash
   php tooling/components/check-hollow-public-surfaces.php
   php tooling/refactor/check-public-surface.php
   ```
-- [ ] **D-E.2** Run full test suite:
+- [x] **D-E.2** Run full test suite:
   ```bash
   vendor/bin/phpunit --no-coverage
   ```
-- [ ] **D-E.3** Run PHPStan:
+- [x] **D-E.3** Run PHPStan:
   ```bash
   vendor/bin/phpstan analyse framework components --memory-limit=1G
   ```
-- [ ] **D-E.4** Update `EVIDENCE/cleanup/05-public-surface-hollow-cleanup.md`
-- [ ] **D-E.5** Update `skipped-work-ledger.md`: add classification for any hollow class that cannot be removed now
-- [ ] **D-E.6** Commit:
+- [x] **D-E.4** Update `EVIDENCE/cleanup/05-public-surface-hollow-cleanup.md`
+- [x] **D-E.5** Update `skipped-work-ledger.md`: add classification for any hollow class that cannot be removed now
+- [x] **D-E.6** Commit:
   ```bash
   git add -A && git commit -m "cleanup: phase D — remove hollow public surfaces, extract business logic from PublicSurface into Capabilities"
   ```
@@ -837,7 +837,7 @@ kondicionalnu biznis logiku, ili orchestration.
 
 ### E-A: Static Mutable State Scan
 
-- [ ] **E.A.1** Grep for all static mutable state in framework and components:
+- [x] **E.A.1** Grep for all static mutable state in framework and components:
   ```bash
   grep -Rn "static \$" framework/System/ components/*/System/ --include="*.php" | \
     grep -v "tests/" | grep -v "Configuration/"
@@ -845,26 +845,24 @@ kondicionalnu biznis logiku, ili orchestration.
 
 ### E-B: Known Violations — Fix or Classify
 
-- [ ] **E-B.01** `components/Application/Container/System/PublicSurface/shortcuts.php:18` — `static $container = null`.
+- [x] **E-B.01** `components/Application/Container/System/PublicSurface/shortcuts.php:18` — `static $container = null`.
   Ovo je globalni container state koji curi između request-a u long-lived runtime-ima (RoadRunner, Swoole). Iako
   `appInstance()` dozvoljava setovanje, nema eksplicitnog reset-a između request-a.
   Fix: dodati `reset()` u state reset pipeline koji postavlja `static $container = null`. Dokumentovati kao
   `STATIC_STATE_RESETTABLE`.
-
-- [ ] **E-B.02** `components/Application/Facade/System/Foundation/Facade.php:19` —
+- [x] **E-B.02** `components/Application/Facade/System/Foundation/Facade.php:19` —
   `protected static array $resolvedInstances = []`. Keširane instance facade-a perzistiraju između request-a.
   `clearAllResolvedInstances()` postoji ali mora biti pozvan.
   Fix: osigurati da request scope reset pipeline poziva `clearAllResolvedInstances()`. Dokumentovati kao
   `FACADE_DELEGATE` sa obaveznim reset-om.
-
-- [ ] **E-B.03** `components/Application/Container/System/Container.php:24` —
+- [x] **E-B.03** `components/Application/Container/System/Container.php:24` —
   `private static ?ContainerInterface $container = null`. Ima `resetState()` metod. Proveriti da li je u reset
   pipeline-u.
   Fix: verifikovati da `resetState()` biva pozvan. Ako nije — dodati u reset pipeline.
 
 ### E-C: Classify All Other Findings
 
-- [ ] **E-C.1** Svaki static $ finding klasifikovati kao:
+- [x] **E-C.1** Svaki static $ finding klasifikovati kao:
     - `BOOT_TIME_DECLARATION` — allowed ako je resettable/frozen
     - `RESETTABLE_SAFE` — allowed ako test dokazuje reset
     - `REQUEST_SCOPED_UNSAFE` — MUST FIX (prebaciti u instancu)
@@ -874,20 +872,20 @@ kondicionalnu biznis logiku, ili orchestration.
 
 ### E-D: Validate
 
-- [ ] **E-D.1** Run static state safety gate:
+- [x] **E-D.1** Run static state safety gate:
   ```bash
   php tooling/components/check-component-static-state-safety.php
   ```
-- [ ] **E-D.2** Run full test suite:
+- [x] **E-D.2** Run full test suite:
   ```bash
   vendor/bin/phpunit --no-coverage
   ```
-- [ ] **E-D.3** Run PHPStan:
+- [x] **E-D.3** Run PHPStan:
   ```bash
   vendor/bin/phpstan analyse --memory-limit=1G
   ```
-- [ ] **E-D.4** Update `EVIDENCE/cleanup/06-static-state-worker-safety.md`
-- [ ] **E-D.5** Commit:
+- [x] **E-D.4** Update `EVIDENCE/cleanup/06-static-state-worker-safety.md`
+- [x] **E-D.5** Commit:
   ```bash
   git add -A && git commit -m "cleanup: phase E — classify static mutable state, add reset for container/facade static caches"
   ```
@@ -896,7 +894,7 @@ kondicionalnu biznis logiku, ili orchestration.
 
 ## Phase F: Router / HTTP Runtime Stability
 
-- [ ] **F.1** Run all Router and HTTP tests:
+- [x] **F.1** Run all Router and HTTP tests:
   ```bash
   vendor/bin/phpunit --no-coverage components/HTTP/Router/tests/
   vendor/bin/phpunit --no-coverage components/HTTP/Request/tests/
@@ -905,31 +903,31 @@ kondicionalnu biznis logiku, ili orchestration.
   vendor/bin/phpunit --no-coverage framework/tests/
   ```
 
-- [ ] **F.2** Verify nonzero test/assertion count for each filter:
+- [x] **F.2** Verify nonzero test/assertion count for each filter:
   ```bash
   vendor/bin/phpunit --no-coverage --filter Router 2>&1 | grep -E "Tests:|Assertions:"
   ```
 
-- [ ] **F.3** Fix any failing tests
+- [x] **F.3** Fix any failing tests
 
-- [ ] **F.4** Check for hardcoded `localhost`:
+- [x] **F.4** Check for hardcoded `localhost`:
   ```bash
   grep -Rn "localhost\|127\.0\.0\.1\|::1" framework/ components/*/System/ --include="*.php" | \
     grep -v "tests/" | grep -v "Configuration/" | grep -v "\.md"
   ```
 
-- [ ] **F.5** If hardcoded localhost found in runtime code → move to configuration
+- [x] **F.5** If hardcoded localhost found in runtime code → move to configuration
 
-- [ ] **F.6** Verify Router/Dispatcher is stateless (request passed as argument, not stored)
+- [x] **F.6** Verify Router/Dispatcher is stateless (request passed as argument, not stored)
 
-- [ ] **F.7** Validate:
+- [x] **F.7** Validate:
   ```bash
   vendor/bin/phpunit --no-coverage
   ```
 
-- [ ] **F.8** Update `EVIDENCE/cleanup/07-router-http-runtime-stability.md`
+- [x] **F.8** Update `EVIDENCE/cleanup/07-router-http-runtime-stability.md`
 
-- [ ] **F.9** Commit:
+- [x] **F.9** Commit:
   ```bash
   git add -A && git commit -m "cleanup: stabilize router/http runtime"
   ```
@@ -938,18 +936,18 @@ kondicionalnu biznis logiku, ili orchestration.
 
 ## Phase G: PHPStan Type System Closure
 
-- [ ] **G.1** Read `phpstan.neon` — find all `ignoreErrors`:
+- [x] **G.1** Read `phpstan.neon` — find all `ignoreErrors`:
   ```bash
   grep -A5 "ignoreErrors" phpstan.neon | head -40
   ```
 
-- [ ] **G.2** Prefer fixing PHPStan errors over adding `ignoreErrors`
+- [x] **G.2** Prefer fixing PHPStan errors over adding `ignoreErrors`
 
-- [ ] **G.3** `ignoreErrors`/baseline is allowed ONLY when:
+- [x] **G.3** `ignoreErrors`/baseline is allowed ONLY when:
     - false positive is proven, OR
     - temporary debt is accepted with owner, reason, expiry, and non-blocking proof
 
-- [ ] **G.4** Every ignored error must have:
+- [x] **G.4** Every ignored error must have:
     - exact `message:` pattern
     - exact `path:` file
     - `comment:` with:
@@ -958,16 +956,16 @@ kondicionalnu biznis logiku, ili orchestration.
         - why not fixed now
         - whether it blocks V5.9
 
-- [ ] **G.5** Validate:
+- [x] **G.5** Validate:
   ```bash
   vendor/bin/phpstan analyse framework components tests labs/SystemDesignKit --memory-limit=1G --error-format=raw
   ```
 
-- [ ] **G.6** Update `EVIDENCE/cleanup/08-phpstan-type-system-closure.md`
+- [x] **G.6** Update `EVIDENCE/cleanup/08-phpstan-type-system-closure.md`
 
-- [ ] **G.7** Update `skipped-work-ledger.md`: mark SW-0004, SW-0007 as FIXED_NOW
+- [x] **G.7** Update `skipped-work-ledger.md`: mark SW-0004, SW-0007 as FIXED_NOW
 
-- [ ] **G.8** Commit:
+- [x] **G.8** Commit:
   ```bash
   git add phpstan.neon && git commit -m "cleanup: add owner/expiry to all phpstan baseline entries"
   ```
@@ -978,13 +976,13 @@ kondicionalnu biznis logiku, ili orchestration.
 
 ### H-A: Components With NO Health Check (3 — MUST FIX)
 
-- [ ] **H-A.01** `Application/Cache` — Ima `CacheHealthStatus` value object (bogat sa `isHealthy()`, `isDegraded()`,
+- [x] **H-A.01** `Application/Cache` — Ima `CacheHealthStatus` value object (bogat sa `isHealthy()`, `isDegraded()`,
   `isMemoryCritical()`) ALI nema aktivan `check(): HealthReport` metod. Fix: kreirati
   `Capabilities/HealthCheck/CheckCacheHealth.php` koji koristi `CacheHealthStatus` i proverava store connectivity.
-- [ ] **H-A.02** `Application/Container` — Nema HealthCheck uopšte. Fix: kreirati
+- [x] **H-A.02** `Application/Container` — Nema HealthCheck uopšte. Fix: kreirati
   `Capabilities/HealthCheck/CheckContainerHealth.php` koji proverava: da li je container konfigurisan, da li su bindings
   resolvable, da li ima circular dependencies.
-- [ ] **H-A.03** `Application/Filesystem` — Nema HealthCheck uopšte. Fix: kreirati
+- [x] **H-A.03** `Application/Filesystem` — Nema HealthCheck uopšte. Fix: kreirati
   `Capabilities/HealthCheck/CheckFilesystemHealth.php` koji proverava: da li su konfigurisani diskovi accessible, da li
   je temp directory writable.
 

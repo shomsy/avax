@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\PublicSurface;
 
+use Avax\Components\Application\Container\System\Capabilities\HealthCheck\CheckContainerHealth;
+use Avax\Framework\System\Capabilities\Health\Foundation\HealthReport;
 use Avax\Framework\System\Capabilities\StateReset\ResettableState;
 use RuntimeException;
 
@@ -27,8 +29,13 @@ class Container implements ResettableState
 
     public function resetState(): void
     {
-        self::$container = null;
+        self::reset();
         $this->engine = null;
+    }
+
+    public static function reset() : void
+    {
+        self::$container = null;
     }
 
     public static function setContainer(ContainerInterface $container): void
@@ -123,6 +130,11 @@ class Container implements ResettableState
     public static function flush(): void
     {
         self::getContainer()->flush();
+    }
+
+    public static function check() : HealthReport
+    {
+        return (new CheckContainerHealth())->check();
     }
 
     private static function getContainer(): ContainerInterface

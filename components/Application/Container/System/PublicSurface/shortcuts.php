@@ -17,9 +17,13 @@ if (! function_exists('appInstance')) {
     {
         static $container = null;
 
-        if ($instance instanceof ContainerInterface) {
+        if (func_num_args() > 0) {
             $container = $instance;
-            Container::setContainer($instance);
+            if ($instance instanceof ContainerInterface) {
+                Container::setContainer($instance);
+            } else {
+                Container::reset();
+            }
         }
 
         return $container;
@@ -86,7 +90,7 @@ if (! function_exists('resetAppInstance')) {
     function resetAppInstance(): void
     {
         appInstance(null);
-        Container::resetState();
+        Container::reset();
     }
 }
 

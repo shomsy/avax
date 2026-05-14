@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Flows\RunDoctor;
 
+use Avax\Framework\System\Capabilities\Health\Foundation\HealthStatus;
 use Avax\Framework\System\Capabilities\RuntimeSafety\RuntimeSafety;
 use Avax\Framework\System\Capabilities\RuntimeSafety\RuntimeSafetyFinding;
 

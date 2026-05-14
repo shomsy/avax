@@ -60,6 +60,8 @@ Scan result: CLEAN — no violations in components/*/System/PublicSurface/ or fr
 | `Router.php`        | PUBLIC_COMPATIBLE | Interface unchanged, behavior now delegates to capabilities |
 | `GraphQLSchema.php` | PUBLIC_COMPATIBLE | Public API unchanged, internals extracted                   |
 | `Workflow.php`      | PUBLIC_BREAKING   | Constructor requires SagaExecutor now (was optional)        |
+| `AvaxCache.php`     | PUBLIC_BREAKING   | Constructor requires explicit capability injection now      |
+| `MessageBus.php`    | PUBLIC_BREAKING   | Switched from static-only to DI-managed singleton instance  |
 
 ## D-E: Validation
 

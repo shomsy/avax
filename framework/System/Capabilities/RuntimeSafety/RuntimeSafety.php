@@ -16,9 +16,10 @@ use Avax\Framework\System\Capabilities\RuntimeSafety\StateLeakDetection\StateLea
 final readonly class RuntimeSafety
 {
     public function __construct(
-        private readonly StateLeakDetector  $stateLeakDetector,
-        private readonly StaticStateScanner $staticStateScanner,
-        private readonly ResetVerifier      $resetVerifier,
+        private readonly StateLeakDetector      $stateLeakDetector,
+        private readonly StaticStateScanner     $staticStateScanner,
+        private readonly ResetVerifier          $resetVerifier,
+        private readonly ComponentHealthScanner $componentHealthScanner,
     ) {}
 
     /**
@@ -29,9 +30,10 @@ final readonly class RuntimeSafety
     public static function create() : self
     {
         return new self(
-            stateLeakDetector : new StateLeakDetector(),
-            staticStateScanner: new StaticStateScanner(),
-            resetVerifier     : new ResetVerifier(),
+            stateLeakDetector     : new StateLeakDetector(),
+            staticStateScanner    : new StaticStateScanner(),
+            resetVerifier         : new ResetVerifier(),
+            componentHealthScanner: new ComponentHealthScanner(),
         );
     }
 
@@ -56,8 +58,9 @@ final readonly class RuntimeSafety
 
         $findings = [...$findings, ...$this->stateLeakDetector->detect()];
         $findings = [...$findings, ...$this->staticStateScanner->scan()];
+        $findings = [...$findings, ...$this->resetVerifier->verify()];
 
-        return [...$findings, ...$this->resetVerifier->verify()];
+        return [...$findings, ...$this->componentHealthScanner->scan()];
     }
 
     public function leakDetector(): StateLeakDetector

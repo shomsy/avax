@@ -17,8 +17,9 @@ final readonly class Redis implements State
 
     private string $prefix;
 
-    public function __construct(string $url = '127.0.0.1:6379')
+    public function __construct(string|null $url = null)
     {
+        $url ??= getenv('REDIS_URL') ?: '127.0.0.1:6379';
         $parsed = parse_url($url);
         $host = $parsed['host'] ?? '127.0.0.1';
         $port = (int) ($parsed['port'] ?? 6379);

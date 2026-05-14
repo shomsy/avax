@@ -10,6 +10,7 @@ use Avax\Framework\System\Capabilities\Runtime\Runtime;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeState;
 use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
+use Avax\Framework\System\Capabilities\StateReset\StaticStateReset;
 use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
 use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 
@@ -32,6 +33,7 @@ final readonly class BuildApplicationState
 
         $stateResetRegistry->register(name: 'request-scopes', state: $requestScopeStore);
         $stateResetRegistry->register(name: 'runtime-context', state: $runtimeContext);
+        $stateResetRegistry->register(name: 'static-state', state: new StaticStateReset());
 
         foreach ($builder->componentProviders() as $componentProvider) {
             $componentRegistry->registerProvider(provider: $componentProvider);

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\Configuration;
 
-use Avax\Components\HTTP\Middleware\System\Capabilities\Pipeline\MiddlewarePipeline;
+use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\MiddlewarePipeline;
 use Avax\Components\HTTP\System\PublicSurface\Http;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentProviderInterface;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;

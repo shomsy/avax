@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\DataStack\Database\Lifecycle;
 
-use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ConnectionContracts\DatabaseConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\DTO\ExecutionResult;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Execution\ExecutorInterface;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Execution\QueryOrchestrator;
@@ -13,29 +13,30 @@ use Avax\Components\DataStack\Database\System\Capabilities\Transactions\RunTrans
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\CompiledDatabaseLifecycleRegistry;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\EntityLifecyclePhase;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\EntityLifecycleRegistration;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\AfterCommit;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\AfterRollback;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntityCreated;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntityCreating;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntityDeleted;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntityDeleting;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntitySaved;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntitySaving;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntityUpdated;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntityUpdating;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\FailedToSave;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\QueryExecuted;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\QueryExecuting;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\QueryFailed;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\TransactionBeginning;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\TransactionCommitted;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\TransactionRolledBack;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\GlobalDatabaseLifecycleState;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\AfterCommit;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\AfterRollback;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\EntityCreated;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\EntityCreating;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\EntityDeleted;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\EntityDeleting;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\EntitySaved;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\EntitySaving;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\EntityUpdated;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\EntityUpdating;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\FailedToSave;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\QueryExecuted;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\QueryExecuting;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\QueryFailed;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\TransactionBeginning;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\TransactionCommitted;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\TransactionRolledBack;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\QueryLifecyclePhase;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\QueryLifecycleRegistration;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\TransactionLifecyclePhase;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\TransactionLifecycleRegistration;
+use Override;
 use PDO;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\GlobalDatabaseLifecycleState;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -119,9 +120,9 @@ final class DatabaseLifecycleIntegrationTest extends TestCase
         $registry->freeze();
 
         $failingExecutor = new class implements ExecutorInterface {
-            #[\Override] public function query(string $sql, array $bindings = [], ?ExecutionScope $executionScope = null): array { throw new RuntimeException('Query failed'); }
-            #[\Override] public function execute(string $sql, ?array $bindings = [], ?ExecutionScope $executionScope = null): ExecutionResult { throw new RuntimeException('Execute failed'); }
-            #[\Override] public function getDriverName(): string { return 'sqlite'; }
+            #[Override] public function query(string $sql, array $bindings = [], ?ExecutionScope $executionScope = null): array { throw new RuntimeException('Query failed'); }
+            #[Override] public function execute(string $sql, ?array $bindings = [], ?ExecutionScope $executionScope = null): ExecutionResult { throw new RuntimeException('Execute failed'); }
+            #[Override] public function getDriverName(): string { return 'sqlite'; }
         };
 
         $orchestrator = new QueryOrchestrator(
@@ -152,12 +153,12 @@ final class DatabaseLifecycleIntegrationTest extends TestCase
         $registry->freeze();
 
         $slowExecutor = new class implements ExecutorInterface {
-            #[\Override] public function query(string $sql, array $bindings = [], ?ExecutionScope $executionScope = null): array {
+            #[Override] public function query(string $sql, array $bindings = [], ?ExecutionScope $executionScope = null): array {
                 usleep(2000); // 2ms
                 return [['id' => 1]];
             }
-            #[\Override] public function execute(string $sql, ?array $bindings = [], ?ExecutionScope $executionScope = null): ExecutionResult { return ExecutionResult::success(affectedRows: 1); }
-            #[\Override] public function getDriverName(): string { return 'sqlite'; }
+            #[Override] public function execute(string $sql, ?array $bindings = [], ?ExecutionScope $executionScope = null): ExecutionResult { return ExecutionResult::success(affectedRows: 1); }
+            #[Override] public function getDriverName(): string { return 'sqlite'; }
         };
 
         $orchestrator = new QueryOrchestrator(
@@ -382,12 +383,12 @@ final class DatabaseLifecycleIntegrationTest extends TestCase
     private function createOrchestratorWithRegistry(CompiledDatabaseLifecycleRegistry $registry): QueryOrchestrator
     {
         $executor = new class implements ExecutorInterface {
-            #[\Override] public function query(string $sql, array $bindings = [], ?ExecutionScope $executionScope = null): array {
+            #[Override] public function query(string $sql, array $bindings = [], ?ExecutionScope $executionScope = null): array {
                 usleep(100); // Tiny delay so durationMs > 0
                 return [['id' => 1]];
             }
-            #[\Override] public function execute(string $sql, ?array $bindings = [], ?ExecutionScope $executionScope = null): ExecutionResult { return ExecutionResult::success(affectedRows: 1); }
-            #[\Override] public function getDriverName(): string { return 'sqlite'; }
+            #[Override] public function execute(string $sql, ?array $bindings = [], ?ExecutionScope $executionScope = null): ExecutionResult { return ExecutionResult::success(affectedRows: 1); }
+            #[Override] public function getDriverName(): string { return 'sqlite'; }
         };
 
         return new QueryOrchestrator(

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Execution;
 
-use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ConnectionContracts\DatabaseConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\DTO\ExecutionResult;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Exceptions\QueryException;
-use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\EventBus;
-use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\QueryExecuted;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\QueryEvents\EventBus;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\QueryEvents\QueryExecuted;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
 use Override;
 use PDO;

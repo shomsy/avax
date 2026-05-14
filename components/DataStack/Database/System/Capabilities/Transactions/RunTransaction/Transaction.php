@@ -5,17 +5,18 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\Transactions\RunTransaction;
 
 use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
-use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
-use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Contracts\TransactionsInterface;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ConnectionContracts\DatabaseConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Exceptions\TransactionException;
+use Avax\Components\DataStack\Database\System\Capabilities\Transactions\TransactionContracts\TransactionsInterface;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\CompiledDatabaseLifecycleRegistry;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\GlobalDatabaseLifecycleState;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\AfterCommit;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\AfterRollback;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\TransactionBeginning;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\TransactionCommitted;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\TransactionRolledBack;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\AfterCommit;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\AfterRollback;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\TransactionBeginning;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\TransactionCommitted;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\TransactionRolledBack;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\TransactionLifecyclePhase;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -497,7 +498,7 @@ final class Transaction implements TransactionsInterface
                 transactionId: $this->transactionId ?? '',
                 reason: $reason,
             ),
-            TransactionLifecyclePhase::Failed => throw new \RuntimeException('Failed phase should not be dispatched directly'),
+            TransactionLifecyclePhase::Failed => throw new RuntimeException('Failed phase should not be dispatched directly'),
         };
 
         $resolver = new ResolveCallable();

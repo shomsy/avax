@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\QueryTypes\Expression;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\State\AST\WhereNode;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\State\QueryState;
-use Avax\Components\DataStack\Database\System\Capabilities\Query\ValueObjects\Expression;
 use RuntimeException;
 
 /**

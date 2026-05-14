@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Container\System;
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompileReport;
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Errors\ContainerException;
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Errors\DependencyNotFoundException;
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Observability\RuntimeReport;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistryContract;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDependency;
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\DependencyNotFoundException;
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\RuntimeReport;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Reports\InjectionReport;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\LazyProxy;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes\ScopeInterface;

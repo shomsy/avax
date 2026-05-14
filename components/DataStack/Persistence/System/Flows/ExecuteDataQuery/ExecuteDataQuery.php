@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Persistence\System\Flows\ExecuteDataQuery;
 
-use Avax\Components\DataStack\Persistence\System\Capabilities\Diagnostics\QueryFingerprint;
+use Avax\Components\DataStack\Persistence\System\Capabilities\PersistenceDiagnostics\QueryFingerprint;
 use Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent\DataQueryPlan;
 use Avax\Components\DataStack\Persistence\System\Capabilities\QueryIntent\QueryResult;
 use function count;

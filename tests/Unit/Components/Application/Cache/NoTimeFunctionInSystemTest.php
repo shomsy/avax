@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Application\Cache;
 
-use Avax\Components\Application\Cache\Cache;
-use Avax\Components\Application\Cache\CompiledCache;
+use Avax\Components\Application\Cache\System\PublicSurface\Cache;
+use Avax\Components\Application\Cache\System\PublicSurface\CompiledCache;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured as CacheNotConfigured;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;

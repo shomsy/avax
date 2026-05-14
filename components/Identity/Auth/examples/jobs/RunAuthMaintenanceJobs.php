@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\examples\jobs;
 
-use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\ExportAuditEvents\ExportAuditEvents;
+use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\ExportAuditEvents\ExportAuditEvents;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\CleanupExpiredSessions\CleanupExpiredSessions;
 use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\CleanupExpiredPasswordResets\CleanupExpiredPasswordResets;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Limit\CleanupExpiredMfaChallenges;

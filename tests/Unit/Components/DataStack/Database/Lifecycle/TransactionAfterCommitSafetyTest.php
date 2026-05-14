@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\DataStack\Database\Lifecycle;
 
-use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
-use Avax\Components\DataStack\Database\System\Capabilities\Transactions\RunTransaction\Transaction;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ConnectionContracts\DatabaseConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Exceptions\TransactionException;
+use Avax\Components\DataStack\Database\System\Capabilities\Transactions\RunTransaction\Transaction;
 use PDO;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;

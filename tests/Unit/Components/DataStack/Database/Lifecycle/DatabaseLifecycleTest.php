@@ -11,34 +11,35 @@ use Avax\Components\DataStack\Database\System\Capabilities\Transactions\RunTrans
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\CompiledDatabaseLifecycleRegistry;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\EntityLifecyclePhase;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\EntityLifecycleRegistration;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\AfterCommit;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\AfterRollback;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntityCreated;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntityCreating;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntityDeleted;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntityDeleting;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntityRestored;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntitySaved;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntitySaving;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntityUpdated;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\EntityUpdating;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\FailedToDelete;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\FailedToSave;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\QueryExecuted;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\QueryExecuting;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\QueryFailed;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\TransactionBeginning;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\TransactionCommitted;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\TransactionRolledBack;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\GlobalDatabaseLifecycleState;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\AfterCommit;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\AfterRollback;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\EntityCreated;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\EntityCreating;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\EntityDeleted;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\EntityDeleting;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\EntityRestored;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\EntitySaved;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\EntitySaving;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\EntityUpdated;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\EntityUpdating;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\FailedToDelete;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\FailedToSave;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\QueryExecuted;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\QueryExecuting;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\QueryFailed;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\TransactionBeginning;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\TransactionCommitted;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\TransactionRolledBack;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleExecutionMode;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleSource;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\QueryLifecyclePhase;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\QueryLifecycleRegistration;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\TransactionLifecyclePhase;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\TransactionLifecycleRegistration;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\GlobalDatabaseLifecycleState;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use stdClass;
 
 final class DatabaseLifecycleTest extends TestCase
 {
@@ -172,7 +173,7 @@ final class DatabaseLifecycleTest extends TestCase
 
     public function test_entity_created_event(): void
     {
-        $entity = new \stdClass();
+        $entity = new stdClass();
         $event = new EntityCreated(
             entityClass: 'App\\User',
             entity: $entity,

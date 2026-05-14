@@ -6,7 +6,7 @@ namespace Avax\Components\DataStack\Persistence\System\PublicSurface;
 
 use Avax\Components\DataStack\Persistence\System\Capabilities\Hydration\HydratorInterface;
 use Avax\Components\DataStack\Persistence\System\Capabilities\IdentityMap\IdentityMap;
-use Avax\Components\DataStack\Persistence\System\Capabilities\Repositories\RepositoryRegistry;
+use Avax\Components\DataStack\Persistence\System\Capabilities\PersistenceRepositories\RepositoryRegistry;
 use Avax\Components\DataStack\Persistence\System\Capabilities\UnitOfWork\UnitOfWorkInterface;
 
 /**

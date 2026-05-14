@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\Capabilities\Declaration\Providers;
 
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Errors\ContainerException;
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Observability\ResolutionMetrics;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistry;
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionMetrics;
 
 /**
  * Owns deferred provider ownership and lazy boot lifecycle.

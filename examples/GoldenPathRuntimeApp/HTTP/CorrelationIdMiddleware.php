@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Examples\GoldenPathRuntimeApp\HTTP;
 
-use Avax\Components\HTTP\Middleware\System\PublicSurface\MiddlewareInterface;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
+use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\System\PublicSurface\MiddlewareInterface;
 
 /**
  * Injects a correlation ID into every request and response.

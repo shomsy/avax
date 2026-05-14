@@ -1,0 +1,14 @@
+  Application/Container: CheckCompositionPolicies.php — PASS
+  DataStack/Database: CheckDatabaseHealth.php, DatabaseHealthReport.php — PASS
+  HTTP/Router: RouterHealthReport.php, CheckRouterHealth.php — PASS
+  Operations/Events: EventsHealthReport.php, CheckEventsHealth.php — PASS
+  Application/Cache: CheckCompiledCacheIsFresh.php, CacheHealthDetector.php, CacheHealthStatus.php, CheckCachedValueIsExpired.php, DetectUnhealthyCacheNode.php, CacheNodeHealth.php, NodeHealthRecord.php, CheckCacheCapacity.php — PASS
+  Application/Filesystem: CheckPathPermissions.php, CheckPathIsReadable.php, CheckPathIsWritable.php — PASS
+  Operations/Logging: CheckLoggingHealth.php, LoggingHealthReport.php — PASS
+  Operations/Queue: SCAFFOLD (excluded) — SKIP
+  Security/Redaction: RedactionHealthReport.php, CheckRedactionHealth.php — PASS
+  Security/Cryptography: CryptographyHealthReport.php, CheckCryptographyHealth.php — PASS
+  Integration/ObjectStorage: ObjectStorageHealthReport.php, CheckObjectStorageHealth.php — PASS
+  Framework/FailureBoundary: CheckFailureBoundaryHealth.php, FailureBoundaryHealthReport.php — PASS
+
+PASS: 12 runtime-critical components have health proof

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes;
 
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Errors\ContainerException;
 
 /**
  * Stores disposable instances for the current active scope stack.

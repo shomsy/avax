@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\DataStack\Database\Lifecycle;
 
-use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ConnectionContracts\DatabaseConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\DTO\ExecutionResult;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Execution\ExecutorInterface;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Execution\QueryOrchestrator;
@@ -13,15 +13,17 @@ use Avax\Components\DataStack\Database\System\Capabilities\Transactions\RunTrans
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\CompiledDatabaseLifecycleRegistry;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\EntityLifecyclePhase;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\EntityLifecycleRegistration;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\QueryExecuted;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\QueryExecuting;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\QueryFailed;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\GlobalDatabaseLifecycleState;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\QueryExecuted;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\QueryExecuting;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\QueryFailed;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\QueryLifecyclePhase;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\QueryLifecycleRegistration;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\RedactBindings;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\TransactionLifecyclePhase;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\TransactionLifecycleRegistration;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\RedactBindings;
+use Exception;
+use Override;
 use PDO;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -272,9 +274,9 @@ final class DatabaseLifecycleReviewRemediationTest extends TestCase
 
         // Create QueryOrchestrator without explicit registry — should use global.
         $executor = new class implements ExecutorInterface {
-            #[\Override] public function query(string $sql, array $bindings = [], ?ExecutionScope $executionScope = null): array { return [['id' => 1]]; }
-            #[\Override] public function execute(string $sql, ?array $bindings = [], ?ExecutionScope $executionScope = null): ExecutionResult { return ExecutionResult::success(affectedRows: 1); }
-            #[\Override] public function getDriverName(): string { return 'sqlite'; }
+            #[Override] public function query(string $sql, array $bindings = [], ?ExecutionScope $executionScope = null): array { return [['id' => 1]]; }
+            #[Override] public function execute(string $sql, ?array $bindings = [], ?ExecutionScope $executionScope = null): ExecutionResult { return ExecutionResult::success(affectedRows: 1); }
+            #[Override] public function getDriverName(): string { return 'sqlite'; }
         };
 
         $orchestrator = new QueryOrchestrator(executor: $executor);
@@ -317,7 +319,7 @@ final class DatabaseLifecycleReviewRemediationTest extends TestCase
         try {
             $transaction->commit();
             $this->fail('Expected exception');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $message = $e->getMessage();
             $this->assertStringContainsString('AfterCommit callback failed', $message,
                 'Exception should say afterCommit callback failed, not "Failed to commit transaction"');
@@ -398,9 +400,9 @@ final class DatabaseLifecycleReviewRemediationTest extends TestCase
         $registry->freeze();
 
         $executor = new class implements ExecutorInterface {
-            #[\Override] public function query(string $sql, array $bindings = [], ?ExecutionScope $executionScope = null): array { return [['id' => 1]]; }
-            #[\Override] public function execute(string $sql, ?array $bindings = [], ?ExecutionScope $executionScope = null): ExecutionResult { return ExecutionResult::success(affectedRows: 1); }
-            #[\Override] public function getDriverName(): string { return 'sqlite'; }
+            #[Override] public function query(string $sql, array $bindings = [], ?ExecutionScope $executionScope = null): array { return [['id' => 1]]; }
+            #[Override] public function execute(string $sql, ?array $bindings = [], ?ExecutionScope $executionScope = null): ExecutionResult { return ExecutionResult::success(affectedRows: 1); }
+            #[Override] public function getDriverName(): string { return 'sqlite'; }
         };
 
         $orchestrator = new QueryOrchestrator(executor: $executor, registry: $registry);
@@ -423,9 +425,9 @@ final class DatabaseLifecycleReviewRemediationTest extends TestCase
         $registry->freeze();
 
         $executor = new class implements ExecutorInterface {
-            #[\Override] public function query(string $sql, array $bindings = [], ?ExecutionScope $executionScope = null): array { return [['id' => 1]]; }
-            #[\Override] public function execute(string $sql, ?array $bindings = [], ?ExecutionScope $executionScope = null): ExecutionResult { return ExecutionResult::success(affectedRows: 1); }
-            #[\Override] public function getDriverName(): string { return 'sqlite'; }
+            #[Override] public function query(string $sql, array $bindings = [], ?ExecutionScope $executionScope = null): array { return [['id' => 1]]; }
+            #[Override] public function execute(string $sql, ?array $bindings = [], ?ExecutionScope $executionScope = null): ExecutionResult { return ExecutionResult::success(affectedRows: 1); }
+            #[Override] public function getDriverName(): string { return 'sqlite'; }
         };
 
         $orchestrator = new QueryOrchestrator(executor: $executor, registry: $registry);

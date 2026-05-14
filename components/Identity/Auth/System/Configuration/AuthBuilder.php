@@ -20,11 +20,11 @@ use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\InMemoryKnownAuthenticationEnvironmentStore;
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\InMemoryRiskSignalStore;
 use Avax\Components\Identity\Auth\System\Auth;
-use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\AuditLogInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\CorrelatingAuditLog;
-use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\NullAuditLog;
-use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Diagnostics;
-use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Explainability\AuthIssueExplainer;
+use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\CorrelatingAuditLog;
+use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\NullAuditLog;
+use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Diagnostics;
+use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Explainability\AuthIssueExplainer;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners\Account;

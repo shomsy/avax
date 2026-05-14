@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Application\Cache\PublicSurface;
 
-use Avax\Components\Application\Cache\Cache;
 use Avax\Components\Application\Cache\System\CacheContract;
+use Avax\Components\Application\Cache\System\PublicSurface\Cache;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured as CacheNotConfigured;
 use Avax\Tests\TestCase;
 use Override;

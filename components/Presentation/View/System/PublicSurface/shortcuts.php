@@ -7,7 +7,7 @@ declare(strict_types=1);
  */
 
 use Avax\Components\HTTP\Response\System\PublicSurface\Response;
-use Avax\Components\Presentation\View\TemplateEngine;
+use Avax\Components\Presentation\View\System\Capabilities\TemplateRendering\TemplateEngine;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Avax\Components\HTTP\Session\System\PublicSurface;
 
 use Avax\Components\HTTP\Session\System\Capabilities\Audit\SessionAudit;
-use Avax\Components\HTTP\Session\System\Capabilities\Events\SessionEventBus;
 use Avax\Components\HTTP\Session\System\Capabilities\Metadata\SessionMetadata;
+use Avax\Components\HTTP\Session\System\Capabilities\SessionEvents\SessionEventBus;
 use Avax\Components\HTTP\Session\System\Capabilities\Transaction\SessionTransaction;
 use Avax\Components\HTTP\Session\System\Foundation\SessionRecord;
 use DateTimeImmutable;

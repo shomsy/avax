@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Transactions\RunTransaction;
 
-use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Contracts\TransactionsInterface;
+use Avax\Components\DataStack\Database\System\Capabilities\Transactions\TransactionContracts\TransactionsInterface;
 use Throwable;
 
 /**

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Persistence\System\Flows\FindEntity;
 
-use Avax\Components\DataStack\Persistence\System\Capabilities\Repositories\Repository;
+use Avax\Components\DataStack\Persistence\System\Capabilities\PersistenceRepositories\Repository;
 
 final class FindEntity
 {

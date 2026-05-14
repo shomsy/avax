@@ -1,0 +1,5 @@
+ M .phpunit.cache/test-results
+ M avax.txt
+?? EVIDENCE/cleanup/29-independent-whole-system-review.md
+?? EVIDENCE/cleanup/logs/worktree-pre.txt
+?? fix-this.md

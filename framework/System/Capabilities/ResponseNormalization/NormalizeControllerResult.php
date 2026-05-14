@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Capabilities\ResponseNormalization;
 
 use Avax\Components\DataStack\DataTransfer\System\PublicSurface\DataObject;
-use Avax\Components\HTTP\Response\ResponseFactory;
+use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use JsonSerializable;
 use Psr\Http\Message\ResponseInterface;
 use Stringable;

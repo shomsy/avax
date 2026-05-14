@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Integration\Components;
 
-use Avax\Components\Operations\Filesystem\System\Capabilities\Adapters\LocalStorageAdapter;
+use Avax\Components\Operations\Filesystem\System\Capabilities\StorageBackends\LocalStorageAdapter;
 use Avax\Tests\TestCase;
 
 final class StorageTest extends TestCase

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\Capabilities\Runtime\Scopes;
 
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionMetrics;
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Observability\ResolutionMetrics;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\DependencyPool;
 use Override;
 

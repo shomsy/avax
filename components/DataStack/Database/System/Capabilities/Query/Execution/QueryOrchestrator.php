@@ -9,9 +9,9 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\DTO\ExecutionRe
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\CompiledDatabaseLifecycleRegistry;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\GlobalDatabaseLifecycleState;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\QueryExecuted;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\QueryExecuting;
-use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\Events\QueryFailed;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\QueryExecuted;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\QueryExecuting;
+use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\LifecycleEvents\QueryFailed;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\QueryLifecyclePhase;
 use Avax\Components\DataStack\Database\System\Foundation\Lifecycle\RedactBindings;
 use Random\RandomException;

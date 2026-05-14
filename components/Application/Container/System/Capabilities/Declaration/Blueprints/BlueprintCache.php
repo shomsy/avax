@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\Capabilities\Declaration\Blueprints;
 
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionMetrics;
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Errors\ContainerException;
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Observability\ResolutionMetrics;
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Throwable;
 

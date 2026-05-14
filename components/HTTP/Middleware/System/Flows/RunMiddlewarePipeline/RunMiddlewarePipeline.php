@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Middleware\System\Flows\RunMiddlewarePipeline;
 
-use Avax\Components\HTTP\Middleware\System\Capabilities\Pipeline\MiddlewarePipeline;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
+use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\MiddlewarePipeline;
 
 final readonly class RunMiddlewarePipeline
 {

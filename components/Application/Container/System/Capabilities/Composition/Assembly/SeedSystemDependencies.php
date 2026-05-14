@@ -6,11 +6,11 @@ namespace Avax\Components\Application\Container\System\Capabilities\Composition\
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\ContainerSettings;
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Observability\ResolutionMetrics;
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Observability\ResolutionTelemetry;
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Observability\ResolutionTimeline;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistry;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistryContract;
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionMetrics;
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionTelemetry;
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionTimeline;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Invocation\FunctionCaller;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\ResolutionPolicy;

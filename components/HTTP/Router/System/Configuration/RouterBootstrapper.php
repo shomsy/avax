@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Router\System\Configuration;
 
-use Avax\Components\HTTP\Middleware\System\PublicSurface\MiddlewareInterface;
 use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\Registrar;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
+use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\MiddlewareInterface;
 use InvalidArgumentException;
 use LogicException;
 

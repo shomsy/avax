@@ -6,9 +6,9 @@ namespace Avax\Components\SystemDesign\System\Capabilities\Messaging;
 
 use Avax\Components\SystemDesign\System\Capabilities\Messaging\Acknowledgement\AcknowledgementPolicy;
 use Avax\Components\SystemDesign\System\Capabilities\Messaging\Broker\Broker;
+use Avax\Components\SystemDesign\System\Capabilities\Messaging\CommandQuery\CommandSide;
+use Avax\Components\SystemDesign\System\Capabilities\Messaging\CommandQuery\QuerySide;
 use Avax\Components\SystemDesign\System\Capabilities\Messaging\Consumers\Consumer;
-use Avax\Components\SystemDesign\System\Capabilities\Messaging\Cqrs\CommandSide;
-use Avax\Components\SystemDesign\System\Capabilities\Messaging\Cqrs\QuerySide;
 use Avax\Components\SystemDesign\System\Capabilities\Messaging\DeadLetters\DeadLetterQueue;
 use Avax\Components\SystemDesign\System\Capabilities\Messaging\Inbox\Inbox;
 use Avax\Components\SystemDesign\System\Capabilities\Messaging\Outbox\Outbox;

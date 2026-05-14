@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\OpenConnection;
 
-use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ConnectionContracts\DatabaseConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ConnectionTypes\ConnectionConfig;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ConnectionTypes\Dsn;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Exceptions\ConnectionFailure;
-use Avax\Components\DataStack\Database\System\Capabilities\Connections\ValueObjects\ConnectionConfig;
-use Avax\Components\DataStack\Database\System\Capabilities\Connections\ValueObjects\Dsn;
 use PDO;
 use Throwable;
 

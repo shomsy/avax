@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Middleware\System\Configuration;
 
-use Avax\Components\HTTP\Middleware\System\PublicSurface\MiddlewareInterface;
+use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\MiddlewareInterface;
 
 /**
  * Builder for constructing a middleware pipeline.

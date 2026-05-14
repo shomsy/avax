@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\HTTP\Middleware;
 
-use Avax\Components\HTTP\Middleware\System\Capabilities\Pipeline\MiddlewarePipeline;
-use Avax\Components\HTTP\Middleware\System\PublicSurface\MiddlewareInterface;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
+use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\MiddlewareInterface;
+use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\MiddlewarePipeline;
 use PHPUnit\Framework\TestCase;
 
 final class MiddlewareCapabilitiesTest extends TestCase

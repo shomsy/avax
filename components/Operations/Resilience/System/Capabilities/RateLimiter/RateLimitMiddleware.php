@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Resilience\System\Capabilities\RateLimiter;
 
-use Avax\Components\HTTP\Response\ResponseFactory;
+use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Closure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Container\System\Capabilities\Runtime;
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompiledContainer;
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Errors\ContainerException;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveRequest;
 use Closure;

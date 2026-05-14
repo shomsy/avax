@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
+use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Psr\Http\Message\ServerRequestInterface;
 
 $responseFactory = new ResponseFactory();

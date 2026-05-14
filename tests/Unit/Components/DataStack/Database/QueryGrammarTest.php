@@ -10,12 +10,12 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Execution\Execu
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Execution\QueryOrchestrator;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\BaseGrammar;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\MySQLGrammar;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\QueryTypes\Expression;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\State\AST\JoinNode;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\State\AST\OrderNode;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\State\AST\WhereNode;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\State\QueryState;
-use Avax\Components\DataStack\Database\System\Capabilities\Query\ValueObjects\Expression;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

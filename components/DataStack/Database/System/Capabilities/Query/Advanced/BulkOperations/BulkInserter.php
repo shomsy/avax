@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Advanced\BulkOperations;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
-use Avax\Components\DataStack\Database\System\Capabilities\Query\ValueObjects\Expression;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\QueryTypes\Expression;
 
 final class BulkInserter
 {

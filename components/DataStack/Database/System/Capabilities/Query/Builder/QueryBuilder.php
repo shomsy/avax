@@ -17,8 +17,8 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concern
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Exceptions\InvalidCriteriaException;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Execution\QueryOrchestrator;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\QueryTypes\Expression;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\State\QueryState;
-use Avax\Components\DataStack\Database\System\Capabilities\Query\ValueObjects\Expression;
 use ReflectionClass;
 use ReflectionException;
 use RuntimeException;

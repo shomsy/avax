@@ -5,43 +5,100 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\PublicSurface;
 
 use Avax\Components\Application\Cache\System\CacheContract;
+use Avax\Components\Application\Cache\System\PublicSurface\Exception\InvalidTarget;
+use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured;
+use Avax\Components\Application\Cache\System\PublicSurface\Read\CompiledCacheTarget;
+use Avax\Components\Application\Cache\System\PublicSurface\Read\RuntimeCacheTarget;
 use DateInterval;
 
 /**
- * Cache Public Surface.
- *
- * Thin entry point for the Cache component.
- * Delegated to internal capabilities (Storage, Lifecycle).
+ * Stable static entrypoint for the Cache component.
  */
-final readonly class Cache
+final class Cache
 {
-    public function __construct(
-        private CacheContract $cacheContract,
-    ) {
+    private static ?CacheContract $cacheContract = null;
+
+    public static function use(CacheContract $cache) : void
+    {
+        self::$cacheContract = $cache;
     }
 
-    public function get(string $key, mixed $default = null): mixed
+    public static function reset() : void
     {
-        return $this->cacheContract->get($key, $default);
+        self::$cacheContract = null;
     }
 
-    public function set(string $key, mixed $value, int|DateInterval|null $ttl = null): bool
+    public static function put(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
     {
-        return $this->cacheContract->set($key, $value, $ttl);
+        return self::set($key, $value, $ttl);
     }
 
-    public function has(string $key): bool
+    public static function set(string $key, mixed $value, int|DateInterval|null $ttl = null) : bool
     {
-        return $this->cacheContract->has($key);
+        return self::default()->set($key, $value, $ttl);
     }
 
-    public function forget(string $key): bool
+    private static function default() : CacheContract
     {
-        return $this->cacheContract->delete($key);
+        if (! self::$cacheContract instanceof CacheContract) {
+            throw new NotConfigured();
+        }
+
+        return self::$cacheContract;
     }
 
-    public function clear(): bool
+    public static function remember(string $key, int|DateInterval|null $ttl, callable $loader) : mixed
     {
-        return $this->cacheContract->clear();
+        return self::default()->remember($key, $ttl, $loader);
+    }
+
+    public static function forget(string $key) : bool
+    {
+        return self::default()->delete(key: $key);
+    }
+
+    public static function clear() : bool
+    {
+        return self::default()->clear();
+    }
+
+    public static function has(string $key) : bool
+    {
+        return self::default()->has(key: $key);
+    }
+
+    public static function read(CacheReadTarget|string $target, mixed $default = null) : mixed
+    {
+        if (is_string($target)) {
+            return self::get(key: $target, default: $default);
+        }
+
+        if ($target instanceof RuntimeCacheTarget) {
+            if ($target->store !== null) {
+                return self::store(name: $target->store)->get(key: $target->key, default: $target->default);
+            }
+
+            return self::default()->get(key: $target->key, default: $target->default ?? $default);
+        }
+
+        if ($target instanceof CompiledCacheTarget) {
+            return CompiledCache::read($target->name, $target->builder(), $target->compiledCacheSources);
+        }
+
+        throw new InvalidTarget(targetClass: $target::class);
+    }
+
+    public static function get(string $key, mixed $default = null) : mixed
+    {
+        return self::default()->get(key: $key, default: $default);
+    }
+
+    public static function store(string|null $name = null) : CacheContract
+    {
+        if ($name !== null) {
+            throw new NotConfigured(message: 'Named store requires RegisterCacheDependencies');
+        }
+
+        return self::default();
     }
 }

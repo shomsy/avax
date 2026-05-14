@@ -1,0 +1,13 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit;
+
+/**
+ * Sink for auth audit events.
+ */
+interface AuditLogInterface
+{
+    public function record(AuditEvent $auditEvent) : void;
+}

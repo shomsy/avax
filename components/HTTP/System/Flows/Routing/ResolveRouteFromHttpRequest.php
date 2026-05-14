@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\Flows\Routing;
 
-use Avax\Components\HTTP\Middleware\RequestHandlerInterface;
 use Avax\Components\HTTP\Request\ServerRequest\IncomingRequest\ServerRequest;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
+use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\RequestHandlerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\DataStack\Database;
 
-use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ConnectionContracts\DatabaseConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\ConnectionPool;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\ConnectionPoolInterface;
-use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\Contracts\ConnectionPoolInterface as ContractsConnectionPoolInterface;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\PoolContracts\ConnectionPoolInterface as ContractsConnectionPoolInterface;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\PooledConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\PooledConnectionAuthority;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\PoolException;

@@ -6,7 +6,7 @@ namespace Avax\Components\DataStack\Database\System\PublicSurface;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Query as QueryCapability;
-use Avax\Components\DataStack\Database\System\Capabilities\Query\ValueObjects\Expression;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\QueryTypes\Expression;
 
 /**
  * Public surface for Querying operations.

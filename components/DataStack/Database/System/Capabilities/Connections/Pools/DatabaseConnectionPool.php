@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools;
 
-use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ConnectionContracts\DatabaseConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Exceptions\PoolLimitReachedException;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\OpenConnection\BuildPhysicalConnection;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\OpenConnection\OpenConnection;
-use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\Contracts\ConnectionPoolInterface;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\DTO\ConnectionPoolMetrics;
-use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\ConnectionAcquired;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\PoolContracts\ConnectionPoolInterface;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\QueryEvents\ConnectionAcquired;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
 use Avax\Components\Operations\MessageBus\System\Capabilities\Bus\EventBus;
 use ReflectionException;

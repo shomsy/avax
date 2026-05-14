@@ -8,7 +8,7 @@ use Avax\Components\Identity\Auth\Integrations\Http\HttpOAuthProofInput;
 use Avax\Components\Identity\Auth\Integrations\Http\VerifyDpopProof;
 use Avax\Components\Identity\Auth\Integrations\Http\VerifyMtlsSenderConstraint;
 use Avax\Components\Identity\Auth\Integrations\Http\VerifyOAuthSenderConstraint;
-use Avax\Components\Identity\Auth\System\Capabilities\Diagnostics\Audit\NullAuditLog;
+use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\NullAuditLog;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\SenderConstraint\InMemoryDpopProofReplayStore;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\SenderConstraint\OAuthSenderConstraint;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\SenderConstraint\OAuthSenderConstraintType;

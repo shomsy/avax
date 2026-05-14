@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\Capabilities\Kernel;
 
-use Avax\Components\HTTP\Middleware\IpRestrictionMiddleware;
-use Avax\Components\HTTP\Middleware\MiddlewareInterface;
-use Avax\Components\HTTP\Middleware\MiddlewareRegistry;
-use Avax\Components\HTTP\Middleware\RateLimiterInterface;
-use Avax\Components\HTTP\Middleware\RateLimiterMiddleware;
-use Avax\Components\HTTP\Middleware\RequestLoggerMiddleware;
-use Avax\Components\HTTP\Middleware\SessionLifecycleMiddleware;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
-use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
-use Avax\Components\HTTP\Session\NullSession;
+use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\IpRestrictionMiddleware;
+use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\MiddlewareInterface;
+use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\MiddlewareRegistry;
+use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\RateLimiterInterface;
+use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\RateLimiterMiddleware;
+use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\RequestLoggerMiddleware;
+use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\SessionLifecycleMiddleware;
+use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\System\Capabilities\SessionStorage\NullSession;
 use Avax\Components\HTTP\System\PublicSurface\HttpInterface;
+use Avax\Framework\System\Capabilities\FailureBoundary\Configuration\BuildFailureBoundary;
+use Avax\Framework\System\Capabilities\FailureBoundary\Integration\HttpFailureBoundaryMiddleware;
 use Override;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
@@ -78,10 +80,10 @@ final readonly class AppKernel implements HttpInterface, Kernel
         }
 
         // FailureBoundary: outermost error-handling middleware (framework-level, optional)
-        if (class_exists(\Avax\Framework\System\Capabilities\FailureBoundary\Configuration\BuildFailureBoundary::class)
-            && class_exists(\Avax\Framework\System\Capabilities\FailureBoundary\Integration\HttpFailureBoundaryMiddleware::class)) {
-            $fbBuilder = new \Avax\Framework\System\Capabilities\FailureBoundary\Configuration\BuildFailureBoundary();
-            $middleware[] = new \Avax\Framework\System\Capabilities\FailureBoundary\Integration\HttpFailureBoundaryMiddleware(
+        if (class_exists(BuildFailureBoundary::class)
+            && class_exists(HttpFailureBoundaryMiddleware::class)) {
+            $fbBuilder = new BuildFailureBoundary();
+            $middleware[] = new HttpFailureBoundaryMiddleware(
                 $fbBuilder->build(),
             );
         }

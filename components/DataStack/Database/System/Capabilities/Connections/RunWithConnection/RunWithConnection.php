@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\RunWithConnection;
 
-use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
-use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\Contracts\ConnectionPoolInterface;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ConnectionContracts\DatabaseConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\PoolContracts\ConnectionPoolInterface;
 use Avax\Components\DataStack\Database\System\Capabilities\Connections\ReadConnection\ReadConnection;
 use Throwable;
 

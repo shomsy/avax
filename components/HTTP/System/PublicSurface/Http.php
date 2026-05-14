@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\PublicSurface;
 
-use Avax\Components\HTTP\Middleware\System\Capabilities\Pipeline\MiddlewarePipeline;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
+use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\MiddlewarePipeline;
 
 final readonly class Http implements HttpInterface
 {

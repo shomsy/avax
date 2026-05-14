@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\HealthCheck;
 
-use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
+use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 
 /**
  * CheckApplicationHealth — Baseline health endpoint for V4-01.

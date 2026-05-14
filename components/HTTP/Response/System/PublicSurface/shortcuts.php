@@ -6,7 +6,7 @@ declare(strict_types=1);
  * Response shortcuts for global access.
  */
 
-use Avax\Components\HTTP\Response\ResponseFactory;
+use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Psr\Http\Message\ResponseInterface;
 
 if (! function_exists('response')) {

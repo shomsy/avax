@@ -6,6 +6,7 @@ namespace Avax\Components\Application\Container\System;
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompileReport;
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Observability\RuntimeReport;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DecoratorInterface;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistration;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\RegisterForTarget;
@@ -16,7 +17,6 @@ use Avax\Components\Application\Container\System\Capabilities\Declaration\Owners
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\Views\FoundationSliceView;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Ownership\Views\RootCompositionView;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDependency;
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\RuntimeReport;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Reports\InjectionReport;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\Runtime\LazyProxy;

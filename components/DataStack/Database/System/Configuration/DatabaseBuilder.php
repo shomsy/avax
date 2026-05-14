@@ -20,7 +20,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\ORM\Persisters\Entity
 use Avax\Components\DataStack\Database\System\Capabilities\Query\CreateBuilder\CreateBuilder;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\MySQLGrammar;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Query;
-use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\EventBus;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\QueryEvents\EventBus;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Telemetry;
 use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Transactions;
 use Avax\Components\DataStack\Database\System\PublicSurface\Database;

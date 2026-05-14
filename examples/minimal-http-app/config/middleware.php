@@ -10,8 +10,8 @@ declare(strict_types=1);
 // These are illustrative examples of middleware pipeline configuration.
 
 // Existing middleware (confirmed):
-use Avax\Components\HTTP\Middleware\RateLimiterMiddleware;
-use Avax\Components\HTTP\Middleware\RequestLoggerMiddleware;
+use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\RateLimiterMiddleware;
+use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\RequestLoggerMiddleware;
 
 return [
     'global' => [

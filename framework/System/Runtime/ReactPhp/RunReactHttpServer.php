@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Runtime\ReactPhp;
 
-use Avax\Components\HTTP\Response\ResponseFactory;
+use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
 use Avax\Framework\System\Runtime\MemoryGuard\MonitorWorkerMemory;
 use Avax\Framework\System\Runtime\WarmApplication\HandleWarmRequest;

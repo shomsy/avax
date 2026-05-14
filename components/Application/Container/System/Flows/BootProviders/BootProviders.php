@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\Flows\BootProviders;
 
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Errors\ContainerException;
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Observability\ResolutionMetrics;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\ProviderBootPlan;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDeferredDependency;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Providers\RegisterDependency;
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionMetrics;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\ContainerInterface;
 use InvalidArgumentException;

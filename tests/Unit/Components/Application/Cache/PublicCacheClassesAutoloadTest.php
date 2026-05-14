@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Application\Cache;
 
-use Avax\Components\Application\Cache\CompiledCache;
 use Avax\Components\Application\Cache\System\AvaxCache;
 use Avax\Components\Application\Cache\System\CacheContract;
 use Avax\Components\Application\Cache\System\PublicSurface\CacheFacade;
 use Avax\Components\Application\Cache\System\PublicSurface\CacheRegistry;
+use Avax\Components\Application\Cache\System\PublicSurface\CompiledCache;
 use Avax\Components\Application\Cache\System\PublicSurface\CompiledCacheTarget;
 use Avax\Components\Application\Cache\System\PublicSurface\ReadFromCache;
 use Avax\Components\Application\Cache\System\PublicSurface\RuntimeCacheTarget;

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Container\System\Capabilities\Composition\Assembly;
 
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionMetrics;
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionTimeline;
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Observability\ResolutionMetrics;
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Observability\ResolutionTimeline;
 use Avax\Components\Application\Container\System\Foundation\Time\Clock;
 
 /**

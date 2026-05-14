@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\Capabilities\Connections\OpenConnection;
 
-use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
-use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\ConnectionFailed;
-use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\ConnectionOpened;
-use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\EventBus;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ConnectionContracts\DatabaseConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\QueryEvents\ConnectionFailed;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\QueryEvents\ConnectionOpened;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\QueryEvents\EventBus;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
 use Throwable;
 

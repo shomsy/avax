@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Container\System\Capabilities\Resolution;
 
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Errors\ContainerException;
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Errors\ContainerException;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Attributes\Inject;
 use Avax\Components\Application\Container\System\Capabilities\Execution\Injection\Attributes\RuntimeInput;
 use ReflectionNamedType;

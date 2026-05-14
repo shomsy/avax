@@ -6,8 +6,8 @@ declare(strict_types=1);
  * Router shortcuts for global access.
  */
 
-use Avax\Components\HTTP\Response\ResponseFactory;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
+use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 

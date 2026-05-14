@@ -10,8 +10,8 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Exceptions\Inva
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Execution\ExecutorInterface;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Execution\QueryOrchestrator;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\MySQLGrammar;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\QueryTypes\Expression;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\State\QueryState;
-use Avax\Components\DataStack\Database\System\Capabilities\Query\ValueObjects\Expression;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;

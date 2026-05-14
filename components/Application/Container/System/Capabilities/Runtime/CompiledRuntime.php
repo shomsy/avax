@@ -8,8 +8,8 @@ use Avax\Components\Application\Container\System\Capabilities\Composition\Compil
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompiledContainer;
 use Avax\Components\Application\Container\System\Capabilities\Composition\Compilation\CompileReport;
 use Avax\Components\Application\Container\System\Capabilities\Composition\CreateContainerConfig;
+use Avax\Components\Application\Container\System\Capabilities\ContainerObservability\Observability\ResolutionMetrics;
 use Avax\Components\Application\Container\System\Capabilities\Declaration\Bindings\DependencyRegistry;
-use Avax\Components\Application\Container\System\Capabilities\Diagnostics\Observability\ResolutionMetrics;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveDependency;
 use Avax\Components\Application\Container\System\Capabilities\Resolution\ResolveRequest;
 use JsonException;

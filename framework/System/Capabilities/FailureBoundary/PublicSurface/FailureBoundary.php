@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\FailureBoundary\PublicSurface;
 
+use Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Builders\BuildFailureBoundary;
 use Avax\Framework\System\Capabilities\FailureBoundary\Flows\RunProtectedAction\RunProtectedAction;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureContext;
 use Closure;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * FailureBoundary — Static facade for the failure boundary component.
@@ -26,10 +28,18 @@ final class FailureBoundary
         self::$instance = $instance;
     }
 
+    /**
+     * Reset the cached instance. Required for long-lived runtimes (worker mode).
+     */
+    public static function reset() : void
+    {
+        self::$instance = null;
+    }
+
     public static function getInstance(): RunProtectedAction
     {
         if (self::$instance === null) {
-            self::$instance = (new \Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Builders\BuildFailureBoundary())->build();
+            self::$instance = (new BuildFailureBoundary())->build();
         }
         return self::$instance;
     }
@@ -39,7 +49,7 @@ final class FailureBoundary
         return self::getInstance()->run($action, $context);
     }
 
-    public static function forHttp(Closure $action, \Psr\Http\Message\RequestInterface $request, string $targetClass = '', string $targetMethod = ''): mixed
+    public static function forHttp(Closure $action, RequestInterface $request, string $targetClass = '', string $targetMethod = ''): mixed
     {
         return self::run(
             action: $action,

@@ -4,12 +4,37 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Parallelism\System\PublicSurface;
 
+use Avax\Components\Operations\Parallelism\System\Configuration\Builders\BuildParallelRuntime;
+use Avax\Components\Operations\Parallelism\System\Configuration\ParallelRuntimeInterface;
 use Avax\Components\Operations\Parallelism\System\Flows\RunWorkInParallel\RunWorkInParallel;
 use Avax\Components\Operations\Parallelism\System\Foundation\ParallelResult;
 use Closure;
 
-final readonly class Parallel
+final class Parallel
 {
+    private static ?ParallelRuntimeInterface $runtime = null;
+
+    private static function runtime() : ParallelRuntimeInterface
+    {
+        return self::$runtime ??= (new BuildParallelRuntime())->build();
+    }
+
+    /**
+     * Replace the runtime (for testing).
+     */
+    public static function setRuntime(ParallelRuntimeInterface $runtime) : void
+    {
+        self::$runtime = $runtime;
+    }
+
+    /**
+     * Reset the runtime. Required for long-lived runtimes (worker mode).
+     */
+    public static function reset() : void
+    {
+        self::$runtime = null;
+    }
+
     /**
      * Map items through a callable in parallel.
      *
@@ -37,6 +62,6 @@ final readonly class Parallel
      */
     public static function run(array $work, int|null $maxWorkers = null) : ParallelResult
     {
-        return (new RunWorkInParallel())->run(work: $work, maxWorkers: $maxWorkers);
+        return (new RunWorkInParallel(runtime: self::runtime()))->run(work: $work, maxWorkers: $maxWorkers);
     }
 }

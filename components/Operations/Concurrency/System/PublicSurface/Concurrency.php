@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Concurrency\System\PublicSurface;
 
+use Avax\Components\Operations\Concurrency\System\Configuration\Builders\BuildConcurrencyRuntime;
+use Avax\Components\Operations\Concurrency\System\Configuration\ConcurrencyConfig;
+use Avax\Components\Operations\Concurrency\System\Configuration\TaskRuntimeInterface;
 use Avax\Components\Operations\Concurrency\System\Flows\RaceTasks\RaceTasks;
 use Avax\Components\Operations\Concurrency\System\Flows\RunConcurrentTasks\RunConcurrentTasks;
 use Avax\Components\Operations\Concurrency\System\Flows\StartTask\StartTask;
@@ -12,8 +15,33 @@ use Avax\Components\Operations\Concurrency\System\Foundation\ConcurrentResult;
 use Avax\Components\Operations\Concurrency\System\Foundation\ConcurrentTask;
 use Closure;
 
-final readonly class Concurrency
+final class Concurrency
 {
+    private static ?TaskRuntimeInterface $runtime = null;
+
+    private static function runtime() : TaskRuntimeInterface
+    {
+        return self::$runtime ??= (new BuildConcurrencyRuntime())->build(
+            config: ConcurrencyConfig::fromArray([]),
+        );
+    }
+
+    /**
+     * Replace the runtime (for testing).
+     */
+    public static function setRuntime(TaskRuntimeInterface $runtime) : void
+    {
+        self::$runtime = $runtime;
+    }
+
+    /**
+     * Reset the runtime. Required for long-lived runtimes (worker mode).
+     */
+    public static function reset() : void
+    {
+        self::$runtime = null;
+    }
+
     /**
      * Run multiple tasks concurrently with optional concurrency limit.
      *
@@ -21,7 +49,7 @@ final readonly class Concurrency
      */
     public static function run(array $tasks, int|null $maxConcurrent = null) : ConcurrentResult
     {
-        return (new RunConcurrentTasks())->run(tasks: $tasks, maxConcurrent: $maxConcurrent);
+        return (new RunConcurrentTasks(runtime: self::runtime()))->run(tasks: $tasks, maxConcurrent: $maxConcurrent);
     }
 
     /**

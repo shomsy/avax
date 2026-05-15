@@ -25,6 +25,14 @@ final class SchemaGeneration
     }
 
     /**
+     * Reset the cached assembly. Required for long-lived runtimes (worker mode).
+     */
+    public static function reset() : void
+    {
+        self::$assembly = null;
+    }
+
+    /**
      * Generate JSON Schema from a DataObject class or instance.
      *
      * @template T of DataObject

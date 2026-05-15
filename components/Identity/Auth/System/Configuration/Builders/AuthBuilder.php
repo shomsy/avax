@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Configuration\Builders;
 
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\Identity\Access\System\Capabilities\Access;
 use Avax\Components\Identity\Access\System\Capabilities\Authentication\Throttle\AttemptThrottle;
 use Avax\Components\Identity\Access\System\Capabilities\Authentication\Throttle\InMemoryAttemptThrottleStore;
@@ -19,7 +20,6 @@ use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Runtime\
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\DeterministicRiskEngine;
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\InMemoryKnownAuthenticationEnvironmentStore;
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\InMemoryRiskSignalStore;
-use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
 use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\AuditLogInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\CorrelatingAuditLog;
 use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\NullAuditLog;
@@ -95,6 +95,7 @@ use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Auth\System\Foundation\Exceptions\ConfigurationException;
 use Avax\Components\Identity\Auth\System\Foundation\IdGenerator;
 use Avax\Components\Identity\Auth\System\Foundation\IdGeneratorInterface;
+use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Mfa;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Backup\GenerateBackupCodes;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Backup\RegenerateBackupCodes;
@@ -211,7 +212,6 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Tenants\Tenants;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Flow\RefreshAuthentication;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\RefreshTokenStoreInterface;
 use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
-use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use SensitiveParameter;
 
 /**
@@ -1058,7 +1058,7 @@ final class AuthBuilder
                                        startMfaChallenge       : $startMfaChallenge,
                                        clock                   : $clock,
                                        rateLimit               : $this->loginRateLimit,
-                                       riskEngine              : $riskEngine,
+                                       deterministicRiskEngine : $riskEngine,
                                    ),
             logout               : new Logout(
                                        identity             : $identity,
@@ -1076,7 +1076,7 @@ final class AuthBuilder
                                        clock                   : $clock,
                                        refreshTokenStore       : $this->refreshTokenStore,
                                        jwtIdentity             : $identity->jwtIdentity(),
-                                       riskEngine              : $riskEngine,
+                                       deterministicRiskEngine : $riskEngine,
                                    ),
         );
 
@@ -1223,7 +1223,7 @@ final class AuthBuilder
                                        clock                   : $clock,
                                        challengeStore          : $mfaChallengeStore,
                                        attemptLimit            : $mfaAttemptLimit,
-                                       riskEngine              : $riskEngine,
+                                       deterministicRiskEngine : $riskEngine,
                                    ),
             regenerateBackupCodes: new RegenerateBackupCodes(
                                        currentAuthentication: $currentAuthentication,
@@ -1469,7 +1469,7 @@ final class AuthBuilder
                                             auditLog       : $auditLog,
                                             clock          : $clock,
                                             federationConnectionStore: $federationConnectionStore,
-                                            runtime        : $this->federationRuntime ?? throw ConfigurationException::missingCapabilityDependency(
+                                            federationRuntime: $this->federationRuntime ?? throw ConfigurationException::missingCapabilityDependency(
                                             capability : 'federation',
                                             requirement: 'runtime',
                                             buildPath  : 'AuthBuilder::ready()',
@@ -1488,31 +1488,31 @@ final class AuthBuilder
                                               idGenerator             : $this->idGenerator ?? throw ConfigurationException::missingDependency('IdGenerator', 'usingIdGenerator() or AuthServiceProvider'),
                                               auditLog                : $auditLog,
                                               clock                   : $clock,
-                                              connectionStore         : $federationConnectionStore,
-                                              runtime                 : $this->federationRuntime ?? throw ConfigurationException::missingCapabilityDependency(
+                                              federationConnectionStore: $federationConnectionStore,
+                                              federationRuntime: $this->federationRuntime ?? throw ConfigurationException::missingCapabilityDependency(
                                               capability : 'federation',
                                               requirement: 'runtime',
                                               buildPath  : 'AuthBuilder::ready()',
                                               option     : 'withFederationRuntime()',
                                               cause      : 'Federation capability assembly was attempted.',
                                           ),
-                                              linkStore               : $federatedIdentityLinkStore,
-                                              riskEngine              : $riskEngine,
-                                              lifecycle               : $lifecycle,
+                                              federatedIdentityLinkStore: $federatedIdentityLinkStore,
+                                              deterministicRiskEngine: $riskEngine,
+                                              lifecycleOrchestrator: $lifecycle,
                                           )
                                           : null,
-            registerConnection      : $authCapabilityReadiness->federation()
+            registerFederationConnection: $authCapabilityReadiness->federation()
                                           ? new RegisterFederationConnection(
                                               groupRoleMappingValidator: $groupRoleMappingValidator,
                                               auditLog                 : $auditLog,
                                               clock                    : $clock,
-                                              connectionStore          : $federationConnectionStore,
+                                              federationConnectionStore: $federationConnectionStore,
                                           )
                                           : null,
-            readConnections         : $authCapabilityReadiness->federation()
+            readFederationConnections: $authCapabilityReadiness->federation()
                                           ? new ReadFederationConnections(federationConnectionStore: $federationConnectionStore)
                                           : null,
-            verifyDomain            : $authCapabilityReadiness->federation()
+            verifyFederationDomain: $authCapabilityReadiness->federation()
                                           ? new VerifyFederationDomain(
                                               auditLog       : $auditLog,
                                               clock          : $clock,
@@ -1532,7 +1532,7 @@ final class AuthBuilder
                                               auditLog       : $auditLog,
                                               clock          : $clock,
                                               federationConnectionStore: $federationConnectionStore,
-                                              federationMetadataRuntime: $this->federationRuntime,
+                                              federationHealthCheck: $this->federationRuntime,
                                           )
                                           : null,
             evaluateFederationBreakGlassBypass: $authCapabilityReadiness->federation()

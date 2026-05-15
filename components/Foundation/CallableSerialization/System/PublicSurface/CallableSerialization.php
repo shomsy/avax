@@ -31,6 +31,14 @@ final class CallableSerialization
     }
 
     /**
+     * Reset the cached pair. Required for long-lived runtimes (worker mode).
+     */
+    public static function reset() : void
+    {
+        self::$pair = null;
+    }
+
+    /**
      * Serialize and sign a closure. Returns JSON payload string.
      */
     public static function encode(Closure $closure, string|null $signingKey = null) : string

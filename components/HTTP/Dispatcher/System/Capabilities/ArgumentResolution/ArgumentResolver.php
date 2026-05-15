@@ -26,6 +26,7 @@ final readonly class ArgumentResolver
 {
     public function __construct(
         private ContainerInterface $container,
+        private SecureRequestInputBuilder $inputBuilder,
     ) {}
 
     public function resolve(ReflectionMethod $reflectionMethod, ServerRequestInterface $serverRequest) : array
@@ -94,8 +95,7 @@ final readonly class ArgumentResolver
      */
     private function resolveSecureRequest(string $typeName, ServerRequestInterface $serverRequest) : SecureRequest
     {
-        $inputBuilder = new SecureRequestInputBuilder();
-        $input        = $inputBuilder->buildInput(request: $serverRequest);
+        $input = $this->inputBuilder->buildInput(request: $serverRequest);
 
         $reflectionClass = new ReflectionClass($typeName);
         $instance        = $reflectionClass->newInstance();

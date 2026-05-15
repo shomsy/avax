@@ -393,6 +393,35 @@ private function loadConfigs(): array
 
 ---
 
+## Rule: Semantic PHPDoc
+
+**Status:** MANDATORY
+**Scope:** All production PHP classes, interfaces, traits, enums, and public/protected methods
+**Severity:** HIGH
+**Enforcement:** Manual review, gate tooling
+
+### Cross-Reference
+
+For the full semantic PHPDoc governance including class PHPDoc, method PHPDoc, tag rules, flow/action documentation, review criteria, gate rules, and phased adoption, see:
+
+```text
+.agents/how-to/how-to-document.md — Semantic PHPDoc Rule
+.agents/how-to/how-to-code-review.md — §24 PHPDoc Review Rule
+```
+
+### Summary
+
+```
+Every class explains its responsibility.
+Every public/protected method explains its action.
+Every exception is documented.
+Every complex type boundary is documented.
+No PHPDoc may lie, drift, decorate, or merely repeat code.
+PHPDoc must make the architecture easier to read.
+```
+
+---
+
 ## Completion Language
 
 A component or stage **MUST NOT** be marked GREEN unless:

@@ -1498,7 +1498,51 @@ For the full exception format, see:
 .agents/how-to/how-to-production-readiness.md §8
 ```
 
-## 24. Critical Quality Signal Rule
+## 24. PHPDoc Review Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** HIGH
+
+### Rule
+
+Code review MUST check PHPDoc quality.
+
+A scope cannot be GREEN if:
+
+```text
+a production class has no semantic class PHPDoc
+a public/protected method has no semantic method PHPDoc
+a method that throws lacks @throws
+array shapes, generics, or iterables are undocumented
+PHPDoc lies or drifts from implementation
+PHPDoc merely repeats code without explaining intent
+PHPDoc hides architecture confusion behind vague language
+PHPDoc uses fully-qualified names instead of imports
+PHPDoc conflicts with native types or PHPStan/Psalm analysis
+```
+
+### Severity
+
+```text
+BLOCKER: misleading docs that can cause wrong usage, security risk, public API misuse, or runtime misunderstanding
+HIGH:    public API or framework behavior is undocumented
+MEDIUM:  internal behavior is under-documented but not dangerous
+LOW:     wording polish
+```
+
+### Cross-Reference
+
+For full PHPDoc rules including class, method, tag, flow/action documentation, gate, and phased adoption, see:
+
+```text
+.agents/how-to/how-to-document.md — Semantic PHPDoc Rule
+```
+
+---
+
+## 25. Critical Quality Signal Rule
 
 ### Status
 

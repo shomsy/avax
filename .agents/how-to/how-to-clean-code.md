@@ -1572,7 +1572,16 @@ Test class over 500 lines:       mandatory test organization review
 
 Threshold trigger does not automatically mean refactor. It does require documented decision. No large unit may be called GREEN without review decision.
 
-## 24. Final position
+## 24. PHPDoc Cross-Reference
+
+PHPDoc is part of clean code. For the full semantic PHPDoc rule including class, method, tag, flow/action documentation, and review criteria, see:
+
+```text
+.agents/how-to/how-to-document.md — Semantic PHPDoc Rule
+.agents/how-to/how-to-code-review.md — §24 PHPDoc Review Rule
+```
+
+## 25. Final position
 
 If you remember only one sentence from this entire document, remember this:
 

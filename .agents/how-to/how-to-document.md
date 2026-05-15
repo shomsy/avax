@@ -457,6 +457,218 @@ Reports may prove.
 
 ## Final Authority Clause
 
+## Semantic PHPDoc Rule
+
+### Status
+
+**MANDATORY**
+
+### Core Philosophy
+
+PHPDoc in AvaX is not decorative.
+
+PHPDoc is part of the architecture reading model.
+
+It must help the reader understand:
+- what this unit is
+- what it owns
+- why it exists
+- which flow or capability it supports
+- what problem it solves
+- what assumptions matter
+- what can fail
+- what must not be changed casually
+
+PHPDoc MUST follow:
+- PSR-12 formatting rules for PHP code layout
+- phpDocumentor/PHPStan/Psalm-compatible tag style
+- AvaX plain-English documentation style
+- screaming architecture language: folder says flow or capability, class says responsibility, method says exact action
+
+PHPDoc MUST NOT become noise.
+
+---
+
+### Class PHPDoc Rule
+
+Every production class, interface, trait, and enum MUST have a semantic PHPDoc block.
+
+The class PHPDoc MUST explain:
+1. What this unit is.
+2. What responsibility it owns.
+3. Which flow/capability/configuration/foundation/public-surface role it supports.
+4. Why it exists.
+5. What kind of problem it solves.
+6. Whether it executes behavior, assembles dependencies, delegates public API, or represents a value/result.
+7. What must stay true for it to remain valid.
+
+Class PHPDoc MUST be short, plain-English, and architecture-aware. It must not merely repeat the class name.
+
+**Good:**
+```php
+/**
+ * Builds HTTP responses for internal framework flows.
+ *
+ * This capability owns response creation rules so runtime code can ask for a
+ * ready Response without knowing how headers, status codes, JSON encoding, or
+ * redirect defaults are normalized.
+ *
+ * It creates produced response objects only. It must not assemble runtime
+ * services, read from the container, or act as a public facade.
+ */
+final readonly class CreateHttpResponse
+{
+}
+```
+
+**Bad (repeats the class name without meaning):**
+```php
+/**
+ * Class CreateHttpResponse
+ */
+final readonly class CreateHttpResponse
+{
+}
+```
+
+---
+
+### Method PHPDoc Rule
+
+Every public and protected method MUST have a semantic PHPDoc block.
+
+Private methods MUST have PHPDoc when they:
+- contain non-trivial logic
+- hide an important assumption
+- perform I/O
+- mutate state
+- throw exceptions
+- trigger security-sensitive behavior
+- affect performance-sensitive code
+- use array shapes, generics, iterables, callables, or mixed values
+- exist because of a design decision that is not obvious from the name
+
+For maximum AI-readability, AvaX MAY require PHPDoc on every method including private methods, but the docblock must remain useful and concise.
+
+Method PHPDoc MUST explain:
+1. What exact action the method performs.
+2. Why the action exists.
+3. What it receives conceptually, not just technically.
+4. What it returns conceptually.
+5. What can fail.
+6. What side effects happen, if any.
+7. Which invariants or boundaries matter.
+
+Do not duplicate native types unless PHPDoc adds precision.
+
+**Good:**
+```php
+/**
+ * Creates a JSON response from public or internal payload data.
+ *
+ * The method centralizes JSON encoding and default content-type behavior so
+ * runtime flows do not duplicate response formatting rules.
+ *
+ * @param array<string, mixed>|object $data Payload that can be encoded as JSON.
+ * @param array<string, string|string[]> $headers Extra response headers.
+ *
+ * @throws JsonException When the payload cannot be encoded safely.
+ */
+public function json(array|object $data, int $status = 200, array $headers = []): Response
+```
+
+**Bad (adds nothing beyond the signature):**
+```php
+/**
+ * Creates JSON response.
+ *
+ * @param array $data
+ * @param int $status
+ * @param array $headers
+ * @return Response
+ */
+public function json(array $data, int $status = 200, array $headers = []): Response
+```
+
+---
+
+### PHPDoc Tag Rule
+
+Use PHPDoc tags only when they add information that native PHP types cannot express.
+
+**Required tags:**
+- `@throws` for every exception that may escape the method
+- `@template` for generic classes/methods
+- `@implements` / `@extends` for generic inheritance
+- `@param` for array shapes, callable shapes, iterable value types, generic collections, mixed boundaries, or domain explanation
+- `@return` for array shapes, iterable value types, generic collections, fluent self semantics, or domain explanation
+
+**Forbidden tags:**
+- `@param string $name` when the native type and variable name are already clear
+- `@return bool` when the method signature already says bool and the meaning is obvious
+- fake `@throws` tags for exceptions that cannot escape
+- stale tags that no longer match behavior
+- fully-qualified class names when imports can be used
+
+---
+
+### Flow/Action Documentation Rule
+
+PHPDoc must strengthen the AvaX reading model.
+
+Class PHPDoc should answer:
+- What responsibility does this unit own?
+- Is it a flow owner, action owner, state owner, configuration owner, public surface, or foundation primitive?
+- Which higher-level flow or capability does it support?
+
+Method PHPDoc should answer:
+- What exact action happens here?
+- What boundary does this method protect?
+- What would break if this method changed?
+
+If PHPDoc does not improve flow/action understanding, rewrite it or remove it.
+
+---
+
+### PHPDoc Gate Rule
+
+A PHPDoc gate SHOULD verify:
+- every production class/interface/trait/enum has a semantic docblock
+- every public/protected method has a docblock
+- every `@throws` is present where exceptions escape
+- no docblock contains fully-qualified class names when imports should be used
+- no obvious redundant `@param`/`@return` tags exist
+- iterable/array/callable/mixed boundaries have useful PHPDoc
+- no docblock uses banned generic phrases: `Handles things`, `Processes data`, `Helper for`, `Service for`, `Manager for`
+
+Gate without semantic review is not enough. Human/AI governance review still checks quality.
+
+---
+
+### Short Version
+
+```
+Every class explains its responsibility.
+Every public/protected method explains its action.
+Every exception is documented.
+Every complex type boundary is documented.
+No PHPDoc may lie, drift, decorate, or merely repeat code.
+PHPDoc must make the architecture easier to read.
+```
+
+---
+
+### Phased Adoption
+
+```
+New code:         PHPDoc rule is mandatory immediately.
+Touched code:     must be upgraded while touched.
+Existing untouched: classify as documentation debt and ratchet down.
+PublicSurface/runtime/security-sensitive: upgrade first.
+```
+
+---
+
 ## Examples Are Architecture Rule
 
 Examples, GoldenPath apps, documentation snippets, generated examples, and tests are source material for humans and AI. They MUST show canonical style.

@@ -2344,7 +2344,7 @@ If security is hidden in vague helpers, it failed.
 
 ---
 
-## 40. Security Must Scream Rule
+## 51. Security Must Scream Rule
 
 ### Status
 
@@ -2393,7 +2393,7 @@ explicit stage-blocking decision
 
 ---
 
-## 41. Security Review Trigger Rule
+## 52. Security Review Trigger Rule
 
 ### Status
 
@@ -2459,7 +2459,7 @@ Security review cannot be skipped silently.
 
 ---
 
-## 42. Security Commit Block Rule
+## 53. Security Commit Block Rule
 
 ### Status
 
@@ -2505,7 +2505,7 @@ A GREEN commit with unresolved security issue is forbidden.
 
 ---
 
-## 44. Security and Performance Trigger Cross-Rule
+## 54. Security and Performance Trigger Cross-Rule
 
 Security review MUST be triggered by changes to: user input, authentication, authorization, session, cookies, CSRF, CORS, encryption, hashing, secrets, filesystem I/O, HTTP client/server, serialization/deserialization, database query building, queue payloads, cache keys containing user data, logging of sensitive data, redirects, file upload/download, template rendering, command/process execution, event payloads crossing trust boundaries, tenant isolation, or plugin/sandbox execution.
 
@@ -2515,7 +2515,7 @@ If triggered, review evidence must include why security/performance is relevant,
 
 ---
 
-## 45. Critical Quality Signal Rule
+## 55. Critical Quality Signal Rule
 
 ### Status
 

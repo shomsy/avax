@@ -667,6 +667,38 @@ Existing untouched: classify as documentation debt and ratchet down.
 PublicSurface/runtime/security-sensitive: upgrade first.
 ```
 
+### PHPDoc GREEN Status Rule
+
+Semantic PHPDoc is part of AvaX architecture readability. Missing or fake PHPDoc can block GREEN.
+
+Severity:
+
+**BLOCKER:**
+- missing semantic PHPDoc on PublicSurface production class
+- missing semantic PHPDoc on runtime-critical class
+- missing semantic PHPDoc on security-sensitive class
+- missing or wrong `@throws` on public API method where exception may escape
+- PHPDoc that lies about behavior, security, lifecycle, or public API semantics
+- PHPDoc that hides runtime assembly, service locator, or dependency fallback
+
+**HIGH:**
+- missing semantic PHPDoc on ordinary production class touched in the current pass
+- missing semantic PHPDoc on public/protected method touched in the current pass
+- missing array shape/generic/iterable/callable/mixed boundary docs
+- method side effects or mutations not documented
+
+**MEDIUM:**
+- missing semantic PHPDoc on private non-trivial methods
+- unclear intent in internal docblocks
+- incomplete conceptual input/output explanation
+
+**LOW:**
+- wording polish only
+
+**Legacy rule:** Existing untouched legacy PHPDoc debt may be YELLOW only with ratchet and owner. New code and touched code must follow the rule immediately.
+
+**Hard anti-spam rule:** Mandatory PHPDoc does not allow decorative PHPDoc. A required docblock that merely repeats code is still a violation.
+
 ---
 
 ## Examples Are Architecture Rule

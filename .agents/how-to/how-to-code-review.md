@@ -1534,7 +1534,7 @@ LOW:     wording polish
 
 ### Cross-Reference
 
-For full PHPDoc rules including class, method, tag, flow/action documentation, gate, and phased adoption, see:
+For full PHPDoc rules including class, method, tag, flow/action documentation, gate, severity, phased adoption, and GREEN status rule, see:
 
 ```text
 .agents/how-to/how-to-document.md — Semantic PHPDoc Rule

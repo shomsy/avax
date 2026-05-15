@@ -2098,7 +2098,7 @@ Performance tests are the judge.
 
 ---
 
-## 44. Security and Performance Trigger Cross-Rule
+## 47. Security and Performance Trigger Cross-Rule
 
 Performance review MUST be triggered by changes to: hot paths, loops over routes/listeners/middleware, reflection, container resolution, event dispatch, queue workers, database query execution, route matching, filesystem scans, cache compile/read/write, boot/worker startup, long-lived runtime reset, serialization, hydration/extraction, projections/read models, graph compilation, or runtime scope creation/closing.
 
@@ -2112,7 +2112,7 @@ For security triggers, see:
 
 ---
 
-## 45. Critical Quality Signal Rule
+## 48. Critical Quality Signal Rule
 
 ### Status
 

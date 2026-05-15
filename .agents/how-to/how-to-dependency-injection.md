@@ -299,11 +299,13 @@ This provider is responsible for the earliest bootstrap phase and MUST:
 
 ### 4.2 The Rule
 
-Every ACTIVE component MUST have exactly one ServiceProvider.
+Every ACTIVE production component with runtime behavior, public API, dependencies, replaceable services, state, I/O, configuration, or lifecycle ownership MUST have exactly one real ServiceProvider.
 
 The ServiceProvider is the composition root for that component.
 
 It lives in `System/Configuration/<ComponentName>ServiceProvider.php`.
+
+Exempt statuses: ROADMAP, SCAFFOLD, LABS_ONLY, EVIDENCE_ONLY, TEST_ONLY, PURE_FOUNDATION, inactive DEPRECATED.
 
 ### 4.3 ServiceProvider Contract
 

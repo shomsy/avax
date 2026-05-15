@@ -2298,7 +2298,7 @@ A component **MUST** be marked **experimental** if it's not proven in production
 
 A component **MUST** be marked **production-ready** only when all items above are satisfied.
 
-## 22. Component Status Ownership Rule
+## 28. Component Status Ownership Rule
 
 ### Status
 
@@ -2347,7 +2347,7 @@ Gates must use component status ownership. A ROADMAP/SCAFFOLD/LABS_ONLY componen
 
 ---
 
-## 23. Large Unit Review Thresholds
+## 29. Large Unit Review Thresholds
 
 Large code is not automatically wrong, but it is automatically suspicious.
 

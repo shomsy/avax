@@ -1201,7 +1201,7 @@ A GREEN commit with unresolved security issue is forbidden.
 
 ---
 
-## 16. Gate Self-Test Rule
+## 14. Gate Self-Test Rule
 
 ### Status
 
@@ -1247,7 +1247,7 @@ Rules:
 - gate that scans zero active files is FAIL, not PASS
 - gate PASS with RED content is FAIL
 
-## 17. No Zero-Scan Gate Rule
+## 15. No Zero-Scan Gate Rule
 
 ### Status
 
@@ -1278,7 +1278,7 @@ UNAVAILABLE is not PASS.
 SKIPPED is not PASS unless explicitly allowed by stage scope.
 Exit 0 with RED content is not PASS.
 
-## 18. Quality Ratchet Rule
+## 16. Quality Ratchet Rule
 
 ### Status
 
@@ -1332,7 +1332,7 @@ Quality ratchet evidence must include:
 
 ---
 
-## 22. Security and Performance Trigger Cross-Rule
+## 19. Security and Performance Trigger Cross-Rule
 
 Security review MUST be triggered by changes to areas listed in:
 
@@ -1348,7 +1348,7 @@ Performance review MUST be triggered by changes to areas listed in:
 
 If triggered, review evidence must include the compliance table. If not triggered, review must say why.
 
-## 23. Large Unit Review Thresholds
+## 20. Large Unit Review Thresholds
 
 Mandatory review triggers:
 
@@ -1364,7 +1364,7 @@ Test class over 500 lines:       mandatory test organization review
 
 Threshold trigger requires documented decision. No large unit may be called GREEN without review decision.
 
-## 24. Examples Are Architecture Rule
+## 21. Examples Are Architecture Rule
 
 Examples, GoldenPath apps, documentation snippets, generated examples, and tests are source material for humans and AI. They MUST show canonical style.
 
@@ -1374,11 +1374,11 @@ If examples must show low-level/manual usage, they must be clearly labeled as ad
 
 GoldenPath examples MUST be canonical. If examples teach an anti-pattern, the codebase will reproduce it.
 
-## 25. Canonical Term Registry Rule
+## 22. Canonical Term Registry Rule
 
 One concept must have one canonical name. Check the registry at `docs/governance/canonical-terms.md` before introducing or accepting new terminology.
 
-## 26. PublicSurface Factory Boundary Rule
+## 23. PublicSurface Factory Boundary Rule
 
 PublicSurface may expose public factories only when they create public value/result objects or protect users from internal construction details. PublicSurface factories MUST NOT assemble runtime service graphs, instantiate runtime services, access the container as service locator, or create middleware/dispatchers/resolvers/clients/stores/loggers/repositories/framework runtime services.
 
@@ -1387,7 +1387,7 @@ Forbidden: `Responses::json()` creates new `CreateHttpResponse` internally.
 
 PublicSurface may create produced public values. PublicSurface must not assemble machinery.
 
-## 27. DDD Factory vs Runtime Assembly Rule
+## 24. DDD Factory vs Runtime Assembly Rule
 
 A DDD factory owns meaningful creation of domain/value/result objects when construction has invariants, policy, or language meaning. A DDD factory MUST NOT assemble framework runtime service graphs.
 
@@ -1396,7 +1396,7 @@ Forbidden: `RuntimeFactory` creates `Router`, `EventDispatcher`, `Logger`, `Midd
 
 If a class assembles runtime services, it belongs in `ServiceProvider`, `System/Configuration`, or `System/Configuration/Builders` — not in a DDD factory.
 
-## 28. Governance Exception Register Rule
+## 25. Governance Exception Register Rule
 
 A documented exception is valid only when recorded in the exception register at:
 
@@ -1406,7 +1406,54 @@ EVIDENCE/accepted-exceptions-ledger.md
 
 Exception without owner and expiry is not an exception. It is unresolved governance debt.
 
-## 29. Critical Quality Signal Rule
+## 26. Semantic PHPDoc GREEN Status Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** BLOCKER/HIGH/MEDIUM/LOW (see below)
+
+### Rule
+
+Semantic PHPDoc is part of AvaX architecture readability. Missing or fake PHPDoc can block GREEN.
+
+Severity:
+
+```text
+BLOCKER:
+- missing semantic PHPDoc on PublicSurface production class
+- missing semantic PHPDoc on runtime-critical class
+- missing semantic PHPDoc on security-sensitive class
+- missing or wrong @throws on public API method
+- PHPDoc that lies about behavior, security, or public API
+- PHPDoc that hides runtime assembly or service locator
+
+HIGH:
+- missing semantic PHPDoc on ordinary production class touched in current pass
+- missing PHPDoc on public/protected method touched in current pass
+- missing array shape/generic/iterable/callable/mixed boundary docs
+
+MEDIUM:
+- missing PHPDoc on private non-trivial methods
+- unclear intent in internal docblocks
+
+LOW:
+- wording polish only
+```
+
+### Anti-Spam Rule
+
+Mandatory PHPDoc does not allow decorative PHPDoc. A required docblock that merely repeats code is still a violation.
+
+### Cross-Reference
+
+```text
+.agents/how-to/how-to-document.md — Semantic PHPDoc Rule
+```
+
+---
+
+## 27. Critical Quality Signal Rule
 
 ### Status
 
@@ -1447,7 +1494,7 @@ If it can create a security hole, corrupt data, hide a runtime failure, break lo
 
 ---
 
-## 20. Status State Machine Rule
+## 17. Status State Machine Rule
 
 ### Status
 
@@ -1514,7 +1561,7 @@ commit/push is forbidden unless explicitly committing evidence-only RED/YELLOW c
 
 ---
 
-## 21. Component Status Ownership Rule
+## 18. Component Status Ownership Rule
 
 ### Status
 
@@ -1579,7 +1626,7 @@ A ROADMAP/SCAFFOLD/LABS_ONLY component MUST NOT leak into production runtime aut
 
 
 
-## 30. Final Verdict
+## 28. Final Verdict
 
 > NOTE: This section is HISTORICAL. The current project state is GREEN across all V1-V5 stages as proven by CURRENT_TRUTH.md (2026-05-15). 8351 tests pass, PHPStan 0 errors, all gates GREEN. The content below is preserved to document the previous RED state.
 

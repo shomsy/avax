@@ -182,19 +182,6 @@ Helpers/
   StringHelper.php
 ```
 
-## 54. Canonical Term Registry Rule
-
-One concept must have one canonical name. If the same concept appears under multiple names, review MUST choose one canonical term and mark the others as aliases, deprecated terms, or wrong terms.
-
-The canonical registry is at:
-
-```text
-docs/governance/canonical-terms.md
-```
-
-Check the registry before introducing or accepting new terminology. All term decisions MUST be added to the registry.
-
-
 - Folder names describe flows or capabilities
 - File names describe responsibility
 - Function names describe exact action
@@ -1179,7 +1166,22 @@ Bad examples:
 Choose one name.
 Delete the others.
 
-### 27.4 Function Naming Rule
+### 27.4 Canonical Term Registry Rule
+
+One concept must have one canonical name. If the same concept appears under multiple names, review MUST choose one canonical term and mark the others as aliases, deprecated terms, or wrong terms.
+
+The canonical registry is at:
+
+```text
+docs/governance/canonical-terms.md
+```
+
+Check the registry before introducing or accepting new terminology. All term decisions MUST be added to the registry.
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+### 27.5 Function Naming Rule
 
 Function names must describe exact action.
 

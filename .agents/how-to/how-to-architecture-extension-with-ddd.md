@@ -433,7 +433,29 @@ Foundation/
 
 ---
 
-## 11. Public API Stability Rule
+## 11. PublicSurface Factory Boundary Rule
+
+PublicSurface may expose public factories only when they create public value/result objects or protect users from internal construction details.
+
+PublicSurface factories MUST NOT:
+
+\`\`\`text
+assemble runtime service graphs
+instantiate runtime services
+access the container as service locator
+create middleware, dispatchers, resolvers, clients, stores, loggers, repositories, or framework runtime services
+hide dependency assembly
+\`\`\`
+
+**Allowed:** \`Responses::json()\` delegates to \`CreateHttpResponse\` and returns \`Response\`.
+**Forbidden:** \`Responses::json()\` creates new \`CreateHttpResponse\` internally.
+
+PublicSurface may create produced public values. PublicSurface must not assemble machinery.
+
+---
+
+
+## 12. Public API Stability Rule
 
 Changing `PublicSurface/` is a public API decision.
 
@@ -461,7 +483,7 @@ Internal folders may change more freely.
 
 ---
 
-## 12. Small Surface Rule
+## 13. Small Surface Rule
 
 `PublicSurface/` must stay small.
 
@@ -482,7 +504,7 @@ A strong public API is usually small, boring, predictable, and easy to document.
 
 ---
 
-## 13. No Runtime Leakage Rule
+## 14. No Runtime Leakage Rule
 
 Runtime-specific APIs must not leak into `PublicSurface/`.
 
@@ -524,7 +546,7 @@ It must not expose server-specific implementation details by accident.
 
 ---
 
-## 14. No Request State Rule
+## 15. No Request State Rule
 
 `PublicSurface/` must not hold request-scoped mutable state.
 
@@ -549,7 +571,7 @@ This protects the system from leaking state between requests in worker runtimes.
 
 ---
 
-## 15. PublicSurface Placement Rule
+## 16. PublicSurface Placement Rule
 
 Use `PublicSurface/` inside a framework or component system root.
 
@@ -583,7 +605,7 @@ Do not create a top-level repository `PublicSurface/` folder unless the reposito
 
 ---
 
-## 16. PublicSurface Naming Rule
+## 17. PublicSurface Naming Rule
 
 Files inside `PublicSurface/` must use public API names.
 
@@ -616,7 +638,7 @@ A public API name must explain what the user is touching.
 
 ---
 
-## 17. PublicSurface Documentation Rule
+## 18. PublicSurface Documentation Rule
 
 Every `PublicSurface/` folder must be documented.
 
@@ -636,7 +658,7 @@ If the public surface cannot be documented simply, the API is probably too broad
 
 ---
 
-## 18. PublicSurface Proof Rule
+## 19. PublicSurface Proof Rule
 
 A public surface is accepted only when at least one test proves that:
 
@@ -667,7 +689,7 @@ No proof means no green status.
 
 ---
 
-## 19. Status of DDD in This Architecture
+## 20. Status of DDD in This Architecture
 
 This architecture may use parts of Domain-Driven Design.
 
@@ -708,7 +730,7 @@ It rejects DDD as a folder template.
 
 ---
 
-## 20. DDD Integration Law
+## 21. DDD Integration Law
 
 DDD concepts must obey this rule:
 
@@ -758,7 +780,7 @@ Only then should the reader discover whether a unit is a value object, entity, a
 
 ---
 
-## 21. What Ubiquitous Language Means Here
+## 22. What Ubiquitous Language Means Here
 
 Ubiquitous Language is the shared language of a bounded context.
 
@@ -795,7 +817,7 @@ If the word cannot pass this test, it is not yet a stable domain term.
 
 ---
 
-## 22. Ubiquitous Language Must Be Simple
+## 23. Ubiquitous Language Must Be Simple
 
 The language must be easy to read.
 
@@ -844,7 +866,7 @@ It must describe real ownership.
 
 ---
 
-## 23. Contract Naming Rule
+## 24. Contract Naming Rule
 
 Do not use `Contract` as a broad bounded context name.
 
@@ -900,7 +922,7 @@ If the answer is breaking change detection, name it `DetectBreakingPublicApiChan
 
 ---
 
-## 24. Adapter Naming Rule
+## 25. Adapter Naming Rule
 
 Do not use `Adapters/` as a broad dumping ground.
 
@@ -935,7 +957,7 @@ Do not sort code by architectural jargon when a clearer capability name exists.
 
 ---
 
-## 25. Bounded Context
+## 26. Bounded Context
 
 A Bounded Context is a boundary where language has one stable meaning.
 
@@ -1067,7 +1089,7 @@ This is stronger than a generic `Contract` context because it explains the real 
 
 ---
 
-## 26. When Bounded Contexts Are Needed
+## 27. When Bounded Contexts Are Needed
 
 Use explicit bounded contexts when:
 
@@ -1098,7 +1120,7 @@ They deserve separate context definitions.
 
 ---
 
-## 27. When Bounded Contexts Are Not Needed
+## 28. When Bounded Contexts Are Not Needed
 
 Do not create explicit bounded contexts when:
 
@@ -1129,7 +1151,7 @@ Do not add DDD structure just to look mature.
 
 ---
 
-## 28. Tactical DDD Concepts
+## 29. Tactical DDD Concepts
 
 Use tactical DDD concepts only when they solve a real clarity or correctness problem.
 
@@ -1317,7 +1339,20 @@ DomainFactory
 
 Do not create factories for trivial constructors.
 
-### 28.7 Domain Event
+### 28.7 DDD Factory vs Runtime Assembly Rule
+
+A DDD factory owns meaningful creation of domain/value/result objects when construction has invariants, policy, or language meaning.
+
+A DDD factory MUST NOT assemble framework runtime service graphs.
+
+**Allowed:** `CreateReleaseCandidate` creates `ReleaseCandidate` with invariants.
+**Forbidden:** `RuntimeFactory` creates `Router`, `EventDispatcher`, `Logger`, `MiddlewareStack`, `DatabaseConnection`.
+
+If a class assembles runtime services, it belongs in `ServiceProvider`, `System/Configuration`, or `System/Configuration/Builders` — not in a DDD factory.
+
+Factories create meaningful objects. Configuration assembles the system.
+
+### 28.8 Domain Event
 
 A Domain Event records a completed domain fact.
 
@@ -1349,7 +1384,7 @@ An event records a fact.
 
 ---
 
-## 29. Ubiquitous Language Dictionary
+## 30. Ubiquitous Language Dictionary
 
 Every significant bounded context should have a small language dictionary.
 
@@ -1383,7 +1418,7 @@ Examples:
 
 ---
 
-## 30. Required DDD Language Outputs
+## 31. Required DDD Language Outputs
 
 When a bounded context is explicitly introduced, the design must produce:
 
@@ -1413,7 +1448,7 @@ It means every bounded context must honestly decide which ones are needed.
 
 ---
 
-## 31. When DDD Is Needed
+## 32. When DDD Is Needed
 
 Use DDD concepts when the system has real domain pressure.
 
@@ -1448,7 +1483,7 @@ That deserves language.
 
 ---
 
-## 32. When DDD Is Not Needed
+## 33. When DDD Is Not Needed
 
 Do not use DDD concepts when the code is simple and already clear.
 
@@ -1492,7 +1527,7 @@ Domain/
 
 ---
 
-## 33. DDD Minimum Rule
+## 34. DDD Minimum Rule
 
 Use the smallest DDD concept that solves the clarity problem.
 
@@ -1518,7 +1553,7 @@ The first solution to unclear design is usually better language.
 
 ---
 
-## 34. DDD Proof Rule
+## 35. DDD Proof Rule
 
 A DDD concept is accepted only when at least one test proves the behavior or invariant it exists to protect.
 
@@ -1538,7 +1573,7 @@ A DDD concept may exist temporarily as yellow during active design, but it must 
 
 ---
 
-## 35. DDD and Flow Slices
+## 36. DDD and Flow Slices
 
 Flow slices describe end-to-end behavior.
 
@@ -1577,7 +1612,7 @@ Shared last.
 
 ---
 
-## 36. DDD and Capability Slices
+## 37. DDD and Capability Slices
 
 Capability slices describe reusable system abilities.
 
@@ -1621,7 +1656,7 @@ This is invalid because it says nothing about the system ability.
 
 ---
 
-## 37. DDD and PublicSurface
+## 38. DDD and PublicSurface
 
 Public DDD objects may appear in `PublicSurface/` only when they are part of the stable user-facing API.
 
@@ -1659,7 +1694,7 @@ Internal domain machinery should remain internal.
 
 ---
 
-## 38. DDD and Foundation
+## 39. DDD and Foundation
 
 Foundation contains tiny neutral primitives.
 
@@ -1693,7 +1728,7 @@ It belongs in the flow or capability that owns it.
 
 ---
 
-## 39. DDD and Configuration
+## 40. DDD and Configuration
 
 Configuration owns assembly, wiring, bootstrapping, and composition.
 
@@ -1727,7 +1762,7 @@ The second does domain work and belongs in flows or capabilities.
 
 ---
 
-## 40. Existing Code Migration Rule
+## 41. Existing Code Migration Rule
 
 When existing code uses generic DDD folders, do not rename mechanically.
 
@@ -1780,7 +1815,7 @@ Tests are the judge.
 
 ---
 
-## 41. Legacy Recovery Classification
+## 42. Legacy Recovery Classification
 
 When recovering behavior from old material, classify each candidate:
 
@@ -1817,7 +1852,7 @@ Do not restore code without this classification.
 
 ---
 
-## 42. Skeleton Recovery Ban
+## 43. Skeleton Recovery Ban
 
 Do not create empty classes, fake facades, fake contracts, or placeholder implementations just to silence tooling.
 
@@ -1853,7 +1888,7 @@ If ownership is unclear, classify it and stop.
 
 ---
 
-## 43. Naming Matrix
+## 44. Naming Matrix
 
 Use this matrix during design and review.
 
@@ -1872,7 +1907,7 @@ Use this matrix during design and review.
 
 ---
 
-## 44. Forbidden DDD Anti-Patterns
+## 45. Forbidden DDD Anti-Patterns
 
 The following are forbidden unless explicitly justified inside a narrow local scope:
 
@@ -1910,7 +1945,7 @@ DDD must not become decoration.
 
 ---
 
-## 45. Acceptable DDD Exceptions
+## 46. Acceptable DDD Exceptions
 
 A technical DDD folder may be allowed only inside a very narrow local scope when it improves navigation and does not weaken ownership.
 
@@ -1941,7 +1976,7 @@ The child may group technical shape second.
 
 ---
 
-## 46. Practical Decision Tree
+## 47. Practical Decision Tree
 
 Before introducing a DDD concept, ask:
 
@@ -1961,7 +1996,7 @@ If the answer to question 6, 7, or 9 is no, do not mark the concept green.
 
 ---
 
-## 47. Review Checklist for DDD Usage
+## 48. Review Checklist for DDD Usage
 
 A DDD design passes review only if:
 
@@ -1987,7 +2022,7 @@ If DDD makes the design harder to explain, remove it.
 
 ---
 
-## 48. Review Classification
+## 49. Review Classification
 
 Use this classification during review.
 
@@ -2030,7 +2065,7 @@ A concept is called production-ready without proof.
 
 ---
 
-## 49. DDD Documentation Template
+## 50. DDD Documentation Template
 
 Use this template when a context or capability needs explicit domain documentation.
 
@@ -2122,7 +2157,7 @@ Invariants:
 
 ---
 
-## 50. Example: Compatibility Domain Model
+## 51. Example: Compatibility Domain Model
 
 This example shows DDD adapted to screaming architecture.
 
@@ -2197,7 +2232,7 @@ Compatibility says users must not be broken accidentally.
 
 ---
 
-## 51. Example: Release Readiness Domain Model
+## 52. Example: Release Readiness Domain Model
 
 ```text
 components/
@@ -2254,7 +2289,7 @@ A domain fact that approval happened.
 
 ---
 
-## 52. Example: Runtime Safety Domain Model
+## 53. Example: Runtime Safety Domain Model
 
 ```text
 framework/
@@ -2313,7 +2348,7 @@ Domain event emitted when safety rules fail.
 
 ---
 
-## 53. Example: Persistence Domain Model
+## 54. Example: Persistence Domain Model
 
 Persistence and ORM are allowed to use DDD concepts only when they protect real persistence boundaries.
 
@@ -2373,7 +2408,7 @@ DDD concepts exist only where they protect identity, lifecycle, or persistence b
 
 ---
 
-## 54. Combined Review Checklist
+## 55. Combined Review Checklist
 
 A design using `PublicSurface/` and DDD passes only if all of the following are true.
 
@@ -2437,7 +2472,7 @@ Skeleton-only recovery is rejected.
 
 ---
 
-## 55. Final Law
+## 56. Final Law
 
 Public surface receives.
 
@@ -2470,37 +2505,6 @@ Old code is evidence.
 Current architecture is the target.
 
 Tests are the judge.
-
-## 50. PublicSurface Factory Boundary Rule
-
-PublicSurface may expose public factories only when they create public value/result objects or protect users from internal construction details.
-
-PublicSurface factories MUST NOT:
-- assemble runtime service graphs
-- instantiate runtime services
-- access the container as service locator
-- create middleware, dispatchers, resolvers, clients, stores, loggers, repositories, or framework runtime services
-- hide dependency assembly
-
-**Allowed:** `Responses::json()` delegates to `CreateHttpResponse` and returns `Response`.
-**Forbidden:** `Responses::json()` creates new `CreateHttpResponse` internally.
-
-PublicSurface may create produced public values. PublicSurface must not assemble machinery.
-
-## 51. DDD Factory vs Runtime Assembly Rule
-
-A DDD factory owns meaningful creation of domain/value/result objects when construction has invariants, policy, or language meaning.
-
-A DDD factory MUST NOT assemble framework runtime service graphs.
-
-**Allowed:** `CreateReleaseCandidate` creates `ReleaseCandidate` with invariants.
-**Forbidden:** `RuntimeFactory` creates `Router`, `EventDispatcher`, `Logger`, `MiddlewareStack`, `DatabaseConnection`.
-
-If a class assembles runtime services, it belongs in `ServiceProvider`, `System/Configuration`, or `System/Configuration/Builders` — not in a DDD factory.
-
-Factories create meaningful objects. Configuration assembles the system.
-
----
 
 Everything must remain readable.
 

@@ -224,6 +224,8 @@ unsafe plugin or sandbox execution
 
 A security issue may remain only if final status is YELLOW or RED. Never GREEN.
 
+A GREEN commit with unresolved security issue is forbidden.
+
 If temporarily accepted, it MUST have:
 
 ```text

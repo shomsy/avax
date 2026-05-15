@@ -1574,7 +1574,7 @@ Threshold trigger does not automatically mean refactor. It does require document
 
 ## 24. PHPDoc Cross-Reference
 
-PHPDoc is part of clean code. For the full semantic PHPDoc rule including class, method, tag, flow/action documentation, and review criteria, see:
+PHPDoc is part of clean code. For the full semantic PHPDoc rule including class, method, tag, flow/action documentation, severity, GREEN status block criteria, and review criteria, see:
 
 ```text
 .agents/how-to/how-to-document.md — Semantic PHPDoc Rule

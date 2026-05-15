@@ -17,7 +17,7 @@ use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\SessionLifecycle
 use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Components\HTTP\System\Capabilities\SessionStorage\NullSession;
 use Avax\Components\HTTP\System\PublicSurface\HttpInterface;
-use Avax\Framework\System\Capabilities\FailureBoundary\Configuration\BuildFailureBoundary;
+use Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Builders\BuildFailureBoundary;
 use Avax\Framework\System\Capabilities\FailureBoundary\Integration\HttpFailureBoundaryMiddleware;
 use Override;
 use Psr\Http\Message\ServerRequestInterface;

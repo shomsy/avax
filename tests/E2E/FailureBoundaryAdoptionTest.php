@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\E2E;
 
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\CompileFailurePolicies\CompileFailurePolicies;
-use Avax\Framework\System\Capabilities\FailureBoundary\Configuration\BuildFailureBoundary;
+use Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Builders\BuildFailureBoundary;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\CompiledPolicyCache;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureContext;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;

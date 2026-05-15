@@ -6,7 +6,7 @@ namespace Avax\Tests\Integration\Framework;
 
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
-use Avax\Framework\System\Configuration\BuildApplication\BuildApplication;
+use Avax\Framework\System\Configuration\BuildApplication\Builders\BuildApplication;
 use Avax\Framework\System\PublicSurface\Avax;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;

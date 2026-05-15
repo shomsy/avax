@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Foundation\CallableSerialization\System\PublicSurface;
 
-use Avax\Components\Foundation\CallableSerialization\System\Configuration\BuildCallableSerialization;
+use Avax\Components\Foundation\CallableSerialization\System\Configuration\Builders\BuildCallableSerialization;
 use Avax\Components\Foundation\CallableSerialization\System\Configuration\CallableSerializationConfig;
 use Avax\Components\Foundation\CallableSerialization\System\Configuration\EncodeDecodePair;
 use Avax\Components\Foundation\CallableSerialization\System\Foundation\Failure\CallablePayloadFailure;

@@ -23,7 +23,7 @@ final class HttpFailureBoundaryTest extends TestCase
     public function testSuccessfulRequestPassesThrough(): void
     {
         $middleware = new HttpFailureBoundaryMiddleware(
-            (new \Avax\Framework\System\Capabilities\FailureBoundary\Configuration\BuildFailureBoundary())->build(),
+            (new \Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Builders\BuildFailureBoundary())->build(),
         );
 
         $request = $this->createMockRequest();
@@ -41,7 +41,7 @@ final class HttpFailureBoundaryTest extends TestCase
         // The middleware has no target context, so no policy is matched.
         // Unhandled exceptions should rethrow.
         $middleware = new HttpFailureBoundaryMiddleware(
-            (new \Avax\Framework\System\Capabilities\FailureBoundary\Configuration\BuildFailureBoundary())->build(),
+            (new \Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Builders\BuildFailureBoundary())->build(),
         );
 
         $request = $this->createMockRequest();
@@ -57,7 +57,7 @@ final class HttpFailureBoundaryTest extends TestCase
     {
         // The middleware reports failures before rethrowing unhandled ones.
         $middleware = new HttpFailureBoundaryMiddleware(
-            (new \Avax\Framework\System\Capabilities\FailureBoundary\Configuration\BuildFailureBoundary())->build(),
+            (new \Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Builders\BuildFailureBoundary())->build(),
         );
 
         $request = $this->createMockRequest();

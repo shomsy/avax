@@ -6,7 +6,7 @@ namespace Avax\Tests\Unit\Framework\FailureBoundary;
 
 use Avax\Components\Operations\Resilience\System\Foundation\Failure\OperationTimedOut\OperationTimedOut;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\EnforceTimeout\EnforceTimeout;
-use Avax\Framework\System\Capabilities\FailureBoundary\Configuration\BuildFailureBoundary;
+use Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Builders\BuildFailureBoundary;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\CompiledMethodPolicy;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\CompiledPolicyCache;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureContext;

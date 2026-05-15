@@ -14,7 +14,7 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeState;
 use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
 use Avax\Framework\System\Capabilities\StateReset\StateResetReport;
-use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
+use Avax\Framework\System\Configuration\BuildApplication\Builders\ApplicationBuilder;
 use Avax\Framework\System\Flows\BootApplication\BootApplication;
 use Avax\Framework\System\Flows\BootApplication\BuildApplicationState;
 use Avax\Framework\System\Flows\CreateApplication\CreateApplication;

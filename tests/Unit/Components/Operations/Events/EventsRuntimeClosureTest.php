@@ -987,7 +987,7 @@ final class EventsRuntimeClosureTest extends TestCase
     {
         onEvent('WireTest')->do(static fn () => null);
 
-        \Avax\Components\Operations\Events\System\Configuration\RegisterEventDependencies::compileAndWire($this->registry);
+        \Avax\Components\Operations\Events\System\Configuration\Builders\RegisterEventDependencies::compileAndWire($this->registry);
 
         $event = new \stdClass();
         $event->wired = false;

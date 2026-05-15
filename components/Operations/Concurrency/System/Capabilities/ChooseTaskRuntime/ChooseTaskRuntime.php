@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Concurrency\System\Capabilities\ChooseTaskRuntime;
 
-use Avax\Components\Operations\Concurrency\System\Configuration\BuildConcurrencyRuntime;
+use Avax\Components\Operations\Concurrency\System\Configuration\Builders\BuildConcurrencyRuntime;
 use Avax\Components\Operations\Concurrency\System\Configuration\ConcurrencyConfig;
 use Avax\Components\Operations\Concurrency\System\Configuration\TaskRuntimeInterface;
 
 final readonly class ChooseTaskRuntime
 {
     public function __construct(
-        private BuildConcurrencyRuntime $builder = new BuildConcurrencyRuntime(),
+        private BuildConcurrencyRuntime $builder,
     ) {}
 
     public function forConfig(ConcurrencyConfig|null $config = null) : TaskRuntimeInterface

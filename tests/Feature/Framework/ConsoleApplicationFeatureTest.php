@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Feature\Framework;
 
-use Avax\Framework\System\Configuration\BuildApplication\BuildApplication;
+use Avax\Framework\System\Configuration\BuildApplication\Builders\BuildApplication;
 use Avax\Framework\System\PublicSurface\Avax;
 use PHPUnit\Framework\TestCase;
 

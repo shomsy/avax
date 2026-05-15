@@ -4,20 +4,16 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Parallelism\System\Flows\RunWorkInParallel;
 
-use Avax\Components\Operations\Parallelism\System\Configuration\BuildParallelRuntime;
 use Avax\Components\Operations\Parallelism\System\Configuration\ParallelRuntimeInterface;
 use Avax\Components\Operations\Parallelism\System\Foundation\ParallelResult;
 use Closure;
 
 final readonly class RunWorkInParallel
 {
-    private ParallelRuntimeInterface $runtime;
-
     public function __construct(
-        private BuildParallelRuntime $builder = new BuildParallelRuntime(),
+        private ParallelRuntimeInterface $runtime,
     )
     {
-        $this->runtime = $this->builder->build();
     }
 
     /**

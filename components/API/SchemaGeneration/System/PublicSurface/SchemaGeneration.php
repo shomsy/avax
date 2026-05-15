@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\API\SchemaGeneration\System\PublicSurface;
 
-use Avax\Components\API\SchemaGeneration\System\Configuration\BuildSchemaGeneration;
+use Avax\Components\API\SchemaGeneration\System\Configuration\Builders\BuildSchemaGeneration;
 use Avax\Components\API\SchemaGeneration\System\Configuration\SchemaGenerationAssembly;
 use Avax\Components\API\SchemaGeneration\System\Flows\GenerateOpenApiFromRoutes\GenerateOpenApiFromRoutes;
 use Avax\Components\API\SchemaGeneration\System\Foundation\JsonSchemaDocument;

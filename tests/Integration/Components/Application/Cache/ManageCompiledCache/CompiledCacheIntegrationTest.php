@@ -6,7 +6,7 @@ namespace Avax\Tests\Integration\Components\Application\Cache\ManageCompiledCach
 
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheSources;
-use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
+use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\Builders\BuildCompiledCache;
 use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\CompiledCacheConfiguration;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;

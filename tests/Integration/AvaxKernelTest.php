@@ -6,14 +6,14 @@ namespace Avax\Tests\Integration;
 
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\HTTP\Request\System\Capabilities\Uri\RequestUri;
-use Avax\Components\HTTP\Request\System\Configuration\RequestBuilder;
+use Avax\Components\HTTP\Request\System\Configuration\Builders\RequestBuilder;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\Responses;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
-use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
+use Avax\Framework\System\Configuration\BuildApplication\Builders\ApplicationBuilder;
 use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;

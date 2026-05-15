@@ -6,7 +6,7 @@ namespace Avax\Tests\Unit\Framework\FailureBoundary;
 
 use Avax\Components\Operations\Resilience\System\Capabilities\Retry\RetryExecutor;
 use Avax\Components\Operations\Resilience\System\Capabilities\Retry\RetryOptions;
-use Avax\Framework\System\Capabilities\FailureBoundary\Configuration\BuildFailureBoundary;
+use Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Builders\BuildFailureBoundary;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\CompiledMethodPolicy;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\CompiledPolicyCache;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureContext;

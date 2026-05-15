@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\API\SchemaGeneration;
 
+
 use Avax\Components\API\SchemaGeneration\System\Capabilities\ConvertDataObjectShapeToJsonSchema\ConvertDataObjectShapeToJsonSchema;
 use Avax\Components\API\SchemaGeneration\System\Capabilities\ReadDataObjectShape\ReadDataObjectShape;
-use Avax\Components\API\SchemaGeneration\System\Configuration\BuildSchemaGeneration;
+use Avax\Components\API\SchemaGeneration\System\Configuration\Builders\BuildSchemaGeneration;
 use Avax\Components\API\SchemaGeneration\System\Configuration\SchemaGenerationAssembly;
 use Avax\Components\API\SchemaGeneration\System\Flows\GenerateSchemaFromDataObject\GenerateSchemaFromDataObject;
 use Avax\Components\API\SchemaGeneration\System\Flows\ValidatePayloadAgainstSchema\ValidatePayloadAgainstSchema;

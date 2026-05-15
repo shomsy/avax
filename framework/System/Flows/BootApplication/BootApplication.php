@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Flows\BootApplication;
 
 use Avax\Framework\System\Capabilities\Runtime\Runtime;
-use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
+use Avax\Framework\System\Configuration\BuildApplication\Builders\ApplicationBuilder;
 use Throwable;
 
 final readonly class BootApplication

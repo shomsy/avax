@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Application\Config\System\Configuration;
 
-use Avax\Components\Application\Config\System\Configuration\RegisterConfig;
+use Avax\Components\Application\Config\System\Configuration\Builders\RegisterConfig;
 use Avax\Components\Application\Config\System\PublicSurface\Config;
 use PHPUnit\Framework\TestCase;
 

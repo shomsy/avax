@@ -29,7 +29,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RegisterDirectory\RegisterScimDirectoryData;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RotateToken\RotatedScimToken;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\SyncGroups\SyncScimGroupsData;
-use Avax\Components\Identity\Auth\System\Configuration\AuthBuilder;
+use Avax\Components\Identity\Auth\System\Configuration\Builders\AuthBuilder;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\BeginEmailChangeData;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\ConfirmEmailChangeData;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\EmailChangeChallenge;

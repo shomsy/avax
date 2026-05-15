@@ -6,7 +6,7 @@ namespace Avax\Examples\GoldenPathRuntimeApp;
 
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
-use Avax\Framework\System\Configuration\BuildApplication\ApplicationBuilder;
+use Avax\Framework\System\Configuration\BuildApplication\Builders\ApplicationBuilder;
 use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;

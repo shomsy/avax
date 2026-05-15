@@ -6,7 +6,7 @@ namespace Avax\Tests\Feature\Framework;
 
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
-use Avax\Framework\System\Configuration\BuildApplication\BuildApplication;
+use Avax\Framework\System\Configuration\BuildApplication\Builders\BuildApplication;
 use Avax\Framework\System\PublicSurface\Avax;
 use PHPUnit\Framework\TestCase;
 

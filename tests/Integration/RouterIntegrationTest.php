@@ -6,7 +6,7 @@ namespace Avax\Tests\Integration;
 
 use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 use Avax\Components\HTTP\Request\System\Capabilities\Uri\RequestUri;
-use Avax\Components\HTTP\Request\System\Configuration\RequestBuilder;
+use Avax\Components\HTTP\Request\System\Configuration\Builders\RequestBuilder;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\Responses;
 use Avax\Components\HTTP\Router\System\Capabilities\ErrorResponseBuilding\BuildErrorResponse;

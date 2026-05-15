@@ -8,7 +8,7 @@ use Avax\Components\Foundation\CallableSerialization\System\Capabilities\Compute
 use Avax\Components\Foundation\CallableSerialization\System\Capabilities\RejectUnsafeCallable\RejectUnsafeCallable;
 use Avax\Components\Foundation\CallableSerialization\System\Capabilities\SerializeCallable\SerializeClosureThroughLibrary;
 use Avax\Components\Foundation\CallableSerialization\System\Capabilities\VerifyHmacSignature\VerifyHmacSignature;
-use Avax\Components\Foundation\CallableSerialization\System\Configuration\BuildCallableSerialization;
+use Avax\Components\Foundation\CallableSerialization\System\Configuration\Builders\BuildCallableSerialization;
 use Avax\Components\Foundation\CallableSerialization\System\Configuration\CallableSerializationConfig;
 use Avax\Components\Foundation\CallableSerialization\System\Flows\DecodeCallable\DecodeCallable;
 use Avax\Components\Foundation\CallableSerialization\System\Flows\EncodeCallable\EncodeCallable;

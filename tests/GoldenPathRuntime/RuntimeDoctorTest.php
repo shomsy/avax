@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\GoldenPathRuntime;
 
+use Avax\Framework\System\Configuration\BuildApplication\Builders\ApplicationBuilder;
+
 use Avax\Examples\GoldenPathRuntimeApp\WebhookIngestionApp;
 use Avax\Framework\System\Capabilities\RuntimeSafety\ResetVerification\ResetVerifier;
 use Avax\Framework\System\Capabilities\RuntimeSafety\RuntimeSafety;

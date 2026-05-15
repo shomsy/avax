@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Persistence\System\PublicSurface;
 
+use Avax\Components\DataStack\Persistence\System\Configuration\Builders\PersistenceBuilder;
+
 use Avax\Components\DataStack\Persistence\System\Configuration\DataLayerConfig;
-use Avax\Components\DataStack\Persistence\System\Configuration\RegisterDataLayerRuntime;
+use Avax\Components\DataStack\Persistence\System\Configuration\Builders\RegisterDataLayerRuntime;
 use Avax\Components\DataStack\Persistence\System\Flows\AccessPersistentData\AccessPersistentData;
 use Avax\Components\DataStack\Persistence\System\Flows\CommitDataChanges\CommitDataChanges;
 

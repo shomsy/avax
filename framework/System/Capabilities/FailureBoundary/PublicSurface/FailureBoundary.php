@@ -29,7 +29,7 @@ final class FailureBoundary
     public static function getInstance(): RunProtectedAction
     {
         if (self::$instance === null) {
-            self::$instance = (new \Avax\Framework\System\Capabilities\FailureBoundary\Configuration\BuildFailureBoundary())->build();
+            self::$instance = (new \Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Builders\BuildFailureBoundary())->build();
         }
         return self::$instance;
     }

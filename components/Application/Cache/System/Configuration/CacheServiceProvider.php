@@ -7,9 +7,9 @@ namespace Avax\Components\Application\Cache\System\Configuration;
 use Avax\Components\Application\Cache\System\PublicSurface\AvaxCache;
 use Avax\Components\Application\Cache\System\PublicSurface\CacheContract;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
-use Avax\Components\Application\Cache\System\Configuration\BuildCache;
+use Avax\Components\Application\Cache\System\Configuration\Builders\BuildCache;
 use Avax\Components\Application\Cache\System\Configuration\CacheConfiguration;
-use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\BuildCompiledCache;
+use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\Builders\BuildCompiledCache;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Cache\System\PublicSurface\Cache;
@@ -57,7 +57,7 @@ final class CacheServiceProvider implements ServiceProvider
             $registry = new CacheRegistry();
 
             foreach ($this->namedCaches as $name => $config) {
-                $registry->register($name, $this->buildNamedCache(name: $name, config: $config));
+                $registry->register($name, $this->buildNamedCache(name: $name, config: $config, container: $container));
             }
 
             return $registry;
@@ -131,9 +131,12 @@ final class CacheServiceProvider implements ServiceProvider
     /**
      * @param  array<string, mixed>  $config
      */
-    private function buildNamedCache(string $name, array $config) : AvaxCache
+    private function buildNamedCache(string $name, array $config, ContainerInterface $container) : AvaxCache
     {
-        $builder = new BuildCache();
+        $builder = new BuildCache(
+            clock     : $container->get(Clock::class),
+            filesystem: $container->get(Filesystem::class),
+        );
         $cacheConfiguration = new CacheConfiguration(
             name      : $name,
             defaultTtl: is_int($config['ttl'] ?? null) ? $config['ttl'] : 3600,

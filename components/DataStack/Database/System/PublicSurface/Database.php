@@ -13,7 +13,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBu
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Query as QueryCapability;
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Telemetry as TelemetryCapability;
 use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Transactions as TransactionsCapability;
-use Avax\Components\DataStack\Database\System\Configuration\DatabaseBuilder;
+use Avax\Components\DataStack\Database\System\Configuration\Builders\DatabaseBuilder;
 
 /**
  * Public surface for the Database component.

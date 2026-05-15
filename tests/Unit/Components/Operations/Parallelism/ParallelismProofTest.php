@@ -7,7 +7,7 @@ namespace Avax\Tests\Unit\Components\Operations\Parallelism;
 use Avax\Components\Foundation\CallableSerialization\System\PublicSurface\CallableSerialization;
 use Avax\Components\Operations\Parallelism\System\Capabilities\RunInCurrentProcess\CurrentProcessParallelRuntime;
 use Avax\Components\Operations\Parallelism\System\Capabilities\RunThroughProcessPool\SymfonyProcessParallelRuntime;
-use Avax\Components\Operations\Parallelism\System\Configuration\BuildParallelRuntime;
+use Avax\Components\Operations\Parallelism\System\Configuration\Builders\BuildParallelRuntime;
 use Avax\Components\Operations\Parallelism\System\Configuration\ParallelismConfig;
 use Avax\Components\Operations\Parallelism\System\Flows\RunWorkInParallel\RunWorkInParallel;
 use Avax\Components\Operations\Parallelism\System\Foundation\Failure\ParallelException;

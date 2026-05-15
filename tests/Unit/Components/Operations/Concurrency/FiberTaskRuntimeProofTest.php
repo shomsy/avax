@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit\Components\Operations\Concurrency;
 
 use Avax\Components\Operations\Concurrency\System\Capabilities\RunWithFibers\FiberTaskRuntime;
-use Avax\Components\Operations\Concurrency\System\Configuration\BuildConcurrencyRuntime;
+use Avax\Components\Operations\Concurrency\System\Configuration\Builders\BuildConcurrencyRuntime;
 use Avax\Components\Operations\Concurrency\System\Configuration\ConcurrencyConfig;
 use Avax\Components\Operations\Concurrency\System\Foundation\ConcurrentFailure;
 use Avax\Components\Operations\Concurrency\System\Foundation\Failure\ConcurrencyException;

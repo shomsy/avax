@@ -8,7 +8,7 @@ use Avax\Examples\SecureRegistrationApi\ExternalServiceDown;
 use Avax\Examples\SecureRegistrationApi\RegistrationController;
 use Avax\Examples\SecureRegistrationApi\ValidationFailed;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\CompileFailurePolicies\CompileFailurePolicies;
-use Avax\Framework\System\Capabilities\FailureBoundary\Configuration\BuildFailureBoundary;
+use Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Builders\BuildFailureBoundary;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\CompiledPolicyCache;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureContext;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;

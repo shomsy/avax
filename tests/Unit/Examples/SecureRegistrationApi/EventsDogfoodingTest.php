@@ -37,7 +37,7 @@ final class EventsDogfoodingTest extends TestCase
         RegistrationController::wireEventListeners();
 
         // Compile and wire the global emitter.
-        \Avax\Components\Operations\Events\System\Configuration\RegisterEventDependencies::compileAndWire($registry);
+        \Avax\Components\Operations\Events\System\Configuration\Builders\RegisterEventDependencies::compileAndWire($registry);
     }
 
     protected function tearDown(): void
@@ -121,7 +121,7 @@ final class EventsDogfoodingTest extends TestCase
         onEventSetRegistry($registry);
 
         // Do NOT wire listeners.
-        \Avax\Components\Operations\Events\System\Configuration\RegisterEventDependencies::compileAndWire($registry);
+        \Avax\Components\Operations\Events\System\Configuration\Builders\RegisterEventDependencies::compileAndWire($registry);
 
         $controller = new RegistrationController();
         $controller->register([

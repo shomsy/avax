@@ -19,7 +19,7 @@ final class DispatcherCapabilitiesTest extends TestCase
         $request   = $this->createMock(ServerRequestInterface::class);
         $request->method('getAttribute')->with('name')->willReturn('John');
 
-        $resolver = new ArgumentResolver(typeResolvers: $typeResolvers, inputBuilder: new SecureRequestInputBuilder());
+        $resolver = new ArgumentResolver(container: $this->createMock(ContainerInterface::class), inputBuilder: new SecureRequestInputBuilder()))
 
         $object     = new class {
             public function action(string $name) : void {}

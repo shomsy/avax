@@ -430,7 +430,7 @@ final class SecureRequestHttpIntegrationTest extends TestCase
             public function get(string $id) : mixed { return null; }
         };
 
-        $this->resolver = new ArgumentResolver(typeResolvers: $typeResolvers, inputBuilder: new SecureRequestInputBuilder());
+        $this->resolver = new ArgumentResolver(container: $this->container, inputBuilder: new SecureRequestInputBuilder()))
         $this->exceptionHandler = new CatchUnhandledExceptions(
             new ReportExceptionToLogger(),
             new CreateJsonResponse(),

@@ -93,7 +93,7 @@ final class ParallelismProofTest extends TestCase
 
     public function test_runWorkInParallel_uses_buildParallelRuntime_not_hardcoded() : void
     {
-        $flow = new RunWorkInParallel(runtime: Parallel::runtime());
+        $flow = new RunWorkInParallel(runtime: Parallel::run(static fn () => "test"));
         $reflection = new ReflectionClass($flow);
         $builderProperty = $reflection->getProperty('builder');
         $builder = $builderProperty->getValue($flow);

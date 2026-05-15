@@ -61,7 +61,7 @@ final readonly class RunApplication
         $container          = new RouteFacadeContainer();
         $resolveCallable    = new ResolveCallable(container: clone $container);
         $controllerResolver = new ControllerResolver(resolver: $resolveCallable);
-        $argumentResolver = new ArgumentResolver(typeResolvers: $typeResolvers, inputBuilder: new SecureRequestInputBuilder());
+        $argumentResolver = new ArgumentResolver(container: $container, inputBuilder: new SecureRequestInputBuilder());
 
         return new self(
             responseFactory   : $responseFactory,

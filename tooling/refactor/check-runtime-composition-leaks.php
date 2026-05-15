@@ -182,22 +182,18 @@ final class CheckRuntimeCompositionLeaks
         ],
         // Container files: legitimate registry lookup patterns, not constructor DI
         'components/Application/Container/System/Capabilities/Declaration/Bindings/DependencyRegistry.php'             => [
-            '?? new DependencyRegistration' => 'Registry lookup; creates new registration only when key not found',
-            '?? new'                        => 'Registry lookup; creates new registration only when key not found',
+            '?? new D' => 'Registry lookup; creates new DependencyRegistration only when key not found',
             'interface_exists'              => 'Container compile-time reflection; checks type availability',
         ],
         'components/Application/Container/System/Capabilities/Declaration/Bindings/ServiceRegistry.php'                => [
-            '?? new ServiceRegistration' => 'Registry lookup; creates new registration only when key not found',
-            '?? new'                     => 'Registry lookup; creates new registration only when key not found',
+            '?? new S' => 'Registry lookup; creates new ServiceRegistration only when key not found',
             'interface_exists'           => 'Container compile-time reflection; checks type availability',
         ],
         'components/Application/Container/System/Capabilities/Execution/Injection/Invocation/FunctionCaller.php'       => [
-            '?? new ResolveRequest' => 'Request chain building; creates child request when not provided',
-            '?? new'                => 'Request chain building; creates child request when not provided',
+            '?? new R' => 'Request chain building; creates child ResolveRequest when not provided',
         ],
         'components/Application/Container/System/Capabilities/Resolution/ResolveDependencies.php'                      => [
-            '?? new ResolveRequest' => 'Request chain building; creates child request when not provided',
-            '?? new'                => 'Request chain building; creates child request when not provided',
+            '?? new R' => 'Request chain building; creates child ResolveRequest when not provided',
         ],
         // Static facades with reset(): CallableSerialization is YELLOW per §7.1
         'components/Foundation/CallableSerialization/System/PublicSurface/CallableSerialization.php'                   => [
@@ -306,39 +302,49 @@ final class CheckRuntimeCompositionLeaks
             'new PolicyEngine'    => 'Static facade; creates value object for redaction',
             'new RedactionEngine' => 'Static facade; creates value object for redaction',
         ],
-        // ObjectStorage: middleware for S3 transport is a value object
+        // ObjectStorage: S3 transport — specific vendor client instantiation only
         'components/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php'                   => [
-            'new ' => 'S3 transport middleware; value object for HTTP transport',
+            'new S3Client'           => 'S3 client creation; optional vendor port implementation',
+            'new PresignUrlMiddleware' => 'S3 presigner middleware; optional vendor port',
         ],
         // Migrations: repository for migration tracking is a value object
         'components/DataStack/Database/System/Capabilities/Migrations/Migrations.php'                                  => [
-            'new ' => 'Migration repository; value object for tracking migration state',
+            'new MigrationRecord' => 'Migration record value object for tracking migration state',
         ],
-        // ManageEntityPersistence: manager is a value object for ORM coordination
+        // ManageEntityPersistence: ORM assembly in constructor — specific instantiation
         'components/DataStack/Database/System/PublicSurface/ManageEntityPersistence.php'                               => [
-            'new ' => 'Entity manager coordination; value object for ORM operations',
+            'new IdentityMap'      => 'ORM identity map value object',
+            'new Hydrator'         => 'ORM hydrator with injected IdentityMap',
+            'new EntityPersister'  => 'ORM persister assembled from injected deps',
+            'new OrmEntityManager' => 'ORM manager wrapper; constructed from persister',
         ],
-        // RuntimeSupervision: registry for process supervision state
+        // RuntimeSupervision: Supervisor — specific registry instantiation
         'components/Operations/RuntimeSupervision/System/Capabilities/Supervision/Supervisor.php'                      => [
-            'new ' => 'Supervision registry; value object for process state tracking',
+            'new ProcessRegistry' => 'Process registry value object for state tracking',
         ],
         'components/Operations/RuntimeSupervision/System/PublicSurface/RuntimeSupervision.php'                         => [
-            'new ' => 'Supervision registry; value object for process state tracking',
+            'new Supervisor' => 'Supervisor instance; PublicSurface facade creating capability',
         ],
         // Observability health check: diagnostic
         'components/Operations/Observability/System/Capabilities/Health/ObservabilityHealthCheck.php'                  => [
             'new ' => 'Diagnostic health check; collects health metrics',
         ],
-        // BackgroundProcesses: registry for background process state
+        // BackgroundProcesses: static factory methods creating registry and policies
         'components/Operations/BackgroundProcesses/System/PublicSurface/BackgroundProcesses.php'                       => [
-            'new ' => 'Background process registry; value object for process tracking',
+            'new BackgroundProcesses' => 'Background process facade; self-instantiation for static API',
+            'new ProcessRegistry' => 'Static factory method; creates process registry',
         ],
-        // TaskDispatch: resolver/dispatcher for task routing
+        // TaskDispatch: static facade creating dispatchers (legacy queue dispatch)
         'components/Operations/Queue/System/Capabilities/TaskDispatch/TaskDispatch.php'                                => [
-            'new ' => 'Task resolver/dispatcher; value object for task routing',
+            'new DateInterval' => 'Time interval value object for deferred dispatch',
+            'new DispatchStrategyResolver' => 'Static lazy singleton; resolves dispatch strategy',
+            'new SyncDispatcher' => 'Static method; creates sync dispatcher for immediate dispatch',
+            'new AsyncDispatcher' => 'Static method; creates async dispatcher for async dispatch',
+            'new DeferredDispatcher' => 'Static method; creates deferred dispatcher for delayed dispatch',
         ],
         'components/Operations/Queue/System/Capabilities/TaskDispatch/Dispatchers/DeferredDispatcher.php'              => [
-            'new ' => 'Deferred dispatcher; value object for deferred task execution',
+            'new DateInterval' => 'Time interval value object for deferred task execution',
+            'new SyncDispatcher' => 'Internal fallback; executes deferred task immediately when delay is zero',
         ],
         // Events health check: diagnostic
         'components/Operations/Events/System/Capabilities/HealthCheck/CheckEventsHealth.php'                           => [
@@ -348,29 +354,50 @@ final class CheckRuntimeCompositionLeaks
         'components/Operations/Events/System/Flows/CompileEventListeners/CompileEventListeners.php'                    => [
             'new ' => 'Compile-time listener registry assembly',
         ],
-        // Events facade: static convenience API
+        // Events facade: constructor creates registry and dispatcher (legacy events, pre-emit)
         'components/Operations/Events/System/PublicSurface/Events.php'                                                 => [
-            'new ' => 'Events facade; value object for event coordination',
+            'new Events' => 'Events facade; self-instantiation for static API',
+            'new ListenerRegistry' => 'Constructor creates listener registry for legacy dispatch',
+            'new EventDispatcher' => 'Constructor creates event dispatcher for legacy dispatch',
         ],
-        // ApiVersion: registry for version resolution state
+        // ApiVersion: static lazy singleton for version registry
         'components/HTTP/ApiVersioning/System/PublicSurface/ApiVersion.php'                                            => [
-            'new ' => 'Version registry; value object for version tracking',
+            'new VersionResolver' => 'Version resolver for HTTP API version tracking',
+            'new VersionRegistry' => 'Static lazy singleton; version registry for API tracking',
         ],
-        // ApiContracts: registry for API version contracts
+        // ApiContracts: static facade factory methods
         'components/API/Contracts/System/PublicSurface/ApiContracts.php'                                               => [
-            'new ' => 'API contracts registry; value object for version tracking',
+            'new ApiContracts' => 'API contracts facade; self-instantiation for static API',
+            'new EndpointRegistry' => 'Static factory method; creates endpoint registry',
         ],
-        // HttpContext: provider for HTTP context state
+        // HttpContext: static factory method
         'components/HTTP/Context/System/PublicSurface/HttpContext.php'                                                 => [
-            'new ' => 'HTTP context provider; value object for request context',
+            'new HttpContext' => 'HTTP context facade; static factory method',
+            'new PhpGlobalsProvider' => 'Static factory method; creates globals provider',
         ],
-        // Pipeline: registry for pipeline stage tracking
+        // Pipeline: static lazy singleton for hook registry
         'components/Application/Pipeline/System/PublicSurface/Pipeline.php'                                            => [
-            'new ' => 'Pipeline registry; value object for stage tracking',
+            'new Pipeline' => 'Pipeline facade; self-instantiation for static API',
+            'new HookRegistry' => 'Static lazy singleton; hook registry for pipeline stages',
         ],
-        // GraphQLExecutor: registry for executor state
+        // GraphQLExecutor: specific registry instantiation
         'components/API/GraphQL/System/PublicSurface/GraphQLExecutor.php'                                              => [
-            'new ' => 'GraphQL executor registry; value object for query execution state',
+            'new GraphQLResolverRegistry' => 'Resolver registry value object for query execution state',
+            'new DataLoader'            => 'Data loader value object for batch field loading',
+            'new GraphQLResolverTimeline' => 'Resolver timeline value object for timing tracking',
+        ],
+        // RuntimeSupervision: factory methods creating supervisor and registry
+        'components/Operations/RuntimeSupervision/System/Capabilities/Supervision/Supervisor.php'                      => [
+            'new ProcessRegistry' => 'Constructor creates process registry for state tracking',
+        ],
+        'components/Operations/RuntimeSupervision/System/PublicSurface/RuntimeSupervision.php'                         => [
+            'new Supervisor' => 'Factory method; creates supervisor for process supervision',
+            'new ProcessRegistry' => 'Factory method; creates process registry',
+        ],
+        // Migrations: factory method returning repository
+        'components/DataStack/Database/System/Capabilities/Migrations/Migrations.php'                                  => [
+            'new MigrationRecord' => 'Migration record value object for tracking migration state',
+            'new MigrationRepository' => 'Factory method; creates repository for migration tracking',
         ],
     ];
 

@@ -1343,3 +1343,29 @@ PHPUnit remains GREEN. PHPStan reduced by 55 errors (308 → 253). Truth files u
 
 **Evidence:** `EVIDENCE/hardening/33-v5-8-8-preflight.md` through `EVIDENCE/hardening/42-v5-8-8-truth-reconciliation.md`
 
+## V5.8.x Fix-This Phase A Closure — Runtime Composition Gate Accuracy
+
+Date: 2026-05-15
+
+**Status:** COMPLETE / GREEN
+
+**Scope:** Audit and narrow ~130 runtime composition gate allowances, prove gate still bites, verify AppKernel hot path, verify 54 lazy singleton fixes, security/performance review, recursive governance review.
+
+**Results:**
+- Runtime composition gate: PASS (198 → 0 findings)
+- Gate allowances narrowed: 18 broad `'new '` patterns → specific class names
+- Generic `?? new` patterns removed from 4 container files
+- 8 INVALID_ALLOWANCE candidates fixed
+- Bad runtime fixtures proven to FAIL (class_exists, new Build*, ->build(), ?? new)
+- AppKernel hot path: clean (middleware via DI, no runtime assembly)
+- 54 lazy singleton fixes verified across SessionIdentity, GraphQL, Cache, Database, Container, Operations, HTTP
+- Security review: no HIGH/BLOCKER findings
+- Performance review: no regression in hot paths
+- PHPUnit: 8351 tests, 24020 assertions, 0 errors, 0 failures
+- PHPStan: 0 errors
+- Recursive governance review: 2 YELLOW (non-blocking)
+
+**Evidence:** `EVIDENCE/fix-this/05-phase-a-closure-preflight.md` through `EVIDENCE/fix-this/14-phase-a-truth-reconciliation.md`
+
+**V5.9 Boot DSL:** READY (Phase A blockers resolved)
+

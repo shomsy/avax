@@ -154,11 +154,13 @@ V5.8.8 PHPStan, Runtime Gate & Truth Integrity Closure: CLOSED / YELLOW_WITH_EXA
 
 V5.8.9 AuthBuilder Constructor Drift & Runtime Gate Closure: CLOSED / GREEN (190 PHPStan errors fixed → 63 remaining, runtime composition leaks 3 → 0, AuthBuilder constructor drift ~184 → 0, GraphQLSchema assembly 0 findings, PHPUnit 8351 tests GREEN, all gates PASS)
 
-Current Plan Lock: GREEN (63 pre-existing PHPStan errors, out of V5.8.9 scope)
+V5.8.x Fix-This Phase A Closure: CLOSED / GREEN (198 runtime composition findings → 0, gate allowances narrowed, bad fixtures proven to FAIL, AppKernel hot path clean, 54 lazy singletons verified, security/performance review clean, recursive governance review clean)
 
-Active stage: V5.8.9 AuthBuilder Constructor Drift & Runtime Gate Closure — COMPLETE / GREEN
+Current Plan Lock: GREEN (63 pre-existing PHPStan errors, out of V5.8.x scope)
 
-Next allowed stage: V5.9 Boot DSL — READY (63 pre-existing PHPStan errors may be baselined or cleaned up first)
+Active stage: V5.8.x Fix-This Phase A Closure — COMPLETE / GREEN
+
+Next allowed stage: V5.9 Boot DSL — READY
 
 V5.9 Boot DSL prerequisites:
 1. AuthBuilder constructor drift resolved — DONE (0 errors)

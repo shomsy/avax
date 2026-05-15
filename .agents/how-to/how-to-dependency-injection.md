@@ -205,6 +205,74 @@ The framework boot process MUST:
 5. Validate all registered bindings resolve
 ```
 
+### 4.7 ServiceProvider Builder Delegation
+
+A ServiceProvider should stay small.
+
+If a ServiceProvider becomes too large, it may delegate assembly work to classes in `Configuration/Builders/`.
+
+Good:
+
+```php
+final readonly class AuthServiceProvider
+{
+    public function register(Container $container): void
+    {
+        $this->registerAuthDefaults->register($container);
+        $this->buildAuthRuntime->register($container);
+    }
+}
+```
+
+Bad:
+
+```php
+final readonly class AuthServiceProvider
+{
+    public function register(Container $container): void
+    {
+        // 300 lines of object graph assembly here
+    }
+}
+```
+
+Builder classes may use `new` only when they are creating configuration-time defaults or assembling the object graph.
+
+Allowed:
+
+```php
+final readonly class RegisterAuthDefaults
+{
+    public function register(Container $container): void
+    {
+        $container->bind(
+            PasswordHasher::class,
+            static fn (): PasswordHasher => new PasswordHasher(),
+        );
+    }
+}
+```
+
+Forbidden:
+
+```php
+final readonly class AuthenticateUser
+{
+    public function authenticate(Credentials $credentials): User
+    {
+        $hasher = new PasswordHasher(); // runtime DI bypass
+    }
+}
+```
+
+Every non-trivial builder must have behavior tests proving:
+
+* expected bindings are registered
+* default dependencies resolve
+* user overrides win over defaults
+* no runtime execution happens during registration
+* no hidden `?? new` fallback remains in runtime code
+
 ---
 
 ## 5. "Cheap Code" Elimination Law

@@ -675,6 +675,157 @@ If a file performs actual behavior, it belongs in `Flows/` or `Capabilities/`.
 
 ---
 
+## 6.5.1 Configuration/Builders Rule
+
+A component MAY have a `System/Configuration/Builders/` folder.
+
+This folder is allowed only for classes that assemble configuration-time object graphs, runtime defaults, dependency
+graphs, or component runtime packages.
+
+`Builders/` is not a generic folder for any class that "builds something".
+
+### Purpose
+
+`System/Configuration/Builders/` exists to keep dependency assembly out of runtime execution code.
+
+Builder classes in this folder answer questions like:
+
+- How is this component assembled?
+- Which default dependencies are registered?
+- Which runtime object graph is created?
+- How are user options converted into component runtime configuration?
+- How are ServiceProvider bindings grouped without bloating the ServiceProvider?
+
+### Allowed in Configuration/Builders
+
+Allowed examples:
+
+```text
+BuildApplicationRuntime
+BuildAuthRuntime
+BuildHttpKernel
+BuildCacheRuntime
+BuildDatabaseRuntime
+BuildRouterRuntime
+AssembleAuthDependencies
+AssembleResponseComponent
+RegisterAuthDefaults
+RegisterCacheDefaults
+CreateComponentConfiguration
+```
+
+These classes may instantiate infrastructure dependencies because they are part of the composition layer.
+
+They must remain deterministic, explicit, and testable.
+
+### Forbidden in Configuration/Builders
+
+Do NOT place runtime behavior here.
+
+Forbidden examples:
+
+```text
+BuildSqlQuery
+BuildHttpResponse
+BuildGraphQLSchema
+BuildOpenApiDocument
+BuildUrl
+BuildMiddlewarePipeline
+BuildCacheKey
+BuildEmailMessage
+```
+
+These belong in `System/Capabilities/`, because they create runtime results or execute component behavior.
+
+### Boundary Rule
+
+Use this distinction:
+
+```text
+Configuration/Builders/
+= builds the component/runtime/dependency graph
+
+Capabilities/
+= performs runtime behavior or creates runtime results
+```
+
+### Naming Rule
+
+Builder class names must say exactly what they assemble.
+
+Avoid vague names:
+
+```text
+Builder
+AuthBuilder
+ComponentBuilder
+RuntimeBuilder
+ServiceBuilder
+```
+
+Prefer exact names:
+
+```text
+BuildAuthRuntime
+RegisterAuthDefaults
+AssembleHttpKernel
+BuildDatabaseRuntime
+ConfigureCacheStores
+```
+
+### Public API Rule
+
+`Configuration/Builders/` is internal assembly machinery.
+
+It must not be used as the public developer API unless explicitly designed as a configuration DSL.
+
+If a class is a user-facing fluent configuration DSL, name it clearly:
+
+```text
+ConfigureAuth
+ConfigureCache
+ConfigureRouter
+```
+
+If a class is internal assembly, name it as an action:
+
+```text
+BuildAuthRuntime
+RegisterAuthDefaults
+AssembleRouterRuntime
+```
+
+### Large Builder Warning
+
+Any builder over 300 lines must be reviewed for responsibility split.
+
+If a builder does all of these:
+
+- collects user options
+- creates default dependencies
+- wires runtime services
+- creates runtime objects
+- owns fallback behavior
+- contains many `?? new` fallbacks
+
+then it must be split.
+
+Recommended split:
+
+```text
+Configuration/
+  ConfigureAuth.php              // user-facing fluent DSL
+  AuthServiceProvider.php        // provider entrypoint
+  Builders/
+    RegisterAuthDefaults.php     // default bindings
+    BuildAuthRuntime.php         // runtime graph
+    AssembleAuthCapabilities.php // capability graph
+```
+
+A large builder must not become a hidden container.
+
+---
+
 ## 6.6 Foundation Rule
 
 `Foundation/` contains tiny neutral primitives used locally by the component.

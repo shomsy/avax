@@ -704,6 +704,15 @@ Configuration must not become a hidden behavior layer.
 Configuration assembles the system.
 It does not become the system.
 
+### 13.3 Builders Rule
+
+Configuration slices may use a `Builders/` folder or namespace for explicit assembly classes.
+
+* `Configuration/Builders` is allowed, but only for assembly builders.
+* Runtime builders belong in Capabilities.
+* ServiceProvider may delegate to Builders.
+* Builders must be exact, tested, and must not become dumping grounds.
+
 ---
 
 ## 14. Foundation Slices

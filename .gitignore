@@ -10,6 +10,7 @@ vendor/
 # Generated/backup artifacts
 *.cache
 .phpunit.result.cache
+.phpunit.cache/
 .php-cs-fixer.cache
 .ruff_cache/
 var/

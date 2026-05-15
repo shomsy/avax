@@ -439,16 +439,16 @@ PublicSurface may expose public factories only when they create public value/res
 
 PublicSurface factories MUST NOT:
 
-\`\`\`text
+```text
 assemble runtime service graphs
 instantiate runtime services
 access the container as service locator
 create middleware, dispatchers, resolvers, clients, stores, loggers, repositories, or framework runtime services
 hide dependency assembly
-\`\`\`
+```
 
-**Allowed:** \`Responses::json()\` delegates to \`CreateHttpResponse\` and returns \`Response\`.
-**Forbidden:** \`Responses::json()\` creates new \`CreateHttpResponse\` internally.
+**Allowed:** `Responses::json()` delegates to `CreateHttpResponse` and returns `Response`.
+**Forbidden:** `Responses::json()` creates new `CreateHttpResponse` internally.
 
 PublicSurface may create produced public values. PublicSurface must not assemble machinery.
 
@@ -974,7 +974,7 @@ A Bounded Context is not a folder category.
 
 A Bounded Context is a meaning boundary.
 
-### 25.1 Naming Bounded Contexts
+### 26.1 Naming Bounded Contexts
 
 A bounded context name must describe a real capability, business area, platform area, or language boundary.
 
@@ -1007,7 +1007,7 @@ Services
 Business
 ```
 
-### 25.2 Bounded Context Documentation
+### 26.2 Bounded Context Documentation
 
 Every explicit bounded context must define:
 
@@ -1048,7 +1048,7 @@ Other contexts or external systems it collaborates with.
 Words that are too vague or misleading here.
 ```
 
-### 25.3 Bounded Context Example: Compatibility
+### 26.3 Bounded Context Example: Compatibility
 
 ```md
 ## Compatibility
@@ -1155,7 +1155,7 @@ Do not add DDD structure just to look mature.
 
 Use tactical DDD concepts only when they solve a real clarity or correctness problem.
 
-### 28.1 Aggregate
+### 29.1 Aggregate
 
 An Aggregate owns a consistency boundary.
 
@@ -1196,7 +1196,7 @@ Domain/
   Aggregates/
 ```
 
-### 28.2 Entity
+### 29.2 Entity
 
 An Entity has identity and lifecycle.
 
@@ -1222,7 +1222,7 @@ An entity must protect lifecycle behavior.
 
 It must not be a database row wrapper with setters.
 
-### 28.3 Value Object
+### 29.3 Value Object
 
 A Value Object is immutable and represents a meaningful value.
 
@@ -1251,7 +1251,7 @@ A value object must validate or express meaning.
 
 Do not wrap primitives mechanically.
 
-### 28.4 Repository
+### 29.4 Repository
 
 A Repository persists and retrieves aggregates.
 
@@ -1289,7 +1289,7 @@ Capabilities/
 
 A repository is allowed only when there is a real aggregate or lifecycle to protect.
 
-### 28.5 Domain Service
+### 29.5 Domain Service
 
 A Domain Service is an exact domain action that does not naturally belong to one entity or value object.
 
@@ -1315,7 +1315,7 @@ Manager
 
 A domain service must have one clear action.
 
-### 28.6 Factory
+### 29.6 Factory
 
 A Factory owns meaningful creation.
 
@@ -1339,7 +1339,7 @@ DomainFactory
 
 Do not create factories for trivial constructors.
 
-### 28.7 DDD Factory vs Runtime Assembly Rule
+### 29.7 DDD Factory vs Runtime Assembly Rule
 
 A DDD factory owns meaningful creation of domain/value/result objects when construction has invariants, policy, or language meaning.
 
@@ -1352,7 +1352,7 @@ If a class assembles runtime services, it belongs in `ServiceProvider`, `System/
 
 Factories create meaningful objects. Configuration assembles the system.
 
-### 28.8 Domain Event
+### 29.8 Domain Event
 
 A Domain Event records a completed domain fact.
 

@@ -713,7 +713,7 @@ If examples teach an anti-pattern, the codebase will reproduce it.
 
 ## Canonical Term Registry Rule
 
-One concept must have one canonical name. The canonical registry is at `docs/governance/canonical-terms.md`. Check the registry before introducing or accepting new terminology.
+One concept must have one canonical name. The canonical registry is at `docs/governance/canonical-terms.md`. Check the registry before introducing or accepting new terminology. Default severity HIGH; BLOCKER when naming drift affects PublicSurface, DI/container, Response, Events, Runtime, or public compatibility.
 
 ---
 

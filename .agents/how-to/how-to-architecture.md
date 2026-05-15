@@ -1179,7 +1179,35 @@ docs/governance/canonical-terms.md
 Check the registry before introducing or accepting new terminology. All term decisions MUST be added to the registry.
 
 **Status:** MANDATORY  
-**Severity:** HIGH
+**Severity:** HIGH (escalates to BLOCKER — see below)
+
+### Severity Escalation
+
+Default severity is HIGH.
+
+Escalates to **BLOCKER** when naming drift affects any of the following:
+
+```text
+PublicSurface
+DI/container
+Response layer
+Events
+Runtime
+Boot DSL
+FailureBoundary
+Database lifecycle
+security-sensitive APIs
+public compatibility
+```
+
+Examples that MUST be BLOCKER:
+
+```text
+Response / Responses / CreateHttpResponse confusion in active code
+EventEmitter / EventDispatcher / EventBus confusion in active runtime
+Runtime / Kernel / Application confusion in public boot API
+ServiceProvider / Provider / ComponentDefinition confusion in DI assembly
+```
 
 ### 27.5 Function Naming Rule
 

@@ -2520,7 +2520,39 @@ If triggered, review evidence must include why security/performance is relevant,
 ### Status
 
 **MANDATORY**
-**Severity:** HIGH
+**Severity:** HIGH (escalates to BLOCKER — see below)
+
+### Severity Escalation
+
+Default severity is HIGH.
+
+Escalates to **BLOCKER** when the issue threatens:
+
+```text
+security
+data integrity
+runtime safety
+long-lived worker safety
+truth/evidence integrity
+public API compatibility
+dependency graph correctness
+rollback/recovery safety
+```
+
+Examples that MUST be BLOCKER when active:
+
+```text
+exploitable security issue
+data corruption risk
+request state stored in singleton
+unresolved runtime composition leak in active runtime
+fake GREEN
+gate PASS with RED content
+mandatory gate scans zero active files
+hidden fallback dependency in runtime
+missing required dependency discovered in business/runtime code
+service locator in business/runtime code
+```
 
 ### Rule
 

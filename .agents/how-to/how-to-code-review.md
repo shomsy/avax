@@ -1482,6 +1482,8 @@ docs/governance/canonical-terms.md
 
 before introducing or accepting new terminology.
 
+**Severity escalation:** Default HIGH. BLOCKER when naming drift affects PublicSurface, DI/container, Response layer, Events, Runtime, Boot DSL, FailureBoundary, Database lifecycle, security-sensitive APIs, or public compatibility.
+
 ## 23. Governance Exception Register Rule
 
 A documented governance exception is valid only when recorded in the exception register at:
@@ -1547,7 +1549,39 @@ For full PHPDoc rules including class, method, tag, flow/action documentation, g
 ### Status
 
 **MANDATORY**
-**Severity:** HIGH
+**Severity:** HIGH (escalates to BLOCKER — see below)
+
+### Severity Escalation
+
+Default severity is HIGH.
+
+Escalates to **BLOCKER** when the issue threatens:
+
+```text
+security
+data integrity
+runtime safety
+long-lived worker safety
+truth/evidence integrity
+public API compatibility
+dependency graph correctness
+rollback/recovery safety
+```
+
+Examples that MUST be BLOCKER when active:
+
+```text
+exploitable security issue
+data corruption risk
+request state stored in singleton
+unresolved runtime composition leak in active runtime
+fake GREEN
+gate PASS with RED content
+mandatory gate scans zero active files
+hidden fallback dependency in runtime
+missing required dependency discovered in business/runtime code
+service locator in business/runtime code
+```
 
 ### Rule
 

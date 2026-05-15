@@ -1373,3 +1373,26 @@ Date: 2026-05-15
 
 **V5.9 Boot DSL:** READY (Phase A blockers resolved, YELLOW debt does not block)
 
+## V5.8.x Fix-This Phase B Closure — Facade Self-Instantiation & Reset Proof
+
+Date: 2026-05-15
+
+**Status:** COMPLETE / FULL_GREEN_PHASE_B_FACADE_DEBT_CLOSED
+
+**Scope:** Close YELLOW-DEBT-001 (facade self-instantiation) and YELLOW-DEBT-002 (missing facade reset methods).
+
+**Results:**
+- ApiVersion: Added `reset()` + `setInstance()` lifecycle — static state now testable and injectable
+- Pipeline: Added `reset()` + `setInstance()` lifecycle — static state now testable and injectable
+- Events: NOT APPLICABLE — regular instance class, not static facade
+- Stateless facades (RuntimeSupervision, BackgroundProcesses, ApiContracts, GraphQL, HttpContext): NOT APPLICABLE — no static state
+- Runtime composition gate: PASS
+- PHPUnit: 8365 tests, 24052 assertions, 0 errors, 0 failures (+7 new tests, +22 assertions)
+- PHPStan: 0 errors
+- YELLOW-DEBT-001: CLOSED
+- YELLOW-DEBT-002: CLOSED
+
+**Evidence:** `EVIDENCE/fix-this-phase-b/01-phase-b-governance-review.md`, `EVIDENCE/fix-this-phase-b/02-phase-b-truth-reconciliation.md`
+
+**V5.9 Boot DSL:** READY (All Phase A/B debts closed)
+

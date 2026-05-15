@@ -360,10 +360,10 @@ final class CheckRuntimeCompositionLeaks
             'new ListenerRegistry' => 'Constructor creates listener registry for legacy dispatch',
             'new EventDispatcher' => 'Constructor creates event dispatcher for legacy dispatch',
         ],
-        // ApiVersion: static lazy singleton for version registry
+        // ApiVersion: static facade with reset()/setInstance() — testable lifecycle
         'components/HTTP/ApiVersioning/System/PublicSurface/ApiVersion.php'                                            => [
             'new VersionResolver' => 'Version resolver for HTTP API version tracking',
-            'new VersionRegistry' => 'Static lazy singleton; version registry for API tracking',
+            'new VersionRegistry' => 'Static facade with reset()/setInstance() — testable lifecycle',
         ],
         // ApiContracts: static facade factory methods
         'components/API/Contracts/System/PublicSurface/ApiContracts.php'                                               => [
@@ -375,10 +375,10 @@ final class CheckRuntimeCompositionLeaks
             'new HttpContext' => 'HTTP context facade; static factory method',
             'new PhpGlobalsProvider' => 'Static factory method; creates globals provider',
         ],
-        // Pipeline: static lazy singleton for hook registry
+        // Pipeline: static facade with reset()/setInstance() — testable lifecycle
         'components/Application/Pipeline/System/PublicSurface/Pipeline.php'                                            => [
             'new Pipeline' => 'Pipeline facade; self-instantiation for static API',
-            'new HookRegistry' => 'Static lazy singleton; hook registry for pipeline stages',
+            'new HookRegistry' => 'Static facade with reset()/setInstance() — testable lifecycle',
         ],
         // GraphQLExecutor: specific registry instantiation
         'components/API/GraphQL/System/PublicSurface/GraphQLExecutor.php'                                              => [

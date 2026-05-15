@@ -11,7 +11,7 @@ use Psr\Http\Message\RequestInterface;
 
 final class ApiVersion
 {
-    private static VersionRegistry $versionRegistry;
+    private static ?VersionRegistry $versionRegistry = null;
 
     public static function resolve(RequestInterface $request) : ApiVersionResolved
     {
@@ -20,7 +20,7 @@ final class ApiVersion
 
     private static function registry() : VersionRegistry
     {
-        if (! isset(self::$versionRegistry)) {
+        if (self::$versionRegistry === null) {
             self::$versionRegistry = new VersionRegistry();
         }
 
@@ -40,6 +40,22 @@ final class ApiVersion
     public static function supported() : array
     {
         return self::registry()->supported();
+    }
+
+    /**
+     * Reset the static version registry. Required for test isolation.
+     */
+    public static function reset(): void
+    {
+        self::$versionRegistry = null;
+    }
+
+    /**
+     * Replace the version registry (for testing or DI injection).
+     */
+    public static function setInstance(VersionRegistry $registry): void
+    {
+        self::$versionRegistry = $registry;
     }
 }
 

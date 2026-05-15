@@ -68,4 +68,20 @@ final class Pipeline
     {
         return self::registry()->all();
     }
+
+    /**
+     * Reset the static hook registry. Required for test isolation.
+     */
+    public static function reset(): void
+    {
+        self::$hookRegistry = null;
+    }
+
+    /**
+     * Replace the hook registry (for testing or DI injection).
+     */
+    public static function setInstance(HookRegistry $registry): void
+    {
+        self::$hookRegistry = $registry;
+    }
 }

@@ -156,11 +156,13 @@ V5.8.9 AuthBuilder Constructor Drift & Runtime Gate Closure: CLOSED / GREEN (190
 
 V5.8.x Fix-This Phase A Closure: CLOSED / GREEN_WITH_ACCEPTED_YELLOW_DEBT (198 runtime composition findings → 0, gate allowances narrowed, bad fixtures proven to FAIL, AppKernel hot path clean, 54 lazy singletons verified, security/performance review clean, recursive governance review 2 YELLOW formally accepted as non-blocking debt: YELLOW-DEBT-001 facade self-instantiation, YELLOW-DEBT-002 facade lifecycle proof — both Phase B, both LOW risk, neither blocks V5.9)
 
+V5.8.x Fix-This Phase B Closure: CLOSED / FULL_GREEN_PHASE_B_FACADE_DEBT_CLOSED (YELLOW-DEBT-001 CLOSED, YELLOW-DEBT-002 CLOSED, ApiVersion reset/setInstance added, Pipeline reset/setInstance added, 7 new tests, 8365 tests total, 0 PHPStan errors, all gates PASS)
+
 Current Plan Lock: GREEN (63 pre-existing PHPStan errors, out of V5.8.x scope)
 
-Active stage: V5.8.x Fix-This Phase A Closure — COMPLETE / GREEN_WITH_ACCEPTED_YELLOW_DEBT
+Active stage: V5.8.x Fix-This Phase B Closure — COMPLETE / FULL_GREEN_PHASE_B_FACADE_DEBT_CLOSED
 
-Next allowed stage: V5.9 Boot DSL — READY
+Next allowed stage: V5.9 Boot DSL — READY (All Phase A/B debts closed)
 
 V5.9 Boot DSL prerequisites:
 1. AuthBuilder constructor drift resolved — DONE (0 errors)

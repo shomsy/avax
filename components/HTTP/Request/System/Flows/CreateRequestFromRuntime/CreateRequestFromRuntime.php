@@ -22,11 +22,12 @@ final class CreateRequestFromRuntime
      * @param array<string, mixed>               $attributes
      */
     public function execute(
+        UploadedFiles     $uploadedFiles,
         string            $method = 'GET',
         RequestUri|string $uri = '/',
         array             $headers = [],
         string            $rawBody = '',
-        array|object|null $parsedBody = null, UploadedFiles|null $uploadedFiles = null,
+        array|object|null $parsedBody = null,
         array             $serverParams = [],
         array             $cookieParams = [],
         array             $queryParams = [],
@@ -42,7 +43,7 @@ final class CreateRequestFromRuntime
                                  rawBody   : new RawBody(content: $rawBody),
                                  parsedBody: new ParsedBody(data: $parsedBody),
                              ),
-            uploadedFiles  : $uploadedFiles ?? new UploadedFiles(),
+            uploadedFiles  : $uploadedFiles,
             serverParams   : $serverParams,
             cookieParams   : $cookieParams,
             queryParams    : $queryParams,

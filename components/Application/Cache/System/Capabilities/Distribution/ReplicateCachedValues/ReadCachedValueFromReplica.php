@@ -56,7 +56,7 @@ final readonly class ReadCachedValueFromReplica
     private function readWithQuorum(CacheKey $cacheKey): CacheStoreRecordWasFound|CacheStoreRecordWasMissing
     {
         $results = [];
-        $found = null;
+        $firstFound = null;
 
         foreach ($this->stores as $store) {
             try {
@@ -64,14 +64,21 @@ final readonly class ReadCachedValueFromReplica
 
                 if ($result instanceof CacheStoreRecordWasFound) {
                     $results[] = $result;
-                    $found ??= $result;
+
+                    if ($firstFound === null) {
+                        $firstFound = $result;
+                    }
                 }
             } catch (Throwable) {
             }
         }
 
         if (count($results) >= $this->chooseReplicaForRead->replicaCount()->quorumSize()) {
-            return $found ?? new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
+            if ($firstFound !== null) {
+                return $firstFound;
+            }
+
+            return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);
         }
 
         return new CacheStoreRecordWasMissing(cacheKey: $cacheKey);

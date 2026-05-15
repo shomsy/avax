@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Configuration\Builders;
 
-use Avax\Components\Application\Cache\System\Configuration\CacheConfiguration;
-
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ExpireCachedValues\CacheTtl;
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ExpireCachedValues\DecideStaleValueCanBeServed;
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ExpireCachedValues\StaleValuePolicy;
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\RefreshCachedValues\RefreshPolicy;
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\RefreshCachedValues\ShouldRefreshCachedValue;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
 use Avax\Components\Application\Cache\System\Capabilities\Observability\ObserveCache\CacheMetrics;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\ChainCacheStore;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\FileCacheStore;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\RedisCacheStore;
+use Avax\Components\Application\Cache\System\Configuration\CacheConfiguration;
+use Avax\Components\Application\Cache\System\Foundation\Serialization\JsonCacheSerializer;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\PublicSurface\AvaxCache;
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
@@ -31,7 +32,10 @@ final readonly class BuildCache
 
     public function inMemory(CacheConfiguration|null $config = null) : AvaxCache
     {
-        $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->clock);
+        $inMemoryCacheStore = new InMemoryCacheStore(
+            clock                          : $this->clock,
+            chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(),
+        );
 
         return $this->fromStore(store: $inMemoryCacheStore, config: $config);
     }
@@ -69,6 +73,7 @@ final readonly class BuildCache
             basePath  : $basePath,
             filesystem: $this->filesystem,
             clock     : $this->clock,
+            jsonCacheSerializer: new JsonCacheSerializer(clock: $this->clock),
         );
 
         return $this->fromStore(store: $fileCacheStore, config: $config);
@@ -79,9 +84,10 @@ final readonly class BuildCache
         int $port = 6379, CacheConfiguration|null $config = null,
     ): AvaxCache {
         $redisCacheStore = new RedisCacheStore(
+            clock          : $this->clock,
+            cacheSerializer: new JsonCacheSerializer(clock: $this->clock),
             host : $host,
             port : $port,
-            clock: $this->clock,
         );
 
         return $this->fromStore(store: $redisCacheStore, config: $config);

@@ -8,6 +8,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Distribution\UseCacheT
 use Avax\Components\Application\Cache\System\Capabilities\Distribution\UseCacheTiers\CacheTierName;
 use Avax\Components\Application\Cache\System\Capabilities\Distribution\UseCacheTiers\TieredCache;
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
 use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
@@ -44,8 +45,8 @@ final class TieredCacheTest extends TestCase
         $cacheTier = CacheTier::l1(name: 'l1_memory', maxSize: 100);
         $l2Tier    = CacheTier::l2(name: 'l2_distributed', maxSize: 1000);
 
-        $l1Store = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
-        $l2Store = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 1000);
+        $l1Store = new InMemoryCacheStore(clock: $this->frozenClock, chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(), maxEntries: 100);
+        $l2Store = new InMemoryCacheStore(clock: $this->frozenClock, chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(), maxEntries: 1000);
 
         $tieredCache = new TieredCache($this->frozenClock, $cacheTier, $l2Tier);
         $tieredCache->registerTier(cacheTier: $cacheTier, cacheStore: $l1Store);

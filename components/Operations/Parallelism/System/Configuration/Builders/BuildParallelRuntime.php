@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Parallelism\System\Configuration\Builders;
 
-use Avax\Components\Operations\Parallelism\System\Configuration\ParallelRuntimeInterface;
-
-use Avax\Components\Operations\Parallelism\System\Configuration\ParallelismConfig;
-
 use Avax\Components\Operations\Parallelism\System\Capabilities\RunInCurrentProcess\CurrentProcessParallelRuntime;
+use Avax\Components\Operations\Parallelism\System\Capabilities\RunThroughProcessPool\ReadWorkerResult;
+use Avax\Components\Operations\Parallelism\System\Capabilities\RunThroughProcessPool\StartWorkerProcess;
+use Avax\Components\Operations\Parallelism\System\Capabilities\RunThroughProcessPool\StopWorkerProcess;
 use Avax\Components\Operations\Parallelism\System\Capabilities\RunThroughProcessPool\SymfonyProcessParallelRuntime;
+use Avax\Components\Operations\Parallelism\System\Configuration\ParallelismConfig;
+use Avax\Components\Operations\Parallelism\System\Configuration\ParallelRuntimeInterface;
 use Avax\Components\Operations\Parallelism\System\Foundation\ParallelResult;
 use Symfony\Component\Process\Process;
 
@@ -27,7 +28,11 @@ final readonly class BuildParallelRuntime
 
     private function buildSymfonyProcessRuntime() : SymfonyProcessParallelRuntime
     {
-        return new SymfonyProcessParallelRuntime();
+        return new SymfonyProcessParallelRuntime(
+            starter: new StartWorkerProcess(),
+            reader : new ReadWorkerResult(),
+            stopper: new StopWorkerProcess(),
+        );
     }
 
     private function buildCurrentProcessRuntime() : CurrentProcessParallelRuntime

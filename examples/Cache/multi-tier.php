@@ -5,13 +5,18 @@ declare(strict_types=1);
 namespace Avax\Examples\Cache;
 
 use Avax\Components\Application\Cache\System\AvaxCache;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Cache\System\PublicSurface\Cache;
 
 require __DIR__.'/../../vendor/autoload.php';
 
 $clock = new SystemClock();
-$l1 = new InMemoryCacheStore(clock: $clock);
+$l1 = new InMemoryCacheStore(
+    clock                          : $clock,
+    chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(),
+);
 
 $cache = new AvaxCache(clock: $clock, store: $l1);
 

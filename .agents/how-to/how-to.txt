@@ -434,7 +434,29 @@ Foundation/
 
 ---
 
-## 11. Public API Stability Rule
+## 11. PublicSurface Factory Boundary Rule
+
+PublicSurface may expose public factories only when they create public value/result objects or protect users from internal construction details.
+
+PublicSurface factories MUST NOT:
+
+```text
+assemble runtime service graphs
+instantiate runtime services
+access the container as service locator
+create middleware, dispatchers, resolvers, clients, stores, loggers, repositories, or framework runtime services
+hide dependency assembly
+```
+
+**Allowed:** `Responses::json()` delegates to `CreateHttpResponse` and returns `Response`.
+**Forbidden:** `Responses::json()` creates new `CreateHttpResponse` internally.
+
+PublicSurface may create produced public values. PublicSurface must not assemble machinery.
+
+---
+
+
+## 12. Public API Stability Rule
 
 Changing `PublicSurface/` is a public API decision.
 
@@ -462,7 +484,7 @@ Internal folders may change more freely.
 
 ---
 
-## 12. Small Surface Rule
+## 13. Small Surface Rule
 
 `PublicSurface/` must stay small.
 
@@ -483,7 +505,7 @@ A strong public API is usually small, boring, predictable, and easy to document.
 
 ---
 
-## 13. No Runtime Leakage Rule
+## 14. No Runtime Leakage Rule
 
 Runtime-specific APIs must not leak into `PublicSurface/`.
 
@@ -525,7 +547,7 @@ It must not expose server-specific implementation details by accident.
 
 ---
 
-## 14. No Request State Rule
+## 15. No Request State Rule
 
 `PublicSurface/` must not hold request-scoped mutable state.
 
@@ -550,7 +572,7 @@ This protects the system from leaking state between requests in worker runtimes.
 
 ---
 
-## 15. PublicSurface Placement Rule
+## 16. PublicSurface Placement Rule
 
 Use `PublicSurface/` inside a framework or component system root.
 
@@ -584,7 +606,7 @@ Do not create a top-level repository `PublicSurface/` folder unless the reposito
 
 ---
 
-## 16. PublicSurface Naming Rule
+## 17. PublicSurface Naming Rule
 
 Files inside `PublicSurface/` must use public API names.
 
@@ -617,7 +639,7 @@ A public API name must explain what the user is touching.
 
 ---
 
-## 17. PublicSurface Documentation Rule
+## 18. PublicSurface Documentation Rule
 
 Every `PublicSurface/` folder must be documented.
 
@@ -637,7 +659,7 @@ If the public surface cannot be documented simply, the API is probably too broad
 
 ---
 
-## 18. PublicSurface Proof Rule
+## 19. PublicSurface Proof Rule
 
 A public surface is accepted only when at least one test proves that:
 
@@ -668,7 +690,7 @@ No proof means no green status.
 
 ---
 
-## 19. Status of DDD in This Architecture
+## 20. Status of DDD in This Architecture
 
 This architecture may use parts of Domain-Driven Design.
 
@@ -709,7 +731,7 @@ It rejects DDD as a folder template.
 
 ---
 
-## 20. DDD Integration Law
+## 21. DDD Integration Law
 
 DDD concepts must obey this rule:
 
@@ -759,7 +781,7 @@ Only then should the reader discover whether a unit is a value object, entity, a
 
 ---
 
-## 21. What Ubiquitous Language Means Here
+## 22. What Ubiquitous Language Means Here
 
 Ubiquitous Language is the shared language of a bounded context.
 
@@ -796,7 +818,7 @@ If the word cannot pass this test, it is not yet a stable domain term.
 
 ---
 
-## 22. Ubiquitous Language Must Be Simple
+## 23. Ubiquitous Language Must Be Simple
 
 The language must be easy to read.
 
@@ -845,7 +867,7 @@ It must describe real ownership.
 
 ---
 
-## 23. Contract Naming Rule
+## 24. Contract Naming Rule
 
 Do not use `Contract` as a broad bounded context name.
 
@@ -901,7 +923,7 @@ If the answer is breaking change detection, name it `DetectBreakingPublicApiChan
 
 ---
 
-## 24. Adapter Naming Rule
+## 25. Adapter Naming Rule
 
 Do not use `Adapters/` as a broad dumping ground.
 
@@ -936,7 +958,7 @@ Do not sort code by architectural jargon when a clearer capability name exists.
 
 ---
 
-## 25. Bounded Context
+## 26. Bounded Context
 
 A Bounded Context is a boundary where language has one stable meaning.
 
@@ -953,7 +975,7 @@ A Bounded Context is not a folder category.
 
 A Bounded Context is a meaning boundary.
 
-### 25.1 Naming Bounded Contexts
+### 26.1 Naming Bounded Contexts
 
 A bounded context name must describe a real capability, business area, platform area, or language boundary.
 
@@ -986,7 +1008,7 @@ Services
 Business
 ```
 
-### 25.2 Bounded Context Documentation
+### 26.2 Bounded Context Documentation
 
 Every explicit bounded context must define:
 
@@ -1027,7 +1049,7 @@ Other contexts or external systems it collaborates with.
 Words that are too vague or misleading here.
 ```
 
-### 25.3 Bounded Context Example: Compatibility
+### 26.3 Bounded Context Example: Compatibility
 
 ```md
 ## Compatibility
@@ -1068,7 +1090,7 @@ This is stronger than a generic `Contract` context because it explains the real 
 
 ---
 
-## 26. When Bounded Contexts Are Needed
+## 27. When Bounded Contexts Are Needed
 
 Use explicit bounded contexts when:
 
@@ -1099,7 +1121,7 @@ They deserve separate context definitions.
 
 ---
 
-## 27. When Bounded Contexts Are Not Needed
+## 28. When Bounded Contexts Are Not Needed
 
 Do not create explicit bounded contexts when:
 
@@ -1130,11 +1152,11 @@ Do not add DDD structure just to look mature.
 
 ---
 
-## 28. Tactical DDD Concepts
+## 29. Tactical DDD Concepts
 
 Use tactical DDD concepts only when they solve a real clarity or correctness problem.
 
-### 28.1 Aggregate
+### 29.1 Aggregate
 
 An Aggregate owns a consistency boundary.
 
@@ -1175,7 +1197,7 @@ Domain/
   Aggregates/
 ```
 
-### 28.2 Entity
+### 29.2 Entity
 
 An Entity has identity and lifecycle.
 
@@ -1201,7 +1223,7 @@ An entity must protect lifecycle behavior.
 
 It must not be a database row wrapper with setters.
 
-### 28.3 Value Object
+### 29.3 Value Object
 
 A Value Object is immutable and represents a meaningful value.
 
@@ -1230,7 +1252,7 @@ A value object must validate or express meaning.
 
 Do not wrap primitives mechanically.
 
-### 28.4 Repository
+### 29.4 Repository
 
 A Repository persists and retrieves aggregates.
 
@@ -1268,7 +1290,7 @@ Capabilities/
 
 A repository is allowed only when there is a real aggregate or lifecycle to protect.
 
-### 28.5 Domain Service
+### 29.5 Domain Service
 
 A Domain Service is an exact domain action that does not naturally belong to one entity or value object.
 
@@ -1294,7 +1316,7 @@ Manager
 
 A domain service must have one clear action.
 
-### 28.6 Factory
+### 29.6 Factory
 
 A Factory owns meaningful creation.
 
@@ -1318,7 +1340,20 @@ DomainFactory
 
 Do not create factories for trivial constructors.
 
-### 28.7 Domain Event
+### 29.7 DDD Factory vs Runtime Assembly Rule
+
+A DDD factory owns meaningful creation of domain/value/result objects when construction has invariants, policy, or language meaning.
+
+A DDD factory MUST NOT assemble framework runtime service graphs.
+
+**Allowed:** `CreateReleaseCandidate` creates `ReleaseCandidate` with invariants.
+**Forbidden:** `RuntimeFactory` creates `Router`, `EventDispatcher`, `Logger`, `MiddlewareStack`, `DatabaseConnection`.
+
+If a class assembles runtime services, it belongs in `ServiceProvider`, `System/Configuration`, or `System/Configuration/Builders` — not in a DDD factory.
+
+Factories create meaningful objects. Configuration assembles the system.
+
+### 29.8 Domain Event
 
 A Domain Event records a completed domain fact.
 
@@ -1350,7 +1385,7 @@ An event records a fact.
 
 ---
 
-## 29. Ubiquitous Language Dictionary
+## 30. Ubiquitous Language Dictionary
 
 Every significant bounded context should have a small language dictionary.
 
@@ -1384,7 +1419,7 @@ Examples:
 
 ---
 
-## 30. Required DDD Language Outputs
+## 31. Required DDD Language Outputs
 
 When a bounded context is explicitly introduced, the design must produce:
 
@@ -1414,7 +1449,7 @@ It means every bounded context must honestly decide which ones are needed.
 
 ---
 
-## 31. When DDD Is Needed
+## 32. When DDD Is Needed
 
 Use DDD concepts when the system has real domain pressure.
 
@@ -1449,7 +1484,7 @@ That deserves language.
 
 ---
 
-## 32. When DDD Is Not Needed
+## 33. When DDD Is Not Needed
 
 Do not use DDD concepts when the code is simple and already clear.
 
@@ -1493,7 +1528,7 @@ Domain/
 
 ---
 
-## 33. DDD Minimum Rule
+## 34. DDD Minimum Rule
 
 Use the smallest DDD concept that solves the clarity problem.
 
@@ -1519,7 +1554,7 @@ The first solution to unclear design is usually better language.
 
 ---
 
-## 34. DDD Proof Rule
+## 35. DDD Proof Rule
 
 A DDD concept is accepted only when at least one test proves the behavior or invariant it exists to protect.
 
@@ -1539,7 +1574,7 @@ A DDD concept may exist temporarily as yellow during active design, but it must 
 
 ---
 
-## 35. DDD and Flow Slices
+## 36. DDD and Flow Slices
 
 Flow slices describe end-to-end behavior.
 
@@ -1578,7 +1613,7 @@ Shared last.
 
 ---
 
-## 36. DDD and Capability Slices
+## 37. DDD and Capability Slices
 
 Capability slices describe reusable system abilities.
 
@@ -1622,7 +1657,7 @@ This is invalid because it says nothing about the system ability.
 
 ---
 
-## 37. DDD and PublicSurface
+## 38. DDD and PublicSurface
 
 Public DDD objects may appear in `PublicSurface/` only when they are part of the stable user-facing API.
 
@@ -1660,7 +1695,7 @@ Internal domain machinery should remain internal.
 
 ---
 
-## 38. DDD and Foundation
+## 39. DDD and Foundation
 
 Foundation contains tiny neutral primitives.
 
@@ -1694,7 +1729,7 @@ It belongs in the flow or capability that owns it.
 
 ---
 
-## 39. DDD and Configuration
+## 40. DDD and Configuration
 
 Configuration owns assembly, wiring, bootstrapping, and composition.
 
@@ -1728,7 +1763,7 @@ The second does domain work and belongs in flows or capabilities.
 
 ---
 
-## 40. Existing Code Migration Rule
+## 41. Existing Code Migration Rule
 
 When existing code uses generic DDD folders, do not rename mechanically.
 
@@ -1781,7 +1816,7 @@ Tests are the judge.
 
 ---
 
-## 41. Legacy Recovery Classification
+## 42. Legacy Recovery Classification
 
 When recovering behavior from old material, classify each candidate:
 
@@ -1818,7 +1853,7 @@ Do not restore code without this classification.
 
 ---
 
-## 42. Skeleton Recovery Ban
+## 43. Skeleton Recovery Ban
 
 Do not create empty classes, fake facades, fake contracts, or placeholder implementations just to silence tooling.
 
@@ -1854,7 +1889,7 @@ If ownership is unclear, classify it and stop.
 
 ---
 
-## 43. Naming Matrix
+## 44. Naming Matrix
 
 Use this matrix during design and review.
 
@@ -1873,7 +1908,7 @@ Use this matrix during design and review.
 
 ---
 
-## 44. Forbidden DDD Anti-Patterns
+## 45. Forbidden DDD Anti-Patterns
 
 The following are forbidden unless explicitly justified inside a narrow local scope:
 
@@ -1911,7 +1946,7 @@ DDD must not become decoration.
 
 ---
 
-## 45. Acceptable DDD Exceptions
+## 46. Acceptable DDD Exceptions
 
 A technical DDD folder may be allowed only inside a very narrow local scope when it improves navigation and does not weaken ownership.
 
@@ -1942,7 +1977,7 @@ The child may group technical shape second.
 
 ---
 
-## 46. Practical Decision Tree
+## 47. Practical Decision Tree
 
 Before introducing a DDD concept, ask:
 
@@ -1962,7 +1997,7 @@ If the answer to question 6, 7, or 9 is no, do not mark the concept green.
 
 ---
 
-## 47. Review Checklist for DDD Usage
+## 48. Review Checklist for DDD Usage
 
 A DDD design passes review only if:
 
@@ -1988,7 +2023,7 @@ If DDD makes the design harder to explain, remove it.
 
 ---
 
-## 48. Review Classification
+## 49. Review Classification
 
 Use this classification during review.
 
@@ -2031,7 +2066,7 @@ A concept is called production-ready without proof.
 
 ---
 
-## 49. DDD Documentation Template
+## 50. DDD Documentation Template
 
 Use this template when a context or capability needs explicit domain documentation.
 
@@ -2123,7 +2158,7 @@ Invariants:
 
 ---
 
-## 50. Example: Compatibility Domain Model
+## 51. Example: Compatibility Domain Model
 
 This example shows DDD adapted to screaming architecture.
 
@@ -2198,7 +2233,7 @@ Compatibility says users must not be broken accidentally.
 
 ---
 
-## 51. Example: Release Readiness Domain Model
+## 52. Example: Release Readiness Domain Model
 
 ```text
 components/
@@ -2255,7 +2290,7 @@ A domain fact that approval happened.
 
 ---
 
-## 52. Example: Runtime Safety Domain Model
+## 53. Example: Runtime Safety Domain Model
 
 ```text
 framework/
@@ -2314,7 +2349,7 @@ Domain event emitted when safety rules fail.
 
 ---
 
-## 53. Example: Persistence Domain Model
+## 54. Example: Persistence Domain Model
 
 Persistence and ORM are allowed to use DDD concepts only when they protect real persistence boundaries.
 
@@ -2374,7 +2409,7 @@ DDD concepts exist only where they protect identity, lifecycle, or persistence b
 
 ---
 
-## 54. Combined Review Checklist
+## 55. Combined Review Checklist
 
 A design using `PublicSurface/` and DDD passes only if all of the following are true.
 
@@ -2438,7 +2473,7 @@ Skeleton-only recovery is rejected.
 
 ---
 
-## 55. Final Law
+## 56. Final Law
 
 Public surface receives.
 
@@ -2471,37 +2506,6 @@ Old code is evidence.
 Current architecture is the target.
 
 Tests are the judge.
-
-## 50. PublicSurface Factory Boundary Rule
-
-PublicSurface may expose public factories only when they create public value/result objects or protect users from internal construction details.
-
-PublicSurface factories MUST NOT:
-- assemble runtime service graphs
-- instantiate runtime services
-- access the container as service locator
-- create middleware, dispatchers, resolvers, clients, stores, loggers, repositories, or framework runtime services
-- hide dependency assembly
-
-**Allowed:** `Responses::json()` delegates to `CreateHttpResponse` and returns `Response`.
-**Forbidden:** `Responses::json()` creates new `CreateHttpResponse` internally.
-
-PublicSurface may create produced public values. PublicSurface must not assemble machinery.
-
-## 51. DDD Factory vs Runtime Assembly Rule
-
-A DDD factory owns meaningful creation of domain/value/result objects when construction has invariants, policy, or language meaning.
-
-A DDD factory MUST NOT assemble framework runtime service graphs.
-
-**Allowed:** `CreateReleaseCandidate` creates `ReleaseCandidate` with invariants.
-**Forbidden:** `RuntimeFactory` creates `Router`, `EventDispatcher`, `Logger`, `MiddlewareStack`, `DatabaseConnection`.
-
-If a class assembles runtime services, it belongs in `ServiceProvider`, `System/Configuration`, or `System/Configuration/Builders` — not in a DDD factory.
-
-Factories create meaningful objects. Configuration assembles the system.
-
----
 
 Everything must remain readable.
 
@@ -2693,19 +2697,6 @@ Services/
 Helpers/
   StringHelper.php
 ```
-
-## 54. Canonical Term Registry Rule
-
-One concept must have one canonical name. If the same concept appears under multiple names, review MUST choose one canonical term and mark the others as aliases, deprecated terms, or wrong terms.
-
-The canonical registry is at:
-
-```text
-docs/governance/canonical-terms.md
-```
-
-Check the registry before introducing or accepting new terminology. All term decisions MUST be added to the registry.
-
 
 - Folder names describe flows or capabilities
 - File names describe responsibility
@@ -3691,7 +3682,50 @@ Bad examples:
 Choose one name.
 Delete the others.
 
-### 27.4 Function Naming Rule
+### 27.4 Canonical Term Registry Rule
+
+One concept must have one canonical name. If the same concept appears under multiple names, review MUST choose one canonical term and mark the others as aliases, deprecated terms, or wrong terms.
+
+The canonical registry is at:
+
+```text
+docs/governance/canonical-terms.md
+```
+
+Check the registry before introducing or accepting new terminology. All term decisions MUST be added to the registry.
+
+**Status:** MANDATORY
+**Severity:** HIGH (escalates to BLOCKER — see below)
+
+### Severity Escalation
+
+Default severity is HIGH.
+
+Escalates to **BLOCKER** when naming drift affects any of the following:
+
+```text
+PublicSurface
+DI/container
+Response layer
+Events
+Runtime
+Boot DSL
+FailureBoundary
+Database lifecycle
+security-sensitive APIs
+public compatibility
+```
+
+Examples that MUST be BLOCKER:
+
+```text
+Response / Responses / CreateHttpResponse confusion in active code
+EventEmitter / EventDispatcher / EventBus confusion in active runtime
+Runtime / Kernel / Application confusion in public boot API
+ServiceProvider / Provider / ComponentDefinition confusion in DI assembly
+```
+
+### 27.5 Function Naming Rule
 
 Function names must describe exact action.
 
@@ -6079,7 +6113,39 @@ This document synthesizes guidance from the following major schools and official
 ### Status
 
 **MANDATORY**
-**Severity:** HIGH
+**Severity:** HIGH (escalates to BLOCKER — see below)
+
+### Severity Escalation
+
+Default severity is HIGH.
+
+Escalates to **BLOCKER** when the issue threatens:
+
+```text
+security
+data integrity
+runtime safety
+long-lived worker safety
+truth/evidence integrity
+public API compatibility
+dependency graph correctness
+rollback/recovery safety
+```
+
+Examples that MUST be BLOCKER when active:
+
+```text
+exploitable security issue
+data corruption risk
+request state stored in singleton
+unresolved runtime composition leak in active runtime
+fake GREEN
+gate PASS with RED content
+mandatory gate scans zero active files
+hidden fallback dependency in runtime
+missing required dependency discovered in business/runtime code
+service locator in business/runtime code
+```
 
 ### Rule
 
@@ -6158,7 +6224,7 @@ Threshold trigger does not automatically mean refactor. It does require document
 
 ## 24. PHPDoc Cross-Reference
 
-PHPDoc is part of clean code. For the full semantic PHPDoc rule including class, method, tag, flow/action documentation, and review criteria, see:
+PHPDoc is part of clean code. For the full semantic PHPDoc rule including class, method, tag, flow/action documentation, severity, GREEN status block criteria, and review criteria, see:
 
 ```text
 .agents/how-to/how-to-document.md — Semantic PHPDoc Rule
@@ -7659,6 +7725,8 @@ docs/governance/canonical-terms.md
 
 before introducing or accepting new terminology.
 
+**Severity escalation:** Default HIGH. BLOCKER when naming drift affects PublicSurface, DI/container, Response layer, Events, Runtime, Boot DSL, FailureBoundary, Database lifecycle, security-sensitive APIs, or public compatibility.
+
 ## 23. Governance Exception Register Rule
 
 A documented governance exception is valid only when recorded in the exception register at:
@@ -7711,7 +7779,7 @@ LOW:     wording polish
 
 ### Cross-Reference
 
-For full PHPDoc rules including class, method, tag, flow/action documentation, gate, and phased adoption, see:
+For full PHPDoc rules including class, method, tag, flow/action documentation, gate, severity, phased adoption, and GREEN status rule, see:
 
 ```text
 .agents/how-to/how-to-document.md — Semantic PHPDoc Rule
@@ -7724,7 +7792,39 @@ For full PHPDoc rules including class, method, tag, flow/action documentation, g
 ### Status
 
 **MANDATORY**
-**Severity:** HIGH
+**Severity:** HIGH (escalates to BLOCKER — see below)
+
+### Severity Escalation
+
+Default severity is HIGH.
+
+Escalates to **BLOCKER** when the issue threatens:
+
+```text
+security
+data integrity
+runtime safety
+long-lived worker safety
+truth/evidence integrity
+public API compatibility
+dependency graph correctness
+rollback/recovery safety
+```
+
+Examples that MUST be BLOCKER when active:
+
+```text
+exploitable security issue
+data corruption risk
+request state stored in singleton
+unresolved runtime composition leak in active runtime
+fake GREEN
+gate PASS with RED content
+mandatory gate scans zero active files
+hidden fallback dependency in runtime
+missing required dependency discovered in business/runtime code
+service locator in business/runtime code
+```
 
 ### Rule
 
@@ -10064,11 +10164,13 @@ This provider is responsible for the earliest bootstrap phase and MUST:
 
 ### 4.2 The Rule
 
-Every ACTIVE component MUST have exactly one ServiceProvider.
+Every ACTIVE production component with runtime behavior, public API, dependencies, replaceable services, state, I/O, configuration, or lifecycle ownership MUST have exactly one real ServiceProvider.
 
 The ServiceProvider is the composition root for that component.
 
 It lives in `System/Configuration/<ComponentName>ServiceProvider.php`.
+
+Exempt statuses: ROADMAP, SCAFFOLD, LABS_ONLY, EVIDENCE_ONLY, TEST_ONLY, PURE_FOUNDATION, inactive DEPRECATED.
 
 ### 4.3 ServiceProvider Contract
 
@@ -13667,7 +13769,7 @@ A component **MUST** be marked **experimental** if it's not proven in production
 
 A component **MUST** be marked **production-ready** only when all items above are satisfied.
 
-## 22. Component Status Ownership Rule
+## 28. Component Status Ownership Rule
 
 ### Status
 
@@ -13716,7 +13818,7 @@ Gates must use component status ownership. A ROADMAP/SCAFFOLD/LABS_ONLY componen
 
 ---
 
-## 23. Large Unit Review Thresholds
+## 29. Large Unit Review Thresholds
 
 Large code is not automatically wrong, but it is automatically suspicious.
 
@@ -14431,6 +14533,38 @@ Existing untouched: classify as documentation debt and ratchet down.
 PublicSurface/runtime/security-sensitive: upgrade first.
 ```
 
+### PHPDoc GREEN Status Rule
+
+Semantic PHPDoc is part of AvaX architecture readability. Missing or fake PHPDoc can block GREEN.
+
+Severity:
+
+**BLOCKER:**
+- missing semantic PHPDoc on PublicSurface production class
+- missing semantic PHPDoc on runtime-critical class
+- missing semantic PHPDoc on security-sensitive class
+- missing or wrong `@throws` on public API method where exception may escape
+- PHPDoc that lies about behavior, security, lifecycle, or public API semantics
+- PHPDoc that hides runtime assembly, service locator, or dependency fallback
+
+**HIGH:**
+- missing semantic PHPDoc on ordinary production class touched in the current pass
+- missing semantic PHPDoc on public/protected method touched in the current pass
+- missing array shape/generic/iterable/callable/mixed boundary docs
+- method side effects or mutations not documented
+
+**MEDIUM:**
+- missing semantic PHPDoc on private non-trivial methods
+- unclear intent in internal docblocks
+- incomplete conceptual input/output explanation
+
+**LOW:**
+- wording polish only
+
+**Legacy rule:** Existing untouched legacy PHPDoc debt may be YELLOW only with ratchet and owner. New code and touched code must follow the rule immediately.
+
+**Hard anti-spam rule:** Mandatory PHPDoc does not allow decorative PHPDoc. A required docblock that merely repeats code is still a violation.
+
 ---
 
 ## Examples Are Architecture Rule
@@ -14445,7 +14579,7 @@ If examples teach an anti-pattern, the codebase will reproduce it.
 
 ## Canonical Term Registry Rule
 
-One concept must have one canonical name. The canonical registry is at `docs/governance/canonical-terms.md`. Check the registry before introducing or accepting new terminology.
+One concept must have one canonical name. The canonical registry is at `docs/governance/canonical-terms.md`. Check the registry before introducing or accepting new terminology. Default severity HIGH; BLOCKER when naming drift affects PublicSurface, DI/container, Response, Events, Runtime, or public compatibility.
 
 ---
 
@@ -17012,6 +17146,8 @@ unsafe plugin or sandbox execution
 
 A security issue may remain only if final status is YELLOW or RED. Never GREEN.
 
+A GREEN commit with unresolved security issue is forbidden.
+
 If temporarily accepted, it MUST have:
 
 ```text
@@ -19035,7 +19171,7 @@ A GREEN commit with unresolved security issue is forbidden.
 
 ---
 
-## 16. Gate Self-Test Rule
+## 14. Gate Self-Test Rule
 
 ### Status
 
@@ -19081,7 +19217,7 @@ Rules:
 - gate that scans zero active files is FAIL, not PASS
 - gate PASS with RED content is FAIL
 
-## 17. No Zero-Scan Gate Rule
+## 15. No Zero-Scan Gate Rule
 
 ### Status
 
@@ -19112,7 +19248,7 @@ UNAVAILABLE is not PASS.
 SKIPPED is not PASS unless explicitly allowed by stage scope.
 Exit 0 with RED content is not PASS.
 
-## 18. Quality Ratchet Rule
+## 16. Quality Ratchet Rule
 
 ### Status
 
@@ -19166,7 +19302,7 @@ Quality ratchet evidence must include:
 
 ---
 
-## 22. Security and Performance Trigger Cross-Rule
+## 19. Security and Performance Trigger Cross-Rule
 
 Security review MUST be triggered by changes to areas listed in:
 
@@ -19182,7 +19318,7 @@ Performance review MUST be triggered by changes to areas listed in:
 
 If triggered, review evidence must include the compliance table. If not triggered, review must say why.
 
-## 23. Large Unit Review Thresholds
+## 20. Large Unit Review Thresholds
 
 Mandatory review triggers:
 
@@ -19198,7 +19334,7 @@ Test class over 500 lines:       mandatory test organization review
 
 Threshold trigger requires documented decision. No large unit may be called GREEN without review decision.
 
-## 24. Examples Are Architecture Rule
+## 21. Examples Are Architecture Rule
 
 Examples, GoldenPath apps, documentation snippets, generated examples, and tests are source material for humans and AI. They MUST show canonical style.
 
@@ -19208,11 +19344,11 @@ If examples must show low-level/manual usage, they must be clearly labeled as ad
 
 GoldenPath examples MUST be canonical. If examples teach an anti-pattern, the codebase will reproduce it.
 
-## 25. Canonical Term Registry Rule
+## 22. Canonical Term Registry Rule
 
 One concept must have one canonical name. Check the registry at `docs/governance/canonical-terms.md` before introducing or accepting new terminology.
 
-## 26. PublicSurface Factory Boundary Rule
+## 23. PublicSurface Factory Boundary Rule
 
 PublicSurface may expose public factories only when they create public value/result objects or protect users from internal construction details. PublicSurface factories MUST NOT assemble runtime service graphs, instantiate runtime services, access the container as service locator, or create middleware/dispatchers/resolvers/clients/stores/loggers/repositories/framework runtime services.
 
@@ -19221,7 +19357,7 @@ Forbidden: `Responses::json()` creates new `CreateHttpResponse` internally.
 
 PublicSurface may create produced public values. PublicSurface must not assemble machinery.
 
-## 27. DDD Factory vs Runtime Assembly Rule
+## 24. DDD Factory vs Runtime Assembly Rule
 
 A DDD factory owns meaningful creation of domain/value/result objects when construction has invariants, policy, or language meaning. A DDD factory MUST NOT assemble framework runtime service graphs.
 
@@ -19230,7 +19366,7 @@ Forbidden: `RuntimeFactory` creates `Router`, `EventDispatcher`, `Logger`, `Midd
 
 If a class assembles runtime services, it belongs in `ServiceProvider`, `System/Configuration`, or `System/Configuration/Builders` — not in a DDD factory.
 
-## 28. Governance Exception Register Rule
+## 25. Governance Exception Register Rule
 
 A documented exception is valid only when recorded in the exception register at:
 
@@ -19240,12 +19376,91 @@ EVIDENCE/accepted-exceptions-ledger.md
 
 Exception without owner and expiry is not an exception. It is unresolved governance debt.
 
-## 29. Critical Quality Signal Rule
+## 26. Semantic PHPDoc GREEN Status Rule
 
 ### Status
 
 **MANDATORY**
-**Severity:** HIGH
+**Severity:** BLOCKER/HIGH/MEDIUM/LOW (see below)
+
+### Rule
+
+Semantic PHPDoc is part of AvaX architecture readability. Missing or fake PHPDoc can block GREEN.
+
+Severity:
+
+```text
+BLOCKER:
+- missing semantic PHPDoc on PublicSurface production class
+- missing semantic PHPDoc on runtime-critical class
+- missing semantic PHPDoc on security-sensitive class
+- missing or wrong @throws on public API method
+- PHPDoc that lies about behavior, security, or public API
+- PHPDoc that hides runtime assembly or service locator
+
+HIGH:
+- missing semantic PHPDoc on ordinary production class touched in current pass
+- missing PHPDoc on public/protected method touched in current pass
+- missing array shape/generic/iterable/callable/mixed boundary docs
+
+MEDIUM:
+- missing PHPDoc on private non-trivial methods
+- unclear intent in internal docblocks
+
+LOW:
+- wording polish only
+```
+
+### Anti-Spam Rule
+
+Mandatory PHPDoc does not allow decorative PHPDoc. A required docblock that merely repeats code is still a violation.
+
+### Cross-Reference
+
+```text
+.agents/how-to/how-to-document.md — Semantic PHPDoc Rule
+```
+
+---
+
+## 27. Critical Quality Signal Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** HIGH (escalates to BLOCKER — see below)
+
+### Severity Escalation
+
+Default severity is HIGH.
+
+Escalates to **BLOCKER** when the issue threatens:
+
+```text
+security
+data integrity
+runtime safety
+long-lived worker safety
+truth/evidence integrity
+public API compatibility
+dependency graph correctness
+rollback/recovery safety
+```
+
+Examples that MUST be BLOCKER when active:
+
+```text
+exploitable security issue
+data corruption risk
+request state stored in singleton
+unresolved runtime composition leak in active runtime
+fake GREEN
+gate PASS with RED content
+mandatory gate scans zero active files
+hidden fallback dependency in runtime
+missing required dependency discovered in business/runtime code
+service locator in business/runtime code
+```
 
 ### Rule
 
@@ -19281,7 +19496,7 @@ If it can create a security hole, corrupt data, hide a runtime failure, break lo
 
 ---
 
-## 20. Status State Machine Rule
+## 17. Status State Machine Rule
 
 ### Status
 
@@ -19348,7 +19563,7 @@ commit/push is forbidden unless explicitly committing evidence-only RED/YELLOW c
 
 ---
 
-## 21. Component Status Ownership Rule
+## 18. Component Status Ownership Rule
 
 ### Status
 
@@ -19413,7 +19628,7 @@ A ROADMAP/SCAFFOLD/LABS_ONLY component MUST NOT leak into production runtime aut
 
 
 
-## 30. Final Verdict
+## 28. Final Verdict
 
 > NOTE: This section is HISTORICAL. The current project state is GREEN across all V1-V5 stages as proven by CURRENT_TRUTH.md (2026-05-15). 8351 tests pass, PHPStan 0 errors, all gates GREEN. The content below is preserved to document the previous RED state.
 
@@ -22588,7 +22803,7 @@ Performance tests are the judge.
 
 ---
 
-## 44. Security and Performance Trigger Cross-Rule
+## 47. Security and Performance Trigger Cross-Rule
 
 Performance review MUST be triggered by changes to: hot paths, loops over routes/listeners/middleware, reflection, container resolution, event dispatch, queue workers, database query execution, route matching, filesystem scans, cache compile/read/write, boot/worker startup, long-lived runtime reset, serialization, hydration/extraction, projections/read models, graph compilation, or runtime scope creation/closing.
 
@@ -22602,12 +22817,44 @@ For security triggers, see:
 
 ---
 
-## 45. Critical Quality Signal Rule
+## 48. Critical Quality Signal Rule
 
 ### Status
 
 **MANDATORY**
-**Severity:** HIGH
+**Severity:** HIGH (escalates to BLOCKER — see below)
+
+### Severity Escalation
+
+Default severity is HIGH.
+
+Escalates to **BLOCKER** when the issue threatens:
+
+```text
+security
+data integrity
+runtime safety
+long-lived worker safety
+truth/evidence integrity
+public API compatibility
+dependency graph correctness
+rollback/recovery safety
+```
+
+Examples that MUST be BLOCKER when active:
+
+```text
+exploitable security issue
+data corruption risk
+request state stored in singleton
+unresolved runtime composition leak in active runtime
+fake GREEN
+gate PASS with RED content
+mandatory gate scans zero active files
+hidden fallback dependency in runtime
+missing required dependency discovered in business/runtime code
+service locator in business/runtime code
+```
 
 ### Rule
 
@@ -25014,7 +25261,7 @@ If security is hidden in vague helpers, it failed.
 
 ---
 
-## 40. Security Must Scream Rule
+## 51. Security Must Scream Rule
 
 ### Status
 
@@ -25063,7 +25310,7 @@ explicit stage-blocking decision
 
 ---
 
-## 41. Security Review Trigger Rule
+## 52. Security Review Trigger Rule
 
 ### Status
 
@@ -25129,7 +25376,7 @@ Security review cannot be skipped silently.
 
 ---
 
-## 42. Security Commit Block Rule
+## 53. Security Commit Block Rule
 
 ### Status
 
@@ -25175,7 +25422,7 @@ A GREEN commit with unresolved security issue is forbidden.
 
 ---
 
-## 44. Security and Performance Trigger Cross-Rule
+## 54. Security and Performance Trigger Cross-Rule
 
 Security review MUST be triggered by changes to: user input, authentication, authorization, session, cookies, CSRF, CORS, encryption, hashing, secrets, filesystem I/O, HTTP client/server, serialization/deserialization, database query building, queue payloads, cache keys containing user data, logging of sensitive data, redirects, file upload/download, template rendering, command/process execution, event payloads crossing trust boundaries, tenant isolation, or plugin/sandbox execution.
 
@@ -25185,12 +25432,44 @@ If triggered, review evidence must include why security/performance is relevant,
 
 ---
 
-## 45. Critical Quality Signal Rule
+## 55. Critical Quality Signal Rule
 
 ### Status
 
 **MANDATORY**
-**Severity:** HIGH
+**Severity:** HIGH (escalates to BLOCKER — see below)
+
+### Severity Escalation
+
+Default severity is HIGH.
+
+Escalates to **BLOCKER** when the issue threatens:
+
+```text
+security
+data integrity
+runtime safety
+long-lived worker safety
+truth/evidence integrity
+public API compatibility
+dependency graph correctness
+rollback/recovery safety
+```
+
+Examples that MUST be BLOCKER when active:
+
+```text
+exploitable security issue
+data corruption risk
+request state stored in singleton
+unresolved runtime composition leak in active runtime
+fake GREEN
+gate PASS with RED content
+mandatory gate scans zero active files
+hidden fallback dependency in runtime
+missing required dependency discovered in business/runtime code
+service locator in business/runtime code
+```
 
 ### Rule
 

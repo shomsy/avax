@@ -84,14 +84,14 @@ use Avax\Components\Identity\Auth\System\Flows\Login\StartAuthenticatedSession;
 use Avax\Components\Identity\Auth\System\Flows\Login\VerifyPassword;
 use Avax\Components\Identity\Auth\System\Flows\Logout\ClearAuthenticatedIdentity;
 use Avax\Components\Identity\Auth\System\Flows\Logout\Logout;
-use Avax\Components\Identity\Auth\System\Flows\Register\CreateRegisteredUser;
-use Avax\Components\Identity\Auth\System\Flows\Register\HashRegisteredPassword;
-use Avax\Components\Identity\Auth\System\Flows\Register\Register;
-use Avax\Components\Identity\Auth\System\Flows\Register\ValidateRegistrationData;
 use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordReset;
 use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\InMemoryPasswordResetStore;
 use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\PasswordResetStoreInterface;
 use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\ResetPassword;
+use Avax\Components\Identity\Auth\System\Flows\Register\CreateRegisteredUser;
+use Avax\Components\Identity\Auth\System\Flows\Register\HashRegisteredPassword;
+use Avax\Components\Identity\Auth\System\Flows\Register\Register;
+use Avax\Components\Identity\Auth\System\Flows\Register\ValidateRegistrationData;
 use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\BeginEmailVerification;
 use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\EmailVerificationStateStoreInterface;
 use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\EmailVerificationStoreInterface;
@@ -213,6 +213,7 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Security\InMemoryTenant
 use Avax\Components\Identity\Tenancy\System\Capabilities\Security\InMemoryTenantSecurityConfigurationStore;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Security\Security;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurityChangeRequestStoreInterface;
+use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurityConfiguration;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurityConfigurationStoreInterface;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Tenancy;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Tenants\Tenants;
@@ -966,6 +967,7 @@ final class AuthBuilder
             clock             : $clock,
             tenantSecurityConfigurationStore: $tenantSecurityConfigurationStore,
             tenantSecurityChangeRequestStore: $tenantSecurityChangeRequestStore,
+            defaultConfiguration: new TenantSecurityConfiguration(tenantSlug: 'default'),
         );
         $readTenantSecurityChangeRequest        = new ReadTenantSecurityChangeRequest(tenantSecurityChangeRequestStore: $tenantSecurityChangeRequestStore);
         $readTenantSecurityChangeRequests       = new ReadTenantSecurityChangeRequests(tenantSecurityChangeRequestStore: $tenantSecurityChangeRequestStore);

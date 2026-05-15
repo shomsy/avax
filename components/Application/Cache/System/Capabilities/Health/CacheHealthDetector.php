@@ -8,7 +8,6 @@ use Avax\Components\Application\Cache\System\Capabilities\Observability\Identify
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
-use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use Throwable;
 
@@ -25,7 +24,7 @@ final class CacheHealthDetector
     private array $statusCache = [];
 
     public function __construct(
-        private readonly Clock $clock = new SystemClock(),
+        private readonly Clock $clock,
         private readonly int $latencyThresholdMs = 100,
         private readonly float $memoryUsageThreshold = 90.0,
         private readonly float $hitRateThreshold = 0.5,
@@ -161,6 +160,7 @@ final class CacheHealthDetector
                 $testRecord = StoredCacheRecord::create(
                     value: 'health_check_'.$i,
                     ttl  : 60,
+                    clock: $this->clock,
                 );
                 $cacheStore->write($testKey, $testRecord);
 
@@ -204,13 +204,13 @@ final class CacheHealthDetector
     /**
      * Create a new health detector with default settings.
      */
-    public static function create(Clock|null $clock = null,
+    public static function create(Clock $clock,
         int $latencyThresholdMs = 100,
         float $memoryUsageThreshold = 90.0,
         float $hitRateThreshold = 0.5,
     ): self {
         return new self(
-            clock               : $clock ?? new SystemClock(),
+            clock               : $clock,
             latencyThresholdMs  : $latencyThresholdMs,
             memoryUsageThreshold: $memoryUsageThreshold,
             hitRateThreshold    : $hitRateThreshold,

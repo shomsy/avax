@@ -6,10 +6,13 @@ namespace Avax\Tests\Unit\Components\Operations\Parallelism;
 
 use Avax\Components\Foundation\CallableSerialization\System\PublicSurface\CallableSerialization;
 use Avax\Components\Operations\Parallelism\System\Capabilities\RunInCurrentProcess\CurrentProcessParallelRuntime;
+use Avax\Components\Operations\Parallelism\System\Capabilities\RunThroughProcessPool\ReadWorkerResult;
+use Avax\Components\Operations\Parallelism\System\Capabilities\RunThroughProcessPool\StartWorkerProcess;
+use Avax\Components\Operations\Parallelism\System\Capabilities\RunThroughProcessPool\StopWorkerProcess;
 use Avax\Components\Operations\Parallelism\System\Capabilities\RunThroughProcessPool\SymfonyProcessParallelRuntime;
 use Avax\Components\Operations\Parallelism\System\Configuration\Builders\BuildParallelRuntime;
-use Avax\Components\Operations\Parallelism\System\Configuration\ParallelRuntimeInterface;
 use Avax\Components\Operations\Parallelism\System\Configuration\ParallelismConfig;
+use Avax\Components\Operations\Parallelism\System\Configuration\ParallelRuntimeInterface;
 use Avax\Components\Operations\Parallelism\System\Flows\RunWorkInParallel\RunWorkInParallel;
 use Avax\Components\Operations\Parallelism\System\Foundation\Failure\ParallelException;
 use Avax\Components\Operations\Parallelism\System\Foundation\ParallelFailure;
@@ -289,7 +292,11 @@ final class ParallelismProofTest extends TestCase
             $this->markTestSkipped('Symfony Process not available');
         }
 
-        $runtime = new SymfonyProcessParallelRuntime();
+        $runtime = new SymfonyProcessParallelRuntime(
+            starter: new StartWorkerProcess(),
+            reader : new ReadWorkerResult(),
+            stopper: new StopWorkerProcess(),
+        );
 
         $this->assertInstanceOf(SymfonyProcessParallelRuntime::class, $runtime);
     }

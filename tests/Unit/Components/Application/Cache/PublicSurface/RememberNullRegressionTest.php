@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Application\Cache\PublicSurface;
 
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 use Avax\Components\Application\Cache\System\Configuration\Builders\BuildCache;
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
@@ -75,6 +76,7 @@ final class RememberNullRegressionTest extends TestCase
         $this->frozenClock        = new FrozenClock(timestamp: Timestamp::now());
         $this->inMemoryCacheStore = new InMemoryCacheStore(
             clock: $this->frozenClock,
+            chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(),
         );
         $buildCache = new BuildCache(clock: $this->frozenClock, filesystem: new Filesystem());
         $this->avaxCache = $buildCache->fromStore(store: $this->inMemoryCacheStore);

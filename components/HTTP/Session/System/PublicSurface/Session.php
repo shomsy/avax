@@ -11,6 +11,7 @@ use Avax\Components\HTTP\Session\System\Capabilities\Transaction\SessionTransact
 use Avax\Components\HTTP\Session\System\Foundation\SessionRecord;
 use DateTimeImmutable;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 
 final class Session implements SessionInterface
 {
@@ -222,6 +223,10 @@ final class Session implements SessionInterface
 
     public function events() : SessionEventBus
     {
-        return $this->sessionEventBus ?? new SessionEventBus();
+        if ($this->sessionEventBus === null) {
+            throw new RuntimeException('SessionEventBus is not configured');
+        }
+
+        return $this->sessionEventBus;
     }
 }

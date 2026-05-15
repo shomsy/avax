@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Configuration;
 
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\FileCacheStore;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
+use Avax\Components\Application\Cache\System\Foundation\Serialization\JsonCacheSerializer;
+use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use InvalidArgumentException;
 
@@ -49,10 +52,17 @@ public function build(): CacheStore
             : sys_get_temp_dir().'/avax_cache';
 
         return match ($this->type) {
-            'memory' => new InMemoryCacheStore(),
+            'memory' => new InMemoryCacheStore(
+                clock                          : new SystemClock(),
+                chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(),
+            ),
             'file' => new FileCacheStore(
                 basePath  : $basePath,
                 filesystem: new Filesystem(),
+                clock     : new SystemClock(),
+                jsonCacheSerializer: new JsonCacheSerializer(
+                                clock: new SystemClock(),
+                            ),
             ),
             default => throw new InvalidArgumentException(message: 'Unknown store type: '.$this->type),
         };

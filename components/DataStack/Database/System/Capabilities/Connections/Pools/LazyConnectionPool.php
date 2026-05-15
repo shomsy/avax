@@ -30,7 +30,12 @@ final class LazyConnectionPool implements ConnectionPoolInterface
     #[Override]
     public function stats(): PoolStats
     {
-        return $this->connectionPool?->stats() ?? new PoolStats(
+        return $this->connectionPool?->stats() ?? $this->defaultStats();
+    }
+
+    private function defaultStats() : PoolStats
+    {
+        return new PoolStats(
             totalConnections : 0,
             activeConnections: 0,
             idleConnections  : 0,

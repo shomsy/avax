@@ -9,6 +9,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Distribution\Distribut
 use Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues\ConsistentHashRing;
 use Avax\Components\Application\Cache\System\Capabilities\Distribution\DistributeCachedValues\DistributedCacheStore;
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
 use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
@@ -29,7 +30,7 @@ final class DistributedCacheStoreTest extends TestCase
         $consistentHashRing = new ConsistentHashRing();
         $consistentHashRing->addNode(cacheNode: CacheNode::create(id: 'node_a'));
 
-        $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
+        $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(), maxEntries: 100);
 
         $distributedCacheStore = new DistributedCacheStore(clock: $this->frozenClock, consistentHashRing: $consistentHashRing)
             ->registerNodeStore(cacheNodeId: CacheNodeId::from(id: 'node_a'), cacheStore: $inMemoryCacheStore);
@@ -64,7 +65,7 @@ final class DistributedCacheStoreTest extends TestCase
         $consistentHashRing->addNode(cacheNode: CacheNode::create(id: 'node_a'));
         $consistentHashRing->addNode(cacheNode: CacheNode::create(id: 'node_b'));
 
-        $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
+        $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(), maxEntries: 100);
 
         $distributedCacheStore = new DistributedCacheStore(clock: $this->frozenClock, consistentHashRing: $consistentHashRing)
             ->registerNodeStore(cacheNodeId: CacheNodeId::from(id: 'node_a'), cacheStore: $inMemoryCacheStore);
@@ -79,7 +80,7 @@ final class DistributedCacheStoreTest extends TestCase
         $consistentHashRing = new ConsistentHashRing();
         $consistentHashRing->addNode(cacheNode: CacheNode::create(id: 'node_a'));
 
-        $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
+        $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(), maxEntries: 100);
 
         $distributedCacheStore = new DistributedCacheStore(clock: $this->frozenClock, consistentHashRing: $consistentHashRing)
             ->registerNodeStore(cacheNodeId: CacheNodeId::from(id: 'node_a'), cacheStore: $inMemoryCacheStore);
@@ -99,8 +100,8 @@ final class DistributedCacheStoreTest extends TestCase
         $consistentHashRing->addNode(cacheNode: CacheNode::create(id: 'node_a'));
         $consistentHashRing->addNode(cacheNode: CacheNode::create(id: 'node_b'));
 
-        $storeA = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
-        $storeB = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
+        $storeA = new InMemoryCacheStore(clock: $this->frozenClock, chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(), maxEntries: 100);
+        $storeB = new InMemoryCacheStore(clock: $this->frozenClock, chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(), maxEntries: 100);
 
         $distributedCacheStore = new DistributedCacheStore(clock: $this->frozenClock, consistentHashRing: $consistentHashRing)
             ->registerNodeStore(cacheNodeId: CacheNodeId::from(id: 'node_a'), cacheStore: $storeA)
@@ -131,7 +132,7 @@ final class DistributedCacheStoreTest extends TestCase
         $consistentHashRing = new ConsistentHashRing();
         $consistentHashRing->addNode(cacheNode: CacheNode::create(id: 'node_a'));
 
-        $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
+        $inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(), maxEntries: 100);
 
         $distributedCacheStore = new DistributedCacheStore(clock: $this->frozenClock, consistentHashRing: $consistentHashRing)
             ->registerNodeStore(cacheNodeId: CacheNodeId::from(id: 'node_a'), cacheStore: $inMemoryCacheStore);

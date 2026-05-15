@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Examples\Cache;
 
 use Avax\Components\Application\Cache\System\AvaxCache;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
@@ -16,6 +17,7 @@ $clock = new FrozenClock(timestamp: Timestamp::now());
 
 $store = new InMemoryCacheStore(
     clock: $clock,
+    chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(),
 );
 
 $cache = new AvaxCache(

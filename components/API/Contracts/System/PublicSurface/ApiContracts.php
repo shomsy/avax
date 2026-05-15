@@ -60,9 +60,9 @@ final class ApiContracts
     /**
      * @return array{version:string,major:string,minor:string,patch:string,current:string,is_major_change:bool,is_compatible:bool}
      */
-    public static function registerVersion(string $version, ApiContractsConfiguration|null $config = null) : array
+    public static function registerVersion(string $version, ApiContractsConfiguration $config) : array
     {
-        return (new RegisterApiVersion(config: $config ?? new ApiContractsConfiguration()))->execute(version: $version);
+        return (new RegisterApiVersion(config: $config))->execute(version: $version);
     }
 
     /**

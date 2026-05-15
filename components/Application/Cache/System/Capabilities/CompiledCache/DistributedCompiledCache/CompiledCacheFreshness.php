@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Capabilities\CompiledCache\DistributedCompiledCache;
 
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
-use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 
 /**
@@ -21,16 +20,16 @@ final class CompiledCacheFreshness
 
     public function __construct(
         private Filesystem $filesystem,
-        private readonly Clock $clock = new SystemClock(),
+        private readonly Clock $clock,
     ) {
     }
 
     /**
      * Create a new freshness checker.
      */
-    public static function create(Filesystem $filesystem, Clock|null $clock = null) : self
+    public static function create(Filesystem $filesystem, Clock $clock) : self
     {
-        return new self(filesystem: $filesystem, clock: $clock ?? new SystemClock());
+        return new self(filesystem: $filesystem, clock: $clock);
     }
 
     /**

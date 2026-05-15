@@ -164,7 +164,11 @@ final class ExecuteWithReliability
             return ($this->fallback)($retryResult->lastException);
         }
 
-        throw $retryResult->lastException ?? new RuntimeException('Operation failed after retries');
+        if ($retryResult->lastException !== null) {
+            throw $retryResult->lastException;
+        }
+
+        throw new RuntimeException('Operation failed after retries');
     }
 
     private function sleep(int $backoffMs) : void

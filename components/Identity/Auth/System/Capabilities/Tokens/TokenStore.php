@@ -21,13 +21,11 @@ final class TokenStore
         $this->revokedTokens[$tokenId] = $expiresAt;
     }
 
-    public function isRevoked(#[SensitiveParameter] string $tokenId = '', DateTimeImmutable|null $moment = null) : bool
+    public function isRevoked(DateTimeImmutable $moment, #[SensitiveParameter] string $tokenId = '') : bool
     {
         if ($tokenId === '' || ! isset($this->revokedTokens[$tokenId])) {
             return false;
         }
-
-        $moment ??= new DateTimeImmutable();
 
         if ($this->revokedTokens[$tokenId] <= $moment) {
             unset($this->revokedTokens[$tokenId]);

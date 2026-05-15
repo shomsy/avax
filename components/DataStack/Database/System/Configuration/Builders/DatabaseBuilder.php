@@ -24,6 +24,7 @@ use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\QueryEvents
 use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Telemetry;
 use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Transactions;
 use Avax\Components\DataStack\Database\System\PublicSurface\Database;
+use Avax\Components\DataStack\DataTransfer\System\Capabilities\AttributeReading\AttributeCompiler;
 use InvalidArgumentException;
 use Throwable;
 
@@ -105,7 +106,7 @@ final class DatabaseBuilder
             databaseConnection: $connections->connection(name: $this->defaultConnectionName()),
         );
 
-        $attributeMetadataReader = new AttributeMetadataReader();
+        $attributeMetadataReader = new AttributeMetadataReader(new AttributeCompiler());
         $hydrator = new Hydrator(new IdentityMap());
         $entityPersister = new EntityPersister($query, $attributeMetadataReader, $hydrator);
 

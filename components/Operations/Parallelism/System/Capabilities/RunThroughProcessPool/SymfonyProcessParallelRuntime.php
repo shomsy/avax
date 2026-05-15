@@ -17,9 +17,9 @@ use Throwable;
 final readonly class SymfonyProcessParallelRuntime implements ParallelRuntimeInterface
 {
     public function __construct(
-        private StartWorkerProcess $starter = new StartWorkerProcess(),
-        private ReadWorkerResult   $reader = new ReadWorkerResult(),
-        private StopWorkerProcess  $stopper = new StopWorkerProcess(),
+        private StartWorkerProcess $starter,
+        private ReadWorkerResult   $reader,
+        private StopWorkerProcess  $stopper,
         private string|null $signingKey = null,
     ) {}
 
@@ -140,11 +140,16 @@ final readonly class SymfonyProcessParallelRuntime implements ParallelRuntimeInt
             if ($result->isSuccess()) {
                 $values[$name] = $result->value;
             } else {
-                $failure    = $result->failure ?? new ParallelFailure(
-                    name   : $name,
-                    message: 'Unknown worker failure',
-                    code   : 1,
-                );
+                $failure = $result->failure;
+
+                if ($failure === null) {
+                    $failure = new ParallelFailure(
+                        name   : $name,
+                        message: 'Unknown worker failure',
+                        code   : 1,
+                    );
+                }
+
                 $failures[] = $failure;
             }
 

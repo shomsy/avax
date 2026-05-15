@@ -9,6 +9,7 @@ use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedVal
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasMissing;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\StoredCacheRecord;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use InvalidArgumentException;
 use Throwable;
@@ -28,6 +29,7 @@ final class CacheReplication
         /** @var list<CacheStore> */
         private readonly array $replicas,
         private readonly PrimaryReplicaPolicy $primaryReplicaPolicy,
+        private readonly Clock $clock = new SystemClock(),
     ) {
     }
 
@@ -158,7 +160,7 @@ final class CacheReplication
      */
     public function write(string $key, mixed $value, int|null $ttl = null) : void
     {
-        $storedCacheRecord = StoredCacheRecord::create($value, $ttl);
+        $storedCacheRecord = StoredCacheRecord::create(value: $value, ttl: $ttl, clock: $this->clock);
         $this->cacheStore->write(
             new CacheKey($key),
             $storedCacheRecord,
@@ -230,7 +232,7 @@ final class CacheReplication
     private function writeToPrimary(string $key, mixed $value, int|null $ttl) : bool
     {
         try {
-            $record = StoredCacheRecord::create($value, $ttl);
+            $record = StoredCacheRecord::create(value: $value, ttl: $ttl, clock: $this->clock);
             $this->cacheStore->write(
                 new CacheKey($key),
                 $record,
@@ -248,7 +250,7 @@ final class CacheReplication
     private function writeToReplica(CacheStore $cacheStore, string $key, mixed $value, int|null $ttl, int $index) : ReplicaWriteResult
     {
         try {
-            $record = StoredCacheRecord::create($value, $ttl);
+            $record = StoredCacheRecord::create(value: $value, ttl: $ttl, clock: $this->clock);
             $cacheStore->write(
                 new CacheKey($key),
                 $record,

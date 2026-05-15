@@ -17,8 +17,8 @@ final readonly class RememberCachedValue
     public function __construct(
         private CacheStore $cacheStore,
         private Clock $clock,
-        private ReadCachedValue|null  $readCachedValue = null,
-        private StoreCachedValue|null $storeCachedValue = null,
+        private ReadCachedValue  $readCachedValue,
+        private StoreCachedValue $storeCachedValue,
     ) {
     }
 
@@ -28,10 +28,7 @@ final readonly class RememberCachedValue
         callable $loader,
         mixed $default = null,
     ): mixed {
-        $readCachedValue = $this->readCachedValue ?? new ReadCachedValue(cacheStore: $this->cacheStore, clock: $this->clock);
-        $storeCachedValue = $this->storeCachedValue ?? new StoreCachedValue(cacheStore: $this->cacheStore, clock: $this->clock);
-
-        $value = $readCachedValue->read(cacheKey: $cacheKey);
+        $value = $this->readCachedValue->read(cacheKey: $cacheKey);
 
         if ($value !== null) {
             return $value;
@@ -43,7 +40,7 @@ final readonly class RememberCachedValue
             return $default;
         }
 
-        $storeCachedValue->store(cacheKey: $cacheKey, value: $value, ttl: $ttl);
+        $this->storeCachedValue->store(cacheKey: $cacheKey, value: $value, ttl: $ttl);
 
         return $value;
     }

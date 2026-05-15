@@ -16,10 +16,9 @@ final class ResolutionTimeline
 
     private readonly Clock $clock;
 
-    public function __construct(Clock|null $clock = null,
+    public function __construct(Clock $clock,
         private readonly bool $enabled = true,
     ) {
-        $clock ??= new Clock();
         $this->clock = $clock;
     }
 

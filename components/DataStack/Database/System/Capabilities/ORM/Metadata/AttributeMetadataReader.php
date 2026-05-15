@@ -25,9 +25,9 @@ final class AttributeMetadataReader
     /** @var array<class-string, EntityMetadata> */
     private array $cache = [];
 
-    private AttributeCompiler|null $attributeCompiler;
+    private AttributeCompiler $attributeCompiler;
 
-    public function __construct(AttributeCompiler|null $attributeCompiler = null)
+    public function __construct(AttributeCompiler $attributeCompiler)
     {
         $this->attributeCompiler = $attributeCompiler;
     }
@@ -46,7 +46,7 @@ final class AttributeMetadataReader
     private function read(string $entityClass): EntityMetadata
     {
         // Try compiled metadata first (V5-08)
-        $compiled = $this->attributeCompiler?->resolve($entityClass);
+        $compiled = $this->attributeCompiler->resolve($entityClass);
         if ($compiled !== null) {
             return $this->readFromCompiled($entityClass, $compiled);
         }
@@ -162,14 +162,15 @@ final class AttributeMetadataReader
             $generatedAttribute = $reflectionProperty->getAttributes(name: GeneratedValue::class)[0] ?? null;
 
             if ($columnAttribute !== null || $idAttribute !== null) {
-                $column = $columnAttribute?->newInstance() ?? new Column(name: $reflectionProperty->getName());
+                $columnInstance                         = $columnAttribute?->newInstance();
+                $columnName                             = $columnInstance->name ?? $reflectionProperty->getName();
                 $fields[$reflectionProperty->getName()] = new FieldMetadata(
                     property : $reflectionProperty->getName(),
-                    column   : $column->name ?? $reflectionProperty->getName(),
-                    type     : $column->type,
+                    column   : $columnName,
+                    type     : $columnInstance?->type,
                     id       : $idAttribute !== null,
                     generated: $generatedAttribute !== null,
-                    nullable : $column->nullable,
+                    nullable : $columnInstance?->nullable ?: false,
                 );
             }
 

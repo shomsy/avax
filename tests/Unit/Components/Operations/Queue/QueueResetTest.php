@@ -9,6 +9,11 @@ use PHPUnit\Framework\TestCase;
 
 final class QueueResetTest extends TestCase
 {
+    protected function setUp() : void
+    {
+        Queue::reset();
+    }
+
     protected function tearDown() : void
     {
         Queue::reset();

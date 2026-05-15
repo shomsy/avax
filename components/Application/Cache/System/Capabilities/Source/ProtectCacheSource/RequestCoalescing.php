@@ -10,7 +10,7 @@ final readonly class RequestCoalescing
 {
     public function __construct(
         private CacheLockStore $cacheLockStore,
-        private CacheLockTimeout $cacheLockTimeout = new CacheLockTimeout(seconds: 5),
+        private CacheLockTimeout $cacheLockTimeout,
     ) {
     }
 

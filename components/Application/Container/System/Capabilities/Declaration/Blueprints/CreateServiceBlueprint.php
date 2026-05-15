@@ -22,13 +22,12 @@ final readonly class CreateServiceBlueprint
 {
     private BlueprintCache $cache;
 
-    private ResolveDependencies|null $dependencies;
+    private ResolveDependencies $dependencies;
 
-    public function __construct(BlueprintCache $cache, ResolveDependencies|null $dependencies = null
+    public function __construct(BlueprintCache $cache, ResolveDependencies $dependencies
     ) {
         $this->dependencies = $dependencies;
         $this->cache = $cache;
-        $this->dependencies ??= new ResolveDependencies();
     }
 
     /**

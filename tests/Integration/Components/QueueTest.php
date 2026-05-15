@@ -25,6 +25,7 @@ final class QueueTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Queue::reset();
         Queue::clear(queue: 'integration');
     }
 }

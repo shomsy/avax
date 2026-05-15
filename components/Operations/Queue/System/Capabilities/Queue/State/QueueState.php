@@ -6,6 +6,7 @@ namespace Avax\Components\Operations\Queue\System\Capabilities\Queue\State;
 
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsStore;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\InMemoryFailedJobsStore;
+use RuntimeException;
 
 /**
  * Instance-scoped canonical queue state.
@@ -78,10 +79,18 @@ final class QueueState
 
     /**
      * Get the failed jobs store.
+     *
+     * @throws RuntimeException if no failed-jobs store has been configured
      */
     public function getFailedJobsStore() : FailedJobsStore
     {
-        return $this->failedJobsStore ??= new InMemoryFailedJobsStore();
+        if ($this->failedJobsStore === null) {
+            throw new RuntimeException(
+                'FailedJobsStore has not been configured. Call setFailedJobsStore() first.',
+            );
+        }
+
+        return $this->failedJobsStore;
     }
 
     /**

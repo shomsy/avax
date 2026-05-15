@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit\Components\Application\Cache\Flows\WarmCache;
 
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
 use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStoreRecordWasFound;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
@@ -123,6 +124,6 @@ final class WarmCacheTest extends TestCase
     {
         parent::setUp();
         $this->frozenClock        = new FrozenClock(timestamp: Timestamp::now());
-        $this->inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
+        $this->inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(), maxEntries: 100);
     }
 }

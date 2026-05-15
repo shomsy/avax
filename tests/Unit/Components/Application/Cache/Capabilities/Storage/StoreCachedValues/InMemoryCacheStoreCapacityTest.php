@@ -26,6 +26,7 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
     {
         $inMemoryCacheStore = new InMemoryCacheStore(
             clock     : $this->frozenClock,
+            chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(),
             maxEntries: 3,
         );
 
@@ -65,8 +66,8 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
     {
         $inMemoryCacheStore = new InMemoryCacheStore(
             clock                          : $this->frozenClock,
-            maxEntries                     : 3,
             chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(),
+            maxEntries                     : 3,
         );
 
         $inMemoryCacheStore->write(cacheKey: $this->makeKey(key: 'key_1'), storedCacheRecord: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));
@@ -89,8 +90,8 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
     {
         $inMemoryCacheStore = new InMemoryCacheStore(
             clock                          : $this->frozenClock,
-            maxEntries                     : 3,
             chooseCachedValueForReplacement: new FirstInFirstOutReplacement(),
+            maxEntries                     : 3,
         );
 
         $inMemoryCacheStore->write(cacheKey: $this->makeKey(key: 'key_1'), storedCacheRecord: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));
@@ -112,6 +113,7 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
     {
         $inMemoryCacheStore = new InMemoryCacheStore(
             clock     : $this->frozenClock,
+            chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(),
             maxEntries: 3,
         );
 
@@ -136,8 +138,8 @@ final class InMemoryCacheStoreCapacityTest extends TestCase
     {
         $inMemoryCacheStore = new InMemoryCacheStore(
             clock                          : $this->frozenClock,
-            maxEntries                     : 2,
             chooseCachedValueForReplacement: new NoReplacement(),
+            maxEntries                     : 2,
         );
 
         $inMemoryCacheStore->write(cacheKey: $this->makeKey(key: 'key_1'), storedCacheRecord: $this->makeRecord(value: 'value_1', ttlSeconds: 3600));

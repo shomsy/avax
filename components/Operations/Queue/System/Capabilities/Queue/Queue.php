@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Avax\Components\Operations\Queue\System\Capabilities\Queue;
 
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsStore;
+use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\InMemoryFailedJobsStore;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\State\QueueState;
 use Avax\Components\Operations\Queue\System\Foundation\JobInterface;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -18,13 +20,32 @@ use Throwable;
  */
 final class Queue
 {
-    private static QueueState $state;
+    private static QueueState|null $state = null;
 
     private const int DEFAULT_MAX_ATTEMPTS = 3;
 
+    /**
+     * Get the current queue state.
+     *
+     * @throws RuntimeException if state has not been initialized
+     */
     private static function state() : QueueState
     {
-        return self::$state ??= new QueueState();
+        if (self::$state === null) {
+            throw new RuntimeException(
+                'Queue state has not been initialized. Call Queue::setInstance() first.',
+            );
+        }
+
+        return self::$state;
+    }
+
+    /**
+     * Set the queue state instance explicitly.
+     */
+    public static function setInstance(QueueState $state) : void
+    {
+        self::$state = $state;
     }
 
     /**
@@ -164,8 +185,10 @@ final class Queue
      */
     public static function reset(): void
     {
-        self::state()->reset();
-        self::$state = new QueueState();
+        self::$state?->reset();
+        $state = new QueueState();
+        $state->setFailedJobsStore(new InMemoryFailedJobsStore());
+        self::$state = $state;
     }
 
     public static function bulk(array $jobs, string $queue = 'default'): array

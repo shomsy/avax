@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Cache\System\Capabilities\Distribution\UseCacheTiers;
 
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
-use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 
 final class L1MemoryCache
 {
@@ -21,8 +21,11 @@ final class L1MemoryCache
         return $tieredCache;
     }
 
-    public static function create(Clock|null $clock = null) : InMemoryCacheStore
+    public static function create(Clock $clock) : InMemoryCacheStore
     {
-        return new InMemoryCacheStore(clock: $clock ?? new SystemClock());
+        return new InMemoryCacheStore(
+            clock                          : $clock,
+            chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(),
+        );
     }
 }

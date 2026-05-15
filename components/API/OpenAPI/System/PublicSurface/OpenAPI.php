@@ -16,12 +16,12 @@ use Avax\Components\API\OpenAPI\System\Flows\ValidateOpenApiDocument\ValidateOpe
 final readonly class OpenAPI
 {
     public static function fromSurface(
-        ApiBlueprintDefinition $surface, OpenApiConfiguration|null $configuration = null,
+        ApiBlueprintDefinition $surface, OpenApiConfiguration $configuration,
     ) : OpenApiDocument
     {
         return new ExportOpenApiDocument(
             buildOpenApiDocument: new BuildOpenApiDocument(
-                                      configuration: $configuration ?? new OpenApiConfiguration(),
+                                      configuration: $configuration,
                                   ),
         )->export(surface: $surface);
     }

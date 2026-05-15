@@ -10,7 +10,6 @@ use Avax\Components\Application\Cache\System\Foundation\Serialization\CacheSeria
 use Avax\Components\Application\Cache\System\Foundation\Serialization\JsonCacheSerializer;
 use Avax\Components\Application\Cache\System\Foundation\Serialization\SerializedCachePayload;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
-use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Avax\Components\Application\Cache\System\Foundation\Time\Timestamp;
 use JsonException;
 use Override;
@@ -26,11 +25,11 @@ final class RedisCacheStore implements CacheStore
 
     private const string DEFAULT_PREFIX = 'avax_cache:';
 
-    private readonly CacheSerializer $cacheSerializer;
-
     private object $redis;
 
     public function __construct(
+        private readonly Clock           $clock,
+        private readonly CacheSerializer $cacheSerializer,
         private readonly string $host = '127.0.0.1',
         private readonly int $port = self::DEFAULT_PORT,
         #[SensitiveParameter]
@@ -38,7 +37,6 @@ final class RedisCacheStore implements CacheStore
         private readonly int $database = 0,
         private readonly float $timeout = self::DEFAULT_TIMEOUT,
         private readonly string $prefix = self::DEFAULT_PREFIX,
-        private readonly Clock $clock = new SystemClock(), CacheSerializer|null $cacheSerializer = null,
     ) {
         if (! class_exists('Redis')) {
             throw new RuntimeException('Redis cache store requires the redis PHP extension.');
@@ -59,8 +57,6 @@ final class RedisCacheStore implements CacheStore
         if ($this->database > 0 && $this->callRedis('select', $this->database) !== true) {
             throw new RuntimeException(sprintf('Cannot select Redis database %d.', $this->database));
         }
-
-        $this->cacheSerializer = $cacheSerializer ?? new JsonCacheSerializer(clock: $this->clock);
     }
 
     #[Override]

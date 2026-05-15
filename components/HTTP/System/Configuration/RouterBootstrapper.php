@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\Configuration;
 
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\HTTP\Router\System\Flows\RegisterRoutes\Files\Registrar;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
 use Avax\Components\HTTP\System\Capabilities\Kernel\AppKernel;
 use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\MiddlewareInterface;
-use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use InvalidArgumentException;
 use LogicException;
 
@@ -283,9 +283,10 @@ final class RouterBootstrapper
         $routerRuntime = $this->bootstrap();
 
         return new AppKernel(
-            routerRuntime   : $routerRuntime,
-            createHttpResponse : $createHttpResponse,
-            globalMiddleware: $this->globalMiddleware,
+            routerRuntime     : $routerRuntime,
+            createHttpResponse: $createHttpResponse,
+            /** @var list<MiddlewareInterface> $middlewareStack */
+            middlewareStack   : array_values($this->globalMiddleware),
         );
     }
 

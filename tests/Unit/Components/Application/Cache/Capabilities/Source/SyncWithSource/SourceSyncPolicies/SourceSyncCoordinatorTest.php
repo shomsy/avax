@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit\Components\Application\Cache\Capabilities\Source\SyncWithSource\SourceSyncPolicies;
 
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\CachedValues\CachedValueLifecycle;
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
 use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
 use Avax\Components\Application\Cache\System\Capabilities\Source\SyncWithSource\CacheSource;
 use Avax\Components\Application\Cache\System\Capabilities\Source\SyncWithSource\CacheSourceKey;
@@ -132,7 +133,7 @@ final class SourceSyncCoordinatorTest extends TestCase
     protected function setUp() : void
     {
         $this->frozenClock        = new FrozenClock(timestamp: Timestamp::now());
-        $this->inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, maxEntries: 100);
+        $this->inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement(), maxEntries: 100);
         $this->testCacheSource    = new TestCacheSource();
     }
 }

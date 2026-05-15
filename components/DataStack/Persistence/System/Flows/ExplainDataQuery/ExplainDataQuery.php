@@ -18,11 +18,8 @@ use function is_array;
  */
 final readonly class ExplainDataQuery
 {
-    private CompileDataQuery $compileDataQuery;
-
-    public function __construct(CompileDataQuery|null $compileDataQuery = null)
+    public function __construct(private CompileDataQuery $compileDataQuery)
     {
-        $this->compileDataQuery = $compileDataQuery ?? new CompileDataQuery();
     }
 
     /**

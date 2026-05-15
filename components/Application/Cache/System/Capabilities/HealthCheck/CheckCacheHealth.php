@@ -7,6 +7,7 @@ namespace Avax\Components\Application\Cache\System\Capabilities\HealthCheck;
 use Avax\Components\Application\Cache\System\Capabilities\Health\CacheHealthDetector;
 use Avax\Components\Application\Cache\System\Capabilities\Health\CacheHealthStatus;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\CacheStore;
+use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\PublicSurface\Cache;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured;
 use Avax\Framework\System\Capabilities\Health\Foundation\HealthFinding;
@@ -24,6 +25,7 @@ final class CheckCacheHealth
 {
     public function __construct(
         private readonly CacheHealthDetector|null $healthDetector = null,
+        private readonly Clock|null $clock = null,
     ) {}
 
     public function check() : HealthReport
@@ -45,7 +47,14 @@ final class CheckCacheHealth
             );
         }
 
-        $detector = $this->healthDetector ?? CacheHealthDetector::create();
+        $detector = $this->healthDetector ?? ($this->clock !== null ? CacheHealthDetector::create($this->clock) : null);
+
+        if ($detector === null) {
+            return new HealthReport(
+                findings: [new HealthFinding('cache.connectivity', HealthStatus::Yellow, 'Cache health detector not configured')],
+                overall : HealthStatus::Yellow,
+            );
+        }
 
         try {
             $status = $detector->checkConnection($cacheStore);

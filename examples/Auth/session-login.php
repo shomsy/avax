@@ -5,16 +5,20 @@ declare(strict_types=1);
 require_once __DIR__.'/../../vendor/autoload.php';
 
 use Avax\Components\Application\Container\System\Foundation\SimpleContainer;
-use Avax\Components\Identity\Auth\System\Configuration\AuthBuilder;
-use Avax\Components\Identity\Auth\System\Configuration\AuthServiceProvider;
-use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
+use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\NullAuditLog;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentity;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionLifetime;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\NativeSessionStore;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserEmail;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
+use Avax\Components\Identity\Auth\System\Configuration\AuthBuilder;
+use Avax\Components\Identity\Auth\System\Configuration\AuthServiceProvider;
 use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationFailed;
 use Avax\Components\Identity\Auth\System\Flows\Login\Credentials;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
 use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 
 $passwordHasher = new PasswordHasher();
@@ -35,7 +39,12 @@ $serviceProvider->register($engine);
 $auth = (new AuthBuilder())
     ->withContainer($engine)
     ->forUser(userSource: $userSource)
-    ->withIdentityBackends(sessionIdentity: new SessionIdentity())
+    ->withIdentityBackends(sessionIdentity: new SessionIdentity(
+                                                sessionStore   : new NativeSessionStore(),
+                                                clock          : new Clock(),
+                                                auditLog       : new NullAuditLog(),
+                                                sessionLifetime: new SessionLifetime(),
+                                            ))
     ->usingHasher(passwordHasher: $passwordHasher)
     ->ready();
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Capabilities\Source\ProtectCacheSource;
 
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
-use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 
 final readonly class CacheLockTimeout
 {
@@ -13,9 +12,8 @@ final readonly class CacheLockTimeout
     {
     }
 
-    public function isExpired(int $acquiredAt, Clock|null $clock = null) : bool
+    public function isExpired(int $acquiredAt, Clock $clock) : bool
     {
-        $clock ??= new SystemClock();
         $now = $clock->now();
 
         return ($now->seconds - $acquiredAt) > $this->seconds;

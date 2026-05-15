@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Application\Cache\Providers;
 
+use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues\InMemoryCacheStore;
 use Avax\Components\Application\Cache\System\Configuration\Builders\BuildCache;
 use Avax\Components\Application\Cache\System\Foundation\Time\FrozenClock;
@@ -83,7 +84,7 @@ final class RegisterCacheDependenciesTest extends TestCase
         CompiledCache::reset();
 
         $this->frozenClock        = new FrozenClock();
-        $this->inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock);
+        $this->inMemoryCacheStore = new InMemoryCacheStore(clock: $this->frozenClock, chooseCachedValueForReplacement: new LeastRecentlyUsedReplacement());
 
         $buildCache          = new BuildCache(clock: $this->frozenClock, filesystem: new Filesystem());
         $this->cacheContract = $buildCache->fromStore(store: $this->inMemoryCacheStore);

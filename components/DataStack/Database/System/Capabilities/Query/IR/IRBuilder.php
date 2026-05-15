@@ -14,9 +14,9 @@ final readonly class IRBuilder
 {
     private QueryNode $queryNode;
 
-    public function __construct(QueryNode|null $queryNode = null)
+    private function __construct()
     {
-        $this->queryNode = $queryNode ?? new QueryNode();
+        $this->queryNode = new QueryNode();
     }
 
     public static function query(): self

@@ -23,8 +23,13 @@ final class FilesystemServiceProvider implements ServiceProvider
         // ReadFile flow — stateless, no constructor params
         $container->singleton(ReadFile::class, static fn () : ReadFile => new ReadFile());
 
-        // Health check
-        $container->singleton(CheckFilesystemHealth::class, static fn () : CheckFilesystemHealth => new CheckFilesystemHealth());
+        // Health check — requires Filesystem instance
+        $container->singleton(
+            CheckFilesystemHealth::class,
+            static fn (ContainerInterface $c) : CheckFilesystemHealth => new CheckFilesystemHealth(
+                filesystem: $c->get(Filesystem::class),
+            ),
+        );
     }
 
     public function boot(ContainerInterface $container) : void

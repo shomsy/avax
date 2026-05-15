@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Capabilities\Source\ProtectCacheSource;
 
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
-use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Override;
 use Stringable;
 
@@ -18,9 +17,8 @@ final readonly class CacheLockOwner implements Stringable
     ) {
     }
 
-    public static function current(string $ownerId, int $ttlSeconds = 30, Clock|null $clock = null) : self
+    public static function current(string $ownerId, int $ttlSeconds, Clock $clock) : self
     {
-        $clock ??= new SystemClock();
         $now = $clock->now();
 
         return new self(
@@ -30,9 +28,8 @@ final readonly class CacheLockOwner implements Stringable
         );
     }
 
-    public function isExpired(Clock|null $clock = null) : bool
+    public function isExpired(Clock $clock) : bool
     {
-        $clock ??= new SystemClock();
         $now = $clock->now();
 
         return ($now->seconds - $this->acquiredAt) > $this->ttlSeconds;

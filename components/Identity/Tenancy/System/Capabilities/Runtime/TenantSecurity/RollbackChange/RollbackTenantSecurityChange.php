@@ -16,7 +16,13 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurity
 
 final readonly class RollbackTenantSecurityChange
 {
-    public function __construct(private TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore, private TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore, private AuditLogInterface $auditLog, private Clock $clock) {}
+    public function __construct(
+        private TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore,
+        private TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore,
+        private AuditLogInterface                         $auditLog,
+        private Clock                                     $clock,
+        private TenantSecurityConfiguration               $defaultConfiguration,
+    ) {}
 
     /**
      * @throws TenantSecurityFailed
@@ -29,7 +35,7 @@ final readonly class RollbackTenantSecurityChange
             throw TenantSecurityFailed::unknownChangeRequest();
         }
 
-        $rollback = $changeRequest->before ?? new TenantSecurityConfiguration(tenantSlug: $changeRequest->tenantSlug);
+        $rollback = $changeRequest->before ?? $this->defaultConfiguration;
         $this->tenantSecurityConfigurationStore->save(configuration: $rollback);
         $tenantSecurityChangeRequest = new TenantSecurityChangeRequest(
             changeId    : $changeRequest->changeId,

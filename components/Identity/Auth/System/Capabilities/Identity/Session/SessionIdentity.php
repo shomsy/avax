@@ -6,10 +6,8 @@ namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Session;
 
 use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\AuditEvent;
 use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\AuditLogInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\NullAuditLog;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRecord;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\NativeSessionStore;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\SessionStoreInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
@@ -23,14 +21,6 @@ use SensitiveParameter;
  */
 final class SessionIdentity implements SessionIdentityInterface
 {
-    private string $issuedAtKey = 'auth_session_issued_at';
-
-    private string $phishingResistantKey = 'auth_phishing_resistant';
-
-    private string $mfaVerifiedAtKey = 'auth_mfa_verified_at';
-
-    private string $sessionKey = 'auth_user_id';
-
     private readonly SessionLifetime $sessionLifetime;
 
     private readonly AuditLogInterface $auditLog;
@@ -39,30 +29,25 @@ final class SessionIdentity implements SessionIdentityInterface
 
     private readonly SessionStoreInterface $sessionStore;
 
-    public function __construct(SessionStoreInterface|null $sessionStore = null, Clock|null $clock = null, AuditLogInterface|null $auditLog = null, SessionLifetime|null $sessionLifetime = null,
+    public function __construct(
+        SessionStoreInterface   $sessionStore,
+        Clock                   $clock,
+        AuditLogInterface       $auditLog,
+        SessionLifetime         $sessionLifetime,
         #[SensitiveParameter]
         private readonly ?SessionRegistryInterface $sessionRegistry = null,
         #[SensitiveParameter]
-                                ?string                    $sessionKey = null, string|null $mfaVerifiedAtKey = null, string|null $phishingResistantKey = null, string|null $issuedAtKey = null,
-        private readonly string                    $lastSeenAtKey = 'auth_session_last_seen_at',
+        private readonly string $sessionKey = 'auth_user_id',
+        private readonly string $mfaVerifiedAtKey = 'auth_mfa_verified_at',
+        private readonly string $phishingResistantKey = 'auth_phishing_resistant',
+        private readonly string $issuedAtKey = 'auth_session_issued_at',
+        private readonly string $lastSeenAtKey = 'auth_session_last_seen_at',
     )
     {
-        $sessionStore               ??= new NativeSessionStore();
-        $clock                      ??= new Clock();
-        $auditLog                   ??= new NullAuditLog();
-        $sessionLifetime            ??= new SessionLifetime();
-        $sessionKey                 ??= 'auth_user_id';
-        $mfaVerifiedAtKey           ??= 'auth_mfa_verified_at';
-        $phishingResistantKey       ??= 'auth_phishing_resistant';
-        $issuedAtKey                ??= 'auth_session_issued_at';
-        $this->sessionStore         = $sessionStore;
-        $this->clock                = $clock;
-        $this->auditLog             = $auditLog;
-        $this->sessionLifetime      = $sessionLifetime;
-        $this->sessionKey           = $sessionKey;
-        $this->mfaVerifiedAtKey     = $mfaVerifiedAtKey;
-        $this->phishingResistantKey = $phishingResistantKey;
-        $this->issuedAtKey          = $issuedAtKey;
+        $this->sessionStore    = $sessionStore;
+        $this->clock           = $clock;
+        $this->auditLog        = $auditLog;
+        $this->sessionLifetime = $sessionLifetime;
     }
 
     /**

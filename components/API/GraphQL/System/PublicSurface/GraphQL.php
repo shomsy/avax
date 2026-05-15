@@ -18,12 +18,12 @@ final readonly class GraphQL
     }
 
     public static function executor(
-        GraphQLSchema $schema, GraphQLConfiguration|null $configuration = null,
+        GraphQLSchema $schema, GraphQLConfiguration $configuration,
     ) : GraphQLExecutor
     {
         return new GraphQLExecutor(
             schema       : $schema,
-            configuration: $configuration ?? new GraphQLConfiguration(),
+            configuration: $configuration,
         );
     }
 
@@ -32,14 +32,14 @@ final readonly class GraphQL
      */
     public static function validate(
         GraphQLSchema         $schema,
-        string $operation, GraphQLConfiguration|null $configuration = null,
+        string $operation, GraphQLConfiguration $configuration,
         array                 $permissions = [],
     ) : GraphQLOperationReport
     {
         return new ValidateGraphQLOperation()->validate(
             schema       : $schema,
             operation    : $operation,
-            configuration: $configuration ?? new GraphQLConfiguration(),
+            configuration: $configuration,
             permissions  : $permissions,
         );
     }

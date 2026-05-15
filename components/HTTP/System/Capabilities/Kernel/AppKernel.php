@@ -5,207 +5,31 @@ declare(strict_types=1);
 namespace Avax\Components\HTTP\System\Capabilities\Kernel;
 
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
-use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\IpRestrictionMiddleware;
 use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\MiddlewareInterface;
-use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\MiddlewareRegistry;
-use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\RateLimiterInterface;
-use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\RateLimiterMiddleware;
-use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\RequestLoggerMiddleware;
-use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\SessionLifecycleMiddleware;
-use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
-use Avax\Components\HTTP\System\Capabilities\SessionStorage\NullSession;
 use Avax\Components\HTTP\System\PublicSurface\HttpInterface;
-use Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Builders\BuildFailureBoundary;
-use Avax\Framework\System\Capabilities\FailureBoundary\Integration\HttpFailureBoundaryMiddleware;
-use Override;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LoggerInterface;
-use SensitiveParameter;
-use Stringable;
 
 /**
  * Application Kernel - Complete HTTP Runtime
  *
  * Combines Router, Kernel, and PSR-15 middleware pipeline into
  * a production-ready HTTP application runtime.
+ *
+ * Middleware stack is assembled in Configuration and injected.
+ * Runtime execution only runs the pipeline — no composition.
  */
 final readonly class AppKernel implements HttpInterface, Kernel
 {
-    /** @var list<MiddlewareInterface> */
-    private array $middlewareStack;
-
     public function __construct(
         private RouterRuntimeInterface $routerRuntime,
         private CreateHttpResponse        $createHttpResponse,
         /** @var list<MiddlewareInterface> */
-        private array                  $globalMiddleware = [],
-    )
-    {
-        $this->middlewareStack = $this->globalMiddleware === []
-            ? $this->createDefaultMiddlewareStack()
-            : $this->globalMiddleware;
-    }
-
-    /**
-     * @return list<MiddlewareInterface>
-     */
-    private function createDefaultMiddlewareStack() : array
-    {
-        $middleware = [];
-
-        if (MiddlewareRegistry::has('ip-restrict')) {
-            $middleware[] = $this->createOfficeIpRestriction();
-        }
-
-        if (MiddlewareRegistry::has('session')) {
-            $middleware[] = $this->createSessionMiddleware();
-        }
-
-        if (MiddlewareRegistry::has('log')) {
-            $middleware[] = $this->createRequestLogger();
-        }
-
-        if (MiddlewareRegistry::has('cors')) {
-            $middleware[] = MiddlewareRegistry::create('cors', [$this->createHttpResponse]);
-        }
-
-        if (MiddlewareRegistry::has('rate-limit')) {
-            $middleware[] = $this->createRateLimiter();
-        }
-
-        if (MiddlewareRegistry::has('json')) {
-            $middleware[] = MiddlewareRegistry::create('json', [$this->createHttpResponse]);
-        }
-
-        // FailureBoundary: outermost error-handling middleware (framework-level, optional)
-        if (class_exists(BuildFailureBoundary::class)
-            && class_exists(HttpFailureBoundaryMiddleware::class)) {
-            $fbBuilder = new BuildFailureBoundary();
-            $middleware[] = new HttpFailureBoundaryMiddleware(
-                $fbBuilder->build(),
-                new CreateHttpResponse(),
-            );
-        }
-
-        /** @var list<MiddlewareInterface> $middleware */
-        return $middleware;
-    }
-
-    private function createOfficeIpRestriction() : MiddlewareInterface
-    {
-        return new class () extends IpRestrictionMiddleware {
-            #[Override]
-            protected function isAllowedIp(#[SensitiveParameter] string $ipAddress) : bool
-            {
-                $allowed = ['127.0.0.1', '::1', '192.168.1.0/24'];
-                foreach ($allowed as $allowedIp) {
-                    if (str_contains($allowedIp, '/')) {
-                        if (str_starts_with($ipAddress, '192.168.1.')) {
-                            return true;
-                        }
-                    } elseif ($ipAddress === $allowedIp) {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-        };
-    }
-
-    private function createSessionMiddleware() : SessionLifecycleMiddleware
-    {
-        return new SessionLifecycleMiddleware(new NullSession());
-    }
-
-    private function createRequestLogger() : RequestLoggerMiddleware
-    {
-        return new RequestLoggerMiddleware(
-            new class () implements LoggerInterface {
-                public function emergency(Stringable|string $message, array $context = []) : void
-                {
-                    error_log((string) $message);
-                }
-
-                public function alert(Stringable|string $message, array $context = []) : void
-                {
-                    error_log((string) $message);
-                }
-
-                public function critical(Stringable|string $message, array $context = []) : void
-                {
-                    error_log((string) $message);
-                }
-
-                public function error(Stringable|string $message, array $context = []) : void
-                {
-                    error_log((string) $message);
-                }
-
-                public function warning(Stringable|string $message, array $context = []) : void
-                {
-                    error_log((string) $message);
-                }
-
-                public function notice(Stringable|string $message, array $context = []) : void
-                {
-                    error_log((string) $message);
-                }
-
-                public function info(Stringable|string $message, array $context = []) : void
-                {
-                    error_log((string) $message);
-                }
-
-                public function debug(Stringable|string $message, array $context = []) : void
-                {
-                    error_log((string) $message);
-                }
-
-                public function log($level, Stringable|string $message, array $context = []) : void
-                {
-                    error_log((string) $message);
-                }
-            },
-        );
-    }
-
-    private function createRateLimiter() : RateLimiterMiddleware
-    {
-        return new RateLimiterMiddleware(
-            new class () implements RateLimiterInterface {
-                public function canAttempt(string $key, int $maxAttempts, int $decaySeconds) : bool
-                {
-                    return true;
-                }
-
-                public function recordFailedAttempt(string $key, int $maxAttempts, int $decaySeconds) : void {}
-
-                public function remainingAttempts(string $key, int $maxAttempts, int $decaySeconds) : int
-                {
-                    return 60;
-                }
-
-                public function availableIn(string $key, int $maxAttempts, int $decaySeconds) : int
-                {
-                    return 0;
-                }
-
-                public function clear(string $key) : void {}
-            },
-            (new class () {
-                public function rateLimited(int $retryAfter) : Response
-                {
-                    return new CreateHttpResponse()->rateLimited(retryAfter: $retryAfter);
-                }
-            }),
-            'ip',
-            100,
-            60,
-        );
+        private array $middlewareStack = [],
+    ) {
     }
 
     /**
@@ -213,7 +37,7 @@ final readonly class AppKernel implements HttpInterface, Kernel
      */
     public static function getMiddlewarePriorityHints() : array
     {
-        return MiddlewareRegistry::getPriorityHints();
+        return [];
     }
 
     public function handleRequest(RequestInterface $request) : ResponseInterface

@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Capabilities\Storage\StoreCachedValues;
 
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\ChooseCachedValueForReplacement;
-use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\LeastRecentlyUsedReplacement;
 use Avax\Components\Application\Cache\System\Capabilities\Lifecycle\ReplaceCachedValues\TrackCachedValueAccess;
 use Avax\Components\Application\Cache\System\Capabilities\Observability\IdentifyCachedValues\CacheKey;
 use Avax\Components\Application\Cache\System\Capabilities\Storage\SizeCachedValues\CacheCapacityWasExceeded;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
-use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;
 use Override;
 
 final class InMemoryCacheStore implements CacheStore
@@ -19,9 +17,9 @@ final class InMemoryCacheStore implements CacheStore
     private array $records = [];
 
     public function __construct(
-        private readonly Clock $clock = new SystemClock(),
+        private readonly Clock                           $clock,
+        private readonly ChooseCachedValueForReplacement $chooseCachedValueForReplacement,
         private readonly int $maxEntries = 1000,
-        private readonly ChooseCachedValueForReplacement $chooseCachedValueForReplacement = new LeastRecentlyUsedReplacement(),
     ) {
     }
 

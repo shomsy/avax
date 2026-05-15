@@ -51,9 +51,9 @@ final readonly class Tasks
         return (new RetryTask())->retry($runner, $task, $policy);
     }
 
-    public static function retry(TaskRetryPolicy|null $policy = null) : TaskRetryPolicy
+    public static function retry(TaskRetryPolicy $policy) : TaskRetryPolicy
     {
-        return $policy ?? new TaskRetryPolicy();
+        return $policy;
     }
 
     public static function cancel(TaskScheduler $scheduler, string $taskId) : bool

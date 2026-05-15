@@ -38,25 +38,30 @@ final class GraphQLSchema
      */
     public function __construct(
         public readonly string     $name,
+        AssembleFieldsFromMap $fieldAssembler,
+        SchemaToArray         $schemaSerializer,
+        SchemaRouter          $schemaRouter,
         array                      $queryFields = [],
         array                      $mutationFields = [],
         array                      $types = [],
-        AssembleFieldsFromMap|null $fieldAssembler = null,
-        SchemaToArray|null         $schemaSerializer = null,
-        SchemaRouter|null $schemaRouter = null,
     )
     {
         $this->queryFields      = $queryFields;
         $this->mutationFields   = $mutationFields;
         $this->types            = $types;
-        $this->fieldAssembler   = $fieldAssembler ?? new AssembleFieldsFromMap();
-        $this->schemaSerializer = $schemaSerializer ?? new SchemaToArray();
-        $this->schemaRouter = $schemaRouter ?? new SchemaRouter();
+        $this->fieldAssembler = $fieldAssembler;
+        $this->schemaSerializer = $schemaSerializer;
+        $this->schemaRouter = $schemaRouter;
     }
 
     public static function define(string $name = 'AvaX GraphQL API') : self
     {
-        return new self(name: $name);
+        return new self(
+            name            : $name,
+            fieldAssembler  : new AssembleFieldsFromMap(),
+            schemaSerializer: new SchemaToArray(),
+            schemaRouter    : new SchemaRouter(),
+        );
     }
 
     /**

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Avax\Components\DataStack\Database\System\PublicSurface;
 
-use Avax\Components\DataStack\Database\System\Capabilities\ORM\ManageEntityPersistence as OrmEntityManager;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Hydration\Hydrator;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\IdentityMap\IdentityMap;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\ManageEntityPersistence as OrmEntityManager;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata\AttributeMetadataReader;
 use Avax\Components\DataStack\Database\System\Capabilities\ORM\Persisters\EntityPersister;
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Query;
@@ -15,9 +15,8 @@ final class ManageEntityPersistence
 {
     private OrmEntityManager $orm;
 
-    public function __construct(Query $query, AttributeMetadataReader|null $metadataReader = null)
+    public function __construct(Query $query, AttributeMetadataReader $metadataReader)
     {
-        $metadataReader ??= new AttributeMetadataReader();
         $identityMap = new IdentityMap();
         $hydrator = new Hydrator($identityMap);
         $persister = new EntityPersister(

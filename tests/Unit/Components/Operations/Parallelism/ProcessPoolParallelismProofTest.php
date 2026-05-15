@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Operations\Parallelism;
 
+use Avax\Components\Operations\Parallelism\System\Capabilities\RunThroughProcessPool\ReadWorkerResult;
+use Avax\Components\Operations\Parallelism\System\Capabilities\RunThroughProcessPool\StartWorkerProcess;
+use Avax\Components\Operations\Parallelism\System\Capabilities\RunThroughProcessPool\StopWorkerProcess;
 use Avax\Components\Operations\Parallelism\System\Capabilities\RunThroughProcessPool\SymfonyProcessParallelRuntime;
 use PHPUnit\Framework\Attributes\After;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use Symfony\Component\Process\Process;
 
 /**
  * Proof tests for real multi-process parallel execution via Symfony Process.
@@ -26,6 +30,16 @@ final class ProcessPoolParallelismProofTest extends TestCase
 {
     private string $tempDir;
 
+    private function createRuntime(string|null $signingKey = null) : SymfonyProcessParallelRuntime
+    {
+        return new SymfonyProcessParallelRuntime(
+            starter   : new StartWorkerProcess(),
+            reader    : new ReadWorkerResult(),
+            stopper   : new StopWorkerProcess(),
+            signingKey: $signingKey,
+        );
+    }
+
     protected function setUp(): void
     {
         $this->tempDir = __DIR__ . '/.tmp-parallel-' . uniqid();
@@ -35,7 +49,7 @@ final class ProcessPoolParallelismProofTest extends TestCase
             self::markTestSkipped('proc_open is not available.');
         }
 
-        if (! class_exists(\Symfony\Component\Process\Process::class)) {
+        if (! class_exists(Process::class)) {
             self::markTestSkipped('Symfony Process is not installed.');
         }
     }
@@ -66,7 +80,7 @@ final class ProcessPoolParallelismProofTest extends TestCase
             };
         }
 
-        $runtime = new SymfonyProcessParallelRuntime(signingKey: 'proof-key');
+        $runtime = $this->createRuntime(signingKey: 'proof-key');
         $result = $runtime->run($tasks, maxWorkers: 3);
 
         $this->assertTrue($result->successful(), 'All tasks should succeed. Failures: ' . json_encode($result->failures()));
@@ -101,7 +115,7 @@ final class ProcessPoolParallelismProofTest extends TestCase
     {
         $captured = 'serialized-across-processes';
 
-        $runtime = new SymfonyProcessParallelRuntime(signingKey: 'capture-test');
+        $runtime = $this->createRuntime(signingKey: 'capture-test');
         $result = $runtime->run([
             'capture' => static fn() => $captured,
         ]);
@@ -116,7 +130,7 @@ final class ProcessPoolParallelismProofTest extends TestCase
 
     public function test_worker_payloads_are_signed() : void
     {
-        $runtime = new SymfonyProcessParallelRuntime(signingKey: 'signing-proof');
+        $runtime = $this->createRuntime(signingKey: 'signing-proof');
         $result = $runtime->run([
             'signed' => static fn() => 42,
         ]);
@@ -131,7 +145,7 @@ final class ProcessPoolParallelismProofTest extends TestCase
 
     public function test_result_order_matches_input_order() : void
     {
-        $runtime = new SymfonyProcessParallelRuntime(signingKey: 'order-test');
+        $runtime = $this->createRuntime(signingKey: 'order-test');
         $result = $runtime->run([
             'first'  => static fn() => 'a',
             'second' => static fn() => 'b',
@@ -152,7 +166,7 @@ final class ProcessPoolParallelismProofTest extends TestCase
 
     public function test_worker_exception_returns_structured_failure() : void
     {
-        $runtime = new SymfonyProcessParallelRuntime(signingKey: 'failure-test');
+        $runtime = $this->createRuntime(signingKey: 'failure-test');
         $result = $runtime->run([
             'good' => static fn() => 'ok',
             'bad'  => static fn() => throw new RuntimeException('Worker crashed'),
@@ -170,7 +184,7 @@ final class ProcessPoolParallelismProofTest extends TestCase
 
     public function test_empty_work_returns_empty_result() : void
     {
-        $runtime = new SymfonyProcessParallelRuntime();
+        $runtime = $this->createRuntime();
         $result = $runtime->run([]);
 
         $this->assertTrue($result->successful());
@@ -185,7 +199,7 @@ final class ProcessPoolParallelismProofTest extends TestCase
 
     public function test_result_contains_worker_metadata() : void
     {
-        $runtime = new SymfonyProcessParallelRuntime(signingKey: 'meta-test');
+        $runtime = $this->createRuntime(signingKey: 'meta-test');
         $result = $runtime->run([
             'w1' => static fn() => 'one',
             'w2' => static fn() => 'two',

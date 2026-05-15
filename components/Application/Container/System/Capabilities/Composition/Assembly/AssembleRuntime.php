@@ -61,7 +61,14 @@ final class AssembleRuntime
             failMode: $createContainerConfig->policyFailMode,
             profiles: $createContainerConfig->policyProfiles,
         );
+        $dependencyCompiler = new DependencyCompiler(
+            registrations: $dependencyRegistry,
+            blueprints   : $createDependencyBlueprint,
+        );
         $compileContainer = new CompileContainer(
+            dependencyRegistry       : $dependencyRegistry,
+            createDependencyBlueprint: $createDependencyBlueprint,
+            dependencyCompiler       : $dependencyCompiler,
             cacheDir              : $createContainerConfig->cacheDir,
             cacheVersion          : $createContainerConfig->cacheVersion,
             configHash            : $createContainerConfig->configHash(),
@@ -76,13 +83,7 @@ final class AssembleRuntime
             validateOnLoad        : $createContainerConfig->validatesCompiledArtifactsOnLoad(),
             failClosedOnCorruption: $createContainerConfig->failsClosedOnCompiledCorruption(),
             validateBeforeCompile : $createContainerConfig->validatesBeforeCompile(),
-            registrations         : $dependencyRegistry,
-            blueprints            : $createDependencyBlueprint,
-            metrics               : $observabilityAssembly->metrics,
-            services              : new DependencyCompiler(
-                registrations: $dependencyRegistry,
-                blueprints   : $createDependencyBlueprint,
-            ),
+            resolutionMetrics        : $observabilityAssembly->metrics,
             filesystem            : new Filesystem(),
         );
         $resolveDependency = new ResolveDependency(
@@ -100,10 +101,10 @@ final class AssembleRuntime
             timeline         : $observabilityAssembly->timeline,
             policy           : $resolutionPolicy,
             compiledRuntime  : new CompiledRuntime(
-                executionMode: $createContainerConfig->executionMode,
-                compiler     : $compileContainer,
-                inliner      : new HotPathInliner(),
-                metrics      : $observabilityAssembly->metrics,
+                                   compileContainer : $compileContainer,
+                                   hotPathInliner   : new HotPathInliner(),
+                                   resolutionMetrics: $observabilityAssembly->metrics,
+                                   executionMode    : $createContainerConfig->executionMode,
             ),
             deferredProviders: new DeferredProviderRegistry(),
             diagnosticsMode  : $createContainerConfig->diagnosticsMode,

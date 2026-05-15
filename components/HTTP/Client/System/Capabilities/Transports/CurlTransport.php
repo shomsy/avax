@@ -11,6 +11,7 @@ use Avax\Components\HTTP\Client\System\Foundation\Failure\HttpRequestFailed;
 use Avax\Components\HTTP\Client\System\Foundation\Failure\HttpTimeout;
 use CurlHandle;
 use GuzzleHttp\Psr7\Request;
+use InvalidArgumentException;
 
 /**
  * CurlTransport - cURL-based HTTP transport implementation.
@@ -32,7 +33,11 @@ final class CurlTransport implements HttpTransportInterface
      */
     public function send(OutboundRequest $outboundRequest) : ClientResponse
     {
-        $options = $outboundRequest->options ?? new RequestOptions();
+        $options = $outboundRequest->options;
+
+        if ($options === null) {
+            throw new InvalidArgumentException('OutboundRequest.options must not be null');
+        }
 
         $ch = curl_init();
         if ($ch === false) {

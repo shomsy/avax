@@ -17,6 +17,11 @@ use RuntimeException;
  */
 final class QueueProcessingTest extends TestCase
 {
+    protected function setUp() : void
+    {
+        Queue::reset();
+    }
+
     #[Test]
     public function queueProcessesJobs() : void
     {

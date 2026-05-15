@@ -52,6 +52,10 @@ final class Fallback
             }
         }
 
-        throw $lastException ?? new RuntimeException('All fallbacks failed');
+        if ($lastException !== null) {
+            throw $lastException;
+        }
+
+        throw new RuntimeException('All fallbacks failed');
     }
 }

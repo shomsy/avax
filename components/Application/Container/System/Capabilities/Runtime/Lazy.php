@@ -18,8 +18,16 @@ final class Lazy
     public function __construct(
         private readonly string $serviceId,
         private readonly Closure $factory,
-    ) {
-        self::$instances ??= new WeakMap();
+    ) {}
+
+    /**
+     * Sets the static instance map for testing purposes.
+     *
+     * @param WeakMap<object, object> $instances
+     */
+    public static function setInstance(WeakMap $instances) : void
+    {
+        self::$instances = $instances;
     }
 
     /**

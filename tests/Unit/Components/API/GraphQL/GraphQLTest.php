@@ -77,7 +77,10 @@ final class GraphQLTest extends TestCase
 
     public function test_query_executor_resolves_data_with_variables_permissions_and_timing() : void
     {
-        $executor = GraphQL::executor(schema: $this->schema())
+        $executor = GraphQL::executor(
+            schema       : $this->schema(),
+            configuration: new GraphQLConfiguration(),
+        )
             ->registerResolver(
                 typeName : 'Query',
                 fieldName: 'users',
@@ -119,7 +122,10 @@ final class GraphQLTest extends TestCase
 
     public function test_mutation_executor_rejects_query_operations_and_resolves_mutations() : void
     {
-        $executor = GraphQL::executor(schema: $this->schema())
+        $executor = GraphQL::executor(
+            schema       : $this->schema(),
+            configuration: new GraphQLConfiguration(),
+        )
             ->registerResolver(
                 typeName : 'Mutation',
                 fieldName: 'createUser',

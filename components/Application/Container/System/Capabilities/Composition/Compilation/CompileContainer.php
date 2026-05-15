@@ -28,8 +28,6 @@ final class CompileContainer
 
     private const int SCHEMA_VERSION = 8;
 
-    private readonly DependencyCompiler $dependencyCompiler;
-
     private ArtifactMetadata|null $artifactMetadata = null;
 
     private readonly bool $validateBeforeCompile;
@@ -64,10 +62,13 @@ final class CompileContainer
 
     public function __construct(
         private readonly DependencyRegistry $dependencyRegistry,
-        private readonly CreateDependencyBlueprint $createDependencyBlueprint, string|null $cacheDir = null, string|null $cacheVersion = null,
+        private readonly CreateDependencyBlueprint $createDependencyBlueprint,
+        private readonly DependencyCompiler        $dependencyCompiler,
+        Filesystem|null                            $filesystem = null,
+        string|null                                $cacheDir = null, string|null $cacheVersion = null,
         #[SensitiveParameter]
         ?string                                    $configHash = null, string|null $diagnosticsMode = null, string|null $environment = null, string|null $compileMode = null, bool|null $strict = null, string|null $settingsFingerprint = null, string|null $benchmarkBuildMarker = null, string|null $executionMode = null, string|null $pruneMode = null, bool|null $validateOnLoad = null, bool|null $failClosedOnCorruption = null, bool|null $validateBeforeCompile = null,
-        private readonly ?ResolutionMetrics        $resolutionMetrics = null, DependencyCompiler|null $dependencyCompiler = null, Filesystem|null $filesystem = null,
+        private readonly ?ResolutionMetrics        $resolutionMetrics = null,
     ) {
         $cacheDir ??= '';
         $cacheVersion ??= 'container-v1';
@@ -97,10 +98,6 @@ final class CompileContainer
         $this->validateOnLoad = $validateOnLoad;
         $this->failClosedOnCorruption = $failClosedOnCorruption;
         $this->validateBeforeCompile = $validateBeforeCompile;
-        $this->dependencyCompiler = $dependencyCompiler ?? new DependencyCompiler(
-            dependencyRegistry       : $this->dependencyRegistry,
-            createDependencyBlueprint: $this->createDependencyBlueprint,
-        );
 
         if ($filesystem === null) {
             throw new RuntimeException('CompileContainer requires Filesystem to be supplied by assembly.');

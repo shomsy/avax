@@ -10,9 +10,8 @@ use Psr\Http\Message\RequestInterface;
 
 final readonly class VersionResolver
 {
-    public static function resolve(RequestInterface $request, VersionRegistry|null $versionRegistry = null) : ApiVersionResolved
+    public static function resolve(RequestInterface $request, VersionRegistry $versionRegistry) : ApiVersionResolved
     {
-        $versionRegistry ??= new VersionRegistry();
         $version         = self::readVersion(request: $request) ?? $versionRegistry->current();
 
         return new ApiVersionResolved(

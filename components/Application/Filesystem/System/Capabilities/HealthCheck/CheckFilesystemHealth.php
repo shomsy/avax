@@ -19,8 +19,8 @@ use Throwable;
 final class CheckFilesystemHealth
 {
     public function __construct(
-        private readonly Filesystem|null $filesystem = null,
-        private readonly string|null     $rootPath = null,
+        private readonly Filesystem  $filesystem,
+        private readonly string|null $rootPath = null,
     ) {}
 
     public function check() : HealthReport
@@ -28,7 +28,7 @@ final class CheckFilesystemHealth
         $findings = [];
         $overall  = HealthStatus::Green;
 
-        $fs = $this->filesystem ?? new Filesystem();
+        $fs = $this->filesystem;
 
         // 1. Temp directory is writable
         $tempDir      = sys_get_temp_dir();

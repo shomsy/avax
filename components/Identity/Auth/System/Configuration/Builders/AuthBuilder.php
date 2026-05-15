@@ -77,14 +77,21 @@ use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateR
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\CheckAuthentication;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\ReadCurrentUser\ReadCurrentUser;
+use Avax\Components\Identity\Auth\System\Flows\Login\FindUserByCredentials;
 use Avax\Components\Identity\Auth\System\Flows\Login\Login;
 use Avax\Components\Identity\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
+use Avax\Components\Identity\Auth\System\Flows\Login\StartAuthenticatedSession;
+use Avax\Components\Identity\Auth\System\Flows\Login\VerifyPassword;
+use Avax\Components\Identity\Auth\System\Flows\Logout\ClearAuthenticatedIdentity;
 use Avax\Components\Identity\Auth\System\Flows\Logout\Logout;
+use Avax\Components\Identity\Auth\System\Flows\Register\CreateRegisteredUser;
+use Avax\Components\Identity\Auth\System\Flows\Register\HashRegisteredPassword;
+use Avax\Components\Identity\Auth\System\Flows\Register\Register;
+use Avax\Components\Identity\Auth\System\Flows\Register\ValidateRegistrationData;
 use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordReset;
 use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\InMemoryPasswordResetStore;
 use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\PasswordResetStoreInterface;
 use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\ResetPassword;
-use Avax\Components\Identity\Auth\System\Flows\Register\Register;
 use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\BeginEmailVerification;
 use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\EmailVerificationStateStoreInterface;
 use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\EmailVerificationStoreInterface;
@@ -700,24 +707,24 @@ final class AuthBuilder
         $sessionRegistry       = $this->sessionRegistry;
         $refreshTokenStore     = $this->refreshTokenStore;
         AuthBootstrapValidator::validate(
-            userSource: $this->userSource ?? throw ConfigurationException::missingDependency("UserSource", "forUser()"),
-            identity         : $this->identity,
-            sessionRegistry  : $this->sessionRegistry,
-            refreshTokenStore: $this->refreshTokenStore,
-            passkeyRuntime   : $this->passkeyRuntime,
-            federationRuntime: $this->federationRuntime,
-            oidcProvider     : $this->oidcProvider,
-            requests         : $this->capabilityRequests(),
+            userSource          : $this->userSource ?? throw ConfigurationException::missingDependency("UserSource", "forUser()"),
+            identity            : $this->identity,
+            authCapabilityRequests: $this->capabilityRequests(),
+            sessionRegistry     : $this->sessionRegistry,
+            refreshTokenStore   : $this->refreshTokenStore,
+            passkeyRuntime      : $this->passkeyRuntime,
+            federationRuntime   : $this->federationRuntime,
+            oidcProvider        : $this->oidcProvider,
         );
 
-        $identity       = $this->identity;
+        $identity       = $this->identity ?? throw ConfigurationException::missingDependency('Identity', 'withIdentity() or withIdentityBackends()');
         $passwordHasher = $this->passwordHasher ?? throw ConfigurationException::missingDependency('PasswordHasher', 'withHasher() or AuthServiceProvider');
         $auditLog       = $this->auditLog ?? throw ConfigurationException::missingDependency('AuditLog', 'withAuditLog() or AuthServiceProvider');
 
         if ($this->auditCorrelationId !== null) {
             $auditLog = new CorrelatingAuditLog(
+                auditLog     : $auditLog,
                 correlationId: $this->auditCorrelationId,
-                inner        : $auditLog,
             );
         }
 
@@ -735,7 +742,7 @@ final class AuthBuilder
         $passwordResetStore                     = $this->passwordResetStore ?? throw ConfigurationException::missingDependency('PasswordResetStore', 'withPasswordResetStore() or AuthServiceProvider');
         $emailVerificationStore                 = $this->emailVerificationStore ?? throw ConfigurationException::missingDependency('EmailVerificationStore', 'withEmailVerificationStore() or AuthServiceProvider');
         $emailChangeStore                       = $this->emailChangeStore ?? throw ConfigurationException::missingDependency('EmailChangeStore', 'withEmailChangeStore() or AuthServiceProvider');
-        $emailVerificationState                 = $this->emailVerificationStateStore ?? throw ConfigurationException::missingDependency('EmailVerificationStateStore', 'withEmailVerificationState() or AuthServiceProvider');
+        $emailVerificationStateStore              = $this->emailVerificationStateStore ?? throw ConfigurationException::missingDependency('EmailVerificationStateStore', 'withEmailVerificationState() or AuthServiceProvider');
         $mfaStore                               = $this->mfaStore ?? throw ConfigurationException::missingDependency('MfaStore', 'withMfaStore() or AuthServiceProvider');
         $mfaChallengeStore                      = $this->mfaChallengeStore ?? throw ConfigurationException::missingDependency('MfaChallengeStore', 'withMfaChallengeStore() or AuthServiceProvider');
         $totp                                   = $this->totp ?? throw ConfigurationException::missingDependency('Totp', 'usingTotp() or AuthServiceProvider');
@@ -744,8 +751,8 @@ final class AuthBuilder
         $mfaRecoveryThrottle                    = $this->mfaRecoveryThrottle ?? throw ConfigurationException::missingDependency('MfaRecoveryThrottle', 'withMfaRecoveryThrottle() or AuthServiceProvider');
         $scimThrottle                           = $this->scimThrottle ?? throw ConfigurationException::missingDependency('ScimThrottle', 'withScimThrottle() or AuthServiceProvider');
         $projectAuthenticatedUser               = new ProjectAuthenticatedUser(
-            mfaStore              : $mfaStore,
-            emailVerificationState: $emailVerificationState,
+            emailVerificationStateStore: $emailVerificationStateStore,
+            mfaStore                   : $mfaStore,
         );
         $currentAuthentication                  = new CurrentAuthentication();
         $requireFreshMfa                        = new RequireFreshMfa(
@@ -764,10 +771,10 @@ final class AuthBuilder
         );
         $startMfaChallenge                      = new StartMfaChallenge(
             currentAuthentication: $currentAuthentication,
+            generalMfaStore      : $mfaStore,
+            mfaChallengeStore    : $mfaChallengeStore,
             auditLog             : $auditLog,
             clock                : $clock,
-            mfaStore             : $mfaStore,
-            challengeStore       : $mfaChallengeStore,
         );
         $authenticateRequest                    = new AuthenticateRequest(
             currentAuthentication   : $currentAuthentication,
@@ -787,33 +794,33 @@ final class AuthBuilder
         $registerClient                         = new RegisterClient(
             auditLog      : $auditLog,
             clock         : $clock,
-            clientRegistry: $oauthClientRegistry,
+            oAuthClientRegistry: $oauthClientRegistry,
         );
         $approveClientRegistration              = new ApproveClientRegistration(
             auditLog      : $auditLog,
             clock         : $clock,
-            clientRegistry: $oauthClientRegistry,
+            oAuthClientRegistry: $oauthClientRegistry,
         );
         $updateClient                           = new UpdateClient(
             auditLog      : $auditLog,
             clock         : $clock,
-            clientRegistry: $oauthClientRegistry,
+            oAuthClientRegistry: $oauthClientRegistry,
         );
         $disableClient                          = new DisableClient(
             auditLog      : $auditLog,
             clock         : $clock,
-            clientRegistry: $oauthClientRegistry,
+            oAuthClientRegistry: $oauthClientRegistry,
         );
         $rotateClientSecret                     = new RotateClientSecret(
             auditLog      : $auditLog,
             clock         : $clock,
-            clientRegistry: $oauthClientRegistry,
+            oAuthClientRegistry: $oauthClientRegistry,
         );
         $readClients                            = new ReadClients(
-            clientRegistry: $oauthClientRegistry,
+            oAuthClientRegistry: $oauthClientRegistry,
         );
         $readWorkloadIdentities                 = new ReadWorkloadIdentities(
-            clientRegistry: $oauthClientRegistry,
+            oAuthClientRegistry: $oauthClientRegistry,
         );
         $readOidcProviderMetadata               = $this->oidcProvider instanceof OidcProviderInterface
             ? new ReadOidcProviderMetadata(oidcProvider: $this->oidcProvider)
@@ -830,38 +837,41 @@ final class AuthBuilder
             : null;
         $pushOidcAuthorizationRequest           = $oidcRequestObjectStore instanceof OidcRequestObjectStoreInterface
             ? new PushAuthorizationRequest(
-                auditLog          : $auditLog,
-                clock             : $clock,
-                oidcProvider      : $this->oidcProvider,
-                requestObjectStore: $oidcRequestObjectStore,
-                clientRegistry    : $oauthClientRegistry,
+                oidcRequestObjectStore: $oidcRequestObjectStore,
+                auditLog              : $auditLog,
+                clock                 : $clock,
+                oAuthClientRegistry   : $oauthClientRegistry,
+                oidcProvider          : $this->oidcProvider,
             )
             : null;
         $validateRequestObject                  = $oidcRequestObjectStore instanceof OidcRequestObjectStoreInterface
-            ? new ValidateRequestObject(requestObjectStore: $oidcRequestObjectStore, clientRegistry: $oauthClientRegistry)
+            ? new ValidateRequestObject(
+                oidcRequestObjectStore: $oidcRequestObjectStore,
+                oAuthClientRegistry   : $oauthClientRegistry,
+            )
             : null;
         $oidcLogout                             = $this->oidcProvider instanceof OidcProviderInterface
             ? new OidcLogout(
                 frontChannelLogout: new FrontChannelLogout(
-                                        currentAuthentication: $currentAuthentication,
-                                        identity             : $identity,
-                                        auditLog             : $auditLog,
-                                        clock                : $clock,
-                                        sessionRegistry      : $this->sessionRegistry,
-                                        refreshTokenStore    : $this->refreshTokenStore,
-                                        oidcProvider         : $this->oidcProvider,
-                                        clientRegistry       : $oauthClientRegistry,
-                                    ),
+                    currentAuthentication: $currentAuthentication,
+                    identity             : $identity,
+                    auditLog             : $auditLog,
+                    clock                : $clock,
+                    sessionRegistry      : $this->sessionRegistry,
+                    refreshTokenStore    : $this->refreshTokenStore,
+                    oidcProvider         : $this->oidcProvider,
+                    oAuthClientRegistry  : $oauthClientRegistry,
+                ),
                 backChannelLogout : new BackChannelLogout(
-                                        currentAuthentication: $currentAuthentication,
-                                        identity             : $identity,
-                                        auditLog             : $auditLog,
-                                        clock                : $clock,
-                                        sessionRegistry      : $this->sessionRegistry,
-                                        refreshTokenStore    : $this->refreshTokenStore,
-                                        oidcProvider         : $this->oidcProvider,
-                                        clientRegistry       : $oauthClientRegistry,
-                                    ),
+                    currentAuthentication: $currentAuthentication,
+                    identity             : $identity,
+                    auditLog             : $auditLog,
+                    clock                : $clock,
+                    sessionRegistry      : $this->sessionRegistry,
+                    refreshTokenStore    : $this->refreshTokenStore,
+                    oidcProvider         : $this->oidcProvider,
+                    oAuthClientRegistry  : $oauthClientRegistry,
+                ),
             )
             : null;
         $buildOidcJarmResponse                  = $this->oidcProvider instanceof OidcProviderInterface
@@ -871,19 +881,19 @@ final class AuthBuilder
             )
             : null;
         $authorizeCode                          = new AuthorizeCode(
-            currentAuthentication : $currentAuthentication,
-            userSource            : $this->userSource,
-            auditLog              : $auditLog,
-            clock                 : $clock,
-            oidcProvider          : $this->oidcProvider,
-            clientRegistry        : $oauthClientRegistry,
-            codeStore             : $authorizationCodeStore,
-            requestObjectValidator: $validateRequestObject,
+            currentAuthentication: $currentAuthentication,
+            userSource           : $this->userSource,
+            oAuthClientRegistry  : $oauthClientRegistry,
+            authorizationCodeStore: $authorizationCodeStore,
+            auditLog             : $auditLog,
+            clock                : $clock,
+            oidcProvider         : $this->oidcProvider,
+            validateRequestObject: $validateRequestObject,
         );
         $requireAdminElevation                  = new RequireAdminElevation(
             currentAuthentication: $currentAuthentication,
+            adminElevationStore  : $adminElevationStore,
             clock                : $clock,
-            elevationStore       : $adminElevationStore,
         );
         $requireAuthentication                  = new RequireAuthentication(
             currentAuthentication: $currentAuthentication,
@@ -910,20 +920,20 @@ final class AuthBuilder
             requireAdminElevation                 : $requireAdminElevation,
         );
         $authorization                          = new Authorization(
-            requireAuthentication: $requireAuthentication,
-            requireRole          : $requireRole,
-            requirePermission    : $requirePermission,
-            requireAccessPolicy  : $requireAccessPolicy,
+            requireAuthenticationBoundary: $requireAuthentication,
+            requireRoleBoundary          : $requireRole,
+            requirePermissionBoundary    : $requirePermission,
+            requireAccessPolicyBoundary  : $requireAccessPolicy,
         );
         $provisionableUserSource                = $this->userSource instanceof ProvisionableUserSourceInterface
             ? $this->userSource
             : null;
         $lifecycle                              = $provisionableUserSource instanceof ProvisionableUserSourceInterface
             ? new LifecycleOrchestrator(
-                auditLog  : $auditLog,
-                clock     : $clock,
-                userSource: $provisionableUserSource,
-                store     : $lifecycleStore,
+                provisionableUserSource: $provisionableUserSource,
+                lifecycleStore         : $lifecycleStore,
+                auditLog               : $auditLog,
+                clock                  : $clock,
             )
             : null;
         $scimDirectoryStore                     = $this->scimDirectoryStore ?? throw ConfigurationException::missingDependency('ScimDirectoryStore', 'withScimDirectoryStore() or AuthServiceProvider');
@@ -931,34 +941,34 @@ final class AuthBuilder
         $tenantStore                            = $this->tenantStore ?? throw ConfigurationException::missingDependency('TenantStore', 'withTenantStore() or AuthServiceProvider');
         $tenantSecurityConfigurationStore       = $this->tenantSecurityConfigurationStore ?? throw ConfigurationException::missingDependency('TenantSecurityConfigurationStore', 'withTenantSecurityConfigurationStore() or AuthServiceProvider');
         $tenantSecurityChangeRequestStore       = $this->tenantSecurityChangeRequestStore ?? throw ConfigurationException::missingDependency('TenantSecurityChangeRequestStore', 'withTenantSecurityChangeRequestStore() or AuthServiceProvider');
-        $readTenantSecurityConfiguration        = new ReadTenantSecurityConfiguration(configurationStore: $tenantSecurityConfigurationStore);
+        $readTenantSecurityConfiguration        = new ReadTenantSecurityConfiguration(tenantSecurityConfigurationStore: $tenantSecurityConfigurationStore);
         $beginTenantSecurityChange              = new BeginTenantSecurityChange(
-            federationConnectionStore: $federationConnectionStore,
-            scimDirectoryStore       : $scimDirectoryStore,
-            auditLog                 : $auditLog,
-            clock                    : $clock,
-            configurationStore       : $tenantSecurityConfigurationStore,
-            changeRequestStore       : $tenantSecurityChangeRequestStore,
+            tenantSecurityConfigurationStore: $tenantSecurityConfigurationStore,
+            tenantSecurityChangeRequestStore: $tenantSecurityChangeRequestStore,
+            federationConnectionStore       : $federationConnectionStore,
+            scimDirectoryStore              : $scimDirectoryStore,
+            auditLog                        : $auditLog,
+            clock                           : $clock,
         );
         $approveTenantSecurityChange            = new ApproveTenantSecurityChange(
             auditLog          : $auditLog,
             clock             : $clock,
-            changeRequestStore: $tenantSecurityChangeRequestStore,
+            tenantSecurityChangeRequestStore: $tenantSecurityChangeRequestStore,
         );
         $applyTenantSecurityChange              = new ApplyTenantSecurityChange(
             auditLog          : $auditLog,
             clock             : $clock,
-            configurationStore: $tenantSecurityConfigurationStore,
-            changeRequestStore: $tenantSecurityChangeRequestStore,
+            tenantSecurityConfigurationStore: $tenantSecurityConfigurationStore,
+            tenantSecurityChangeRequestStore: $tenantSecurityChangeRequestStore,
         );
         $rollbackTenantSecurityChange           = new RollbackTenantSecurityChange(
             auditLog          : $auditLog,
             clock             : $clock,
-            configurationStore: $tenantSecurityConfigurationStore,
-            changeRequestStore: $tenantSecurityChangeRequestStore,
+            tenantSecurityConfigurationStore: $tenantSecurityConfigurationStore,
+            tenantSecurityChangeRequestStore: $tenantSecurityChangeRequestStore,
         );
-        $readTenantSecurityChangeRequest        = new ReadTenantSecurityChangeRequest(changeRequestStore: $tenantSecurityChangeRequestStore);
-        $readTenantSecurityChangeRequests       = new ReadTenantSecurityChangeRequests(changeRequestStore: $tenantSecurityChangeRequestStore);
+        $readTenantSecurityChangeRequest        = new ReadTenantSecurityChangeRequest(tenantSecurityChangeRequestStore: $tenantSecurityChangeRequestStore);
+        $readTenantSecurityChangeRequests       = new ReadTenantSecurityChangeRequests(tenantSecurityChangeRequestStore: $tenantSecurityChangeRequestStore);
         $createTenant                           = new CreateTenant(
             tenantStore: $tenantStore,
             userSource : $this->userSource,
@@ -1026,58 +1036,25 @@ final class AuthBuilder
             ? new RunScimBulk(
                 provisionScimUser: $provisionScimUser,
                 deleteScimUser   : new DeleteScimUser(
-                                       auditLog      : $auditLog,
-                                       clock         : $clock,
-                                       userSource    : $provisionableUserSource,
-                                       scimDirectoryStore: $scimDirectoryStore,
-                                       identityStore : $scimProvisionedIdentityStore,
-                                       lifecycle     : $lifecycle,
-                                   ),
+                    provisionableUserSource: $provisionableUserSource ?? throw ConfigurationException::missingDependency("ProvisionableUserSource", "forUser()"),
+                    scimDirectoryStore     : $scimDirectoryStore,
+                    scimProvisionedIdentityStore: $scimProvisionedIdentityStore,
+                    auditLog               : $auditLog,
+                    clock                  : $clock,
+                    lifecycleOrchestrator  : $lifecycle,
+                    attemptThrottle        : $scimThrottle,
+                ),
             )
             : null;
 
         $assessCurrentRisk = new AssessCurrentRisk(
             currentAuthentication: $currentAuthentication,
             userSource           : $this->userSource,
-            riskEngine           : $riskEngine,
+            deterministicRiskEngine: $riskEngine,
         );
         $readRiskSignals   = new ReadRiskSignals(
             currentAuthentication: $currentAuthentication,
-            riskEngine           : $riskEngine,
-        );
-
-        $authentication = new Authentication(
-            login                : new Login(
-                                       identity                : $identity,
-                                       userSource              : $this->userSource,
-                                       passwordHasher          : $passwordHasher,
-                                       projectAuthenticatedUser: $projectAuthenticatedUser,
-                                       currentAuthentication   : $currentAuthentication,
-                                       auditLog                : $auditLog,
-                                       mfaStore                : $mfaStore,
-                                       startMfaChallenge       : $startMfaChallenge,
-                                       clock                   : $clock,
-                                       rateLimit               : $this->loginRateLimit,
-                                       deterministicRiskEngine : $riskEngine,
-                                   ),
-            logout               : new Logout(
-                                       identity             : $identity,
-                                       currentAuthentication: $currentAuthentication,
-                                       auditLog             : $auditLog,
-                                       clock                : $clock,
-                                       sessionRegistry      : $this->sessionRegistry,
-                                       refreshTokenStore    : $this->refreshTokenStore,
-                                   ),
-            refreshAuthentication: new RefreshAuthentication(
-                                       userSource              : $this->userSource,
-                                       projectAuthenticatedUser: $projectAuthenticatedUser,
-                                       currentAuthentication   : $currentAuthentication,
-                                       auditLog                : $auditLog,
-                                       clock                   : $clock,
-                                       refreshTokenStore       : $this->refreshTokenStore,
-                                       jwtIdentity             : $identity->jwtIdentity(),
-                                       deterministicRiskEngine : $riskEngine,
-                                   ),
+            deterministicRiskEngine: $riskEngine,
         );
 
         $sessions = new Sessions(
@@ -1103,6 +1080,29 @@ final class AuthBuilder
                                 ),
         );
 
+        $authentication = new Authentication(
+            login                : new Login(
+                                       findUserByCredentials    : new FindUserByCredentials(userSource: $this->userSource),
+                                       verifyPassword           : new VerifyPassword(passwordHasher: $passwordHasher),
+                                       startAuthenticatedSession: new StartAuthenticatedSession(sessions: $sessions),
+                                       identity                 : $identity,
+                                   ),
+            logout               : new Logout(
+                                       clearAuthenticatedIdentity: new ClearAuthenticatedIdentity(sessions: $sessions),
+                                       identity                  : $identity,
+                                   ),
+            refreshAuthentication: new RefreshAuthentication(
+                                       userSource              : $this->userSource,
+                                       projectAuthenticatedUser: $projectAuthenticatedUser,
+                                       currentAuthentication   : $currentAuthentication,
+                                       auditLog                : $auditLog,
+                                       clock                   : $clock,
+                                       refreshTokenStore       : $this->refreshTokenStore,
+                                       jwtIdentity             : $identity->jwtIdentity(),
+                                       deterministicRiskEngine : $riskEngine,
+                                   ),
+        );
+
         $account = new Account(
             changePassword    : new ChangePassword(
                                     userSource           : $this->userSource,
@@ -1114,8 +1114,8 @@ final class AuthBuilder
                                     sessionRegistry      : $this->sessionRegistry,
                                     mfaChallengeStore    : $mfaChallengeStore,
                                     refreshTokenStore    : $this->refreshTokenStore,
+                                    loginRateLimit       : $this->loginRateLimit,
                                     requireFreshMfa      : $requireFreshMfa,
-                                    rateLimit            : $this->loginRateLimit,
                                 ),
             beginEmailChange  : new BeginEmailChange(
                                     currentAuthentication: $currentAuthentication,
@@ -1128,27 +1128,26 @@ final class AuthBuilder
                                 ),
             confirmEmailChange: $provisionableUserSource instanceof ProvisionableUserSourceInterface
                                     ? new ConfirmEmailChange(
-                                        emailChangeStore      : $emailChangeStore,
-                                        auditLog              : $auditLog,
-                                        clock                 : $clock,
-                                        currentAuthentication : $currentAuthentication,
-                                        identity              : $identity,
-                                        sessionRegistry       : $this->sessionRegistry,
-                                        mfaChallengeStore     : $mfaChallengeStore,
-                                        refreshTokenStore     : $this->refreshTokenStore,
-                                        userSource            : $provisionableUserSource,
-                                        emailVerificationState: $emailVerificationState,
+                                        provisionableUserSource     : $provisionableUserSource,
+                                        emailChangeStore            : $emailChangeStore,
+                                        emailVerificationStateStore : $emailVerificationStateStore,
+                                        auditLog                    : $auditLog,
+                                        clock                       : $clock,
+                                        currentAuthentication       : $currentAuthentication,
+                                        identity                    : $identity,
+                                        sessionRegistry             : $this->sessionRegistry,
+                                        mfaChallengeStore           : $mfaChallengeStore,
+                                        refreshTokenStore           : $this->refreshTokenStore,
                                     )
                                     : null,
             register          : new Register(
-                                    userSource               : $this->userSource,
-                                    passwordHasher           : $passwordHasher,
-                                    idGenerator              : $this->idGenerator ?? throw ConfigurationException::missingDependency('IdGenerator', 'usingIdGenerator() or AuthServiceProvider'),
-                                    projectAuthenticatedUser : $projectAuthenticatedUser,
-                                    auditLog                 : $auditLog,
-                                    clock                    : $clock,
-                                    emailVerificationRequired: $this->emailVerificationStateStore instanceof EmailVerificationStateStoreInterface || $this->emailVerificationStore instanceof EmailVerificationStoreInterface,
-                                    rateLimit                : $this->loginRateLimit,
+                                    validateRegistrationData: new ValidateRegistrationData(),
+                                    hashRegisteredPassword  : new HashRegisteredPassword(passwordHasher: $passwordHasher),
+                                    createRegisteredUser    : new CreateRegisteredUser(
+                                        userSource  : $this->userSource,
+                                        idGenerator : $this->idGenerator ?? throw ConfigurationException::missingDependency('IdGenerator', 'usingIdGenerator() or AuthServiceProvider'),
+                                    ),
+                                    identity                : $identity,
                                 ),
         );
 
@@ -1180,10 +1179,10 @@ final class AuthBuilder
                                         clock                 : $clock,
                                     ),
             verifyEmail           : new VerifyEmail(
-                                        emailVerificationStore: $emailVerificationStore,
-                                        auditLog              : $auditLog,
-                                        clock                 : $clock,
-                                        emailVerificationState: $emailVerificationState,
+                                        emailVerificationStore     : $emailVerificationStore,
+                                        emailVerificationStateStore: $emailVerificationStateStore,
+                                        auditLog                   : $auditLog,
+                                        clock                      : $clock,
                                     ),
         );
 
@@ -1212,6 +1211,7 @@ final class AuthBuilder
                                    ),
             startMfaChallenge    : $startMfaChallenge,
             verifyMfaChallenge   : new VerifyMfaChallenge(
+                                       mfaChallengeStore       : $mfaChallengeStore,
                                        mfaStore                : $mfaStore,
                                        totp                    : $totp,
                                        verifyBackupCode        : $verifyBackupCode,
@@ -1221,8 +1221,7 @@ final class AuthBuilder
                                        currentAuthentication   : $currentAuthentication,
                                        auditLog                : $auditLog,
                                        clock                   : $clock,
-                                       challengeStore          : $mfaChallengeStore,
-                                       attemptLimit            : $mfaAttemptLimit,
+                                       limitMfaAttempts        : $mfaAttemptLimit,
                                        deterministicRiskEngine : $riskEngine,
                                    ),
             regenerateBackupCodes: new RegenerateBackupCodes(
@@ -1264,96 +1263,96 @@ final class AuthBuilder
         $passkey = new Passkey(
             beginPasskeyRegistration     : $authCapabilityReadiness->passkey()
                                                ? new BeginPasskeyRegistration(
-                                                 currentAuthentication: $currentAuthentication,
-                                                 requireFreshMfa      : $requireFreshMfa,
-                                                 auditLog             : $auditLog,
-                                                 clock                : $clock,
-                                                 rpId                 : $this->passkeyRpId,
-                                                 rpName               : $this->passkeyRpName,
-                                                 runtime              : $this->passkeyRuntime ?? throw ConfigurationException::missingCapabilityDependency(
-                                                 capability : 'passkey',
-                                                 requirement: 'runtime',
-                                                 buildPath  : 'AuthBuilder::ready()',
-                                                 option     : 'withPasskeyRuntime()',
-                                                 cause      : 'Passkey capability assembly was attempted.',
-                                             ),
-                                                 credentialStore      : $passkeyCredentialStore,
-                                                 challengeStore       : $passkeyChallengeStore,
+                                                 currentAuthentication   : $currentAuthentication,
+                                                 requireFreshMfa         : $requireFreshMfa,
+                                                 passkeyRuntime          : $this->passkeyRuntime ?? throw ConfigurationException::missingCapabilityDependency(
+                                                     capability : 'passkey',
+                                                     requirement: 'runtime',
+                                                     buildPath  : 'AuthBuilder::ready()',
+                                                     option     : 'withPasskeyRuntime()',
+                                                     cause      : 'Passkey capability assembly was attempted.',
+                                                 ),
+                                                 passkeyCredentialStore  : $passkeyCredentialStore,
+                                                 passkeyChallengeStore   : $passkeyChallengeStore,
+                                                 auditLog                : $auditLog,
+                                                 clock                   : $clock,
+                                                 rpId                    : $this->passkeyRpId,
+                                                 rpName                  : $this->passkeyRpName,
                                              )
                                                : null,
             completePasskeyRegistration  : $authCapabilityReadiness->passkey()
                                                ? new CompletePasskeyRegistration(
-                                                   currentAuthentication: $currentAuthentication,
-                                                   auditLog             : $auditLog,
-                                                   clock                : $clock,
-                                                   rpId                 : $this->passkeyRpId,
-                                                   runtime              : $this->passkeyRuntime ?? throw ConfigurationException::missingCapabilityDependency(
-                                                   capability : 'passkey',
-                                                   requirement: 'runtime',
-                                                   buildPath  : 'AuthBuilder::ready()',
-                                                   option     : 'withPasskeyRuntime()',
-                                                   cause      : 'Passkey capability assembly was attempted.',
-                                               ),
-                                                   credentialStore      : $passkeyCredentialStore,
-                                                   challengeStore       : $passkeyChallengeStore,
+                                                   currentAuthentication : $currentAuthentication,
+                                                   passkeyRuntime        : $this->passkeyRuntime ?? throw ConfigurationException::missingCapabilityDependency(
+                                                       capability : 'passkey',
+                                                       requirement: 'runtime',
+                                                       buildPath  : 'AuthBuilder::ready()',
+                                                       option     : 'withPasskeyRuntime()',
+                                                       cause      : 'Passkey capability assembly was attempted.',
+                                                   ),
+                                                   passkeyCredentialStore: $passkeyCredentialStore,
+                                                   passkeyChallengeStore : $passkeyChallengeStore,
+                                                   auditLog              : $auditLog,
+                                                   clock                 : $clock,
+                                                   rpId                  : $this->passkeyRpId,
                                                )
                                                : null,
             beginPasskeyAuthentication   : $authCapabilityReadiness->passkey()
                                                ? new BeginPasskeyAuthentication(
-                                                   userSource     : $this->userSource,
-                                                   auditLog       : $auditLog,
-                                                   clock          : $clock,
-                                                   rpId           : $this->passkeyRpId,
-                                                   runtime        : $this->passkeyRuntime ?? throw ConfigurationException::missingCapabilityDependency(
-                                                   capability : 'passkey',
-                                                   requirement: 'runtime',
-                                                   buildPath  : 'AuthBuilder::ready()',
-                                                   option     : 'withPasskeyRuntime()',
-                                                   cause      : 'Passkey capability assembly was attempted.',
-                                               ),
-                                                   credentialStore: $passkeyCredentialStore,
-                                                   challengeStore : $passkeyChallengeStore,
+                                                   userSource            : $this->userSource,
+                                                   passkeyRuntime        : $this->passkeyRuntime ?? throw ConfigurationException::missingCapabilityDependency(
+                                                       capability : 'passkey',
+                                                       requirement: 'runtime',
+                                                       buildPath  : 'AuthBuilder::ready()',
+                                                       option     : 'withPasskeyRuntime()',
+                                                       cause      : 'Passkey capability assembly was attempted.',
+                                                   ),
+                                                   passkeyCredentialStore: $passkeyCredentialStore,
+                                                   passkeyChallengeStore : $passkeyChallengeStore,
+                                                   auditLog              : $auditLog,
+                                                   clock                 : $clock,
+                                                   rpId                  : $this->passkeyRpId,
                                                )
                                                : null,
             completePasskeyAuthentication: $authCapabilityReadiness->passkey()
                                                ? new CompletePasskeyAuthentication(
-                                                   userSource              : $this->userSource,
-                                                   identity                : $identity,
+                                                   passkeyRuntime        : $this->passkeyRuntime ?? throw ConfigurationException::missingCapabilityDependency(
+                                                       capability : 'passkey',
+                                                       requirement: 'runtime',
+                                                       buildPath  : 'AuthBuilder::ready()',
+                                                       option     : 'withPasskeyRuntime()',
+                                                       cause      : 'Passkey capability assembly was attempted.',
+                                                   ),
+                                                   passkeyChallengeStore : $passkeyChallengeStore,
+                                                   passkeyCredentialStore: $passkeyCredentialStore,
+                                                   userSource            : $this->userSource,
+                                                   identity              : $identity,
                                                    projectAuthenticatedUser: $projectAuthenticatedUser,
-                                                   currentAuthentication   : $currentAuthentication,
-                                                   auditLog                : $auditLog,
-                                                   clock                   : $clock,
-                                                   rpId                    : $this->passkeyRpId,
-                                                   runtime                 : $this->passkeyRuntime ?? throw ConfigurationException::missingCapabilityDependency(
-                                                   capability : 'passkey',
-                                                   requirement: 'runtime',
-                                                   buildPath  : 'AuthBuilder::ready()',
-                                                   option     : 'withPasskeyRuntime()',
-                                                   cause      : 'Passkey capability assembly was attempted.',
-                                               ),
-                                                   challengeStore          : $passkeyChallengeStore,
-                                                   credentialStore         : $passkeyCredentialStore,
+                                                   currentAuthentication : $currentAuthentication,
+                                                   auditLog              : $auditLog,
+                                                   clock                 : $clock,
+                                                   rpId                  : $this->passkeyRpId,
                                                )
                                                : null,
             renamePasskey                : $authCapabilityReadiness->passkey()
                                                ? new RenamePasskey(
-                                                   currentAuthentication: $currentAuthentication,
-                                                   credentialStore      : $passkeyCredentialStore,
+                                                   currentAuthentication : $currentAuthentication,
+                                                   passkeyCredentialStore: $passkeyCredentialStore,
                                                )
                                                : null,
             revokePasskey                : $authCapabilityReadiness->passkey()
                                                ? new RevokePasskey(
                                                    currentAuthentication: $currentAuthentication,
                                                    requireFreshMfa      : $requireFreshMfa,
+                                                   passkeyCredentialStore: $passkeyCredentialStore,
                                                    auditLog             : $auditLog,
                                                    clock                : $clock,
-                                                   credentialStore      : $passkeyCredentialStore,
                                                )
                                                : null,
-            readPasskeys                 : $authCapabilityReadiness->passkey()
+            listPasskeys                 : $authCapabilityReadiness->passkey()
                                                ? new ListPasskeys(
-                                                   currentAuthentication: $currentAuthentication,
-                                                   credentialStore      : $passkeyCredentialStore,
+                                                   currentAuthentication : $currentAuthentication,
+                                                   passkeyCredentialStore: $passkeyCredentialStore,
                                                )
                                                : null,
         );
@@ -1381,52 +1380,64 @@ final class AuthBuilder
             authorizeCode            : $authCapabilityReadiness->oauth() ? $authorizeCode : null,
             exchangeAuthorizationCode: $authCapabilityReadiness->oauth()
                                            ? new ExchangeAuthorizationCode(
-                                               userSource           : $this->userSource,
-                                               jwtIdentity          : $jwtIdentity ?? throw ConfigurationException::missingCapabilityDependency(
-                                               capability : 'oauth',
-                                               requirement: 'jwt_identity',
-                                               buildPath  : 'AuthBuilder::ready()',
-                                               option     : 'withIdentityBackends(jwtIdentity: ...) or withIdentity(new Identity(jwtIdentity: ...))',
-                                               cause      : 'OAuth capability assembly was attempted.',
-                                           ),
-                                               refreshTokenStore    : $this->refreshTokenStore ?? throw ConfigurationException::missingCapabilityDependency(
-                                               capability : 'oauth',
-                                               requirement: 'refresh_token_store',
-                                               buildPath  : 'AuthBuilder::ready()',
-                                               option     : 'withRefreshTokenStore()',
-                                               cause      : 'OAuth capability assembly was attempted.',
-                                           ),
-                                               auditLog             : $auditLog,
-                                               clock                : $clock,
-                                               currentAuthentication: $currentAuthentication,
-                                               oidcProvider         : $this->oidcProvider,
-                                               clientRegistry       : $oauthClientRegistry,
-                                               codeStore            : $authorizationCodeStore,
+                                               oAuthClientRegistry   : $oauthClientRegistry,
+                                               authorizationCodeStore: $authorizationCodeStore,
+                                               userSource            : $this->userSource,
+                                               jwtIdentity           : $jwtIdentity ?? throw ConfigurationException::missingCapabilityDependency(
+                                                   capability : 'oauth',
+                                                   requirement: 'jwt_identity',
+                                                   buildPath  : 'AuthBuilder::ready()',
+                                                   option     : 'withIdentityBackends(jwtIdentity: ...) or withIdentity(new Identity(jwtIdentity: ...))',
+                                                   cause      : 'OAuth capability assembly was attempted.',
+                                               ),
+                                               refreshTokenStore     : $this->refreshTokenStore ?? throw ConfigurationException::missingCapabilityDependency(
+                                                   capability : 'oauth',
+                                                   requirement: 'refresh_token_store',
+                                                   buildPath  : 'AuthBuilder::ready()',
+                                                   option     : 'withRefreshTokenStore()',
+                                                   cause      : 'OAuth capability assembly was attempted.',
+                                               ),
+                                               auditLog              : $auditLog,
+                                               clock                 : $clock,
+                                               currentAuthentication : $currentAuthentication,
+                                               oidcProvider          : $this->oidcProvider,
                                            )
                                            : null,
             exchangeClientCredentials: $authCapabilityReadiness->oauth()
                                            ? new ExchangeClientCredentials(
-                                               jwtIdentity   : $jwtIdentity,
-                                               auditLog      : $auditLog,
-                                               clock         : $clock,
-                                               clientRegistry: $oauthClientRegistry,
+                                               oAuthClientRegistry: $oauthClientRegistry,
+                                               jwtIdentity        : $jwtIdentity ?? throw ConfigurationException::missingCapabilityDependency(
+                                                   capability : 'oauth',
+                                                   requirement: 'jwt_identity',
+                                                   buildPath  : 'AuthBuilder::ready()',
+                                                   option     : 'withIdentityBackends(jwtIdentity: ...) or withIdentity(new Identity(jwtIdentity: ...))',
+                                                   cause      : 'OAuth capability assembly was attempted.',
+                                               ),
+                                               auditLog           : $auditLog,
+                                               clock              : $clock,
                                            )
                                            : null,
             exchangeRefreshToken     : $authCapabilityReadiness->oauth()
                                            ? new ExchangeRefreshToken(
-                                               refreshTokenStore: $this->refreshTokenStore ?? throw ConfigurationException::missingCapabilityDependency(
-                                               capability : 'oauth',
-                                               requirement: 'refresh_token_store',
-                                               buildPath  : 'AuthBuilder::ready()',
-                                               option     : 'withRefreshTokenStore()',
-                                               cause      : 'OAuth capability assembly was attempted.',
-                                           ),
-                                               userSource: $this->userSource ?? throw ConfigurationException::missingDependency("UserSource", "forUser()"),
-                                               jwtIdentity      : $jwtIdentity,
-                                               auditLog         : $auditLog,
-                                               clock            : $clock,
-                                               clientRegistry   : $oauthClientRegistry,
-                                               riskEngine       : $riskEngine,
+                                               oAuthClientRegistry: $oauthClientRegistry,
+                                               refreshTokenStore  : $this->refreshTokenStore ?? throw ConfigurationException::missingCapabilityDependency(
+                                                   capability : 'oauth',
+                                                   requirement: 'refresh_token_store',
+                                                   buildPath  : 'AuthBuilder::ready()',
+                                                   option     : 'withRefreshTokenStore()',
+                                                   cause      : 'OAuth capability assembly was attempted.',
+                                               ),
+                                               userSource         : $this->userSource,
+                                               jwtIdentity        : $jwtIdentity ?? throw ConfigurationException::missingCapabilityDependency(
+                                                   capability : 'oauth',
+                                                   requirement: 'jwt_identity',
+                                                   buildPath  : 'AuthBuilder::ready()',
+                                                   option     : 'withIdentityBackends(jwtIdentity: ...) or withIdentity(new Identity(jwtIdentity: ...))',
+                                                   cause      : 'OAuth capability assembly was attempted.',
+                                               ),
+                                               auditLog           : $auditLog,
+                                               clock              : $clock,
+                                               deterministicRiskEngine: $riskEngine,
                                            )
                                            : null,
             revokeToken              : $authCapabilityReadiness->oauth()
@@ -1439,7 +1450,13 @@ final class AuthBuilder
                                                    option     : 'withRefreshTokenStore()',
                                                    cause      : 'OAuth capability assembly was attempted.',
                                                ),
-                                               jwtIdentity        : $jwtIdentity,
+                                               jwtIdentity        : $jwtIdentity ?? throw ConfigurationException::missingCapabilityDependency(
+                                                   capability : 'oauth',
+                                                   requirement: 'jwt_identity',
+                                                   buildPath  : 'AuthBuilder::ready()',
+                                                   option     : 'withIdentityBackends(jwtIdentity: ...) or withIdentity(new Identity(jwtIdentity: ...))',
+                                                   cause      : 'OAuth capability assembly was attempted.',
+                                               ),
                                                auditLog           : $auditLog,
                                                clock              : $clock,
                                            )
@@ -1447,7 +1464,13 @@ final class AuthBuilder
             introspectToken          : $authCapabilityReadiness->oauth()
                                            ? new IntrospectToken(
                                                oAuthClientRegistry: $oauthClientRegistry,
-                                               jwtIdentity        : $jwtIdentity,
+                                               jwtIdentity        : $jwtIdentity ?? throw ConfigurationException::missingCapabilityDependency(
+                                                   capability : 'oauth',
+                                                   requirement: 'jwt_identity',
+                                                   buildPath  : 'AuthBuilder::ready()',
+                                                   option     : 'withIdentityBackends(jwtIdentity: ...) or withIdentity(new Identity(jwtIdentity: ...))',
+                                                   cause      : 'OAuth capability assembly was attempted.',
+                                               ),
                                                auditLog           : $auditLog,
                                                clock              : $clock,
                                            )

@@ -14,7 +14,6 @@ final class RegisterDateTimeDependencies
 {
     public function build(): Clock
     {
-        Clock::setDefaultTimezone(new UtcTimezone());
         return new Clock();
     }
 }

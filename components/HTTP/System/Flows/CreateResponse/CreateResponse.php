@@ -21,7 +21,7 @@ final class CreateResponse
 
     public static function html(string $html, int $status = 200, array $headers = []) : Response
     {
-        return (new CreateHttpResponse())->html(body: $html, status: $status, headers: $headers);
+        return (new CreateHttpResponse())->html(content: $html, status: $status, headers: $headers);
     }
 
     public static function redirect(string $url, int $status = 302, array $headers = []) : Response
@@ -31,6 +31,6 @@ final class CreateResponse
 
     public static function plain(string $text, int $status = 200, array $headers = []) : Response
     {
-        return (new CreateHttpResponse())->text(body: $text, status: $status, headers: $headers);
+        return (new CreateHttpResponse())->text(content: $text, status: $status, headers: $headers);
     }
 }

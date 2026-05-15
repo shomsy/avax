@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Flows\Logout;
 
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
 
 /**
  * Logout - Flow orchestrator for user logout.
@@ -14,7 +14,7 @@ final readonly class Logout
 {
     public function __construct(
         private ClearAuthenticatedIdentity $clearAuthenticatedIdentity,
-        private Identity                   $identity,
+        private IdentityInterface          $identity,
     ) {}
 
     public function execute() : void

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Flows\Register;
 
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
 
 /**
  * Register - Flow orchestrator for user registration.
@@ -16,7 +16,7 @@ final readonly class Register
         private ValidateRegistrationData $validateRegistrationData,
         private HashRegisteredPassword   $hashRegisteredPassword,
         private CreateRegisteredUser     $createRegisteredUser,
-        private Identity                 $identity,
+        private IdentityInterface        $identity,
     ) {}
 
     /**

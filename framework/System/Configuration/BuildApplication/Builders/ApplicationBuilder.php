@@ -14,6 +14,7 @@ use Avax\Framework\System\Capabilities\Routing\RegisterRouteCommands;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
+use Avax\Framework\System\Configuration\Builders\BuildDispatchConfiguredRoute;
 use Avax\Framework\System\Flows\HandleIncomingHttp\DispatchConfiguredRoute;
 use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
@@ -160,7 +161,7 @@ final class ApplicationBuilder
     public function withHttpRouteDefinitions(callable $routeDefinitions): self
     {
         return $this->withHttpHandler(
-            httpHandler: DispatchConfiguredRoute::fromRouteDefinitions(
+            httpHandler: (new BuildDispatchConfiguredRoute())->fromRouteDefinitions(
                 routeDefinitions: $routeDefinitions,
                 createHttpResponse: $this->createHttpResponse,
             ),
@@ -176,7 +177,7 @@ final class ApplicationBuilder
         }
 
         return $this->withHttpHandler(
-            httpHandler: DispatchConfiguredRoute::fromRoutesFile(
+            httpHandler: (new BuildDispatchConfiguredRoute())->fromRoutesFile(
                 routesFile: $resolvedPath,
                 createHttpResponse: $this->createHttpResponse,
             ),

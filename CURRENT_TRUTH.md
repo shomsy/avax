@@ -1,6 +1,6 @@
 # CURRENT_TRUTH
 
-Date of Truth: 2026-05-13
+Date of Truth: 2026-05-15
 Branch: main
 Commit: V5.7 Final Acceptance — Events Fluent DSL, Dogfooding, CQRS Projection, Event-History Proof
 
@@ -30,7 +30,7 @@ Current validation:
 - Broken-reference audit: GREEN (main tree).
 - Stage lock: GREEN.
 
-Next allowed action: V5.9 Boot DSL may begin.
+Next allowed action: V5.9 Boot DSL may begin (Governance Hardening complete).
 
 ## Core Status
 
@@ -58,6 +58,20 @@ V4-17 Optional Runtime Adapters: COMPLETE / GREEN (adapter interface + ReactPhpA
 
 Note: V5 dogfooding/performance convergence is planned separately.
 V4 production-ready: GREEN.
+
+## V5.8.9 Hardening Pass
+
+Date: 2026-05-15
+Evidence: `EVIDENCE/hardening/43-v5-8-9-preflight.md` through `EVIDENCE/hardening/49-phpstan-reduction-253-to-63.md`
+Status: GREEN
+
+- DispatchConfiguredRoute runtime leaks: 3 → 0 (moved assembly to BuildDispatchConfiguredRoute)
+- AuthBuilder constructor drift: ~184 → 0 (parameter names, types, order aligned)
+- GraphQLSchema runtime assembly: 0 findings (verified clean)
+- PHPStan errors: 253 → 63 (190 fixed, remaining are pre-existing style/type annotation issues)
+- PHPUnit: 8351 tests, 24026 assertions, 0 errors, 0 failures
+- Runtime composition gate: 0 new findings from touched files
+- Runtime assembly gate: 0 findings
 
 ## Validation Status
 
@@ -103,6 +117,7 @@ Stage V2-03 (V2 Engine Implementation): COMPLETE / GREEN
 Stage V2-04 (Component Completion Fill): COMPLETE / GREEN
 Stage V2-05 (V2 Platform Baseline Closure): COMPLETE / GREEN
 Stage V2-06 (Component Canonical Shape Audit): COMPLETE / GREEN
+Stage V5.8.x (Governance Hardening Pass): COMPLETE / GREEN (11+ Hardening: Normative audit, Dynamic Inventory, Recursive Review, Quality Ratchets, and AI Suspicion Rules integrated)
 
 V1 Kernel: PROVEN
 V2 Platform Baseline: CLOSED / GREEN

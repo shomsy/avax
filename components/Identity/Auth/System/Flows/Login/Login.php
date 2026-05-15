@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Flows\Login;
 
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
 
 /**
@@ -17,7 +17,7 @@ final readonly class Login
         private FindUserByCredentials     $findUserByCredentials,
         private VerifyPassword            $verifyPassword,
         private StartAuthenticatedSession $startAuthenticatedSession,
-        private Identity                  $identity,
+        private IdentityInterface         $identity,
     ) {}
 
     /**

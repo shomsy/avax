@@ -36,6 +36,15 @@ final class ApiVersion
         self::$versionRegistry = $registry;
     }
 
+    /**
+     * Resolve the API version for an incoming HTTP request.
+     *
+     * Delegates to VersionResolver using the configured VersionRegistry.
+     *
+     * @param RequestInterface $request The incoming HTTP request to inspect for version information.
+     * @return ApiVersionResolved The resolved version, deprecation status, and optional sunset date.
+     * @throws RuntimeException if the VersionRegistry was not configured during boot.
+     */
     public static function resolve(RequestInterface $request) : ApiVersionResolved
     {
         return VersionResolver::resolve(request: $request, versionRegistry: self::registry());
@@ -57,16 +66,35 @@ final class ApiVersion
         return self::$versionRegistry;
     }
 
+    /**
+     * Get the current API version.
+     *
+     * @return int The current API version number.
+     * @throws RuntimeException if the VersionRegistry was not configured during boot.
+     */
     public static function current() : int
     {
         return self::registry()->current();
     }
 
+    /**
+     * Mark an API version as deprecated with a sunset date.
+     *
+     * @param int $version The API version number to deprecate.
+     * @param DateTimeInterface $sunset The date after which this version will no longer be supported.
+     * @throws RuntimeException if the VersionRegistry was not configured during boot.
+     */
     public static function deprecated(int $version, DateTimeInterface $sunset) : void
     {
         self::registry()->markDeprecated($version, $sunset);
     }
 
+    /**
+     * Get the list of supported API versions.
+     *
+     * @return list<int> Sorted list of supported API version numbers.
+     * @throws RuntimeException if the VersionRegistry was not configured during boot.
+     */
     public static function supported() : array
     {
         return self::registry()->supported();

@@ -17,6 +17,12 @@ final class HookRegistry
     /** @var array<string, list<Closure>> */
     private array $hooks = [];
 
+    /**
+     * Register a handler for a named hook point.
+     *
+     * @param string $name The hook point name (e.g. beforeRoute, afterController).
+     * @param Closure $handler The handler closure to execute when the hook fires.
+     */
     public function add(string $name, Closure $handler): void
     {
         if (! isset($this->hooks[$name])) {
@@ -26,6 +32,13 @@ final class HookRegistry
         $this->hooks[$name][] = $handler;
     }
 
+    /**
+     * Execute all handlers for a given hook point in registration order.
+     *
+     * @param string $hook The hook point name to execute.
+     * @param mixed $data Optional data passed through each handler.
+     * @return mixed The final data after all handlers have executed.
+     */
     public function execute(string $hook, mixed $data = null): mixed
     {
         $handlers = $this->hooks[$hook] ?? [];
@@ -38,18 +51,32 @@ final class HookRegistry
         return $result;
     }
 
+    /**
+     * Check whether any handlers are registered for a hook point.
+     *
+     * @param string $hook The hook point name to check.
+     * @return bool True if at least one handler is registered.
+     */
     public function has(string $hook): bool
     {
         return isset($this->hooks[$hook]) && $this->hooks[$hook] !== [];
     }
 
+    /**
+     * Count handlers registered for a hook point.
+     *
+     * @param string $hook The hook point name to count.
+     * @return int The number of handlers registered.
+     */
     public function count(string $hook): int
     {
         return count($this->hooks[$hook] ?? []);
     }
 
     /**
-     * @return array<string, list<Closure>>
+     * Get all registered hooks grouped by hook name.
+     *
+     * @return array<string, list<Closure>> Map of hook names to handler lists.
      */
     public function all(): array
     {

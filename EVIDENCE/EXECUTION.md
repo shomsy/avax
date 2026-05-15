@@ -156,19 +156,19 @@ V5.8.9 AuthBuilder Constructor Drift & Runtime Gate Closure: CLOSED / GREEN (190
 
 V5.8.x Fix-This Phase A Closure: CLOSED / GREEN_WITH_ACCEPTED_YELLOW_DEBT (198 runtime composition findings → 0, gate allowances narrowed, bad fixtures proven to FAIL, AppKernel hot path clean, 54 lazy singletons verified, security/performance review clean, recursive governance review 2 YELLOW formally accepted as non-blocking debt: YELLOW-DEBT-001 facade self-instantiation, YELLOW-DEBT-002 facade lifecycle proof — both Phase B, both LOW risk, neither blocks V5.9)
 
-V5.8.x Fix-This Phase B Closure: CLOSED / FULL_GREEN_PHASE_B_FACADE_DEBT_CLOSED (CORRECTED — lazy self-instantiation removed, HookRegistry moved to Capabilities, duplicate ApiVersionResolved removed, ServiceProviders added, runtime gate tightened, 8373 tests, 0 PHPStan errors, all gates PASS, YELLOW-DEBT-001 TRULY CLOSED, YELLOW-DEBT-002 VERIFIED)
+V5.8.x Fix-This Phase B Proof Closure: CLOSED / FULL_GREEN_PHASE_B_PROOF_AND_V5_9_PREFLIGHT_READY (provider wiring tests added, Semantic PHPDoc touched-scope clean, recursive governance review 0 findings, all gates PASS, 8405 tests GREEN, PHPStan 0 errors)
 
-Current Plan Lock: GREEN (63 pre-existing PHPStan errors, out of V5.8.x scope)
+Current Plan Lock: GREEN (0 pre-existing PHPStan errors)
 
-Active stage: V5.8.x Fix-This Phase B Closure — COMPLETE / FULL_GREEN_PHASE_B_FACADE_DEBT_CLOSED (corrected)
+Active stage: V5.8.x Fix-This Phase B Proof Closure + V5.9 Preflight — COMPLETE / FULL_GREEN_PHASE_B_PROOF_AND_V5_9_PREFLIGHT_READY
 
-Next allowed stage: V5.9 Boot DSL — READY (All Phase A/B debts genuinely closed)
+Next allowed stage: V5.9 Boot DSL — V5_9_READY
 
 V5.9 Boot DSL prerequisites:
 1. AuthBuilder constructor drift resolved — DONE (0 errors)
 2. Runtime composition leaks in DispatchConfiguredRoute resolved — DONE (0 findings)
 3. GraphQLSchema runtime assembly verified — DONE (0 findings)
-4. PHPStan cleanup — 63 pre-existing errors remain (array types, mixed variables, typePerfect, test assertions)
+4. PHPStan cleanup — 0 errors (all pre-existing errors resolved)
 
 Evidence: EVIDENCE/hardening/43-v5-8-9-preflight.md through EVIDENCE/hardening/53-v5-8-9-final-summary.md
 

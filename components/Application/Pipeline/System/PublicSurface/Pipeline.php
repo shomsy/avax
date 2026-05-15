@@ -34,6 +34,12 @@ final class Pipeline
         self::$hookRegistry = $registry;
     }
 
+    /**
+     * Register a handler to run before route matching.
+     *
+     * @param Closure $handler The hook handler closure.
+     * @throws RuntimeException if the HookRegistry was not configured during boot.
+     */
     public static function beforeRoute(Closure $handler): void
     {
         self::registry()->add('beforeRoute', $handler);
@@ -55,48 +61,101 @@ final class Pipeline
         return self::$hookRegistry;
     }
 
+    /**
+     * Register a handler to run after route matching.
+     *
+     * @param Closure $handler The hook handler closure.
+     * @throws RuntimeException if the HookRegistry was not configured during boot.
+     */
     public static function afterRoute(Closure $handler): void
     {
         self::registry()->add('afterRoute', $handler);
     }
 
+    /**
+     * Register a handler to run before controller execution.
+     *
+     * @param Closure $handler The hook handler closure.
+     * @throws RuntimeException if the HookRegistry was not configured during boot.
+     */
     public static function beforeController(Closure $handler): void
     {
         self::registry()->add('beforeController', $handler);
     }
 
+    /**
+     * Register a handler to run after controller execution.
+     *
+     * @param Closure $handler The hook handler closure.
+     * @throws RuntimeException if the HookRegistry was not configured during boot.
+     */
     public static function afterController(Closure $handler): void
     {
         self::registry()->add('afterController', $handler);
     }
 
+    /**
+     * Register a handler to run before response building.
+     *
+     * @param Closure $handler The hook handler closure.
+     * @throws RuntimeException if the HookRegistry was not configured during boot.
+     */
     public static function beforeResponse(Closure $handler): void
     {
         self::registry()->add('beforeResponse', $handler);
     }
 
+    /**
+     * Register a handler to run after response building.
+     *
+     * @param Closure $handler The hook handler closure.
+     * @throws RuntimeException if the HookRegistry was not configured during boot.
+     */
     public static function afterResponse(Closure $handler): void
     {
         self::registry()->add('afterResponse', $handler);
     }
 
+    /**
+     * Register a handler for exception interception.
+     *
+     * @param Closure $handler The hook handler closure.
+     * @throws RuntimeException if the HookRegistry was not configured during boot.
+     */
     public static function onException(Closure $handler): void
     {
         self::registry()->add('onException', $handler);
     }
 
+    /**
+     * Register a handler for request termination.
+     *
+     * @param Closure $handler The hook handler closure.
+     * @throws RuntimeException if the HookRegistry was not configured during boot.
+     */
     public static function onTerminate(Closure $handler): void
     {
         self::registry()->add('onTerminate', $handler);
     }
 
+    /**
+     * Execute all registered handlers for a given hook point.
+     *
+     * @param string $hook The hook name to execute.
+     * @param mixed $data Optional data passed through the hook chain.
+     * @return mixed The final data after all handlers have executed.
+     * @throws RuntimeException if the HookRegistry was not configured during boot.
+     */
     public static function execute(string $hook, mixed $data = null): mixed
     {
         return self::registry()->execute($hook, $data);
     }
 
     /**
-     * @return array<string, list<Closure>>
+     * Get all registered hooks grouped by hook name.
+     *
+     * @return array<string, list<Closure>> Map of hook names to handler lists.
+     * @throws RuntimeException if the HookRegistry was not configured during boot.
      */
     public static function hooks(): array
     {

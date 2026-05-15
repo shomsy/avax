@@ -1373,31 +1373,45 @@ Date: 2026-05-15
 
 **V5.9 Boot DSL:** READY (Phase A blockers resolved, YELLOW debt does not block)
 
-## V5.8.x Fix-This Phase B Closure — Facade Self-Instantiation & Reset Proof
+## V5.8.x Fix-This Phase B Proof Closure + V5.9 Preflight
 
 Date: 2026-05-15
 
-**Status:** COMPLETE / FULL_GREEN_PHASE_B_FACADE_DEBT_CLOSED (corrected)
+**Status:** COMPLETE / FULL_GREEN_PHASE_B_PROOF_AND_V5_9_PREFLIGHT_READY
 
-**Scope:** Close YELLOW-DEBT-001 (facade self-instantiation) and YELLOW-DEBT-002 (missing facade reset methods).
+**Scope:** Prove Phase B provider wiring, close touched-scope PHPDoc, validate V5.9 readiness.
 
-**Phase B (initial):** Added reset/setInstance but lazy `??= new` remained — reported FULL_GREEN incorrectly.
+**Phase B Correction (commit 284b74cca):** Removed lazy self-instantiation, moved HookRegistry to Capabilities, removed duplicate ApiVersionResolved, added ServiceProviders, tightened runtime gate.
 
-**Phase B Correction:** Removed all lazy self-instantiation, moved HookRegistry to Capabilities, removed duplicate ApiVersionResolved, added ServiceProviders, tightened runtime gate.
+**Phase B Proof (this pass):** Added direct ServiceProvider wiring tests, closed Semantic PHPDoc on touched files, ran full validation + gates + recursive governance review.
+
+**Provider Wiring Tests Added:**
+- `ApiVersioningServiceProviderTest` — 8 tests proving register → singleton → boot → facade wiring
+- `PipelineServiceProviderTest` — 8 tests proving register → singleton → boot → facade wiring
+- Both prove single source of truth through behavioral container mutation
+
+**Semantic PHPDoc Closed:**
+- ApiVersion: class + method PHPDoc + @throws on all 5 public methods
+- ApiVersionResolved: class PHPDoc explaining immutable result value
+- Pipeline: class + method PHPDoc + @throws on all 10 public methods
+- HookRegistry: method PHPDoc on all 5 public methods
 
 **Results:**
-- ApiVersion: Lazy `new VersionRegistry()` removed — `setInstance()` required, fail-if-not-configured, ApiVersioningServiceProvider created
-- Pipeline: Lazy `new HookRegistry()` removed — `setInstance()` required, fail-if-not-configured, PipelineServiceProvider wires registry
-- HookRegistry: Moved from PublicSurface to Capabilities/PipelineHooks (internal mutable machinery)
-- ApiVersionResolved: Duplicate inline class removed from ApiVersion.php
-- Runtime gate: `isStaticFacadeFile()` now rejects facades with lazy `new` patterns
-- PHPUnit: 8373 tests, 24066 assertions, 0 errors
+- PHPUnit: 8405 tests, 24129 assertions, 0 errors, 0 failures
 - PHPStan: 0 errors
-- All gates: PASS
+- Runtime composition gate: PASS (0 findings)
+- Runtime assembly gate: PASS (0 findings)
+- Public surface gate: PASS (0 findings)
+- Hollow public surface gate: PASS (0 findings)
+- Truth consistency: PASS
+- Canonical terms: PASS
+- Quality ratchet: PASS
+- Security commit block: PASS
 - YELLOW-DEBT-001: TRULY CLOSED
 - YELLOW-DEBT-002: VERIFIED
+- Recursive governance review: 0 unresolved findings
 
-**Evidence:** `EVIDENCE/fix-this/15-phase-b-correction-preflight.md` through `EVIDENCE/fix-this/27-phase-b-correction-truth-reconciliation.md`
+**Evidence:** `EVIDENCE/fix-this/28-phase-b-proof-preflight.md` through `EVIDENCE/fix-this/40-phase-b-proof-truth-reconciliation.md`
 
-**V5.9 Boot DSL:** READY (All Phase A/B debts genuinely closed)
+**V5.9 Boot DSL:** V5_9_READY — All Phase A/B debts genuinely closed, provider wiring proven, PHPDoc clean, validation green.
 

@@ -570,7 +570,7 @@ final readonly class CreateHttpResponse
 }
 ```
 
-**SUMNJIVO — factory assembles a graph:**
+**SUSPICIOUS — factory assembles a graph:**
 
 ```php
 final readonly class RuntimeFactory

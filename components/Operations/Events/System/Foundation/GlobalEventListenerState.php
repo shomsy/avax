@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Events\System\Foundation;
 
-use Avax\Components\Operations\Events\System\Capabilities\InvokeEventListener\InvokeEventListener;
 use Avax\Components\Operations\Events\System\Capabilities\Registry\ListenerRegistry;
-use Avax\Components\Operations\Events\System\Capabilities\ResolveEventListeners\ResolveEventListeners;
+use RuntimeException;
 
 /**
  * Global registry state for the Events DSL and emitter.
@@ -40,27 +39,22 @@ final class GlobalEventListenerState
     }
 
     /**
-     * Return the global emitter, creating a default one if not set.
+     * Return the global emitter.
      *
-     * If no emitter has been explicitly set, creates a default emitter
-     * backed by a CompiledListenerRegistry wired to the global registry.
+     * The emitter must be set at boot time via setEmitter().
+     * In production, the EventsServiceProvider wires and sets the emitter during boot.
+     * If no emitter is set, this indicates a boot configuration error.
+     *
+     * @throws RuntimeException If no emitter has been configured
      */
     public static function emitter(): EventEmitter
     {
-        if (self::$emitter !== null) {
-            return self::$emitter;
+        if (self::$emitter === null) {
+            throw new RuntimeException(
+                'No event emitter configured. Events must be wired through EventsServiceProvider at boot time. '
+                .'Call GlobalEventListenerState::setEmitter() before dispatching events.',
+            );
         }
-
-        // Default: create an emitter with an empty compiled registry.
-        // In production, the bootstrap should compile and set a real registry.
-        $compiled = new CompiledListenerRegistry();
-        $compiled->freeze();
-
-        self::$emitter = new EventEmitter(
-            $compiled,
-            new ResolveEventListeners(),
-            new InvokeEventListener(),
-        );
 
         return self::$emitter;
     }

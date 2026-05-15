@@ -4,6 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Framework\V4RuntimeApp;
 
+use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\CreateRequestFromGlobals;
+use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\ReadQueryParameters;
+use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\ReadRequestBody;
+use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\ReadServerParameters;
+use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\ReadUploadedFiles;
+use Avax\Components\HTTP\Request\System\Capabilities\Body\ParseFormBody;
+use Avax\Components\HTTP\Request\System\Capabilities\Body\ParseJsonBody;
+use Avax\Components\HTTP\Request\System\Capabilities\Files\NormalizeUploadedFiles;
+use Avax\Components\HTTP\Request\System\Capabilities\Headers\NormalizeHeaders;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
 use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
@@ -86,6 +95,16 @@ final class CreateApplicationTest extends TestCase
             stateResetRegistry: new StateResetRegistry(),
             responseFactory: new ResponseFactory(),
             handleIncomingHttp: new HandleIncomingHttp(responseFactory: new ResponseFactory()),
+            createRequestFromGlobals: new CreateRequestFromGlobals(
+                readServerParameters  : new ReadServerParameters(),
+                readQueryParameters   : new ReadQueryParameters(),
+                readUploadedFiles     : new ReadUploadedFiles(),
+                readRequestBody       : new ReadRequestBody(),
+                normalizeHeaders      : new NormalizeHeaders(),
+                normalizeUploadedFiles: new NormalizeUploadedFiles(),
+                parseJsonBody         : new ParseJsonBody(),
+                parseFormBody         : new ParseFormBody(),
+            ),
         );
     }
 }

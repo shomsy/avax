@@ -24,8 +24,8 @@ final class EventEmitter
 
     public function __construct(
         private CompiledListenerRegistry $registry,
-        private ResolveEventListeners $resolver = new ResolveEventListeners(),
-        private InvokeEventListener $invoker = new InvokeEventListener(),
+        private ResolveEventListeners $resolver,
+        private InvokeEventListener $invoker,
     ) {
     }
 

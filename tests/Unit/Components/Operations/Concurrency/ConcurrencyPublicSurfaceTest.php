@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Operations\Concurrency;
 
+use Avax\Components\Operations\Concurrency\System\Configuration\Builders\BuildConcurrencyRuntime;
 use Avax\Components\Operations\Concurrency\System\Foundation\ConcurrentFailure;
 use Avax\Components\Operations\Concurrency\System\Foundation\ConcurrentResult;
 use Avax\Components\Operations\Concurrency\System\Foundation\ConcurrentTask;
@@ -16,6 +17,18 @@ use RuntimeException;
 
 final class ConcurrencyPublicSurfaceTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        Concurrency::reset();
+        $runtime = (new BuildConcurrencyRuntime())->build();
+        Concurrency::setRuntime($runtime);
+    }
+
+    protected function tearDown(): void
+    {
+        Concurrency::reset();
+    }
+
     public function test_run_returns_successful_results() : void
     {
         $result = Concurrency::run([

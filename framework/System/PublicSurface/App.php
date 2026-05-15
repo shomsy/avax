@@ -4,15 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\PublicSurface;
 
-use Avax\Components\HTTP\Request\System\Capabilities\Body\ParseFormBody;
-use Avax\Components\HTTP\Request\System\Capabilities\Body\ParseJsonBody;
-use Avax\Components\HTTP\Request\System\Capabilities\Files\NormalizeUploadedFiles;
-use Avax\Components\HTTP\Request\System\Capabilities\Headers\NormalizeHeaders;
 use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\CreateRequestFromGlobals;
-use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\ReadQueryParameters;
-use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\ReadRequestBody;
-use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\ReadServerParameters;
-use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\ReadUploadedFiles;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
@@ -90,6 +82,7 @@ final class App
         private readonly ResetApplicationState $resetApplicationState,
         private readonly ResponseFactory           $responseFactory,
         private readonly NormalizeControllerResult $normalizer,
+        private readonly CreateRequestFromGlobals $createRequestFromGlobals,
         private readonly MetricsCollector|null $metricsCollector = null,
     ) {
     }
@@ -336,18 +329,7 @@ final class App
 
         // V5-13: Delegate superglobal access to canonical Request component.
         // App.php must not access $_SERVER/$_GET/$_POST/$_FILES/php://input directly.
-        $createRequest = new CreateRequestFromGlobals(
-            readServerParameters: new ReadServerParameters(),
-            readQueryParameters: new ReadQueryParameters(),
-            readUploadedFiles: new ReadUploadedFiles(),
-            readRequestBody: new ReadRequestBody(),
-            normalizeHeaders: new NormalizeHeaders(),
-            normalizeUploadedFiles: new NormalizeUploadedFiles(),
-            parseJsonBody: new ParseJsonBody(),
-            parseFormBody: new ParseFormBody(),
-        );
-
-        $avaxRequest = $createRequest->execute();
+        $avaxRequest = $this->createRequestFromGlobals->execute();
 
         /** @var array<string, list<string>> $headers */
         $headers = $avaxRequest->getHeaders();

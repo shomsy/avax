@@ -10,7 +10,7 @@ use Closure;
 final readonly class RaceTasks
 {
     public function __construct(
-        private FiberTaskRuntime $runtime = new FiberTaskRuntime(),
+        private FiberTaskRuntime $runtime,
     ) {}
 
     /**

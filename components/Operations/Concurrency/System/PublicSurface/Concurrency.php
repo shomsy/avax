@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Concurrency\System\PublicSurface;
 
-use Avax\Components\Operations\Concurrency\System\Configuration\Builders\BuildConcurrencyRuntime;
 use Avax\Components\Operations\Concurrency\System\Configuration\ConcurrencyConfig;
 use Avax\Components\Operations\Concurrency\System\Configuration\TaskRuntimeInterface;
-use Avax\Components\Operations\Concurrency\System\Flows\RaceTasks\RaceTasks;
 use Avax\Components\Operations\Concurrency\System\Flows\RunConcurrentTasks\RunConcurrentTasks;
 use Avax\Components\Operations\Concurrency\System\Flows\StartTask\StartTask;
 use Avax\Components\Operations\Concurrency\System\Flows\WaitForTask\WaitForTask;
 use Avax\Components\Operations\Concurrency\System\Foundation\ConcurrentResult;
 use Avax\Components\Operations\Concurrency\System\Foundation\ConcurrentTask;
 use Closure;
+use RuntimeException;
 
 final class Concurrency
 {
@@ -21,9 +20,14 @@ final class Concurrency
 
     private static function runtime() : TaskRuntimeInterface
     {
-        return self::$runtime ??= (new BuildConcurrencyRuntime())->build(
-            config: ConcurrencyConfig::fromArray([]),
-        );
+        if (self::$runtime === null) {
+            throw new RuntimeException(
+                'No concurrency runtime configured. Concurrency must be wired through ConcurrencyServiceProvider at boot time. '
+                .'Call Concurrency::setRuntime() before using concurrency features.',
+            );
+        }
+
+        return self::$runtime;
     }
 
     /**
@@ -69,7 +73,7 @@ final class Concurrency
      */
     public static function race(array $tasks) : mixed
     {
-        return (new RaceTasks())->race(tasks: $tasks);
+        return self::runtime()->race(tasks: $tasks);
     }
 
     /**

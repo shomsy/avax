@@ -6,6 +6,8 @@ namespace Avax\Components\Operations\Concurrency\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
 use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
+use Avax\Components\Operations\Concurrency\System\Configuration\Builders\BuildConcurrencyRuntime;
+use Avax\Components\Operations\Concurrency\System\PublicSurface\Concurrency;
 use Override;
 
 /**
@@ -25,6 +27,9 @@ final readonly class ConcurrencyServiceProvider implements ServiceProvider
     #[Override]
     public function boot(ContainerInterface $container): void
     {
-        // No boot-time actions required.
+        $config = $container->get(ConcurrencyConfig::class);
+        $runtime = (new BuildConcurrencyRuntime())->build(config: $config);
+
+        Concurrency::setRuntime(runtime: $runtime);
     }
 }

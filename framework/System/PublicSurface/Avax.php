@@ -13,7 +13,7 @@ use Avax\Components\HTTP\Request\System\Capabilities\Body\ParseFormBody;
 use Avax\Components\HTTP\Request\System\Capabilities\Body\ParseJsonBody;
 use Avax\Components\HTTP\Request\System\Capabilities\Files\NormalizeUploadedFiles;
 use Avax\Components\HTTP\Request\System\Capabilities\Headers\NormalizeHeaders;
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
 use Avax\Framework\System\Capabilities\PreCommit\Configuration\PreCommitConfig;
 use Avax\Framework\System\Capabilities\PreCommit\PreCommit;
@@ -69,7 +69,7 @@ final readonly class Avax implements AvaxInterface
      */
     public static function create(string $environment = 'production'): App
     {
-        $responseFactory = new ResponseFactory();
+        $createHttpResponse = new CreateHttpResponse();
 
         $createRequestFromGlobals = new CreateRequestFromGlobals(
             readServerParameters  : new ReadServerParameters(),
@@ -89,8 +89,8 @@ final readonly class Avax implements AvaxInterface
             requestScopeStore: new RequestScopeStore(),
             runtimeContext: new RuntimeContext(),
             stateResetRegistry: new StateResetRegistry(),
-            responseFactory: $responseFactory,
-            handleIncomingHttp: new HandleIncomingHttp(responseFactory: $responseFactory),
+            createHttpResponse: $createHttpResponse,
+            handleIncomingHttp: new HandleIncomingHttp(createHttpResponse: $createHttpResponse),
             createRequestFromGlobals: $createRequestFromGlobals,
         ))->make(environment: $environment);
     }
@@ -108,8 +108,8 @@ final readonly class Avax implements AvaxInterface
      */
     private static function bootInternal(ApplicationBuilder $builder): self
     {
-        $responseFactory    = new ResponseFactory();
-        $handleIncomingHttp = new HandleIncomingHttp(responseFactory: $responseFactory);
+        $createHttpResponse = new CreateHttpResponse();
+        $handleIncomingHttp = new HandleIncomingHttp(createHttpResponse: $createHttpResponse);
         $bootFlow = new BootApplication(
             buildApplicationState: new BuildApplicationState(
                 componentRegistry : new ComponentRegistry(),

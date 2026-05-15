@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Capabilities\FailureBoundary\Integration;
 
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
-use Avax\Components\HTTP\Response\System\PublicSurface\Response;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\MiddlewareInterface;
 use Avax\Framework\System\Capabilities\FailureBoundary\Flows\RunProtectedAction\RunProtectedAction;
@@ -20,6 +20,7 @@ final readonly class HttpFailureBoundaryMiddleware implements MiddlewareInterfac
 {
     public function __construct(
         private RunProtectedAction $runProtected,
+        private CreateHttpResponse $createHttpResponse,
     ) {
     }
 
@@ -36,9 +37,9 @@ final readonly class HttpFailureBoundaryMiddleware implements MiddlewareInterfac
             return $result;
         }
 
-        return Response::json(
-            $result,
-            200,
+        return $this->createHttpResponse->json(
+            data: $result,
+            status: 200,
         );
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Resilience\System\Capabilities\RateLimiter;
 
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Closure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -13,7 +13,7 @@ final readonly class RateLimitMiddleware
 {
     public function __construct(
         private RedisRateLimiter $redisRateLimiter,
-        private ResponseFactory  $responseFactory,
+        private CreateHttpResponse  $createHttpResponse,
         private array $config = [],
     ) {
     }
@@ -32,7 +32,7 @@ final readonly class RateLimitMiddleware
 
         if (! $decision->allowed) {
             return $this->withRateLimitHeaders(
-                response: $this->responseFactory->json(
+                response: $this->createHttpResponse->json(
                     data      : [
                         'message' => 'Too Many Requests',
                         'retry_after' => $decision->retryAfter,

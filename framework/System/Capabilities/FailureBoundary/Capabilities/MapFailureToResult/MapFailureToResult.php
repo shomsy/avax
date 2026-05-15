@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\MapFailureToResult;
 
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureAction;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureBoundaryKind;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureContext;
@@ -21,7 +21,7 @@ use Throwable;
 final readonly class MapFailureToResult
 {
     public function __construct(
-        private ResponseFactory $responseFactory,
+        private CreateHttpResponse $createHttpResponse,
     ) {
     }
 
@@ -40,10 +40,7 @@ final readonly class MapFailureToResult
         if ($context->kind === FailureBoundaryKind::Http) {
             $statusCode = $action->statusCode ?? 500;
             $message = $action->messageKey ?? 'An error occurred';
-            $response = $this->responseFactory->createErrorResponse(
-                message: $message,
-                statusCode: $statusCode,
-            );
+            $response = $this->createHttpResponse->error(message: $message, status: $statusCode);
             return FailurePipelineResult::mapped($response);
         }
 
@@ -59,10 +56,7 @@ final readonly class MapFailureToResult
     private function defaultErrorResponse(Throwable $failure, FailureContext $context): FailurePipelineResult
     {
         if ($context->kind === FailureBoundaryKind::Http) {
-            $response = $this->responseFactory->createErrorResponse(
-                message: 'Internal server error',
-                statusCode: 500,
-            );
+            $response = $this->createHttpResponse->error(message: 'Internal server error', status: 500);
             return FailurePipelineResult::mapped($response);
         }
 

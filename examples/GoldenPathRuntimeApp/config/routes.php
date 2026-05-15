@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\PublicSurface\Responses;
 use Psr\Http\Message\ServerRequestInterface;
 
-$responseFactory = new ResponseFactory();
+$responses = app(Responses::class);
 
 /**
  * Route definitions for the Webhook Ingestion Pipeline.
@@ -14,35 +14,35 @@ $responseFactory = new ResponseFactory();
  * The router uses exact URI match only — no {id} parameter extraction.
  * Route actions must return a ResponseInterface (PSR-7).
  */
-return static function (RouterInterface $router) use ($responseFactory) : void {
-    $router->get('/health', static fn () => $responseFactory->json([
+return static function (RouterInterface $router) use ($responses) : void {
+    $router->get('/health', static fn () => $responses->json([
                                                                        'status'  => 'healthy',
                                                                        'service' => 'webhook-ingestion-pipeline',
                                                                    ]));
 
-    $router->post('/webhooks/ingest', static function (ServerRequestInterface $request) use ($responseFactory) {
+    $router->post('/webhooks/ingest', static function (ServerRequestInterface $request) use ($responses) {
         $body   = (string) $request->getBody();
         $parsed = json_decode($body, true);
 
         if (! is_array($parsed)) {
-            return $responseFactory->json(['status' => 'error', 'message' => 'Invalid JSON body'], 400);
+            return $responses->json(['status' => 'error', 'message' => 'Invalid JSON body'], 400);
         }
 
         $webhookId = bin2hex(random_bytes(8));
         $source    = $parsed['source'] ?? 'unknown';
 
-        return $responseFactory->json([
+        return $responses->json([
                                           'status'     => 'accepted',
                                           'webhook_id' => $webhookId,
                                           'source'     => $source,
                                       ]);
     });
 
-    $router->get('/webhooks/status', static function (ServerRequestInterface $request) use ($responseFactory) {
+    $router->get('/webhooks/status', static function (ServerRequestInterface $request) use ($responses) {
         $queryParams = $request->getQueryParams();
         $webhookId   = $queryParams['id'] ?? 'unknown';
 
-        return $responseFactory->json([
+        return $responses->json([
                                           'webhook_id' => $webhookId,
                                           'status'     => 'processed',
                                           'state'      => 'completed',

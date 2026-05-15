@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Capabilities\HealthCheck;
 
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 
 /**
  * CheckApplicationHealth — Baseline health endpoint for V4-01.
@@ -16,12 +16,12 @@ use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 final readonly class CheckApplicationHealth
 {
     public function __construct(
-        private ResponseFactory $responseFactory,
+        private CreateHttpResponse $createHttpResponse,
     ) {
     }
 
     public function check(): ResponseInterface
     {
-        return $this->responseFactory->json(data: ['status' => 'ok']);
+        return $this->createHttpResponse->json(data: ['status' => 'ok']);
     }
 }

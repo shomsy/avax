@@ -8,7 +8,7 @@ use Avax\Components\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedExc
 use Avax\Components\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
 use Avax\Components\HTTP\SecureRequest\System\Foundation\Failure\SecureRequestAuthorizationFailed;
 use Avax\Components\HTTP\SecureRequest\System\Foundation\Failure\SecureRequestValidationFailed;
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\ClassifyApplicationException\ClassifyApplicationException;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RenderApplicationError\RenderApplicationError;
 use Avax\Tests\TestCase;
@@ -25,7 +25,7 @@ final class RenderApplicationErrorTest extends TestCase
     {
         parent::setUp();
         $this->renderer = new RenderApplicationError(
-            responseFactory: new ResponseFactory(),
+            createHttpResponse: new CreateHttpResponse(),
             classifier: new ClassifyApplicationException(),
         );
     }

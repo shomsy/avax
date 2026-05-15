@@ -9,12 +9,12 @@ use Avax\Components\HTTP\Dispatcher\System\Capabilities\ActionResolution\Control
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ArgumentResolution\ArgumentResolver;
 use Avax\Components\HTTP\Dispatcher\System\Flows\DispatchRouteAction\DispatchRouteAction;
 use Avax\Components\HTTP\Dispatcher\System\PublicSurface\ControllerDispatcher;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedException;
 use Avax\Components\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 use Avax\Components\HTTP\SecureRequest\System\Capabilities\ResolveSecureRequest\SecureRequestInputBuilder;
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Foundation\Failure\FrameworkMisconfigured;
 use Exception;
@@ -23,7 +23,7 @@ use Psr\Http\Message\ResponseInterface;
 final readonly class DispatchConfiguredRoute
 {
     public function __construct(
-        private ResponseFactory $responseFactory,
+        private CreateHttpResponse $createHttpResponse,
         private RegisteredHttpRoutes $registeredHttpRoutes,
         private ReadIncomingHttpRequest $readIncomingHttpRequest,
         private MatchHttpRoute $matchHttpRoute,
@@ -34,7 +34,7 @@ final readonly class DispatchConfiguredRoute
     /**
      * @throws FrameworkMisconfigured When routes file does not exist
      */
-    public static function fromRoutesFile(string $routesFile, ResponseFactory $responseFactory) : self
+    public static function fromRoutesFile(string $routesFile, CreateHttpResponse $createHttpResponse): self
     {
         if (! is_file(filename: $routesFile)) {
             throw new FrameworkMisconfigured(
@@ -67,27 +67,26 @@ final readonly class DispatchConfiguredRoute
         }
 
         return self::fromRegisteredRoutes(
-            responseFactory     : $responseFactory,
+            createHttpResponse  : $createHttpResponse,
             registeredHttpRoutes: $frameworkRouteRegistrar->collectRoutes(),
         );
     }
 
-    public static function fromRouteDefinitions(callable $routeDefinitions, ResponseFactory $responseFactory) : self
+    public static function fromRouteDefinitions(callable $routeDefinitions, CreateHttpResponse $createHttpResponse): self
     {
         $frameworkRouteRegistrar = new FrameworkRouteRegistrar();
         $routeDefinitions($frameworkRouteRegistrar);
 
         return self::fromRegisteredRoutes(
-            responseFactory     : $responseFactory,
+            createHttpResponse  : $createHttpResponse,
             registeredHttpRoutes: $frameworkRouteRegistrar->collectRoutes(),
         );
     }
 
     public static function fromRegisteredRoutes(
-        ResponseFactory $responseFactory,
+        CreateHttpResponse $createHttpResponse,
         RegisteredHttpRoutes $registeredHttpRoutes,
-    ) : self
-    {
+    ): self {
         $container            = new RouteFacadeContainer();
         $resolveCallable      = new ResolveCallable(container: clone $container);
         $controllerResolver   = new ControllerResolver(resolver: $resolveCallable);
@@ -95,15 +94,16 @@ final readonly class DispatchConfiguredRoute
         $dispatchRouteAction  = new DispatchRouteAction(
             controllerResolver: $controllerResolver,
             argumentResolver  : $argumentResolver,
+            createHttpResponse: $createHttpResponse,
         );
         $controllerDispatcher = new ControllerDispatcher(dispatchRouteAction: $dispatchRouteAction);
 
         return new self(
-            responseFactory        : $responseFactory,
-            registeredHttpRoutes   : $registeredHttpRoutes,
+            createHttpResponse   : $createHttpResponse,
+            registeredHttpRoutes : $registeredHttpRoutes,
             readIncomingHttpRequest: new ReadIncomingHttpRequest(),
-            matchHttpRoute         : new MatchHttpRoute(new MatchRoute()),
-            runHttpRoute           : new RunHttpRoute(controllerDispatcher: $controllerDispatcher),
+            matchHttpRoute       : new MatchHttpRoute(new MatchRoute()),
+            runHttpRoute         : new RunHttpRoute(controllerDispatcher: $controllerDispatcher),
         );
     }
 
@@ -126,14 +126,14 @@ final readonly class DispatchConfiguredRoute
                 );
             }
 
-            return $this->responseFactory->createErrorResponse(
-                message    : 'Route not found',
-                statusCode : 404,
+            return $this->createHttpResponse->error(
+                message: 'Route not found',
+                status : 404,
             );
         } catch (MethodNotAllowedException $exception) {
-            return $this->responseFactory->createErrorResponse(
-                message    : $exception->getMessage(),
-                statusCode : 405,
+            return $this->createHttpResponse->error(
+                message: $exception->getMessage(),
+                status : 405,
             );
         }
     }

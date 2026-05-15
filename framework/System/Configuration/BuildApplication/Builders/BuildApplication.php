@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Configuration\BuildApplication\Builders;
 
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
@@ -18,14 +18,16 @@ final readonly class BuildApplication
         string $projectPath,
         string $environment = 'production',
     ): ApplicationBuilder {
+        $createHttpResponse = new CreateHttpResponse();
+
         return new ApplicationBuilder(
             projectPath       : new ProjectPath(value: $projectPath),
             environmentName   : EnvironmentName::fromString($environment),
             clock             : new SystemClock(),
             runDoctor         : new RunDoctor(),
-            handleIncomingHttp: new HandleIncomingHttp(responseFactory: new ResponseFactory()),
+            handleIncomingHttp: new HandleIncomingHttp(createHttpResponse: $createHttpResponse),
             filesystem        : new Filesystem(),
-            responseFactory   : new ResponseFactory(),
+            createHttpResponse: $createHttpResponse,
         );
     }
 }

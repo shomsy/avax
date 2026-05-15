@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Flows\CreateApplication;
 
 use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\CreateRequestFromGlobals;
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentRegistry;
 use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
 use Avax\Framework\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
@@ -45,8 +45,8 @@ final readonly class CreateApplication
         private RequestScopeStore       $requestScopeStore,
         private RuntimeContext          $runtimeContext,
         private StateResetRegistry      $stateResetRegistry,
-        private ResponseFactory         $responseFactory,
-        private HandleIncomingHttp      $handleIncomingHttp,
+        private CreateHttpResponse $createHttpResponse,
+        private HandleIncomingHttp $handleIncomingHttp,
         private CreateRequestFromGlobals $createRequestFromGlobals,
     ) {}
 
@@ -72,7 +72,7 @@ final readonly class CreateApplication
 
         $runtimeState->markBooted(bootedAt: $clock->now());
 
-        $responseFactory = $this->responseFactory;
+        $createHttpResponse = $this->createHttpResponse;
 
         // Build runtime (no httpHandler — App manages routes directly)
         $runtime = new Runtime(
@@ -95,8 +95,8 @@ final readonly class CreateApplication
         return new App(
             runtime              : $runtime,
             resetApplicationState: new ResetApplicationState(stateResetRegistry: $stateResetRegistry),
-            responseFactory      : $responseFactory,
-            normalizer           : new NormalizeControllerResult(responseFactory: $responseFactory),
+            createHttpResponse   : $createHttpResponse,
+            normalizer           : new NormalizeControllerResult(createHttpResponse: $createHttpResponse),
             createRequestFromGlobals: $this->createRequestFromGlobals,
         );
     }
@@ -121,7 +121,7 @@ final readonly class CreateApplication
 
         $runtimeState->markBooted(bootedAt: $clock->now());
 
-        $responseFactory = new ResponseFactory();
+        $createHttpResponse = new CreateHttpResponse();
 
         $runtime = new Runtime(
             runtimeState: $runtimeState,
@@ -143,8 +143,8 @@ final readonly class CreateApplication
         return new App(
             runtime: $runtime,
             resetApplicationState: new ResetApplicationState(stateResetRegistry: $stateResetRegistry),
-            responseFactory: $responseFactory,
-            normalizer: new NormalizeControllerResult(responseFactory: $responseFactory),
+            createHttpResponse: $createHttpResponse,
+            normalizer: new NormalizeControllerResult(createHttpResponse: $createHttpResponse),
             createRequestFromGlobals: $createRequestFromGlobals,
         );
     }

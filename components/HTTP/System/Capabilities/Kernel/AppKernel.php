@@ -14,7 +14,7 @@ use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\RateLimiterInter
 use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\RateLimiterMiddleware;
 use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\RequestLoggerMiddleware;
 use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\SessionLifecycleMiddleware;
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\HTTP\System\Capabilities\SessionStorage\NullSession;
 use Avax\Components\HTTP\System\PublicSurface\HttpInterface;
 use Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Builders\BuildFailureBoundary;
@@ -38,7 +38,7 @@ final readonly class AppKernel implements HttpInterface, Kernel
 
     public function __construct(
         private RouterRuntimeInterface $routerRuntime,
-        private ResponseFactory        $responseFactory,
+        private CreateHttpResponse        $createHttpResponse,
         /** @var list<MiddlewareInterface> */
         private array                  $globalMiddleware = [],
     )
@@ -68,7 +68,7 @@ final readonly class AppKernel implements HttpInterface, Kernel
         }
 
         if (MiddlewareRegistry::has('cors')) {
-            $middleware[] = MiddlewareRegistry::create('cors', [$this->responseFactory]);
+            $middleware[] = MiddlewareRegistry::create('cors', [$this->createHttpResponse]);
         }
 
         if (MiddlewareRegistry::has('rate-limit')) {
@@ -76,7 +76,7 @@ final readonly class AppKernel implements HttpInterface, Kernel
         }
 
         if (MiddlewareRegistry::has('json')) {
-            $middleware[] = MiddlewareRegistry::create('json', [$this->responseFactory]);
+            $middleware[] = MiddlewareRegistry::create('json', [$this->createHttpResponse]);
         }
 
         // FailureBoundary: outermost error-handling middleware (framework-level, optional)
@@ -197,7 +197,7 @@ final readonly class AppKernel implements HttpInterface, Kernel
             (new class () {
                 public function rateLimited(int $retryAfter) : ResponseInterface
                 {
-                    return new ResponseFactory()->rateLimited($retryAfter);
+                    return new CreateHttpResponse()->rateLimited(retryAfter: $retryAfter);
                 }
             }),
             'ip',
@@ -222,7 +222,7 @@ final readonly class AppKernel implements HttpInterface, Kernel
     public function handle(ServerRequestInterface $serverRequest) : ResponseInterface
     {
         if (! $serverRequest instanceof RequestInterface) {
-            return $this->responseFactory->error('Invalid request type', 400);
+            return $this->createHttpResponse->error(message: 'Invalid request type', status: 400);
         }
 
         return $this->runPipeline($serverRequest);
@@ -252,7 +252,7 @@ final readonly class AppKernel implements HttpInterface, Kernel
     {
         return new self(
             $this->routerRuntime,
-            $this->responseFactory,
+            $this->createHttpResponse,
             [...$this->middlewareStack, $middleware],
         );
     }

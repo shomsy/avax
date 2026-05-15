@@ -13,7 +13,7 @@ use Avax\Components\HTTP\System\Capabilities\Kernel\HttpKernel;
 use Avax\Components\HTTP\System\Capabilities\Kernel\TerminateHttpKernel;
 use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\MiddlewarePipeline;
 use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\MiddlewareRegistry;
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\HTTP\System\PublicSurface\Http;
 use Avax\Components\HTTP\System\PublicSurface\HttpInterface;
 
@@ -29,7 +29,7 @@ final class HttpServiceProvider implements ServiceProvider
         $container->singleton(MiddlewareRegistry::class, static fn () : MiddlewareRegistry => new MiddlewareRegistry());
 
         // Response factory — stateless
-        $container->singleton(ResponseFactory::class, static fn () : ResponseFactory => new ResponseFactory());
+        $container->singleton(CreateHttpResponse::class, static fn () : CreateHttpResponse => new CreateHttpResponse());
 
         // HTTP kernels — stateless
         $container->singleton(BootHttpKernel::class, static fn () : BootHttpKernel => new BootHttpKernel());

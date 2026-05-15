@@ -7,7 +7,7 @@ namespace Avax\Framework\System\PublicSurface;
 use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\CreateRequestFromGlobals;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;
 use Avax\Framework\System\Capabilities\PreCommit\Configuration\PreCommitConfig;
 use Avax\Framework\System\Capabilities\PreCommit\PreCommit;
@@ -80,7 +80,7 @@ final class App
     public function __construct(
         private readonly RuntimeInterface $runtime,
         private readonly ResetApplicationState $resetApplicationState,
-        private readonly ResponseFactory           $responseFactory,
+        private readonly CreateHttpResponse $createHttpResponse,
         private readonly NormalizeControllerResult $normalizer,
         private readonly CreateRequestFromGlobals $createRequestFromGlobals,
         private readonly MetricsCollector|null $metricsCollector = null,
@@ -300,9 +300,9 @@ final class App
     {
         if ($this->dispatcher === null) {
             $this->dispatcher = RunApplication::withDefaultResolutionPipeline(
-                responseFactory : $this->responseFactory,
-                normalizer      : $this->normalizer,
-                metricsCollector: $this->metricsCollector,
+                createHttpResponse: $this->createHttpResponse,
+                normalizer        : $this->normalizer,
+                metricsCollector  : $this->metricsCollector,
             );
         }
     }
@@ -358,9 +358,9 @@ final class App
         $message = $isProduction ? 'Internal server error' : $e->getMessage();
         $status = $isProduction ? 500 : 500;
 
-        return $this->responseFactory->createErrorResponse(
-            message   : $message,
-            statusCode: $status,
+        return $this->createHttpResponse->error(
+            message: $message,
+            status : $status,
         );
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Configuration\BuildApplication\Builders;
 
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Framework\System\Capabilities\ComponentRegistry\ComponentProviderInterface;
 use Avax\Framework\System\Capabilities\Configuration\Builders\RegisterConfigCommands;
@@ -43,7 +43,7 @@ final class ApplicationBuilder
         private RunDoctor $runDoctor,
         private HandleIncomingHttp $handleIncomingHttp,
         private Filesystem $filesystem,
-        private ResponseFactory $responseFactory,
+        private CreateHttpResponse $createHttpResponse,
         private string $runtimeName = 'avax',
     ) {
         $doctor = $this->runDoctor;
@@ -162,7 +162,7 @@ final class ApplicationBuilder
         return $this->withHttpHandler(
             httpHandler: DispatchConfiguredRoute::fromRouteDefinitions(
                 routeDefinitions: $routeDefinitions,
-                responseFactory : $this->responseFactory,
+                createHttpResponse: $this->createHttpResponse,
             ),
         );
     }
@@ -178,7 +178,7 @@ final class ApplicationBuilder
         return $this->withHttpHandler(
             httpHandler: DispatchConfiguredRoute::fromRoutesFile(
                 routesFile: $resolvedPath,
-                responseFactory: $this->responseFactory,
+                createHttpResponse: $this->createHttpResponse,
             ),
         );
     }

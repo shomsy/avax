@@ -19,7 +19,7 @@ use Avax\Framework\System\Capabilities\RequestScope\RequestScopeStore;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Framework\System\Flows\CreateApplication\CreateApplication;
 use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Foundation\Paths\ProjectPath;
@@ -266,8 +266,8 @@ final class AppTest extends TestCase
             requestScopeStore: new RequestScopeStore(),
             runtimeContext: new RuntimeContext(),
             stateResetRegistry: new StateResetRegistry(),
-            responseFactory: new ResponseFactory(),
-            handleIncomingHttp: new HandleIncomingHttp(responseFactory: new ResponseFactory()),
+            createHttpResponse: new CreateHttpResponse(),
+            handleIncomingHttp: new HandleIncomingHttp(createHttpResponse: new CreateHttpResponse()),
             createRequestFromGlobals: new CreateRequestFromGlobals(
                 readServerParameters  : new ReadServerParameters(),
                 readQueryParameters   : new ReadQueryParameters(),

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RenderApplicationError;
 
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\ClassifyApplicationException\ClassifyApplicationException;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
@@ -18,7 +18,7 @@ use Throwable;
 final readonly class RenderApplicationError
 {
     public function __construct(
-        private ResponseFactory              $responseFactory,
+        private CreateHttpResponse         $createHttpResponse,
         private ClassifyApplicationException $classifier,
     ) {
     }
@@ -28,15 +28,15 @@ final readonly class RenderApplicationError
         $classification = $this->classifier->classify($e);
 
         if ($isProduction) {
-            return $this->responseFactory->createErrorResponse(
+            return $this->createHttpResponse->error(
                 message: $classification['safeMessage'],
-                statusCode: $classification['statusCode'],
+                status: $classification['statusCode'],
             );
         }
 
-        return $this->responseFactory->createErrorResponse(
+        return $this->createHttpResponse->error(
             message: $e->getMessage(),
-            statusCode: $classification['statusCode'],
+            status: $classification['statusCode'],
         );
     }
 }

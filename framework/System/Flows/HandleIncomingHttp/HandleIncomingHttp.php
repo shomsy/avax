@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Flows\HandleIncomingHttp;
 
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
@@ -21,7 +21,7 @@ use Throwable;
 final readonly class HandleIncomingHttp
 {
     public function __construct(
-        private ResponseFactory $responseFactory,
+        private CreateHttpResponse $createHttpResponse,
         private MetricsCollector|null $metricsCollector = null,
     ) {
     }
@@ -47,9 +47,9 @@ final readonly class HandleIncomingHttp
     }
 
     /**
- * @throws FrameworkMisconfigured
- */
-public function handleInCurrentScope(RuntimeInterface $runtime, RuntimeRequest $runtimeRequest): RuntimeResponse
+     * @throws FrameworkMisconfigured
+     */
+    public function handleInCurrentScope(RuntimeInterface $runtime, RuntimeRequest $runtimeRequest): RuntimeResponse
     {
         $httpHandler = $runtime->httpHandler();
 
@@ -78,9 +78,9 @@ public function handleInCurrentScope(RuntimeInterface $runtime, RuntimeRequest $
             $this->recordLatency(startTime: $startTime);
 
             $response = RuntimeResponse::fromPsrResponse(
-                response: $this->responseFactory->createErrorResponse(
-                    message   : 'Internal Server Error',
-                    statusCode: 500,
+                response: $this->createHttpResponse->error(
+                    message: 'Internal Server Error',
+                    status : 500,
                 ),
             );
 
@@ -92,7 +92,7 @@ public function handleInCurrentScope(RuntimeInterface $runtime, RuntimeRequest $
         }
     }
 
-    private function recordLatency(float $startTime) : void
+    private function recordLatency(float $startTime): void
     {
         $latencyMs = (microtime(true) - $startTime) * 1000;
         $this->metricsCollector?->observeHistogram(name: 'request.latency', value: $latencyMs);
@@ -110,7 +110,7 @@ public function handleInCurrentScope(RuntimeInterface $runtime, RuntimeRequest $
 
         if (is_array(value: $value) || $value instanceof JsonSerializable || (is_object(value: $value) && ! $value instanceof Stringable)) {
             return RuntimeResponse::fromPsrResponse(
-                response: $this->responseFactory->json(data: $value),
+                response: $this->createHttpResponse->json(data: $value),
             );
         }
 
@@ -122,7 +122,7 @@ public function handleInCurrentScope(RuntimeInterface $runtime, RuntimeRequest $
         };
 
         return RuntimeResponse::fromPsrResponse(
-            response: $this->responseFactory->create(body: $normalizedBody),
+            response: $this->createHttpResponse->create(body: $normalizedBody),
         );
     }
 }

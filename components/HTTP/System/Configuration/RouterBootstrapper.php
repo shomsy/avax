@@ -9,7 +9,7 @@ use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
 use Avax\Components\HTTP\System\Capabilities\Kernel\AppKernel;
 use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\MiddlewareInterface;
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use InvalidArgumentException;
 use LogicException;
 
@@ -277,14 +277,14 @@ final class RouterBootstrapper
      * Create a complete HTTP application with routes and middleware.
      */
     public function createApp(
-        ResponseFactory $responseFactory,
+        CreateHttpResponse $createHttpResponse,
     ) : AppKernel
     {
         $routerRuntime = $this->bootstrap();
 
         return new AppKernel(
             routerRuntime   : $routerRuntime,
-            responseFactory : $responseFactory,
+            createHttpResponse : $createHttpResponse,
             globalMiddleware: $this->globalMiddleware,
         );
     }

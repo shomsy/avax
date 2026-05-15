@@ -5,10 +5,17 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit\Framework\FailureBoundary;
 
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
-use Avax\Framework\System\Capabilities\FailureBoundary\Integration\HttpFailureBoundaryMiddleware;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\HTTP\Response\System\PublicSurface\Response;
+use Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Builders\BuildFailureBoundary;
+use Avax\Framework\System\Capabilities\FailureBoundary\Integration\HttpFailureBoundaryMiddleware;
+use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\Psr7\Utils;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
+use RuntimeException;
 
 /**
  * @no-named-arguments
@@ -23,13 +30,14 @@ final class HttpFailureBoundaryTest extends TestCase
     public function testSuccessfulRequestPassesThrough(): void
     {
         $middleware = new HttpFailureBoundaryMiddleware(
-            (new \Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Builders\BuildFailureBoundary())->build(),
+            (new BuildFailureBoundary())->build(),
+            new CreateHttpResponse(),
         );
 
         $request = $this->createMockRequest();
 
         $response = $middleware->handle($request, static fn () =>
-            Response::json(['ok' => true])
+            new Response(statusCode: 200, headers: ['content-type' => ['application/json']], stream: Utils::streamFor(json_encode(['ok' => true])))
         );
 
         self::assertSame(200, $response->getStatusCode());
@@ -41,15 +49,16 @@ final class HttpFailureBoundaryTest extends TestCase
         // The middleware has no target context, so no policy is matched.
         // Unhandled exceptions should rethrow.
         $middleware = new HttpFailureBoundaryMiddleware(
-            (new \Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Builders\BuildFailureBoundary())->build(),
+            (new BuildFailureBoundary())->build(),
+            new CreateHttpResponse(),
         );
 
         $request = $this->createMockRequest();
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $middleware->handle($request, static fn () =>
-            throw new \RuntimeException('unexpected')
+            throw new RuntimeException('unexpected')
         );
     }
 
@@ -57,15 +66,16 @@ final class HttpFailureBoundaryTest extends TestCase
     {
         // The middleware reports failures before rethrowing unhandled ones.
         $middleware = new HttpFailureBoundaryMiddleware(
-            (new \Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Builders\BuildFailureBoundary())->build(),
+            (new BuildFailureBoundary())->build(),
+            new CreateHttpResponse(),
         );
 
         $request = $this->createMockRequest();
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
 
         $middleware->handle($request, static fn () =>
-            throw new \RuntimeException('reported')
+            throw new RuntimeException('reported')
         );
     }
 }
@@ -82,7 +92,7 @@ final class MockAvaXRequest implements RequestInterface
     /** @return array<string, mixed> */
     public function all(): array { return []; }
     public function getMethod(): string { return $this->method; }
-    public function getUri(): UriInterface { return new \GuzzleHttp\Psr7\Uri($this->uri); }
+    public function getUri(): UriInterface { return new Uri($this->uri); }
     public function getProtocolVersion(): string { return '1.1'; }
     public function withProtocolVersion(string $version): static { return $this; }
     public function getHeaders(): array { return []; }
@@ -92,8 +102,8 @@ final class MockAvaXRequest implements RequestInterface
     public function withHeader(string $name, $value): static { return $this; }
     public function withAddedHeader(string $name, $value, bool $replace = true): static { return $this; }
     public function withoutHeader(string $name): static { return $this; }
-    public function getBody(): \Psr\Http\Message\StreamInterface { return \GuzzleHttp\Psr7\Utils::streamFor(''); }
-    public function withBody(\Psr\Http\Message\StreamInterface $body): static { return $this; }
+    public function getBody(): StreamInterface { return Utils::streamFor(''); }
+    public function withBody(StreamInterface $body): static { return $this; }
     public function getRequestTarget(): string { return '/'; }
     public function withRequestTarget(string $target): static { return $this; }
     public function withMethod(string $method): static { return $this; }
@@ -114,9 +124,9 @@ final class MockAvaXRequest implements RequestInterface
     public function withAttribute(string $name, $value): static { return $this; }
     public function withoutAttribute(string $name): static { return $this; }
 
-    /** @return array<string, \Psr\Http\Message\UploadedFileInterface> */
+    /** @return array<string, UploadedFileInterface> */
     public function getUploadedFiles(): array { return []; }
-    /** @param array<string, \Psr\Http\Message\UploadedFileInterface> $uploadedFiles */
+    /** @param array<string, UploadedFileInterface> $uploadedFiles */
     public function withUploadedFiles(array $uploadedFiles): static { return $this; }
     /** @return array<string, mixed>|null */
     public function getParsedBody(): ?array { return null; }

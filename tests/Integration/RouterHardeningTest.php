@@ -8,6 +8,7 @@ use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\Re
 use Avax\Components\HTTP\Request\System\Capabilities\Uri\RequestUri;
 use Avax\Components\HTTP\Request\System\Configuration\Builders\RequestBuilder;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\HTTP\Response\System\PublicSurface\Responses;
 use Avax\Components\HTTP\Router\System\Capabilities\ErrorResponseBuilding\BuildErrorResponse;
 use Avax\Components\HTTP\Router\System\Capabilities\MiddlewarePipeline\BuildPipeline;
@@ -35,9 +36,9 @@ final class RouterHardeningTest extends TestCase
             routeCollection   : new RouteCollection(),
             matchRoute        : new MatchRoute(),
             pipelineBuilder   : new BuildPipeline($resolveCallable),
-            errorResponse     : new BuildErrorResponse(),
+            errorResponse     : new BuildErrorResponse(new CreateHttpResponse()),
             urlBuilder        : new SubstituteRouteParameters(),
-            invokeRouteAction : new InvokeRouteAction(new NormalizeControllerResult()),
+            invokeRouteAction : new InvokeRouteAction(new NormalizeControllerResult(new CreateHttpResponse())),
         );
         $router->get(path: '/null-test', action: static fn () => null);
 
@@ -129,16 +130,16 @@ final class RouterHardeningTest extends TestCase
     {
         parent::setUp();
 
-        $this->responses = new Responses();
+        $this->responses = new Responses(new CreateHttpResponse());
 
         $resolveCallable = new ResolveCallable();
         $router          = new Router(
             routeCollection   : new RouteCollection(),
             matchRoute        : new MatchRoute(),
             pipelineBuilder   : new BuildPipeline($resolveCallable),
-            errorResponse     : new BuildErrorResponse(),
+            errorResponse     : new BuildErrorResponse(new CreateHttpResponse()),
             urlBuilder        : new SubstituteRouteParameters(),
-            invokeRouteAction : new InvokeRouteAction(new NormalizeControllerResult()),
+            invokeRouteAction : new InvokeRouteAction(new NormalizeControllerResult(new CreateHttpResponse())),
         );
         $router->get(path: '/', action: fn () => $this->textResponse(body: 'Router is Working!'));
         $router->get(path: '/health', action: fn () => $this->textResponse(body: 'ok'));

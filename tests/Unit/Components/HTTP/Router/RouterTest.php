@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit\Components\HTTP\Router;
 
 use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
+use GuzzleHttp\Psr7\Utils;
 use Avax\Components\HTTP\Request\System\Capabilities\Body\ParsedBody;
 use Avax\Components\HTTP\Request\System\Capabilities\Body\RawBody;
 use Avax\Components\HTTP\Request\System\Capabilities\Body\RequestBody;
@@ -12,6 +13,7 @@ use Avax\Components\HTTP\Request\System\Capabilities\Files\UploadedFiles;
 use Avax\Components\HTTP\Request\System\Capabilities\Headers\RequestHeaders;
 use Avax\Components\HTTP\Request\System\Capabilities\Uri\RequestUri;
 use Avax\Components\HTTP\Request\System\PublicSurface\Request;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 use Avax\Components\HTTP\Router\System\Capabilities\ErrorResponseBuilding\BuildErrorResponse;
 use Avax\Components\HTTP\Router\System\Capabilities\MiddlewarePipeline\BuildPipeline;
@@ -286,7 +288,11 @@ final class RouterTest extends TestCase
         $handlerCalled = false;
 
         $middleware = static function ($request, $handler) {
-            return Response::json(['blocked' => true], 403);
+            return new Response(
+                statusCode: 403,
+                headers   : ['content-type' => ['application/json']],
+                stream    : Utils::streamFor(json_encode(['blocked' => true])),
+            );
         };
 
         $this->router->get('/protected', static function () use (&$handlerCalled) {
@@ -452,12 +458,12 @@ final class RouterTest extends TestCase
         $routeCollection    = new RouteCollection();
         $matchRoute         = new MatchRoute();
         $resolveCallable    = new ResolveCallable();
-        $responseNormalizer = new NormalizeControllerResult();
+        $responseNormalizer = new NormalizeControllerResult(new CreateHttpResponse());
         $this->router = new Router(
             routeCollection   : $routeCollection,
             matchRoute        : $matchRoute,
             pipelineBuilder   : new BuildPipeline($resolveCallable),
-            errorResponse     : new BuildErrorResponse(),
+            errorResponse     : new BuildErrorResponse(new CreateHttpResponse()),
             urlBuilder        : new SubstituteRouteParameters(),
             invokeRouteAction : new InvokeRouteAction($responseNormalizer),
         );

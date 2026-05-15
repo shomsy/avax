@@ -10,7 +10,7 @@ use Avax\Components\HTTP\Request\System\Configuration\Builders\RequestBuilder;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\PublicSurface\Responses;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
 use Avax\Framework\System\Configuration\BuildApplication\Builders\ApplicationBuilder;
@@ -26,7 +26,7 @@ final class AvaxKernelTest extends TestCase
 {
     public function test_golden_path_boot_and_handle_http_request() : void
     {
-        $responses = new Responses();
+        $responses = new Responses(new CreateHttpResponse());
 
         // 1. Setup Application Builder with routes
         $builder = (new ApplicationBuilder(
@@ -34,9 +34,9 @@ final class AvaxKernelTest extends TestCase
             EnvironmentName::Testing,
             new SystemClock(),
             new RunDoctor(),
-            new HandleIncomingHttp(responseFactory: new ResponseFactory()),
+            new HandleIncomingHttp(createHttpResponse: new CreateHttpResponse()),
             new Filesystem(),
-            new ResponseFactory(),
+            new CreateHttpResponse(),
             'avax',
         ))->withHttpRouteDefinitions(function (RouterInterface $router) use ($responses) {
             $router->get('/', fn () => $responses->send('Hello from Avax Kernel!'));
@@ -67,9 +67,9 @@ final class AvaxKernelTest extends TestCase
             EnvironmentName::Testing,
             new SystemClock(),
             new RunDoctor(),
-            new HandleIncomingHttp(responseFactory: new ResponseFactory()),
+            new HandleIncomingHttp(createHttpResponse: new CreateHttpResponse()),
             new Filesystem(),
-            new ResponseFactory(),
+            new CreateHttpResponse(),
             'avax',
         );
         $avax    = Avax::boot($builder);

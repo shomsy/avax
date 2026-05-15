@@ -6,7 +6,7 @@ namespace Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Build
 
 use Avax\Framework\System\Capabilities\FailureBoundary\Configuration\FailureBoundaryConfiguration;
 
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\Operations\Observability\System\Capabilities\Logging\Logger;
 use Avax\Components\Operations\Queue\System\Capabilities\Queue\FailedJobs\FailedJobsStore;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\ClassifyFailure\ClassifyFailure;
@@ -42,7 +42,7 @@ final readonly class BuildFailureBoundary
         $fallback = new RunFallbackAction();
         $recovery = new RunRecoveryAction();
         $deadLetter = new SendFailureToDeadLetter($failedJobsStore);
-        $mapToResult = new MapFailureToResult(new ResponseFactory());
+        $mapToResult = new MapFailureToResult(new CreateHttpResponse());
         $resolvePolicy = new ResolveFailurePolicy();
 
         $pipeline = new RunFailurePipeline(

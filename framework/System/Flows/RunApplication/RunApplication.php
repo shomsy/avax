@@ -13,7 +13,7 @@ use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedException;
 use Avax\Components\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
 use Avax\Components\HTTP\SecureRequest\System\Capabilities\ResolveSecureRequest\SecureRequestInputBuilder;
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;
 use Avax\Framework\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
@@ -43,7 +43,7 @@ use Throwable;
 final readonly class RunApplication
 {
     public function __construct(
-        private ResponseFactory         $responseFactory,
+        private CreateHttpResponse         $createHttpResponse,
         private NormalizeControllerResult $normalizer,
         private ReadIncomingHttpRequest $readRequest,
         private MatchHttpRoute          $matchRoute,
@@ -53,7 +53,7 @@ final readonly class RunApplication
     ) {}
 
     public static function withDefaultResolutionPipeline(
-        ResponseFactory           $responseFactory,
+        CreateHttpResponse           $createHttpResponse,
         NormalizeControllerResult $normalizer,
         MetricsCollector|null     $metricsCollector = null,
     ) : self
@@ -64,7 +64,7 @@ final readonly class RunApplication
         $argumentResolver = new ArgumentResolver(container: $container, inputBuilder: new SecureRequestInputBuilder());
 
         return new self(
-            responseFactory   : $responseFactory,
+            createHttpResponse: $createHttpResponse,
             normalizer        : $normalizer,
             readRequest       : new ReadIncomingHttpRequest(),
             matchRoute        : new MatchHttpRoute(new MatchRoute()),
@@ -106,26 +106,26 @@ final readonly class RunApplication
                 $fallback = $routes->fallback();
 
                 if ($fallback === null) {
-                    return $this->responseFactory->createErrorResponse(
+                    return $this->createHttpResponse->error(
                         message: 'Route not found',
-                        statusCode: 404,
+                        status: 404,
                     );
                 }
 
                 return $this->dispatchFallback(fallback: $fallback, serverRequest: $serverRequest);
             }
 
-            return $this->responseFactory->createErrorResponse(
+            return $this->createHttpResponse->error(
                 message: 'Route not found',
-                statusCode: 404,
+                status: 404,
             );
         } catch (MethodNotAllowedException $e) {
             $this->metricsCollector?->incrementCounter(name: 'request.error');
             $this->recordLatency(startTime: $startTime);
 
-            return $this->responseFactory->createErrorResponse(
+            return $this->createHttpResponse->error(
                 message: $e->getMessage(),
-                statusCode: 405,
+                status: 405,
             );
         } catch (Throwable $e) {
             $this->metricsCollector?->incrementCounter(name: 'request.error');

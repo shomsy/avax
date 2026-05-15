@@ -5,7 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Framework\System\Configuration\BuildApplication\Builders\ApplicationBuilder;
 use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Flows\RunDoctor\RunDoctor;
@@ -24,9 +24,9 @@ $builder = new ApplicationBuilder(
     environmentName   : new EnvironmentName('development'),
     clock             : new SystemClock(),
     runDoctor         : new RunDoctor(),
-    handleIncomingHttp: new HandleIncomingHttp(responseFactory: new ResponseFactory()),
+    handleIncomingHttp: new HandleIncomingHttp(createHttpResponse: new CreateHttpResponse()),
     filesystem        : new Filesystem(),
-    responseFactory   : new ResponseFactory(),
+    responseFactory   : new CreateHttpResponse(),
 );
 
 // 2. Boot the Framework

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Framework\V4RuntimeApp;
 
-use Avax\Components\HTTP\System\Capabilities\ResponseBuilding\ResponseFactory;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Framework\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Tests\TestCase;
 use JsonSerializable;
@@ -16,13 +16,13 @@ use Stringable;
 final class NormalizeControllerResultTest extends TestCase
 {
     private NormalizeControllerResult $normalizer;
-    private ResponseFactory $factory;
+    private CreateHttpResponse $createHttpResponse;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->factory    = new ResponseFactory();
-        $this->normalizer = new NormalizeControllerResult($this->factory);
+        $this->createHttpResponse    = new CreateHttpResponse();
+        $this->normalizer = new NormalizeControllerResult($this->createHttpResponse);
     }
 
     public function testNormalizeNullReturnsEmptyResponse(): void
@@ -65,7 +65,7 @@ final class NormalizeControllerResultTest extends TestCase
 
     public function testNormalizeResponseInterfaceReturnsAsIs(): void
     {
-        $original = $this->factory->html(html: 'Direct response');
+        $original = $this->createHttpResponse->html(content: 'Direct response');
 
         $response = $this->normalizer->normalize(result: $original);
 
@@ -107,13 +107,15 @@ final class NormalizeControllerResultTest extends TestCase
     {
         $response = $this->normalizer->normalize(result: 42);
         $body = (string) $response->getBody();
-        self::assertSame('42', $body);
+        $decoded = json_decode($body, true);
+        self::assertSame(['value' => 42], $decoded);
     }
 
     public function testNormalizeBooleanReturnsJson(): void
     {
         $response = $this->normalizer->normalize(result: true);
         $body = (string) $response->getBody();
-        self::assertSame('true', $body);
+        $decoded = json_decode($body, true);
+        self::assertSame(['value' => true], $decoded);
     }
 }

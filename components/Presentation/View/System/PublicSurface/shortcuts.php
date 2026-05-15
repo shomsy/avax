@@ -6,7 +6,7 @@ declare(strict_types=1);
  * View shortcuts for global access.
  */
 
-use Avax\Components\HTTP\Response\System\PublicSurface\Response;
+use Avax\Components\HTTP\Response\System\PublicSurface\Responses;
 use Avax\Components\Presentation\View\System\Capabilities\TemplateRendering\TemplateEngine;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -23,25 +23,6 @@ if (! function_exists('view')) {
         /** @var TemplateEngine $engine */
         $engine = app(TemplateEngine::class);
 
-        return Response::html($engine->render($template, $data));
-    }
-}
-
-if (! function_exists('asset')) {
-    /**
-     * Generate a URL for an asset.
-     */
-    function asset(string $path): string
-    {
-        /** @var ServerRequestInterface $request */
-        $request = app(ServerRequestInterface::class);
-        $uri     = $request->getUri();
-        $baseUrl = $uri->getScheme() . '://' . $uri->getHost();
-        $port    = $uri->getPort();
-        if ($port !== null) {
-            $baseUrl .= ':' . $port;
-        }
-
-        return $baseUrl.'/'.ltrim($path, '/');
+        return app(Responses::class)->html(content: $engine->render($template, $data));
     }
 }

@@ -6,7 +6,7 @@ namespace Avax\Components\HTTP\Dispatcher\System\Flows\DispatchRouteAction;
 
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ActionResolution\ControllerResolver;
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ArgumentResolution\ArgumentResolver;
-use Avax\Components\HTTP\Response\System\PublicSurface\Response;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,12 +21,13 @@ final readonly class DispatchRouteAction
     public function __construct(
         private ControllerResolver $controllerResolver,
         private ArgumentResolver   $argumentResolver,
+        private CreateHttpResponse $createHttpResponse,
     ) {}
 
     /**
- * @throws InvalidArgumentException
- */
-public function execute(callable|array|string $action, ServerRequestInterface $serverRequest) : ResponseInterface
+     * @throws InvalidArgumentException
+     */
+    public function execute(callable|array|string $action, ServerRequestInterface $serverRequest): ResponseInterface
     {
         return match (true) {
             is_callable($action) => $this->dispatchCallable($action, $serverRequest),
@@ -36,34 +37,34 @@ public function execute(callable|array|string $action, ServerRequestInterface $s
         };
     }
 
-    private function dispatchCallable(callable $callable, ServerRequestInterface $serverRequest) : ResponseInterface
+    private function dispatchCallable(callable $callable, ServerRequestInterface $serverRequest): ResponseInterface
     {
         $result = $callable($serverRequest);
 
         return $this->ensureResponse($result, 'Callable');
     }
 
-    private function ensureResponse(mixed $result, string $source) : ResponseInterface
+    private function ensureResponse(mixed $result, string $source): ResponseInterface
     {
         if ($result === null) {
-            return Response::text($source . ' returned null');
+            return $this->createHttpResponse->text(content: $source.' returned null');
         }
 
         if (is_string($result)) {
-            return Response::text($result);
+            return $this->createHttpResponse->text(content: $result);
         }
 
         if (! $result instanceof ResponseInterface) {
-            throw new RuntimeException($source . ' must return a ResponseInterface.');
+            throw new RuntimeException($source.' must return a ResponseInterface.');
         }
 
         return $result;
     }
 
     /**
- * @throws InvalidArgumentException
- */
-private function dispatchControllerAndMethod(array $action, ServerRequestInterface $serverRequest) : ResponseInterface
+     * @throws InvalidArgumentException
+     */
+    private function dispatchControllerAndMethod(array $action, ServerRequestInterface $serverRequest): ResponseInterface
     {
         if (count($action) !== 2) {
             throw new InvalidArgumentException('Controller action must be [Class, "method"]');
@@ -86,9 +87,9 @@ private function dispatchControllerAndMethod(array $action, ServerRequestInterfa
     }
 
     /**
- * @throws RuntimeException
- */
-private function dispatchInvokableController(string $controllerClass, ServerRequestInterface $serverRequest) : ResponseInterface
+     * @throws RuntimeException
+     */
+    private function dispatchInvokableController(string $controllerClass, ServerRequestInterface $serverRequest): ResponseInterface
     {
         $instance = $this->controllerResolver->resolve($controllerClass);
 
@@ -98,6 +99,6 @@ private function dispatchInvokableController(string $controllerClass, ServerRequ
 
         $result = $instance($serverRequest);
 
-        return $this->ensureResponse($result, 'Invokable controller ' . $controllerClass);
+        return $this->ensureResponse($result, 'Invokable controller '.$controllerClass);
     }
 }

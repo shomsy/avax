@@ -2327,19 +2327,19 @@ DEPRECATED
 
 Every status entry MUST include:
 
-| Field | Required |
-|---|---|
-| component path | yes |
-| status | yes |
-| owner | yes |
-| reason | yes |
-| production autoload decision | yes |
-| ServiceProvider requirement | yes |
-| health/doctor requirement | yes |
-| test requirement | yes |
-| security review requirement | yes when relevant |
+| Field                          | Required          |
+|--------------------------------|-------------------|
+| component path                 | yes               |
+| status                         | yes               |
+| owner                          | yes               |
+| reason                         | yes               |
+| production autoload decision   | yes               |
+| ServiceProvider requirement    | yes when ACTIVE   |
+| health/doctor requirement      | yes               |
+| test requirement               | yes               |
+| security review requirement    | yes when relevant |
 | performance review requirement | yes when relevant |
-| V5.9 blocking decision | yes when relevant |
+| V5.9 blocking decision         | yes when relevant |
 
 A component with no status MUST NOT be silently treated as ACTIVE_GREEN.
 

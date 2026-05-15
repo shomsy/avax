@@ -172,9 +172,47 @@ Commit is FORBIDDEN if:
 * unrelated dirty files are staged
 * cache/generated/local files are staged without explicit approval
 
+### Recursive Review Accepted Debt Rule
+
+A recursive governance review is clean only when it has zero unresolved findings.
+
+Unresolved YELLOW findings are allowed only as accepted governance debt.
+
+If any YELLOW finding remains, the phase MUST NOT be reported as pure FULL_GREEN.
+
+Allowed final statuses:
+
+- FULL_GREEN: validation clean, gates clean, governance review has zero unresolved findings.
+- GREEN_WITH_ACCEPTED_YELLOW_DEBT: validation/gates clean, no BLOCKER/HIGH/MEDIUM remains, but YELLOW findings are
+  formally accepted.
+- YELLOW_WITH_EXACT_BLOCKERS: findings remain and may affect readiness.
+- RED: validation, security, truth, or mandatory gates are broken.
+
+Accepted YELLOW debt MUST include:
+
+- affected files
+- exact pattern
+- severity
+- why it is not HIGH/BLOCKER
+- owner
+- target phase/version
+- expiry or review date
+- risk
+- mitigation
+- evidence location
+- V5.9 blocking decision
+- truth/backlog entry
+
+Commit is allowed with accepted YELLOW debt only if:
+
+- no BLOCKER/HIGH/MEDIUM review finding remains
+- no HIGH/BLOCKER security issue remains
+- YELLOW debt is tracked with owner/target/risk/expiry
+- truth files clearly say it is not pure FULL_GREEN
+
 ### Final Acceptance
 
-A pass may be marked GREEN only when validation and governance review are both clean.
+A pass may be marked FULL_GREEN only when validation and governance review are both clean.
 
 If validation is green but governance review is not clean, status is YELLOW or RED depending on severity.
 

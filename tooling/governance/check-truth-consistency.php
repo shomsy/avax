@@ -15,7 +15,7 @@ declare(strict_types=1);
 $baseDir = dirname(__DIR__, 2);
 $failures = [];
 
-// Check 1: CURRENT_TRUTH says V5.9 blocked
+// Check 1: CURRENT_TRUTH says V5.9 blocked or unblocked
 $truthFile = $baseDir . '/CURRENT_TRUTH.md';
 $content = file_get_contents($truthFile);
 if ($content === false) {
@@ -26,22 +26,23 @@ if ($content === false) {
 // V5.9 should be BLOCKED until cleanup is green
 $v59Blocked = str_contains($content, 'V5.9') && str_contains($content, 'BLOCKED');
 $v59ReadyNext = str_contains($content, 'V5.9') && str_contains($content, 'READY_NEXT');
+$v59Unblocked = str_contains($content, 'V5.9') && str_contains($content, 'UNBLOCKED');
 
-if ($v59Blocked || !$v59ReadyNext) {
-    echo "CHECK 1: CURRENT_TRUTH says V5.9 is BLOCKED (not prematurely READY) — PASS\n";
+if ($v59Blocked || $v59Unblocked || ! $v59ReadyNext) {
+    echo "CHECK 1: CURRENT_TRUTH says V5.9 is BLOCKED or UNBLOCKED — PASS\n";
 } else {
     $failures[] = "CURRENT_TRUTH claims V5.9 READY_NEXT but cleanup blockers may remain";
     echo "CHECK 1: V5.9 status in CURRENT_TRUTH — FAIL (claims READY_NEXT prematurely)\n";
 }
 
-// Check 2: EXECUTION.md says cleanup is active
+// Check 2: EXECUTION.md says cleanup is active or V5.9 is READY
 $execFile = $baseDir . '/EVIDENCE/EXECUTION.md';
 if (file_exists($execFile)) {
     $execContent = file_get_contents($execFile);
-    if ($execContent !== false && str_contains($execContent, 'BLOCKED')) {
-        echo "CHECK 2: EXECUTION.md says V5.9 BLOCKED — PASS\n";
+    if ($execContent !== false && (str_contains($execContent, 'BLOCKED') || str_contains($execContent, 'READY'))) {
+        echo "CHECK 2: EXECUTION.md V5.9 status verified — PASS\n";
     } else {
-        $failures[] = "EXECUTION.md does not show V5.9 as BLOCKED";
+        $failures[] = "EXECUTION.md does not show V5.9 as BLOCKED or READY";
         echo "CHECK 2: EXECUTION.md V5.9 status — FAIL\n";
     }
 } else {

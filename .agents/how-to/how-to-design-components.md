@@ -474,11 +474,16 @@ PublicSurface/
   WorkerLoop.php
 ```
 
-`PublicSurface/` receives.
+`PublicSurface/` receives and delegates.
 
-It does not execute the real behavior.
+It MUST NOT execute real behavior.
 
-It must delegate to `Flows/`, `Capabilities/`, or `Configuration/`.
+It MUST NOT instantiate services or objects other than simple value objects/DTOs/result wrappers.
+
+It MUST delegate all real logic to injectable `Flows/` or `Capabilities/`.
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
 
 A public surface class must not contain:
 

@@ -60,6 +60,9 @@ Stop the review immediately if any of the following cannot be produced:
 
 ---
 
+
+---
+
 ## Review Rules (Mandatory)
 
 1. Do **not** propose fixes in Phase 1.
@@ -71,6 +74,111 @@ Stop the review immediately if any of the following cannot be produced:
     - **Impact**: why it matters
     - **Evidence**: concrete pointers (files, classes, call paths, scenarios)
     - **Risk Level**: Low / Medium / High / Rewrite Risk
+
+---
+
+## Mandatory Recursive Governance Review Before Commit
+
+### Status
+
+MANDATORY.
+
+Implementation is not complete when tests pass.
+
+Implementation is complete only when:
+
+1. implementation/refactor/fix is done
+2. required validation passes
+3. required gates pass
+4. governance code review passes
+5. evidence is written
+6. truth/backlog files match reality
+7. staged files are intentional
+8. no forbidden generated/cache/local files are committed
+
+### Rule
+
+After every implementation, refactor, remediation, test fix, validation fix, or gate fix, the agent MUST perform a
+governance code review before commit or push.
+
+The review MUST check the changed scope against:
+
+- `AGENTS.md`
+- `.agents/how-to/how-to-code-review.md`
+- every applicable `.agents/how-to/how-to-*.md`
+- current stage evidence
+- current acceptance criteria
+- component-specific governance
+- production-readiness rules
+
+### Recursive Loop
+
+The required loop is:
+
+```text
+implement/fix
+run validation
+run gates
+perform governance review
+fix every BLOCKER/HIGH/MEDIUM finding
+rerun validation
+perform governance review again
+repeat until clean
+write evidence
+update truth/backlog
+commit
+push only if requested/allowed
+```
+
+### After Broken Test Fixes
+
+Fixing broken tests is new implementation work.
+
+Therefore, after fixing a failing test, PHPStan error, gate failure, or validation issue, the agent MUST run governance
+review again before commit.
+
+A test fix MUST NOT be committed only because the test now passes.
+
+### Required Review Checks
+
+The review MUST explicitly check:
+
+* architecture placement
+* naming rules
+* DI/container ownership
+* runtime composition leaks
+* ServiceProvider/Configuration ownership
+* Configuration/Builders boundary
+* PublicSurface delegation
+* Foundation misuse
+* hidden fallback construction
+* static state and reset safety
+* test quality
+* gate quality
+* evidence/truth consistency
+* no broad suppressions
+* no fake shims
+* no fake GREEN
+
+### Commit Rule
+
+Commit is FORBIDDEN if:
+
+* validation is failing
+* mandatory gates are failing
+* governance review has unresolved BLOCKER/HIGH/MEDIUM findings
+* truth files disagree with validation
+* evidence is missing
+* unrelated dirty files are staged
+* cache/generated/local files are staged without explicit approval
+
+### Final Acceptance
+
+A pass may be marked GREEN only when validation and governance review are both clean.
+
+If validation is green but governance review is not clean, status is YELLOW or RED depending on severity.
+
+If a mandatory `how-to-*.md` rule is violated, the scope MUST NOT be marked GREEN.
 
 ---
 
@@ -949,6 +1057,69 @@ Use one entry per significant decision.
 - **Consequences:** expected outcomes and risks
 
 - **Evidence:** findings and references
+
+---
+
+---
+
+## 14. Quality and Safety Ratchets
+
+### 14.1 Quality Ratchet Rule
+
+Metrics and quality scores MUST NOT regress from the previously established baseline.
+
+- **PHPStan Errors**: MUST stay at 0 or current baseline. New errors are BLOCKERS.
+- **Test Coverage**: MUST NOT decrease for the affected component.
+- **Runtime Leaks**: MUST stay at 0 confirmed leaks.
+- **Namespace Drift**: MUST stay at 0.
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+### 14.2 Gate Self-Test Rule
+
+Every custom validation gate or architecture test MUST have at least one negative test case (proving it fails when the
+rule is violated).
+
+- A gate that cannot fail is not a gate.
+- A gate with "0 scans" or "0 violations" is UNPROVEN until the scanner's ability to find violations is verified.
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+### 14.3 No Zero-Scan Gate Rule
+
+A validation command that reports success but scanned 0 files/units is a failure.
+
+- Every validation report MUST include the count of items scanned.
+- 0 items scanned = UNPROVEN.
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+---
+
+## 15. AI-Generated Code Suspicion Rule
+
+### 15.1 Definition of AI Suspicion
+
+All code generated or heavily assisted by an AI agent is classified as **UNPROVEN** by default.
+
+### 15.2 Mandatory Behavioral Proof
+
+AI-generated code MUST NOT be accepted based on "logic review" alone. It MUST be validated by:
+
+1. **Negative Test Case**: Prove the code fails under incorrect conditions.
+2. **Boundary Stress**: Prove the code handles null, empty, max, and invalid inputs.
+3. **Recursive Governance Review**: The code must pass the full recursive review loop.
+
+### 15.3 AI-Generated Exception Rule
+
+If an AI agent proposes a governance exception, it MUST be independently verified by a human or a secondary,
+disconnected validation process.
+
+**Status:** MANDATORY  
+**Severity:** HIGH
 
 ---
 

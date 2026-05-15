@@ -94,20 +94,24 @@ No new feature expansion should run while this report remains RED.
 
 ### GREEN
 
-A section may be marked GREEN only when:
+A section or component MUST be marked GREEN only when current validation evidence proves all requirements are met.
 
-```text
-[ ] expected files exist
-[ ] code is in the correct owner
-[ ] no duplicate owner remains
-[ ] namespaces are canonical
-[ ] autoload passes
-[ ] relevant checkers pass
-[ ] tests pass where required
-[ ] static analysis is clean or consciously baselined
-[ ] docs match source
-[ ] remaining risks are documented
-```
+- [ ] expected files exist in canonical taxonomy
+- [ ] code is in the correct owner (no technical dumping grounds)
+- [ ] no duplicate owner remains
+- [ ] namespaces are canonical and PSR-4 compliant
+- [ ] autoload passes without warnings or skipped classes
+- [ ] relevant checkers (taxonomy, public surface, leaks) pass
+- [ ] all tests pass (0 failures)
+- [ ] static analysis is green at max level or honestly baselined
+- [ ] documentation matches source reality
+- [ ] remaining risks are documented and accepted
+
+**Evidence Rule**: A GREEN claim without a timestamped validation report or a pointer to a specific test/checker output
+is **UNPROVEN** and MUST be rejected.
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
 
 ### YELLOW
 
@@ -122,18 +126,19 @@ A section may be marked YELLOW when:
 
 ### RED
 
-A section is RED when:
+A section or component MUST be marked RED when any mandatory rule is violated or any of the following exist:
 
-```text
-[ ] autoload fails
-[ ] architecture checker fails
-[ ] namespace drift exists
-[ ] tests cannot load
-[ ] PublicSurface leaks internals
-[ ] runtime safety is unproven
-[ ] source and docs disagree
-[ ] component PHPStan is not green
-```
+- [ ] autoload fails or has production warnings
+- [ ] architecture/taxonomy checker fails
+- [ ] namespace drift exists
+- [ ] tests cannot load or fail to target current code
+- [ ] PublicSurface leaks internals or has hollow behavior
+- [ ] runtime safety is unproven or has confirmed leaks
+- [ ] source and documentation disagree
+- [ ] static analysis (PHPStan/Psalm) has unbaselined errors
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
 
 ---
 
@@ -182,6 +187,23 @@ Production readiness requires all of these to be green.
 [ ] No new Build* in runtime code.
 [ ] No ?? new fallback in runtime code.
 [ ] Gate enforcement tools are path/context-aware, not class-name allowlists.
+```
+
+---
+
+## 3.1 Mandatory Recursive Governance Review Before Commit
+
+For the detailed recursive review protocol and required checks, see:
+
+```text
+.agents/how-to/how-to-code-review.md
+```
+
+**Short version:**
+
+```text
+Implementation is not complete when tests pass.
+Implementation is complete only when validation passes AND governance review passes.
 ```
 
 ---
@@ -687,7 +709,43 @@ Acceptance:
 
 ---
 
-## 6. Component Readiness Matrix
+## 8. Governance Exception Register Protocol
+
+### 8.1 Definition of an Exception
+
+A governance exception is a conscious, documented decision to temporarily or permanently waive a mandatory rule.
+
+### 8.2 Mandatory Registration
+
+Every governance deviation MUST be recorded in the **Exception Register**.
+The register is a centralized ledger (e.g., `EVIDENCE/accepted-exceptions-ledger.md` or similar).
+
+### 8.3 Required Exception Data
+
+An exception MUST include:
+
+1. **Rule**: The exact rule being waived.
+2. **Context**: Path, class, or component affected.
+3. **Reason**: Why the rule cannot be followed.
+4. **Risk**: What is the impact of waiving this rule?
+5. **Mitigation**: How is the risk managed?
+6. **Owner**: The person/agent who authorized the exception.
+7. **Expiry**: When will the exception be reviewed or cleaned up?
+
+### 8.4 Approval
+
+Exceptions MUST be explicitly accepted by a human reviewer or a higher-tier governance authority.
+
+**Silent exceptions are FORBIDDEN.**
+
+A "workaround" that is not in the register is a governance violation.
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+---
+
+## 9. Component Readiness Matrix
 
 Use this matrix as the canonical production-readiness view.
 

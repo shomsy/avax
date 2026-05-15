@@ -2479,38 +2479,12 @@ Everything must remain simple.
 The system must speak in the language of what it does, what it protects, and what must never become unclear.
 
 === how-to-architecture.md ===
-Below is a **fully expanded governance draft** in English, written as a **language-agnostic, pragmatic architecture and
-engineering governance document**. It absorbs and extends your existing standard, including the recursive/fractal flow
-rule, strict TDD, ownership law, naming law, review rules, and pragmatic multi-language applicability. It is designed to
-be dropped into a file such as `ARCHITECTURE_GOVERNANCE.md` or `ENGINEERING_GOVERNANCE.md`. It is based on and expands
-the governance text you provided.
+# AvaX Architecture Governance
+## Pragmatic Fractal Flow Architecture and Recursive Ownership Standard
 
 ## Status
 
 **MANDATORY** - This document defines non-negotiable architecture rules for AvaX.
-
-## Normative Language
-
-The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
-*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
-
-- **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
-- **MUST NOT / FORBIDDEN**: prohibited pattern.
-- **SHOULD**: expected default unless documented exception exists.
-- **SHOULD NOT**: discouraged pattern requiring justification.
-- **MAY**: optional behavior.
-- **BLOCKER**: violation prevents GREEN status.
-- **HIGH**: must be fixed before production-complete unless explicitly accepted.
-- **MEDIUM**: must be tracked and fixed or explicitly deferred.
-- **LOW**: cleanup or documentation issue.
-
-A rule without an explicit exception **MUST** be treated as mandatory.
-
-Code review **MUST NOT** mark a scope GREEN when a mandatory rule is violated.
-
-````md
-# Engineering Governance
-## Pragmatic Fractal Flow Architecture and Recursive Ownership Standard
 
 ---
 
@@ -2925,7 +2899,7 @@ Project/
   README.md
   GOVERNANCE.md
   package metadata
-````
+```
 
 The repo root does not need to scream domain behavior.
 
@@ -4520,6 +4494,40 @@ Remember these laws:
 
 ---
 
+## 52. Quality Ratchets and Gate Self-Tests
+
+### 52.1 Non-Regression Rule
+Architectural metrics and quality scores MUST NOT regress from the previously established baseline.
+
+- **Namespace Drift**: MUST stay at 0.
+- **Duplicate Owners**: MUST stay at 0.
+- **Hollow Public Surfaces**: MUST stay at 0.
+- **Technical Dumping Grounds**: MUST stay at 0 (enforced by forbidden-folder audit).
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+### 52.2 Gate Self-Test Rule
+Every architecture-specific validation gate MUST have a negative test case proving it detects violations (e.g., placing a class in a forbidden folder).
+
+**Status:** MANDATORY
+**Severity:** HIGH
+
+---
+
+## 53. Evidence-Driven Architectural Claims
+
+### 53.1 Definition of Proof
+An architectural claim (e.g., "all components are canonical") is **UNPROVEN** unless it is accompanied by a timestamped validation report from a canonical tool.
+
+### 53.2 Suspicion of Manual Claims
+Manual claims of "correctness" are classified as **HIGH RISK** and MUST be replaced by automated gate evidence at the earliest opportunity.
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+---
+
 ```
 
 
@@ -6088,6 +6096,9 @@ Stop the review immediately if any of the following cannot be produced:
 
 ---
 
+
+---
+
 ## Review Rules (Mandatory)
 
 1. Do **not** propose fixes in Phase 1.
@@ -6099,6 +6110,109 @@ Stop the review immediately if any of the following cannot be produced:
     - **Impact**: why it matters
     - **Evidence**: concrete pointers (files, classes, call paths, scenarios)
     - **Risk Level**: Low / Medium / High / Rewrite Risk
+
+---
+
+## Mandatory Recursive Governance Review Before Commit
+
+### Status
+
+MANDATORY.
+
+Implementation is not complete when tests pass.
+
+Implementation is complete only when:
+
+1. implementation/refactor/fix is done
+2. required validation passes
+3. required gates pass
+4. governance code review passes
+5. evidence is written
+6. truth/backlog files match reality
+7. staged files are intentional
+8. no forbidden generated/cache/local files are committed
+
+### Rule
+
+After every implementation, refactor, remediation, test fix, validation fix, or gate fix, the agent MUST perform a governance code review before commit or push.
+
+The review MUST check the changed scope against:
+
+- `AGENTS.md`
+- `.agents/how-to/how-to-code-review.md`
+- every applicable `.agents/how-to/how-to-*.md`
+- current stage evidence
+- current acceptance criteria
+- component-specific governance
+- production-readiness rules
+
+### Recursive Loop
+
+The required loop is:
+
+```text
+implement/fix
+run validation
+run gates
+perform governance review
+fix every BLOCKER/HIGH/MEDIUM finding
+rerun validation
+perform governance review again
+repeat until clean
+write evidence
+update truth/backlog
+commit
+push only if requested/allowed
+```
+
+### After Broken Test Fixes
+
+Fixing broken tests is new implementation work.
+
+Therefore, after fixing a failing test, PHPStan error, gate failure, or validation issue, the agent MUST run governance review again before commit.
+
+A test fix MUST NOT be committed only because the test now passes.
+
+### Required Review Checks
+
+The review MUST explicitly check:
+
+* architecture placement
+* naming rules
+* DI/container ownership
+* runtime composition leaks
+* ServiceProvider/Configuration ownership
+* Configuration/Builders boundary
+* PublicSurface delegation
+* Foundation misuse
+* hidden fallback construction
+* static state and reset safety
+* test quality
+* gate quality
+* evidence/truth consistency
+* no broad suppressions
+* no fake shims
+* no fake GREEN
+
+### Commit Rule
+
+Commit is FORBIDDEN if:
+
+* validation is failing
+* mandatory gates are failing
+* governance review has unresolved BLOCKER/HIGH/MEDIUM findings
+* truth files disagree with validation
+* evidence is missing
+* unrelated dirty files are staged
+* cache/generated/local files are staged without explicit approval
+
+### Final Acceptance
+
+A pass may be marked GREEN only when validation and governance review are both clean.
+
+If validation is green but governance review is not clean, status is YELLOW or RED depending on severity.
+
+If a mandatory `how-to-*.md` rule is violated, the scope MUST NOT be marked GREEN.
 
 ---
 
@@ -6977,6 +7091,61 @@ Use one entry per significant decision.
 - **Consequences:** expected outcomes and risks
 
 - **Evidence:** findings and references
+
+---
+
+---
+
+## 14. Quality and Safety Ratchets
+
+### 14.1 Quality Ratchet Rule
+Metrics and quality scores MUST NOT regress from the previously established baseline.
+
+- **PHPStan Errors**: MUST stay at 0 or current baseline. New errors are BLOCKERS.
+- **Test Coverage**: MUST NOT decrease for the affected component.
+- **Runtime Leaks**: MUST stay at 0 confirmed leaks.
+- **Namespace Drift**: MUST stay at 0.
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+### 14.2 Gate Self-Test Rule
+Every custom validation gate or architecture test MUST have at least one negative test case (proving it fails when the rule is violated).
+
+- A gate that cannot fail is not a gate.
+- A gate with "0 scans" or "0 violations" is UNPROVEN until the scanner's ability to find violations is verified.
+
+**Status:** MANDATORY
+**Severity:** HIGH
+
+### 14.3 No Zero-Scan Gate Rule
+A validation command that reports success but scanned 0 files/units is a failure.
+
+- Every validation report MUST include the count of items scanned.
+- 0 items scanned = UNPROVEN.
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+---
+
+## 15. AI-Generated Code Suspicion Rule
+
+### 15.1 Definition of AI Suspicion
+All code generated or heavily assisted by an AI agent is classified as **UNPROVEN** by default.
+
+### 15.2 Mandatory Behavioral Proof
+AI-generated code MUST NOT be accepted based on "logic review" alone. It MUST be validated by:
+
+1. **Negative Test Case**: Prove the code fails under incorrect conditions.
+2. **Boundary Stress**: Prove the code handles null, empty, max, and invalid inputs.
+3. **Recursive Governance Review**: The code must pass the full recursive review loop.
+
+### 15.3 AI-Generated Exception Rule
+If an AI agent proposes a governance exception, it MUST be independently verified by a human or a secondary, disconnected validation process.
+
+**Status:** MANDATORY
+**Severity:** HIGH
 
 ---
 
@@ -9224,11 +9393,37 @@ $container->bind(
 
 **Rules:**
 
-- No `$dependency ?? new Dependency()` in runtime services.
-- No constructor defaults like `private Foo $foo = new Foo()`.
-- No fallback construction hidden inside service factory closures.
-- Register explicit default bindings first.
-- Resolve dependencies from the container after that.
+- MUST register explicit default bindings first.
+- MUST resolve dependencies from the container after that.
+
+---
+
+## 3.7 Missing dependency failure belongs to container compile/verify/boot
+
+Required dependencies MUST fail during container compile/verify/boot.
+
+Runtime/business code MUST NOT contain missing-dependency checks for framework services.
+
+Forbidden in runtime/business code:
+
+- `if ($this->filesystem === null) throw ...`
+- `if (! $container->has(...)) throw ...`
+- `$dependency ?? new Dependency()`
+- `$container->has(...) ? $container->get(...) : new Dependency()`
+
+If a dependency is required, constructor injection must require it.
+
+If a default exists, it must be registered as an explicit default binding.
+
+If no binding exists, container verification must fail before runtime execution starts.
+
+**Short version:**
+
+```text
+Dependency failure belongs to boot.
+Business code belongs to business.
+Runtime must never discover that the app was badly assembled.
+```
 
 ---
 
@@ -9236,10 +9431,9 @@ $container->bind(
 
 ### 4.0 Active Component ServiceProvider Rule
 
-Every ACTIVE production component with runtime behavior, public API, dependencies, replaceable services, state, I/O,
-configuration, or lifecycle ownership MUST have exactly one real ServiceProvider.
+Every ACTIVE production component with runtime behavior, public API, dependencies, replaceable services, state, I/O, configuration, or lifecycle ownership MUST have exactly one real ServiceProvider.
 
-A real ServiceProvider registers at least one of:
+A real ServiceProvider MUST register at least one of:
 
 - component public API entrypoints
 - runtime services
@@ -9262,54 +9456,29 @@ The following component statuses are exempt from mandatory ServiceProvider creat
 - PURE_FOUNDATION
 - DEPRECATED, if inactive and classified
 
-Exempt components MUST be classified in component-status-lock.
+Exempt components MUST be classified in component-status-lock or current governance evidence.
 
 **Empty ServiceProvider shells are FORBIDDEN.**
 
-A ServiceProvider that registers nothing, only exists to satisfy a gate, or contains TODO-only behavior is a governance
-violation.
+A ServiceProvider that registers nothing, only exists to satisfy a gate, or contains TODO-only behavior is a governance violation.
 
-**BAD:**
+**Status:** MANDATORY
+**Severity:** BLOCKER
 
-```php
-final class EmptyServiceProvider
-{
-    public function register(Container $container): void
-    {
-        // TODO
-    }
-}
-```
+### 4.1 Root Application Container + FrameworkBootstrapServiceProvider Rule
 
-**GOOD:**
+The framework MUST have a dedicated `FrameworkBootstrapServiceProvider` located in `framework/System/Configuration/`.
 
-```php
-final readonly class ResponseServiceProvider
-{
-    public function register(Container $container): void
-    {
-        $container->bind(
-            CreateHttpResponse::class,
-            static fn (): CreateHttpResponse => new CreateHttpResponse(),
-        );
+This provider is responsible for the earliest bootstrap phase and MUST:
 
-        $container->bind(
-            Responses::class,
-            static fn (Container $container): Responses => new Responses(
-                createHttpResponse: $container->get(CreateHttpResponse::class),
-            ),
-        );
-    }
-}
-```
+1. Bind the `RootApplicationContainer` itself into the container.
+2. Use the canonical alias `avax.container` for the root container.
+3. Ensure the container is available as a service for approved composition contexts.
 
-Acceptance criteria:
+**Status:** MANDATORY
+**Severity:** BLOCKER
 
-- ACTIVE_GREEN runtime components have real ServiceProvider/assembly ownership.
-- ROADMAP/SCAFFOLD/LABS_ONLY components are not forced to create fake providers.
-- Every missing provider has status, owner, target stage, and blocking decision if relevant.
-
-### 4.1 The Rule
+### 4.2 The Rule
 
 Every ACTIVE component MUST have exactly one ServiceProvider.
 
@@ -9317,7 +9486,7 @@ The ServiceProvider is the composition root for that component.
 
 It lives in `System/Configuration/<ComponentName>ServiceProvider.php`.
 
-### 4.2 ServiceProvider Contract
+### 4.3 ServiceProvider Contract
 
 ```php
 interface ServiceProvider
@@ -9339,7 +9508,7 @@ interface ServiceProvider
 }
 ```
 
-### 4.3 Registration Rules
+### 4.4 Registration Rules
 
 ```text
 register() MUST declare all public APIs of the component.
@@ -9350,7 +9519,7 @@ register() MUST NOT instantiate classes outside container registration.
 register() MUST NOT contain business logic.
 ```
 
-### 4.4 Boot Rules
+### 4.5 Boot Rules
 
 ```text
 boot() runs AFTER all ServiceProviders have registered.
@@ -9398,7 +9567,7 @@ boot() **MUST**:
 boot() MAY register health checks.
 boot() MUST NOT execute expensive/destructive/external health checks during normal boot unless explicitly configured.
 
-### 4.5 Example ServiceProvider
+### 4.6 Example ServiceProvider
 
 ```php
 final class HttpServiceProvider implements ServiceProvider
@@ -9428,7 +9597,7 @@ final class HttpServiceProvider implements ServiceProvider
 }
 ```
 
-### 4.6 ServiceProvider Discovery
+### 4.7 ServiceProvider Discovery
 
 The framework boot process MUST:
 
@@ -9440,7 +9609,7 @@ The framework boot process MUST:
 5. Validate all registered bindings resolve
 ```
 
-### 4.7 ServiceProvider Builder Delegation
+### 4.8 ServiceProvider Builder Delegation
 
 A ServiceProvider should stay small.
 
@@ -9595,9 +9764,43 @@ Every other `new Class()` in production code is a violation.
 
 ---
 
-## 6. Container Ownership Rule
+## 6. Container Lifetime and Scope Taxonomy
 
-### 6.1 Core Principle
+AvaX uses a strict taxonomy for container object lifetimes and scopes.
+Bindings MUST explicitly declare their intended scope.
+
+### 7.1 Singleton Scope
+- **Meaning**: One instance per application lifetime.
+- **Use when**: Stateless services, immutable config, thread-safe global capabilities.
+- **Worker Safety**: Must be stateless or have explicit `reset()` for worker loops.
+
+### 7.2 Scoped (Request/Job) Scope
+- **Meaning**: One instance per execution unit (HTTP Request, CLI Command, Queue Job).
+- **Use when**: Request-specific state, session, current user, database transaction.
+- **Worker Safety**: MUST be cleared or recreated at the start of each execution loop.
+
+### 7.3 Transient Scope
+- **Meaning**: New instance for every resolution.
+- **Use when**: Short-lived builders, lightweight strategy objects, non-reusable stateful units.
+
+### 7.4 Tenant Scope (SaaS)
+- **Meaning**: One instance per tenant identifier.
+- **Use when**: Tenant-specific configuration, isolated storage adapters.
+
+### 7.5 Test/Mock Scope
+- **Meaning**: Instance valid only during test execution.
+- **Use when**: Fakes, mocks, or specialized test-only infrastructure.
+
+**Rule:** Every binding in a `ServiceProvider` SHOULD aim for `singleton` by default unless request-scoped state is involved.
+
+**Status:** MANDATORY
+**Severity:** HIGH
+
+---
+
+## 7. Container Ownership Rule
+
+### 7.1 Core Principle
 
 ```text
 Value objects can be new.
@@ -9610,7 +9813,7 @@ This rule resolves the fundamental question: "When is `new` allowed?"
 
 The answer depends on **what the object is** and **where the code lives**.
 
-### 6.2 When DI/Container is MANDATORY
+### 7.2 When DI/Container is MANDATORY
 
 A class MUST be container-managed when it is:
 
@@ -9675,7 +9878,7 @@ final readonly class HandleIncomingHttp
 }
 ```
 
-### 6.3 When direct `new` is ALLOWED — Data and Result Objects
+### 7.3 When direct `new` is ALLOWED — Data and Result Objects
 
 A class does NOT need to be container-managed when it is:
 
@@ -9719,7 +9922,7 @@ return new Response(
 
 This is allowed because `Response` is the **result**, not the **service**.
 
-### 6.4 Decision Tests
+### 7.4 Decision Tests
 
 When unsure, apply this test:
 
@@ -9756,7 +9959,7 @@ new Logger()
 new QueryOrchestrator()
 ```
 
-### 6.5 Direct `new` by Path Context — Not by Class Name
+### 7.5 Direct `new` by Path Context — Not by Class Name
 
 Permissions are **path/context-based**, not class-name-based.
 
@@ -9779,7 +9982,7 @@ Saying "Filesystem is allowed" is wrong.
 
 Saying "Filesystem may be `new` in ServiceProvider, Configuration, Builder, test, or tooling context" is correct.
 
-### 6.6 Factory Class Precision
+### 7.6 Factory Class Precision
 
 A factory may instantiate produced result objects.
 
@@ -9997,6 +10200,59 @@ Runtime execution must only execute.
 Is it a machine? It comes from DI.
 Is it a product? It may be new.
 Is it optional? It is registered, not detected.
+```
+
+
+---
+
+## 7. Root Application Container Rule
+
+AvaX MUST use one canonical root Application Container as the runtime object graph owner.
+
+Components MUST NOT own independent runtime containers by default.
+
+Components own registrations through:
+- ServiceProviders
+- ComponentDefinitions
+- Configuration/Builders
+
+The root container owns:
+- object graph
+- lifecycle scopes
+- verification
+- freezing
+- runtime resolution
+
+FrameworkBootstrapServiceProvider or FrameworkCoreServiceProvider MUST load first.
+
+It may register only framework-level primitives/defaults/lifecycle services:
+- Clock / SystemClock
+- Filesystem
+- Logger / NullLogger
+- ResolveCallable
+- ComponentRegistry
+- ProviderRegistry
+- ResettableStateRegistry
+- RequestScopeFactory
+- HealthRegistry
+- container compile/verify hooks
+
+It MUST NOT register component-specific behavior such as Router, Database, Auth, Queue, GraphQL, Response, Cache stores, or Events internals unless those are true framework bootstrap primitives.
+
+Child containers/scopes MAY exist only for lifecycle isolation:
+- request
+- worker
+- tenant
+- plugin sandbox
+- tests
+
+**Short version:**
+
+```text
+Component is not a container.
+Component owns registrations.
+Application container owns the graph.
+Runtime scope owns lifecycle state.
 ```
 
 ---
@@ -10915,11 +11171,16 @@ PublicSurface/
   WorkerLoop.php
 ```
 
-`PublicSurface/` receives.
+`PublicSurface/` receives and delegates.
 
-It does not execute the real behavior.
+It MUST NOT execute real behavior.
 
-It must delegate to `Flows/`, `Capabilities/`, or `Configuration/`.
+It MUST NOT instantiate services or objects other than simple value objects/DTOs/result wrappers.
+
+It MUST delegate all real logic to injectable `Flows/` or `Capabilities/`.
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
 
 A public surface class must not contain:
 
@@ -15556,6 +15817,73 @@ No async without queue.
 
 No GREEN without evidence.
 
+=== how-to-git.md ===
+# how-to-git.md
+
+# AvaX Git & Workflow Governance
+
+## 1. Status
+
+**MANDATORY** — This document defines the non-negotiable workflow for commits, pushes, and reviews in AvaX.
+
+---
+
+## 2. Core Principle
+
+AvaX is governed by evidence, not optimism.
+
+Commit/push is forbidden after validation only.
+
+---
+
+## 3. Workflow Protocol
+
+Commit/push is allowed only after:
+
+1. **Implementation/Fix Complete**: The task is fully implemented according to the requirement.
+2. **Validation Passes**: The focused or full validation set (per `AGENTS.md`) is GREEN.
+3. **Relevant Gates Pass**: Architecture, security, and performance gates are GREEN.
+4. **Recursive Governance Code Review Passes**: The work has been reviewed against all relevant `how-to-*.md` documents.
+5. **Evidence is Written**: Operational artifacts and proof reports are updated in `EVIDENCE/`.
+6. **Truth/Backlog Reconciled**: `CURRENT_TRUTH.md`, `TODO.md`, and `BUGS.md` are updated.
+7. **Staged Files are Intentional**: `git status` shows only the intended changes.
+8. **No Local Junk**: No cache, generated, or local files (`.phpunit.cache`, `vendor`, `.qoder/worktrees`, etc.) are committed.
+
+---
+
+## 4. Mandatory Recursive Governance Review Before Commit
+
+For the detailed recursive review protocol and required checks, see:
+
+```text
+.agents/how-to/how-to-code-review.md
+```
+
+**Short version:**
+
+```text
+Implementation is not complete when tests pass.
+Implementation is complete only when validation passes AND governance review passes.
+```
+
+---
+
+## 5. Commit Discipline
+
+- MUST check `git status` before every commit.
+- MUST use descriptive commit messages.
+- MUST NOT commit `vendor/`.
+- MUST NOT commit `.phpunit.cache`.
+- MUST NOT commit `avax.txt` (unless explicitly requested as a snapshot).
+- MUST NOT commit `.qoder/worktrees/`.
+- MUST NOT introduce accidental structural drift.
+
+---
+
+## 6. Final Gate
+
+A task MUST NOT be marked CLOSED until the evidence report is committed and the status in `CURRENT_TRUTH.md` is updated to GREEN based on that evidence.
+
 === how-to-modern-php-attributes-di.md ===
 # how-to-modern-php-attributes-di.md
 
@@ -16444,20 +16772,23 @@ No new feature expansion should run while this report remains RED.
 
 ### GREEN
 
-A section may be marked GREEN only when:
+A section or component MUST be marked GREEN only when current validation evidence proves all requirements are met.
 
-```text
-[ ] expected files exist
-[ ] code is in the correct owner
-[ ] no duplicate owner remains
-[ ] namespaces are canonical
-[ ] autoload passes
-[ ] relevant checkers pass
-[ ] tests pass where required
-[ ] static analysis is clean or consciously baselined
-[ ] docs match source
-[ ] remaining risks are documented
-```
+- [ ] expected files exist in canonical taxonomy
+- [ ] code is in the correct owner (no technical dumping grounds)
+- [ ] no duplicate owner remains
+- [ ] namespaces are canonical and PSR-4 compliant
+- [ ] autoload passes without warnings or skipped classes
+- [ ] relevant checkers (taxonomy, public surface, leaks) pass
+- [ ] all tests pass (0 failures)
+- [ ] static analysis is green at max level or honestly baselined
+- [ ] documentation matches source reality
+- [ ] remaining risks are documented and accepted
+
+**Evidence Rule**: A GREEN claim without a timestamped validation report or a pointer to a specific test/checker output is **UNPROVEN** and MUST be rejected.
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
 
 ### YELLOW
 
@@ -16472,18 +16803,19 @@ A section may be marked YELLOW when:
 
 ### RED
 
-A section is RED when:
+A section or component MUST be marked RED when any mandatory rule is violated or any of the following exist:
 
-```text
-[ ] autoload fails
-[ ] architecture checker fails
-[ ] namespace drift exists
-[ ] tests cannot load
-[ ] PublicSurface leaks internals
-[ ] runtime safety is unproven
-[ ] source and docs disagree
-[ ] component PHPStan is not green
-```
+- [ ] autoload fails or has production warnings
+- [ ] architecture/taxonomy checker fails
+- [ ] namespace drift exists
+- [ ] tests cannot load or fail to target current code
+- [ ] PublicSurface leaks internals or has hollow behavior
+- [ ] runtime safety is unproven or has confirmed leaks
+- [ ] source and documentation disagree
+- [ ] static analysis (PHPStan/Psalm) has unbaselined errors
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
 
 ---
 
@@ -16532,6 +16864,23 @@ Production readiness requires all of these to be green.
 [ ] No new Build* in runtime code.
 [ ] No ?? new fallback in runtime code.
 [ ] Gate enforcement tools are path/context-aware, not class-name allowlists.
+```
+
+---
+
+## 3.1 Mandatory Recursive Governance Review Before Commit
+
+For the detailed recursive review protocol and required checks, see:
+
+```text
+.agents/how-to/how-to-code-review.md
+```
+
+**Short version:**
+
+```text
+Implementation is not complete when tests pass.
+Implementation is complete only when validation passes AND governance review passes.
 ```
 
 ---
@@ -17037,7 +17386,39 @@ Acceptance:
 
 ---
 
-## 6. Component Readiness Matrix
+## 8. Governance Exception Register Protocol
+
+### 8.1 Definition of an Exception
+A governance exception is a conscious, documented decision to temporarily or permanently waive a mandatory rule.
+
+### 8.2 Mandatory Registration
+Every governance deviation MUST be recorded in the **Exception Register**.
+The register is a centralized ledger (e.g., `EVIDENCE/accepted-exceptions-ledger.md` or similar).
+
+### 8.3 Required Exception Data
+An exception MUST include:
+
+1. **Rule**: The exact rule being waived.
+2. **Context**: Path, class, or component affected.
+3. **Reason**: Why the rule cannot be followed.
+4. **Risk**: What is the impact of waiving this rule?
+5. **Mitigation**: How is the risk managed?
+6. **Owner**: The person/agent who authorized the exception.
+7. **Expiry**: When will the exception be reviewed or cleaned up?
+
+### 8.4 Approval
+Exceptions MUST be explicitly accepted by a human reviewer or a higher-tier governance authority.
+
+**Silent exceptions are FORBIDDEN.**
+
+A "workaround" that is not in the register is a governance violation.
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+---
+
+## 9. Component Readiness Matrix
 
 Use this matrix as the canonical production-readiness view.
 
@@ -18310,6 +18691,56 @@ A stage **MUST** be RED if:
 
 ---
 
+## 11. Runtime Service Locator Prohibition
+
+### 11.1 Definition
+A Service Locator is any pattern where a runtime class requests its own dependencies from a container or registry at runtime.
+
+### 11.2 Mandatory DI
+Runtime classes MUST use constructor injection.
+
+- **FORBIDDEN**: `$container->get(...)` inside a Flow or Capability.
+- **FORBIDDEN**: `Avax::get(...)` inside a Flow or Capability.
+- **FORBIDDEN**: Passing the container itself as a dependency to a runtime class.
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+---
+
+## 12. Non-Negotiable Composition Evidence
+
+### 12.1 Composition Report
+Every component commit MUST prove that all runtime dependencies are correctly bound.
+
+### 12.2 Zero-Scan Gate Rule
+A composition scan that reports 0 findings is UNPROVEN unless the scanner confirms the count of files scanned.
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+---
+
+## 13. Builder Standards and Prohibitions
+
+### 13.1 Builder Responsibility
+A Builder in `Configuration/Builders/` MUST own exactly one assembly graph.
+
+### 13.2 Builder Dumping Ground Prohibition
+Builders MUST NOT become generic technical categories.
+
+- **FORBIDDEN**: `CommonBuilder.php`
+- **FORBIDDEN**: `InternalBuilder.php`
+- **FORBIDDEN**: `GeneralConfiguration.php`
+
+### 13.3 Static Construction in Builders
+Builders SHOULD use static methods for construction to avoid state leaks in warm runtimes.
+
+**Status:** MANDATORY
+**Severity:** HIGH
+
+---
+
 ## Final Runtime Composition Law
 
 ```text
@@ -18335,6 +18766,27 @@ If it is a product, it may be new.
 If it is optional, it is registered, not detected.
 
 Runtime receives ready pipeline.
+```
+
+---
+
+## 8. Root Application Container Rule
+
+AvaX MUST use one canonical root Application Container as the runtime object graph owner.
+
+For the full governance of container ownership and registration, see:
+
+```text
+.agents/how-to/how-to-dependency-injection.md
+```
+
+**Short version:**
+
+```text
+Component is not a container.
+Component owns registrations.
+Application container owns the graph.
+Runtime scope owns lifecycle state.
 ```
 
 === how-to-system-performance.md ===

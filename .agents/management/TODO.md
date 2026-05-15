@@ -25,6 +25,22 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: V5.8.9
+- `created_at`: 2026-05-15
+- `updated_at`: 2026-05-15
+- `status`: done
+- `estimate`: small
+- `outcome`: V5.8.9 Governance Documentation Update — COMPLETE / GREEN. Root Application Container, Boot-time Dependency
+  Verification, Git Workflow, and Mandatory Recursive Governance Review Before Commit added to how-to documents. 5 files
+  modified/created.
+- `acceptance`: how-to-dependency-injection.md contains Root Application Container and Section 3.7 rules.
+  how-to-runtime-composition.md cross-references Root Application Container. how-to-git.md created with commit/review
+  workflow. how-to-code-review.md contains the full Mandatory Recursive Governance Review Before Commit rule. No broken
+  links.
+- `links`: `.agents/how-to/how-to-dependency-injection.md`, `.agents/how-to/how-to-runtime-composition.md`,
+  `.agents/how-to/how-to-git.md`, `.agents/how-to/how-to-code-review.md`,
+  `.agents/how-to/how-to-production-readiness.md`
+
 - `id`: V5.8.8
 - `created_at`: 2026-05-15
 - `updated_at`: 2026-05-15

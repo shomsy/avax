@@ -210,11 +210,37 @@ $container->bind(
 
 **Rules:**
 
-- No `$dependency ?? new Dependency()` in runtime services.
-- No constructor defaults like `private Foo $foo = new Foo()`.
-- No fallback construction hidden inside service factory closures.
-- Register explicit default bindings first.
-- Resolve dependencies from the container after that.
+- MUST register explicit default bindings first.
+- MUST resolve dependencies from the container after that.
+
+---
+
+## 3.7 Missing dependency failure belongs to container compile/verify/boot
+
+Required dependencies MUST fail during container compile/verify/boot.
+
+Runtime/business code MUST NOT contain missing-dependency checks for framework services.
+
+Forbidden in runtime/business code:
+
+- `if ($this->filesystem === null) throw ...`
+- `if (! $container->has(...)) throw ...`
+- `$dependency ?? new Dependency()`
+- `$container->has(...) ? $container->get(...) : new Dependency()`
+
+If a dependency is required, constructor injection must require it.
+
+If a default exists, it must be registered as an explicit default binding.
+
+If no binding exists, container verification must fail before runtime execution starts.
+
+**Short version:**
+
+```text
+Dependency failure belongs to boot.
+Business code belongs to business.
+Runtime must never discover that the app was badly assembled.
+```
 
 ---
 
@@ -225,7 +251,7 @@ $container->bind(
 Every ACTIVE production component with runtime behavior, public API, dependencies, replaceable services, state, I/O,
 configuration, or lifecycle ownership MUST have exactly one real ServiceProvider.
 
-A real ServiceProvider registers at least one of:
+A real ServiceProvider MUST register at least one of:
 
 - component public API entrypoints
 - runtime services
@@ -248,54 +274,30 @@ The following component statuses are exempt from mandatory ServiceProvider creat
 - PURE_FOUNDATION
 - DEPRECATED, if inactive and classified
 
-Exempt components MUST be classified in component-status-lock.
+Exempt components MUST be classified in component-status-lock or current governance evidence.
 
 **Empty ServiceProvider shells are FORBIDDEN.**
 
 A ServiceProvider that registers nothing, only exists to satisfy a gate, or contains TODO-only behavior is a governance
 violation.
 
-**BAD:**
+**Status:** MANDATORY  
+**Severity:** BLOCKER
 
-```php
-final class EmptyServiceProvider
-{
-    public function register(Container $container): void
-    {
-        // TODO
-    }
-}
-```
+### 4.1 Root Application Container + FrameworkBootstrapServiceProvider Rule
 
-**GOOD:**
+The framework MUST have a dedicated `FrameworkBootstrapServiceProvider` located in `framework/System/Configuration/`.
 
-```php
-final readonly class ResponseServiceProvider
-{
-    public function register(Container $container): void
-    {
-        $container->bind(
-            CreateHttpResponse::class,
-            static fn (): CreateHttpResponse => new CreateHttpResponse(),
-        );
+This provider is responsible for the earliest bootstrap phase and MUST:
 
-        $container->bind(
-            Responses::class,
-            static fn (Container $container): Responses => new Responses(
-                createHttpResponse: $container->get(CreateHttpResponse::class),
-            ),
-        );
-    }
-}
-```
+1. Bind the `RootApplicationContainer` itself into the container.
+2. Use the canonical alias `avax.container` for the root container.
+3. Ensure the container is available as a service for approved composition contexts.
 
-Acceptance criteria:
+**Status:** MANDATORY  
+**Severity:** BLOCKER
 
-- ACTIVE_GREEN runtime components have real ServiceProvider/assembly ownership.
-- ROADMAP/SCAFFOLD/LABS_ONLY components are not forced to create fake providers.
-- Every missing provider has status, owner, target stage, and blocking decision if relevant.
-
-### 4.1 The Rule
+### 4.2 The Rule
 
 Every ACTIVE component MUST have exactly one ServiceProvider.
 
@@ -303,7 +305,7 @@ The ServiceProvider is the composition root for that component.
 
 It lives in `System/Configuration/<ComponentName>ServiceProvider.php`.
 
-### 4.2 ServiceProvider Contract
+### 4.3 ServiceProvider Contract
 
 ```php
 interface ServiceProvider
@@ -325,7 +327,7 @@ interface ServiceProvider
 }
 ```
 
-### 4.3 Registration Rules
+### 4.4 Registration Rules
 
 ```text
 register() MUST declare all public APIs of the component.
@@ -336,7 +338,7 @@ register() MUST NOT instantiate classes outside container registration.
 register() MUST NOT contain business logic.
 ```
 
-### 4.4 Boot Rules
+### 4.5 Boot Rules
 
 ```text
 boot() runs AFTER all ServiceProviders have registered.
@@ -384,7 +386,7 @@ boot() **MUST**:
 boot() MAY register health checks.
 boot() MUST NOT execute expensive/destructive/external health checks during normal boot unless explicitly configured.
 
-### 4.5 Example ServiceProvider
+### 4.6 Example ServiceProvider
 
 ```php
 final class HttpServiceProvider implements ServiceProvider
@@ -414,7 +416,7 @@ final class HttpServiceProvider implements ServiceProvider
 }
 ```
 
-### 4.6 ServiceProvider Discovery
+### 4.7 ServiceProvider Discovery
 
 The framework boot process MUST:
 
@@ -426,7 +428,7 @@ The framework boot process MUST:
 5. Validate all registered bindings resolve
 ```
 
-### 4.7 ServiceProvider Builder Delegation
+### 4.8 ServiceProvider Builder Delegation
 
 A ServiceProvider should stay small.
 
@@ -581,9 +583,49 @@ Every other `new Class()` in production code is a violation.
 
 ---
 
-## 6. Container Ownership Rule
+## 6. Container Lifetime and Scope Taxonomy
 
-### 6.1 Core Principle
+AvaX uses a strict taxonomy for container object lifetimes and scopes.
+Bindings MUST explicitly declare their intended scope.
+
+### 7.1 Singleton Scope
+
+- **Meaning**: One instance per application lifetime.
+- **Use when**: Stateless services, immutable config, thread-safe global capabilities.
+- **Worker Safety**: Must be stateless or have explicit `reset()` for worker loops.
+
+### 7.2 Scoped (Request/Job) Scope
+
+- **Meaning**: One instance per execution unit (HTTP Request, CLI Command, Queue Job).
+- **Use when**: Request-specific state, session, current user, database transaction.
+- **Worker Safety**: MUST be cleared or recreated at the start of each execution loop.
+
+### 7.3 Transient Scope
+
+- **Meaning**: New instance for every resolution.
+- **Use when**: Short-lived builders, lightweight strategy objects, non-reusable stateful units.
+
+### 7.4 Tenant Scope (SaaS)
+
+- **Meaning**: One instance per tenant identifier.
+- **Use when**: Tenant-specific configuration, isolated storage adapters.
+
+### 7.5 Test/Mock Scope
+
+- **Meaning**: Instance valid only during test execution.
+- **Use when**: Fakes, mocks, or specialized test-only infrastructure.
+
+**Rule:** Every binding in a `ServiceProvider` SHOULD aim for `singleton` by default unless request-scoped state is
+involved.
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+---
+
+## 7. Container Ownership Rule
+
+### 7.1 Core Principle
 
 ```text
 Value objects can be new.
@@ -596,7 +638,7 @@ This rule resolves the fundamental question: "When is `new` allowed?"
 
 The answer depends on **what the object is** and **where the code lives**.
 
-### 6.2 When DI/Container is MANDATORY
+### 7.2 When DI/Container is MANDATORY
 
 A class MUST be container-managed when it is:
 
@@ -661,7 +703,7 @@ final readonly class HandleIncomingHttp
 }
 ```
 
-### 6.3 When direct `new` is ALLOWED — Data and Result Objects
+### 7.3 When direct `new` is ALLOWED — Data and Result Objects
 
 A class does NOT need to be container-managed when it is:
 
@@ -705,7 +747,7 @@ return new Response(
 
 This is allowed because `Response` is the **result**, not the **service**.
 
-### 6.4 Decision Tests
+### 7.4 Decision Tests
 
 When unsure, apply this test:
 
@@ -742,7 +784,7 @@ new Logger()
 new QueryOrchestrator()
 ```
 
-### 6.5 Direct `new` by Path Context — Not by Class Name
+### 7.5 Direct `new` by Path Context — Not by Class Name
 
 Permissions are **path/context-based**, not class-name-based.
 
@@ -765,7 +807,7 @@ Saying "Filesystem is allowed" is wrong.
 
 Saying "Filesystem may be `new` in ServiceProvider, Configuration, Builder, test, or tooling context" is correct.
 
-### 6.6 Factory Class Precision
+### 7.6 Factory Class Precision
 
 A factory may instantiate produced result objects.
 
@@ -983,6 +1025,63 @@ Runtime execution must only execute.
 Is it a machine? It comes from DI.
 Is it a product? It may be new.
 Is it optional? It is registered, not detected.
+```
+
+---
+
+## 7. Root Application Container Rule
+
+AvaX MUST use one canonical root Application Container as the runtime object graph owner.
+
+Components MUST NOT own independent runtime containers by default.
+
+Components own registrations through:
+
+- ServiceProviders
+- ComponentDefinitions
+- Configuration/Builders
+
+The root container owns:
+
+- object graph
+- lifecycle scopes
+- verification
+- freezing
+- runtime resolution
+
+FrameworkBootstrapServiceProvider or FrameworkCoreServiceProvider MUST load first.
+
+It may register only framework-level primitives/defaults/lifecycle services:
+
+- Clock / SystemClock
+- Filesystem
+- Logger / NullLogger
+- ResolveCallable
+- ComponentRegistry
+- ProviderRegistry
+- ResettableStateRegistry
+- RequestScopeFactory
+- HealthRegistry
+- container compile/verify hooks
+
+It MUST NOT register component-specific behavior such as Router, Database, Auth, Queue, GraphQL, Response, Cache stores,
+or Events internals unless those are true framework bootstrap primitives.
+
+Child containers/scopes MAY exist only for lifecycle isolation:
+
+- request
+- worker
+- tenant
+- plugin sandbox
+- tests
+
+**Short version:**
+
+```text
+Component is not a container.
+Component owns registrations.
+Application container owns the graph.
+Runtime scope owns lifecycle state.
 ```
 
 ---

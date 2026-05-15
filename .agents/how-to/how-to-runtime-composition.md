@@ -941,6 +941,64 @@ A stage **MUST** be RED if:
 
 ---
 
+## 11. Runtime Service Locator Prohibition
+
+### 11.1 Definition
+
+A Service Locator is any pattern where a runtime class requests its own dependencies from a container or registry at
+runtime.
+
+### 11.2 Mandatory DI
+
+Runtime classes MUST use constructor injection.
+
+- **FORBIDDEN**: `$container->get(...)` inside a Flow or Capability.
+- **FORBIDDEN**: `Avax::get(...)` inside a Flow or Capability.
+- **FORBIDDEN**: Passing the container itself as a dependency to a runtime class.
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+---
+
+## 12. Non-Negotiable Composition Evidence
+
+### 12.1 Composition Report
+
+Every component commit MUST prove that all runtime dependencies are correctly bound.
+
+### 12.2 Zero-Scan Gate Rule
+
+A composition scan that reports 0 findings is UNPROVEN unless the scanner confirms the count of files scanned.
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+---
+
+## 13. Builder Standards and Prohibitions
+
+### 13.1 Builder Responsibility
+
+A Builder in `Configuration/Builders/` MUST own exactly one assembly graph.
+
+### 13.2 Builder Dumping Ground Prohibition
+
+Builders MUST NOT become generic technical categories.
+
+- **FORBIDDEN**: `CommonBuilder.php`
+- **FORBIDDEN**: `InternalBuilder.php`
+- **FORBIDDEN**: `GeneralConfiguration.php`
+
+### 13.3 Static Construction in Builders
+
+Builders SHOULD use static methods for construction to avoid state leaks in warm runtimes.
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+---
+
 ## Final Runtime Composition Law
 
 ```text
@@ -966,4 +1024,25 @@ If it is a product, it may be new.
 If it is optional, it is registered, not detected.
 
 Runtime receives ready pipeline.
+```
+
+---
+
+## 8. Root Application Container Rule
+
+AvaX MUST use one canonical root Application Container as the runtime object graph owner.
+
+For the full governance of container ownership and registration, see:
+
+```text
+.agents/how-to/how-to-dependency-injection.md
+```
+
+**Short version:**
+
+```text
+Component is not a container.
+Component owns registrations.
+Application container owns the graph.
+Runtime scope owns lifecycle state.
 ```

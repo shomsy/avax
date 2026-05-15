@@ -1,35 +1,10 @@
-Below is a **fully expanded governance draft** in English, written as a **language-agnostic, pragmatic architecture and
-engineering governance document**. It absorbs and extends your existing standard, including the recursive/fractal flow
-rule, strict TDD, ownership law, naming law, review rules, and pragmatic multi-language applicability. It is designed to
-be dropped into a file such as `ARCHITECTURE_GOVERNANCE.md` or `ENGINEERING_GOVERNANCE.md`. It is based on and expands
-the governance text you provided.
+# AvaX Architecture Governance
+
+## Pragmatic Fractal Flow Architecture and Recursive Ownership Standard
 
 ## Status
 
 **MANDATORY** - This document defines non-negotiable architecture rules for AvaX.
-
-## Normative Language
-
-The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
-*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
-
-- **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
-- **MUST NOT / FORBIDDEN**: prohibited pattern.
-- **SHOULD**: expected default unless documented exception exists.
-- **SHOULD NOT**: discouraged pattern requiring justification.
-- **MAY**: optional behavior.
-- **BLOCKER**: violation prevents GREEN status.
-- **HIGH**: must be fixed before production-complete unless explicitly accepted.
-- **MEDIUM**: must be tracked and fixed or explicitly deferred.
-- **LOW**: cleanup or documentation issue.
-
-A rule without an explicit exception **MUST** be treated as mandatory.
-
-Code review **MUST NOT** mark a scope GREEN when a mandatory rule is violated.
-
-````md
-# Engineering Governance
-## Pragmatic Fractal Flow Architecture and Recursive Ownership Standard
 
 ---
 
@@ -444,7 +419,7 @@ Project/
   README.md
   GOVERNANCE.md
   package metadata
-````
+```
 
 The repo root does not need to scream domain behavior.
 
@@ -2036,6 +2011,47 @@ Remember these laws:
 ### Simplicity law
 
 **If it looks smarter but reads worse, it failed.**
+
+---
+
+## 52. Quality Ratchets and Gate Self-Tests
+
+### 52.1 Non-Regression Rule
+
+Architectural metrics and quality scores MUST NOT regress from the previously established baseline.
+
+- **Namespace Drift**: MUST stay at 0.
+- **Duplicate Owners**: MUST stay at 0.
+- **Hollow Public Surfaces**: MUST stay at 0.
+- **Technical Dumping Grounds**: MUST stay at 0 (enforced by forbidden-folder audit).
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+### 52.2 Gate Self-Test Rule
+
+Every architecture-specific validation gate MUST have a negative test case proving it detects violations (e.g., placing
+a class in a forbidden folder).
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+---
+
+## 53. Evidence-Driven Architectural Claims
+
+### 53.1 Definition of Proof
+
+An architectural claim (e.g., "all components are canonical") is **UNPROVEN** unless it is accompanied by a timestamped
+validation report from a canonical tool.
+
+### 53.2 Suspicion of Manual Claims
+
+Manual claims of "correctness" are classified as **HIGH RISK** and MUST be replaced by automated gate evidence at the
+earliest opportunity.
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
 
 ---
 

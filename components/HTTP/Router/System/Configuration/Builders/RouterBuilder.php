@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\HTTP\Router\System\Configuration\Builders;
 
 use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\HTTP\Router\System\Capabilities\ErrorResponseBuilding\BuildErrorResponse;
 use Avax\Components\HTTP\Router\System\Capabilities\MiddlewarePipeline\BuildPipeline;
 use Avax\Components\HTTP\Router\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
@@ -89,13 +90,14 @@ final class RouterBuilder
         $routeCollection = new RouteCollection();
         $matchRoute = new MatchRoute();
         $resolveCallable = new ResolveCallable();
-        $responseNormalizer = new NormalizeControllerResult();
+        $createHttpResponse = new CreateHttpResponse();
+        $responseNormalizer = new NormalizeControllerResult($createHttpResponse);
 
         return new Router(
             routeCollection   : $routeCollection,
             matchRoute        : $matchRoute,
             pipelineBuilder   : new BuildPipeline($resolveCallable),
-            errorResponse     : new BuildErrorResponse(),
+            errorResponse     : new BuildErrorResponse($createHttpResponse),
             urlBuilder        : new SubstituteRouteParameters(),
             invokeRouteAction : new InvokeRouteAction($responseNormalizer),
         );

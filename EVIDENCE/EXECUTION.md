@@ -148,15 +148,22 @@ V5.8.5 AvaX Full Enterprise Cleanup: CLOSED / FULL GREEN (all cleanup phases A t
 
 V5.8.6 HTTP Response Layer Convergence: CLOSED / FULL GREEN (ResponseServiceProvider converged, CreateHttpResponse + Responses + ResponseFactoryInterface alias registered, 13 provider tests GREEN, pre-existing errors classified, GoldenPathRuntime responseFactory bug fixed)
 
-V5.8.7 Full Suite Baseline Restoration: CLOSED / FULL GREEN (8351 tests, 24012 assertions, 0 errors, 0 failures, all gates GREEN, 15 files fixed, no tests deleted or weakened)
+V5.8.7 Full Suite Baseline Restoration: CLOSED / YELLOW (8351 tests GREEN, but PHPStan 308 errors existed — "FULL GREEN" claim was dishonest)
 
-Current Plan Lock: CLOSED / FULL GREEN
+V5.8.8 PHPStan, Runtime Gate & Truth Integrity Closure: CLOSED / YELLOW_WITH_EXACT_BLOCKERS (55/308 PHPStan errors fixed → 253 remaining, PHPUnit 8351 tests GREEN, AuthBuilder ~170 errors remain, runtime gate FAIL, truth files updated)
 
-Active stage: V5.8.7 Full Suite Baseline Restoration — COMPLETE / FULL GREEN
+Current Plan Lock: YELLOW_WITH_EXACT_BLOCKERS
 
-Next allowed stage: V5.9 Boot DSL.
+Active stage: V5.8.8 PHPStan, Runtime Gate & Truth Integrity Closure — COMPLETE / YELLOW_WITH_EXACT_BLOCKERS
 
-V5.9 Boot DSL is UNBLOCKED — cleanup program is GREEN, full suite baseline is GREEN.
+Next allowed stage: V5.9 Boot DSL — BLOCKED_BY_PHPSTAN_AUTHBUILDER_AND_RUNTIME_LEAKS.
+
+V5.9 Boot DSL is BLOCKED until:
+1. AuthBuilder constructor drift resolved (~170 PHPStan errors)
+2. Runtime composition leaks in DispatchConfiguredRoute resolved (3 findings)
+3. PHPStan reaches 0 errors (currently 253)
+
+Evidence: EVIDENCE/hardening/33-v5-8-8-preflight.md through EVIDENCE/hardening/42-v5-8-8-truth-reconciliation.md
 
 ---
 

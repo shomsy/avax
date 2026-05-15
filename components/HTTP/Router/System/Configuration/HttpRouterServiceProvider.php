@@ -8,6 +8,7 @@ use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\Re
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
 use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ActionResolution\ControllerResolver;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\HTTP\Router\System\Capabilities\ErrorResponseBuilding\BuildErrorResponse;
 use Avax\Components\HTTP\Router\System\Capabilities\MiddlewarePipeline\BuildPipeline;
 use Avax\Components\HTTP\Router\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
@@ -42,9 +43,13 @@ final class HttpRouterServiceProvider implements ServiceProvider
             callableResolver: $c->get(ResolveCallable::class),
         ),
         );
-        $container->singleton(BuildErrorResponse::class, static fn () : BuildErrorResponse => new BuildErrorResponse());
+        $container->singleton(BuildErrorResponse::class, static fn (ContainerInterface $c) : BuildErrorResponse => new BuildErrorResponse(
+            $c->get(CreateHttpResponse::class),
+        ));
         $container->singleton(SubstituteRouteParameters::class, static fn () : SubstituteRouteParameters => new SubstituteRouteParameters());
-        $container->singleton(NormalizeControllerResult::class, static fn () : NormalizeControllerResult => new NormalizeControllerResult());
+        $container->singleton(NormalizeControllerResult::class, static fn (ContainerInterface $c) : NormalizeControllerResult => new NormalizeControllerResult(
+            $c->get(CreateHttpResponse::class),
+        ));
         $container->singleton(InvokeRouteAction::class, static fn (ContainerInterface $c) : InvokeRouteAction => new InvokeRouteAction(
             responseNormalizer: $c->get(NormalizeControllerResult::class),
         ));

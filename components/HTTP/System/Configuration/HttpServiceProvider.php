@@ -42,9 +42,10 @@ final class HttpServiceProvider implements ServiceProvider
             terminateHttpKernel: $c->get(TerminateHttpKernel::class),
         ));
 
-        // AppKernel — requires HttpKernel
+        // AppKernel — requires router, createHttpResponse; uses default middleware from registry
         $container->singleton(AppKernel::class, static fn (ContainerInterface $c) : AppKernel => new AppKernel(
-            httpKernel: $c->get(HttpKernel::class),
+            routerRuntime     : $c->get(RouterInterface::class),
+            createHttpResponse: $c->get(CreateHttpResponse::class),
         ));
 
         // Http facade — requires router and middleware pipeline

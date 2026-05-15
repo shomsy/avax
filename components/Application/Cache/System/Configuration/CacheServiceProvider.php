@@ -95,11 +95,12 @@ final class CacheServiceProvider implements ServiceProvider
         });
 
         if ($this->compiledCacheDirectory !== null) {
-            $container->singleton(CompiledCacheContract::class, function (ContainerInterface $app) : CompiledCacheContract {
+            $directory = $this->compiledCacheDirectory;
+            $container->singleton(CompiledCacheContract::class, function (ContainerInterface $app) use ($directory) : CompiledCacheContract {
                 $clock      = $app->get(Clock::class);
                 $filesystem = $app->get(Filesystem::class);
 
-                return (new BuildCompiledCache(clock: $clock, filesystem: $filesystem))->inDirectory(directory: $this->compiledCacheDirectory);
+                return (new BuildCompiledCache(clock: $clock, filesystem: $filesystem))->inDirectory(directory: $directory);
             });
         }
 

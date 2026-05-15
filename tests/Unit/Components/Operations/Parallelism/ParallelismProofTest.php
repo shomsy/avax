@@ -101,11 +101,6 @@ final class ParallelismProofTest extends TestCase
         $actualRuntime = $runtimeProperty->getValue($flow);
 
         $this->assertSame($runtime, $actualRuntime);
-        $this->assertInstanceOf(
-            ParallelRuntimeInterface::class,
-            $actualRuntime,
-            'RunWorkInParallel accepts any ParallelRuntimeInterface, not hardcoded runtime',
-        );
     }
 
     // ============================================================

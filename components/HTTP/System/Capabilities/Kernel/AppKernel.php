@@ -85,6 +85,7 @@ final readonly class AppKernel implements HttpInterface, Kernel
             $fbBuilder = new BuildFailureBoundary();
             $middleware[] = new HttpFailureBoundaryMiddleware(
                 $fbBuilder->build(),
+                new CreateHttpResponse(),
             );
         }
 

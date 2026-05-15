@@ -25,6 +25,15 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: V5.8.8
+- `created_at`: 2026-05-15
+- `updated_at`: 2026-05-15
+- `status`: done
+- `estimate`: large
+- `outcome`: V5.8.8 PHPStan, Runtime Gate & Truth Integrity Closure — COMPLETE / YELLOW_WITH_EXACT_BLOCKERS. PHPUnit 8351 tests GREEN. PHPStan reduced 308 → 253 (55 fixed). 15 files changed. Runtime gate FAIL (163 findings, 3 new from V5.8.7). Truth files updated to honest state. V5.9 BLOCKED by AuthBuilder ~170 errors + 3 runtime leaks.
+- `acceptance`: PHPStan inventory created. 55 PHPStan errors fixed from root cause. Runtime gate findings classified. Truth files updated to match validation. Evidence files created. No tests deleted or weakened. No broad suppressions added.
+- `links`: `EVIDENCE/hardening/33-v5-8-8-preflight.md` through `EVIDENCE/hardening/42-v5-8-8-truth-reconciliation.md`
+
 - `id`: V5.8.6
 - `created_at`: 2026-05-15
 - `updated_at`: 2026-05-15

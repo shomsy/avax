@@ -4,43 +4,33 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\System\Flows\CreateResponse;
 
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\HTTP\Response\System\PublicSurface\Response;
-use Avax\Components\HTTP\System\Flows\BuildResponse\BuildResponse;
 
+/**
+ * CreateResponse — static convenience shortcuts for common HTTP responses.
+ *
+ * Delegates to the canonical CreateHttpResponse capability.
+ */
 final class CreateResponse
 {
-    public static function json(mixed $data, int $status = 200) : Response
+    public static function json(mixed $data, int $status = 200, array $headers = []) : Response
     {
-        return BuildResponse::execute(
-            $status,
-            ['Content-Type' => 'application/json'],
-            json_encode($data),
-        );
+        return (new CreateHttpResponse())->json(data: $data, status: $status, headers: $headers);
     }
 
-    public static function html(string $html, int $status = 200) : Response
+    public static function html(string $html, int $status = 200, array $headers = []) : Response
     {
-        return BuildResponse::execute(
-            $status,
-            ['Content-Type' => 'text/html'],
-            $html,
-        );
+        return (new CreateHttpResponse())->html(body: $html, status: $status, headers: $headers);
     }
 
-    public static function redirect(string $url, int $status = 302) : Response
+    public static function redirect(string $url, int $status = 302, array $headers = []) : Response
     {
-        return BuildResponse::execute(
-            $status,
-            ['Location' => $url],
-        );
+        return (new CreateHttpResponse())->redirect(url: $url, status: $status, headers: $headers);
     }
 
-    public static function plain(string $text, int $status = 200) : Response
+    public static function plain(string $text, int $status = 200, array $headers = []) : Response
     {
-        return BuildResponse::execute(
-            $status,
-            ['Content-Type' => 'text/plain'],
-            $text,
-        );
+        return (new CreateHttpResponse())->text(body: $text, status: $status, headers: $headers);
     }
 }

@@ -47,12 +47,10 @@ final readonly class BuildCache
             clock                      : $this->clock,
             cacheTtl                   : new CacheTtl(clock: $this->clock),
             decideStaleValueCanBeServed: new DecideStaleValueCanBeServed(
-                                             staleValuePolicy: $config->staleValuePolicy ?? StaleValuePolicy::DO_NOT_SERVE_STALE,
+                                             staleValuePolicy: $config->staleValuePolicy,
                                          ),
             shouldRefreshCachedValue   : new ShouldRefreshCachedValue(
-                                             clock                    : $this->clock,
-                                             refreshPolicy            : $config->refreshPolicy ?? RefreshPolicy::DO_NOT_REFRESH,
-                                             refreshAheadWindowSeconds: $config->refreshAheadWindowSeconds ?? 60,
+                                             clock: $this->clock,
                                          ),
             cacheMetrics               : $metrics,
             acquireCacheStampedeLock   : null,

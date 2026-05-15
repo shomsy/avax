@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Avax\Components\Application\Cache\System\Configuration\Builders;
 
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
+use Avax\Components\Application\Cache\System\Configuration\Builders\BuildCache;
+use Avax\Components\Application\Cache\System\Configuration\CacheConfiguration;
 use Avax\Components\Application\Cache\System\Configuration\CompiledCacheConfiguration\Builders\BuildCompiledCache;
 use Avax\Components\Application\Cache\System\Foundation\Time\Clock;
 use Avax\Components\Application\Cache\System\Foundation\Time\SystemClock;

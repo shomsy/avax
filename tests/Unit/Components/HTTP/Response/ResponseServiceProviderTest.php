@@ -41,17 +41,19 @@ final class ResponseServiceProviderTest extends TestCase
 
     public function test_response_factory_interface_resolves_to_responses(): void
     {
+        /** @var Responses $factory */
         $factory = $this->container->get(ResponseFactoryInterface::class);
+        /** @var Responses $responses */
         $responses = $this->container->get(Responses::class);
 
         // Both resolve to Responses instances via alias binding
         $this->assertInstanceOf(Responses::class, $factory);
         $this->assertInstanceOf(Responses::class, $responses);
-        $this->assertInstanceOf(ResponseFactoryInterface::class, $factory);
     }
 
     public function test_responses_delegates_to_create_http_response(): void
     {
+        /** @var Responses $responses */
         $responses = $this->container->get(Responses::class);
 
         $response = $responses->json(['key' => 'value'], 201);
@@ -62,6 +64,7 @@ final class ResponseServiceProviderTest extends TestCase
 
     public function test_responses_creates_psr17_response(): void
     {
+        /** @var ResponseFactoryInterface $factory */
         $factory = $this->container->get(ResponseFactoryInterface::class);
 
         $response = $factory->createResponse(204);
@@ -72,6 +75,7 @@ final class ResponseServiceProviderTest extends TestCase
     public function test_no_runtime_new_response_factory_remains(): void
     {
         // Verify that ResponseFactoryInterface resolves to Responses, not a legacy factory
+        /** @var Responses $factory */
         $factory = $this->container->get(ResponseFactoryInterface::class);
 
         $this->assertInstanceOf(Responses::class, $factory);
@@ -86,6 +90,7 @@ final class ResponseServiceProviderTest extends TestCase
 
     public function test_responses_json_returns_response_interface(): void
     {
+        /** @var Responses $responses */
         $responses = $this->container->get(Responses::class);
 
         $response = $responses->json(['status' => 'ok']);
@@ -96,6 +101,7 @@ final class ResponseServiceProviderTest extends TestCase
 
     public function test_responses_html_returns_response_interface(): void
     {
+        /** @var Responses $responses */
         $responses = $this->container->get(Responses::class);
 
         $response = $responses->html('<h1>Hello</h1>');
@@ -106,6 +112,7 @@ final class ResponseServiceProviderTest extends TestCase
 
     public function test_responses_text_returns_response_interface(): void
     {
+        /** @var Responses $responses */
         $responses = $this->container->get(Responses::class);
 
         $response = $responses->text('Hello World');
@@ -116,6 +123,7 @@ final class ResponseServiceProviderTest extends TestCase
 
     public function test_responses_redirect_returns_response_interface(): void
     {
+        /** @var Responses $responses */
         $responses = $this->container->get(Responses::class);
 
         $response = $responses->redirect('/home', 301);
@@ -126,6 +134,7 @@ final class ResponseServiceProviderTest extends TestCase
 
     public function test_responses_empty_returns_response_interface(): void
     {
+        /** @var Responses $responses */
         $responses = $this->container->get(Responses::class);
 
         $response = $responses->empty(204);
@@ -135,6 +144,7 @@ final class ResponseServiceProviderTest extends TestCase
 
     public function test_responses_error_returns_json_error_response(): void
     {
+        /** @var Responses $responses */
         $responses = $this->container->get(Responses::class);
 
         $response = $responses->error('Something went wrong', 503);

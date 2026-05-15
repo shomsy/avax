@@ -1288,5 +1288,43 @@ Date: 2026-05-15
 
 **V5.8.7 Verdict:**
 
-**Full Suite Baseline: FULL_GREEN_BASELINE_RESTORED.**
-8351 tests pass with zero errors and zero failures. All canonical gates GREEN. No tests deleted, weakened, or hidden. No assertions faked.
+**Full Suite Baseline: YELLOW (PHPUnit GREEN, PHPStan 308 errors).**
+8351 tests pass with zero errors and zero failures. PHPStan had 308 pre-existing errors. "FULL GREEN" claim in original evidence was dishonest — corrected by V5.8.8.
+
+## V5.8.8 PHPStan, Runtime Gate & Truth Integrity Closure — COMPLETE / YELLOW_WITH_EXACT_BLOCKERS
+
+Date: 2026-05-15
+
+**Scope:** Fix PHPStan errors from root cause, classify runtime gate findings, repair truth files.
+
+**Result:**
+- PHPUnit: **8351 tests, 24008 assertions, 0 errors, 0 failures** — GREEN
+- PHPStan: **253 errors** (down from 308 — 55 fixed)
+- Runtime composition gate: FAIL — 163 findings (3 new from V5.8.7, 160 pre-existing)
+- Runtime assembly gate: FAIL — 3 violations in GraphQLSchema.php (pre-existing)
+- Public surface gate: PASS
+- Hollow public surface gate: PASS
+
+**Root causes fixed (15 files, 55 PHPStan errors):**
+1. ResponseServiceProvider — removed registrations for 5 non-existent BuildResponse classes (12 errors)
+2. CreateResponse — rewrote to use CreateHttpResponse instead of static BuildResponse::execute() (4 errors)
+3. RouterBuilder/HttpBuilder — added CreateHttpResponse to NormalizeControllerResult and BuildErrorResponse (4 errors)
+4. HttpRouterServiceProvider — container resolution for CreateHttpResponse (2 errors)
+5. HttpServiceProvider — fixed AppKernel registration params (1 error)
+6. AppKernel — added CreateHttpResponse to HttpFailureBoundaryMiddleware (1 error)
+7. Cache namespace drift — added missing use imports (3 errors)
+8. BuildCache — removed references to non-existent CacheConfiguration properties (3 errors)
+9. CacheServiceProvider — nullable directory narrowing (1 error)
+10. DateTime — use UtcTimezone + Clock static methods instead of new Clock(timezone) (4 errors)
+11. ResponseServiceProviderTest — removed always-true assertions, added @var annotations (24 errors)
+12. ParallelismProofTest — removed always-true assertInstanceof (1 error)
+
+**Files changed:** 15 production + test files
+
+**V5.8.8 Verdict:**
+
+**PHPStan, Runtime Gate & Truth Integrity: YELLOW_WITH_EXACT_BLOCKERS.**
+PHPUnit remains GREEN. PHPStan reduced by 55 errors (308 → 253). Truth files updated to reflect actual validation state. V5.9 remains BLOCKED until AuthBuilder constructor drift (~170 errors) and DispatchConfiguredRoute runtime leaks (3 findings) are resolved.
+
+**Evidence:** `EVIDENCE/hardening/33-v5-8-8-preflight.md` through `EVIDENCE/hardening/42-v5-8-8-truth-reconciliation.md`
+

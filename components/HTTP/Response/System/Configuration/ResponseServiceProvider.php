@@ -8,12 +8,7 @@ use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\Se
 use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\HTTP\Response\System\Capabilities\Status\ResolveStatusReason;
-use Avax\Components\HTTP\Response\System\Flows\BuildResponse\BuildEmptyResponse;
-use Avax\Components\HTTP\Response\System\Flows\BuildResponse\BuildHtmlResponse;
-use Avax\Components\HTTP\Response\System\Flows\BuildResponse\BuildJsonResponse;
-use Avax\Components\HTTP\Response\System\Flows\BuildResponse\BuildRedirectResponse;
 use Avax\Components\HTTP\Response\System\Flows\BuildResponse\BuildResponse;
-use Avax\Components\HTTP\Response\System\Flows\BuildResponse\BuildTextResponse;
 use Avax\Components\HTTP\Response\System\Flows\BuildResponse\NormalizeResponseBody;
 use Avax\Components\HTTP\Response\System\Flows\BuildResponse\NormalizeResponseHeaders;
 use Avax\Components\HTTP\Response\System\PublicSurface\Responses;
@@ -26,7 +21,7 @@ use Psr\Http\Message\ResponseFactoryInterface;
  * - CreateHttpResponse: internal construction capability (single owner of response creation)
  * - Responses: PublicSurface facade, implements PSR-17 ResponseFactoryInterface
  * - ResponseFactoryInterface: bound to Responses (canonical PSR-17 factory for runtime users)
- * - BuildResponse flows: legacy normalization pipeline (deprecated, retained for internal flows)
+ * - BuildResponse flow: legacy normalization pipeline (deprecated, retained for internal flows)
  */
 final class ResponseServiceProvider implements ServiceProvider
 {
@@ -55,13 +50,6 @@ final class ResponseServiceProvider implements ServiceProvider
             normalizeResponseBody   : $c->get(NormalizeResponseBody::class),
             normalizeResponseHeaders: $c->get(NormalizeResponseHeaders::class),
         ));
-
-        // Specialized response builders — static-only, no constructor params (legacy pipeline)
-        $container->singleton(BuildJsonResponse::class, static fn () : BuildJsonResponse => new BuildJsonResponse());
-        $container->singleton(BuildHtmlResponse::class, static fn () : BuildHtmlResponse => new BuildHtmlResponse());
-        $container->singleton(BuildTextResponse::class, static fn () : BuildTextResponse => new BuildTextResponse());
-        $container->singleton(BuildRedirectResponse::class, static fn () : BuildRedirectResponse => new BuildRedirectResponse());
-        $container->singleton(BuildEmptyResponse::class, static fn () : BuildEmptyResponse => new BuildEmptyResponse());
     }
 
     public function boot(ContainerInterface $container) : void

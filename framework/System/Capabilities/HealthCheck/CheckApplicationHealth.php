@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\HealthCheck;
 
-use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
+use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 
 /**
@@ -20,7 +20,7 @@ final readonly class CheckApplicationHealth
     ) {
     }
 
-    public function check(): ResponseInterface
+    public function check(): Response
     {
         return $this->createHttpResponse->json(data: ['status' => 'ok']);
     }

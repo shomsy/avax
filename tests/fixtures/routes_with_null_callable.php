@@ -8,6 +8,7 @@ use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
 
 return static function (RouterInterface $router) : void {
+    /** @var Responses $responses */
     $responses = app(Responses::class);
 
     $router->get(path: '/null-test', action: static function (RequestInterface $request) : ?ResponseInterface {

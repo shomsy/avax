@@ -41,9 +41,7 @@ final class ResponseServiceProviderTest extends TestCase
 
     public function test_response_factory_interface_resolves_to_responses(): void
     {
-        /** @var Responses $factory */
         $factory = $this->container->get(ResponseFactoryInterface::class);
-        /** @var Responses $responses */
         $responses = $this->container->get(Responses::class);
 
         // Both resolve to Responses instances via alias binding
@@ -75,7 +73,6 @@ final class ResponseServiceProviderTest extends TestCase
     public function test_no_runtime_new_response_factory_remains(): void
     {
         // Verify that ResponseFactoryInterface resolves to Responses, not a legacy factory
-        /** @var Responses $factory */
         $factory = $this->container->get(ResponseFactoryInterface::class);
 
         $this->assertInstanceOf(Responses::class, $factory);

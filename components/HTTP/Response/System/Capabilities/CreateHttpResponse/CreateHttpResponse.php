@@ -24,6 +24,8 @@ final readonly class CreateHttpResponse
 {
     /**
      * Create a generic response.
+     *
+     * @param array<string, mixed> $headers
      */
     public function create(int $status = 200, array $headers = [], string $body = ''): Response
     {
@@ -36,6 +38,9 @@ final readonly class CreateHttpResponse
 
     /**
      * Create a JSON response.
+     *
+     * @param array<string, mixed>|object $data
+     * @param array<string, mixed> $headers
      */
     public function json(array|object $data, int $status = 200, array $headers = []): Response
     {
@@ -51,6 +56,8 @@ final readonly class CreateHttpResponse
 
     /**
      * Create an HTML response.
+     *
+     * @param array<string, mixed> $headers
      */
     public function html(string $content, int $status = 200, array $headers = []): Response
     {
@@ -65,6 +72,8 @@ final readonly class CreateHttpResponse
 
     /**
      * Create a plain text response.
+     *
+     * @param array<string, mixed> $headers
      */
     public function text(string $content, int $status = 200, array $headers = []): Response
     {
@@ -79,6 +88,8 @@ final readonly class CreateHttpResponse
 
     /**
      * Create a redirect response.
+     *
+     * @param array<string, mixed> $headers
      */
     public function redirect(string $url, int $status = 302, array $headers = []): Response
     {
@@ -93,6 +104,8 @@ final readonly class CreateHttpResponse
 
     /**
      * Create an empty (no body) response.
+     *
+     * @param array<string, mixed> $headers
      */
     public function empty(int $status = 200, array $headers = []): Response
     {
@@ -104,6 +117,8 @@ final readonly class CreateHttpResponse
 
     /**
      * Create a no-content response (204).
+     *
+     * @param array<string, mixed> $headers
      */
     public function noContent(array $headers = []): Response
     {
@@ -115,6 +130,8 @@ final readonly class CreateHttpResponse
 
     /**
      * Create an error response (JSON with error message).
+     *
+     * @param array<string, mixed> $headers
      */
     public function error(string $message, int $status = 500, array $headers = []): Response
     {
@@ -127,6 +144,8 @@ final readonly class CreateHttpResponse
 
     /**
      * Create a not-found error response.
+     *
+     * @param array<string, mixed> $headers
      */
     public function notFound(string $message = 'Not Found', array $headers = []): Response
     {
@@ -141,6 +160,7 @@ final readonly class CreateHttpResponse
      * Create a method-not-allowed error response.
      *
      * @param list<string> $allowedMethods
+     * @param array<string, mixed> $headers
      */
     public function methodNotAllowed(array $allowedMethods, array $headers = []): Response
     {
@@ -153,6 +173,8 @@ final readonly class CreateHttpResponse
 
     /**
      * Create a rate-limited response (429).
+     *
+     * @param array<string, mixed> $headers
      */
     public function rateLimited(int $retryAfter = 60, array $headers = []): Response
     {
@@ -166,6 +188,8 @@ final readonly class CreateHttpResponse
     /**
      * Intelligent dispatch: creates appropriate response based on data type.
      * Arrays/JsonSerializable/objects → JSON. Strings → text. ResponseInterface → passthrough.
+     *
+     * @param array<string, mixed> $headers
      */
     public function send(mixed $data, int $status = 200, array $headers = []): ResponseInterface
     {

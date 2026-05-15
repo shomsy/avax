@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\HTTP\System\Capabilities\Kernel;
 
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+use Avax\Components\HTTP\Response\System\PublicSurface\Response;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterRuntimeInterface;
 use Avax\Components\HTTP\System\Capabilities\MiddlewarePipeline\IpRestrictionMiddleware;
@@ -196,7 +197,7 @@ final readonly class AppKernel implements HttpInterface, Kernel
                 public function clear(string $key) : void {}
             },
             (new class () {
-                public function rateLimited(int $retryAfter) : ResponseInterface
+                public function rateLimited(int $retryAfter) : Response
                 {
                     return new CreateHttpResponse()->rateLimited(retryAfter: $retryAfter);
                 }

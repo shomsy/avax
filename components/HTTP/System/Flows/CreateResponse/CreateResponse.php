@@ -14,21 +14,33 @@ use Avax\Components\HTTP\Response\System\PublicSurface\Response;
  */
 final class CreateResponse
 {
+    /**
+     * @param array<string, mixed> $headers
+     */
     public static function json(mixed $data, int $status = 200, array $headers = []) : Response
     {
         return (new CreateHttpResponse())->json(data: $data, status: $status, headers: $headers);
     }
 
+    /**
+     * @param array<string, mixed> $headers
+     */
     public static function html(string $html, int $status = 200, array $headers = []) : Response
     {
         return (new CreateHttpResponse())->html(content: $html, status: $status, headers: $headers);
     }
 
+    /**
+     * @param array<string, mixed> $headers
+     */
     public static function redirect(string $url, int $status = 302, array $headers = []) : Response
     {
         return (new CreateHttpResponse())->redirect(url: $url, status: $status, headers: $headers);
     }
 
+    /**
+     * @param array<string, mixed> $headers
+     */
     public static function plain(string $text, int $status = 200, array $headers = []) : Response
     {
         return (new CreateHttpResponse())->text(content: $text, status: $status, headers: $headers);

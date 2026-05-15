@@ -23,6 +23,8 @@ if (! function_exists('view')) {
         /** @var TemplateEngine $engine */
         $engine = app(TemplateEngine::class);
 
-        return app(Responses::class)->html(content: $engine->render($template, $data));
+        /** @var Responses $responses */
+        $responses = app(Responses::class);
+        return $responses->html(content: $engine->render($template, $data));
     }
 }

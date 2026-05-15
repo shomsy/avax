@@ -29,7 +29,9 @@ if (! function_exists('redirect')) {
      */
     function redirect(string $url, int $status = 302): ResponseInterface
     {
-        return app(Responses::class)->redirect(url: $url, status: $status);
+        /** @var Responses $responses */
+        $responses = app(Responses::class);
+        return $responses->redirect(url: $url, status: $status);
     }
 }
 

@@ -8,6 +8,7 @@ use Avax\Components\Application\Container\System\PublicSurface\Container;
 
 final class ContainerBuilder
 {
+    /** @var array<string, callable> */
     private array $bindings = [];
 
     public function bind(string $id, callable $factory): self

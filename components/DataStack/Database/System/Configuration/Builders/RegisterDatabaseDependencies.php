@@ -44,34 +44,61 @@ final readonly class RegisterDatabaseDependencies implements RegisterDependency
         $this->container->singleton(abstract: DatabaseInterface::class, concrete: fn () : Database => $this->buildDatabase());
         $this->container->alias(abstract: DatabaseInterface::class, alias: Database::class);
 
-        $this->container->singleton(abstract: Connections::class, concrete: fn () => $this->container->get(id: Database::class)->connections());
+        $this->container->singleton(abstract: Connections::class, concrete: function (): Connections {
+            /** @var Database $database */
+            $database = $this->container->get(id: Database::class);
+            return $database->connections();
+        });
 
-        $this->container->singleton(abstract: Query::class, concrete: fn () => $this->container->get(id: Database::class)->query());
+        $this->container->singleton(abstract: Query::class, concrete: function (): Query {
+            /** @var Database $database */
+            $database = $this->container->get(id: Database::class);
+            return $database->query();
+        });
 
-        $this->container->singleton(abstract: Migrations::class, concrete: fn () => $this->container->get(id: Database::class)->migrations());
+        $this->container->singleton(abstract: Migrations::class, concrete: function (): Migrations {
+            /** @var Database $database */
+            $database = $this->container->get(id: Database::class);
+            return $database->migrations();
+        });
 
-        $this->container->singleton(abstract: Entities::class, concrete: fn () => $this->container->get(id: Database::class)->entities());
+        $this->container->singleton(abstract: Entities::class, concrete: function (): Entities {
+            /** @var Database $database */
+            $database = $this->container->get(id: Database::class);
+            return $database->entities();
+        });
 
-        $this->container->singleton(abstract: Schema::class, concrete: fn () => $this->container->get(id: Database::class)->schema());
+        $this->container->singleton(abstract: Schema::class, concrete: function (): Schema {
+            /** @var Database $database */
+            $database = $this->container->get(id: Database::class);
+            return $database->schema();
+        });
 
-        $this->container->singleton(abstract: Transactions::class, concrete: fn () => $this->container->get(id: Database::class)->transactions());
+        $this->container->singleton(abstract: Transactions::class, concrete: function (): Transactions {
+            /** @var Database $database */
+            $database = $this->container->get(id: Database::class);
+            return $database->transactions();
+        });
 
-        $this->container->singleton(abstract: Telemetry::class, concrete: fn () => $this->container->get(id: Database::class)->telemetry());
+        $this->container->singleton(abstract: Telemetry::class, concrete: function (): Telemetry {
+            /** @var Database $database */
+            $database = $this->container->get(id: Database::class);
+            return $database->telemetry();
+        });
 
-        $this->container->bind(abstract: QueryBuilder::class, concrete: fn () => $this->container->get(id: Query::class)->builder());
+        $this->container->bind(abstract: QueryBuilder::class, concrete: function (): QueryBuilder {
+            /** @var Query $query */
+            $query = $this->container->get(id: Query::class);
+            return $query->builder();
+        });
 
         $this->container->singleton(abstract: MigrationLoader::class);
         $this->container->singleton(abstract: MigrationGenerator::class);
-
-        $this->container->singleton(abstract: MigrationRepository::class, concrete: fn () => $this->container->get(id: Migrations::class)->repository());
-
-        $this->container->singleton(abstract: MigrationRunner::class, concrete: fn () => $this->container->get(id: Migrations::class)->runner());
-
-        $this->container->singleton(abstract: RollbackMigrations::class, concrete: fn () => $this->container->get(id: Migrations::class)->rollbacker());
-
-        $this->container->singleton(abstract: ReadMigrationStatus::class, concrete: fn () => $this->container->get(id: Migrations::class)->status());
-
-        $this->container->singleton(abstract: DatabaseExporter::class, concrete: fn () => $this->container->get(id: Migrations::class)->exporter());
+        $this->container->singleton(abstract: MigrationRepository::class);
+        $this->container->singleton(abstract: MigrationRunner::class);
+        $this->container->singleton(abstract: RollbackMigrations::class);
+        $this->container->singleton(abstract: ReadMigrationStatus::class);
+        $this->container->singleton(abstract: DatabaseExporter::class);
     }
 
     public function boot() : void {}

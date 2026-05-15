@@ -26,7 +26,7 @@ abstract class IpRestrictionMiddleware implements MiddlewareInterface
 
     abstract protected function isAllowedIp(string $ipAddress): bool;
 
-    protected function createForbiddenResponse(): ResponseInterface
+    protected function createForbiddenResponse(): Response
     {
         return new Response(403, ['Content-Type' => ['text/plain']], 'Forbidden');
     }

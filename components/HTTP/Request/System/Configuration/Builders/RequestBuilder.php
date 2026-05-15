@@ -70,6 +70,9 @@ final class RequestBuilder
         return $this;
     }
 
+    /**
+     * @param array<string, mixed>|object|null $parsedBody
+     */
     public function withBody(string $rawBody, array|object|null $parsedBody = null) : self
     {
         $this->requestBody = new RequestBody(

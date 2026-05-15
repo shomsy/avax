@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Application\Pipeline;
 
-use Avax\Components\Application\Pipeline\System\PublicSurface\HookRegistry;
+use Avax\Components\Application\Pipeline\System\Capabilities\PipelineHooks\HookRegistry;
 use Avax\Components\Application\Pipeline\System\PublicSurface\Pipeline;
 use Closure;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 final class PipelineLifecycleTest extends TestCase
 {
@@ -16,20 +17,18 @@ final class PipelineLifecycleTest extends TestCase
         Pipeline::reset();
     }
 
-    public function test_reset_clears_static_hook_registry() : void
+    public function test_unconfigured_usage_fails_clearly() : void
     {
-        // Add hooks
-        Pipeline::beforeRoute(fn () => 'test');
-        $this->assertNotEmpty(Pipeline::hooks());
-
-        // Reset should clear all hooks
         Pipeline::reset();
-        $this->assertSame([], Pipeline::hooks());
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Pipeline registry not configured');
+
+        Pipeline::hooks();
     }
 
-    public function test_setInstance_replaces_registry() : void
+    public function test_setInstance_wires_registry() : void
     {
-        Pipeline::reset();
         $custom = new HookRegistry();
         Pipeline::setInstance($custom);
 
@@ -37,26 +36,52 @@ final class PipelineLifecycleTest extends TestCase
         Pipeline::beforeRoute(fn () => 'custom');
 
         // Verify the custom registry received the hook
-        /** @var array<string, list<\Closure>> $hooks */
         $hooks = $custom->all();
         $this->assertTrue(isset($hooks['beforeRoute']));
+    }
+
+    public function test_double_boot_fails() : void
+    {
+        Pipeline::setInstance(new HookRegistry());
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('already configured');
+
+        Pipeline::setInstance(new HookRegistry());
+    }
+
+    public function test_reset_clears_static_state() : void
+    {
+        Pipeline::setInstance(new HookRegistry());
+        Pipeline::beforeRoute(fn () => 'test');
+        $this->assertNotEmpty(Pipeline::hooks());
+
+        Pipeline::reset();
+
+        // After reset, usage should fail clearly
+        $this->expectException(RuntimeException::class);
+        Pipeline::hooks();
     }
 
     public function test_reset_provides_test_isolation() : void
     {
         // Simulate test A adding hooks
+        Pipeline::setInstance(new HookRegistry());
         Pipeline::beforeRoute(fn () => 'test-a');
         Pipeline::afterResponse(fn () => 'test-a-2');
         $this->assertCount(2, Pipeline::hooks());
 
         // Simulate test B starting after reset
         Pipeline::reset();
-        $this->assertSame([], Pipeline::hooks());
+
+        // Test B's first usage should fail until it configures its own registry
+        $this->expectException(RuntimeException::class);
+        Pipeline::hooks();
     }
 
     public function test_hooks_execute_in_order() : void
     {
-        Pipeline::reset();
+        Pipeline::setInstance(new HookRegistry());
 
         $results = [];
         Pipeline::beforeRoute(static function () use (&$results) {

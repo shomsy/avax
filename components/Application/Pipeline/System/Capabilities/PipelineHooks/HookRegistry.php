@@ -2,10 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Pipeline\System\PublicSurface;
+namespace Avax\Components\Application\Pipeline\System\Capabilities\PipelineHooks;
 
 use Closure;
 
+/**
+ * HookRegistry — internal mutable registry for pipeline stage hooks.
+ *
+ * Not a public API entry point. Registered by PipelineServiceProvider
+ * and injected into the Pipeline facade during boot.
+ */
 final class HookRegistry
 {
     /** @var array<string, list<Closure>> */
@@ -42,6 +48,9 @@ final class HookRegistry
         return count($this->hooks[$hook] ?? []);
     }
 
+    /**
+     * @return array<string, list<Closure>>
+     */
     public function all(): array
     {
         return $this->hooks;

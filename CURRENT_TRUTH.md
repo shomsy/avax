@@ -1377,22 +1377,27 @@ Date: 2026-05-15
 
 Date: 2026-05-15
 
-**Status:** COMPLETE / FULL_GREEN_PHASE_B_FACADE_DEBT_CLOSED
+**Status:** COMPLETE / FULL_GREEN_PHASE_B_FACADE_DEBT_CLOSED (corrected)
 
 **Scope:** Close YELLOW-DEBT-001 (facade self-instantiation) and YELLOW-DEBT-002 (missing facade reset methods).
 
+**Phase B (initial):** Added reset/setInstance but lazy `??= new` remained — reported FULL_GREEN incorrectly.
+
+**Phase B Correction:** Removed all lazy self-instantiation, moved HookRegistry to Capabilities, removed duplicate ApiVersionResolved, added ServiceProviders, tightened runtime gate.
+
 **Results:**
-- ApiVersion: Added `reset()` + `setInstance()` lifecycle — static state now testable and injectable
-- Pipeline: Added `reset()` + `setInstance()` lifecycle — static state now testable and injectable
-- Events: NOT APPLICABLE — regular instance class, not static facade
-- Stateless facades (RuntimeSupervision, BackgroundProcesses, ApiContracts, GraphQL, HttpContext): NOT APPLICABLE — no static state
-- Runtime composition gate: PASS
-- PHPUnit: 8365 tests, 24052 assertions, 0 errors, 0 failures (+7 new tests, +22 assertions)
+- ApiVersion: Lazy `new VersionRegistry()` removed — `setInstance()` required, fail-if-not-configured, ApiVersioningServiceProvider created
+- Pipeline: Lazy `new HookRegistry()` removed — `setInstance()` required, fail-if-not-configured, PipelineServiceProvider wires registry
+- HookRegistry: Moved from PublicSurface to Capabilities/PipelineHooks (internal mutable machinery)
+- ApiVersionResolved: Duplicate inline class removed from ApiVersion.php
+- Runtime gate: `isStaticFacadeFile()` now rejects facades with lazy `new` patterns
+- PHPUnit: 8373 tests, 24066 assertions, 0 errors
 - PHPStan: 0 errors
-- YELLOW-DEBT-001: CLOSED
-- YELLOW-DEBT-002: CLOSED
+- All gates: PASS
+- YELLOW-DEBT-001: TRULY CLOSED
+- YELLOW-DEBT-002: VERIFIED
 
-**Evidence:** `EVIDENCE/fix-this-phase-b/01-phase-b-governance-review.md`, `EVIDENCE/fix-this-phase-b/02-phase-b-truth-reconciliation.md`
+**Evidence:** `EVIDENCE/fix-this/15-phase-b-correction-preflight.md` through `EVIDENCE/fix-this/27-phase-b-correction-truth-reconciliation.md`
 
-**V5.9 Boot DSL:** READY (All Phase A/B debts closed)
+**V5.9 Boot DSL:** READY (All Phase A/B debts genuinely closed)
 

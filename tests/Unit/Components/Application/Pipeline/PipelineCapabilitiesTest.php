@@ -7,7 +7,7 @@ namespace Avax\Tests\Unit\Components\Application\Pipeline;
 use Avax\Components\Application\Pipeline\System\Capabilities\Hooks\PipelineHook;
 use Avax\Components\Application\Pipeline\System\Capabilities\Hooks\PipelineStage;
 use Avax\Components\Application\Pipeline\System\Capabilities\Hooks\StagePipeline;
-use Avax\Components\Application\Pipeline\System\PublicSurface\HookRegistry;
+use Avax\Components\Application\Pipeline\System\Capabilities\PipelineHooks\HookRegistry;
 use Avax\Components\Application\Pipeline\System\PublicSurface\Pipeline;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -16,6 +16,7 @@ final class PipelineCapabilitiesTest extends TestCase
 {
     public function test_public_pipeline_executes_registered_hooks_in_registration_order() : void
     {
+        Pipeline::setInstance(new HookRegistry());
         Pipeline::beforeController(static fn (string $value) : string => $value . '-first');
         Pipeline::beforeController(static fn (string $value) : string => $value . '-second');
 
@@ -24,6 +25,7 @@ final class PipelineCapabilitiesTest extends TestCase
 
     public function test_public_pipeline_returns_original_data_when_hook_is_missing() : void
     {
+        Pipeline::setInstance(new HookRegistry());
         $this->assertSame('unchanged', Pipeline::execute('missingHook', 'unchanged'));
     }
 
@@ -78,8 +80,6 @@ final class PipelineCapabilitiesTest extends TestCase
 
     protected function setUp() : void
     {
-        $reflection = new ReflectionClass(Pipeline::class);
-        $property   = $reflection->getProperty('hookRegistry');
-        $property->setValue(null, null);
+        Pipeline::reset();
     }
 }

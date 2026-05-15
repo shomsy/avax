@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Integration\GoldenPath;
 
 use Avax\Components\Application\FeatureFlags\System\PublicSurface\FeatureFlags;
+use Avax\Components\Application\Pipeline\System\Capabilities\PipelineHooks\HookRegistry;
 use Avax\Components\Application\Pipeline\System\PublicSurface\Pipeline;
 use Avax\Components\Identity\Tenancy\System\PublicSurface\Tenancy;
 use Avax\Components\Operations\Concurrency\System\Capabilities\RunWithFibers\FiberTaskRuntime;
@@ -25,11 +26,13 @@ class GoldenPathTest extends TestCase
     {
         parent::setUp();
         Concurrency::setRuntime(new FiberTaskRuntime());
+        Pipeline::setInstance(new HookRegistry());
     }
 
     #[Override]
     protected function tearDown(): void
     {
+        Pipeline::reset();
         Concurrency::reset();
         parent::tearDown();
     }
@@ -73,7 +76,6 @@ class GoldenPathTest extends TestCase
 
         $hooks = Pipeline::hooks();
 
-        $this->assertIsArray($hooks);
         $this->assertTrue(Pipeline::hooks()['beforeController'] ?? false ? true : false);
     }
 

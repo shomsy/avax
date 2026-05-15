@@ -360,10 +360,9 @@ final class CheckRuntimeCompositionLeaks
             'new ListenerRegistry' => 'Constructor creates listener registry for legacy dispatch',
             'new EventDispatcher' => 'Constructor creates event dispatcher for legacy dispatch',
         ],
-        // ApiVersion: static facade with reset()/setInstance() — testable lifecycle
+        // ApiVersion: provider-wired facade, no self-instantiation, reset/setInstance lifecycle
         'components/HTTP/ApiVersioning/System/PublicSurface/ApiVersion.php'                                            => [
             'new VersionResolver' => 'Version resolver for HTTP API version tracking',
-            'new VersionRegistry' => 'Static facade with reset()/setInstance() — testable lifecycle',
         ],
         // ApiContracts: static facade factory methods
         'components/API/Contracts/System/PublicSurface/ApiContracts.php'                                               => [
@@ -375,11 +374,8 @@ final class CheckRuntimeCompositionLeaks
             'new HttpContext' => 'HTTP context facade; static factory method',
             'new PhpGlobalsProvider' => 'Static factory method; creates globals provider',
         ],
-        // Pipeline: static facade with reset()/setInstance() — testable lifecycle
-        'components/Application/Pipeline/System/PublicSurface/Pipeline.php'                                            => [
-            'new Pipeline' => 'Pipeline facade; self-instantiation for static API',
-            'new HookRegistry' => 'Static facade with reset()/setInstance() — testable lifecycle',
-        ],
+        // Pipeline: provider-wired facade, no self-instantiation, reset/setInstance lifecycle
+        'components/Application/Pipeline/System/PublicSurface/Pipeline.php'                                            => [],
         // GraphQLExecutor: specific registry instantiation
         'components/API/GraphQL/System/PublicSurface/GraphQLExecutor.php'                                              => [
             'new GraphQLResolverRegistry' => 'Resolver registry value object for query execution state',
@@ -620,12 +616,34 @@ final class CheckRuntimeCompositionLeaks
     }
 
     /**
-     * Static facade files: classes with both reset() and setInstance() per governance §7.1.
+     * Static facade files: classes with both reset() and setInstance() per governance §7.1,
+     * AND no lazy runtime service construction.
+     *
+     * A facade with reset/setInstance but also ??= new RuntimeService is NOT safe —
+     * the lazy fallback means the facade self-instantiates runtime machinery.
      */
     private function isStaticFacadeFile(string $content) : bool
     {
-        return preg_match('/public\s+static\s+function\s+reset\s*\(/', $content)
+        $hasLifecycle = preg_match('/public\s+static\s+function\s+reset\s*\(/', $content)
             && preg_match('/public\s+static\s+function\s+setInstance\s*\(/', $content);
+
+        if (! $hasLifecycle) {
+            return false;
+        }
+
+        // Check for lazy runtime service construction — disqualifies facade from "proven safe"
+        $lazyPatterns = [
+            '/\?\?\s*new\s+[A-Z]/',    // ?? new RuntimeService
+            '/\?\?=\s*new\s+[A-Z]/',   // ??= new RuntimeService
+        ];
+
+        foreach ($lazyPatterns as $pattern) {
+            if (preg_match($pattern, $content)) {
+                return false; // Has lazy fallback — not proven safe
+            }
+        }
+
+        return true;
     }
 
     private function extractMatchedText(string $line, string $pattern): string

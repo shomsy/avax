@@ -4,21 +4,52 @@ declare(strict_types=1);
 
 namespace Avax\Components\Application\Pipeline\System\PublicSurface;
 
+use Avax\Components\Application\Pipeline\System\Capabilities\PipelineHooks\HookRegistry;
 use Closure;
+use RuntimeException;
 
+/**
+ * Pipeline — PublicSurface entry point for pipeline hook execution.
+ *
+ * Receives and delegates. Does not assemble or instantiate runtime services.
+ * The HookRegistry must be configured during boot via setInstance().
+ *
+ * @see \Avax\Components\Application\Pipeline\System\Configuration\PipelineServiceProvider
+ */
 final class Pipeline
 {
     private static ?HookRegistry $hookRegistry = null;
+
+    /**
+     * Configure the hook registry during boot.
+     *
+     * @throws RuntimeException if registry is already configured (prevents double-boot)
+     */
+    public static function setInstance(HookRegistry $registry): void
+    {
+        if (self::$hookRegistry !== null) {
+            throw new RuntimeException('Pipeline registry is already configured.');
+        }
+
+        self::$hookRegistry = $registry;
+    }
 
     public static function beforeRoute(Closure $handler): void
     {
         self::registry()->add('beforeRoute', $handler);
     }
 
+    /**
+     * @return HookRegistry The configured hook registry.
+     * @throws RuntimeException if registry was not configured during boot.
+     */
     private static function registry(): HookRegistry
     {
-        if (! self::$hookRegistry instanceof HookRegistry) {
-            self::$hookRegistry = new HookRegistry();
+        if (self::$hookRegistry === null) {
+            throw new RuntimeException(
+                'Pipeline registry not configured. '
+                . 'Ensure PipelineServiceProvider is registered and booted.'
+            );
         }
 
         return self::$hookRegistry;
@@ -64,24 +95,19 @@ final class Pipeline
         return self::registry()->execute($hook, $data);
     }
 
+    /**
+     * @return array<string, list<Closure>>
+     */
     public static function hooks(): array
     {
         return self::registry()->all();
     }
 
     /**
-     * Reset the static hook registry. Required for test isolation.
+     * Reset the static hook registry. Required for test isolation and long-lived workers.
      */
     public static function reset(): void
     {
         self::$hookRegistry = null;
-    }
-
-    /**
-     * Replace the hook registry (for testing or DI injection).
-     */
-    public static function setInstance(HookRegistry $registry): void
-    {
-        self::$hookRegistry = $registry;
     }
 }

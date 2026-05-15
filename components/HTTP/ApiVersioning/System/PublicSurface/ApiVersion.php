@@ -8,20 +8,50 @@ use Avax\Components\HTTP\ApiVersioning\System\Capabilities\Lifecycle\VersionRegi
 use Avax\Components\HTTP\ApiVersioning\System\Capabilities\Resolution\VersionResolver;
 use DateTimeInterface;
 use Psr\Http\Message\RequestInterface;
+use RuntimeException;
 
+/**
+ * ApiVersion — PublicSurface entry point for HTTP API versioning.
+ *
+ * Receives and delegates. Does not assemble or instantiate runtime services.
+ * The VersionRegistry must be configured during boot via setInstance().
+ *
+ * @see \Avax\Components\HTTP\ApiVersioning\System\Configuration\ApiVersioningServiceProvider
+ */
 final class ApiVersion
 {
     private static ?VersionRegistry $versionRegistry = null;
+
+    /**
+     * Configure the version registry during boot.
+     *
+     * @throws RuntimeException if registry is already configured (prevents double-boot)
+     */
+    public static function setInstance(VersionRegistry $registry): void
+    {
+        if (self::$versionRegistry !== null) {
+            throw new RuntimeException('ApiVersion registry is already configured.');
+        }
+
+        self::$versionRegistry = $registry;
+    }
 
     public static function resolve(RequestInterface $request) : ApiVersionResolved
     {
         return VersionResolver::resolve(request: $request, versionRegistry: self::registry());
     }
 
+    /**
+     * @return VersionRegistry The configured version registry.
+     * @throws RuntimeException if registry was not configured during boot.
+     */
     private static function registry() : VersionRegistry
     {
         if (self::$versionRegistry === null) {
-            self::$versionRegistry = new VersionRegistry();
+            throw new RuntimeException(
+                'ApiVersion registry not configured. '
+                . 'Ensure ApiVersioningServiceProvider is registered and booted.'
+            );
         }
 
         return self::$versionRegistry;
@@ -43,27 +73,10 @@ final class ApiVersion
     }
 
     /**
-     * Reset the static version registry. Required for test isolation.
+     * Reset the static version registry. Required for test isolation and long-lived workers.
      */
     public static function reset(): void
     {
         self::$versionRegistry = null;
     }
-
-    /**
-     * Replace the version registry (for testing or DI injection).
-     */
-    public static function setInstance(VersionRegistry $registry): void
-    {
-        self::$versionRegistry = $registry;
-    }
-}
-
-final readonly class ApiVersionResolved
-{
-    public function __construct(
-        public int                $version,
-        public bool               $deprecated,
-        public DateTimeInterface|null $sunset = null,
-    ) {}
 }

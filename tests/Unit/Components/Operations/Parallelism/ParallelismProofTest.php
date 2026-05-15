@@ -12,9 +12,12 @@ use Avax\Components\Operations\Parallelism\System\Configuration\ParallelismConfi
 use Avax\Components\Operations\Parallelism\System\Flows\RunWorkInParallel\RunWorkInParallel;
 use Avax\Components\Operations\Parallelism\System\Foundation\Failure\ParallelException;
 use Avax\Components\Operations\Parallelism\System\Foundation\ParallelFailure;
+use Avax\Components\Operations\Parallelism\System\Foundation\ParallelResult;
+use Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use RuntimeException;
+use Symfony\Component\Process\Process;
 
 /**
  * Proof tests for Parallelism process-based parallel execution.
@@ -44,7 +47,7 @@ final class ParallelismProofTest extends TestCase
         $this->assertArrayHasKey('current_process', $runtimes);
         $this->assertTrue($runtimes['current_process']);
 
-        if (class_exists(\Symfony\Component\Process\Process::class)) {
+        if (class_exists(Process::class)) {
             $this->assertArrayHasKey('symfony_process', $runtimes);
         }
     }
@@ -89,7 +92,7 @@ final class ParallelismProofTest extends TestCase
 
     public function test_runWorkInParallel_uses_buildParallelRuntime_not_hardcoded() : void
     {
-        $flow   = new RunWorkInParallel();
+        $flow = new RunWorkInParallel(runtime: Parallel::runtime());
         $reflection = new ReflectionClass($flow);
         $builderProperty = $reflection->getProperty('builder');
         $builder = $builderProperty->getValue($flow);
@@ -201,7 +204,7 @@ final class ParallelismProofTest extends TestCase
 
     public function test_parallelResult_throwIfFailed_with_single_failure() : void
     {
-        $result = new \Avax\Components\Operations\Parallelism\System\Foundation\ParallelResult(
+        $result = new ParallelResult(
             values         : [],
             failures       : [new ParallelFailure(name: 'w1', message: 'Single failure', code: 1)],
             startedWorkers : 1,
@@ -217,7 +220,7 @@ final class ParallelismProofTest extends TestCase
 
     public function test_parallelResult_throwIfFailed_with_multiple_failures() : void
     {
-        $result = new \Avax\Components\Operations\Parallelism\System\Foundation\ParallelResult(
+        $result = new ParallelResult(
             values         : [],
             failures       : [
                 new ParallelFailure(name: 'w1', message: 'A', code: 1),
@@ -277,13 +280,13 @@ final class ParallelismProofTest extends TestCase
     {
         $closure = static fn () => 'hello';
 
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         serialize($closure);
     }
 
     public function test_symfonyProcessParallelRuntime_is_instantiable() : void
     {
-        if (! class_exists(\Symfony\Component\Process\Process::class)) {
+        if (! class_exists(Process::class)) {
             $this->markTestSkipped('Symfony Process not available');
         }
 

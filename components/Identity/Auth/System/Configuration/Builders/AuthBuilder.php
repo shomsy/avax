@@ -1007,7 +1007,7 @@ final class AuthBuilder
                 auditLog       : $auditLog,
                 clock          : $clock,
                 attemptThrottle: $scimThrottle,
-                provisionableUserSource: $provisionableUserSource ?? throw ConfigurationException::missingDependency("ProvisionableUserSource", "forUser()"),
+                provisionableUserSource: throw ConfigurationException::missingDependency("ProvisionableUserSource", "forUser()"),
                 scimDirectoryStore: $scimDirectoryStore,
                 scimProvisionedIdentityStore: $scimProvisionedIdentityStore,
                 lifecycleOrchestrator: $lifecycle,
@@ -1459,8 +1459,8 @@ final class AuthBuilder
             logout                  : $authCapabilityReadiness->oauth() ? $oidcLogout : null,
             buildJarmResponse       : $authCapabilityReadiness->oauth() ? $buildOidcJarmResponse : null,
             readProviderMetadata    : $authCapabilityReadiness->oauth() ? $readOidcProviderMetadata : null,
-            readJsonWebKeySet       : $authCapabilityReadiness->oauth() ? $readOidcJsonWebKeySet : null,
-            readUserInfo            : $authCapabilityReadiness->oauth() ? $readOidcUserInfo : null,
+            readOidcJsonWebKeySet   : $authCapabilityReadiness->oauth() ? $readOidcJsonWebKeySet : null,
+            readOidcUserInfo        : $authCapabilityReadiness->oauth() ? $readOidcUserInfo : null,
         );
 
         $singleSignOn = new SingleSignOn(
@@ -1593,7 +1593,7 @@ final class AuthBuilder
                                                 auditLog       : $auditLog,
                                                 clock          : $clock,
                                                 attemptThrottle: $scimThrottle,
-                                                provisionableUserSource: $provisionableUserSource ?? throw ConfigurationException::missingDependency("ProvisionableUserSource", "forUser()"),
+                                                provisionableUserSource: throw ConfigurationException::missingDependency("ProvisionableUserSource", "forUser()"),
                                                 scimDirectoryStore: $scimDirectoryStore,
                                                 scimProvisionedIdentityStore: $scimProvisionedIdentityStore,
                                                 lifecycleOrchestrator: $lifecycle,
@@ -1615,7 +1615,7 @@ final class AuthBuilder
         $provisioning = new Provisioning(
             suspendUser    : $provisionableUserSource instanceof ProvisionableUserSourceInterface
                                  ? new SuspendUser(
-                                                provisionableUserSource: $provisionableUserSource ?? throw ConfigurationException::missingDependency("ProvisionableUserSource", "forUser()"),
+                                   provisionableUserSource             : throw ConfigurationException::missingDependency("ProvisionableUserSource", "forUser()"),
                                                 requireAdminElevation  : $requireAdminElevation,
                                                 auditLog               : $auditLog,
                                                 clock                  : $clock,
@@ -1624,7 +1624,7 @@ final class AuthBuilder
                                  : null,
             reactivateUser : $provisionableUserSource instanceof ProvisionableUserSourceInterface
                                  ? new ReactivateUser(
-                                                provisionableUserSource: $provisionableUserSource ?? throw ConfigurationException::missingDependency("ProvisionableUserSource", "forUser()"),
+                                     provisionableUserSource           : throw ConfigurationException::missingDependency("ProvisionableUserSource", "forUser()"),
                                                 requireAdminElevation  : $requireAdminElevation,
                                                 auditLog               : $auditLog,
                                                 clock                  : $clock,
@@ -1633,7 +1633,7 @@ final class AuthBuilder
                                  : null,
             deprovisionUser: $provisionableUserSource instanceof ProvisionableUserSourceInterface
                                  ? new DeprovisionUser(
-                                                provisionableUserSource: $provisionableUserSource ?? throw ConfigurationException::missingDependency("ProvisionableUserSource", "forUser()"),
+                                     provisionableUserSource           : throw ConfigurationException::missingDependency("ProvisionableUserSource", "forUser()"),
                                                 requireAdminElevation  : $requireAdminElevation,
                                                 auditLog               : $auditLog,
                                                 clock                  : $clock,

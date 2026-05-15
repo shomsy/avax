@@ -1458,7 +1458,7 @@ final class AuthBuilder
             pushAuthorizationRequest: $authCapabilityReadiness->oauth() ? $pushOidcAuthorizationRequest : null,
             logout                  : $authCapabilityReadiness->oauth() ? $oidcLogout : null,
             buildJarmResponse       : $authCapabilityReadiness->oauth() ? $buildOidcJarmResponse : null,
-            readProviderMetadata    : $authCapabilityReadiness->oauth() ? $readOidcProviderMetadata : null,
+            readOidcProviderMetadata: $authCapabilityReadiness->oauth() ? $readOidcProviderMetadata : null,
             readOidcJsonWebKeySet   : $authCapabilityReadiness->oauth() ? $readOidcJsonWebKeySet : null,
             readOidcUserInfo        : $authCapabilityReadiness->oauth() ? $readOidcUserInfo : null,
         );

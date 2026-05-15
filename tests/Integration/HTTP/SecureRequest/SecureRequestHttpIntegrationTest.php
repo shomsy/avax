@@ -16,6 +16,7 @@ use Avax\Components\HTTP\Dispatcher\System\Capabilities\ArgumentResolution\Argum
 use Avax\Components\HTTP\Request\System\Capabilities\IncomingRequest\ServerRequest;
 use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
 use Avax\Components\HTTP\Response\System\Flows\CreateJsonResponse\CreateJsonResponse;
+use Avax\Components\HTTP\SecureRequest\System\Capabilities\ResolveSecureRequest\SecureRequestInputBuilder;
 use Avax\Components\HTTP\SecureRequest\System\Capabilities\SecureRequestValidation\ValidationContext;
 use Avax\Components\HTTP\SecureRequest\System\Foundation\Failure\SecureRequestAuthorizationFailed;
 use Avax\Components\HTTP\SecureRequest\System\Foundation\Failure\SecureRequestResolutionFailed;
@@ -429,7 +430,7 @@ final class SecureRequestHttpIntegrationTest extends TestCase
             public function get(string $id) : mixed { return null; }
         };
 
-        $this->resolver         = new ArgumentResolver($container);
+        $this->resolver = new ArgumentResolver(typeResolvers: $typeResolvers, inputBuilder: new SecureRequestInputBuilder());
         $this->exceptionHandler = new CatchUnhandledExceptions(
             new ReportExceptionToLogger(),
             new CreateJsonResponse(),

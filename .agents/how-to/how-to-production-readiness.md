@@ -162,6 +162,10 @@ Production readiness requires all of these to be green.
 [ ] Superglobal boundary audit is green.
 [ ] PublicSurface checker is green.
 [ ] Runtime leak checker is green.
+[ ] Runtime composition leak checker is green.
+[ ] DI container service locator checker is green.
+[ ] DI direct instantiation checker is green.
+[ ] DI service provider coverage checker is green.
 [ ] Vendor monolith isolation checker is green.
 [ ] PHP-CS-Fixer dry-run is green for the committed scope.
 [ ] .agents/management/TODO.md, .agents/management/BUGS.md, and .agents/management/ACTIVE.md are synchronized.
@@ -172,6 +176,12 @@ Production readiness requires all of these to be green.
 [ ] Performance baseline is documented and benchmarked.
 [ ] Observability contract is documented and implemented at minimum level.
 [ ] Compatibility bridges are documented, tested, and removable.
+[ ] No forbidden patterns in runtime folders (Flows, Capabilities runtime, PublicSurface runtime).
+[ ] No service locator pattern in runtime execution paths.
+[ ] No class_exists() gating in runtime code.
+[ ] No new Build* in runtime code.
+[ ] No ?? new fallback in runtime code.
+[ ] Gate enforcement tools are path/context-aware, not class-name allowlists.
 ```
 
 ---

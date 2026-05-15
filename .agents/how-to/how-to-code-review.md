@@ -283,6 +283,11 @@ When these files exist, the review MUST check them explicitly:
 - `how-to-system-performance.md`: performance governance, hot paths, hidden I/O, bounding, latency budgets, memory
   management
 - `how-to-production-readiness.md`: production gates, health checks, doctor, runtime safety, failure handling
+- `how-to-dependency-injection.md`: DI/autowiring, ServiceProvider coverage, Container Ownership Rule, Approved
+  Composition Contexts, Container Resolution Rule, Gate Enforcement Rule, Forbidden Patterns, factory precision, golden
+  path examples
+- `how-to-runtime-composition.md`: Runtime Composition Leak Law, Forbidden Patterns, Container Ownership Rule, static
+  facade law, path/context-aware gate enforcement
 - `how-to-code-review.md`: this review process itself, including hard gates, findings, decision, next steps, and
   governance compliance
 

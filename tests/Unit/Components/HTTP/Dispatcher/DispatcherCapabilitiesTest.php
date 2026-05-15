@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit\Components\HTTP\Dispatcher;
 
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ArgumentResolution\ArgumentResolver;
+use Avax\Components\HTTP\SecureRequest\System\Capabilities\ResolveSecureRequest\SecureRequestInputBuilder;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -18,7 +19,7 @@ final class DispatcherCapabilitiesTest extends TestCase
         $request   = $this->createMock(ServerRequestInterface::class);
         $request->method('getAttribute')->with('name')->willReturn('John');
 
-        $resolver = new ArgumentResolver($container);
+        $resolver = new ArgumentResolver(typeResolvers: $typeResolvers, inputBuilder: new SecureRequestInputBuilder());
 
         $object     = new class {
             public function action(string $name) : void {}

@@ -98,7 +98,7 @@ This is how AvaX eliminates `new Class()` in runtime code.
 ### 3.4 Forbidden
 
 ```text
-new Class() outside composition root, factory, or test
+new Class() for services outside approved composition context
 $this->dependency ?? new Fallback()
 static::someMethod() to bypass DI
 Container::get() in business logic (allowed in bootstrap only)
@@ -111,11 +111,193 @@ autowiring that silently resolves to null without diagnostics
 
 ---
 
-## 4. ServiceProvider Pattern — Mandatory Per Component
+## 3.5 Approved Composition Contexts Rule
+
+Direct `new` for services is allowed only inside approved composition contexts.
+
+**Approved composition contexts:**
+
+```text
+ServiceProvider register()
+ServiceProvider boot(), only for boot-time wiring objects and only when idempotent
+System/Configuration/
+System/Configuration/Builders/
+explicit graph assembly classes
+explicit factories, but only for produced result objects
+tests
+tooling
+migration/recovery scripts when not active runtime
+examples, only for value/config objects and top-level application configuration DSL
+```
+
+**Runtime execution code MUST NOT create services.**
+
+Runtime execution includes:
+
+```text
+Flows executing application behavior
+Capabilities executing runtime behavior
+PublicSurface behavior
+request handling
+middleware execution
+controller dispatch
+event dispatch
+listener execution
+queue/job execution
+database/query execution
+failure handling
+worker loop execution
+runtime kernel execution
+```
+
+**Short law:**
+
+```text
+Value objects can be new.
+Services must be injected.
+Composition roots may assemble.
+Runtime execution must only execute.
+```
+
+---
+
+## 3.6 Optional Dependency Binding Rule
+
+Optional default does not mean hidden fallback.
+
+Optional default means explicit default binding.
+
+**BAD:**
+
+```php
+$this->clock ?? new SystemClock()
+```
+
+**BAD even inside a ServiceProvider closure:**
+
+```php
+$container->bind(
+    SomeRuntimeService::class,
+    static fn (Container $container): SomeRuntimeService => new SomeRuntimeService(
+        filesystem: $container->has(Filesystem::class)
+            ? $container->get(Filesystem::class)
+            : new Filesystem(),
+    ),
+);
+```
+
+**GOOD:**
+
+```php
+$container->bind(
+    Clock::class,
+    static fn (): Clock => new SystemClock(),
+);
+
+$container->bind(
+    Filesystem::class,
+    static fn (): Filesystem => new Filesystem(),
+);
+
+$container->bind(
+    SomeRuntimeService::class,
+    static fn (Container $container): SomeRuntimeService => new SomeRuntimeService(
+        clock: $container->get(Clock::class),
+        filesystem: $container->get(Filesystem::class),
+    ),
+);
+```
+
+**Rules:**
+
+- No `$dependency ?? new Dependency()` in runtime services.
+- No constructor defaults like `private Foo $foo = new Foo()`.
+- No fallback construction hidden inside service factory closures.
+- Register explicit default bindings first.
+- Resolve dependencies from the container after that.
+
+---
+
+## 4. ServiceProvider Pattern — Per Active Component
+
+### 4.0 Active Component ServiceProvider Rule
+
+Every ACTIVE production component with runtime behavior, public API, dependencies, replaceable services, state, I/O,
+configuration, or lifecycle ownership MUST have exactly one real ServiceProvider.
+
+A real ServiceProvider registers at least one of:
+
+- component public API entrypoints
+- runtime services
+- default infrastructure bindings
+- component configuration objects
+- aliases/contracts
+- capability implementations
+- factories for produced result objects
+- boot-time wiring hooks
+- health/doctor checks
+- resettable state hooks
+
+The following component statuses are exempt from mandatory ServiceProvider creation:
+
+- ROADMAP
+- SCAFFOLD
+- LABS_ONLY
+- EVIDENCE_ONLY
+- TEST_ONLY
+- PURE_FOUNDATION
+- DEPRECATED, if inactive and classified
+
+Exempt components MUST be classified in component-status-lock.
+
+**Empty ServiceProvider shells are FORBIDDEN.**
+
+A ServiceProvider that registers nothing, only exists to satisfy a gate, or contains TODO-only behavior is a governance
+violation.
+
+**BAD:**
+
+```php
+final class EmptyServiceProvider
+{
+    public function register(Container $container): void
+    {
+        // TODO
+    }
+}
+```
+
+**GOOD:**
+
+```php
+final readonly class ResponseServiceProvider
+{
+    public function register(Container $container): void
+    {
+        $container->bind(
+            CreateHttpResponse::class,
+            static fn (): CreateHttpResponse => new CreateHttpResponse(),
+        );
+
+        $container->bind(
+            Responses::class,
+            static fn (Container $container): Responses => new Responses(
+                createHttpResponse: $container->get(CreateHttpResponse::class),
+            ),
+        );
+    }
+}
+```
+
+Acceptance criteria:
+
+- ACTIVE_GREEN runtime components have real ServiceProvider/assembly ownership.
+- ROADMAP/SCAFFOLD/LABS_ONLY components are not forced to create fake providers.
+- Every missing provider has status, owner, target stage, and blocking decision if relevant.
 
 ### 4.1 The Rule
 
-Every component MUST have exactly one ServiceProvider.
+Every ACTIVE component MUST have exactly one ServiceProvider.
 
 The ServiceProvider is the composition root for that component.
 
@@ -161,7 +343,46 @@ boot() runs AFTER all ServiceProviders have registered.
 boot() MUST NOT register new dependencies.
 boot() MAY subscribe to events, register middleware, compile routes.
 boot() MUST be idempotent — calling boot() twice must not double-register.
+boot() MUST be deterministic.
+boot() MUST avoid runtime execution side effects.
+boot() MUST NOT run destructive operations.
+boot() MUST NOT run expensive or external health checks unless explicitly configured.
+boot() MUST NOT process real requests, jobs, or events.
+boot() MUST NOT mutate request-scoped state.
 ```
+
+**ServiceProvider boot() Rule:**
+
+register() binds dependencies.
+
+boot() wires already registered systems.
+
+boot() **MAY**:
+
+- subscribe events
+- register middleware declarations
+- register routes
+- register health check declarations
+- register cache warmers
+- register lifecycle hooks
+- connect facade/static/public-surface bridges
+- finalize component wiring
+
+boot() **MUST**:
+
+- be idempotent
+- be deterministic
+- avoid runtime execution side effects
+- not register new dependencies that should be in register()
+- not run destructive operations
+- not run expensive or external health checks unless explicitly configured
+- not process real requests/jobs/events
+- not mutate request-scoped state
+
+**Health/doctor rule:**
+
+boot() MAY register health checks.
+boot() MUST NOT execute expensive/destructive/external health checks during normal boot unless explicitly configured.
 
 ### 4.5 Example ServiceProvider
 
@@ -352,15 +573,9 @@ Error::response($exception)
 
 ### 5.3 Allowed Exceptions
 
-`new Class()` is allowed ONLY in:
+`new Class()` is allowed ONLY in approved composition contexts.
 
-```text
-ServiceProvider register() methods — composition root
-Factory classes with explicit responsibility — object creation is their job
-Tests — test setup and mock creation
-Fluent API terminal methods — when building a value object
-Value object private constructors — named constructor pattern
-```
+See **Section 3.5: Approved Composition Contexts Rule** for the full list.
 
 Every other `new Class()` in production code is a violation.
 
@@ -552,7 +767,9 @@ Saying "Filesystem may be `new` in ServiceProvider, Configuration, Builder, test
 
 ### 6.6 Factory Class Precision
 
-A factory class may use `new` only when its job is to create a **result**, not to assemble a runtime graph.
+A factory may instantiate produced result objects.
+
+A factory **MUST NOT** secretly assemble framework/runtime graphs.
 
 **GOOD — factory creates a result:**
 
@@ -570,7 +787,7 @@ final readonly class CreateHttpResponse
 }
 ```
 
-**SUSPICIOUS — factory assembles a graph:**
+**FORBIDDEN — factory assembles a graph:**
 
 ```php
 final readonly class RuntimeFactory
@@ -586,8 +803,19 @@ final readonly class RuntimeFactory
 }
 ```
 
-This second example is actually a `Configuration/Builder` or `ServiceProvider`, not an ordinary factory. It assembles
-dependencies, it does not produce a simple result.
+If a class assembles multiple runtime services, it belongs in:
+
+```text
+System/Configuration/Builders/
+```
+
+not in a generic factory.
+
+**Factory rule:**
+
+- Factories create produced objects.
+- Configuration builders assemble system graphs.
+- Runtime services execute behavior.
 
 ### 6.7 Clock Default Binding
 
@@ -677,28 +905,54 @@ For the full runtime composition law, see:
 .agents/how-to/how-to-runtime-composition.md
 ```
 
-### 6.10 Examples Must Show Canonical Style
+### 6.10 Golden Path Example Rule
 
-Golden path examples must show canonical framework usage, not manual service graph assembly.
+Golden path examples **MUST** show canonical framework usage.
 
-Examples may instantiate:
+Examples are architecture because humans and AI copy them.
 
-```php
-new ApplicationBuilder(...)
-new ProjectPath(...)
-new EnvironmentName(...)
+Golden path examples **MAY** instantiate:
+
+```text
+ApplicationBuilder
+ProjectPath
+EnvironmentName
+simple config/value objects
+userland DTOs/events/messages
+top-level application configuration DSL objects
 ```
 
-Examples should NOT manually instantiate runtime services:
+Golden path examples **MUST NOT** manually instantiate framework runtime services:
 
-```php
-new RunDoctor()
-new HandleIncomingHttp(...)
-new ResponseFactory()
-new Filesystem()
+```text
+RunDoctor
+HandleIncomingHttp
+ResponseFactory / CreateHttpResponse
+Filesystem
+EventDispatcher
+Logger
+DatabaseConnection
+QueryOrchestrator
+HttpMiddlewareStack
+FailureBoundary
+ControllerResolver
+ResolveCallable
 ```
 
-**BETTER:**
+**BAD:**
+
+```php
+return new ApplicationBuilder(
+    clock: new SystemClock(),
+    runDoctor: new RunDoctor(),
+    handleIncomingHttp: new HandleIncomingHttp(
+        responseFactory: new ResponseFactory(),
+    ),
+    filesystem: new Filesystem(),
+);
+```
+
+**GOOD:**
 
 ```php
 return ApplicationBuilder::forProject(
@@ -709,7 +963,14 @@ return ApplicationBuilder::forProject(
     ->withHttpRoutes(__DIR__ . '/config/routes.php');
 ```
 
-Examples teach future AI and humans. They must not show cheap assembly patterns.
+If an example needs custom runtime services, it **MUST** show provider/configuration override, not manual graph
+assembly.
+
+**Acceptance criteria:**
+
+- Golden path examples do not manually assemble runtime services.
+- Examples show provider/configuration override for customization.
+- Examples teach canonical framework usage, not cheap assembly.
 
 ### 6.11 Short Version
 
@@ -830,18 +1091,121 @@ It MUST NOT leak state between requests in long-lived runtimes.
 
 ## 10. Container Resolution Law
 
-### 10.1 ResolveCallable — Primary Callable Resolver
+### 10.1 Container Resolution Rule
+
+**Status:** MANDATORY
+**Scope:** All production PHP code
+**Severity:** BLOCKER
+
+Container resolution **MUST** occur only in approved composition contexts.
+
+Service locator pattern **MUST NOT** be used in runtime execution code.
+
+```text
+Container::get()
+$container->get()
+$container->make()
+$container->resolve()
+app()
+resolve()
+```
+
+These calls **MUST NOT** appear in:
+
+```text
+business/runtime execution paths
+Flows
+Capabilities (runtime methods)
+PublicSurface (runtime methods)
+controllers
+middleware execution
+event/listener execution
+queue/job execution
+database/query execution
+request handling
+failure handling
+worker loop iteration
+```
+
+**BAD:**
+
+```php
+public function handle(Request $request): Response
+{
+    $logger = app(LoggerInterface::class);
+    $logger->info('Request received');
+
+    $service = $container->get(SomeService::class);
+
+    return $service->process($request);
+}
+```
+
+**GOOD:**
+
+```php
+final readonly class HandleIncomingHttp
+{
+    public function __construct(
+        private LoggerInterface $logger,
+        private SomeService $someService,
+    ) {}
+
+    public function handle(Request $request): Response
+    {
+        $this->logger->info('Request received');
+
+        return $this->someService->process($request);
+    }
+}
+```
+
+### 10.2 Approved Container Resolution Contexts
+
+Container resolution is **ALLOWED** only in:
+
+```text
+ServiceProvider register() method
+ServiceProvider boot() method (with idempotency)
+System/Configuration/
+System/Configuration/Builders/
+explicit factory classes (for result objects, not graph assembly)
+test setup (tests/)
+tooling scripts (tooling/)
+composition roots (Avax::create, CreateApplication)
+```
+
+**GOOD:**
+
+```php
+final readonly class LoggerServiceProvider
+{
+    public function register(Container $container): void
+    {
+        $container->bind(
+            LoggerInterface::class,
+            static fn (): LoggerInterface => new FileLogger(
+                projectPath: $container->get(ProjectPath::class),
+            ),
+        );
+    }
+}
+```
+
+### 10.3 ResolveCallable — Primary Callable Resolver
 
 `ResolveCallable` is the primary mechanism for resolving and invoking callables.
 
 ```text
 If PSR-11 container is available, delegate to it.
-If not, fall back to zero-arg new — but this is a YELLOW status, not GREEN.
+Container autowiring MUST resolve all constructor dependencies.
 Reject non-invokable class-strings.
 Support method-level autowiring for route handlers.
 ```
 
-### 10.2 Autowiring Implementation
+Container resolution failure MUST produce clear diagnostics at boot, not runtime.
+
+### 10.4 Autowiring Implementation
 
 The container MUST support:
 
@@ -857,7 +1221,7 @@ interface -> concrete aliasing
 fallback to default when dependency is truly optional
 ```
 
-### 10.3 Resolution Failure Law
+### 10.5 Resolution Failure Law
 
 ```text
 Resolution failure MUST produce clear diagnostics at boot, not runtime.
@@ -904,6 +1268,66 @@ severity (BLOCKER / HIGH / MEDIUM)
 suggested fix
 ```
 
+### 11.2 Gate Enforcement Rule
+
+**Status:** MANDATORY
+**Scope:** All tooling gates and manual review
+**Severity:** BLOCKER
+
+Tooling gates **MUST** be path/context-aware, not class-name based.
+
+Gates **MUST NOT** use allowlists of class names to decide what is allowed.
+
+Gates **MUST** scan by path context and rule violation pattern.
+
+```text
+FORBIDDEN: allowlist of class names that may be instantiated
+ALLOWED:  scan all runtime folders for forbidden patterns
+```
+
+Gate logic:
+
+```text
+1. Scan framework/System/Flows/** for forbidden patterns
+2. Scan framework/System/Capabilities/** runtime methods for forbidden patterns
+3. Scan framework/System/PublicSurface/** runtime methods for forbidden patterns
+4. Scan components/**/System/Flows/** for forbidden patterns
+5. Scan components/**/System/Capabilities/** runtime methods for forbidden patterns
+6. Scan components/**/System/PublicSurface/** runtime methods for forbidden patterns
+7. Report every violation with file, line, pattern type, severity
+```
+
+Forbidden patterns (§2 Forbidden Patterns):
+
+```text
+class_exists() gating
+new Build* in runtime code
+new *Middleware, *Handler, *Dispatcher, *Resolver in runtime code
+->build() in runtime execution
+$middleware[], $pipeline[] construction in runtime code
+?? new fallback in runtime code
+= new ClassName() default parameter in runtime code
+Container::get(), $container->get(), app(), resolve() in runtime code
+service locator pattern in runtime code
+```
+
+Approved composition contexts (§3.5 Approved Composition Contexts):
+
+```text
+ServiceProvider register()
+ServiceProvider boot()
+System/Configuration/
+System/Configuration/Builders/
+explicit factory classes
+tests/
+tooling/
+composition roots
+```
+
+If a file is in an approved composition context, it is exempt from runtime pattern scanning.
+
+If a file is in a runtime context, it is scanned for all forbidden patterns regardless of class name.
+
 ---
 
 ## 12. Review Checklist
@@ -911,7 +1335,9 @@ suggested fix
 A DI / ServiceProvider / Fluent API review passes only if:
 
 ```text
-every component has a ServiceProvider
+every ACTIVE component has a ServiceProvider
+ROADMAP/SCAFFOLD/LABS_ONLY/EVIDENCE_ONLY/TEST_ONLY/PURE_FOUNDATION components are exempt and classified
+empty ServiceProvider shells do not exist
 ServiceProvider register() declares all public APIs
 ServiceProvider boot() is idempotent
 no new Class() outside composition root / factory / test
@@ -971,14 +1397,17 @@ Step 5: Update call sites to use injected dependency
 
 ```text
 Framework = DI.
-ServiceProvider = composition root per component.
-new Class() = forbidden outside composition root.
+ServiceProvider = composition root per active component.
+new Class() = forbidden outside approved composition contexts.
 ?? new Fallback() = missing DI configuration.
 Static = entry points and value objects only.
 Fluent API = intent-first call sites.
 Autowiring = mandatory for route handlers.
 Container = the framework's heart.
 Evidence = validation proves DI discipline.
+Gates = path/context-aware, not class-name allowlists.
+Runtime = execute only, never assemble.
+Composition = assemble only, never execute.
 ```
 
 No claim of GREEN may be made without:
@@ -986,6 +1415,11 @@ No claim of GREEN may be made without:
 ```text
 check-direct-instantiation.php GREEN
 check-container-service-locator.php GREEN
-every component has ServiceProvider
+check-service-provider-coverage.php GREEN
+check-runtime-composition-leaks.php GREEN
+every ACTIVE component has real ServiceProvider
+empty ServiceProvider shells do not exist
 all tests pass through DI-resolved dependencies
+no forbidden patterns in runtime folders
+no service locator in runtime execution paths
 ```

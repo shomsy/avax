@@ -91,7 +91,7 @@ final readonly class DispatchConfiguredRoute
         $container            = new RouteFacadeContainer();
         $resolveCallable      = new ResolveCallable(container: clone $container);
         $controllerResolver   = new ControllerResolver(resolver: $resolveCallable);
-        $argumentResolver     = new ArgumentResolver(container: clone $container);
+        $argumentResolver = new ArgumentResolver(typeResolvers: $typeResolvers, inputBuilder: new SecureRequestInputBuilder());
         $dispatchRouteAction  = new DispatchRouteAction(
             controllerResolver: $controllerResolver,
             argumentResolver  : $argumentResolver,

@@ -13,6 +13,7 @@ use Avax\Components\Operations\Parallelism\System\Flows\RunWorkInParallel\RunWor
 use Avax\Components\Operations\Parallelism\System\Foundation\Failure\ParallelException;
 use Avax\Components\Operations\Parallelism\System\Foundation\ParallelFailure;
 use Avax\Components\Operations\Parallelism\System\Foundation\ParallelResult;
+use Avax\Components\Operations\Parallelism\System\PublicSurface\Parallel;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;

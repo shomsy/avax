@@ -50,6 +50,7 @@ final class CheckRuntimeCompositionLeaks
         '/Tests/',
         '/tooling/',
         '/Tooling/',
+        '/Application/Container/',
     ];
 
     /**

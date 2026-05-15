@@ -832,6 +832,26 @@ BLOCKER_FOR_V5_9      — must be fixed before V5.9 GREEN
 
 ## 9. Tooling Gate Requirements
 
+### 9.0 Related Governance
+
+The Container Ownership Rule, which defines when classes must be DI-managed versus when direct `new` is allowed, is
+defined in:
+
+```text
+.agents/how-to/how-to-dependency-injection.md — Section 6: Container Ownership Rule
+```
+
+That document includes:
+
+- Builder placement rule (Configuration/Builders vs Capabilities)
+- Factory class precision rule (result vs graph assembly)
+- Clock default binding rule
+- Path/context-based enforcement (not class-name-based)
+- Examples canonical style rule
+
+This document focuses on runtime composition leaks specifically.
+The DI document defines the broader ownership law.
+
 ### 9.1 Detection tool
 
 ```bash

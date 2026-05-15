@@ -366,15 +366,375 @@ Every other `new Class()` in production code is a violation.
 
 ---
 
-## 6. Fluent API Law
+## 6. Container Ownership Rule
 
-### 6.1 The Rule
+### 6.1 Core Principle
+
+```text
+Value objects can be new.
+Services must be injected.
+Composition roots may assemble.
+Runtime execution must only execute.
+```
+
+This rule resolves the fundamental question: "When is `new` allowed?"
+
+The answer depends on **what the object is** and **where the code lives**.
+
+### 6.2 When DI/Container is MANDATORY
+
+A class MUST be container-managed when it is:
+
+- a framework or runtime service
+- a capability with dependencies
+- a class that performs I/O
+- a class that owns lifecycle or state
+- a class that must be configurable or replaceable
+- a class that needs a fake or test implementation
+- a class used by runtime execution paths
+- a middleware, listener, controller, job, dispatcher, resolver, renderer, factory, provider, store, logger, client,
+  repository, transport, cache store, queue broker, filesystem adapter, database connection, or clock
+- a class whose implementation may differ by environment
+- a class that must be reset or scoped in long-lived runtimes
+
+Examples that MUST come from DI/container/ServiceProvider:
+
+```text
+Filesystem
+ResponseFactory / CreateHttpResponse
+RunDoctor
+HandleIncomingHttp
+EventDispatcher
+ResolveCallable
+QueryOrchestrator
+EntityPersister
+Logger
+Clock
+HttpMiddlewareStack
+HttpFailureBoundaryMiddleware
+FailureBoundary
+CacheStore
+QueueBroker
+DatabaseConnection
+ControllerResolver
+```
+
+**BAD:**
+
+```php
+public function handle(Request $request): Response
+{
+    $responseFactory = new ResponseFactory();
+
+    return $responseFactory->json(['ok' => true]);
+}
+```
+
+**GOOD:**
+
+```php
+final readonly class HandleIncomingHttp
+{
+    public function __construct(
+        private CreateHttpResponse $createHttpResponse,
+    ) {}
+
+    public function handle(Request $request): Response
+    {
+        return $this->createHttpResponse->json(['ok' => true]);
+    }
+}
+```
+
+### 6.3 When direct `new` is ALLOWED — Data and Result Objects
+
+A class does NOT need to be container-managed when it is:
+
+- value object
+- DTO
+- event
+- exception
+- enum
+- simple immutable config object
+- message, command, or query object
+- result object
+- collection object
+- specification object without I/O
+- temporary local object with no dependencies
+- concrete output produced by a service
+
+Examples that may be created directly:
+
+```php
+new UserRegistered(...)
+new ProjectPath(...)
+new EnvironmentName(...)
+new Response(...)
+new HeaderBag(...)
+new CacheKey(...)
+new RuntimeException(...)
+new ValidationError(...)
+new AuthOptions(...)
+new RegisteredUserView(...)
+```
+
+**GOOD:**
+
+```php
+return new Response(
+    status: 200,
+    headers: ['Content-Type' => 'application/json'],
+    body: $json,
+);
+```
+
+This is allowed because `Response` is the **result**, not the **service**.
+
+### 6.4 Decision Tests
+
+When unsure, apply this test:
+
+```text
+Can this class be safely created with `new` anywhere, without configuration,
+lifecycle, I/O, state, environment, overrides, mocks, reset, or policy?
+```
+
+If yes, direct `new` is fine.
+
+If no, container/DI/ServiceProvider owns it.
+
+Second test:
+
+```text
+Is this object the thing being produced, or the machine that produces things?
+```
+
+Produced thing (allowed):
+
+```php
+new Response(...)
+new UserRegistered(...)
+new CacheKey(...)
+```
+
+Machine (DI/container):
+
+```php
+new ResponseFactory()
+new EventDispatcher()
+new Filesystem()
+new Logger()
+new QueryOrchestrator()
+```
+
+### 6.5 Direct `new` by Path Context — Not by Class Name
+
+Permissions are **path/context-based**, not class-name-based.
+
+Direct instantiation is allowed ONLY in:
+
+```text
+ServiceProvider register() methods — composition root
+System/Configuration/ — assembly boundary
+System/Configuration/Builders/ — configuration-time graph assembly
+explicit Factory classes — object creation is their job
+test setup (tests/) — test fixture creation
+tooling scripts (tooling/) — developer tools
+Foundation value objects — named constructor pattern
+examples — config/value objects and top-level app assembly only
+```
+
+**No broad allowlists by class name.**
+
+Saying "Filesystem is allowed" is wrong.
+
+Saying "Filesystem may be `new` in ServiceProvider, Configuration, Builder, test, or tooling context" is correct.
+
+### 6.6 Factory Class Precision
+
+A factory class may use `new` only when its job is to create a **result**, not to assemble a runtime graph.
+
+**GOOD — factory creates a result:**
+
+```php
+final readonly class CreateHttpResponse
+{
+    public function json(array $data): Response
+    {
+        return new Response(
+            status: 200,
+            headers: ['Content-Type' => ['application/json']],
+            body: json_encode($data),
+        );
+    }
+}
+```
+
+**SUMNJIVO — factory assembles a graph:**
+
+```php
+final readonly class RuntimeFactory
+{
+    public function create(): Runtime
+    {
+        return new Runtime(
+            router: new Router(),
+            dispatcher: new EventDispatcher(),
+            logger: new Logger(),
+        );
+    }
+}
+```
+
+This second example is actually a `Configuration/Builder` or `ServiceProvider`, not an ordinary factory. It assembles
+dependencies, it does not produce a simple result.
+
+### 6.7 Clock Default Binding
+
+`Clock` must come from DI in runtime code.
+
+`new SystemClock()` is allowed ONLY in a ServiceProvider as a default binding:
+
+```php
+$container->bind(
+    Clock::class,
+    static fn (): Clock => new SystemClock(),
+);
+```
+
+It is NOT allowed in runtime flows, controllers, middleware, listeners, or builders invoked per-request.
+
+### 6.8 Builder Placement Rule
+
+A builder belongs in `System/Configuration/Builders/` only when it assembles **configuration-time** dependency graphs,
+runtime packages, default bindings, or component wiring.
+
+A builder belongs in `System/Capabilities/` when it creates **runtime results** or performs runtime behavior.
+
+**Allowed in `Configuration/Builders/`:**
+
+```text
+BuildApplicationRuntime
+BuildAuthRuntime
+AssembleHttpKernel
+RegisterAuthDefaults
+BuildCacheRuntime
+```
+
+**Belongs in `Capabilities/`:**
+
+```text
+BuildHttpResponse
+BuildGraphQLSchema
+BuildOpenApiDocument
+BuildUrl
+BuildMiddlewarePipeline
+BuildSqlQuery
+```
+
+**Rule:**
+
+```text
+Configuration builders assemble the system.
+Capability builders create runtime results.
+```
+
+### 6.9 Runtime Composition Leak Rule
+
+Runtime code **MUST NOT** discover or assemble optional capabilities.
+
+**Forbidden in runtime paths:**
+
+```php
+class_exists(SomeCapability::class);
+new BuildSomething();
+new SomeMiddleware(...);
+$middleware[] = new SomeMiddleware(...);
+$builder->build();
+```
+
+Optional capability wiring belongs in `ServiceProvider`, `Configuration`, or `Configuration/Builders`.
+
+**Runtime receives ready objects:**
+
+```php
+final readonly class HandleIncomingHttp
+{
+    public function __construct(
+        private HttpMiddlewareStack $middlewareStack,
+    ) {}
+
+    public function handle(Request $request): Response
+    {
+        return $this->middlewareStack->handle($request);
+    }
+}
+```
+
+For the full runtime composition law, see:
+
+```text
+.agents/how-to/how-to-runtime-composition.md
+```
+
+### 6.10 Examples Must Show Canonical Style
+
+Golden path examples must show canonical framework usage, not manual service graph assembly.
+
+Examples may instantiate:
+
+```php
+new ApplicationBuilder(...)
+new ProjectPath(...)
+new EnvironmentName(...)
+```
+
+Examples should NOT manually instantiate runtime services:
+
+```php
+new RunDoctor()
+new HandleIncomingHttp(...)
+new ResponseFactory()
+new Filesystem()
+```
+
+**BETTER:**
+
+```php
+return ApplicationBuilder::forProject(
+    projectPath: $projectPath,
+    environmentName: $environmentName,
+)
+    ->withDefaultRuntimeServices()
+    ->withHttpRoutes(__DIR__ . '/config/routes.php');
+```
+
+Examples teach future AI and humans. They must not show cheap assembly patterns.
+
+### 6.11 Short Version
+
+```text
+Value objects can be new.
+Services must be injected.
+Composition roots may assemble.
+Runtime execution must only execute.
+
+Is it a machine? It comes from DI.
+Is it a product? It may be new.
+Is it optional? It is registered, not detected.
+```
+
+---
+
+## 8. Fluent API Law
+
+### 8.1 The Rule
 
 Complex operations MUST provide fluent, chainable, intent-first APIs.
 
 Call sites must read like human DSL, not internal plumbing.
 
-### 6.2 Fluent API Design
+### 8.2 Fluent API Design
 
 ```php
 // GOOD — fluent builder
@@ -402,7 +762,7 @@ Transaction::begin()
     ->run(fn () => $this->processOrder($order));
 ```
 
-### 6.3 Fluent API Rules
+### 8.3 Fluent API Rules
 
 ```text
 Entry point is static factory or DI-resolved instance.
@@ -412,7 +772,7 @@ Fluent chain MUST NOT have side effects until the terminal method.
 Fluent API MUST accept natural inputs — boundary owns normalization.
 ```
 
-### 6.4 Forbidden Fluent Patterns
+### 8.4 Forbidden Fluent Patterns
 
 ```php
 // BAD — mutable fluent API
@@ -434,9 +794,9 @@ ErrorRenderer::fromResponse(
 
 ---
 
-## 7. Static Method Rules
+## 9. Static Method Rules
 
-### 7.1 Allowed Static Usage
+### 9.1 Allowed Static Usage
 
 ```text
 Fluent API entry points: Queue::dispatch(), Error::response(), Transaction::begin()
@@ -445,7 +805,7 @@ Immutable named constructors: Config::fromFile(), Schema::fromMigration()
 Configuration access: DataTransfer::config(), Cache::ttl()
 ```
 
-### 7.2 Forbidden Static Usage
+### 9.2 Forbidden Static Usage
 
 ```text
 Mutable shared state without reset capability
@@ -455,7 +815,7 @@ Operations that bypass the container
 Facade patterns that hide dependencies
 ```
 
-### 7.3 Static Mutable State Law
+### 9.3 Static Mutable State Law
 
 If a component uses static mutable state:
 
@@ -468,9 +828,9 @@ It MUST NOT leak state between requests in long-lived runtimes.
 
 ---
 
-## 8. Container Resolution Law
+## 10. Container Resolution Law
 
-### 8.1 ResolveCallable — Primary Callable Resolver
+### 10.1 ResolveCallable — Primary Callable Resolver
 
 `ResolveCallable` is the primary mechanism for resolving and invoking callables.
 
@@ -481,7 +841,7 @@ Reject non-invokable class-strings.
 Support method-level autowiring for route handlers.
 ```
 
-### 8.2 Autowiring Implementation
+### 10.2 Autowiring Implementation
 
 The container MUST support:
 
@@ -497,7 +857,7 @@ interface -> concrete aliasing
 fallback to default when dependency is truly optional
 ```
 
-### 8.3 Resolution Failure Law
+### 10.3 Resolution Failure Law
 
 ```text
 Resolution failure MUST produce clear diagnostics at boot, not runtime.
@@ -508,7 +868,7 @@ Non-instantiable class MUST report: is it abstract? interface? missing autoload?
 
 ---
 
-## 9. Tooling Gates
+## 11. Tooling Gates
 
 The following tooling gates enforce this governance:
 
@@ -521,7 +881,7 @@ php tooling/refactor/check-service-provider-coverage.php
 
 These gates are mandatory before any stage may be marked GREEN.
 
-### 9.1 check-direct-instantiation.php
+### 11.1 check-direct-instantiation.php
 
 Scans all production PHP files for:
 
@@ -546,7 +906,7 @@ suggested fix
 
 ---
 
-## 10. Review Checklist
+## 12. Review Checklist
 
 A DI / ServiceProvider / Fluent API review passes only if:
 
@@ -571,9 +931,9 @@ If any item fails, status is YELLOW or RED.
 
 ---
 
-## 11. Migration Strategy
+## 13. Migration Strategy
 
-### 11.1 For Existing Code with `new Class()`
+### 13.1 For Existing Code with `new Class()`
 
 ```text
 Step 1: Identify all new Class() outside constructors
@@ -585,7 +945,7 @@ Step 6: Remove ?? new Fallback() — register fallback in ServiceProvider
 Step 7: Run tests and validation
 ```
 
-### 11.2 For Existing Code with `?? new Fallback()`
+### 13.2 For Existing Code with `?? new Fallback()`
 
 ```text
 Step 1: Identify all ?? new Fallback() patterns
@@ -595,7 +955,7 @@ Step 4: Remove the null-coalescing fallback
 Step 5: Verify tests pass
 ```
 
-### 11.3 For Existing Code with Static Calls
+### 13.3 For Existing Code with Static Calls
 
 ```text
 Step 1: Identify static calls that bypass DI
@@ -607,7 +967,7 @@ Step 5: Update call sites to use injected dependency
 
 ---
 
-## 12. Final Law
+## 14. Final Law
 
 ```text
 Framework = DI.

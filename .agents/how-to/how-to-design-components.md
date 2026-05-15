@@ -824,6 +824,33 @@ Configuration/
 
 A large builder must not become a hidden container.
 
+### 6.5.2 Container Ownership Rule — Cross-Reference
+
+For the complete Container Ownership Rule, including:
+
+- When DI/container is mandatory vs when direct `new` is allowed
+- Builder placement rule (Configuration/Builders vs Capabilities)
+- Runtime composition leak rule
+- Factory class precision (result vs graph assembly)
+- Path/context-based enforcement
+- Clock default binding
+- Examples canonical style
+
+See:
+
+```text
+.agents/how-to/how-to-dependency-injection.md — Section 6: Container Ownership Rule
+.agents/how-to/how-to-runtime-composition.md — Full runtime composition law
+```
+
+Key principle for component design:
+
+```text
+Configuration/Builders/ assembles the system.
+Capabilities/ creates runtime results.
+Runtime execution code must not assemble dependencies.
+```
+
 ---
 
 ## 6.6 Foundation Rule

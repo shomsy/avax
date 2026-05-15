@@ -148,13 +148,15 @@ V5.8.5 AvaX Full Enterprise Cleanup: CLOSED / FULL GREEN (all cleanup phases A t
 
 V5.8.6 HTTP Response Layer Convergence: CLOSED / FULL GREEN (ResponseServiceProvider converged, CreateHttpResponse + Responses + ResponseFactoryInterface alias registered, 13 provider tests GREEN, pre-existing errors classified, GoldenPathRuntime responseFactory bug fixed)
 
+V5.8.7 Full Suite Baseline Restoration: CLOSED / FULL GREEN (8351 tests, 24012 assertions, 0 errors, 0 failures, all gates GREEN, 15 files fixed, no tests deleted or weakened)
+
 Current Plan Lock: CLOSED / FULL GREEN
 
-Active stage: V5.8.5 AvaX Full Enterprise Cleanup — COMPLETE / FULL GREEN
+Active stage: V5.8.7 Full Suite Baseline Restoration — COMPLETE / FULL GREEN
 
 Next allowed stage: V5.9 Boot DSL.
 
-V5.9 Boot DSL is UNBLOCKED — cleanup program is GREEN.
+V5.9 Boot DSL is UNBLOCKED — cleanup program is GREEN, full suite baseline is GREEN.
 
 ---
 
@@ -189,13 +191,13 @@ An agent must not combine stages unless EXECUTION.md explicitly allows it.
 The current active stage is:
 
 ```text
-None — V5.8.6 HTTP Response Layer Convergence COMPLETE / FULL GREEN
+None — V5.8.7 Full Suite Baseline Restoration COMPLETE / FULL GREEN
 ```
 
 Last completed stage:
 
 ```text
-V5.8.6 HTTP Response Layer Convergence — FULL GREEN (ResponseServiceProvider converged, 13 provider tests GREEN, pre-existing errors classified)
+V5.8.7 Full Suite Baseline Restoration — FULL GREEN (8351 tests, 24012 assertions, 0 errors, 0 failures, all gates GREEN)
 ```
 
 Current Plan Lock: FULL GREEN

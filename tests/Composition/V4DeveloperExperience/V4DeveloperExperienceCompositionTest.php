@@ -70,7 +70,7 @@ final class V4DeveloperExperienceCompositionTest extends TestCase
     #[Test]
     public function configurationCapabilitiesFollowCanonicalShape(): void
     {
-        $configPath = $this->frameworkRoot.'/Capabilities/Configuration';
+        $configPath = $this->frameworkRoot.'/Capabilities/Configuration/Builders';
 
         self::assertFileExists(
             $configPath.'/RegisterConfigCommands.php',

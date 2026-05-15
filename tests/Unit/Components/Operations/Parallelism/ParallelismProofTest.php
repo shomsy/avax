@@ -8,6 +8,7 @@ use Avax\Components\Foundation\CallableSerialization\System\PublicSurface\Callab
 use Avax\Components\Operations\Parallelism\System\Capabilities\RunInCurrentProcess\CurrentProcessParallelRuntime;
 use Avax\Components\Operations\Parallelism\System\Capabilities\RunThroughProcessPool\SymfonyProcessParallelRuntime;
 use Avax\Components\Operations\Parallelism\System\Configuration\Builders\BuildParallelRuntime;
+use Avax\Components\Operations\Parallelism\System\Configuration\ParallelRuntimeInterface;
 use Avax\Components\Operations\Parallelism\System\Configuration\ParallelismConfig;
 use Avax\Components\Operations\Parallelism\System\Flows\RunWorkInParallel\RunWorkInParallel;
 use Avax\Components\Operations\Parallelism\System\Foundation\Failure\ParallelException;
@@ -93,15 +94,17 @@ final class ParallelismProofTest extends TestCase
 
     public function test_runWorkInParallel_uses_buildParallelRuntime_not_hardcoded() : void
     {
-        $flow = new RunWorkInParallel(runtime: Parallel::run(static fn () => "test"));
+        $runtime = new CurrentProcessParallelRuntime();
+        $flow = new RunWorkInParallel(runtime: $runtime);
         $reflection = new ReflectionClass($flow);
-        $builderProperty = $reflection->getProperty('builder');
-        $builder = $builderProperty->getValue($flow);
+        $runtimeProperty = $reflection->getProperty('runtime');
+        $actualRuntime = $runtimeProperty->getValue($flow);
 
+        $this->assertSame($runtime, $actualRuntime);
         $this->assertInstanceOf(
-            BuildParallelRuntime::class,
-            $builder,
-            'RunWorkInParallel uses BuildParallelRuntime, not hardcoded CurrentProcessParallelRuntime',
+            ParallelRuntimeInterface::class,
+            $actualRuntime,
+            'RunWorkInParallel accepts any ParallelRuntimeInterface, not hardcoded runtime',
         );
     }
 

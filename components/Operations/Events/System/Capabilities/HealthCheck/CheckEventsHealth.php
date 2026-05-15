@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Operations\Events\System\Capabilities\HealthCheck;
 
+use Avax\Components\Operations\Events\System\Capabilities\InvokeEventListener\InvokeEventListener;
 use Avax\Components\Operations\Events\System\Capabilities\ResolveEventListeners\ResolveEventListeners;
 use Avax\Components\Operations\Events\System\Foundation\CompiledListener;
 use Avax\Components\Operations\Events\System\Foundation\CompiledListenerRegistry;
@@ -64,7 +65,9 @@ final class CheckEventsHealth
         // Check 2: EventEmitter dispatches correctly
         try {
             $registry = new CompiledListenerRegistry();
-            $emitter  = new EventEmitter($registry);
+            $resolver = new ResolveEventListeners();
+            $invoker  = new InvokeEventListener();
+            $emitter  = new EventEmitter($registry, $resolver, $invoker);
 
             $testEvent = new stdClass();
             $result    = $emitter->emit($testEvent);

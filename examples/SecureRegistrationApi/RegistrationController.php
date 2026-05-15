@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Examples\SecureRegistrationApi;
 
-use Avax\Components\HTTP\Response\System\PublicSurface\Response;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\Attributes\OnFailure;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\Attributes\ReportFailure;
@@ -84,7 +84,7 @@ final readonly class RegistrationController
             registeredAt: $registeredAt,
         ));
 
-        return Response::json([
+        return (new CreateHttpResponse())->json([
             'status' => 'registered',
             'message' => 'User registered successfully',
             'userId' => $userId,
@@ -117,7 +117,7 @@ final readonly class RegistrationController
             throw new ExternalServiceDown('Identity provider is unavailable');
         }
 
-        return Response::json([
+        return (new CreateHttpResponse())->json([
             'status' => 'verified',
             'provider' => $provider,
         ]);

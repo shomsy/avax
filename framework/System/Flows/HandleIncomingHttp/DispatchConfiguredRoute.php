@@ -58,7 +58,7 @@ final readonly class DispatchConfiguredRoute
             $routeDefinitions = require $routesFile;
 
             if (is_callable(value: $routeDefinitions)) {
-                $routeDefinitions($frameworkRouteRegistrar);
+                $routeDefinitions($frameworkRouteRegistrar, $createHttpResponse);
             }
         } finally {
             if ($previousContainer !== null) {

@@ -3,18 +3,22 @@
 declare(strict_types=1);
 
 use Avax\Components\HTTP\Router\System\PublicSurface\RouterInterface;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\HTTP\Response\System\PublicSurface\Responses;
 use Psr\Http\Message\ServerRequestInterface;
-
-$responses = app(Responses::class);
 
 /**
  * Route definitions for the Webhook Ingestion Pipeline.
  *
  * The router uses exact URI match only — no {id} parameter extraction.
  * Route actions must return a ResponseInterface (PSR-7).
+ *
+ * @param RouterInterface $router
+ * @param CreateHttpResponse $createHttpResponse
  */
-return static function (RouterInterface $router) use ($responses) : void {
+return static function (RouterInterface $router, CreateHttpResponse $createHttpResponse): void {
+    $responses = new Responses(createHttpResponse: $createHttpResponse);
+
     $router->get('/health', static fn () => $responses->json([
                                                                        'status'  => 'healthy',
                                                                        'service' => 'webhook-ingestion-pipeline',

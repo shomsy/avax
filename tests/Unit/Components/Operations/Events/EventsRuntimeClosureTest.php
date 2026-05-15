@@ -31,16 +31,28 @@ use function Avax\Components\Operations\Events\System\PublicSurface\onEventSetRe
 final class EventsRuntimeClosureTest extends TestCase
 {
     private ListenerRegistry $registry;
+    private ResolveEventListeners $resolver;
+    private InvokeEventListener $invoker;
 
     protected function setUp(): void
     {
         $this->registry = new ListenerRegistry();
+        $this->resolver = new ResolveEventListeners();
+        $this->invoker  = new InvokeEventListener();
         onEventSetRegistry($this->registry);
     }
 
     protected function tearDown(): void
     {
         GlobalEventListenerState::reset();
+    }
+
+    /**
+     * Create a fully wired EventEmitter from a compiled registry.
+     */
+    private function createEmitter(CompiledListenerRegistry $compiled): EventEmitter
+    {
+        return new EventEmitter($compiled, $this->resolver, $this->invoker);
     }
 
     // ============================================================
@@ -53,7 +65,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiled = new CompiledListenerRegistry();
         $compiled->freeze();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
         GlobalEventListenerState::setEmitter($emitter);
 
         $event = new class {
@@ -71,7 +83,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiled = new CompiledListenerRegistry();
         $compiled->freeze();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
         GlobalEventListenerState::setEmitter($emitter);
 
         $event = new \stdClass();
@@ -86,7 +98,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiled = new CompiledListenerRegistry();
         $compiled->freeze();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
         GlobalEventListenerState::setEmitter($emitter);
 
         $event = new \stdClass();
@@ -102,7 +114,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiled = new CompiledListenerRegistry();
         $compiled->freeze();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
         GlobalEventListenerState::setEmitter($emitter);
 
         $beforeCount = $compiled->totalListenerCount();
@@ -116,7 +128,7 @@ final class EventsRuntimeClosureTest extends TestCase
     #[Test]
     public function emit_delegates_to_emitter(): void
     {
-        $flow = new EmitEvent(new EventEmitter(new CompiledListenerRegistry()));
+        $flow = new EmitEvent($this->createEmitter(new CompiledListenerRegistry()));
 
         $event = new class {
             public bool $touched = false;
@@ -324,7 +336,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiler = new CompileEventListeners($this->registry);
         $compiled = $compiler->execute();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
         $emitter->emit($plainEvent);
 
         self::assertSame($plainEvent, $received);
@@ -344,7 +356,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiler = new CompileEventListeners($this->registry);
         $compiled = $compiler->execute();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
         $event = new class {};
 
         // Register under the anonymous class name
@@ -361,7 +373,7 @@ final class EventsRuntimeClosureTest extends TestCase
         ));
         $compiled2->freeze();
 
-        $emitter2 = new EventEmitter($compiled2);
+        $emitter2 = $this->createEmitter($compiled2);
         $emitter2->emit($event);
 
         self::assertTrue($called);
@@ -382,7 +394,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiler = new CompileEventListeners($this->registry);
         $compiled = $compiler->execute();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
         $emitter->emit(new UserRegistered('user-1'));
 
         self::assertTrue($called);
@@ -400,7 +412,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiler = new CompileEventListeners($this->registry);
         $compiled = $compiler->execute();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
         $emitter->emit(new UserRegistered('user-1'));
 
         self::assertSame(3, $count);
@@ -418,7 +430,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiler = new CompileEventListeners($this->registry);
         $compiled = $compiler->execute();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
         $emitter->emit(new UserRegistered('user-1'));
 
         self::assertSame(['high', 'medium', 'low'], $order);
@@ -436,7 +448,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiler = new CompileEventListeners($this->registry);
         $compiled = $compiler->execute();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
         $emitter->emit(new UserRegistered('user-1'));
 
         self::assertSame(['first', 'second', 'third'], $order);
@@ -450,7 +462,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiler = new CompileEventListeners($this->registry);
         $compiled = $compiler->execute();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
         $event = new UserRegistered('user-1');
 
         $result = $emitter->emit($event);
@@ -464,7 +476,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiler = new CompileEventListeners($this->registry);
         $compiled = $compiler->execute();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
         $event = new UserRegistered('orphan');
 
         $result = $emitter->emit($event);
@@ -482,7 +494,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiler = new CompileEventListeners($this->registry);
         $compiled = $compiler->execute();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
         $event = new UserRegistered('user-1');
 
         $result = $emitter->emit($event);
@@ -500,7 +512,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiler = new CompileEventListeners($this->registry);
         $compiled = $compiler->execute();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Listener failed');
@@ -526,7 +538,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiler = new CompileEventListeners($this->registry);
         $compiled = $compiler->execute();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
         $emitter->emit($event);
 
         self::assertSame(['first'], $calls);
@@ -547,7 +559,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiler = new CompileEventListeners($this->registry);
         $compiled = $compiler->execute();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
         $emitter->emit($plainEvent);
 
         self::assertNotNull($received);
@@ -562,7 +574,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiler = new CompileEventListeners($this->registry);
         $compiled = $compiler->execute();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
         $emitter->emit(new UserRegistered('user-1'));
 
         self::assertTrue(PlainInvokableListener::$called);
@@ -579,7 +591,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiler = new CompileEventListeners($this->registry);
         $compiled = $compiler->execute();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
         $event = new UserRegistered('user-1');
 
         // Dispatch should work without any attribute scanning.
@@ -609,7 +621,7 @@ final class EventsRuntimeClosureTest extends TestCase
         ));
         $compiled->freeze();
 
-        $emitter = new EventEmitter($compiled);
+        $emitter = $this->createEmitter($compiled);
         $event = new DirectTestEvent();
 
         $emitter->emit($event);
@@ -638,7 +650,7 @@ final class EventsRuntimeClosureTest extends TestCase
         ));
         $compiled->freeze();
 
-        $avaxEmitter = new EventEmitter($compiled);
+        $avaxEmitter = $this->createEmitter($compiled);
         $psrAdapter = new Psr14EventDispatcherAdapter($avaxEmitter);
 
         $event = new \stdClass();
@@ -675,7 +687,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiled = new CompiledListenerRegistry();
         $compiled->freeze();
 
-        $avaxEmitter = new EventEmitter($compiled);
+        $avaxEmitter = $this->createEmitter($compiled);
         $psrAdapter = new Psr14EventDispatcherAdapter($avaxEmitter);
 
         $event = new \stdClass();
@@ -714,7 +726,7 @@ final class EventsRuntimeClosureTest extends TestCase
         ));
         $compiled->freeze();
 
-        $avaxEmitter = new EventEmitter($compiled);
+        $avaxEmitter = $this->createEmitter($compiled);
         $psrAdapter = new Psr14EventDispatcherAdapter($avaxEmitter);
 
         $psrAdapter->dispatch(new StoppableTestEvent());
@@ -728,7 +740,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiled = new CompiledListenerRegistry();
         $compiled->freeze();
 
-        $avaxEmitter = new EventEmitter($compiled);
+        $avaxEmitter = $this->createEmitter($compiled);
         $psrAdapter = new Psr14EventDispatcherAdapter($avaxEmitter);
 
         $plainEvent = new class {
@@ -757,7 +769,7 @@ final class EventsRuntimeClosureTest extends TestCase
         ));
         $compiled->freeze();
 
-        $avaxEmitter = new EventEmitter($compiled);
+        $avaxEmitter = $this->createEmitter($compiled);
         $provider = new Psr14ListenerProviderAdapter($compiled);
 
         self::assertInstanceOf(ListenerProviderInterface::class, $provider);
@@ -775,7 +787,7 @@ final class EventsRuntimeClosureTest extends TestCase
         $compiled = new CompiledListenerRegistry();
         $compiled->freeze();
 
-        $avaxEmitter = new EventEmitter($compiled);
+        $avaxEmitter = $this->createEmitter($compiled);
         $provider = new Psr14ListenerProviderAdapter($compiled);
 
         // Empty registry → no listeners.

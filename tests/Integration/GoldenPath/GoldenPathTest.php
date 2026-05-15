@@ -7,10 +7,12 @@ namespace Avax\Tests\Integration\GoldenPath;
 use Avax\Components\Application\FeatureFlags\System\PublicSurface\FeatureFlags;
 use Avax\Components\Application\Pipeline\System\PublicSurface\Pipeline;
 use Avax\Components\Identity\Tenancy\System\PublicSurface\Tenancy;
+use Avax\Components\Operations\Concurrency\System\Capabilities\RunWithFibers\FiberTaskRuntime;
 use Avax\Components\Operations\Concurrency\System\PublicSurface\Concurrency;
 use Avax\Components\Operations\Resilience\System\Capabilities\Fallback\Fallback;
 use Avax\Components\Security\System\PublicSurface\Security;
 use Avax\Tests\TestCase;
+use Override;
 use RuntimeException;
 
 /**
@@ -18,6 +20,19 @@ use RuntimeException;
  */
 class GoldenPathTest extends TestCase
 {
+    #[Override]
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Concurrency::setRuntime(new FiberTaskRuntime());
+    }
+
+    #[Override]
+    protected function tearDown(): void
+    {
+        Concurrency::reset();
+        parent::tearDown();
+    }
     /**
      * @test
      */

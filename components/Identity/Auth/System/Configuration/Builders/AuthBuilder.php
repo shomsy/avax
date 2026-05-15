@@ -1431,25 +1431,25 @@ final class AuthBuilder
                                            : null,
             revokeToken              : $authCapabilityReadiness->oauth()
                                            ? new RevokeToken(
-                                               refreshTokenStore: $this->refreshTokenStore ?? throw ConfigurationException::missingCapabilityDependency(
-                                               capability : 'oauth',
-                                               requirement: 'refresh_token_store',
-                                               buildPath  : 'AuthBuilder::ready()',
-                                               option     : 'withRefreshTokenStore()',
-                                               cause      : 'OAuth capability assembly was attempted.',
-                                           ),
-                                               jwtIdentity      : $jwtIdentity,
-                                               auditLog         : $auditLog,
-                                               clock            : $clock,
-                                               clientRegistry   : $oauthClientRegistry,
+                                               oAuthClientRegistry: $oauthClientRegistry,
+                                               refreshTokenStore  : $this->refreshTokenStore ?? throw ConfigurationException::missingCapabilityDependency(
+                                                   capability : 'oauth',
+                                                   requirement: 'refresh_token_store',
+                                                   buildPath  : 'AuthBuilder::ready()',
+                                                   option     : 'withRefreshTokenStore()',
+                                                   cause      : 'OAuth capability assembly was attempted.',
+                                               ),
+                                               jwtIdentity        : $jwtIdentity,
+                                               auditLog           : $auditLog,
+                                               clock              : $clock,
                                            )
                                            : null,
             introspectToken          : $authCapabilityReadiness->oauth()
                                            ? new IntrospectToken(
-                                               jwtIdentity   : $jwtIdentity,
-                                               auditLog      : $auditLog,
-                                               clock         : $clock,
-                                               clientRegistry: $oauthClientRegistry,
+                                               oAuthClientRegistry: $oauthClientRegistry,
+                                               jwtIdentity        : $jwtIdentity,
+                                               auditLog           : $auditLog,
+                                               clock              : $clock,
                                            )
                                            : null,
         );

@@ -7,7 +7,7 @@ namespace Avax\Examples\FailureBoundaryDemo;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\Attributes\OnFailure;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\Attributes\ReportFailure;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\Attributes\Retry;
-use Avax\Components\HTTP\Response\System\PublicSurface\Response;
+use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 
 /**
@@ -55,9 +55,9 @@ final readonly class DemoFailureController
     /**
      * Returns a successful response (no exception).
      */
-    public function returnsSuccess(): Response
+    public function returnsSuccess(): ResponseInterface
     {
-        return Response::json(
+        return (new CreateHttpResponse())->json(
             ['status' => 'ok'],
             200,
         );

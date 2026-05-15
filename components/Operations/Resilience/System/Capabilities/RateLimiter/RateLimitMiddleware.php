@@ -37,7 +37,7 @@ final readonly class RateLimitMiddleware
                         'message' => 'Too Many Requests',
                         'retry_after' => $decision->retryAfter,
                     ],
-                    statusCode: 429,
+                    status: 429,
                 ),
                 decision: $decision,
             );

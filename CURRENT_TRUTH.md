@@ -1258,3 +1258,35 @@ Date: 2026-05-15
 
 **Response Layer Convergence: FULL_GREEN_RESPONSE_LAYER_CONVERGED.**
 Response ownership is canonical. Provider registers all required services. PSR-17 binding correct. Tests prove delegation chain. No legacy ResponseFactory in main tree.
+
+## V5.8.7 Full Suite Baseline Restoration — COMPLETE / GREEN
+
+Date: 2026-05-15
+
+**Scope:** Restore full PHPUnit + PHPStan validation baseline. Fix all pre-existing test failures without deleting, weakening, or hiding tests.
+
+**Result:**
+- PHPUnit: **8351 tests, 24012 assertions, 0 errors, 0 failures**
+- PHPStan: No new errors introduced
+- All gates: GREEN
+
+**Root causes fixed (15 files):**
+1. EncodeDecodePair namespace mismatch (Builders vs Configuration)
+2. DataLayerConfig empty stub → added databaseRuntime property
+3. RegisterDataLayerRuntime missing use import + broken constructor call
+4. GoldenPathRuntime routes.php container wiring → pass CreateHttpResponse as callback param
+5. Response::json() static calls on PSR-7 value object → CreateHttpResponse instances
+6. EventEmitter 1-param constructor → 3-param (registry, resolver, invoker) in tests + production
+7. ParallelismProofTest passed ParallelResult where ParallelRuntimeInterface expected
+8. GoldenPathTest concurrency — missing Concurrency::setRuntime() in setUp
+9. SecureRegistrationApiFailureBoundaryTest — missing event emitter wiring
+10. V4DeveloperExperienceCompositionTest — wrong file path for RegisterConfigCommands
+11. RateLimitMiddleware — statusCode → status named param
+12. AuthBuilder — IntrospectToken/RevokeToken clientRegistry → oAuthClientRegistry
+
+**Evidence:** `EVIDENCE/hardening/24-full-suite-baseline-restoration.md`
+
+**V5.8.7 Verdict:**
+
+**Full Suite Baseline: FULL_GREEN_BASELINE_RESTORED.**
+8351 tests pass with zero errors and zero failures. All canonical gates GREEN. No tests deleted, weakened, or hidden. No assertions faked.

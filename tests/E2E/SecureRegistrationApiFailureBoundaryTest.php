@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\E2E;
 
 use Avax\Examples\SecureRegistrationApi\ExternalServiceDown;
+use Avax\Components\Operations\Events\System\Capabilities\Registry\ListenerRegistry;
 use Avax\Examples\SecureRegistrationApi\RegistrationController;
 use Avax\Examples\SecureRegistrationApi\ValidationFailed;
 use Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\CompileFailurePolicies\CompileFailurePolicies;
@@ -13,8 +14,11 @@ use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\CompiledPolicy
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureContext;
 use Avax\Components\HTTP\Response\System\PublicSurface\ResponseInterface;
 use GuzzleHttp\Psr7\ServerRequest;
+use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+
+use function Avax\Components\Operations\Events\System\PublicSurface\onEventSetRegistry;
 
 /**
  * SecureRegistrationApiFailureBoundaryTest — E2E proof that FailureBoundary
@@ -31,9 +35,21 @@ use PHPUnit\Framework\TestCase;
  */
 final class SecureRegistrationApiFailureBoundaryTest extends TestCase
 {
+    #[Override]
+    protected function setUp(): void
+    {
+        RegistrationController::reset();
+        $registry = new ListenerRegistry();
+        onEventSetRegistry($registry);
+        RegistrationController::wireEventListeners();
+        \Avax\Components\Operations\Events\System\Configuration\Builders\RegisterEventDependencies::compileAndWire($registry);
+    }
+
     protected function tearDown(): void
     {
         CompiledPolicyCache::clear();
+        RegistrationController::reset();
+        \Avax\Components\Operations\Events\System\Foundation\GlobalEventListenerState::reset();
     }
 
     #[Test]

@@ -158,9 +158,11 @@ V5.8.x Fix-This Phase A Closure: CLOSED / GREEN_WITH_ACCEPTED_YELLOW_DEBT (198 r
 
 V5.8.x Fix-This Phase B Proof Closure: CLOSED / FULL_GREEN_PHASE_B_PROOF_AND_V5_9_PREFLIGHT_READY (provider wiring tests added, Semantic PHPDoc touched-scope clean, recursive governance review 0 findings, all gates PASS, 8405 tests GREEN, PHPStan 0 errors)
 
+V5.8.x Fix-This Phase B Proof Consistency Correction: CLOSED / FULL_GREEN_PHASE_B_PROOF_CONSISTENCY_CLOSED_AND_V5_9_READY (provider method PHPDoc added, raw evidence reconciled to 9, top-level HTTP/ApiVersioning confirmed absent, runtime gate fixture proof added with 8 tests, 8413 tests GREEN, PHPStan 0 errors, all gates PASS, recursive governance review 0 unresolved findings)
+
 Current Plan Lock: GREEN (0 pre-existing PHPStan errors)
 
-Active stage: V5.8.x Fix-This Phase B Proof Closure + V5.9 Preflight — COMPLETE / FULL_GREEN_PHASE_B_PROOF_AND_V5_9_PREFLIGHT_READY
+Active stage: V5.8.x Fix-This Phase B Proof Consistency Correction — COMPLETE / FULL_GREEN_PHASE_B_PROOF_CONSISTENCY_CLOSED_AND_V5_9_READY
 
 Next allowed stage: V5.9 Boot DSL — V5_9_READY
 

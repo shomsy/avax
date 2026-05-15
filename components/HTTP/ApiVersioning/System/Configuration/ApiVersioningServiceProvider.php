@@ -16,6 +16,12 @@ use Avax\Components\HTTP\ApiVersioning\System\PublicSurface\ApiVersion;
  */
 final class ApiVersioningServiceProvider implements ServiceProvider
 {
+    /**
+     * Register API versioning services in the container.
+     *
+     * Registers VersionRegistry as a singleton configured from application config.
+     * Uses currentVersion and supportedVersions from config, with sensible defaults.
+     */
     public function register(ContainerInterface $container) : void
     {
         $container->singleton(
@@ -27,6 +33,13 @@ final class ApiVersioningServiceProvider implements ServiceProvider
         );
     }
 
+    /**
+     * Boot the API versioning component by wiring the facade.
+     *
+     * Resolves the registered VersionRegistry singleton and injects it
+     * into the ApiVersion static facade via setInstance().
+     * This is the single source of truth for API version resolution.
+     */
     public function boot(ContainerInterface $container) : void
     {
         ApiVersion::setInstance($container->make(VersionRegistry::class));

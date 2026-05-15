@@ -16,11 +16,24 @@ use Avax\Components\Application\Pipeline\System\PublicSurface\Pipeline;
  */
 final class PipelineServiceProvider implements ServiceProvider
 {
+    /**
+     * Register pipeline hook services in the container.
+     *
+     * Registers HookRegistry as a singleton. The registry starts empty
+     * and is populated through the Pipeline facade public API.
+     */
     public function register(ContainerInterface $container) : void
     {
         $container->singleton(HookRegistry::class, static fn () : HookRegistry => new HookRegistry());
     }
 
+    /**
+     * Boot the pipeline component by wiring the facade.
+     *
+     * Resolves the registered HookRegistry singleton and injects it
+     * into the Pipeline static facade via setInstance().
+     * This is the single source of truth for pipeline hook execution.
+     */
     public function boot(ContainerInterface $container) : void
     {
         Pipeline::setInstance($container->make(HookRegistry::class));

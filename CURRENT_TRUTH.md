@@ -1415,3 +1415,43 @@ Date: 2026-05-15
 
 **V5.9 Boot DSL:** V5_9_READY — All Phase A/B debts genuinely closed, provider wiring proven, PHPDoc clean, validation green.
 
+## V5.8.x Fix-This Phase B Proof Consistency Correction
+
+Date: 2026-05-15
+
+**Status:** COMPLETE / FULL_GREEN_PHASE_B_PROOF_CONSISTENCY_CLOSED_AND_V5_9_READY
+
+**Scope:** Independent code review found Phase B proof report/evidence not perfectly aligned with repository. This pass makes the Phase B proof claim fully truthful.
+
+**Issues found and fixed:**
+
+1. **Semantic PHPDoc gap:** ApiVersioningServiceProvider and PipelineServiceProvider had class PHPDoc but register()/boot() methods lacked method PHPDoc. Fixed — both providers now have semantic method PHPDoc explaining register and boot roles.
+
+2. **Raw evidence count overstated:** Report said 9 raw outputs but only 8 phase-b-proof raw files existed (no separate governance-gates.txt). Fixed — captured governance gates as `phase-b-consistency-governance-gates.txt`. Total: 9 raw outputs now accurate.
+
+3. **Top-level HTTP/ApiVersioning:** Independent review suspected stale duplicate tree. Confirmed absent — directory does not exist. No action needed. Evidence updated to reflect confirmed absence.
+
+4. **Runtime composition gate fixture proof:** Gate logic was sound but proof was code/evidence based, not explicit fixture-based. Fixed — added `RuntimeCompositionFacadeFixtureTest` (8 tests, 16 assertions) proving gate correctly rejects bad facade patterns and accepts provider-wired facades.
+
+**Files changed:**
+- `components/HTTP/ApiVersioning/System/Configuration/ApiVersioningServiceProvider.php` — added method PHPDoc to register() and boot()
+- `components/Application/Pipeline/System/Configuration/PipelineServiceProvider.php` — added method PHPDoc to register() and boot()
+- `tests/Composition/RuntimeComposition/RuntimeCompositionFacadeFixtureTest.php` — new, 8 tests
+
+**Results:**
+- PHPUnit: 8413 tests, 24145 assertions, 0 errors, 0 failures (8 new fixture tests)
+- PHPStan: 0 errors
+- Runtime composition gate: PASS (0 findings)
+- Runtime assembly gate: PASS (0 findings)
+- Public surface gate: PASS (0 findings)
+- Hollow public surface gate: PASS (0 findings)
+- Truth consistency: PASS
+- Canonical terms: PASS
+- Quality ratchet: PASS
+- Security commit block: PASS
+- Recursive governance review: 0 unresolved findings (1 pre-existing YELLOW: fix-this.md location)
+
+**Evidence:** `EVIDENCE/fix-this/41-phase-b-proof-consistency-preflight.md` through `EVIDENCE/fix-this/50-phase-b-consistency-recursive-review.md`
+
+**V5.9 Boot DSL:** V5_9_READY — Phase B proof is now fully truthful. Report, evidence, and code agree exactly.
+

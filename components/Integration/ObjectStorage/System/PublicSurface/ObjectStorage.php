@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Avax\Components\Integration\ObjectStorage\System\PublicSurface;
 
 use Avax\Components\Integration\ObjectStorage\System\Capabilities\Health\CheckObjectStorageHealth;
-use Avax\Components\Integration\ObjectStorage\System\Capabilities\Health\ObjectStorageHealthReport;
 use Avax\Components\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStoragePort;
 use Avax\Components\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStorageResult;
 use Avax\Components\Integration\ObjectStorage\System\Configuration\ObjectStorageConfiguration;
@@ -49,7 +48,7 @@ final readonly class ObjectStorage
             : ObjectStorageResult::failure('Delete failed.');
     }
 
-    public function health() : ObjectStorageHealthReport
+    public function health() : \Avax\Framework\System\Capabilities\Health\Foundation\HealthReport
     {
         return (new CheckObjectStorageHealth($this->port))->check();
     }

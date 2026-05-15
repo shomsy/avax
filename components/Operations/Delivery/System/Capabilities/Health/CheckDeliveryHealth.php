@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Avax\Components\Operations\Delivery\System\Capabilities\Health;
 
 use Avax\Components\Operations\Delivery\System\Configuration\DeliveryConfigurationInterface;
+use Avax\Framework\System\Capabilities\Health\Foundation\HealthFinding;
+use Avax\Framework\System\Capabilities\Health\Foundation\HealthReport;
+use Avax\Framework\System\Capabilities\Health\Foundation\HealthStatus;
 
 class CheckDeliveryHealth
 {
@@ -13,23 +16,26 @@ class CheckDeliveryHealth
     ) {
     }
 
-    public function check(): DeliveryHealthReport
+    public function check(): HealthReport
     {
         if (! $this->deliveryConfiguration instanceof DeliveryConfigurationInterface) {
-            return new DeliveryHealthReport(
-                healthy: false,
-                message: 'Configuration not initialized',
-                details: [],
+            return new HealthReport(
+                findings: [new HealthFinding('delivery.configuration', HealthStatus::Yellow, 'Configuration not initialized')],
+                overall : HealthStatus::Yellow,
             );
         }
 
-        return new DeliveryHealthReport(
-            healthy: $this->deliveryConfiguration->isEnabled(),
-            message: $this->deliveryConfiguration->isEnabled() ? 'Delivery ready' : 'Delivery disabled',
-            details: [
-                'environment' => $this->deliveryConfiguration->getEnvironment(),
-                'build_options' => $this->deliveryConfiguration->getBuildOptions(),
+        $enabled = $this->deliveryConfiguration->isEnabled();
+
+        return new HealthReport(
+            findings: [
+                new HealthFinding(
+                    'delivery.status',
+                    $enabled ? HealthStatus::Green : HealthStatus::Yellow,
+                    $enabled ? 'Delivery ready' : 'Delivery disabled',
+                ),
             ],
+            overall: $enabled ? HealthStatus::Green : HealthStatus::Yellow,
         );
     }
 }

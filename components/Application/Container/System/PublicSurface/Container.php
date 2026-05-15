@@ -69,7 +69,7 @@ class Container implements ResettableState
      */
     public function engine(): ContainerInterface
     {
-        return $this->engine ?? self::$container;
+        return $this->engine ?? self::getContainer();
     }
 
     public static function make(string $abstract, array $parameters = []): object

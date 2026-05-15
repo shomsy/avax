@@ -988,29 +988,29 @@ kondicionalnu biznis logiku, ili orchestration.
 
 ### H-B: FAKE Always-Green Health Checks (2 — BLOCKER, MUST FIX)
 
-- [ ] **H-B.01** `components/Operations/Observability/System/Capabilities/Health/ObservabilityHealthCheck.php` — vraća
+- [x] **H-B.01** `components/Operations/Observability/System/Capabilities/Health/ObservabilityHealthCheck.php` — vraća
   hardcoded
   `['healthy' => true, 'drivers' => ['metrics' => true, 'tracing' => true, 'logging' => true], 'issues' => []]` bez
   stvarne provere driver-a. Fix: implementirati stvarnu proveru — da li su metrics/tracing/logging backends reachable.
   Ako je komponenta SCAFFOLD, označiti kao exempt.
-- [ ] **H-B.02** `components/Operations/RuntimeSupervision/System/Capabilities/Health/SupervisorHealthCheck.php` — vraća
+- [x] **H-B.02** `components/Operations/RuntimeSupervision/System/Capabilities/Health/SupervisorHealthCheck.php` — vraća
   hardcoded `['healthy' => true, 'status' => 'running', 'issues' => []]`. Fix: implementirati stvarnu proveru supervisor
   process-a. Ako je SCAFFOLD, označiti kao exempt.
 
 ### H-C: HealthCheck Dokazuje Samo Autoloading (5 — MEDIUM, Treba Ojačati)
 
-- [ ] **H-C.01** `components/HTTP/Router/System/Capabilities/HealthCheck/CheckRouterHealth.php` — samo
+- [x] **H-C.01** `components/HTTP/Router/System/Capabilities/HealthCheck/CheckRouterHealth.php` — samo
   `class_exists(RouteCollection::class)`. Fix: dodati stvarnu proveru — da li su rute definisane? Da li middleware
   pipeline radi?
-- [ ] **H-C.02** `components/Operations/Events/System/Capabilities/HealthCheck/CheckEventsHealth.php` — samo
+- [x] **H-C.02** `components/Operations/Events/System/Capabilities/HealthCheck/CheckEventsHealth.php` — samo
   `class_exists()` na 3 klase. Fix: dodati proveru — da li je dispatcher konfigurisan? Da li su listener-i registrovani?
-- [ ] **H-C.03** `components/Operations/Logging/System/Capabilities/HealthCheck/CheckLoggingHealth.php` — samo
+- [x] **H-C.03** `components/Operations/Logging/System/Capabilities/HealthCheck/CheckLoggingHealth.php` — samo
   `class_exists(Logger::class)`. Fix: dodati proveru — da li je log direktorijum writable? Da li su channels
   konfigurisani?
-- [ ] **H-C.04** `components/Security/Redaction/System/Capabilities/HealthCheck/CheckRedactionHealth.php` — samo
+- [x] **H-C.04** `components/Security/Redaction/System/Capabilities/HealthCheck/CheckRedactionHealth.php` — samo
   `class_exists()` na 2 klase. Fix: dodati proveru — da li su redaction rules konfigurisane? Da li engine može da se
   instancira?
-- [ ] **H-C.05**
+- [x] **H-C.05**
   `framework/System/Capabilities/FailureBoundary/Capabilities/HealthCheck/CheckFailureBoundaryHealth.php` — samo
   `class_exists()` na 3 klase. Fix: dodati proveru — da li su failure policy-e compiled? Da li handlers postoje?
 
@@ -1019,25 +1019,25 @@ kondicionalnu biznis logiku, ili orchestration.
 Sve komponente koriste custom `*HealthReport` sa `bool $healthy` umesto `HealthStatus::Green|Yellow|Red`. Kanonski tip
 postoji na `framework/System/Capabilities/Health/Foundation/HealthReport.php`.
 
-- [ ] **H-D.01** `DataStack/Database` — `DatabaseHealthReport` → prebaciti na `HealthReport`
-- [ ] **H-D.02** `HTTP/Router` — `RouterHealthReport` → prebaciti na `HealthReport`
-- [ ] **H-D.03** `Operations/Events` — `EventsHealthReport` → prebaciti na `HealthReport`
-- [ ] **H-D.04** `Operations/Logging` — `LoggingHealthReport` → prebaciti na `HealthReport`
-- [ ] **H-D.05** `Security/Redaction` — `RedactionHealthReport` → prebaciti na `HealthReport`
-- [ ] **H-D.06** `Security/Cryptography` — `CryptographyHealthReport` → prebaciti na `HealthReport`
-- [ ] **H-D.07** `FailureBoundary` — `FailureBoundaryHealthReport` → prebaciti na `HealthReport`
+- [x] **H-D.01** `DataStack/Database` — `DatabaseHealthReport` → prebaciti na `HealthReport`
+- [x] **H-D.02** `HTTP/Router` — `RouterHealthReport` → prebaciti na `HealthReport`
+- [x] **H-D.03** `Operations/Events` — `EventsHealthReport` → prebaciti na `HealthReport`
+- [x] **H-D.04** `Operations/Logging` — `LoggingHealthReport` → prebaciti na `HealthReport`
+- [x] **H-D.05** `Security/Redaction` — `RedactionHealthReport` → prebaciti na `HealthReport`
+- [x] **H-D.06** `Security/Cryptography` — `CryptographyHealthReport` → prebaciti na `HealthReport`
+- [x] **H-D.07** `FailureBoundary` — `FailureBoundaryHealthReport` → prebaciti na `HealthReport`
 
 ### H-E: Health Checks With Real Invariants (2 — KEEP As-Is)
 
-- [ ] **H-E.01** `DataStack/Database/System/Capabilities/HealthCheck/CheckDatabaseHealth.php` — proverava runtime state
+- [x] **H-E.01** `DataStack/Database/System/Capabilities/HealthCheck/CheckDatabaseHealth.php` — proverava runtime state
   kroz `GlobalDatabaseLifecycleState::registry()`, `CompiledDatabaseLifecycleRegistry`, `DatabaseConnection`. Jedini
   pravi health check. Samo konvertovati na `HealthReport`.
-- [ ] **H-E.02** `Security/Cryptography/System/Capabilities/HealthCheck/CheckCryptographyHealth.php` — proverava
+- [x] **H-E.02** `Security/Cryptography/System/Capabilities/HealthCheck/CheckCryptographyHealth.php` — proverava
   `extension_loaded('openssl')` (stvarna invarijanta). Samo konvertovati na `HealthReport`.
 
 ### H-F: Zero Health Check Tests (Systemic Gap)
 
-- [ ] **H-F.01** — Za SVIH 7+ HealthCheck komponenti napisati testove:
+- [x] **H-F.01** — Za SVIH 7+ HealthCheck komponenti napisati testove:
   ```bash
   # Kreirati tests/Unit/HealthCheck/{Component}HealthTest.php za svaki:
   # - DatabaseHealthTest
@@ -1053,39 +1053,39 @@ postoji na `framework/System/Capabilities/Health/Foundation/HealthReport.php`.
 
 Rule: Container's ServiceProvider interface: "Every component MUST have exactly one ServiceProvider."
 
-- [ ] **H-G.01** `DataStack/Database` — nema ServiceProvider. Fix: kreirati
+- [x] **H-G.01** `DataStack/Database` — nema ServiceProvider. Fix: kreirati
   `System/Configuration/DatabaseServiceProvider.php`.
-- [ ] **H-G.02** `Operations/Events` — nema ServiceProvider. Fix: kreirati
+- [x] **H-G.02** `Operations/Events` — nema ServiceProvider. Fix: kreirati
   `System/Configuration/EventsServiceProvider.php`.
-- [ ] **H-G.03** `Operations/Logging` — nema ServiceProvider. Fix: kreirati
+- [x] **H-G.03** `Operations/Logging` — nema ServiceProvider. Fix: kreirati
   `System/Configuration/LoggingServiceProvider.php`.
-- [ ] **H-G.04** `Security/Redaction` — nema ServiceProvider. Fix: kreirati
+- [x] **H-G.04** `Security/Redaction` — nema ServiceProvider. Fix: kreirati
   `System/Configuration/RedactionServiceProvider.php`.
-- [ ] **H-G.05** `Security/Cryptography` — nema ServiceProvider. Fix: kreirati
+- [x] **H-G.05** `Security/Cryptography` — nema ServiceProvider. Fix: kreirati
   `System/Configuration/CryptographyServiceProvider.php`.
-- [ ] **H-G.06** `Application/Filesystem` — nema ServiceProvider. Fix: kreirati
+- [x] **H-G.06** `Application/Filesystem` — nema ServiceProvider. Fix: kreirati
   `System/Configuration/FilesystemServiceProvider.php`.
-- [ ] **H-G.07** `Application/Container` — nema ServiceProvider za sam container. Fix: kreirati
+- [x] **H-G.07** `Application/Container` — nema ServiceProvider za sam container. Fix: kreirati
   `System/Configuration/ContainerServiceProvider.php`.
 
 ### H-H: Validate
 
-- [ ] **H-H.1** Run health policy gate:
+- [x] **H-H.1** Run health policy gate:
   ```bash
   php tooling/components/check-component-health-doctor-policy.php
   php tooling/components/check-health-proof-map.php
   ```
-- [ ] **H-H.2** Run full test suite:
+- [x] **H-H.2** Run full test suite:
   ```bash
   vendor/bin/phpunit --no-coverage
   ```
-- [ ] **H-H.3** Run PHPStan:
+- [x] **H-H.3** Run PHPStan:
   ```bash
   vendor/bin/phpstan analyse framework components tests --memory-limit=1G
   ```
-- [ ] **H-H.4** Update `EVIDENCE/cleanup/09-core-health-doctor-checks.md`
-- [ ] **H-H.5** Update `skipped-work-ledger.md`: mark SW-0017 as FIXED_NOW
-- [ ] **H-H.6** Commit:
+- [x] **H-H.4** Update `EVIDENCE/cleanup/09-core-health-doctor-checks.md`
+- [x] **H-H.5** Update `skipped-work-ledger.md`: mark SW-0017 as FIXED_NOW
+- [x] **H-H.6** Commit:
   ```bash
   git add -A && git commit -m "cleanup: phase H — add real health checks for all runtime-critical components, fix fake always-green checks, add 7 ServiceProviders"
   ```

@@ -35,6 +35,7 @@ final class FrameworkServiceProvider implements ServiceProvider
             stateLeakDetector : $c->get(StateLeakDetector::class),
             staticStateScanner: $c->get(StaticStateScanner::class),
             resetVerifier     : $c->get(ResetVerifier::class),
+            componentHealthScanner: new \Avax\Framework\System\Capabilities\RuntimeSafety\ComponentHealthScanner(),
         ));
     }
 

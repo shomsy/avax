@@ -7,6 +7,7 @@ namespace Avax\Tests\GoldenPathRuntime;
 use Avax\Examples\GoldenPathRuntimeApp\WebhookIngestionApp;
 use Avax\Framework\System\Capabilities\RuntimeSafety\ResetVerification\ResetVerifier;
 use Avax\Framework\System\Capabilities\RuntimeSafety\RuntimeSafety;
+use Avax\Framework\System\Capabilities\RuntimeSafety\ComponentHealthScanner;
 use Avax\Framework\System\Capabilities\RuntimeSafety\StateLeakDetection\StateLeakDetector;
 use Avax\Framework\System\Capabilities\RuntimeSafety\StaticStateScanner;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
@@ -29,9 +30,10 @@ final class RuntimeDoctorTest extends TestCase
         $this->bootAvax();
 
         $runtimeSafety = new RuntimeSafety(
-            stateLeakDetector : new StateLeakDetector(),
-            staticStateScanner: new StaticStateScanner(),
-            resetVerifier     : new ResetVerifier(),
+            stateLeakDetector     : new StateLeakDetector(),
+            staticStateScanner    : new StaticStateScanner(),
+            resetVerifier         : new ResetVerifier(),
+            componentHealthScanner: new ComponentHealthScanner(),
         );
         $findings      = $runtimeSafety->inspect();
 
@@ -53,9 +55,10 @@ final class RuntimeDoctorTest extends TestCase
         $this->bootAvax();
 
         $runtimeSafety = new RuntimeSafety(
-            stateLeakDetector : new StateLeakDetector(),
-            staticStateScanner: new StaticStateScanner(),
-            resetVerifier     : new ResetVerifier(),
+            stateLeakDetector     : new StateLeakDetector(),
+            staticStateScanner    : new StaticStateScanner(),
+            resetVerifier         : new ResetVerifier(),
+            componentHealthScanner: new ComponentHealthScanner(),
         );
         $findings      = $runtimeSafety->inspect();
 

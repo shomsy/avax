@@ -100,12 +100,12 @@ The allowance audit found 8 INVALID_ALLOWANCE patterns that were too broad and h
 
 ## 8. Remaining YELLOW Gaps
 
-| Gap | Area | Severity | Blocks Phase A? | Plan |
-|---|---|---|---|---|
-| Some PublicSurface facades self-instantiate | Events, ApiVersion, Pipeline | YELLOW | NO | Evaluate in Phase B |
-| Some static facades lack reset methods | Various | YELLOW | NO | Audit in Phase B |
-| Container internal `?? new` for registration VOs | Container internals | YELLOW (not RED — legitimate) | NO | Accept as container internals |
-| 6 lazy singleton fixes deferred | TokenStore, RollbackTenant, OpenAPI, ApiContracts, ExplainQuery, CheckFilesystemHealth | YELLOW | NO | Phase B |
+| Gap | Area | Severity | Blocks Phase A? | Debt ID | Plan |
+|---|---|---|---|---|---|
+| Some PublicSurface facades self-instantiate | Events, ApiVersion, Pipeline | YELLOW | NO | YELLOW-DEBT-001 | Phase B — evaluate DI delegation vs intentional self-instantiation |
+| Some static facades lack reset methods | Various | YELLOW | NO | YELLOW-DEBT-002 | Phase B — audit facade lifecycle, add reset where state accumulates |
+| Container internal `?? new` for registration VOs | Container internals | YELLOW (not RED — legitimate) | NO | Accepted | Legitimate container internals — compile-time only |
+| 6 lazy singleton fixes deferred | TokenStore, RollbackTenant, OpenAPI, ApiContracts, ExplainQuery, CheckFilesystemHealth | YELLOW | NO | Phase B debt | Phase B |
 
 ## 9. V5.9 Readiness Impact
 
@@ -123,8 +123,8 @@ V5.9 readiness is improved. The remaining YELLOW gaps are known, documented, and
 
 | Phase | Scope | Status |
 |---|---|---|---|
-| Phase A | Runtime composition cleanup | **COMPLETE — GREEN** |
-| Phase B | Remaining lazy singletons, facade lifecycle, security hardening | NEXT — can begin after Phase A commit |
+| Phase A | Runtime composition cleanup | **COMPLETE — GREEN_WITH_ACCEPTED_YELLOW_DEBT** |
+| Phase B | Remaining lazy singletons, facade lifecycle, security hardening, YELLOW-DEBT-001, YELLOW-DEBT-002 | NEXT — can begin after Phase A commit |
 
 **Next allowed action:** Commit Phase A closure evidence and proceed to Phase B planning.
 
@@ -133,14 +133,14 @@ V5.9 readiness is improved. The remaining YELLOW gaps are known, documented, and
 | Field | Value |
 |---|---|
 | Stage | Phase A Closure |
-| Status | GREEN (2 YELLOW — non-blocking) |
+| Status | GREEN_WITH_ACCEPTED_YELLOW_DEBT (YELLOW-DEBT-001, YELLOW-DEBT-002 — both LOW risk, Phase B owner, do NOT block V5.9) |
 | Files changed | 8 evidence reports created |
 | Validation commands | See report 12 |
 | Validation summary | All implemented validations GREEN |
-| Remaining risks | 2 YELLOW gaps — documented, planned for Phase B |
+| Remaining risks | 2 YELLOW formally accepted debt — YELLOW-DEBT-001 (facade self-instantiation), YELLOW-DEBT-002 (facade lifecycle proof) — both LOW risk, Phase B, do NOT block V5.9 |
 | Next allowed action | Commit Phase A, begin Phase B planning |
 | Governance documents read | AGENTS.md, how-to docs, fix-this.md, Phase A evidence |
 | Rules applied | All AGENTS.md rules checked |
 | Rules intentionally not applicable | None |
 | Evidence written | 8 reports (07-14) |
-| Reports updated | 05 (preflight) |
+| Reports updated | 05 (preflight), 13 (governance review §6), 14 (truth reconciliation) |

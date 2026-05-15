@@ -94,6 +94,40 @@ This review checks Phase A closure against:
 
 ## 5. Decision
 
-**Phase A closure passes governance review with 2 YELLOW findings.** Both YELLOW findings are deferred to Phase B and do not block commit. No HIGH or BLOCKER findings remain.
+**Phase A closure passes governance review with 2 YELLOW findings.** Both YELLOW findings are formally accepted as non-blocking governance debt. No HIGH or BLOCKER findings remain.
 
 All AGENTS.md rules are complied with. The evidence is honest, the validation is green, and the remaining gaps are documented and planned.
+
+## 6. Formal YELLOW Debt Acceptance
+
+### 6.1 YELLOW-DEBT-001: PublicSurface Facade Self-Instantiation
+
+| Field       | Value |
+|-------------|-------|
+| **ID**      | YELLOW-DEBT-001 |
+| **Finding** | Events, ApiVersion, Pipeline facades self-instantiate internal dependencies instead of receiving via DI |
+| **Severity** | YELLOW (non-blocking) |
+| **Owner**   | Phase B — Architecture Hardening |
+| **Target**  | Evaluate whether facades should delegate to DI-managed instances or remain self-instantiating entry points |
+| **Risk**    | LOW — These are static facades, not request-path middleware. Instantiation happens once per facade access, not per request. No runtime composition leak. Deviation is from ideal "PublicSurface delegates only" principle, not from runtime safety. |
+| **Expiry**  | End of Phase B — must be resolved or reclassified before Phase C |
+| **V5.9 Decision** | Does NOT block V5.9 Boot DSL. Facades are entry points, not part of boot assembly. V5.9 may proceed without this resolved. |
+| **Resolution Options** | 1. Convert facades to DI delegates (requires ServiceProvider registration), 2. Document facade self-instantiation as intentional pattern with lifecycle contract, 3. Extract internal dependencies to Capabilities and inject via facade singleton |
+
+### 6.2 YELLOW-DEBT-002: Static Facade Lifecycle Proof
+
+| Field       | Value |
+|-------------|-------|
+| **ID**      | YELLOW-DEBT-002 |
+| **Finding** | Some static facades lack `reset()` or `setInstance()` methods for test isolation |
+| **Severity** | YELLOW (non-blocking) |
+| **Owner**   | Phase B — Architecture Hardening |
+| **Target**  | Audit facade lifecycle — add reset methods where state accumulation is possible, document stateless facades |
+| **Risk**    | LOW — Facades lacking reset methods are either stateless or create new instances per call. They don't accumulate state across tests. Risk is test hygiene inconsistency, not production correctness. |
+| **Expiry**  | End of Phase B — must be resolved or reclassified before Phase C |
+| **V5.9 Decision** | Does NOT block V5.9 Boot DSL. Boot DSL does not depend on facade reset methods. V5.9 may proceed without this resolved. |
+| **Resolution Options** | 1. Add `reset()`/`setInstance()` to all facades that hold singleton state, 2. Add PHPDoc `@stateless` annotation to facades that are provably stateless, 3. Create facade lifecycle test that proves no cross-test state leakage |
+
+### 6.3 Debt Summary
+
+Both YELLOW findings are **design pattern choices**, not runtime composition leaks, security issues, or performance regressions. Neither blocks V5.9 Boot DSL. Both are deferred to Phase B Architecture Hardening with explicit owner, target, risk, and expiry.

@@ -1347,7 +1347,7 @@ PHPUnit remains GREEN. PHPStan reduced by 55 errors (308 → 253). Truth files u
 
 Date: 2026-05-15
 
-**Status:** COMPLETE / GREEN
+**Status:** COMPLETE / GREEN_WITH_ACCEPTED_YELLOW_DEBT
 
 **Scope:** Audit and narrow ~130 runtime composition gate allowances, prove gate still bites, verify AppKernel hot path, verify 54 lazy singleton fixes, security/performance review, recursive governance review.
 
@@ -1363,9 +1363,13 @@ Date: 2026-05-15
 - Performance review: no regression in hot paths
 - PHPUnit: 8351 tests, 24020 assertions, 0 errors, 0 failures
 - PHPStan: 0 errors
-- Recursive governance review: 2 YELLOW (non-blocking)
+- Recursive governance review: 2 YELLOW formally accepted as non-blocking debt
 
-**Evidence:** `EVIDENCE/fix-this/05-phase-a-closure-preflight.md` through `EVIDENCE/fix-this/14-phase-a-truth-reconciliation.md`
+**Accepted YELLOW Debt:**
+- YELLOW-DEBT-001: PublicSurface Facade Self-Instantiation (Events, ApiVersion, Pipeline) — LOW risk, Phase B owner, does NOT block V5.9
+- YELLOW-DEBT-002: Static Facade Lifecycle Proof (missing reset/setInstance) — LOW risk, Phase B owner, does NOT block V5.9
 
-**V5.9 Boot DSL:** READY (Phase A blockers resolved)
+**Evidence:** `EVIDENCE/fix-this/05-phase-a-closure-preflight.md` through `EVIDENCE/fix-this/14-phase-a-truth-reconciliation.md`, `EVIDENCE/fix-this/13-phase-a-recursive-governance-review.md` §6
+
+**V5.9 Boot DSL:** READY (Phase A blockers resolved, YELLOW debt does not block)
 

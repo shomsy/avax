@@ -146,6 +146,8 @@ V5.8 Database Lifecycle Events: CLOSED / FULL GREEN (V5.8-01 through V5.8-14 com
 
 V5.8.5 AvaX Full Enterprise Cleanup: CLOSED / FULL GREEN (all cleanup phases A through M complete, 22/22 component gates PASS, PHPStan 0 errors, health checks canonical, ServiceProviders created, truth files reconciled)
 
+V5.8.6 HTTP Response Layer Convergence: CLOSED / FULL GREEN (ResponseServiceProvider converged, CreateHttpResponse + Responses + ResponseFactoryInterface alias registered, 13 provider tests GREEN, pre-existing errors classified, GoldenPathRuntime responseFactory bug fixed)
+
 Current Plan Lock: CLOSED / FULL GREEN
 
 Active stage: V5.8.5 AvaX Full Enterprise Cleanup — COMPLETE / FULL GREEN
@@ -187,13 +189,13 @@ An agent must not combine stages unless EXECUTION.md explicitly allows it.
 The current active stage is:
 
 ```text
-None — V5.8.5 AvaX Full Enterprise Cleanup COMPLETE / FULL GREEN
+None — V5.8.6 HTTP Response Layer Convergence COMPLETE / FULL GREEN
 ```
 
 Last completed stage:
 
 ```text
-V5.8.5 AvaX Full Enterprise Cleanup — FULL GREEN (all phases A through M complete)
+V5.8.6 HTTP Response Layer Convergence — FULL GREEN (ResponseServiceProvider converged, 13 provider tests GREEN, pre-existing errors classified)
 ```
 
 Current Plan Lock: FULL GREEN

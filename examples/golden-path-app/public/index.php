@@ -26,7 +26,7 @@ $builder = new ApplicationBuilder(
     runDoctor         : new RunDoctor(),
     handleIncomingHttp: new HandleIncomingHttp(createHttpResponse: new CreateHttpResponse()),
     filesystem        : new Filesystem(),
-    responseFactory   : new CreateHttpResponse(),
+    createHttpResponse: new CreateHttpResponse(),
 );
 
 // 2. Boot the Framework

@@ -33,7 +33,7 @@ final class WebhookIngestionApp
             runDoctor         : new RunDoctor(),
             handleIncomingHttp: new HandleIncomingHttp(createHttpResponse: new CreateHttpResponse()),
             filesystem        : new Filesystem(),
-            responseFactory   : new CreateHttpResponse(),
+            createHttpResponse: new CreateHttpResponse(),
         ))->withHttpRoutes(__DIR__ . '/config/routes.php');
     }
 }

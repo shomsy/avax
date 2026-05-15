@@ -54,6 +54,8 @@ flowchart LR
         D31["V5.8-08 Outbox Groundwork — GREEN"]
         D32["V5.8-09 Tests (67) — GREEN"]
         D33["V5.8 COMPLETE — GREEN"]
+        D34["V5.8.5 Enterprise Cleanup — FULL GREEN"]
+        D35["V5.8.6 Response Layer — FULL GREEN"]
     end
 
     subgraph Ready["Ready Next"]

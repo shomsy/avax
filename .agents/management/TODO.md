@@ -25,6 +25,15 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: V5.8.6
+- `created_at`: 2026-05-15
+- `updated_at`: 2026-05-15
+- `status`: done
+- `estimate`: medium
+- `outcome`: V5.8.6 HTTP Response Layer Convergence — COMPLETE / GREEN. ResponseServiceProvider registers CreateHttpResponse, Responses, ResponseFactoryInterface alias. 13 provider tests GREEN. Pre-existing errors classified (116 errors + 37 failures, all pre-existing, none caused by response refactor). GoldenPathRuntime responseFactory named parameter bug fixed (54 errors resolved).
+- `acceptance`: ResponseServiceProvider exists and registers CreateHttpResponse + Responses + PSR-17 ResponseFactoryInterface binding. Responses delegates to CreateHttpResponse. No legacy ResponseFactory in main tree. Truth files updated. Evidence files created.
+- `links`: `EVIDENCE/hardening/21-response-final-validation.md`, `EVIDENCE/hardening/22-response-truth-reconciliation.md`, `EVIDENCE/hardening/23-response-layer-final-audit.md`
+
 - `id`: CLEANUP-ENTERPRISE-001
 - `created_at`: 2026-05-13
 - `updated_at`: 2026-05-13

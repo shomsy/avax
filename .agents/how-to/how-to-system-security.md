@@ -2341,3 +2341,215 @@ AvaX must fail closed, redact by default, expose only what is necessary, and pro
 If security makes the design clearer and safer, it belongs.
 
 If security is hidden in vague helpers, it failed.
+
+---
+
+## 40. Security Must Scream Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** BLOCKER
+
+### Rule
+
+Security-sensitive findings MUST be loud, explicit, and blocking by default.
+
+Any OWASP-class weakness, injection risk, authentication bypass, authorization bypass, sensitive data leak, unsafe deserialization, unsafe redirect, filesystem traversal, command execution risk, SSRF risk, XSS risk, CSRF risk, SQL/query injection risk, weak cryptography, secret exposure, unsafe logging, or session/cookie weakness MUST be classified as HIGH or BLOCKER unless proven otherwise.
+
+Security findings MUST NOT be hidden as:
+
+```text
+cleanup
+style issue
+minor refactor note
+pre-existing harmless debt
+accepted risk without owner/expiry
+non-blocking note
+code quality nit
+low-priority cleanup
+```
+
+A security finding may be downgraded only with:
+
+```text
+exact threat explanation
+affected path
+exploitability assessment
+mitigation proof
+test or gate evidence
+owner
+expiry if accepted temporarily
+truth/backlog entry
+explicit stage-blocking decision
+```
+
+### Minimum Severity Rule
+
+- exploitable or likely exploitable security weakness = **BLOCKER**
+- potential OWASP-class weakness = **HIGH** or **BLOCKER**
+- defense-in-depth gap = **MEDIUM** or **HIGH**, depending on blast radius
+- documentation-only security clarification = **LOW** only when no exploit path exists
+
+---
+
+## 41. Security Review Trigger Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** HIGH
+
+### Rule
+
+Security review is mandatory when a change touches any of the following:
+
+```text
+authentication
+authorization
+roles/permissions
+sessions
+cookies
+CSRF
+CORS
+redirects
+user input
+request parsing
+validation
+serialization/deserialization
+database query building
+filesystem I/O
+file upload/download
+logging
+secrets
+hashing
+encryption
+HTTP client/server
+queues and message payloads
+cache keys containing user or user-derived data
+template/rendering
+command/process execution
+event payloads crossing boundaries
+webhooks
+signed URLs
+tokens
+API keys
+password reset flows
+rate limiting
+tenant isolation
+sandboxing
+plugin execution
+object storage paths
+URL generation
+proxy/trusted header handling
+```
+
+### Required Review Evidence
+
+If triggered, the review MUST include this table:
+
+| Area | Changed? | Risk checked | Finding | Severity | Fix/mitigation | Blocks commit? |
+|---|---:|---|---|---|---:|
+
+### Silent Skip Rule
+
+If the change does not trigger security review, the governance review MUST explicitly state why.
+
+Security review cannot be skipped silently.
+
+---
+
+## 42. Security Commit Block Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** BLOCKER
+
+### Rule
+
+A commit is FORBIDDEN if the current change introduces, exposes, or leaves unresolved any security issue classified as BLOCKER, HIGH, OWASP-class weakness, authentication bypass, authorization bypass, injection risk, XSS risk, CSRF risk, SSRF risk, unsafe redirect, unsafe deserialization, path traversal, command execution risk, secret exposure, sensitive data logging, weak cryptography/hashing, session/cookie weakness, unsafe file upload/download, database query injection risk, unsafe event payload crossing trust boundary, unsafe queue payload handling, unsafe tenant boundary, or unsafe plugin/sandbox execution.
+
+### Required Action
+
+1. Do not commit.
+2. Document the finding.
+3. Fix it first.
+4. Rerun validation.
+5. Rerun security review.
+6. Rerun recursive governance review.
+7. Commit only when security review is clean.
+
+### Temporary Acceptance
+
+A security issue may remain only if final status is YELLOW or RED. Never GREEN.
+
+If temporarily accepted, it MUST have:
+
+```text
+exact issue
+affected path
+severity
+exploitability assessment
+owner
+mitigation
+expiry or version
+backlog or truth entry
+evidence
+explicit decision whether it blocks the current stage
+```
+
+### GREEN Commit Rule
+
+A GREEN commit with unresolved security issue is forbidden.
+
+---
+
+## 44. Security and Performance Trigger Cross-Rule
+
+Security review MUST be triggered by changes to: user input, authentication, authorization, session, cookies, CSRF, CORS, encryption, hashing, secrets, filesystem I/O, HTTP client/server, serialization/deserialization, database query building, queue payloads, cache keys containing user data, logging of sensitive data, redirects, file upload/download, template rendering, command/process execution, event payloads crossing trust boundaries, tenant isolation, or plugin/sandbox execution.
+
+Performance review MUST be triggered by changes to: hot paths, loops over routes/listeners/middleware, reflection, container resolution, event dispatch, queue workers, database query execution, route matching, filesystem scans, cache compile/read/write, boot/worker startup, long-lived runtime reset, serialization, hydration/extraction, projections/read models, graph compilation, or runtime scope creation/closing.
+
+If triggered, review evidence must include why security/performance is relevant, what was checked, result, remaining risk, and blocking decision. If not triggered, review must say why.
+
+---
+
+## 45. Critical Quality Signal Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** HIGH
+
+### Rule
+
+The review MUST loudly flag anything that threatens security, data integrity, runtime safety, long-lived worker safety, dependency graph correctness, public API compatibility, static analysis baseline, test reliability, performance hot paths, observability of failures, rollback/recovery safety, container verification, request scope isolation, tenant isolation, state reset safety, or failure boundary correctness.
+
+The following must not pass silently:
+
+```text
+hidden fallback construction
+runtime service assembly
+service locator usage in business code
+missing dependency checks in business or runtime code
+mutable static state without reset proof
+request state stored in singleton
+fake ServiceProvider
+fake PublicSurface
+broad try/catch swallowing errors
+broad PHPStan ignores
+weak tests
+assertTrue(true)
+evidence claiming GREEN while validation says otherwise
+gate PASS with RED content
+mandatory gate with zero scanned files
+fake compatibility shim
+duplicate canonical concepts
+large builders acting as hidden containers
+examples showing non-canonical style
+```
+
+### Core Principle
+
+If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness, it must scream in review.

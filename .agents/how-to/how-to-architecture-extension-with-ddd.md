@@ -2471,6 +2471,37 @@ Current architecture is the target.
 
 Tests are the judge.
 
+## 50. PublicSurface Factory Boundary Rule
+
+PublicSurface may expose public factories only when they create public value/result objects or protect users from internal construction details.
+
+PublicSurface factories MUST NOT:
+- assemble runtime service graphs
+- instantiate runtime services
+- access the container as service locator
+- create middleware, dispatchers, resolvers, clients, stores, loggers, repositories, or framework runtime services
+- hide dependency assembly
+
+**Allowed:** `Responses::json()` delegates to `CreateHttpResponse` and returns `Response`.
+**Forbidden:** `Responses::json()` creates new `CreateHttpResponse` internally.
+
+PublicSurface may create produced public values. PublicSurface must not assemble machinery.
+
+## 51. DDD Factory vs Runtime Assembly Rule
+
+A DDD factory owns meaningful creation of domain/value/result objects when construction has invariants, policy, or language meaning.
+
+A DDD factory MUST NOT assemble framework runtime service graphs.
+
+**Allowed:** `CreateReleaseCandidate` creates `ReleaseCandidate` with invariants.
+**Forbidden:** `RuntimeFactory` creates `Router`, `EventDispatcher`, `Logger`, `MiddlewareStack`, `DatabaseConnection`.
+
+If a class assembles runtime services, it belongs in `ServiceProvider`, `System/Configuration`, or `System/Configuration/Builders` — not in a DDD factory.
+
+Factories create meaningful objects. Configuration assembles the system.
+
+---
+
 Everything must remain readable.
 
 Everything must remain simple.

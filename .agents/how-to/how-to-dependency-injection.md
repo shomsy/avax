@@ -1492,7 +1492,83 @@ Step 5: Update call sites to use injected dependency
 
 ---
 
-## 14. Final Law
+## 15. PublicSurface Factory Boundary Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** HIGH
+
+### Rule
+
+PublicSurface may expose public factories only when they create public value/result objects or protect users from internal construction details.
+
+PublicSurface factories MUST NOT:
+
+```text
+assemble runtime service graphs
+instantiate runtime services
+access the container as service locator
+create middleware, dispatchers, resolvers, clients, stores, loggers, repositories, or framework runtime services
+hide dependency assembly
+```
+
+**Allowed:**
+`Responses::json()` delegates to `CreateHttpResponse` and returns `Response`.
+
+**Forbidden:**
+`Responses::json()` creates new `CreateHttpResponse` internally.
+
+**Forbidden:**
+PublicSurface factory creates `Runtime` with `Router`, `EventDispatcher`, `Logger`, `Container`, `MiddlewareStack`.
+
+### Rule Summary
+
+PublicSurface may create produced public values.
+PublicSurface must not assemble machinery.
+
+---
+
+## 16. DDD Factory vs Runtime Assembly Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** HIGH
+
+### Rule
+
+A DDD factory owns meaningful creation of domain/value/result objects when construction has invariants, policy, or language meaning.
+
+A DDD factory MUST NOT assemble framework runtime service graphs.
+
+**Allowed:**
+`CreateReleaseCandidate` creates `ReleaseCandidate` with invariants.
+
+**Allowed:**
+`CreatePublicApiSnapshot` creates a domain snapshot.
+
+**Forbidden:**
+`RuntimeFactory` creates `Router`, `EventDispatcher`, `Logger`, `MiddlewareStack`, `DatabaseConnection`.
+
+### Rule Summary
+
+If a class assembles runtime services, it belongs in:
+
+```text
+ServiceProvider
+System/Configuration
+System/Configuration/Builders
+```
+
+not in a DDD factory.
+
+Factories create meaningful objects.
+Configuration assembles the system.
+
+---
+
+## 17. Final Law
 
 ```text
 Framework = DI.
@@ -1507,6 +1583,8 @@ Evidence = validation proves DI discipline.
 Gates = path/context-aware, not class-name allowlists.
 Runtime = execute only, never assemble.
 Composition = assemble only, never execute.
+PublicSurface = receives and delegates, never assembles.
+DDD Factory = creates domain objects, never runtime graphs.
 ```
 
 No claim of GREEN may be made without:

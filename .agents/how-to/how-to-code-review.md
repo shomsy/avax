@@ -1078,14 +1078,54 @@ Metrics and quality scores MUST NOT regress from the previously established base
 
 ### 14.2 Gate Self-Test Rule
 
-Every custom validation gate or architecture test MUST have at least one negative test case (proving it fails when the
+Every mandatory validation gate or architecture test MUST have at least one negative test case (proving it fails when the
 rule is violated).
 
 - A gate that cannot fail is not a gate.
 - A gate with "0 scans" or "0 violations" is UNPROVEN until the scanner's ability to find violations is verified.
+- Mandatory gate without self-test or proof is BLOCKER for production-ready GREEN status.
+
+Required examples:
+
+```text
+Runtime composition gate must fail on:
+  $dependency ?? new Dependency()
+  $dependency ??= new Dependency()
+  new BuildSomething() in runtime
+  $middleware[] = new SomeMiddleware(...)
+  class_exists() runtime wiring
+  builder->build() in runtime
+
+DI gate must fail on:
+  hidden fallback construction
+  nullable required services used as fallback
+  container service locator in runtime code
+  missing dependency checks in business/runtime code
+
+Git gate must fail on:
+  .phpunit.cache/**
+  .qoder/worktrees/**
+  avax.txt
+  generated local cache files
+  forbidden local AI cache files
+
+Security gate must fail on:
+  obvious SQL/query injection pattern
+  unsafe redirect pattern
+  sensitive logging pattern
+  path traversal pattern
+  unsafe command execution pattern
+  weak hashing/crypto pattern where detectable
+```
+
+Rules:
+- gate without self-test or proof is YELLOW at minimum
+- mandatory gate without self-test or proof cannot close BLOCKER
+- gate that scans zero active files is FAIL, not PASS
+- gate PASS with RED content is FAIL
 
 **Status:** MANDATORY  
-**Severity:** HIGH
+**Severity:** BLOCKER
 
 ### 14.3 No Zero-Scan Gate Rule
 
@@ -1197,3 +1237,321 @@ Failed: <number>
 Blocked: <number>
 Highest severity: BLOCKER / HIGH / MEDIUM / LOW
 ```
+
+---
+
+## 16. Security Must Scream Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** BLOCKER
+
+### Rule
+
+Security-sensitive findings MUST be loud, explicit, and blocking by default.
+
+Any OWASP-class weakness, injection risk, authentication bypass, authorization bypass, sensitive data leak, unsafe deserialization, unsafe redirect, filesystem traversal, command execution risk, SSRF risk, XSS risk, CSRF risk, SQL/query injection risk, weak cryptography, secret exposure, unsafe logging, or session/cookie weakness MUST be classified as HIGH or BLOCKER unless proven otherwise.
+
+Security findings MUST NOT be hidden as:
+
+```text
+cleanup
+style issue
+minor refactor note
+pre-existing harmless debt
+accepted risk without owner/expiry
+non-blocking note
+code quality nit
+low-priority cleanup
+```
+
+A security finding may be downgraded only with:
+
+```text
+exact threat explanation
+affected path
+exploitability assessment
+mitigation proof
+test or gate evidence
+owner
+expiry if accepted temporarily
+truth/backlog entry
+explicit stage-blocking decision
+```
+
+### Minimum Severity Rule
+
+- exploitable or likely exploitable security weakness = **BLOCKER**
+- potential OWASP-class weakness = **HIGH** or **BLOCKER**
+- defense-in-depth gap = **MEDIUM** or **HIGH**, depending on blast radius
+- documentation-only security clarification = **LOW** only when no exploit path exists
+
+---
+
+## 17. Security Review Trigger Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** HIGH
+
+### Rule
+
+Security review is mandatory when a change touches any of the following:
+
+```text
+authentication
+authorization
+roles/permissions
+sessions
+cookies
+CSRF
+CORS
+redirects
+user input
+request parsing
+validation
+serialization/deserialization
+database query building
+filesystem I/O
+file upload/download
+logging
+secrets
+hashing
+encryption
+HTTP client/server
+queues and message payloads
+cache keys containing user or user-derived data
+template/rendering
+command/process execution
+event payloads crossing boundaries
+webhooks
+signed URLs
+tokens
+API keys
+password reset flows
+rate limiting
+tenant isolation
+sandboxing
+plugin execution
+object storage paths
+URL generation
+proxy/trusted header handling
+```
+
+### Required Review Evidence
+
+If triggered, the review MUST include this table:
+
+| Area | Changed? | Risk checked | Finding | Severity | Fix/mitigation | Blocks commit? |
+|---|---:|---|---|---|---:|
+
+### Silent Skip Rule
+
+If the change does not trigger security review, the governance review MUST explicitly state why.
+
+Security review cannot be skipped silently.
+
+---
+
+## 18. Security Commit Block Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** BLOCKER
+
+### Rule
+
+A commit is FORBIDDEN if the current change introduces, exposes, or leaves unresolved any security issue classified as:
+
+```text
+BLOCKER
+HIGH
+OWASP-class weakness
+authentication bypass
+authorization bypass
+injection risk
+XSS risk
+CSRF risk
+SSRF risk
+unsafe redirect
+unsafe deserialization
+path traversal
+command execution risk
+secret exposure
+sensitive data logging
+weak cryptography or hashing
+session or cookie weakness
+unsafe file upload or download
+database query injection risk
+unsafe event payload crossing trust boundary
+unsafe queue payload handling
+unsafe tenant boundary
+unsafe plugin or sandbox execution
+```
+
+### Required Action
+
+1. Do not commit.
+2. Document the finding.
+3. Fix it first.
+4. Rerun validation.
+5. Rerun security review.
+6. Rerun recursive governance review.
+7. Commit only when security review is clean.
+
+### Temporary Acceptance
+
+A security issue may remain only if final status is YELLOW or RED. Never GREEN.
+
+If temporarily accepted, it MUST have:
+
+```text
+exact issue
+affected path
+severity
+exploitability assessment
+owner
+mitigation
+expiry or version
+backlog or truth entry
+evidence
+explicit decision whether it blocks the current stage
+```
+
+### Forbidden Masking
+
+Security issues MUST NOT be hidden as:
+
+```text
+cleanup
+style issue
+low priority
+pre-existing harmless debt
+non-blocking note
+accepted risk without proof
+```
+
+---
+
+## 20. Security and Performance Trigger Cross-Rule
+
+Security review MUST be triggered by changes to areas listed in:
+
+```text
+.agents/how-to/how-to-system-security.md §44
+```
+
+Performance review MUST be triggered by changes to areas listed in:
+
+```text
+.agents/how-to/how-to-system-performance.md §44
+```
+
+If triggered, the review evidence MUST include the compliance matrix sections for security and performance. If not triggered, the review MUST say why.
+
+## 21. Large Unit Review Thresholds
+
+Large code is not automatically wrong, but it is automatically suspicious.
+
+Mandatory review triggers:
+
+```text
+Class over 300 lines:            mandatory responsibility review
+Method over 50 lines:            mandatory extraction or explanation review
+Constructor with 8+ dependencies: mandatory design review
+PublicSurface over 150 lines:    mandatory behavior leak review
+Builder over 300 lines:          BLOCKER until classified
+ServiceProvider over 250 lines:  mandatory split review
+Test class over 500 lines:       mandatory test organization review
+```
+
+Threshold trigger does not automatically mean refactor. It does require documented decision. No large unit may be called GREEN without review decision.
+
+## 22. Canonical Term Registry Rule
+
+One concept must have one canonical name. If the same concept appears under multiple names, review MUST choose one canonical term and mark the others as aliases, deprecated terms, or wrong terms.
+
+Check the registry at:
+
+```text
+docs/governance/canonical-terms.md
+```
+
+before introducing or accepting new terminology.
+
+## 23. Governance Exception Register Rule
+
+A documented governance exception is valid only when recorded in the exception register at:
+
+```text
+EVIDENCE/accepted-exceptions-ledger.md
+```
+
+An exception without owner and expiry is not an exception. It is unresolved governance debt.
+
+For the full exception format, see:
+
+```text
+.agents/how-to/how-to-production-readiness.md §8
+```
+
+## 24. Critical Quality Signal Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** HIGH
+
+### Rule
+
+The review MUST loudly flag anything that threatens:
+
+```text
+security
+data integrity
+runtime safety
+long-lived worker safety
+dependency graph correctness
+public API compatibility
+static analysis baseline
+test reliability
+performance hot paths
+observability of failures
+rollback or recovery safety
+container verification
+request scope isolation
+tenant isolation
+state reset safety
+failure boundary correctness
+```
+
+The following must not pass silently:
+
+```text
+hidden fallback construction
+runtime service assembly
+service locator usage in business code
+missing dependency checks in business or runtime code
+mutable static state without reset proof
+request state stored in singleton
+fake ServiceProvider
+fake PublicSurface
+broad try/catch swallowing errors
+broad PHPStan ignores
+weak tests
+assertTrue(true)
+evidence claiming GREEN while validation says otherwise
+gate PASS with RED content
+mandatory gate with zero scanned files
+fake compatibility shim
+duplicate canonical concepts
+large builders acting as hidden containers
+examples showing non-canonical style
+```
+
+### Core Principle
+
+If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness, it must scream in review.

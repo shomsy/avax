@@ -1,7 +1,4 @@
-Uskladjeno sam sa mojim glavnim governance dokumentom: ownership, naming, recursive clarity, TDD default, regression
-tests, characterization tests i pravilo da struktura mora da bude jasna, ne dekorativna.
-
-````md
+```md
 # How to Unit Test
 
 ## Pragmatic Unit Testing Governance and Behavior Specification Standard
@@ -2538,6 +2535,19 @@ It should be:
 * edge-case-aware
 * precise
 * boring in the best possible way
+
+## 76. Gate Self-Test Cross-Reference
+
+Every mandatory validation gate or architecture test MUST have at least one negative test case proving it fails when the rule is violated. See:
+
+```text
+.agents/how-to/how-to-code-review.md §14.2
+.agents/how-to/how-to-production-readiness.md §16
+```
+
+A gate that cannot fail is not a gate.
+
+---
 
 The final standard is simple:
 

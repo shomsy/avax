@@ -457,17 +457,30 @@ Reports may prove.
 
 ## Final Authority Clause
 
+## Examples Are Architecture Rule
+
+Examples, GoldenPath apps, documentation snippets, generated examples, and tests are source material for humans and AI. They MUST show canonical style.
+
+They MUST NOT show: manual runtime service assembly, hidden fallback dependencies, direct new of runtime services, service locator in runtime code, fake providers, deprecated APIs as primary examples, old names after canonical rename, shortcuts that violate governance, weak test patterns, fake GREEN evidence, or security-sensitive shortcuts without warning.
+
+If examples must show low-level/manual usage, they must be clearly labeled as advanced/internal/testing-only.
+
+If examples teach an anti-pattern, the codebase will reproduce it.
+
+## Canonical Term Registry Rule
+
+One concept must have one canonical name. The canonical registry is at `docs/governance/canonical-terms.md`. Check the registry before introducing or accepting new terminology.
+
+---
+
 This instruction set is **stable**, **reusable**, and **authoritative**.
 
 It overrides:
 
 - Convenience
-
 - Brevity
-
 - Assumptions
-
-- “Good enough” documentation
+- "Good enough" documentation
 
 Follow it **exactly**.
 

@@ -1,5 +1,4 @@
 
-````md
 # how-to-dogfooding.md
 
 # AvaX Internal Dogfooding Governance
@@ -52,7 +51,7 @@ The goal is:
 one capability = one owner
 all consumers = use that owner
 no local mini-version
-````
+```
 
 AvaX must behave like one composed framework engine, not like unrelated packages placed next to each other.
 

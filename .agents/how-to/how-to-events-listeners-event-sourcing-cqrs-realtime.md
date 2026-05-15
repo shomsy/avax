@@ -1257,7 +1257,7 @@ They will be implemented as part of V5.7-10 (Tooling Gates).
 - event dogfooding
 ```
 
-Status: Design Lock GREEN. Implementation NOT_STARTED.
+Status: **COMPLETE / GREEN** (as of 2026-05-13). All 14 sub-stages (V5.7-00 through V5.7-13) are implemented and validated. See `CURRENT_TRUTH.md` for evidence.
 
 ### V5.8: Database Lifecycle Events
 
@@ -1267,7 +1267,7 @@ Status: Design Lock GREEN. Implementation NOT_STARTED.
 - outbox groundwork
 ```
 
-Status: PLANNED / LOCKED.
+Status: **COMPLETE / GREEN** (as of 2026-05-13). All 14 sub-stages (V5.8-01 through V5.8-14) are implemented and validated. See `CURRENT_TRUTH.md` for evidence.
 
 ### V5.9: Boot DSL
 
@@ -1276,7 +1276,7 @@ Status: PLANNED / LOCKED.
 - compile registries at boot
 ```
 
-Status: PLANNED.
+Status: PLANNED / UNBLOCKED (as of 2026-05-15). See `CURRENT_TRUTH.md` for current stage lock.
 
 ### V6.x: Future Capabilities
 

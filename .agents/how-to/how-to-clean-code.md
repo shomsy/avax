@@ -1490,7 +1490,89 @@ This document synthesizes guidance from the following major schools and official
 
 ---
 
-## 22. Final position
+## 22. Critical Quality Signal Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** HIGH
+
+### Rule
+
+The review MUST loudly flag anything that threatens:
+
+```text
+security
+data integrity
+runtime safety
+long-lived worker safety
+dependency graph correctness
+public API compatibility
+static analysis baseline
+test reliability
+performance hot paths
+observability of failures
+rollback or recovery safety
+container verification
+request scope isolation
+tenant isolation
+state reset safety
+failure boundary correctness
+```
+
+The following must not pass silently:
+
+```text
+hidden fallback construction
+runtime service assembly
+service locator usage in business code
+missing dependency checks in business or runtime code
+mutable static state without reset proof
+request state stored in singleton
+fake ServiceProvider
+fake PublicSurface
+broad try/catch swallowing errors
+broad PHPStan ignores
+weak tests
+assertTrue(true)
+evidence claiming GREEN while validation says otherwise
+gate PASS with RED content
+mandatory gate with zero scanned files
+fake compatibility shim
+duplicate canonical concepts
+large builders acting as hidden containers
+examples showing non-canonical style
+```
+
+### Core Principle
+
+If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness, it must scream in review.
+
+---
+
+## 23. Large Unit Review Thresholds
+
+Large code is not automatically wrong, but it is automatically suspicious.
+
+Mandatory review triggers:
+
+```text
+Class over 300 lines:            mandatory responsibility review
+Method over 50 lines:            mandatory extraction or explanation review
+Constructor with 8+ dependencies: mandatory design review
+PublicSurface over 150 lines:    mandatory behavior leak review
+Builder over 300 lines:          BLOCKER until classified as one of:
+                                 - user-facing configuration DSL
+                                 - configuration graph builder
+                                 - capability runtime-result builder
+                                 - invalid hidden container
+ServiceProvider over 250 lines:  mandatory split review
+Test class over 500 lines:       mandatory test organization review
+```
+
+Threshold trigger does not automatically mean refactor. It does require documented decision. No large unit may be called GREEN without review decision.
+
+## 24. Final position
 
 If you remember only one sentence from this entire document, remember this:
 

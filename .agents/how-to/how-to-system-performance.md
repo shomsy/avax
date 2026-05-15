@@ -2098,6 +2098,59 @@ Performance tests are the judge.
 
 ---
 
+## 44. Security and Performance Trigger Cross-Rule
+
+Performance review MUST be triggered by changes to: hot paths, loops over routes/listeners/middleware, reflection, container resolution, event dispatch, queue workers, database query execution, route matching, filesystem scans, cache compile/read/write, boot/worker startup, long-lived runtime reset, serialization, hydration/extraction, projections/read models, graph compilation, or runtime scope creation/closing.
+
+If triggered, review evidence must include why performance is relevant, what was checked, result, remaining risk, and blocking decision. If not triggered, review must say why.
+
+For security triggers, see:
+
+```text
+.agents/how-to/how-to-system-security.md §44
+```
+
+---
+
+## 45. Critical Quality Signal Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** HIGH
+
+### Rule
+
+The review MUST loudly flag anything that threatens security, data integrity, runtime safety, long-lived worker safety, dependency graph correctness, public API compatibility, static analysis baseline, test reliability, performance hot paths, observability of failures, rollback/recovery safety, container verification, request scope isolation, tenant isolation, state reset safety, or failure boundary correctness.
+
+The following must not pass silently:
+
+```text
+hidden fallback construction
+runtime service assembly
+service locator usage in business code
+missing dependency checks in business or runtime code
+mutable static state without reset proof
+request state stored in singleton
+fake ServiceProvider
+fake PublicSurface
+broad try/catch swallowing errors
+broad PHPStan ignores
+weak tests
+assertTrue(true)
+evidence claiming GREEN while validation says otherwise
+gate PASS with RED content
+mandatory gate with zero scanned files
+fake compatibility shim
+duplicate canonical concepts
+large builders acting as hidden containers
+examples showing non-canonical style
+```
+
+If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness, it must scream in review.
+
+---
+
 ## 46. Final Performance Law
 
 Performance is not decoration.

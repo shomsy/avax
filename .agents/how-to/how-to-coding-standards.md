@@ -1154,7 +1154,7 @@ The key DI laws are:
 
 - new Class() is FORBIDDEN outside composition root, factory, or test
 - ?? new Fallback() is FORBIDDEN — register fallbacks in ServiceProvider
-- every component MUST have a ServiceProvider
+- every ACTIVE production component with runtime behavior, public API, dependencies, replaceable services, state, I/O, configuration, or lifecycle ownership MUST have exactly one real ServiceProvider (see how-to-dependency-injection.md §4.0 for exempt statuses)
 - method-level autowiring is MANDATORY for route handlers
 - static calls are allowed only for fluent API entry points and value object factories
 - fluent APIs must have immutable builders and terminal methods

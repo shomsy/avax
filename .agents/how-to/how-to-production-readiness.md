@@ -718,7 +718,7 @@ A governance exception is a conscious, documented decision to temporarily or per
 ### 8.2 Mandatory Registration
 
 Every governance deviation MUST be recorded in the **Exception Register**.
-The register is a centralized ledger (e.g., `EVIDENCE/accepted-exceptions-ledger.md` or similar).
+The register is a centralized ledger at `EVIDENCE/accepted-exceptions-ledger.md`.
 
 ### 8.3 Required Exception Data
 
@@ -1040,36 +1040,565 @@ If command execution is blocked by environment limits:
 
 ---
 
-## 11. Final Verdict
+## 11. Security Must Scream Rule
 
-Current verdict:
+### Status
+
+**MANDATORY**
+**Severity:** BLOCKER
+
+### Rule
+
+Security-sensitive findings MUST be loud, explicit, and blocking by default.
+
+Any OWASP-class weakness, injection risk, authentication bypass, authorization bypass, sensitive data leak, unsafe deserialization, unsafe redirect, filesystem traversal, command execution risk, SSRF risk, XSS risk, CSRF risk, SQL/query injection risk, weak cryptography, secret exposure, unsafe logging, or session/cookie weakness MUST be classified as HIGH or BLOCKER unless proven otherwise.
+
+Security findings MUST NOT be hidden as:
+
+```text
+cleanup
+style issue
+minor refactor note
+pre-existing harmless debt
+accepted risk without owner/expiry
+non-blocking note
+code quality nit
+low-priority cleanup
+```
+
+A security finding may be downgraded only with:
+
+```text
+exact threat explanation
+affected path
+exploitability assessment
+mitigation proof
+test or gate evidence
+owner
+expiry if accepted temporarily
+truth/backlog entry
+explicit stage-blocking decision
+```
+
+### Minimum Severity Rule
+
+- exploitable or likely exploitable security weakness = **BLOCKER**
+- potential OWASP-class weakness = **HIGH** or **BLOCKER**
+- defense-in-depth gap = **MEDIUM** or **HIGH**, depending on blast radius
+- documentation-only security clarification = **LOW** only when no exploit path exists
+
+---
+
+## 12. Security Review Trigger Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** HIGH
+
+### Rule
+
+Security review is mandatory when a change touches any of the following:
+
+```text
+authentication
+authorization
+roles/permissions
+sessions
+cookies
+CSRF
+CORS
+redirects
+user input
+request parsing
+validation
+serialization/deserialization
+database query building
+filesystem I/O
+file upload/download
+logging
+secrets
+hashing
+encryption
+HTTP client/server
+queues and message payloads
+cache keys containing user or user-derived data
+template/rendering
+command/process execution
+event payloads crossing boundaries
+webhooks
+signed URLs
+tokens
+API keys
+password reset flows
+rate limiting
+tenant isolation
+sandboxing
+plugin execution
+object storage paths
+URL generation
+proxy/trusted header handling
+```
+
+### Required Review Evidence
+
+If triggered, the review MUST include this table:
+
+| Area | Changed? | Risk checked | Finding | Severity | Fix/mitigation | Blocks commit? |
+|---|---:|---|---|---|---:|
+
+### Silent Skip Rule
+
+If the change does not trigger security review, the governance review MUST explicitly state why.
+
+Security review cannot be skipped silently.
+
+---
+
+## 13. Security Commit Block Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** BLOCKER
+
+### Rule
+
+A commit is FORBIDDEN if the current change introduces, exposes, or leaves unresolved any security issue classified as BLOCKER, HIGH, OWASP-class weakness, authentication bypass, authorization bypass, injection risk, XSS risk, CSRF risk, SSRF risk, unsafe redirect, unsafe deserialization, path traversal, command execution risk, secret exposure, sensitive data logging, weak cryptography/hashing, session/cookie weakness, unsafe file upload/download, database query injection risk, unsafe event payload crossing trust boundary, unsafe queue payload handling, unsafe tenant boundary, or unsafe plugin/sandbox execution.
+
+### Required Action
+
+1. Do not commit.
+2. Document the finding.
+3. Fix it first.
+4. Rerun validation.
+5. Rerun security review.
+6. Rerun recursive governance review.
+7. Commit only when security review is clean.
+
+### Temporary Acceptance
+
+A security issue may remain only if final status is YELLOW or RED. Never GREEN.
+
+If temporarily accepted, it MUST have:
+
+```text
+exact issue
+affected path
+severity
+exploitability assessment
+owner
+mitigation
+expiry or version
+backlog or truth entry
+evidence
+explicit decision whether it blocks the current stage
+```
+
+### GREEN Commit Rule
+
+A GREEN commit with unresolved security issue is forbidden.
+
+---
+
+## 16. Gate Self-Test Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** BLOCKER
+
+### Rule
+
+Every mandatory validation gate or architecture test MUST have at least one negative test case (proving it fails when the rule is violated).
+
+- A gate that cannot fail is not a gate.
+- A gate with "0 scans" or "0 violations" is UNPROVEN until the scanner's ability to find violations is verified.
+- Mandatory gate without self-test or proof is BLOCKER for production-ready GREEN status.
+
+Required examples:
+
+```text
+Runtime composition gate must fail on:
+  $dependency ?? new Dependency()
+  new BuildSomething() in runtime
+  $middleware[] = new SomeMiddleware(...)
+  class_exists() runtime wiring
+
+DI gate must fail on:
+  hidden fallback construction
+  container service locator in runtime code
+
+Git gate must fail on:
+  .phpunit.cache/**
+  .qoder/worktrees/**
+  forbidden local AI cache files
+
+Security gate must fail on:
+  obvious SQL/query injection pattern
+  unsafe redirect pattern
+  sensitive logging pattern
+  path traversal pattern
+```
+
+Rules:
+- gate without self-test or proof is YELLOW at minimum
+- mandatory gate without self-test or proof cannot close BLOCKER
+- gate that scans zero active files is FAIL, not PASS
+- gate PASS with RED content is FAIL
+
+## 17. No Zero-Scan Gate Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** BLOCKER
+
+### Rule
+
+A mandatory gate that scans zero active files is failed, not passed.
+
+A gate result MUST report:
+
+```text
+scanned files count
+excluded files count
+exclusion reasons
+active findings count
+accepted exceptions count
+false positives count
+exit code
+final classification
+```
+
+If a gate cannot determine its scan scope, it is unreliable and cannot support GREEN status.
+
+NOT_FOUND is not PASS.
+UNAVAILABLE is not PASS.
+SKIPPED is not PASS unless explicitly allowed by stage scope.
+Exit 0 with RED content is not PASS.
+
+## 18. Quality Ratchet Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** BLOCKER
+
+### Rule
+
+When a quality metric improves, the new better baseline becomes the floor.
+
+Future passes MUST NOT regress below the last proven baseline unless explicitly accepted as YELLOW or RED with owner, expiry, risk, and recovery plan.
+
+Tracked metrics include:
+
+```text
+PHPStan error count
+PHPUnit errors/failures
+mutation score if available
+runtime composition findings
+runtime assembly findings
+public surface violations
+component status lock coverage
+health/doctor check coverage
+security findings
+performance benchmark baseline
+weak test count
+ignored/suppressed static-analysis count
+gate self-test coverage
+component health-check coverage
+```
+
+Important rule:
+- If a metric is established at 0, it MUST stay at 0.
+- If a metric is not yet 0, the accepted current baseline becomes the temporary floor until improved.
+
+Remaining nonzero debt MUST be classified with:
+
+```text
+exact count
+owner
+target stage/version
+risk
+blocking decision
+evidence
+```
+
+Quality ratchet evidence must include:
+
+| Metric | Previous baseline | New baseline | Command | Evidence file | Owner | Blocks next stage? |
+|---|---:|---:|---|---|---|---:|
+
+---
+
+## 22. Security and Performance Trigger Cross-Rule
+
+Security review MUST be triggered by changes to areas listed in:
+
+```text
+.agents/how-to/how-to-system-security.md §44
+```
+
+Performance review MUST be triggered by changes to areas listed in:
+
+```text
+.agents/how-to/how-to-system-performance.md §44
+```
+
+If triggered, review evidence must include the compliance table. If not triggered, review must say why.
+
+## 23. Large Unit Review Thresholds
+
+Mandatory review triggers:
+
+```text
+Class over 300 lines:            mandatory responsibility review
+Method over 50 lines:            mandatory extraction or explanation review
+Constructor with 8+ dependencies: mandatory design review
+PublicSurface over 150 lines:    mandatory behavior leak review
+Builder over 300 lines:          BLOCKER until classified
+ServiceProvider over 250 lines:  mandatory split review
+Test class over 500 lines:       mandatory test organization review
+```
+
+Threshold trigger requires documented decision. No large unit may be called GREEN without review decision.
+
+## 24. Examples Are Architecture Rule
+
+Examples, GoldenPath apps, documentation snippets, generated examples, and tests are source material for humans and AI. They MUST show canonical style.
+
+They MUST NOT show: manual runtime service assembly, hidden fallback dependencies, direct new of runtime services, service locator in runtime code, fake providers, deprecated APIs as primary examples, old names after canonical rename, shortcuts that violate governance, weak test patterns, fake GREEN evidence, or security-sensitive shortcuts without warning.
+
+If examples must show low-level/manual usage, they must be clearly labeled as advanced/internal/testing-only.
+
+GoldenPath examples MUST be canonical. If examples teach an anti-pattern, the codebase will reproduce it.
+
+## 25. Canonical Term Registry Rule
+
+One concept must have one canonical name. Check the registry at `docs/governance/canonical-terms.md` before introducing or accepting new terminology.
+
+## 26. PublicSurface Factory Boundary Rule
+
+PublicSurface may expose public factories only when they create public value/result objects or protect users from internal construction details. PublicSurface factories MUST NOT assemble runtime service graphs, instantiate runtime services, access the container as service locator, or create middleware/dispatchers/resolvers/clients/stores/loggers/repositories/framework runtime services.
+
+Allowed: `Responses::json()` delegates to `CreateHttpResponse` and returns `Response`.
+Forbidden: `Responses::json()` creates new `CreateHttpResponse` internally.
+
+PublicSurface may create produced public values. PublicSurface must not assemble machinery.
+
+## 27. DDD Factory vs Runtime Assembly Rule
+
+A DDD factory owns meaningful creation of domain/value/result objects when construction has invariants, policy, or language meaning. A DDD factory MUST NOT assemble framework runtime service graphs.
+
+Allowed: `CreateReleaseCandidate` creates `ReleaseCandidate` with invariants.
+Forbidden: `RuntimeFactory` creates `Router`, `EventDispatcher`, `Logger`, `MiddlewareStack`, `DatabaseConnection`.
+
+If a class assembles runtime services, it belongs in `ServiceProvider`, `System/Configuration`, or `System/Configuration/Builders` — not in a DDD factory.
+
+## 28. Governance Exception Register Rule
+
+A documented exception is valid only when recorded in the exception register at:
+
+```text
+EVIDENCE/accepted-exceptions-ledger.md
+```
+
+Exception without owner and expiry is not an exception. It is unresolved governance debt.
+
+## 29. Critical Quality Signal Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** HIGH
+
+### Rule
+
+The review MUST loudly flag anything that threatens security, data integrity, runtime safety, long-lived worker safety, dependency graph correctness, public API compatibility, static analysis baseline, test reliability, performance hot paths, observability of failures, rollback/recovery safety, container verification, request scope isolation, tenant isolation, state reset safety, or failure boundary correctness.
+
+The following must not pass silently:
+
+```text
+hidden fallback construction
+runtime service assembly
+service locator usage in business code
+missing dependency checks in business or runtime code
+mutable static state without reset proof
+request state stored in singleton
+fake ServiceProvider
+fake PublicSurface
+broad try/catch swallowing errors
+broad PHPStan ignores
+weak tests
+assertTrue(true)
+evidence claiming GREEN while validation says otherwise
+gate PASS with RED content
+mandatory gate with zero scanned files
+fake compatibility shim
+duplicate canonical concepts
+large builders acting as hidden containers
+examples showing non-canonical style
+```
+
+### Core Principle
+
+If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness, it must scream in review.
+
+---
+
+## 20. Status State Machine Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** BLOCKER
+
+### Rule
+
+Status labels must be exact. The following are the ONLY valid statuses:
+
+### GREEN
+
+All of the following MUST be true:
+
+```text
+all mandatory validation for the scope is clean
+mandatory gates pass cleanly
+governance review is clean
+evidence exists
+truth matches validation
+no unclassified active blockers remain
+no unresolved HIGH/BLOCKER security issue exists
+no mandatory gate has RED content
+no fake GREEN claim exists
+```
+
+### YELLOW
+
+All of the following MUST be true:
+
+```text
+known exact blockers or debt remain
+every remaining issue has owner, target, risk, and blocking decision
+validation may be partially clean
+truth is honest
+work may be accepted only as evidence or partial closure
+unresolved security issue may remain only with explicit owner, mitigation, expiry, and truth/backlog entry
+```
+
+### RED
+
+Any of the following is true:
+
+```text
+validation is broken
+truth is broken
+mandatory gates are unreliable
+active runtime/security/data-loss blockers remain
+status cannot support next-stage work
+commit/push is forbidden unless explicitly committing evidence-only RED/YELLOW closure is approved by workflow
+```
+
+### Forbidden Patterns
+
+```text
+"pre-existing" is not a status — every pre-existing issue must be classified as GREEN/YELLOW/RED
+"Remaining YELLOW: None" when PHPStan or gates have findings — forbidden
+"PASS" with RED content — forbidden
+"GREEN" with missing mandatory validation — forbidden
+"pre-existing" without owner/target/risk — forbidden
+"security note" without severity — forbidden
+"non-blocking security issue" without mitigation/expiry/evidence — forbidden
+```
+
+---
+
+## 21. Component Status Ownership Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** HIGH
+
+### Rule
+
+Every component must have an explicit status before production readiness claims.
+
+### Allowed Statuses
+
+```text
+ACTIVE_GREEN
+ACTIVE_YELLOW
+ROADMAP
+SCAFFOLD
+LABS_ONLY
+EVIDENCE_ONLY
+PURE_FOUNDATION
+TEST_ONLY
+DEPRECATED
+```
+
+### Required Fields
+
+Every status entry MUST include:
+
+| Field | Required |
+|---|---|
+| component path | yes |
+| status | yes |
+| owner | yes |
+| reason | yes |
+| production autoload decision | yes |
+| ServiceProvider requirement | yes |
+| health/doctor requirement | yes |
+| test requirement | yes |
+| security review requirement | yes when relevant |
+| performance review requirement | yes when relevant |
+| V5.9 blocking decision | yes when relevant |
+
+### Enforcement
+
+A component with no status MUST NOT be silently treated as ACTIVE_GREEN.
+
+Gates must use component status ownership:
+
+```text
+ServiceProvider gates must respect component status
+health gates must respect component status
+autoload gates must respect component status
+runtime gates must respect component status
+production-readiness gates must respect component status
+```
+
+A ROADMAP/SCAFFOLD/LABS_ONLY component MUST NOT leak into production runtime autoload unless explicitly justified.
+
+---
+
+
+
+
+
+## 30. Final Verdict
+
+> NOTE: This section is HISTORICAL. The current project state is GREEN across all V1-V5 stages as proven by CURRENT_TRUTH.md (2026-05-15). 8351 tests pass, PHPStan 0 errors, all gates GREEN. The content below is preserved to document the previous RED state.
+
+Historical verdict (pre-V2 convergence):
 
 ```text
 RED
 ```
 
-Reason:
+Historical reason:
 
 ```text
-AvaX has meaningful architecture and component recovery progress, but production readiness is blocked by component PHPStan errors, broken reference audit issues, incomplete test-layer repair, incomplete runtime safety proof, and incomplete component-level validation.
+AvaX had meaningful architecture and component recovery progress, but production readiness was blocked by component PHPStan errors, broken reference audit issues, incomplete test-layer repair, incomplete runtime safety proof, and incomplete component-level validation.
 ```
 
-Next target verdict:
+Current actual status (2026-05-15):
 
 ```text
-YELLOW
+GREEN — V1 Kernel Green proven, V2-V5 all complete, all production-readiness gates PASS.
 ```
 
-YELLOW requires:
-
-```text
-[ ] taxonomy integrity green
-[ ] composer autoload green
-[ ] no unresolved internal broken references
-[ ] targeted component completion tests green
-[ ] Application/Cache PHPStan green
-[ ] component PHPStan errors grouped and reduced
-[ ] test layer repair plan active
-```
-
-GREEN requires all global acceptance criteria.
+See `CURRENT_TRUTH.md` for current evidence.

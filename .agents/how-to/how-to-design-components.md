@@ -2298,6 +2298,75 @@ A component **MUST** be marked **experimental** if it's not proven in production
 
 A component **MUST** be marked **production-ready** only when all items above are satisfied.
 
+## 22. Component Status Ownership Rule
+
+### Status
+
+**MANDATORY**
+**Severity:** HIGH
+
+### Rule
+
+Every component must have an explicit status before production readiness claims.
+
+### Allowed Statuses
+
+```text
+ACTIVE_GREEN
+ACTIVE_YELLOW
+ROADMAP
+SCAFFOLD
+LABS_ONLY
+EVIDENCE_ONLY
+PURE_FOUNDATION
+TEST_ONLY
+DEPRECATED
+```
+
+### Required Fields
+
+Every status entry MUST include:
+
+| Field | Required |
+|---|---|
+| component path | yes |
+| status | yes |
+| owner | yes |
+| reason | yes |
+| production autoload decision | yes |
+| ServiceProvider requirement | yes |
+| health/doctor requirement | yes |
+| test requirement | yes |
+| security review requirement | yes when relevant |
+| performance review requirement | yes when relevant |
+| V5.9 blocking decision | yes when relevant |
+
+A component with no status MUST NOT be silently treated as ACTIVE_GREEN.
+
+Gates must use component status ownership. A ROADMAP/SCAFFOLD/LABS_ONLY component MUST NOT leak into production runtime autoload unless explicitly justified.
+
+---
+
+## 23. Large Unit Review Thresholds
+
+Large code is not automatically wrong, but it is automatically suspicious.
+
+Mandatory review triggers:
+
+```text
+Class over 300 lines:            mandatory responsibility review
+Method over 50 lines:            mandatory extraction or explanation review
+Constructor with 8+ dependencies: mandatory design review
+PublicSurface over 150 lines:    mandatory behavior leak review
+Builder over 300 lines:          BLOCKER until classified
+ServiceProvider over 250 lines:  mandatory split review
+Test class over 500 lines:       mandatory test organization review
+```
+
+Threshold trigger requires documented decision. No large unit may be called GREEN without review decision.
+
+---
+
 ### Stage Completion Language
 
 A stage **MUST NOT** be marked GREEN unless:
@@ -2306,6 +2375,7 @@ A stage **MUST NOT** be marked GREEN unless:
 - All tests pass
 - PHPStan passes (no errors)
 - Component completion criteria are met
+- Component status entries are current for all production components
 - No BLOCKER/HIGH issue remains unresolved
 - Every deferred MEDIUM issue has owner, reason, and next action
 
@@ -2313,9 +2383,11 @@ A stage **MUST** be YELLOW if:
 
 - Validation passes but component completion incomplete
 - MEDIUM/HIGH findings remain deferred
+- Component status entries are incomplete
 
 A stage **MUST** be RED if:
 
 - Tests fail
 - PHPStan fails with errors
 - Component violates mandatory design rules
+- Component status is missing for an ACTIVE production component

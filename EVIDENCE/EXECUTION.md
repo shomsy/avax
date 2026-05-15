@@ -160,9 +160,11 @@ V5.8.x Fix-This Phase B Proof Closure: CLOSED / FULL_GREEN_PHASE_B_PROOF_AND_V5_
 
 V5.8.x Fix-This Phase B Proof Consistency Correction: CLOSED / FULL_GREEN_PHASE_B_PROOF_CONSISTENCY_CLOSED_AND_V5_9_READY (provider method PHPDoc added, raw evidence reconciled to 9, top-level HTTP/ApiVersioning confirmed absent, runtime gate fixture proof added with 8 tests, 8413 tests GREEN, PHPStan 0 errors, all gates PASS, recursive governance review 0 unresolved findings)
 
+V5.8.x Repo-Wide Truth Reconciliation: CLOSED / FULL_GREEN_REPO_WIDE_TRUTH_RECONCILED_AND_V5_9_READY (top-level HTTP/ApiVersioning ABSENT_IN_CURRENT_REPO, lazy VersionRegistry patterns ZERO in production, duplicate ApiVersionResolved SINGLE canonical definition, 8413 tests GREEN, PHPStan 0 errors, all 8 gates PASS, recursive governance review 16/16 PASS)
+
 Current Plan Lock: GREEN (0 pre-existing PHPStan errors)
 
-Active stage: V5.8.x Fix-This Phase B Proof Consistency Correction — COMPLETE / FULL_GREEN_PHASE_B_PROOF_CONSISTENCY_CLOSED_AND_V5_9_READY
+Active stage: V5.8.x Repo-Wide Truth Reconciliation — COMPLETE / FULL_GREEN_REPO_WIDE_TRUTH_RECONCILED_AND_V5_9_READY
 
 Next allowed stage: V5.9 Boot DSL — V5_9_READY
 

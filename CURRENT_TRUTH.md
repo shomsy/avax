@@ -1455,3 +1455,37 @@ Date: 2026-05-15
 
 **V5.9 Boot DSL:** V5_9_READY — Phase B proof is now fully truthful. Report, evidence, and code agree exactly.
 
+## V5.8.x Repo-Wide Truth Reconciliation
+
+Date: 2026-05-16
+
+**Status:** COMPLETE / FULL_GREEN_REPO_WIDE_TRUTH_RECONCILED_AND_V5_9_READY
+
+**Scope:** Prove definitively whether top-level HTTP/ApiVersioning with lazy VersionRegistry patterns exists in current repository. Classify old snapshot evidence. Ensure truth files match validation before V5.9 Boot DSL.
+
+**Definitive Findings:**
+
+1. **Top-level HTTP/ApiVersioning/:** ABSENT_IN_CURRENT_REPO. No directory exists at repo root. Only canonical `components/HTTP/ApiVersioning/` present. Old snapshots came from .qoder/worktrees/ isolated git worktrees, not active HEAD.
+
+2. **Lazy VersionRegistry patterns:** ZERO in production. No `VersionRegistry|null` fallbacks, no `??= new VersionRegistry`, no `?? new VersionRegistry`. All instances created through ApiVersioningServiceProvider singleton pattern.
+
+3. **Duplicate ApiVersionResolved:** SINGLE canonical definition at `components/HTTP/ApiVersioning/System/Capabilities/VersionResolution/ApiVersionResolved.php`. No duplicates anywhere.
+
+4. **Active scope proof:** Only `components/HTTP/ApiVersioning/` exists with proper provider-wired architecture. All tests pass. All gates PASS.
+
+**Results:**
+- PHPUnit: 8413 tests, 24137 assertions, 0 errors, 0 failures
+- PHPStan: 0 errors
+- Runtime composition gate: PASS (0 findings)
+- Runtime assembly gate: PASS (0 findings)
+- Public surface gate: PASS (0 findings)
+- Hollow public surface gate: PASS (0 findings)
+- Governance gates: 4/4 PASS
+- Security review: PASS
+- Performance review: PASS
+- Recursive governance review: 16/16 PASS, 0 unresolved findings
+
+**Evidence:** `EVIDENCE/fix-this/52-repo-wide-preflight.md` through `EVIDENCE/fix-this/60-repo-wide-truth-final-reconciliation.md`
+
+**V5.9 Boot DSL:** V5_9_READY — All stale duplicate concerns resolved. Repository truth is unambiguous. No blockers remain.
+

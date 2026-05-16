@@ -1028,7 +1028,7 @@ Runtime receives ready pipeline.
 
 ---
 
-## 8. Root Application Container Rule
+## 14. Root Application Container Rule
 
 AvaX MUST use one canonical root Application Container as the runtime object graph owner.
 

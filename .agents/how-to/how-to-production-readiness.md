@@ -971,7 +971,7 @@ vendor/bin/phpunit tests/Unit/Components/Application/Cache
 
 ---
 
-## 8. Immediate Next Actions
+## 29. Immediate Next Actions
 
 Run in this order.
 
@@ -1032,7 +1032,7 @@ Groups:
 
 ---
 
-## 9. Forbidden Work Until Report Is YELLOW
+## 30. Forbidden Work Until Report Is YELLOW
 
 ```text
 [ ] Do not add System Design Kit.

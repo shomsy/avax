@@ -1031,7 +1031,7 @@ Is it optional? It is registered, not detected.
 
 ---
 
-## 7. Root Application Container Rule
+## 7.6 Root Application Container Rule
 
 AvaX MUST use one canonical root Application Container as the runtime object graph owner.
 

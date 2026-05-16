@@ -25,6 +25,37 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: V5.9-AUTHBUILDER-SPLIT-FIRST-SLICE
+- `created_at`: 2026-05-16
+- `updated_at`: 2026-05-16
+- `status`: todo
+- `estimate`: large
+- `actual`: not started
+- `outcome`: Execute the first safe AuthBuilder split slice before Boot DSL work continues.
+- `acceptance`: Extract container default dependency resolution from `AuthBuilder::withContainer()` into a focused
+  configuration builder with tests for explicit override precedence, named throttle bindings, missing dependency failure,
+  `DefaultAuth::configuration($container)`, and `RegisterAuthDependencies` resolution. Rerun full validation, governance
+  gates, security review, performance review, and recursive governance review.
+- `links`: `EVIDENCE/v5.9-codex/06-large-unit-gate-classification.md`, `EVIDENCE/v5.9-codex/07-authbuilder-split-plan.md`
+
+- `id`: V5.9-CODEX-BASELINE-RED
+- `created_at`: 2026-05-16
+- `updated_at`: 2026-05-16
+- `status`: done
+- `estimate`: large
+- `actual`: preflight, baseline, gate classification, ratchet correction, how-to structure fix, AuthBuilder split plan
+- `outcome`: V5.9 governance baseline is no longer fake RED. Semantic PHPDoc legacy debt is YELLOW_WITH_RATCHET
+  (9823 findings, touched/new scope blocking), how-to document structure is PASS, and the large-unit gate is classified
+  with one exact real blocker: `AuthBuilder.php`.
+- `acceptance`: Semantic PHPDoc ratchet baseline exists, touched/new violations remain blocking, how-to gate passes,
+  large-unit gate excludes local dot-worktrees and still catches AuthBuilder, AuthBuilder split first-slice plan exists,
+  and truth/backlog files name the next allowed action.
+- `links`: `EVIDENCE/v5.9-codex/00-preflight.md`, `EVIDENCE/v5.9-codex/01-baseline-validation.md`,
+  `EVIDENCE/v5.9-codex/04-semantic-phpdoc-ratchet-correction.md`,
+  `EVIDENCE/v5.9-codex/05-how-to-document-structure-correction.md`,
+  `EVIDENCE/v5.9-codex/06-large-unit-gate-classification.md`,
+  `EVIDENCE/v5.9-codex/07-authbuilder-split-plan.md`
+
 - `id`: V5.8.9
 - `created_at`: 2026-05-15
 - `updated_at`: 2026-05-15

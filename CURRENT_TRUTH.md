@@ -1489,3 +1489,73 @@ Date: 2026-05-16
 
 **V5.9 Boot DSL:** V5_9_READY — All stale duplicate concerns resolved. Repository truth is unambiguous. No blockers remain.
 
+## V5.9 Codex Deep Execution Baseline
+
+Date: 2026-05-16
+
+**Status:** RED_VALIDATION_OR_TRUTH_BROKEN
+
+**Scope:** Harness-Full preflight and baseline validation for the V5.9 Deep Execution Program.
+
+**Preflight finding:** The corrected V5.9 Boot DSL first slice exists, but it is not pure FULL_GREEN. The first slice has
+accepted YELLOW debt for root container ownership because `BootDslEngine::createRuntimeAndApp()` and related public boot
+paths still manually assemble parts of the runtime object graph.
+
+**Baseline validation:**
+
+- Composer validate: GREEN.
+- Optimized autoload: GREEN_WITH_WARNING, 9341 classes, pre-existing `xhp_` PSR-4 skip warning.
+- PHPUnit: GREEN_WITH_DEPRECATION, 8463 tests, 24341 assertions, 0 errors, 0 failures, 1 deprecation.
+- PHPStan: GREEN, 0 errors over 3900 analysed files.
+- Runtime composition gate: PASS.
+- Runtime assembly gate: PASS, 3129 active flow/surface files scanned.
+- PublicSurface gate: PASS.
+- Hollow PublicSurface gate: PASS, 227 public surface files checked.
+- Governance gates: RED.
+
+**Governance blockers:**
+
+1. `php tooling/governance/check-semantic-phpdoc.php` fails with 17,261 HIGH findings across 14,533 scanned files.
+2. `php tooling/governance/check-how-to-document-structure.php` fails with 8 findings across 19 how-to documents
+   (3 HIGH unclosed-fence findings, 5 MEDIUM duplicate heading-number findings).
+3. `php tooling/governance/check-large-unit-thresholds.php` fails with 1 BLOCKER
+   (`components/Identity/Auth/System/Configuration/Builders/AuthBuilder.php`, 1731 lines) and 366 REVIEW findings.
+
+**Decision:** V5.9 Phase 1 must not proceed as GREEN. The next allowed action is to fix or formally classify the
+governance gate blockers, then rerun baseline validation and recursive governance review.
+
+**Evidence:** `EVIDENCE/v5.9-codex/00-preflight.md`, `EVIDENCE/v5.9-codex/01-baseline-validation.md`
+
+## V5.9 Governance Baseline Classification
+
+Date: 2026-05-16
+
+**Status:** YELLOW_WITH_EXACT_AUTHBUILDER_BLOCKER
+
+**Scope:** Classify the V5.9 Codex governance baseline, correct ratchet gates, fix small how-to structure issues, and
+select the next real blocker without starting Boot DSL Phase 2 or a broad AuthBuilder split.
+
+**Results:**
+
+- Semantic PHPDoc gate: PASS_WITH_YELLOW_RATCHET. Legacy untouched debt is 9823 findings, recorded in
+  `EVIDENCE/governance/semantic-phpdoc-ratchet-baseline.md`. Touched/new production PHPDoc violations remain blocking.
+- How-to document structure gate: PASS, 19 files scanned, 0 findings after focused fence and heading-number fixes.
+- Large-unit gate: FAIL_EXPECTED_AUTHBUILDER_BLOCKER, 3906 files scanned, 1 BLOCKER, 108 REVIEW findings after excluding
+  local dot-worktrees and IDE vendor paths.
+- AuthBuilder blocker: REAL. `components/Identity/Auth/System/Configuration/Builders/AuthBuilder.php` is 1730/1731
+  lines, has 46 public methods, 40+ mutable configuration properties, and a ~1000-line `ready()` method.
+- REVIEW large-unit findings: tracked review debt, not immediate V5.9 blockers unless promoted by focused evidence.
+
+**Accepted YELLOW debt:**
+
+| Debt | Owner | Target | Risk | Expiry | V5.9 decision |
+|---|---|---|---|---|---|
+| Semantic PHPDoc legacy debt, 9823 findings | AvaX governance owner | Reduce opportunistically when files are touched | Readability/review burden | Next touched-file pass or dedicated docs hardening | Non-blocking while touched/new violations are 0 and count does not regress |
+| AuthBuilder oversized builder | AvaX architecture/security owner | AuthBuilder split first slice | Security-sensitive graph assembly is too large to review safely | Next V5.9 implementation phase | Blocks pure GREEN and Boot DSL continuation until first split slice is executed or reclassified |
+
+**Next allowed action:** `EVIDENCE/v5.9-codex/07-authbuilder-split-plan.md` first slice:
+extract container default dependency resolution from `AuthBuilder::withContainer()` into a focused configuration builder
+with auth-specific tests. Do not start Boot DSL Phase 2 until this exact blocker is addressed or formally reclassified.
+
+**Evidence:** `EVIDENCE/v5.9-codex/02-governance-baseline-classification-preflight.md` through
+`EVIDENCE/v5.9-codex/08-governance-baseline-truth-reconciliation.md`.

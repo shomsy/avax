@@ -948,5 +948,3 @@ If a component exists but the framework bypasses it, the component is decorative
 Decorative architecture is not enterprise-grade.
 
 The framework becomes real when its components become the muscles of the runtime.
-
-```

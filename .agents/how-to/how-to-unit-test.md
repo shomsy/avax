@@ -1,4 +1,3 @@
-```md
 # How to Unit Test
 
 ## Pragmatic Unit Testing Governance and Behavior Specification Standard
@@ -92,7 +91,7 @@ When does it succeed?
 When does it fail?
 Where are its boundaries?
 Which behavior must never regress?
-````
+```
 
 If tests do not answer these questions, they are weak.
 
@@ -2536,7 +2535,7 @@ It should be:
 * precise
 * boring in the best possible way
 
-## 76. Gate Self-Test Cross-Reference
+## 90. Gate Self-Test Cross-Reference
 
 Every mandatory validation gate or architecture test MUST have at least one negative test case proving it fails when the rule is violated. See:
 
@@ -2553,7 +2552,4 @@ The final standard is simple:
 
 ```text
 A unit test should make the behavior so obvious that the production code has nowhere to hide.
-```
-
-```
 ```

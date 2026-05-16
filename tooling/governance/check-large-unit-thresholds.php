@@ -34,8 +34,9 @@ foreach ($iterator as $file) {
     $path = $file->getPathname();
     $relative = str_replace($basePath . '/', '', $path);
 
-    // Exclude vendor, tests, tooling, EVIDENCE
-    if (str_starts_with($relative, 'vendor/')
+    // Exclude vendor, tests, local dot worktrees, and evidence archives.
+    if (str_starts_with($relative, '.')
+        || str_starts_with($relative, 'vendor/')
         || str_starts_with($relative, 'tests/')
         || str_starts_with($relative, 'EVIDENCE/')
         || str_starts_with($relative, 'examples/')

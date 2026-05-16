@@ -162,11 +162,13 @@ V5.8.x Fix-This Phase B Proof Consistency Correction: CLOSED / FULL_GREEN_PHASE_
 
 V5.8.x Repo-Wide Truth Reconciliation: CLOSED / FULL_GREEN_REPO_WIDE_TRUTH_RECONCILED_AND_V5_9_READY (top-level HTTP/ApiVersioning ABSENT_IN_CURRENT_REPO, lazy VersionRegistry patterns ZERO in production, duplicate ApiVersionResolved SINGLE canonical definition, 8413 tests GREEN, PHPStan 0 errors, all 8 gates PASS, recursive governance review 16/16 PASS)
 
+V5.9 Governance Baseline Classification: YELLOW_WITH_EXACT_AUTHBUILDER_BLOCKER (2026-05-16 Harness-Full classification: semantic PHPDoc legacy debt ratcheted to 9823 YELLOW findings with touched/new scope blocking, how-to document structure PASS, large-unit gate still catches exact AuthBuilder BLOCKER at 1731 lines plus 108 REVIEW findings after excluding local dot-worktrees)
+
 Current Plan Lock: GREEN (0 pre-existing PHPStan errors)
 
-Active stage: V5.8.x Repo-Wide Truth Reconciliation — COMPLETE / FULL_GREEN_REPO_WIDE_TRUTH_RECONCILED_AND_V5_9_READY
+Active stage: V5.9 Governance Baseline Classification — YELLOW_WITH_EXACT_AUTHBUILDER_BLOCKER
 
-Next allowed stage: V5.9 Boot DSL — V5_9_READY
+Next allowed stage: V5.9 AuthBuilder split first slice — extract container default dependency resolution from `AuthBuilder::withContainer()` according to `EVIDENCE/v5.9-codex/07-authbuilder-split-plan.md`. Do not continue Boot DSL Phase 2 while AuthBuilder remains the exact blocker.
 
 V5.9 Boot DSL prerequisites:
 1. AuthBuilder constructor drift resolved — DONE (0 errors)

@@ -76,6 +76,7 @@ final class CheckRuntimeCompositionLeaks
      */
     private array $compositionRoots = [
         'framework/System/PublicSurface/Avax.php',
+        'framework/System/PublicSurface/BootDsl.php',
         'framework/System/Flows/CreateApplication/CreateApplication.php',
         'framework/System/Flows/BootApplication/BuildApplicationState.php',
         'framework/System/Flows/RunApplication/RunApplication.php',

@@ -104,6 +104,20 @@ final readonly class Avax implements AvaxInterface
     }
 
     /**
+     * Start a fluent Boot DSL chain.
+     *
+     * Usage:
+     *   $app = Avax::dsl()
+     *       ->from(__DIR__)
+     *       ->withProvider(AppServiceProvider::class)
+     *       ->create();
+     */
+    public static function dsl(): BootDsl
+    {
+        return BootDsl::make();
+    }
+
+    /**
      * Delegate to the existing boot implementation.
      */
     private static function bootInternal(ApplicationBuilder $builder): self

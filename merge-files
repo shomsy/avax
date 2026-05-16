@@ -1,15 +1,50 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-node --input-type=module - "$@" <<'EOF'
+node --input-type=module - "$@" <<'NODE'
 import fs from 'node:fs';
 import path from 'node:path';
 
-const scriptName = 'merge-files.sh';
-const args = process.argv.slice(2);
+const SCRIPT_NAME = 'merge-files.sh';
+const DEFAULT_PIECES = 1;
+const MINIMUM_PIECES = 1;
+const MAXIMUM_PIECES = 1000;
+
+const DEFAULT_IGNORED_DIRECTORY_NAMES = new Set([
+  '.cache',
+  '.git',
+  '.idea',
+  '__pycache__',
+  'artifacts',
+  'build',
+  'coverage',
+  'dist',
+  'node_modules',
+  'storage',
+  'tmp',
+  'vendor',
+]);
+
+const IGNORED_MIRROR_FILES = new Set([
+  'agents.md',
+]);
 
 function usage() {
-  console.error(`Usage: ${scriptName} <target-dir> [--except=.qoder,EVIDENCE/archive] [--exclude=png,jpg] [--include=md,yaml] [--dry-run]`);
+  console.error(
+    `Usage: ${SCRIPT_NAME} <target-dir> [--except=.qoder,EVIDENCE/archive] [--exclude=png,jpg] [--include=md,yaml] [--pieces=4] [--dry-run]`,
+  );
+}
+
+function fail(message, exitCode = 1) {
+  console.error(message);
+  process.exit(exitCode);
+}
+
+function compareStrings(left, right) {
+  if (left < right) return -1;
+  if (left > right) return 1;
+
+  return 0;
 }
 
 function parseCsv(value) {
@@ -21,21 +56,48 @@ function parseCsv(value) {
     .filter(Boolean);
 }
 
-function compareStrings(left, right) {
-  if (left < right) return -1;
-  if (left > right) return 1;
+function parsePositiveInteger(value, optionName) {
+  if (!/^\d+$/.test(value)) {
+    fail(`${optionName} must be a positive integer`, 2);
+  }
 
-  return 0;
+  const parsed = Number.parseInt(value, 10);
+
+  if (!Number.isSafeInteger(parsed) || parsed < MINIMUM_PIECES || parsed > MAXIMUM_PIECES) {
+    fail(`${optionName} must be between ${MINIMUM_PIECES} and ${MAXIMUM_PIECES}`, 2);
+  }
+
+  return parsed;
+}
+
+function normalizeDirectoryRule(rule) {
+  return rule
+    .trim()
+    .replaceAll('\\', '/')
+    .replace(/^\.\/+/, '')
+    .replace(/\/+/g, '/')
+    .replace(/\/+$/g, '');
+}
+
+function normalizeExtension(extension) {
+  return extension
+    .trim()
+    .replace(/^\.+/, '')
+    .toLowerCase();
+}
+
+function relativePath(rootDir, absPath) {
+  return path.relative(rootDir, absPath).split(path.sep).join('/');
 }
 
 function extensionKey(filePath) {
   const base = path.basename(filePath);
 
   if (base.includes('.')) {
-    return path.extname(base).slice(1);
+    return path.extname(base).slice(1).toLowerCase();
   }
 
-  return base;
+  return base.toLowerCase();
 }
 
 function readPackageName(rootDir) {
@@ -55,112 +117,172 @@ function readPackageName(rootDir) {
   }
 }
 
-function normalizeRule(rule) {
-  return rule
+function fileStemFromPackageName(packageName) {
+  return packageName
     .trim()
-    .replaceAll('\\', '/')
-    .replace(/^\.\/+/, '')
-    .replace(/\/+$/g, '');
+    .replace(/[<>:"/\\|?*\x00-\x1F]/g, '_')
+    .replace(/\s+/g, '-')
+    .replace(/_+/g, '_')
+    .replace(/^\.+/, '')
+    .replace(/[._-]+$/g, '');
 }
 
-function relativePath(rootDir, absPath) {
-  return path.relative(rootDir, absPath).split(path.sep).join('/');
+function outputFileFor(rootDir, targetBasename, packageName) {
+  const packageStem = fileStemFromPackageName(packageName);
+  const outputStem = packageStem !== '' ? packageStem : targetBasename;
+
+  return path.join(rootDir, `${outputStem}.txt`);
 }
 
-if (args.length < 1) {
-  usage();
-  process.exit(1);
+function outputPiecePath(outputFile, pieceNumber, totalPieces) {
+  const extension = path.extname(outputFile) || '.txt';
+  const base = outputFile.slice(0, -extension.length);
+
+  return `${base}.part-${pieceNumber}-of-${totalPieces}${extension}`;
 }
 
-const targetArg = args[0];
-const optionArgs = args.slice(1);
+function outputFamilyFor(outputFile) {
+  const extension = path.extname(outputFile) || '.txt';
+  const directory = path.dirname(outputFile);
+  const fileName = path.basename(outputFile);
+  const stem = fileName.slice(0, -extension.length);
 
-const includeExts = new Set();
-const excludeExts = new Set();
-const exceptRules = new Set();
+  return {
+    directory,
+    extension,
+    stem,
+    singleFile: outputFile,
+  };
+}
 
-let dryRun = false;
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
-for (const arg of optionArgs) {
-  if (arg.startsWith('--include=')) {
-    for (const ext of parseCsv(arg.slice('--include='.length))) {
-      includeExts.add(ext);
+function isGeneratedOutputFile(absPath, outputFamilies) {
+  for (const family of outputFamilies) {
+    if (absPath === family.singleFile) {
+      return true;
     }
 
-    continue;
-  }
-
-  if (arg.startsWith('--exclude=')) {
-    for (const ext of parseCsv(arg.slice('--exclude='.length))) {
-      excludeExts.add(ext);
+    if (path.dirname(absPath) !== family.directory) {
+      continue;
     }
 
-    continue;
+    const fileName = path.basename(absPath);
+    const startsLikePiece = fileName.startsWith(`${family.stem}.part-`);
+    const endsLikePiece = fileName.endsWith(family.extension);
+
+    if (!startsLikePiece || !endsLikePiece) {
+      continue;
+    }
+
+    const piecePattern = new RegExp(
+      `^${escapeRegExp(family.stem)}\\.part-\\d+-of-\\d+${escapeRegExp(family.extension)}$`,
+    );
+
+    if (piecePattern.test(fileName)) {
+      return true;
+    }
   }
 
-  if (arg.startsWith('--except=')) {
-    for (const rule of parseCsv(arg.slice('--except='.length))) {
-      const normalized = normalizeRule(rule);
+  return false;
+}
 
-      if (normalized !== '') {
-        exceptRules.add(normalized);
+function parseOptions(args) {
+  if (args.length < 1) {
+    usage();
+    process.exit(1);
+  }
+
+  const options = {
+    targetArg: args[0],
+    includeExtensions: new Set(),
+    excludeExtensions: new Set(),
+    exceptRules: new Set(),
+    dryRun: false,
+    pieces: DEFAULT_PIECES,
+  };
+
+  for (const arg of args.slice(1)) {
+    if (arg.startsWith('--include=')) {
+      for (const extension of parseCsv(arg.slice('--include='.length))) {
+        const normalized = normalizeExtension(extension);
+
+        if (normalized !== '') {
+          options.includeExtensions.add(normalized);
+        }
       }
+
+      continue;
     }
 
-    continue;
+    if (arg.startsWith('--exclude=')) {
+      for (const extension of parseCsv(arg.slice('--exclude='.length))) {
+        const normalized = normalizeExtension(extension);
+
+        if (normalized !== '') {
+          options.excludeExtensions.add(normalized);
+        }
+      }
+
+      continue;
+    }
+
+    if (arg.startsWith('--except=')) {
+      for (const rule of parseCsv(arg.slice('--except='.length))) {
+        const normalized = normalizeDirectoryRule(rule);
+
+        if (normalized !== '') {
+          options.exceptRules.add(normalized);
+        }
+      }
+
+      continue;
+    }
+
+    if (arg.startsWith('--pieces=')) {
+      options.pieces = parsePositiveInteger(arg.slice('--pieces='.length), '--pieces');
+      continue;
+    }
+
+    if (arg === '--dry-run') {
+      options.dryRun = true;
+      continue;
+    }
+
+    console.error(`Unknown option: ${arg}`);
+    usage();
+    process.exit(2);
   }
 
-  if (arg === '--dry-run') {
-    dryRun = true;
-    continue;
+  if (options.includeExtensions.size > 0 && options.excludeExtensions.size > 0) {
+    fail('you cannot use --exclude and --include at the same time', 2);
   }
 
-  console.error(`Unknown option: ${arg}`);
-  usage();
-  process.exit(2);
+  return options;
 }
 
-if (includeExts.size > 0 && excludeExts.size > 0) {
-  console.error('you cannot use --exclude and --include at the same time');
-  process.exit(2);
+function resolveRootDirectory(targetArg) {
+  const rootDir = path.resolve(targetArg);
+
+  let rootStat;
+
+  try {
+    rootStat = fs.statSync(rootDir);
+  } catch {
+    fail(`directory '${targetArg}' does not exist`);
+  }
+
+  if (!rootStat.isDirectory()) {
+    fail(`directory '${targetArg}' does not exist`);
+  }
+
+  return rootDir;
 }
 
-const rootDir = path.resolve(targetArg);
-let rootStat;
-
-try {
-  rootStat = fs.statSync(rootDir);
-} catch {
-  console.error(`directory '${targetArg}' does not exist`);
-  process.exit(1);
-}
-
-if (!rootStat.isDirectory()) {
-  console.error(`directory '${targetArg}' does not exist`);
-  process.exit(1);
-}
-
-const targetBasename = path.basename(rootDir);
-const outputFile = path.join(rootDir, `${targetBasename}.txt`);
-const packageName = readPackageName(rootDir);
-
-const defaultIgnoredDirNames = new Set([
-  '.cache',
-  '.git',
-  '.idea',
-  '__pycache__',
-  'artifacts',
-  'build',
-  'coverage',
-  'dist',
-  'node_modules',
-  'storage',
-  'tmp',
-  'vendor',
-]);
-
-function shouldIgnoreDirectory(dirName, relDir) {
-  if (defaultIgnoredDirNames.has(dirName)) {
+function shouldIgnoreDirectory(dirName, relDir, exceptRules) {
+  if (DEFAULT_IGNORED_DIRECTORY_NAMES.has(dirName)) {
     return true;
   }
 
@@ -179,132 +301,283 @@ function shouldIgnoreDirectory(dirName, relDir) {
   return false;
 }
 
-console.log(`Scanning directory: ${rootDir}`);
-console.log(`Output file: ${outputFile}`);
-console.log('Ignoring directory names:');
+function collectTextFiles(rootDir, exceptRules, outputFamilies) {
+  const files = [];
 
-for (const dir of [...defaultIgnoredDirNames].sort(compareStrings)) {
-  console.log(`- ${dir}`);
-}
+  function walk(currentDir) {
+    const entries = fs
+      .readdirSync(currentDir, { withFileTypes: true })
+      .sort((a, b) => compareStrings(a.name, b.name));
 
-if (exceptRules.size > 0) {
-  console.log('Ignoring --except rules:');
+    for (const entry of entries) {
+      const currentPath = path.join(currentDir, entry.name);
 
-  for (const rule of [...exceptRules].sort(compareStrings)) {
-    console.log(`- ${rule}`);
-  }
-}
-
-console.log('----------------------------------------');
-
-const files = [];
-
-function walk(currentDir) {
-  const entries = fs
-    .readdirSync(currentDir, { withFileTypes: true })
-    .sort((a, b) => compareStrings(a.name, b.name));
-
-  for (const entry of entries) {
-    const currentPath = path.join(currentDir, entry.name);
-
-    if (entry.isDirectory()) {
-      const relDir = relativePath(rootDir, currentPath);
-
-      if (shouldIgnoreDirectory(entry.name, relDir)) {
+      if (entry.isSymbolicLink()) {
         continue;
       }
 
-      walk(currentPath);
+      if (entry.isDirectory()) {
+        const relDir = relativePath(rootDir, currentPath);
+
+        if (shouldIgnoreDirectory(entry.name, relDir, exceptRules)) {
+          continue;
+        }
+
+        walk(currentPath);
+        continue;
+      }
+
+      if (entry.isFile() && !isGeneratedOutputFile(currentPath, outputFamilies)) {
+        files.push(currentPath);
+      }
+    }
+  }
+
+  walk(rootDir);
+
+  return files.sort(compareStrings);
+}
+
+function shouldSkipByExtension(filePath, includeExtensions, excludeExtensions) {
+  const extension = extensionKey(filePath);
+
+  if (includeExtensions.size > 0 && !includeExtensions.has(extension)) {
+    return 'not in include list';
+  }
+
+  if (includeExtensions.size === 0 && excludeExtensions.has(extension)) {
+    return 'excluded by extension';
+  }
+
+  return '';
+}
+
+function isBinaryBuffer(data) {
+  return data.length > 0 && data.includes(0);
+}
+
+function normalizeText(text) {
+  return text.replace(/[^\S\r\n]+$/gm, '');
+}
+
+function buildFileBlock(relPath, text) {
+  const normalizedText = normalizeText(text);
+  const lines = [`=== ${relPath} ===\n`, normalizedText];
+
+  if (!normalizedText.endsWith('\n')) {
+    lines.push('\n');
+  }
+
+  lines.push('\n');
+
+  return lines.join('');
+}
+
+function mergeFiles(rootDir, files, options) {
+  const chunks = [];
+  const stats = {
+    merged: 0,
+    skipped: 0,
+  };
+
+  for (const absPath of files) {
+    const rel = relativePath(rootDir, absPath);
+
+    if (IGNORED_MIRROR_FILES.has(rel)) {
+      console.log(`Skipping (ignored mirror file): ${rel}`);
+      stats.skipped += 1;
       continue;
     }
 
-    files.push(currentPath);
+    const extensionReason = shouldSkipByExtension(
+      absPath,
+      options.includeExtensions,
+      options.excludeExtensions,
+    );
+
+    if (extensionReason !== '') {
+      console.log(`Skipping (${extensionReason}): ${rel}`);
+      stats.skipped += 1;
+      continue;
+    }
+
+    const data = fs.readFileSync(absPath);
+
+    if (isBinaryBuffer(data)) {
+      console.log(`Skipping (binary or non-text): ${rel}`);
+      stats.skipped += 1;
+      continue;
+    }
+
+    stats.merged += 1;
+
+    if (options.dryRun) {
+      console.log(`[DRY-RUN] Would merge: ${rel}`);
+      continue;
+    }
+
+    console.log(`Merging: ${rel}`);
+    chunks.push(buildFileBlock(rel, data.toString('utf8')));
+  }
+
+  return {
+    text: chunks.join(''),
+    stats,
+  };
+}
+
+function findCleanSplitPoint(text, start, target, minimumRemainingCharacters) {
+  const lastAllowedSplit = Math.max(start + 1, text.length - minimumRemainingCharacters);
+  const safeTarget = Math.min(Math.max(target, start + 1), lastAllowedSplit);
+
+  const previousHeader = text.lastIndexOf('\n=== ', safeTarget);
+
+  if (previousHeader > start) {
+    return previousHeader + 1;
+  }
+
+  const nextHeader = text.indexOf('\n=== ', safeTarget);
+
+  if (nextHeader !== -1 && nextHeader <= lastAllowedSplit) {
+    return nextHeader + 1;
+  }
+
+  const previousNewLine = text.lastIndexOf('\n', safeTarget);
+
+  if (previousNewLine > start && !endsWithOnlyAFileHeader(text.slice(start, previousNewLine + 1))) {
+    return previousNewLine + 1;
+  }
+
+  const nextNewLine = text.indexOf('\n', safeTarget);
+
+  if (nextNewLine !== -1 && nextNewLine <= lastAllowedSplit) {
+    const candidate = nextNewLine + 1;
+
+    if (endsWithOnlyAFileHeader(text.slice(start, candidate))) {
+      const nextContentLine = text.indexOf('\n', candidate);
+
+      if (nextContentLine !== -1 && nextContentLine <= lastAllowedSplit) {
+        return nextContentLine + 1;
+      }
+    }
+
+    return candidate;
+  }
+
+  return safeTarget;
+}
+
+function endsWithOnlyAFileHeader(text) {
+  return /^\s*=== .+ ===\n$/.test(text);
+}
+
+function splitTextIntoPieces(text, totalPieces) {
+  if (totalPieces === 1) {
+    return [text];
+  }
+
+  if (text.length === 0) {
+    return Array.from({ length: totalPieces }, () => '');
+  }
+
+  if (text.length < totalPieces) {
+    return [text, ...Array.from({ length: totalPieces - 1 }, () => '')];
+  }
+
+  const pieces = [];
+  let start = 0;
+
+  for (let index = 1; index < totalPieces; index += 1) {
+    const target = Math.round((text.length * index) / totalPieces);
+    const splitAt = findCleanSplitPoint(text, start, target, 0);
+
+    pieces.push(text.slice(start, splitAt));
+    start = splitAt;
+  }
+
+  pieces.push(text.slice(start));
+
+  return pieces;
+}
+
+function writeOutputFiles(outputFile, text, pieces) {
+  if (pieces === 1) {
+    fs.writeFileSync(outputFile, text, 'utf8');
+
+    return [outputFile];
+  }
+
+  return splitTextIntoPieces(text, pieces).map((pieceText, index) => {
+    const piecePath = outputPiecePath(outputFile, index + 1, pieces);
+
+    fs.writeFileSync(piecePath, pieceText, 'utf8');
+
+    return piecePath;
+  });
+}
+
+function printStartupReport(rootDir, outputFile, options) {
+  console.log(`Scanning directory: ${rootDir}`);
+  console.log(`Output file: ${outputFile}`);
+  console.log(`Output mode: ${options.pieces === 1 ? 'single file' : `${options.pieces} pieces`}`);
+  console.log('Ignoring directory names:');
+
+  for (const dir of [...DEFAULT_IGNORED_DIRECTORY_NAMES].sort(compareStrings)) {
+    console.log(`- ${dir}`);
+  }
+
+  if (options.exceptRules.size > 0) {
+    console.log('Ignoring --except rules:');
+
+    for (const rule of [...options.exceptRules].sort(compareStrings)) {
+      console.log(`- ${rule}`);
+    }
+  }
+
+  console.log('----------------------------------------');
+}
+
+function printFinalReport(stats, writtenFiles, options) {
+  console.log('----------------------------------------');
+  console.log('Done!');
+  console.log(`Merged files : ${stats.merged}`);
+  console.log(`Skipped files: ${stats.skipped}`);
+
+  if (options.dryRun) {
+    console.log(`Output mode  : ${options.pieces === 1 ? 'single file' : `${options.pieces} pieces`}`);
+    return;
+  }
+
+  if (writtenFiles.length === 1) {
+    console.log(`Output file  : ${writtenFiles[0]}`);
+    return;
+  }
+
+  console.log('Output files :');
+
+  for (const writtenFile of writtenFiles) {
+    console.log(`- ${writtenFile}`);
   }
 }
 
-walk(rootDir);
-files.sort(compareStrings);
+const options = parseOptions(process.argv.slice(2));
+const rootDir = resolveRootDirectory(options.targetArg);
+const targetBasename = path.basename(rootDir);
+const packageName = readPackageName(rootDir);
+const outputFile = outputFileFor(rootDir, targetBasename, packageName);
+const legacyOutputFile = path.join(rootDir, `${targetBasename}.txt`);
+const outputFamilies = [
+  outputFamilyFor(outputFile),
+  outputFamilyFor(legacyOutputFile),
+];
 
-let merged = 0;
-let skipped = 0;
+printStartupReport(rootDir, outputFile, options);
 
-const chunks = [];
+const files = collectTextFiles(rootDir, options.exceptRules, outputFamilies);
+const result = mergeFiles(rootDir, files, options);
+const writtenFiles = options.dryRun
+  ? []
+  : writeOutputFiles(outputFile, result.text, options.pieces);
 
-for (const absPath of files) {
-  const rel = relativePath(rootDir, absPath);
-
-  if (absPath === outputFile) {
-    console.log(`Skipping (generated output file): ${rel}`);
-    skipped += 1;
-    continue;
-  }
-
-  if (rel === 'agents.md') {
-    console.log(`Skipping (ignored mirror file): ${rel}`);
-    skipped += 1;
-    continue;
-  }
-
-  const ext = extensionKey(absPath);
-
-  if (includeExts.size > 0 && !includeExts.has(ext)) {
-    console.log(`Skipping (not in include list): ${rel}`);
-    skipped += 1;
-    continue;
-  }
-
-  if (includeExts.size === 0 && excludeExts.has(ext)) {
-    console.log(`Skipping (excluded by extension): ${rel}`);
-    skipped += 1;
-    continue;
-  }
-
-  const data = fs.readFileSync(absPath);
-
-  if (data.length > 0 && data.includes(0)) {
-    console.log(`Skipping (binary or non-text): ${rel}`);
-    skipped += 1;
-    continue;
-  }
-
-  merged += 1;
-
-  if (dryRun) {
-    console.log(`[DRY-RUN] Would merge: ${rel}`);
-    continue;
-  }
-
-  console.log(`Merging: ${rel}`);
-
-  const text = data.toString('utf8');
-  const normalizedText = text.replace(/[^\S\r\n]+$/gm, '');
-
-  chunks.push(`=== ${rel} ===\n`);
-  chunks.push(normalizedText);
-
-  if (!normalizedText.endsWith('\n')) {
-    chunks.push('\n');
-  }
-
-  chunks.push('\n');
-}
-
-if (!dryRun) {
-  fs.writeFileSync(outputFile, chunks.join(''), 'utf8');
-
-  if (packageName && packageName !== targetBasename) {
-    const renamedOutput = path.join(rootDir, `${packageName}.txt`);
-    fs.renameSync(outputFile, renamedOutput);
-  }
-}
-
-const finalOutputFile = packageName && packageName !== targetBasename
-  ? path.join(rootDir, `${packageName}.txt`)
-  : outputFile;
-
-console.log('----------------------------------------');
-console.log('Done!');
-console.log(`Merged files : ${merged}`);
-console.log(`Skipped files: ${skipped}`);
-console.log(`Output file  : ${finalOutputFile}`);
-EOF
+printFinalReport(result.stats, writtenFiles, options);
+NODE

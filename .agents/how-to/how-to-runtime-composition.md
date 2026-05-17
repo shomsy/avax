@@ -10,7 +10,8 @@ Code review **MUST NOT** mark a scope GREEN when a mandatory rule is violated.
 
 ## Normative Language
 
-The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, **BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
+*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
 
 - **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
 - **MUST NOT / FORBIDDEN**: prohibited pattern.
@@ -38,7 +39,8 @@ discovers, assembles, instantiates, or conditionally wires infrastructure
 dependencies that should have been assembled at registration time.
 ```
 
-Runtime execution code must not know about builders, factories, middleware assembly, or conditional capability detection. It receives ready-to-execute dependencies and executes.
+Runtime execution code must not know about builders, factories, middleware assembly, or conditional capability
+detection. It receives ready-to-execute dependencies and executes.
 
 ### 1.2 The Core Principle
 
@@ -48,7 +50,8 @@ Composition roots must assemble.
 Configuration must register.
 ```
 
-If a method handles a request, dispatches an event, processes a job, or serves a query, it is runtime execution. It must not also decide which infrastructure classes exist, create them, wire them together, or conditionally include them.
+If a method handles a request, dispatches an event, processes a job, or serves a query, it is runtime execution. It must
+not also decide which infrastructure classes exist, create them, wire them together, or conditionally include them.
 
 ### 1.3 Anatomy of a Leak
 
@@ -288,7 +291,8 @@ DTO classes
 composition roots (Avax::create, CreateApplication)
 ```
 
-A composition root is the highest-level entry point that wires the entire application. It is the only place where the full object graph is assembled.
+A composition root is the highest-level entry point that wires the entire application. It is the only place where the
+full object graph is assembled.
 
 ---
 
@@ -423,7 +427,8 @@ A class MUST be container-managed when it is:
 - a class that must be configurable or replaceable
 - a class that may need a fake/test implementation
 - a class used by runtime execution paths
-- a middleware, listener, controller, job, dispatcher, resolver, renderer, factory, provider, store, logger, client, repository, transport, cache store, queue broker, filesystem adapter, database connection, or clock
+- a middleware, listener, controller, job, dispatcher, resolver, renderer, factory, provider, store, logger, client,
+  repository, transport, cache store, queue broker, filesystem adapter, database connection, or clock
 - a class whose implementation may differ by environment
 - a class that must be reset/scoped in long-lived runtimes
 
@@ -784,6 +789,7 @@ final class FailureBoundary
 ```
 
 This is YELLOW because:
+
 - `setInstance()` exists for test injection
 - `reset()` exists for long-lived runtime safety
 - Assembly is a single deterministic call
@@ -792,6 +798,7 @@ This is YELLOW because:
 ### 7.2 Static mutable state rules
 
 Static state **MUST**:
+
 - be documented with PHPDoc explaining lifecycle
 - provide `reset()` for worker safety
 - provide `setInstance()` for test injection
@@ -799,11 +806,13 @@ Static state **MUST**:
 
 ### 7.3 Static facade assembly MUST go through Configuration
 
-The assembly that a static facade performs **SHOULD** be moved to `Configuration/Builders/`. The facade becomes a thin proxy.
+The assembly that a static facade performs **SHOULD** be moved to `Configuration/Builders/`. The facade becomes a thin
+proxy.
 
 ### 7.4 DI-preferred path
 
-Static facades are a compatibility layer. New code **SHOULD** use DI. Existing facades **SHOULD** be gradually replaced with injected dependencies.
+Static facades are a compatibility layer. New code **SHOULD** use DI. Existing facades **SHOULD** be gradually replaced
+with injected dependencies.
 
 ---
 
@@ -824,9 +833,9 @@ BLOCKER_FOR_V5_9      — must be fixed before V5.9 GREEN
 
 ### Ledger table format
 
-| File | Pattern | Runtime or Configuration? | Classification | Fix | Gate catches it? |
-|---|---|---|---|---|---|
-| `AppKernel.php:83` | `class_exists(BuildFailureBoundary::class)` | Runtime | BLOCKER_FOR_V5_9 | Extract to ServiceProvider | Yes |
+| File               | Pattern                                     | Runtime or Configuration? | Classification   | Fix                        | Gate catches it? |
+|--------------------|---------------------------------------------|---------------------------|------------------|----------------------------|------------------|
+| `AppKernel.php:83` | `class_exists(BuildFailureBoundary::class)` | Runtime                   | BLOCKER_FOR_V5_9 | Extract to ServiceProvider | Yes              |
 
 ---
 
@@ -876,6 +885,7 @@ $pipeline[]
 ```
 
 The tool is context-aware:
+
 - Ignores `Configuration/`, `Builders/`, `ServiceProvider`, `Factory` classes
 - Ignores `tests/`, `tooling/`, `Foundation/` VOs
 - Ignores events, exceptions, DTOs

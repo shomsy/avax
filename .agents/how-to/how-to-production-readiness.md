@@ -1087,7 +1087,10 @@ If command execution is blocked by environment limits:
 
 Security-sensitive findings MUST be loud, explicit, and blocking by default.
 
-Any OWASP-class weakness, injection risk, authentication bypass, authorization bypass, sensitive data leak, unsafe deserialization, unsafe redirect, filesystem traversal, command execution risk, SSRF risk, XSS risk, CSRF risk, SQL/query injection risk, weak cryptography, secret exposure, unsafe logging, or session/cookie weakness MUST be classified as HIGH or BLOCKER unless proven otherwise.
+Any OWASP-class weakness, injection risk, authentication bypass, authorization bypass, sensitive data leak, unsafe
+deserialization, unsafe redirect, filesystem traversal, command execution risk, SSRF risk, XSS risk, CSRF risk,
+SQL/query injection risk, weak cryptography, secret exposure, unsafe logging, or session/cookie weakness MUST be
+classified as HIGH or BLOCKER unless proven otherwise.
 
 Security findings MUST NOT be hidden as:
 
@@ -1200,7 +1203,12 @@ Security review cannot be skipped silently.
 
 ### Rule
 
-A commit is FORBIDDEN if the current change introduces, exposes, or leaves unresolved any security issue classified as BLOCKER, HIGH, OWASP-class weakness, authentication bypass, authorization bypass, injection risk, XSS risk, CSRF risk, SSRF risk, unsafe redirect, unsafe deserialization, path traversal, command execution risk, secret exposure, sensitive data logging, weak cryptography/hashing, session/cookie weakness, unsafe file upload/download, database query injection risk, unsafe event payload crossing trust boundary, unsafe queue payload handling, unsafe tenant boundary, or unsafe plugin/sandbox execution.
+A commit is FORBIDDEN if the current change introduces, exposes, or leaves unresolved any security issue classified as
+BLOCKER, HIGH, OWASP-class weakness, authentication bypass, authorization bypass, injection risk, XSS risk, CSRF risk,
+SSRF risk, unsafe redirect, unsafe deserialization, path traversal, command execution risk, secret exposure, sensitive
+data logging, weak cryptography/hashing, session/cookie weakness, unsafe file upload/download, database query injection
+risk, unsafe event payload crossing trust boundary, unsafe queue payload handling, unsafe tenant boundary, or unsafe
+plugin/sandbox execution.
 
 ### Required Action
 
@@ -1246,7 +1254,8 @@ A GREEN commit with unresolved security issue is forbidden.
 
 ### Rule
 
-Every mandatory validation gate or architecture test MUST have at least one negative test case (proving it fails when the rule is violated).
+Every mandatory validation gate or architecture test MUST have at least one negative test case (proving it fails when
+the rule is violated).
 
 - A gate that cannot fail is not a gate.
 - A gate with "0 scans" or "0 violations" is UNPROVEN until the scanner's ability to find violations is verified.
@@ -1278,6 +1287,7 @@ Security gate must fail on:
 ```
 
 Rules:
+
 - gate without self-test or proof is YELLOW at minimum
 - mandatory gate without self-test or proof cannot close BLOCKER
 - gate that scans zero active files is FAIL, not PASS
@@ -1325,7 +1335,8 @@ Exit 0 with RED content is not PASS.
 
 When a quality metric improves, the new better baseline becomes the floor.
 
-Future passes MUST NOT regress below the last proven baseline unless explicitly accepted as YELLOW or RED with owner, expiry, risk, and recovery plan.
+Future passes MUST NOT regress below the last proven baseline unless explicitly accepted as YELLOW or RED with owner,
+expiry, risk, and recovery plan.
 
 Tracked metrics include:
 
@@ -1347,6 +1358,7 @@ component health-check coverage
 ```
 
 Important rule:
+
 - If a metric is established at 0, it MUST stay at 0.
 - If a metric is not yet 0, the accepted current baseline becomes the temporary floor until improved.
 
@@ -1364,7 +1376,7 @@ evidence
 Quality ratchet evidence must include:
 
 | Metric | Previous baseline | New baseline | Command | Evidence file | Owner | Blocks next stage? |
-|---|---:|---:|---|---|---|---:|
+|--------|------------------:|-------------:|---------|---------------|-------|-------------------:|
 
 ---
 
@@ -1402,9 +1414,13 @@ Threshold trigger requires documented decision. No large unit may be called GREE
 
 ## 21. Examples Are Architecture Rule
 
-Examples, GoldenPath apps, documentation snippets, generated examples, and tests are source material for humans and AI. They MUST show canonical style.
+Examples, GoldenPath apps, documentation snippets, generated examples, and tests are source material for humans and AI.
+They MUST show canonical style.
 
-They MUST NOT show: manual runtime service assembly, hidden fallback dependencies, direct new of runtime services, service locator in runtime code, fake providers, deprecated APIs as primary examples, old names after canonical rename, shortcuts that violate governance, weak test patterns, fake GREEN evidence, or security-sensitive shortcuts without warning.
+They MUST NOT show: manual runtime service assembly, hidden fallback dependencies, direct new of runtime services,
+service locator in runtime code, fake providers, deprecated APIs as primary examples, old names after canonical rename,
+shortcuts that violate governance, weak test patterns, fake GREEN evidence, or security-sensitive shortcuts without
+warning.
 
 If examples must show low-level/manual usage, they must be clearly labeled as advanced/internal/testing-only.
 
@@ -1412,11 +1428,15 @@ GoldenPath examples MUST be canonical. If examples teach an anti-pattern, the co
 
 ## 22. Canonical Term Registry Rule
 
-One concept must have one canonical name. Check the registry at `docs/governance/canonical-terms.md` before introducing or accepting new terminology.
+One concept must have one canonical name. Check the registry at `docs/governance/canonical-terms.md` before introducing
+or accepting new terminology.
 
 ## 23. PublicSurface Factory Boundary Rule
 
-PublicSurface may expose public factories only when they create public value/result objects or protect users from internal construction details. PublicSurface factories MUST NOT assemble runtime service graphs, instantiate runtime services, access the container as service locator, or create middleware/dispatchers/resolvers/clients/stores/loggers/repositories/framework runtime services.
+PublicSurface may expose public factories only when they create public value/result objects or protect users from
+internal construction details. PublicSurface factories MUST NOT assemble runtime service graphs, instantiate runtime
+services, access the container as service locator, or create
+middleware/dispatchers/resolvers/clients/stores/loggers/repositories/framework runtime services.
 
 Allowed: `Responses::json()` delegates to `CreateHttpResponse` and returns `Response`.
 Forbidden: `Responses::json()` creates new `CreateHttpResponse` internally.
@@ -1425,12 +1445,14 @@ PublicSurface may create produced public values. PublicSurface must not assemble
 
 ## 24. DDD Factory vs Runtime Assembly Rule
 
-A DDD factory owns meaningful creation of domain/value/result objects when construction has invariants, policy, or language meaning. A DDD factory MUST NOT assemble framework runtime service graphs.
+A DDD factory owns meaningful creation of domain/value/result objects when construction has invariants, policy, or
+language meaning. A DDD factory MUST NOT assemble framework runtime service graphs.
 
 Allowed: `CreateReleaseCandidate` creates `ReleaseCandidate` with invariants.
 Forbidden: `RuntimeFactory` creates `Router`, `EventDispatcher`, `Logger`, `MiddlewareStack`, `DatabaseConnection`.
 
-If a class assembles runtime services, it belongs in `ServiceProvider`, `System/Configuration`, or `System/Configuration/Builders` — not in a DDD factory.
+If a class assembles runtime services, it belongs in `ServiceProvider`, `System/Configuration`, or
+`System/Configuration/Builders` — not in a DDD factory.
 
 ## 25. Governance Exception Register Rule
 
@@ -1530,7 +1552,10 @@ service locator in business/runtime code
 
 ### Rule
 
-The review MUST loudly flag anything that threatens security, data integrity, runtime safety, long-lived worker safety, dependency graph correctness, public API compatibility, static analysis baseline, test reliability, performance hot paths, observability of failures, rollback/recovery safety, container verification, request scope isolation, tenant isolation, state reset safety, or failure boundary correctness.
+The review MUST loudly flag anything that threatens security, data integrity, runtime safety, long-lived worker safety,
+dependency graph correctness, public API compatibility, static analysis baseline, test reliability, performance hot
+paths, observability of failures, rollback/recovery safety, container verification, request scope isolation, tenant
+isolation, state reset safety, or failure boundary correctness.
 
 The following must not pass silently:
 
@@ -1558,7 +1583,8 @@ examples showing non-canonical style
 
 ### Core Principle
 
-If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness, it must scream in review.
+If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness,
+it must scream in review.
 
 ---
 
@@ -1690,13 +1716,11 @@ A ROADMAP/SCAFFOLD/LABS_ONLY component MUST NOT leak into production runtime aut
 
 ---
 
-
-
-
-
 ## 28. Final Verdict
 
-> NOTE: This section is HISTORICAL. The current project state is GREEN across all V1-V5 stages as proven by CURRENT_TRUTH.md (2026-05-15). 8351 tests pass, PHPStan 0 errors, all gates GREEN. The content below is preserved to document the previous RED state.
+> NOTE: This section is HISTORICAL. The current project state is GREEN across all V1-V5 stages as proven by
+> CURRENT_TRUTH.md (2026-05-15). 8351 tests pass, PHPStan 0 errors, all gates GREEN. The content below is preserved to
+> document the previous RED state.
 
 Historical verdict (pre-V2 convergence):
 

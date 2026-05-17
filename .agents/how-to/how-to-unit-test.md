@@ -10,7 +10,8 @@
 
 ## Normative Language
 
-The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, **BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
+*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
 
 - **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
 - **MUST NOT / FORBIDDEN**: prohibited pattern.
@@ -2537,7 +2538,8 @@ It should be:
 
 ## 90. Gate Self-Test Cross-Reference
 
-Every mandatory validation gate or architecture test MUST have at least one negative test case proving it fails when the rule is violated. See:
+Every mandatory validation gate or architecture test MUST have at least one negative test case proving it fails when the
+rule is violated. See:
 
 ```text
 .agents/how-to/how-to-code-review.md §14.2

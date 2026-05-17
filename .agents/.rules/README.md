@@ -9,17 +9,17 @@ workspace files.
 
 ## Domains
 
-| Domain | Responsibility | Reusable |
-|--------|----------------|----------|
-| `governance/` | Feature-first reusable rules grouped into core, architecture, execution, standards, intelligence, integrations, delivery, product, profiles, and security | Yes |
-| `language-specific/` | Placeholder for child-repo local stack rules when reusable profiles are not enough | Template only |
-| `business-logic/` | Placeholder for child-repo domain meaning and product rules | Template only |
-| `management/` | Active planning, defects, decisions, timeline policy, risks, evidence, and test records | Yes |
-| `review/` | Review logs and archive | Yes |
-| `templates/` | Reusable templates for tasking, planning, review, ADR, and DoD | Yes |
-| `glossary/` | Shared vocabulary for terms and naming | Yes |
-| `onboarding/` | Bootstrap and contributor operating flow | Yes |
-| `hooks/` | Reusable runtime hook entrypoints that connect policy to execution | Yes |
+| Domain               | Responsibility                                                                                                                                            | Reusable      |
+|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| `governance/`        | Feature-first reusable rules grouped into core, architecture, execution, standards, intelligence, integrations, delivery, product, profiles, and security | Yes           |
+| `language-specific/` | Placeholder for child-repo local stack rules when reusable profiles are not enough                                                                        | Template only |
+| `business-logic/`    | Placeholder for child-repo domain meaning and product rules                                                                                               | Template only |
+| `management/`        | Active planning, defects, decisions, timeline policy, risks, evidence, and test records                                                                   | Yes           |
+| `review/`            | Review logs and archive                                                                                                                                   | Yes           |
+| `templates/`         | Reusable templates for tasking, planning, review, ADR, and DoD                                                                                            | Yes           |
+| `glossary/`          | Shared vocabulary for terms and naming                                                                                                                    | Yes           |
+| `onboarding/`        | Bootstrap and contributor operating flow                                                                                                                  | Yes           |
+| `hooks/`             | Reusable runtime hook entrypoints that connect policy to execution                                                                                        | Yes           |
 
 ## Required Questions
 

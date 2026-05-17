@@ -413,11 +413,15 @@ When these files exist, the review MUST check them explicitly:
   named arguments, static closures, pipe usage when applicable
 - `how-to-coding-standards.md`: PHP version expectations, security, DevSecOps gates, modern language features, output
   expectations, privacy/legal notes where relevant
-- `how-to-dogfooding.md`: internal component reuse, one capability one owner, dependency direction, PublicSurface thinness,
-  hot-path efficiency, Filesystem/Storage/Queue/Messaging/Reliability/Observability/CallableSerialization adoption matrix,
+- `how-to-dogfooding.md`: internal component reuse, one capability one owner, dependency direction, PublicSurface
+  thinness,
+  hot-path efficiency, Filesystem/Storage/Queue/Messaging/Reliability/Observability/CallableSerialization adoption
+  matrix,
   no raw file/process/serialization/retry logic outside owners
-- `how-to-modern-php-attributes-di.md`: PHP 8.0-8.5 feature adoption, attribute compilation (not reflection-per-request),
-  DI/autowiring discipline, constructor bloat rules (0-4 normal, 5-7 check, 8+ warning), compiled metadata vs hot-path reflection,
+- `how-to-modern-php-attributes-di.md`: PHP 8.0-8.5 feature adoption, attribute compilation (not
+  reflection-per-request),
+  DI/autowiring discipline, constructor bloat rules (0-4 normal, 5-7 check, 8+ warning), compiled metadata vs hot-path
+  reflection,
   WeakMap cache policy, property hooks, asymmetric visibility, NoDiscard, pipe operator for pure transformations only,
   superglobal isolation behind AvaX Request, tooling gates
 - `how-to-unit-test.md`: behavior-first tests, happy/failure/edge/regression/security scenarios, naming,
@@ -439,7 +443,8 @@ When these files exist, the review MUST check them explicitly:
 
 Hard rule:
 
-A code review that does not explicitly check `how-to-dogfooding.md` and `how-to-modern-php-attributes-di.md` when they exist is incomplete.
+A code review that does not explicitly check `how-to-dogfooding.md` and `how-to-modern-php-attributes-di.md` when they
+exist is incomplete.
 
 These two documents are central to AvaX V5 governance.
 
@@ -1116,7 +1121,8 @@ Metrics and quality scores MUST NOT regress from the previously established base
 
 ### 14.2 Gate Self-Test Rule
 
-Every mandatory validation gate or architecture test MUST have at least one negative test case (proving it fails when the
+Every mandatory validation gate or architecture test MUST have at least one negative test case (proving it fails when
+the
 rule is violated).
 
 - A gate that cannot fail is not a gate.
@@ -1157,6 +1163,7 @@ Security gate must fail on:
 ```
 
 Rules:
+
 - gate without self-test or proof is YELLOW at minimum
 - mandatory gate without self-test or proof cannot close BLOCKER
 - gate that scans zero active files is FAIL, not PASS
@@ -1289,7 +1296,10 @@ Highest severity: BLOCKER / HIGH / MEDIUM / LOW
 
 Security-sensitive findings MUST be loud, explicit, and blocking by default.
 
-Any OWASP-class weakness, injection risk, authentication bypass, authorization bypass, sensitive data leak, unsafe deserialization, unsafe redirect, filesystem traversal, command execution risk, SSRF risk, XSS risk, CSRF risk, SQL/query injection risk, weak cryptography, secret exposure, unsafe logging, or session/cookie weakness MUST be classified as HIGH or BLOCKER unless proven otherwise.
+Any OWASP-class weakness, injection risk, authentication bypass, authorization bypass, sensitive data leak, unsafe
+deserialization, unsafe redirect, filesystem traversal, command execution risk, SSRF risk, XSS risk, CSRF risk,
+SQL/query injection risk, weak cryptography, secret exposure, unsafe logging, or session/cookie weakness MUST be
+classified as HIGH or BLOCKER unless proven otherwise.
 
 Security findings MUST NOT be hidden as:
 
@@ -1488,7 +1498,8 @@ Performance review MUST be triggered by changes to areas listed in:
 .agents/how-to/how-to-system-performance.md §44
 ```
 
-If triggered, the review evidence MUST include the compliance matrix sections for security and performance. If not triggered, the review MUST say why.
+If triggered, the review evidence MUST include the compliance matrix sections for security and performance. If not
+triggered, the review MUST say why.
 
 ## 21. Large Unit Review Thresholds
 
@@ -1506,11 +1517,13 @@ ServiceProvider over 250 lines:  mandatory split review
 Test class over 500 lines:       mandatory test organization review
 ```
 
-Threshold trigger does not automatically mean refactor. It does require documented decision. No large unit may be called GREEN without review decision.
+Threshold trigger does not automatically mean refactor. It does require documented decision. No large unit may be called
+GREEN without review decision.
 
 ## 22. Canonical Term Registry Rule
 
-One concept must have one canonical name. If the same concept appears under multiple names, review MUST choose one canonical term and mark the others as aliases, deprecated terms, or wrong terms.
+One concept must have one canonical name. If the same concept appears under multiple names, review MUST choose one
+canonical term and mark the others as aliases, deprecated terms, or wrong terms.
 
 Check the registry at:
 
@@ -1520,7 +1533,8 @@ docs/governance/canonical-terms.md
 
 before introducing or accepting new terminology.
 
-**Severity escalation:** Default HIGH. BLOCKER when naming drift affects PublicSurface, DI/container, Response layer, Events, Runtime, Boot DSL, FailureBoundary, Database lifecycle, security-sensitive APIs, or public compatibility.
+**Severity escalation:** Default HIGH. BLOCKER when naming drift affects PublicSurface, DI/container, Response layer,
+Events, Runtime, Boot DSL, FailureBoundary, Database lifecycle, security-sensitive APIs, or public compatibility.
 
 ## 23. Governance Exception Register Rule
 
@@ -1574,7 +1588,8 @@ LOW:     wording polish
 
 ### Cross-Reference
 
-For full PHPDoc rules including class, method, tag, flow/action documentation, gate, severity, phased adoption, and GREEN status rule, see:
+For full PHPDoc rules including class, method, tag, flow/action documentation, gate, severity, phased adoption, and
+GREEN status rule, see:
 
 ```text
 .agents/how-to/how-to-document.md — Semantic PHPDoc Rule
@@ -1670,4 +1685,5 @@ examples showing non-canonical style
 
 ### Core Principle
 
-If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness, it must scream in review.
+If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness,
+it must scream in review.

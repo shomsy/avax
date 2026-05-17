@@ -75,7 +75,8 @@ flowchart LR
     Blocked --> Planned
 ```
 
-All stages through V5.8.x Repo-Wide Truth Reconciliation are COMPLETE historically. The V5.9 Boot DSL first slice exists.
+All stages through V5.8.x Repo-Wide Truth Reconciliation are COMPLETE historically. The V5.9 Boot DSL first slice
+exists.
 The 2026-05-16 Harness-Full governance baseline has been classified:
 
 - Semantic PHPDoc legacy debt is YELLOW_WITH_RATCHET (9823 findings, touched/new scope blocking).

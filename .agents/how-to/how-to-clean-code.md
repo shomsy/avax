@@ -1578,7 +1578,8 @@ examples showing non-canonical style
 
 ### Core Principle
 
-If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness, it must scream in review.
+If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness,
+it must scream in review.
 
 ---
 
@@ -1602,11 +1603,13 @@ ServiceProvider over 250 lines:  mandatory split review
 Test class over 500 lines:       mandatory test organization review
 ```
 
-Threshold trigger does not automatically mean refactor. It does require documented decision. No large unit may be called GREEN without review decision.
+Threshold trigger does not automatically mean refactor. It does require documented decision. No large unit may be called
+GREEN without review decision.
 
 ## 24. PHPDoc Cross-Reference
 
-PHPDoc is part of clean code. For the full semantic PHPDoc rule including class, method, tag, flow/action documentation, severity, GREEN status block criteria, and review criteria, see:
+PHPDoc is part of clean code. For the full semantic PHPDoc rule including class, method, tag, flow/action documentation,
+severity, GREEN status block criteria, and review criteria, see:
 
 ```text
 .agents/how-to/how-to-document.md — Semantic PHPDoc Rule

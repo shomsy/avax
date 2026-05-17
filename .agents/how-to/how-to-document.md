@@ -470,6 +470,7 @@ PHPDoc in AvaX is not decorative.
 PHPDoc is part of the architecture reading model.
 
 It must help the reader understand:
+
 - what this unit is
 - what it owns
 - why it exists
@@ -480,6 +481,7 @@ It must help the reader understand:
 - what must not be changed casually
 
 PHPDoc MUST follow:
+
 - PSR-12 formatting rules for PHP code layout
 - phpDocumentor/PHPStan/Psalm-compatible tag style
 - AvaX plain-English documentation style
@@ -494,6 +496,7 @@ PHPDoc MUST NOT become noise.
 Every production class, interface, trait, and enum MUST have a semantic PHPDoc block.
 
 The class PHPDoc MUST explain:
+
 1. What this unit is.
 2. What responsibility it owns.
 3. Which flow/capability/configuration/foundation/public-surface role it supports.
@@ -505,6 +508,7 @@ The class PHPDoc MUST explain:
 Class PHPDoc MUST be short, plain-English, and architecture-aware. It must not merely repeat the class name.
 
 **Good:**
+
 ```php
 /**
  * Builds HTTP responses for internal framework flows.
@@ -522,6 +526,7 @@ final readonly class CreateHttpResponse
 ```
 
 **Bad (repeats the class name without meaning):**
+
 ```php
 /**
  * Class CreateHttpResponse
@@ -538,6 +543,7 @@ final readonly class CreateHttpResponse
 Every public and protected method MUST have a semantic PHPDoc block.
 
 Private methods MUST have PHPDoc when they:
+
 - contain non-trivial logic
 - hide an important assumption
 - perform I/O
@@ -548,9 +554,11 @@ Private methods MUST have PHPDoc when they:
 - use array shapes, generics, iterables, callables, or mixed values
 - exist because of a design decision that is not obvious from the name
 
-For maximum AI-readability, AvaX MAY require PHPDoc on every method including private methods, but the docblock must remain useful and concise.
+For maximum AI-readability, AvaX MAY require PHPDoc on every method including private methods, but the docblock must
+remain useful and concise.
 
 Method PHPDoc MUST explain:
+
 1. What exact action the method performs.
 2. Why the action exists.
 3. What it receives conceptually, not just technically.
@@ -562,6 +570,7 @@ Method PHPDoc MUST explain:
 Do not duplicate native types unless PHPDoc adds precision.
 
 **Good:**
+
 ```php
 /**
  * Creates a JSON response from public or internal payload data.
@@ -578,6 +587,7 @@ public function json(array|object $data, int $status = 200, array $headers = [])
 ```
 
 **Bad (adds nothing beyond the signature):**
+
 ```php
 /**
  * Creates JSON response.
@@ -597,13 +607,16 @@ public function json(array $data, int $status = 200, array $headers = []): Respo
 Use PHPDoc tags only when they add information that native PHP types cannot express.
 
 **Required tags:**
+
 - `@throws` for every exception that may escape the method
 - `@template` for generic classes/methods
 - `@implements` / `@extends` for generic inheritance
-- `@param` for array shapes, callable shapes, iterable value types, generic collections, mixed boundaries, or domain explanation
+- `@param` for array shapes, callable shapes, iterable value types, generic collections, mixed boundaries, or domain
+  explanation
 - `@return` for array shapes, iterable value types, generic collections, fluent self semantics, or domain explanation
 
 **Forbidden tags:**
+
 - `@param string $name` when the native type and variable name are already clear
 - `@return bool` when the method signature already says bool and the meaning is obvious
 - fake `@throws` tags for exceptions that cannot escape
@@ -617,11 +630,13 @@ Use PHPDoc tags only when they add information that native PHP types cannot expr
 PHPDoc must strengthen the AvaX reading model.
 
 Class PHPDoc should answer:
+
 - What responsibility does this unit own?
 - Is it a flow owner, action owner, state owner, configuration owner, public surface, or foundation primitive?
 - Which higher-level flow or capability does it support?
 
 Method PHPDoc should answer:
+
 - What exact action happens here?
 - What boundary does this method protect?
 - What would break if this method changed?
@@ -633,13 +648,15 @@ If PHPDoc does not improve flow/action understanding, rewrite it or remove it.
 ### PHPDoc Gate Rule
 
 A PHPDoc gate SHOULD verify:
+
 - every production class/interface/trait/enum has a semantic docblock
 - every public/protected method has a docblock
 - every `@throws` is present where exceptions escape
 - no docblock contains fully-qualified class names when imports should be used
 - no obvious redundant `@param`/`@return` tags exist
 - iterable/array/callable/mixed boundaries have useful PHPDoc
-- no docblock uses banned generic phrases: `Handles things`, `Processes data`, `Helper for`, `Service for`, `Manager for`
+- no docblock uses banned generic phrases: `Handles things`, `Processes data`, `Helper for`, `Service for`,
+  `Manager for`
 
 Gate without semantic review is not enough. Human/AI governance review still checks quality.
 
@@ -674,6 +691,7 @@ Semantic PHPDoc is part of AvaX architecture readability. Missing or fake PHPDoc
 Severity:
 
 **BLOCKER:**
+
 - missing semantic PHPDoc on PublicSurface production class
 - missing semantic PHPDoc on runtime-critical class
 - missing semantic PHPDoc on security-sensitive class
@@ -682,30 +700,39 @@ Severity:
 - PHPDoc that hides runtime assembly, service locator, or dependency fallback
 
 **HIGH:**
+
 - missing semantic PHPDoc on ordinary production class touched in the current pass
 - missing semantic PHPDoc on public/protected method touched in the current pass
 - missing array shape/generic/iterable/callable/mixed boundary docs
 - method side effects or mutations not documented
 
 **MEDIUM:**
+
 - missing semantic PHPDoc on private non-trivial methods
 - unclear intent in internal docblocks
 - incomplete conceptual input/output explanation
 
 **LOW:**
+
 - wording polish only
 
-**Legacy rule:** Existing untouched legacy PHPDoc debt may be YELLOW only with ratchet and owner. New code and touched code must follow the rule immediately.
+**Legacy rule:** Existing untouched legacy PHPDoc debt may be YELLOW only with ratchet and owner. New code and touched
+code must follow the rule immediately.
 
-**Hard anti-spam rule:** Mandatory PHPDoc does not allow decorative PHPDoc. A required docblock that merely repeats code is still a violation.
+**Hard anti-spam rule:** Mandatory PHPDoc does not allow decorative PHPDoc. A required docblock that merely repeats code
+is still a violation.
 
 ---
 
 ## Examples Are Architecture Rule
 
-Examples, GoldenPath apps, documentation snippets, generated examples, and tests are source material for humans and AI. They MUST show canonical style.
+Examples, GoldenPath apps, documentation snippets, generated examples, and tests are source material for humans and AI.
+They MUST show canonical style.
 
-They MUST NOT show: manual runtime service assembly, hidden fallback dependencies, direct new of runtime services, service locator in runtime code, fake providers, deprecated APIs as primary examples, old names after canonical rename, shortcuts that violate governance, weak test patterns, fake GREEN evidence, or security-sensitive shortcuts without warning.
+They MUST NOT show: manual runtime service assembly, hidden fallback dependencies, direct new of runtime services,
+service locator in runtime code, fake providers, deprecated APIs as primary examples, old names after canonical rename,
+shortcuts that violate governance, weak test patterns, fake GREEN evidence, or security-sensitive shortcuts without
+warning.
 
 If examples must show low-level/manual usage, they must be clearly labeled as advanced/internal/testing-only.
 
@@ -713,7 +740,9 @@ If examples teach an anti-pattern, the codebase will reproduce it.
 
 ## Canonical Term Registry Rule
 
-One concept must have one canonical name. The canonical registry is at `docs/governance/canonical-terms.md`. Check the registry before introducing or accepting new terminology. Default severity HIGH; BLOCKER when naming drift affects PublicSurface, DI/container, Response, Events, Runtime, or public compatibility.
+One concept must have one canonical name. The canonical registry is at `docs/governance/canonical-terms.md`. Check the
+registry before introducing or accepting new terminology. Default severity HIGH; BLOCKER when naming drift affects
+PublicSurface, DI/container, Response, Events, Runtime, or public compatibility.
 
 ---
 

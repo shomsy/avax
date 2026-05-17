@@ -24,7 +24,8 @@ DI composes.
 Methods act.
 ```
 
-AvaX uses attributes as the central declaration style — similar to NestJS decorators, Java annotations, or .NET attributes.
+AvaX uses attributes as the central declaration style — similar to NestJS decorators, Java annotations, or .NET
+attributes.
 
 But attributes must not become runtime chaos.
 
@@ -50,63 +51,63 @@ Every feature must have a clear use case.
 
 ### 3.1 PHP 8.0 — Foundation
 
-| Feature                    | When to use                                              | When not to use                        |
-| -------------------------- | -------------------------------------------------------- | -------------------------------------- |
-| attributes                 | routing, validation, DI, policy, audit, tracing          | replacing clear constructor logic      |
-| named arguments            | explicit API calls, configuration                        | positional APIs that forbid them       |
-| union types                | precise type signatures                                  | masking unclear return types           |
-| constructor property promotion | default for all classes                           | when property needs hooks or validation |
-| match                      | expressive branching over enums or scalars               | side-effect-heavy branching            |
-| nullsafe operator          | safe chaining on nullable objects                        | hiding missing validation              |
-| WeakMap                    | object metadata cache, per-object associations           | persistent cache, cross-request cache  |
+| Feature                        | When to use                                     | When not to use                         |
+|--------------------------------|-------------------------------------------------|-----------------------------------------|
+| attributes                     | routing, validation, DI, policy, audit, tracing | replacing clear constructor logic       |
+| named arguments                | explicit API calls, configuration               | positional APIs that forbid them        |
+| union types                    | precise type signatures                         | masking unclear return types            |
+| constructor property promotion | default for all classes                         | when property needs hooks or validation |
+| match                          | expressive branching over enums or scalars      | side-effect-heavy branching             |
+| nullsafe operator              | safe chaining on nullable objects               | hiding missing validation               |
+| WeakMap                        | object metadata cache, per-object associations  | persistent cache, cross-request cache   |
 
 ### 3.2 PHP 8.1 — Expressiveness
 
-| Feature               | When to use                                                |
-| --------------------- | ---------------------------------------------------------- |
-| enums                 | domain/state with closed value sets                        |
-| readonly properties   | immutable value objects, DTOs                              |
-| first-class callables | explicit function references, callbacks                    |
-| fibers                | cooperative concurrency in long-lived runtimes             |
-| intersection types    | precise interface contracts requiring multiple interfaces  |
-| never                 | functions that always throw or exit                        |
+| Feature               | When to use                                               |
+|-----------------------|-----------------------------------------------------------|
+| enums                 | domain/state with closed value sets                       |
+| readonly properties   | immutable value objects, DTOs                             |
+| first-class callables | explicit function references, callbacks                   |
+| fibers                | cooperative concurrency in long-lived runtimes            |
+| intersection types    | precise interface contracts requiring multiple interfaces |
+| never                 | functions that always throw or exit                       |
 
 ### 3.3 PHP 8.2 — Immutability and Type Precision
 
-| Feature             | When to use                                                |
-| ------------------- | ---------------------------------------------------------- |
-| readonly classes    | fully immutable DTOs, value objects, configuration shapes  |
-| DNF types           | precise nullable/union combinations                        |
-| standalone true/false/null | precise boolean/null typing                         |
-| SensitiveParameter  | secret protection in stack traces                          |
-| Random extension    | secure random generation                                   |
+| Feature                    | When to use                                               |
+|----------------------------|-----------------------------------------------------------|
+| readonly classes           | fully immutable DTOs, value objects, configuration shapes |
+| DNF types                  | precise nullable/union combinations                       |
+| standalone true/false/null | precise boolean/null typing                               |
+| SensitiveParameter         | secret protection in stack traces                         |
+| Random extension           | secure random generation                                  |
 
 ### 3.4 PHP 8.3 — Contract Strictness
 
-| Feature                      | When to use                                          |
-| ---------------------------- | ---------------------------------------------------- |
-| typed class constants        | framework contracts, policy values, discriminators   |
-| #[Override]                  | strict inheritance discipline                        |
-| dynamic class constant fetch | flexible constant resolution in generic code         |
+| Feature                      | When to use                                        |
+|------------------------------|----------------------------------------------------|
+| typed class constants        | framework contracts, policy values, discriminators |
+| #[Override]                  | strict inheritance discipline                      |
+| dynamic class constant fetch | flexible constant resolution in generic code       |
 
 ### 3.5 PHP 8.4 — Object Model Upgrade
 
-| Feature                  | When to use                                              |
-| ------------------------ | -------------------------------------------------------- |
-| property hooks           | value normalization, invariant enforcement on properties |
-| asymmetric visibility    | public-read/private-write state                          |
-| request_parse_body()     | multipart parsing in AvaX Request                        |
-| PDO driver subclasses    | type-safe database access where PDO is used              |
+| Feature               | When to use                                              |
+|-----------------------|----------------------------------------------------------|
+| property hooks        | value normalization, invariant enforcement on properties |
+| asymmetric visibility | public-read/private-write state                          |
+| request_parse_body()  | multipart parsing in AvaX Request                        |
+| PDO driver subclasses | type-safe database access where PDO is used              |
 
 ### 3.6 PHP 8.5 — Futuristic Syntax
 
-| Feature                          | When to use                                              | When not to use                        |
-| -------------------------------- | -------------------------------------------------------- | -------------------------------------- |
-| pipe operator                    | pure data transformations (schema, config, normalization) | side-effect-heavy code                 |
-| #[NoDiscard]                     | important return values that must not be ignored         | void-like methods                      |
-| clone-with syntax                | immutable object modification                            | mutable update patterns                |
-| static asymmetric visibility     | class-level public-read/private-write                    | unnecessary visibility complexity      |
-| final constructor promotion      | promoted properties that cannot be overridden            | extensible base classes                |
+| Feature                      | When to use                                               | When not to use                   |
+|------------------------------|-----------------------------------------------------------|-----------------------------------|
+| pipe operator                | pure data transformations (schema, config, normalization) | side-effect-heavy code            |
+| #[NoDiscard]                 | important return values that must not be ignored          | void-like methods                 |
+| clone-with syntax            | immutable object modification                             | mutable update patterns           |
+| static asymmetric visibility | class-level public-read/private-write                     | unnecessary visibility complexity |
+| final constructor promotion  | promoted properties that cannot be overridden             | extensible base classes           |
 
 ### 3.7 Application Defaults
 

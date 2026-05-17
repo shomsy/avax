@@ -79,7 +79,10 @@ to GREEN based on that evidence.
 
 Security-sensitive findings MUST be loud, explicit, and blocking by default.
 
-Any OWASP-class weakness, injection risk, authentication bypass, authorization bypass, sensitive data leak, unsafe deserialization, unsafe redirect, filesystem traversal, command execution risk, SSRF risk, XSS risk, CSRF risk, SQL/query injection risk, weak cryptography, secret exposure, unsafe logging, or session/cookie weakness MUST be classified as HIGH or BLOCKER unless proven otherwise.
+Any OWASP-class weakness, injection risk, authentication bypass, authorization bypass, sensitive data leak, unsafe
+deserialization, unsafe redirect, filesystem traversal, command execution risk, SSRF risk, XSS risk, CSRF risk,
+SQL/query injection risk, weak cryptography, secret exposure, unsafe logging, or session/cookie weakness MUST be
+classified as HIGH or BLOCKER unless proven otherwise.
 
 Security findings MUST NOT be hidden as:
 
@@ -163,13 +166,15 @@ For full rule text including tracked metrics and evidence table, see:
 
 ## 13. Examples Are Architecture Rule
 
-Examples, GoldenPath apps, and documentation snippets MUST show canonical framework usage. They MUST NOT show manual runtime service assembly, hidden fallback dependencies, or service locator patterns.
+Examples, GoldenPath apps, and documentation snippets MUST show canonical framework usage. They MUST NOT show manual
+runtime service assembly, hidden fallback dependencies, or service locator patterns.
 
 If examples teach an anti-pattern, the codebase will reproduce it.
 
 ## 14. Governance Exception Register Rule
 
-Every governance exception MUST be recorded in `EVIDENCE/accepted-exceptions-ledger.md` with owner and expiry. An exception without owner and expiry is not an exception — it is unresolved governance debt.
+Every governance exception MUST be recorded in `EVIDENCE/accepted-exceptions-ledger.md` with owner and expiry. An
+exception without owner and expiry is not an exception — it is unresolved governance debt.
 
 ---
 

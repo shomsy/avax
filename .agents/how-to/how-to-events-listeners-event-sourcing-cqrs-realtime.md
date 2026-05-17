@@ -10,7 +10,8 @@ AvaX framework, components, examples, tests, docs, evidence, and future event-dr
 
 ## Normative Language
 
-The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, **BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
+*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
 
 - **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
 - **MUST NOT / FORBIDDEN**: prohibited pattern.
@@ -30,9 +31,12 @@ Code review **MUST NOT** mark a scope GREEN when a mandatory rule is violated.
 
 ## 1. Purpose
 
-This document defines how AvaX uses events, listeners, event-driven reactions, event sourcing, CQRS, projections, outbox/inbox, sagas, realtime delivery, and event governance.
+This document defines how AvaX uses events, listeners, event-driven reactions, event sourcing, CQRS, projections,
+outbox/inbox, sagas, realtime delivery, and event governance.
 
-It complements `how-to-use-advanced-architecture-patterns.md`, which covers the generic pattern mechanics. This document covers the AvaX-specific model: how events work in AvaX, what the fluent DSL looks like, how listeners are compiled, how realtime delivery fits, how event observability works, and how AvaX governance itself uses event-sourced thinking.
+It complements `how-to-use-advanced-architecture-patterns.md`, which covers the generic pattern mechanics. This document
+covers the AvaX-specific model: how events work in AvaX, what the fluent DSL looks like, how listeners are compiled, how
+realtime delivery fits, how event observability works, and how AvaX governance itself uses event-sourced thinking.
 
 Core philosophy:
 
@@ -58,40 +62,40 @@ It defines when events help and when they hurt.
 
 Each definition is short and practical.
 
-| Term | Definition |
-|---|---|
-| **Command** | A request to change state. Imperative action. `RegisterUser`, `ProcessPayment`. |
-| **Event** | A fact that already happened. Past-tense. `UserRegistered`, `PaymentProcessed`. |
-| **Listener** | A concrete reaction to an event. Invokable class. `SendWelcomeEmail`, `CreateUserProjection`. |
-| **Dispatcher** | The mechanism that delivers an event to its listeners. |
-| **Emitter** | The public surface that accepts an event and hands it to the dispatcher. `emit()`. |
-| **Listener Provider** | The capability that knows which listeners belong to which event. |
-| **Listener Registry** | The compiled registry of all event-to-listener mappings. |
-| **Compiled Listener Registry** | A frozen, hot-path-safe listener map built at boot, not at dispatch. |
-| **Domain Event** | A fact that happened inside a bounded context. Internal. `OrderPaid`. |
-| **System Event** | A framework-level fact. `ContainerCompiled`, `ListenerRegistryBuilt`. |
-| **Integration Event** | A fact published across a system boundary. Versioned, stable schema. `UserRegisteredForBilling`. |
-| **Telemetry Event** | A fact recorded for observability. `QueryExecuted`, `SessionStarted`. |
-| **Lifecycle Event** | A fact about object or transaction lifecycle. `EntityCreated`, `TransactionCommitted`. |
-| **Database Lifecycle Event** | A lifecycle event tied to database operations. `BeforeSave`, `AfterCommit`. |
-| **Event Store** | An append-only store of domain events. Used in event sourcing. |
-| **Event Stream** | A sequence of events for one aggregate or entity identity. |
-| **Stored Event** | A persisted event with stream identity, version, and serialized payload. |
-| **Projection** | A capability that turns events into read-optimized state. |
-| **Read Model** | A data shape optimized for reading. Not a domain model. `UserProfileView`. |
-| **Outbox** | A durable queue of events stored in the same transaction, published after commit. |
-| **Inbox** | A deduplication and processing mechanism for incoming external messages. |
-| **Saga** | A long-running workflow coordinated by events and commands across multiple steps. |
-| **Process Manager** | Same as saga: coordinates multi-step workflows with explicit state. |
-| **Pub/Sub** | Publish/subscribe messaging. Publishers send messages, subscribers receive them. |
-| **Queue** | An asynchronous message buffer. Jobs are consumed by workers. |
-| **Realtime Event** | A fact delivered to a live client via WebSocket, SSE, or stream. |
-| **WebSocket Message** | A bidirectional realtime message over a persistent connection. |
-| **SSE Message** | A server-to-client event over a unidirectional HTTP stream. |
-| **Event Replay** | Re-processing stored events to rebuild state or projections. |
-| **Event Upcasting** | Transforming old event payloads to match new schemas during replay. |
-| **Snapshot** | A captured state at a point in time, used to speed up replay. |
-| **Current Truth Projection** | CURRENT_TRUTH.md as a projection of governance evidence events. |
+| Term                           | Definition                                                                                       |
+|--------------------------------|--------------------------------------------------------------------------------------------------|
+| **Command**                    | A request to change state. Imperative action. `RegisterUser`, `ProcessPayment`.                  |
+| **Event**                      | A fact that already happened. Past-tense. `UserRegistered`, `PaymentProcessed`.                  |
+| **Listener**                   | A concrete reaction to an event. Invokable class. `SendWelcomeEmail`, `CreateUserProjection`.    |
+| **Dispatcher**                 | The mechanism that delivers an event to its listeners.                                           |
+| **Emitter**                    | The public surface that accepts an event and hands it to the dispatcher. `emit()`.               |
+| **Listener Provider**          | The capability that knows which listeners belong to which event.                                 |
+| **Listener Registry**          | The compiled registry of all event-to-listener mappings.                                         |
+| **Compiled Listener Registry** | A frozen, hot-path-safe listener map built at boot, not at dispatch.                             |
+| **Domain Event**               | A fact that happened inside a bounded context. Internal. `OrderPaid`.                            |
+| **System Event**               | A framework-level fact. `ContainerCompiled`, `ListenerRegistryBuilt`.                            |
+| **Integration Event**          | A fact published across a system boundary. Versioned, stable schema. `UserRegisteredForBilling`. |
+| **Telemetry Event**            | A fact recorded for observability. `QueryExecuted`, `SessionStarted`.                            |
+| **Lifecycle Event**            | A fact about object or transaction lifecycle. `EntityCreated`, `TransactionCommitted`.           |
+| **Database Lifecycle Event**   | A lifecycle event tied to database operations. `BeforeSave`, `AfterCommit`.                      |
+| **Event Store**                | An append-only store of domain events. Used in event sourcing.                                   |
+| **Event Stream**               | A sequence of events for one aggregate or entity identity.                                       |
+| **Stored Event**               | A persisted event with stream identity, version, and serialized payload.                         |
+| **Projection**                 | A capability that turns events into read-optimized state.                                        |
+| **Read Model**                 | A data shape optimized for reading. Not a domain model. `UserProfileView`.                       |
+| **Outbox**                     | A durable queue of events stored in the same transaction, published after commit.                |
+| **Inbox**                      | A deduplication and processing mechanism for incoming external messages.                         |
+| **Saga**                       | A long-running workflow coordinated by events and commands across multiple steps.                |
+| **Process Manager**            | Same as saga: coordinates multi-step workflows with explicit state.                              |
+| **Pub/Sub**                    | Publish/subscribe messaging. Publishers send messages, subscribers receive them.                 |
+| **Queue**                      | An asynchronous message buffer. Jobs are consumed by workers.                                    |
+| **Realtime Event**             | A fact delivered to a live client via WebSocket, SSE, or stream.                                 |
+| **WebSocket Message**          | A bidirectional realtime message over a persistent connection.                                   |
+| **SSE Message**                | A server-to-client event over a unidirectional HTTP stream.                                      |
+| **Event Replay**               | Re-processing stored events to rebuild state or projections.                                     |
+| **Event Upcasting**            | Transforming old event payloads to match new schemas during replay.                              |
+| **Snapshot**                   | A captured state at a point in time, used to speed up replay.                                    |
+| **Current Truth Projection**   | CURRENT_TRUTH.md as a projection of governance evidence events.                                  |
 
 ---
 
@@ -187,7 +191,8 @@ final readonly class SendWelcomeEmail
 - AvaX **MUST NOT** require every event to implement `EventInterface`.
 - AvaX **MUST NOT** require every listener to implement `ListenerInterface`.
 - Stoppable behavior **MAY** use `PSR\StoppableEventInterface` when PSR-14 is available.
-- Infrastructure contracts belong around emitter, dispatcher, provider, registry, compiler, and adapters — not userland events.
+- Infrastructure contracts belong around emitter, dispatcher, provider, registry, compiler, and adapters — not userland
+  events.
 
 ### Event Example
 
@@ -415,7 +420,8 @@ Event sourcing is a persistence model.
 - Event sourcing **MUST NOT** be the default persistence model.
 - Event sourcing **MAY** be used when history, replay, audit, projections, or causality are core value.
 - Event sourcing **MUST NOT** be used for simple CRUD by default.
-- Event sourcing requires: event store, stream identity, versioning, serialization, upcasting, snapshot/replay strategy, and concurrency control.
+- Event sourcing requires: event store, stream identity, versioning, serialization, upcasting, snapshot/replay strategy,
+  and concurrency control.
 
 ### Use Event Sourcing For
 
@@ -718,9 +724,9 @@ Covers: WebSockets, Server-Sent Events, streams, pub/sub, live projections, broa
 - Disconnect/reconnect behavior **MUST** be defined.
 - Ordering guarantees **MUST** be explicit.
 - Delivery semantics **MUST** be documented:
-  - at-most-once
-  - at-least-once
-  - exactly-once claim is forbidden unless proven
+    - at-most-once
+    - at-least-once
+    - exactly-once claim is forbidden unless proven
 
 ### Examples
 
@@ -904,13 +910,13 @@ Observability records what happened, not the full payload.
 
 ### Failure Policies
 
-| Policy | Behavior |
-|---|---|
-| **Bubble** | Listener failure propagates. Default for sync dispatch. |
-| **ReportAndContinue** | Failure is recorded, remaining listeners continue. Must be explicit. |
-| **RetryThenFail** | Listener is retried using canonical Resilience policy, then fails. |
-| **RetryThenDeadLetter** | After retries, failed event goes to dead-letter queue. |
-| **Ignore** | Forbidden unless justified for diagnostic-only listener. |
+| Policy                  | Behavior                                                             |
+|-------------------------|----------------------------------------------------------------------|
+| **Bubble**              | Listener failure propagates. Default for sync dispatch.              |
+| **ReportAndContinue**   | Failure is recorded, remaining listeners continue. Must be explicit. |
+| **RetryThenFail**       | Listener is retried using canonical Resilience policy, then fails.   |
+| **RetryThenDeadLetter** | After retries, failed event goes to dead-letter queue.               |
+| **Ignore**              | Forbidden unless justified for diagnostic-only listener.             |
 
 ### Rule: No Silent Swallow
 
@@ -1057,12 +1063,12 @@ The evidence history must always reconcile to current truth.
 
 V5.7-01 identified four event systems:
 
-| System | Scope | Decision |
-|---|---|---|
-| `Operations/Events` | General-purpose | **CANONICAL OWNER** |
-| `Operations/MessageBus/EventBus` | MessageBus handlers | Keep as internal mechanism |
-| `DataStack/Database/Telemetry/Events` | Database lifecycle | Keep as internal, future: emit through canonical |
-| `HTTP/Session/SessionEventBus` | Session lifecycle | Keep as internal |
+| System                                | Scope               | Decision                                         |
+|---------------------------------------|---------------------|--------------------------------------------------|
+| `Operations/Events`                   | General-purpose     | **CANONICAL OWNER**                              |
+| `Operations/MessageBus/EventBus`      | MessageBus handlers | Keep as internal mechanism                       |
+| `DataStack/Database/Telemetry/Events` | Database lifecycle  | Keep as internal, future: emit through canonical |
+| `HTTP/Session/SessionEventBus`        | Session lifecycle   | Keep as internal                                 |
 
 Only `Operations/Events/` owns the general-purpose event system.
 
@@ -1209,38 +1215,38 @@ They will be implemented as part of V5.7-10 (Tooling Gates).
 
 ### Forbidden Patterns
 
-| Anti-Pattern | Why It Is Wrong |
-|---|---|
-| `EventInterface` marker for everything | Adds ceremony without value. Events are plain facts. |
-| `ListenerInterface` that weakens concrete type safety | Concrete invokable listeners are safer and clearer. |
-| Using events to hide mandatory business logic | If removing a listener breaks the use case, the logic belongs in the flow. |
-| Emitting events before transaction commits for external side effects | Rollback makes the side effect a lie. Use afterCommit. |
-| Claiming event sourcing while only storing logs | Event sourcing requires event store, versioning, replay, concurrency control. |
-| Using event sourcing for CRUD by default | Event sourcing is rarely the first answer. See pattern decision rules. |
-| Duplicate EventBus/EventDispatcher owners | One canonical owner. See dogfooding rules. |
-| Runtime reflection scanning attributes | Attributes are compiled at boot, not scanned at dispatch. |
-| Async listener options that do nothing | Do not expose inactive modes as production-ready. |
-| "Exactly once" delivery claim without proof | Forbidden unless mathematically proven and tested. |
-| Realtime broadcasting raw domain events | Sensitive payloads leak. Translate to client-safe DTOs. |
-| Projections that are not idempotent | Replay breaks. Projections must be idempotent. |
-| Deleting old evidence instead of superseding it | Governance history is lost. Supersede, do not delete. |
-| CQRS folder theater | `Commands/`, `Queries/` as folders is style, not substance. |
+| Anti-Pattern                                                         | Why It Is Wrong                                                               |
+|----------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| `EventInterface` marker for everything                               | Adds ceremony without value. Events are plain facts.                          |
+| `ListenerInterface` that weakens concrete type safety                | Concrete invokable listeners are safer and clearer.                           |
+| Using events to hide mandatory business logic                        | If removing a listener breaks the use case, the logic belongs in the flow.    |
+| Emitting events before transaction commits for external side effects | Rollback makes the side effect a lie. Use afterCommit.                        |
+| Claiming event sourcing while only storing logs                      | Event sourcing requires event store, versioning, replay, concurrency control. |
+| Using event sourcing for CRUD by default                             | Event sourcing is rarely the first answer. See pattern decision rules.        |
+| Duplicate EventBus/EventDispatcher owners                            | One canonical owner. See dogfooding rules.                                    |
+| Runtime reflection scanning attributes                               | Attributes are compiled at boot, not scanned at dispatch.                     |
+| Async listener options that do nothing                               | Do not expose inactive modes as production-ready.                             |
+| "Exactly once" delivery claim without proof                          | Forbidden unless mathematically proven and tested.                            |
+| Realtime broadcasting raw domain events                              | Sensitive payloads leak. Translate to client-safe DTOs.                       |
+| Projections that are not idempotent                                  | Replay breaks. Projections must be idempotent.                                |
+| Deleting old evidence instead of superseding it                      | Governance history is lost. Supersede, do not delete.                         |
+| CQRS folder theater                                                  | `Commands/`, `Queries/` as folders is style, not substance.                   |
 
 ---
 
 ## 26. Decision Matrix
 
-| Need | Use |
-|---|---|
-| Secondary reaction after something happened | Event + Listener |
-| Cross-context notification | Domain/Integration Event |
-| Durable external publication after DB commit | Outbox |
-| Different read model than write model | CQRS + Projection |
-| History is source of truth | Event Sourcing |
-| Long-running workflow | Saga / Process Manager |
-| Live browser/client update | Realtime DTO via WebSocket/SSE |
-| Audit of framework development truth | Evidence as Event Log + CURRENT_TRUTH projection |
-| Simple CRUD | Do not use event sourcing by default |
+| Need                                         | Use                                              |
+|----------------------------------------------|--------------------------------------------------|
+| Secondary reaction after something happened  | Event + Listener                                 |
+| Cross-context notification                   | Domain/Integration Event                         |
+| Durable external publication after DB commit | Outbox                                           |
+| Different read model than write model        | CQRS + Projection                                |
+| History is source of truth                   | Event Sourcing                                   |
+| Long-running workflow                        | Saga / Process Manager                           |
+| Live browser/client update                   | Realtime DTO via WebSocket/SSE                   |
+| Audit of framework development truth         | Evidence as Event Log + CURRENT_TRUTH projection |
+| Simple CRUD                                  | Do not use event sourcing by default             |
 
 ---
 
@@ -1257,7 +1263,8 @@ They will be implemented as part of V5.7-10 (Tooling Gates).
 - event dogfooding
 ```
 
-Status: **COMPLETE / GREEN** (as of 2026-05-13). All 14 sub-stages (V5.7-00 through V5.7-13) are implemented and validated. See `CURRENT_TRUTH.md` for evidence.
+Status: **COMPLETE / GREEN** (as of 2026-05-13). All 14 sub-stages (V5.7-00 through V5.7-13) are implemented and
+validated. See `CURRENT_TRUTH.md` for evidence.
 
 ### V5.8: Database Lifecycle Events
 
@@ -1267,7 +1274,8 @@ Status: **COMPLETE / GREEN** (as of 2026-05-13). All 14 sub-stages (V5.7-00 thro
 - outbox groundwork
 ```
 
-Status: **COMPLETE / GREEN** (as of 2026-05-13). All 14 sub-stages (V5.8-01 through V5.8-14) are implemented and validated. See `CURRENT_TRUTH.md` for evidence.
+Status: **COMPLETE / GREEN** (as of 2026-05-13). All 14 sub-stages (V5.8-01 through V5.8-14) are implemented and
+validated. See `CURRENT_TRUTH.md` for evidence.
 
 ### V5.9: Boot DSL
 
@@ -1313,18 +1321,18 @@ async listeners: ROADMAP — no queue driver implemented
 
 This document works with:
 
-| Document | Relationship |
-|---|---|
+| Document                                       | Relationship                                                                                                |
+|------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
 | `how-to-use-advanced-architecture-patterns.md` | That document covers generic pattern mechanics. This covers AvaX-specific event model, DSL, and governance. |
-| `how-to-design-components.md` | Events capability follows canonical component shape. |
-| `how-to-dogfooding.md` | Event system must be dogfooded before GREEN. |
-| `how-to-system-security.md` | Event payloads must be redacted. Realtime channels must be authorized. |
-| `how-to-system-performance.md` | No hot-path reflection. Compiled registry. No hidden I/O in listeners. |
-| `how-to-unit-test.md` | Event behavior must be tested, not class existence. |
-| `how-to-modern-php-attributes-di.md` | `#[ListensTo]` is compiled metadata, not runtime reflection. |
-| `how-to-production-readiness.md` | Event system must pass production readiness gates. |
-| `how-to-architecture.md` | Event folders follow screaming architecture law. |
-| `how-to-code-review.md` | Event code review must check all applicable how-to rules. |
+| `how-to-design-components.md`                  | Events capability follows canonical component shape.                                                        |
+| `how-to-dogfooding.md`                         | Event system must be dogfooded before GREEN.                                                                |
+| `how-to-system-security.md`                    | Event payloads must be redacted. Realtime channels must be authorized.                                      |
+| `how-to-system-performance.md`                 | No hot-path reflection. Compiled registry. No hidden I/O in listeners.                                      |
+| `how-to-unit-test.md`                          | Event behavior must be tested, not class existence.                                                         |
+| `how-to-modern-php-attributes-di.md`           | `#[ListensTo]` is compiled metadata, not runtime reflection.                                                |
+| `how-to-production-readiness.md`               | Event system must pass production readiness gates.                                                          |
+| `how-to-architecture.md`                       | Event folders follow screaming architecture law.                                                            |
+| `how-to-code-review.md`                        | Event code review must check all applicable how-to rules.                                                   |
 
 ---
 

@@ -299,7 +299,8 @@ This provider is responsible for the earliest bootstrap phase and MUST:
 
 ### 4.2 The Rule
 
-Every ACTIVE production component with runtime behavior, public API, dependencies, replaceable services, state, I/O, configuration, or lifecycle ownership MUST have exactly one real ServiceProvider.
+Every ACTIVE production component with runtime behavior, public API, dependencies, replaceable services, state, I/O,
+configuration, or lifecycle ownership MUST have exactly one real ServiceProvider.
 
 The ServiceProvider is the composition root for that component.
 
@@ -1503,7 +1504,8 @@ Step 5: Update call sites to use injected dependency
 
 ### Rule
 
-PublicSurface may expose public factories only when they create public value/result objects or protect users from internal construction details.
+PublicSurface may expose public factories only when they create public value/result objects or protect users from
+internal construction details.
 
 PublicSurface factories MUST NOT:
 
@@ -1540,7 +1542,8 @@ PublicSurface must not assemble machinery.
 
 ### Rule
 
-A DDD factory owns meaningful creation of domain/value/result objects when construction has invariants, policy, or language meaning.
+A DDD factory owns meaningful creation of domain/value/result objects when construction has invariants, policy, or
+language meaning.
 
 A DDD factory MUST NOT assemble framework runtime service graphs.
 

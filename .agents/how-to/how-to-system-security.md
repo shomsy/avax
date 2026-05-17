@@ -2355,7 +2355,10 @@ If security is hidden in vague helpers, it failed.
 
 Security-sensitive findings MUST be loud, explicit, and blocking by default.
 
-Any OWASP-class weakness, injection risk, authentication bypass, authorization bypass, sensitive data leak, unsafe deserialization, unsafe redirect, filesystem traversal, command execution risk, SSRF risk, XSS risk, CSRF risk, SQL/query injection risk, weak cryptography, secret exposure, unsafe logging, or session/cookie weakness MUST be classified as HIGH or BLOCKER unless proven otherwise.
+Any OWASP-class weakness, injection risk, authentication bypass, authorization bypass, sensitive data leak, unsafe
+deserialization, unsafe redirect, filesystem traversal, command execution risk, SSRF risk, XSS risk, CSRF risk,
+SQL/query injection risk, weak cryptography, secret exposure, unsafe logging, or session/cookie weakness MUST be
+classified as HIGH or BLOCKER unless proven otherwise.
 
 Security findings MUST NOT be hidden as:
 
@@ -2468,7 +2471,12 @@ Security review cannot be skipped silently.
 
 ### Rule
 
-A commit is FORBIDDEN if the current change introduces, exposes, or leaves unresolved any security issue classified as BLOCKER, HIGH, OWASP-class weakness, authentication bypass, authorization bypass, injection risk, XSS risk, CSRF risk, SSRF risk, unsafe redirect, unsafe deserialization, path traversal, command execution risk, secret exposure, sensitive data logging, weak cryptography/hashing, session/cookie weakness, unsafe file upload/download, database query injection risk, unsafe event payload crossing trust boundary, unsafe queue payload handling, unsafe tenant boundary, or unsafe plugin/sandbox execution.
+A commit is FORBIDDEN if the current change introduces, exposes, or leaves unresolved any security issue classified as
+BLOCKER, HIGH, OWASP-class weakness, authentication bypass, authorization bypass, injection risk, XSS risk, CSRF risk,
+SSRF risk, unsafe redirect, unsafe deserialization, path traversal, command execution risk, secret exposure, sensitive
+data logging, weak cryptography/hashing, session/cookie weakness, unsafe file upload/download, database query injection
+risk, unsafe event payload crossing trust boundary, unsafe queue payload handling, unsafe tenant boundary, or unsafe
+plugin/sandbox execution.
 
 ### Required Action
 
@@ -2507,11 +2515,19 @@ A GREEN commit with unresolved security issue is forbidden.
 
 ## 54. Security and Performance Trigger Cross-Rule
 
-Security review MUST be triggered by changes to: user input, authentication, authorization, session, cookies, CSRF, CORS, encryption, hashing, secrets, filesystem I/O, HTTP client/server, serialization/deserialization, database query building, queue payloads, cache keys containing user data, logging of sensitive data, redirects, file upload/download, template rendering, command/process execution, event payloads crossing trust boundaries, tenant isolation, or plugin/sandbox execution.
+Security review MUST be triggered by changes to: user input, authentication, authorization, session, cookies, CSRF,
+CORS, encryption, hashing, secrets, filesystem I/O, HTTP client/server, serialization/deserialization, database query
+building, queue payloads, cache keys containing user data, logging of sensitive data, redirects, file upload/download,
+template rendering, command/process execution, event payloads crossing trust boundaries, tenant isolation, or
+plugin/sandbox execution.
 
-Performance review MUST be triggered by changes to: hot paths, loops over routes/listeners/middleware, reflection, container resolution, event dispatch, queue workers, database query execution, route matching, filesystem scans, cache compile/read/write, boot/worker startup, long-lived runtime reset, serialization, hydration/extraction, projections/read models, graph compilation, or runtime scope creation/closing.
+Performance review MUST be triggered by changes to: hot paths, loops over routes/listeners/middleware, reflection,
+container resolution, event dispatch, queue workers, database query execution, route matching, filesystem scans, cache
+compile/read/write, boot/worker startup, long-lived runtime reset, serialization, hydration/extraction, projections/read
+models, graph compilation, or runtime scope creation/closing.
 
-If triggered, review evidence must include why security/performance is relevant, what was checked, result, remaining risk, and blocking decision. If not triggered, review must say why.
+If triggered, review evidence must include why security/performance is relevant, what was checked, result, remaining
+risk, and blocking decision. If not triggered, review must say why.
 
 ---
 
@@ -2556,7 +2572,10 @@ service locator in business/runtime code
 
 ### Rule
 
-The review MUST loudly flag anything that threatens security, data integrity, runtime safety, long-lived worker safety, dependency graph correctness, public API compatibility, static analysis baseline, test reliability, performance hot paths, observability of failures, rollback/recovery safety, container verification, request scope isolation, tenant isolation, state reset safety, or failure boundary correctness.
+The review MUST loudly flag anything that threatens security, data integrity, runtime safety, long-lived worker safety,
+dependency graph correctness, public API compatibility, static analysis baseline, test reliability, performance hot
+paths, observability of failures, rollback/recovery safety, container verification, request scope isolation, tenant
+isolation, state reset safety, or failure boundary correctness.
 
 The following must not pass silently:
 
@@ -2584,4 +2603,5 @@ examples showing non-canonical style
 
 ### Core Principle
 
-If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness, it must scream in review.
+If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness,
+it must scream in review.

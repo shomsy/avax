@@ -101,8 +101,8 @@ Required artifact layout:
 - delegation plan and subagent briefs when the prompt is broad enough to benefit
   from offloading discovery or review
 - relevant governance files:
-  - `must_read`
-  - `should_read`
+    - `must_read`
+    - `should_read`
 - context injection plan
 - evidence targets
 - artifact paths
@@ -232,13 +232,13 @@ The portable runtime entrypoints are:
 
 ## Relationship To Other Standards
 
-| Standard | Relationship |
-|:---|:---|
-| `../policy/execution-policy.md` | execution contract after routing |
-| `../hooks/hooks-policy.md` | routing runs at `PreTask` and closes at `PostTask` |
-| `../../core/resolution/profile-resolution-algorithm.md` | stack and lane resolution logic |
-| `../../delivery/workflows/workflow-pipelines.md` | pipeline and role-chain selection |
-| `../../agents/roles/agent-roles.md` | starting-role and handoff rules |
-| `../../intelligence/context/context-management.md` | context injection priority |
-| `../approvals/approval-policy.md` | trust tier and approval posture |
-| `../../delivery/operations/observability-and-error-envelope.md` | trace and routing evidence |
+| Standard                                                        | Relationship                                       |
+|:----------------------------------------------------------------|:---------------------------------------------------|
+| `../policy/execution-policy.md`                                 | execution contract after routing                   |
+| `../hooks/hooks-policy.md`                                      | routing runs at `PreTask` and closes at `PostTask` |
+| `../../core/resolution/profile-resolution-algorithm.md`         | stack and lane resolution logic                    |
+| `../../delivery/workflows/workflow-pipelines.md`                | pipeline and role-chain selection                  |
+| `../../agents/roles/agent-roles.md`                             | starting-role and handoff rules                    |
+| `../../intelligence/context/context-management.md`              | context injection priority                         |
+| `../approvals/approval-policy.md`                               | trust tier and approval posture                    |
+| `../../delivery/operations/observability-and-error-envelope.md` | trace and routing evidence                         |

@@ -56,32 +56,36 @@ In any project using the `.agents` OS, agents MUST follow this order:
 Any project using this OS is divided into specialized domains within the
 `.agents/` folder:
 
-| Domain | Responsibility | Reusable |
-|:---|:---|:---|
-| **`governance/`** | Feature-first reusable rule system grouped into core, architecture, execution, standards, intelligence, integrations, delivery, product, profiles, and security. | **Yes** |
-| **`business-logic/`** | Placeholder for child-repo domain behavior and product-specific rules. | Template only |
-| **`language-specific/`** | Placeholder for child-repo local stack rules when reusable profiles are insufficient. | Template only |
-| **`management/`** | Active planning, task tracking, and delivery evidence. | **Yes** |
-| **`templates/`** | Standardized blueprints for reviews, planning, and ADRs. | **Yes** |
-| **`review/`** | Canonical review findings and archive. | **Yes** |
-| **`glossary/`** | Shared vocabulary, naming dictionaries, and term definitions. | **Yes** |
-| **`onboarding/`** | Guided flows for safe project adoption and contributor entry. | **Yes** |
-| **`hooks/`** | Reusable runtime hook entrypoints for session bootstrap, trust checks, and observation capture. | **Yes** |
-| **`skills/`** | Reusable agent-facing command and workflow definitions. | **Yes** |
+| Domain                   | Responsibility                                                                                                                                                   | Reusable      |
+|:-------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------|
+| **`governance/`**        | Feature-first reusable rule system grouped into core, architecture, execution, standards, intelligence, integrations, delivery, product, profiles, and security. | **Yes**       |
+| **`business-logic/`**    | Placeholder for child-repo domain behavior and product-specific rules.                                                                                           | Template only |
+| **`language-specific/`** | Placeholder for child-repo local stack rules when reusable profiles are insufficient.                                                                            | Template only |
+| **`management/`**        | Active planning, task tracking, and delivery evidence.                                                                                                           | **Yes**       |
+| **`templates/`**         | Standardized blueprints for reviews, planning, and ADRs.                                                                                                         | **Yes**       |
+| **`review/`**            | Canonical review findings and archive.                                                                                                                           | **Yes**       |
+| **`glossary/`**          | Shared vocabulary, naming dictionaries, and term definitions.                                                                                                    | **Yes**       |
+| **`onboarding/`**        | Guided flows for safe project adoption and contributor entry.                                                                                                    | **Yes**       |
+| **`hooks/`**             | Reusable runtime hook entrypoints for session bootstrap, trust checks, and observation capture.                                                                  | **Yes**       |
+| **`skills/`**            | Reusable agent-facing command and workflow definitions.                                                                                                          | **Yes**       |
 
 ## 2) Non-Negotiable Rules (Shared)
 
 1. **Execution mode is strict by default**: implement and validate; no silent redesign.
 2. **One responsibility, one implementation**: duplicate truth is forbidden.
 3. **Security first**: do not weaken runtime, dependency, or secret handling.
-4. **Backlog ownership**: all tasks belong in `.agents/management/TODO.md` or `.agents/management/BUGS.md` with timestamped status updates.
+4. **Backlog ownership**: all tasks belong in `.agents/management/TODO.md` or `.agents/management/BUGS.md` with
+   timestamped status updates.
 5. **Evidence is mandatory and timestamped**: no evidence means incomplete work.
 6. **DoD = implementation + validation + evidence + backlog update + ceremony.**
 7. **What can be automated MUST be automated or gated.**
 8. **Production-ready claims require proof**: review, validation, rollback, and operational evidence must agree.
-9. **Codex is not the default agent for all tasks**: Use specialized sub-agents (Mapper, Docs Researcher) before involving Codex for execution.
-10. **Explore mode vs Execute mode**: Maintain a clear boundary between read-only discovery (Explore) and code-modifying implementation (Execute).
-11. **Every agent MUST return an artifact**: No raw conversational logs as the primary output; all sub-agents must emit a structured result.
+9. **Codex is not the default agent for all tasks**: Use specialized sub-agents (Mapper, Docs Researcher) before
+   involving Codex for execution.
+10. **Explore mode vs Execute mode**: Maintain a clear boundary between read-only discovery (Explore) and code-modifying
+    implementation (Execute).
+11. **Every agent MUST return an artifact**: No raw conversational logs as the primary output; all sub-agents must emit
+    a structured result.
 
 ## 3) Common Operating Flow
 

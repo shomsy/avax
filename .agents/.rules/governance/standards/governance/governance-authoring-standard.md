@@ -16,16 +16,16 @@ instead of creating a new one.
 
 ## Placement Matrix
 
-| Need | Put It In |
-|:---|:---|
-| global safety floor or precedence rule | `AGENTS.md` or `.agents/AGENTS.md` |
-| universal reusable rule | `.agents/governance/core/**`, `standards/**`, `security/**`, `delivery/**` |
-| stack- or repo-kind-specific overlay | `.agents/governance/profiles/**` |
-| repo shape or slice law | `.agents/governance/architecture/**` |
-| runtime adapter or external integration behavior | `.agents/governance/integrations/**` |
-| project-local exception | root `AGENTS.md` |
-| example, starter, or generated helper | `scaffolds/**` |
-| active execution state | `.agents/management/**` |
+| Need                                             | Put It In                                                                  |
+|:-------------------------------------------------|:---------------------------------------------------------------------------|
+| global safety floor or precedence rule           | `AGENTS.md` or `.agents/AGENTS.md`                                         |
+| universal reusable rule                          | `.agents/governance/core/**`, `standards/**`, `security/**`, `delivery/**` |
+| stack- or repo-kind-specific overlay             | `.agents/governance/profiles/**`                                           |
+| repo shape or slice law                          | `.agents/governance/architecture/**`                                       |
+| runtime adapter or external integration behavior | `.agents/governance/integrations/**`                                       |
+| project-local exception                          | root `AGENTS.md`                                                           |
+| example, starter, or generated helper            | `scaffolds/**`                                                             |
+| active execution state                           | `.agents/management/**`                                                    |
 
 ## Authoring Rules
 

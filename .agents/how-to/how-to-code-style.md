@@ -402,7 +402,8 @@ private function loadConfigs(): array
 
 ### Cross-Reference
 
-For the full semantic PHPDoc governance including class PHPDoc, method PHPDoc, tag rules, flow/action documentation, review criteria, gate rules, and phased adoption, see:
+For the full semantic PHPDoc governance including class PHPDoc, method PHPDoc, tag rules, flow/action documentation,
+review criteria, gate rules, and phased adoption, see:
 
 ```text
 .agents/how-to/how-to-document.md — Semantic PHPDoc Rule

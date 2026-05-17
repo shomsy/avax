@@ -1,4 +1,5 @@
 # Architecture Extension
+
 ## Public Surface and DDD Domain Modeling for AvaX Screaming Architecture
 
 ## 1. Status of This Document
@@ -13,7 +14,8 @@ It defines two related rules:
 This document is not a style preference.
 This document is not a generic DDD folder template.
 This document is not a place to introduce ceremony.
-This document is not a justification for technical buckets such as `Entities/`, `ValueObjects/`, `Services/`, `Repositories/`, `Contracts/`, `Adapters/`, `Helpers/`, or `Managers/` at the system root.
+This document is not a justification for technical buckets such as `Entities/`, `ValueObjects/`, `Services/`,
+`Repositories/`, `Contracts/`, `Adapters/`, `Helpers/`, or `Managers/` at the system root.
 
 This document exists to protect clarity.
 
@@ -435,7 +437,8 @@ Foundation/
 
 ## 11. PublicSurface Factory Boundary Rule
 
-PublicSurface may expose public factories only when they create public value/result objects or protect users from internal construction details.
+PublicSurface may expose public factories only when they create public value/result objects or protect users from
+internal construction details.
 
 PublicSurface factories MUST NOT:
 
@@ -453,7 +456,6 @@ hide dependency assembly
 PublicSurface may create produced public values. PublicSurface must not assemble machinery.
 
 ---
-
 
 ## 12. Public API Stability Rule
 
@@ -510,7 +512,8 @@ Runtime-specific APIs must not leak into `PublicSurface/`.
 
 Framework users may choose a runtime.
 
-Core public APIs must not force users to know about runtime internals unless the public API is explicitly about runtime integration.
+Core public APIs must not force users to know about runtime internals unless the public API is explicitly about runtime
+integration.
 
 Forbidden:
 
@@ -601,7 +604,8 @@ components/
         Foundation/
 ```
 
-Do not create a top-level repository `PublicSurface/` folder unless the repository itself is a single package with one system root.
+Do not create a top-level repository `PublicSurface/` folder unless the repository itself is a single package with one
+system root.
 
 ---
 
@@ -776,7 +780,8 @@ System/
 
 The reader should first understand the system behavior or capability.
 
-Only then should the reader discover whether a unit is a value object, entity, aggregate, repository, domain service, factory, or event.
+Only then should the reader discover whether a unit is a value object, entity, aggregate, repository, domain service,
+factory, or event.
 
 ---
 
@@ -906,7 +911,8 @@ OpenApiContract
 CacheStoreContract
 ```
 
-But do not use `Contract` as a large folder or bounded context when the real concern is compatibility, versioning, deprecation, or public API safety.
+But do not use `Contract` as a large folder or bounded context when the real concern is compatibility, versioning,
+deprecation, or public API safety.
 
 The better question is:
 
@@ -1341,14 +1347,16 @@ Do not create factories for trivial constructors.
 
 ### 29.7 DDD Factory vs Runtime Assembly Rule
 
-A DDD factory owns meaningful creation of domain/value/result objects when construction has invariants, policy, or language meaning.
+A DDD factory owns meaningful creation of domain/value/result objects when construction has invariants, policy, or
+language meaning.
 
 A DDD factory MUST NOT assemble framework runtime service graphs.
 
 **Allowed:** `CreateReleaseCandidate` creates `ReleaseCandidate` with invariants.
 **Forbidden:** `RuntimeFactory` creates `Router`, `EventDispatcher`, `Logger`, `MiddlewareStack`, `DatabaseConnection`.
 
-If a class assembles runtime services, it belongs in `ServiceProvider`, `System/Configuration`, or `System/Configuration/Builders` — not in a DDD factory.
+If a class assembles runtime services, it belongs in `ServiceProvider`, `System/Configuration`, or
+`System/Configuration/Builders` — not in a DDD factory.
 
 Factories create meaningful objects. Configuration assembles the system.
 
@@ -1569,7 +1577,8 @@ PublicSurface test proves public API delegates without owning internal behavior.
 
 No proof means the concept is not green.
 
-A DDD concept may exist temporarily as yellow during active design, but it must not be called production-ready until its behavior is proven.
+A DDD concept may exist temporarily as yellow during active design, but it must not be called production-ready until its
+behavior is proven.
 
 ---
 
@@ -1892,18 +1901,18 @@ If ownership is unclear, classify it and stop.
 
 Use this matrix during design and review.
 
-| DDD Concept | Folder Name Should Say | Unit Name Should Say | Function Name Should Say | Good Example | Weak Example |
-|---|---|---|---|---|---|
-| Bounded Context | language boundary | not usually a unit | not usually a function | `Compatibility` | `Contract` |
-| Flow | behavior | flow owner | exact action | `DetectBreakingPublicApiChange` | `ProcessContract` |
-| Capability | reusable ability | responsibility | exact action | `PublicApiCompatibility` | `Contracts` |
-| Aggregate | owning capability or flow | domain concept | state transition | `ReleaseCandidate` | `ReleaseAggregate` |
-| Entity | owning capability or flow | identity concept | lifecycle action | `RuntimeWorker` | `WorkerEntity` |
-| Value Object | owning capability or flow | meaningful value | value behavior | `PublicApiVersion` | `StringValue` |
-| Repository | owning aggregate capability | aggregate persistence boundary | retrieve or save exactness | `ReleaseCandidateRepository` | `DataRepository` |
-| Domain Service | owning flow or capability | exact domain action | exact sub-action | `CalculateReleaseReadiness` | `ReleaseService` |
-| Factory | owning flow or capability | exact creation action | create or build exact object | `CreateReleaseCandidate` | `ObjectFactory` |
-| Domain Event | emitting flow or capability | past-tense fact | not usually behavior | `ReleaseApprovedForProduction` | `ReleaseEvent` |
+| DDD Concept     | Folder Name Should Say      | Unit Name Should Say           | Function Name Should Say     | Good Example                    | Weak Example       |
+|-----------------|-----------------------------|--------------------------------|------------------------------|---------------------------------|--------------------|
+| Bounded Context | language boundary           | not usually a unit             | not usually a function       | `Compatibility`                 | `Contract`         |
+| Flow            | behavior                    | flow owner                     | exact action                 | `DetectBreakingPublicApiChange` | `ProcessContract`  |
+| Capability      | reusable ability            | responsibility                 | exact action                 | `PublicApiCompatibility`        | `Contracts`        |
+| Aggregate       | owning capability or flow   | domain concept                 | state transition             | `ReleaseCandidate`              | `ReleaseAggregate` |
+| Entity          | owning capability or flow   | identity concept               | lifecycle action             | `RuntimeWorker`                 | `WorkerEntity`     |
+| Value Object    | owning capability or flow   | meaningful value               | value behavior               | `PublicApiVersion`              | `StringValue`      |
+| Repository      | owning aggregate capability | aggregate persistence boundary | retrieve or save exactness   | `ReleaseCandidateRepository`    | `DataRepository`   |
+| Domain Service  | owning flow or capability   | exact domain action            | exact sub-action             | `CalculateReleaseReadiness`     | `ReleaseService`   |
+| Factory         | owning flow or capability   | exact creation action          | create or build exact object | `CreateReleaseCandidate`        | `ObjectFactory`    |
+| Domain Event    | emitting flow or capability | past-tense fact                | not usually behavior         | `ReleaseApprovedForProduction`  | `ReleaseEvent`     |
 
 ---
 
@@ -1947,7 +1956,8 @@ DDD must not become decoration.
 
 ## 46. Acceptable DDD Exceptions
 
-A technical DDD folder may be allowed only inside a very narrow local scope when it improves navigation and does not weaken ownership.
+A technical DDD folder may be allowed only inside a very narrow local scope when it improves navigation and does not
+weaken ownership.
 
 Example:
 

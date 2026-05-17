@@ -1154,7 +1154,9 @@ The key DI laws are:
 
 - new Class() is FORBIDDEN outside composition root, factory, or test
 - ?? new Fallback() is FORBIDDEN — register fallbacks in ServiceProvider
-- every ACTIVE production component with runtime behavior, public API, dependencies, replaceable services, state, I/O, configuration, or lifecycle ownership MUST have exactly one real ServiceProvider (see how-to-dependency-injection.md §4.0 for exempt statuses)
+- every ACTIVE production component with runtime behavior, public API, dependencies, replaceable services, state, I/O,
+  configuration, or lifecycle ownership MUST have exactly one real ServiceProvider (see how-to-dependency-injection.md
+  §4.0 for exempt statuses)
 - method-level autowiring is MANDATORY for route handlers
 - static calls are allowed only for fluent API entry points and value object factories
 - fluent APIs must have immutable builders and terminal methods
@@ -1167,7 +1169,8 @@ Model the domain with modern objects first.
 
 Prefer:
 
-- `final readonly class` for Value Objects, DTOs, identifiers, commands, query results, snapshots, tokens, and small immutable policies
+- `final readonly class` for Value Objects, DTOs, identifiers, commands, query results, snapshots, tokens, and small
+  immutable policies
 - explicit immutable state transitions over mutable setters
 - `clone($this, [...])` for withers and immutable modifications
 - property hooks instead of boilerplate getters/setters when the concept is still a property
@@ -1175,9 +1178,11 @@ Prefer:
 - composition over inheritance
 - narrow interfaces
 - domain-focused attributes where metadata belongs near the code
-- `#[\NoDiscard]` on parsers, builders, selectors, immutable modifiers, normalizers, and transformers whose result matters
+- `#[\NoDiscard]` on parsers, builders, selectors, immutable modifiers, normalizers, and transformers whose result
+  matters
 - `#[\Override]` when overriding behavior is intentional and should be enforced by the engine
-- constant-expression closures or first-class callables for local policies, attribute callbacks, and compile-time defaults when they genuinely improve locality
+- constant-expression closures or first-class callables for local policies, attribute callbacks, and compile-time
+  defaults when they genuinely improve locality
 - sealed, stable public surfaces through small facades, ports, contracts, and entry points
 - explicit domain invariants in constructors, factories, hooks, or named constructors
 - Value Objects over primitive obsession when the value has rules, meaning, or formatting behavior
@@ -1447,12 +1452,12 @@ Your final output must include:
 - ✨ Clean, pragmatic, readable PHP 8.5 code
 - 🧩 Feature-Sliced or Vertical-Sliced structure
 - 🧱 Modern object model usage when justified:
-  - readonly classes and properties
-  - property hooks
-  - asymmetric visibility
-  - clone-with immutable updates
-  - attributes
-  - final promoted properties
+    - readonly classes and properties
+    - property hooks
+    - asymmetric visibility
+    - clone-with immutable updates
+    - attributes
+    - final promoted properties
 - 🗣️ DSL naming and fluent APIs where they improve human readability
 - 📘 Full docblocks and comments where useful
 - 🔐 Security best practices embedded in code and architecture
@@ -1530,9 +1535,11 @@ A call site should answer "What is happening?" not "How many internal objects ar
 When generating or reviewing code:
 
 > Do **NOT** force DDD or Clean Architecture if the codebase does not need it.
-> Instead, extract their useful principles such as clarity, ownership, boundaries, dependency flow, and testability, then apply them **pragmatically within the Feature-Sliced model**.
+> Instead, extract their useful principles such as clarity, ownership, boundaries, dependency flow, and testability,
+> then apply them **pragmatically within the Feature-Sliced model**.
 
-> All output must be clean, secure, readable, maintainable, and enterprise-grade, but never academic, ceremonial, or overengineered.
+> All output must be clean, secure, readable, maintainable, and enterprise-grade, but never academic, ceremonial, or
+> overengineered.
 
 > Use PHP 8.5 features as tools, not as decoration.
 > New syntax is only correct when it makes the code more honest, safer, or easier to maintain.

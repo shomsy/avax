@@ -1,4 +1,3 @@
-
 # how-to-dogfooding.md
 
 # AvaX Internal Dogfooding Governance
@@ -9,7 +8,8 @@
 
 ## Normative Language
 
-The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, **BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
+*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
 
 - **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
 - **MUST NOT / FORBIDDEN**: prohibited pattern.
@@ -43,7 +43,8 @@ AvaX must use AvaX.
 
 The purpose of this document is to prevent duplicate internal capability ownership.
 
-If AvaX already has a component that owns a capability, other components must use that owner through the correct boundary.
+If AvaX already has a component that owns a capability, other components must use that owner through the correct
+boundary.
 
 The goal is:
 
@@ -136,7 +137,7 @@ Every reusable capability must have exactly one active owner.
 Examples:
 
 | Capability                                    | Owner                 |
-| --------------------------------------------- | --------------------- |
+|-----------------------------------------------|-----------------------|
 | Local filesystem operations                   | Filesystem            |
 | Disk/object abstraction                       | Storage               |
 | Hydration and validation                      | DataTransfer          |
@@ -847,7 +848,7 @@ Add a section to every HOW_THIS_WORKS.md:
 This component is used by:
 
 - ...
-  
+
 This component uses:
 
 - ...

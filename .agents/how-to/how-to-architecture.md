@@ -154,7 +154,8 @@ This is the main rule.
 
 Everything else is subordinate to it.
 
-If a structural decision violates this rule, the decision is wrong unless there is an exceptional and explicitly justified reason.
+If a structural decision violates this rule, the decision is wrong unless there is an exceptional and explicitly
+justified reason.
 
 ### Requirement
 
@@ -278,7 +279,8 @@ It may also be called **Recursive Ownership Model**.
 At every meaningful level of the tree:
 
 - if there is a real sequence of steps, prefer a local flow owner or pipeline-shaped owner
-- if there is no real sequence but there is one clear transformation, interpretation, or action, prefer a descriptive action owner
+- if there is no real sequence but there is one clear transformation, interpretation, or action, prefer a descriptive
+  action owner
 - if there is no sequence and no transformation, but a stable piece of owned state exists, prefer a state owner
 
 The same reading law should apply at every level where doing so improves clarity.
@@ -1168,7 +1170,8 @@ Delete the others.
 
 ### 27.4 Canonical Term Registry Rule
 
-One concept must have one canonical name. If the same concept appears under multiple names, review MUST choose one canonical term and mark the others as aliases, deprecated terms, or wrong terms.
+One concept must have one canonical name. If the same concept appears under multiple names, review MUST choose one
+canonical term and mark the others as aliases, deprecated terms, or wrong terms.
 
 The canonical registry is at:
 

@@ -134,16 +134,16 @@ Every strict review must produce:
 
 1. overall quality score from `0.0` to `10.0`
 2. final decision:
-   - `Keep and Improve`
-   - `Redesign`
-   - `Rewrite Candidate`
+    - `Keep and Improve`
+    - `Redesign`
+    - `Rewrite Candidate`
 3. findings ordered by severity
 4. evidence for every `high` or `critical` claim
 5. from-scratch rewrite priorities
 6. keep / collapse / delete recommendations
 7. clear distinction between:
-   - governance strength
-   - actual shipped quality
+    - governance strength
+    - actual shipped quality
 
 ## Severity Standard
 

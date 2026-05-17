@@ -1855,44 +1855,44 @@ Name it compatibility.
 
 ## 31. Pattern Placement Matrix
 
-| Pattern | Avoid Folder | Preferred Folder Language | Good Unit Names |
-|---|---|---|---|
-| CQRS | `CQRS/`, `Commands/`, `Queries/` | flow and read capability | `RegisterUser`, `ReadUserProfile` |
-| Event Sourcing | `EventSourcing/` | history capability | `RecordPaymentEvent`, `RebuildPaymentState` |
-| Outbox | `Outbox/` as dumping ground | reliable publishing | `StorePendingEvent`, `PublishPendingEvent` |
-| Inbox | `Inbox/` as dumping ground | incoming message processing | `RememberReceivedMessage`, `MarkMessageProcessed` |
-| Saga | `Sagas/` | long-running flow | `CompleteCheckout`, `CompensateReservedInventory` |
-| State Machine | `StateMachine/` | lifecycle owner | `ReleaseState`, `ApproveReleaseForProduction` |
-| Policy | `Policies/` as dumping ground | decision capability | `EvaluateDeprecationPolicy` |
-| Specification | `Specifications/` as dumping ground | named condition capability | `PublicApiChangeIsBreaking` |
-| Projection | `Projectors/` | view building capability | `UpdateReleaseReadinessView` |
-| Read Model | `ReadModels/` | read capability | `UserProfileView`, `ReadUserProfile` |
-| Retry | `Retries/` | failure recovery capability | `CalculateNextRetryDelay` |
-| Circuit Breaker | `CircuitBreakers/` | dependency availability capability | `CanCallSearchIndex` |
-| Dead Letter | `DeadLetters/` | failed message recovery | `MoveMessageToDeadLetter` |
+| Pattern         | Avoid Folder                        | Preferred Folder Language          | Good Unit Names                                   |
+|-----------------|-------------------------------------|------------------------------------|---------------------------------------------------|
+| CQRS            | `CQRS/`, `Commands/`, `Queries/`    | flow and read capability           | `RegisterUser`, `ReadUserProfile`                 |
+| Event Sourcing  | `EventSourcing/`                    | history capability                 | `RecordPaymentEvent`, `RebuildPaymentState`       |
+| Outbox          | `Outbox/` as dumping ground         | reliable publishing                | `StorePendingEvent`, `PublishPendingEvent`        |
+| Inbox           | `Inbox/` as dumping ground          | incoming message processing        | `RememberReceivedMessage`, `MarkMessageProcessed` |
+| Saga            | `Sagas/`                            | long-running flow                  | `CompleteCheckout`, `CompensateReservedInventory` |
+| State Machine   | `StateMachine/`                     | lifecycle owner                    | `ReleaseState`, `ApproveReleaseForProduction`     |
+| Policy          | `Policies/` as dumping ground       | decision capability                | `EvaluateDeprecationPolicy`                       |
+| Specification   | `Specifications/` as dumping ground | named condition capability         | `PublicApiChangeIsBreaking`                       |
+| Projection      | `Projectors/`                       | view building capability           | `UpdateReleaseReadinessView`                      |
+| Read Model      | `ReadModels/`                       | read capability                    | `UserProfileView`, `ReadUserProfile`              |
+| Retry           | `Retries/`                          | failure recovery capability        | `CalculateNextRetryDelay`                         |
+| Circuit Breaker | `CircuitBreakers/`                  | dependency availability capability | `CanCallSearchIndex`                              |
+| Dead Letter     | `DeadLetters/`                      | failed message recovery            | `MoveMessageToDeadLetter`                         |
 
 ---
 
 ## 32. Pattern Proof Matrix
 
-| Pattern | Required Proof |
-|---|---|
-| CQRS | write invariant and read model separation are tested |
-| Event Sourcing | state rebuilds from events and event versioning is handled |
-| Outbox | state change stores pending event and event is published once |
-| Inbox | duplicate external message does not duplicate side effects |
-| Saga | failure compensation and resume behavior are tested |
-| State Machine | invalid transitions are rejected |
-| Idempotency | duplicate execution is safe |
-| Projection | event updates view and duplicate does not corrupt view |
-| Retry | retryable and non-retryable failures are separated |
-| Circuit Breaker | repeated failure opens circuit and recovery closes it |
-| Backpressure | overload causes explicit delay/rejection |
-| Dead Letter | poison message is moved and visible |
-| Policy | decision is tested with allowed and rejected cases |
-| Specification | condition is tested directly |
-| Compatibility Check | breaking public API change is detected |
-| Fitness Test | architecture violation is caught by tooling |
+| Pattern             | Required Proof                                                |
+|---------------------|---------------------------------------------------------------|
+| CQRS                | write invariant and read model separation are tested          |
+| Event Sourcing      | state rebuilds from events and event versioning is handled    |
+| Outbox              | state change stores pending event and event is published once |
+| Inbox               | duplicate external message does not duplicate side effects    |
+| Saga                | failure compensation and resume behavior are tested           |
+| State Machine       | invalid transitions are rejected                              |
+| Idempotency         | duplicate execution is safe                                   |
+| Projection          | event updates view and duplicate does not corrupt view        |
+| Retry               | retryable and non-retryable failures are separated            |
+| Circuit Breaker     | repeated failure opens circuit and recovery closes it         |
+| Backpressure        | overload causes explicit delay/rejection                      |
+| Dead Letter         | poison message is moved and visible                           |
+| Policy              | decision is tested with allowed and rejected cases            |
+| Specification       | condition is tested directly                                  |
+| Compatibility Check | breaking public API change is detected                        |
+| Fitness Test        | architecture violation is caught by tooling                   |
 
 ---
 
@@ -1966,7 +1966,8 @@ Pattern is called production-ready without tests.
 
 ## 35. Existing Code Recovery Rule
 
-When recovering old code from `avax-backup.txt`, `Framework.txt`, `Components.txt`, or git history, do not restore advanced pattern structure blindly.
+When recovering old code from `avax-backup.txt`, `Framework.txt`, `Components.txt`, or git history, do not restore
+advanced pattern structure blindly.
 
 Translate by pressure and ownership.
 

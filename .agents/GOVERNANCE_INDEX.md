@@ -38,19 +38,19 @@ The `.agents/` folder is the project-local agent workspace.
 
 ## Task Routing
 
-| Task Type                  | Must Read                                                                       |
-|----------------------------|---------------------------------------------------------------------------------|
-| Architecture/refactor      | how-to-architecture, how-to-design-components, DDD extension, advanced patterns |
-| Events, listeners, CQRS, event sourcing | how-to-events-listeners-event-sourcing-cqrs-realtime, advanced patterns |
-| Component design           | how-to-design-components, security, performance, production readiness           |
-| PHP code                   | coding standards, code style, clean code                                        |
-| Modern PHP / attributes / DI | how-to-modern-php-attributes-di                                               |
-| Unit tests                 | how-to-unit-test                                                                |
-| Documentation              | how-to-document                                                                 |
-| Security-sensitive code    | how-to-system-security                                                          |
-| Performance-sensitive code | how-to-system-performance                                                       |
-| Review                     | how-to-code-review plus all applicable how-to docs                              |
-| Recovery                   | recovery skill, business-logic, memories, reports                               |
+| Task Type                               | Must Read                                                                       |
+|-----------------------------------------|---------------------------------------------------------------------------------|
+| Architecture/refactor                   | how-to-architecture, how-to-design-components, DDD extension, advanced patterns |
+| Events, listeners, CQRS, event sourcing | how-to-events-listeners-event-sourcing-cqrs-realtime, advanced patterns         |
+| Component design                        | how-to-design-components, security, performance, production readiness           |
+| PHP code                                | coding standards, code style, clean code                                        |
+| Modern PHP / attributes / DI            | how-to-modern-php-attributes-di                                                 |
+| Unit tests                              | how-to-unit-test                                                                |
+| Documentation                           | how-to-document                                                                 |
+| Security-sensitive code                 | how-to-system-security                                                          |
+| Performance-sensitive code              | how-to-system-performance                                                       |
+| Review                                  | how-to-code-review plus all applicable how-to docs                              |
+| Recovery                                | recovery skill, business-logic, memories, reports                               |
 
 ## Skill Routing
 
@@ -109,21 +109,21 @@ If a claim is important, it must point to:
 
 ## Document Scope
 
-| Document                                     | What It Covers                           |
-|----------------------------------------------|------------------------------------------|
-| how-to-architecture.md                       | Folder structure, screaming architecture |
-| how-to-design-components.md                  | Component lifecycle, canonical shape     |
-| how-to-use-advanced-architecture-patterns.md | Advanced patterns                        |
-| how-to-clean-code.md                         | Clean code                               |
-| how-to-coding-standards.md                   | Coding standards                         |
-| how-to-code-style.md                         | Code style                               |
-| how-to-unit-test.md                          | Testing                                  |
-| how-to-system-security.md                    | Security                                 |
-| how-to-system-performance.md                 | Performance                              |
-| how-to-document.md                           | Documentation                            |
-| how-to-production-readiness.md               | Production gates                         |
-| how-to-code-review.md                        | Review process                           |
-| how-to-modern-php-attributes-di.md           | Modern PHP 8.x, attributes, DI, compiled metadata |
+| Document                                                | What It Covers                                                                   |
+|---------------------------------------------------------|----------------------------------------------------------------------------------|
+| how-to-architecture.md                                  | Folder structure, screaming architecture                                         |
+| how-to-design-components.md                             | Component lifecycle, canonical shape                                             |
+| how-to-use-advanced-architecture-patterns.md            | Advanced patterns                                                                |
+| how-to-clean-code.md                                    | Clean code                                                                       |
+| how-to-coding-standards.md                              | Coding standards                                                                 |
+| how-to-code-style.md                                    | Code style                                                                       |
+| how-to-unit-test.md                                     | Testing                                                                          |
+| how-to-system-security.md                               | Security                                                                         |
+| how-to-system-performance.md                            | Performance                                                                      |
+| how-to-document.md                                      | Documentation                                                                    |
+| how-to-production-readiness.md                          | Production gates                                                                 |
+| how-to-code-review.md                                   | Review process                                                                   |
+| how-to-modern-php-attributes-di.md                      | Modern PHP 8.x, attributes, DI, compiled metadata                                |
 | how-to-events-listeners-event-sourcing-cqrs-realtime.md | Events DSL, listeners, event sourcing, CQRS, realtime, governance event sourcing |
 
 ## Conflict Resolution

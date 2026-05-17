@@ -2343,7 +2343,8 @@ Every status entry MUST include:
 
 A component with no status MUST NOT be silently treated as ACTIVE_GREEN.
 
-Gates must use component status ownership. A ROADMAP/SCAFFOLD/LABS_ONLY component MUST NOT leak into production runtime autoload unless explicitly justified.
+Gates must use component status ownership. A ROADMAP/SCAFFOLD/LABS_ONLY component MUST NOT leak into production runtime
+autoload unless explicitly justified.
 
 ---
 

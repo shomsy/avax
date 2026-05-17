@@ -13,6 +13,7 @@ maximize focus within the parent's context window.
 ## 1) Delegation Triggers
 
 A Supervisor should trigger sub-agent delegation when:
+
 - **Component isolation**: A task can be solved by modifying only 1-2 files.
 - **Context pressure**: The main session is > 60% of its context window.
 - **Spec-to-impl**: Generating detailed boilerplate from a high-level plan.
@@ -23,12 +24,12 @@ A Supervisor should trigger sub-agent delegation when:
 Before launching a sub-agent, the Supervisor MUST prune the context to the
 absolute minimum required for that specific sub-task.
 
-| Context Type | Pruning Rule |
-|:---|:---|
-| **Governance** | Include ONLY `AGENTS.md` and standard-specific rules. |
-| **Code** | Include ONLY the target file(s) and their direct dependencies. |
-| **History** | DO NOT include previous session logs; only the current "Mandate". |
-| **Rules** | Include only the relevant lane rules (e.g., just `coding` rules). |
+| Context Type   | Pruning Rule                                                      |
+|:---------------|:------------------------------------------------------------------|
+| **Governance** | Include ONLY `AGENTS.md` and standard-specific rules.             |
+| **Code**       | Include ONLY the target file(s) and their direct dependencies.    |
+| **History**    | DO NOT include previous session logs; only the current "Mandate". |
+| **Rules**      | Include only the relevant lane rules (e.g., just `coding` rules). |
 
 ## 3) Sub-Agent Token Budgets (Virtual)
 
@@ -43,11 +44,11 @@ When delegating, the Supervisor should define a "Virtual Token Budget":
 Different clients expose sub-agent capabilities in different ways. The
 Supervisor should prefer the client that matches the task shape:
 
-| Client | Best Fit | Harness Use |
-|:---|:---|:---|
-| **Cline** | Read-only exploration, long research tasks, context trimming | Use subagents for file mapping, inventory, and discovery. |
-| **OpenCode** | Primary/subagent orchestration, task permissions, hidden helper agents | Use harness-generated briefs as `mode: subagent` agent inputs. |
-| **Blackbox** | Remote multi-agent execution and branch-level parallel work | Use when the task should execute outside the local context loop. |
+| Client       | Best Fit                                                               | Harness Use                                                      |
+|:-------------|:-----------------------------------------------------------------------|:-----------------------------------------------------------------|
+| **Cline**    | Read-only exploration, long research tasks, context trimming           | Use subagents for file mapping, inventory, and discovery.        |
+| **OpenCode** | Primary/subagent orchestration, task permissions, hidden helper agents | Use harness-generated briefs as `mode: subagent` agent inputs.   |
+| **Blackbox** | Remote multi-agent execution and branch-level parallel work            | Use when the task should execute outside the local context loop. |
 
 The harness should not assume one client can do all three efficiently. Instead,
 it should emit the same subagent brief structure and let the client adapter

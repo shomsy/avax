@@ -2100,9 +2100,13 @@ Performance tests are the judge.
 
 ## 47. Security and Performance Trigger Cross-Rule
 
-Performance review MUST be triggered by changes to: hot paths, loops over routes/listeners/middleware, reflection, container resolution, event dispatch, queue workers, database query execution, route matching, filesystem scans, cache compile/read/write, boot/worker startup, long-lived runtime reset, serialization, hydration/extraction, projections/read models, graph compilation, or runtime scope creation/closing.
+Performance review MUST be triggered by changes to: hot paths, loops over routes/listeners/middleware, reflection,
+container resolution, event dispatch, queue workers, database query execution, route matching, filesystem scans, cache
+compile/read/write, boot/worker startup, long-lived runtime reset, serialization, hydration/extraction, projections/read
+models, graph compilation, or runtime scope creation/closing.
 
-If triggered, review evidence must include why performance is relevant, what was checked, result, remaining risk, and blocking decision. If not triggered, review must say why.
+If triggered, review evidence must include why performance is relevant, what was checked, result, remaining risk, and
+blocking decision. If not triggered, review must say why.
 
 For security triggers, see:
 
@@ -2153,7 +2157,10 @@ service locator in business/runtime code
 
 ### Rule
 
-The review MUST loudly flag anything that threatens security, data integrity, runtime safety, long-lived worker safety, dependency graph correctness, public API compatibility, static analysis baseline, test reliability, performance hot paths, observability of failures, rollback/recovery safety, container verification, request scope isolation, tenant isolation, state reset safety, or failure boundary correctness.
+The review MUST loudly flag anything that threatens security, data integrity, runtime safety, long-lived worker safety,
+dependency graph correctness, public API compatibility, static analysis baseline, test reliability, performance hot
+paths, observability of failures, rollback/recovery safety, container verification, request scope isolation, tenant
+isolation, state reset safety, or failure boundary correctness.
 
 The following must not pass silently:
 
@@ -2179,7 +2186,8 @@ large builders acting as hidden containers
 examples showing non-canonical style
 ```
 
-If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness, it must scream in review.
+If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness,
+it must scream in review.
 
 ---
 

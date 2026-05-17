@@ -17,8 +17,7 @@ delegate complex or token-heavy sub-tasks to a specialized **Sub-Agent**.
 ## How to Delegate
 1. **Define the Mandate**: Be extremely specific about the GOAL and the EXIT CRITERIA.
 2. **Select Target Files**: Only include files that are absolutely necessary.
-3. **Select Client Profile**: Choose the best fit (Cline for research, OpenCode for restricted sub-tasks, Blackbox for
-   remote parallelism).
+3. **Select Client Profile**: Choose the best fit (Cline for research, OpenCode for restricted sub-tasks, Blackbox for remote parallelism).
 4. **Execute Dispatcher**: Run the `subagent-dispatch.sh` script to prepare the sub-session.
 5. **Handoff**: Use the generated `pruned-context.md` as the direct prompt for the sub-agent.
 6. **Merge**: Once the sub-agent completes the task, read the artifacts and update the main session.

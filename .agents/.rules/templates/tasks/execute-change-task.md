@@ -15,16 +15,16 @@ Implement the requested code change based on the brief and any prior research fi
 
 ## Input
 
-| Field                 | Description                                |
-|:----------------------|:-------------------------------------------|
-| `task_id`             | Unique task identifier                     |
-| `session_id`          | Session identifier                         |
-| `user_prompt`         | Original user request                      |
-| `brief`               | Concise brief from previous agents         |
-| `relevant_files`      | Files to modify (from Mapper)              |
-| `docs_findings`       | Documentation references (from Researcher) |
-| `acceptance_criteria` | What defines success                       |
-| `constraints`         | What NOT to do                             |
+| Field | Description |
+|:------|:------------|
+| `task_id` | Unique task identifier |
+| `session_id` | Session identifier |
+| `user_prompt` | Original user request |
+| `brief` | Concise brief from previous agents |
+| `relevant_files` | Files to modify (from Mapper) |
+| `docs_findings` | Documentation references (from Researcher) |
+| `acceptance_criteria` | What defines success |
+| `constraints` | What NOT to do |
 
 ---
 

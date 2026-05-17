@@ -1,9 +1,7 @@
 # Skill: User Feedback Synthesis (`/user-synthesis`)
 
 ## Purpose
-
-Process raw interview transcripts, survey results, or customer feedback into structured **User Personas** and **Pain
-Point** libraries.
+Process raw interview transcripts, survey results, or customer feedback into structured **User Personas** and **Pain Point** libraries.
 
 ## Trigger
 - User provides a new interview log or feedback batch.

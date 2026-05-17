@@ -9,22 +9,21 @@
 
 ## Goal
 
-Review code changes for correctness, security, performance, and regression risks. Provide clear allow/block
-recommendation.
+Review code changes for correctness, security, performance, and regression risks. Provide clear allow/block recommendation.
 
 ---
 
 ## Input
 
-| Field                 | Description                  |
-|:----------------------|:-----------------------------|
-| `task_id`             | Unique task identifier       |
-| `session_id`          | Session identifier           |
-| `user_prompt`         | Original user request        |
-| `code_changes`        | Changes made by Executor     |
-| `diff_summary`        | Summary of changes           |
+| Field | Description |
+|:------|:------------|
+| `task_id` | Unique task identifier |
+| `session_id` | Session identifier |
+| `user_prompt` | Original user request |
+| `code_changes` | Changes made by Executor |
+| `diff_summary` | Summary of changes |
 | `acceptance_criteria` | Original acceptance criteria |
-| `relevant_files`      | Files modified               |
+| `relevant_files` | Files modified |
 
 ---
 
@@ -57,14 +56,14 @@ max_files: 15
 2. **Check acceptance criteria** - verify each is addressed
 3. **Identify risks** - security, performance, regression
 4. **Check for common issues:**
-    - Security vulnerabilities
-    - Memory leaks
-    - Race conditions
-    - Missing error handling
-    - Incomplete error handling
-    - SQL injection points
-    - XSS vulnerabilities
-    - Authentication/authorization gaps
+   - Security vulnerabilities
+   - Memory leaks
+   - Race conditions
+   - Missing error handling
+   - Incomplete error handling
+   - SQL injection points
+   - XSS vulnerabilities
+   - Authentication/authorization gaps
 5. **Verify tests** - are they adequate?
 6. **Return structured artifact**
 
@@ -210,34 +209,34 @@ acceptance_criteria:
 
 ## Risk Categories
 
-| Category        | Description                                       |
-|:----------------|:--------------------------------------------------|
-| **security**    | Vulnerabilities, injection points, auth gaps      |
+| Category | Description |
+|:---------|:------------|
+| **security** | Vulnerabilities, injection points, auth gaps |
 | **performance** | Memory leaks, N+1 queries, inefficient algorithms |
-| **regression**  | Breaking existing functionality                   |
-| **complexity**  | Over-engineered solutions, hard to maintain       |
+| **regression** | Breaking existing functionality |
+| **complexity** | Over-engineered solutions, hard to maintain |
 
 ---
 
 ## Severity Levels
 
-| Severity     | Action Required                           |
-|:-------------|:------------------------------------------|
+| Severity | Action Required |
+|:---------|:----------------|
 | **critical** | MUST block - security breach or data loss |
-| **high**     | MUST block - significant bug or risk      |
-| **medium**   | SHOULD fix before merge                   |
-| **low**      | RECOMMENDED to fix, but not blocking      |
+| **high** | MUST block - significant bug or risk |
+| **medium** | SHOULD fix before merge |
+| **low** | RECOMMENDED to fix, but not blocking |
 
 ---
 
 ## Review Decision
 
-| Decision        | Meaning                                 |
-|:----------------|:----------------------------------------|
-| **allow**       | Safe to merge - no blocking issues      |
+| Decision | Meaning |
+|:---------|:--------|
+| **allow** | Safe to merge - no blocking issues |
 | **conditional** | Allow with minor issues - document them |
-| **block**       | Do not merge - fix issues first         |
-| **escalate**    | Requires human judgment                 |
+| **block** | Do not merge - fix issues first |
+| **escalate** | Requires human judgment |
 
 ---
 

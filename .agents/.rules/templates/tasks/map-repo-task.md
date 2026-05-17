@@ -15,12 +15,12 @@ Map the codebase to identify relevant files, entry points, and dependencies for 
 
 ## Input
 
-| Field         | Description                                             |
-|:--------------|:--------------------------------------------------------|
-| `task_id`     | Unique task identifier                                  |
-| `session_id`  | Session identifier                                      |
-| `user_prompt` | Original user request                                   |
-| `focus_area`  | What area to focus on (e.g., "auth", "payments", "API") |
+| Field | Description |
+|:------|:------------|
+| `task_id` | Unique task identifier |
+| `session_id` | Session identifier |
+| `user_prompt` | Original user request |
+| `focus_area` | What area to focus on (e.g., "auth", "payments", "API") |
 
 ---
 

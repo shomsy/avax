@@ -1,502 +1,731 @@
 #!/usr/bin/env python3
-"""agent-harness-diagnose.py — Interactive Diagnostics & Self-Healing for Agent Harness.
+"""agent-harness-diagnose.py — V6 Adoption & Upgrade Diagnostics
 
-Provides:
-  diagnose   — Full system health check with explain-why failures
-  bootstrap  — One-command onboarding for new repositories
-  status     — Quick operational status summary
-  self-heal  — Automatic repair suggestions for detected issues
+Diagnoses adoption readiness, upgrade readiness, migration readiness,
+install health, and orphan runtime artifact detection.
 
 Usage:
-  python3 agent-harness-diagnose.py diagnose [--dir <dir>]
-  python3 agent-harness-diagnose.py bootstrap [--dir <dir>]
-  python3 agent-harness-diagnose.py status [--dir <dir>]
-  python3 agent-harness-diagnose.py self-heal [--dir <dir>]
+    python3 agent-harness-diagnose.py /path/to/project [--verbose] [--json]
 """
 
+import json
 import os
 import sys
-import json
-import stat
-import shutil
-import time
+import hashlib
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
 
-# ---------------------------------------------------------------------------
-# Constants
-# ---------------------------------------------------------------------------
-
-BIN_DIR = os.path.dirname(os.path.abspath(__file__))
-REQUIRED_PYTHON = (3, 9)
-REQUIRED_BIN_FILES = [
-    "execution-substrate.py",
-    "substrate_security.py",
-    "command_sandbox.py",
-    "crypto_seals.py",
-    "execution_analysis.py",
-    "compile-governance.py",
-    "lint-governance.py",
-    "check-complexity-budget.py",
-    "evidence-lifecycle.py",
-    "replay-evidence.py",
-]
-REQUIRED_HOOK_FILES = [
-    "lib.sh",
-    "session-start.sh",
-    "pre-task.sh",
-    "post-task.sh",
-    "pre-tool-use.sh",
-    "post-tool-use.sh",
-    "resolve-task-context.py",
-]
-REQUIRED_DIRS = [
-    ".agents/management/evidence",
-    ".agents/management/evidence/execution",
-    ".agents/management/evidence/security",
-    ".agents/management/evidence/generated",
-    ".agents/management/evidence/traces",
-    ".agents/management/evidence/raw",
-    ".agents/management/evidence/archive",
-    ".agents/skills/bin",
-    ".agents/hooks",
-    ".agents/governance",
-]
-REQUIRED_GOVERNANCE_FILES = [
-    ".agents/AGENTS.md",
-    ".agents/governance/core/quality/quality-gates.md",
-    ".agents/governance/core/bootstrap/agent-bootstrap.md",
-    ".agents/governance/core/resolution/profile-resolution-algorithm.md",
+# Runtime exclusion patterns matching the installer
+RUNTIME_EXCLUDE_PATTERNS = [
+    "__pycache__", "*.pyc", "*.pyo", ".pytest_cache",
+    "replay-snapshot*", "replay_snapshot*", "quarantine",
+    "stress-output*", "stress_output*", "*.tmp", "*.tmp.*",
+    ".DS_Store", "Thumbs.db", "*.lock", "node_modules", "vendor",
 ]
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
+# Forbidden folder names — based on AvaX AGENTS.md Section 8
+# These are generic technical dumping grounds that should not exist.
+FORBIDDEN_DIRECTORY_NAMES = {
+    "Services", "Helpers", "Utils", "Common", "Shared",
+    "Managers", "Core", "Support", "Adapters", "Contracts",
+    "Handlers", "Processors", "Commands", "Queries",
+    "Domain", "Entities", "ValueObjects", "Aggregates",
+    "Repositories", "Events", "CQRS", "EventSourcing",
+    "Sagas", "Policies", "Specifications",
+    "Diagnostics", "Tests", "Docs",
+    "InternalSystem", "ExportedCapabilities",
+}
 
-def _target_dir(path=None):
-    return os.path.normpath(path) if path else "."
+# Allowed ecosystem terms — these are legitimate framework/runtime names
+# that may appear in paths even though they overlap with forbidden terms.
+ALLOWED_ECOSYSTEM_TERMS = {
+    # PHP ecosystem
+    "ServiceProvider", "Middleware", "Console", "Migrations",
+    "Factories", "Seeders", "Listeners", "Observers",
+    "Providers", "Facades", "Controllers", "Requests",
+    "Resources", "Notifications", "Mail", "Channels",
+    # Runtime adapters
+    "RoadRunner", "Swoole", "FrankenPHP", "Workerman",
+    "ReactPHP", "Amp", "Fiber",
+    # Testing
+    "PHPUnit", "Pest", "TestCase", "Feature", "Unit",
+    # Build/CI
+    "Composer", "Rector", "PHPStan", "CSFixer",
+}
 
 
-def _check(cond, label, detail="", fix=""):
-    """Return a check result dict."""
-    status = "PASS" if cond else "FAIL"
-    return {
-        "status": status,
-        "label": label,
-        "detail": detail if detail else ("OK" if cond else "Not found / not valid"),
-        "fix": fix if not cond else "",
+def file_checksum(path: str) -> str:
+    """SHA256 checksum of a file."""
+    h = hashlib.sha256()
+    try:
+        with open(path, "rb") as f:
+            for chunk in iter(lambda: f.read(8192), b""):
+                h.update(chunk)
+        return h.hexdigest()
+    except (OSError, IOError):
+        return ""
+
+
+class LayoutDetector:
+    """Detect which Agent Harness layout is in use.
+
+    Adopted layout (preferred): .agents/.rules/skills/bin, .agents/.rules/governance
+    Legacy/local layout:       .agents/skills/bin, .agents/governance
+    """
+
+    def __init__(self, target: Path):
+        self.target = target
+        self._layout = self._detect()
+
+    @property
+    def name(self) -> str:
+        return self._layout
+
+    @property
+    def skills_bin(self) -> Path:
+        if self._layout == "adopted":
+            return self.target / ".agents" / ".rules" / "skills" / "bin"
+        return self.target / ".agents" / "skills" / "bin"
+
+    @property
+    def hooks(self) -> Path:
+        if self._layout == "adopted":
+            return self.target / ".agents" / ".rules" / "hooks"
+        return self.target / ".agents" / "hooks"
+
+    @property
+    def governance(self) -> Path:
+        if self._layout == "adopted":
+            return self.target / ".agents" / ".rules" / "governance"
+        return self.target / ".agents" / "governance"
+
+    @property
+    def baseline_rules(self) -> Path:
+        return self.target / ".agents" / ".rules"
+
+    @property
+    def workspace_skills(self) -> Path:
+        """Non-baseline skills dir (workspace, not .rules)."""
+        return self.target / ".agents" / "skills"
+
+    def _detect(self) -> str:
+        adopted = (
+            (self.target / ".agents" / ".rules" / "skills" / "bin").is_dir()
+            or (self.target / ".agents" / ".rules" / "governance").is_dir()
+        )
+        if adopted:
+            return "adopted"
+        return "legacy"
+
+
+def _resolve_skills_bin(target: Path) -> Path:
+    """Return the skills/bin path, adopted layout first."""
+    adopted = target / ".agents" / ".rules" / "skills" / "bin"
+    if adopted.is_dir():
+        return adopted
+    return target / ".agents" / "skills" / "bin"
+
+
+def _resolve_hooks(target: Path) -> Path:
+    """Return the hooks path, adopted layout first."""
+    adopted = target / ".agents" / ".rules" / "hooks"
+    if adopted.is_dir():
+        return adopted
+    return target / ".agents" / "hooks"
+
+
+def _resolve_governance(target: Path) -> Path:
+    """Return the governance path, adopted layout first."""
+    adopted = target / ".agents" / ".rules" / "governance"
+    if adopted.is_dir():
+        return adopted
+    return target / ".agents" / "governance"
+
+
+def is_runtime_excluded(path_str: str) -> bool:
+    """Check if a path matches runtime exclusion patterns."""
+    p = Path(path_str)
+    name = p.name
+
+    for pattern in RUNTIME_EXCLUDE_PATTERNS:
+        if "*" in pattern:
+            import fnmatch
+            if fnmatch.fnmatch(name, pattern) or fnmatch.fnmatch(str(p), pattern):
+                return True
+        else:
+            if pattern in str(p) or pattern == name:
+                return True
+    return False
+
+
+def diagnose(target: str, verbose: bool = False) -> dict[str, Any]:
+    """Run full diagnostic suite against target project."""
+    result: dict[str, Any] = {
+        "diagnostic_version": "6.0.0",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "target": os.path.abspath(target),
+        "overall_status": "GREEN",
+        "checks": {},
+        "findings": [],
+        "recommendations": [],
     }
 
+    target_path = Path(target).resolve()
 
-def _run_check(path, label, fix=""):
-    return _check(os.path.exists(path), label, fix=fix)
+    # Detect layout
+    layout = LayoutDetector(target_path)
+    result["detected_layout"] = layout.name
 
+    # --- ADOPTION READINESS ---
+    adoption = _check_adoption_readiness(target_path, layout, verbose)
+    result["checks"]["adoption_readiness"] = adoption
+    result["findings"].extend(adoption.get("findings", []))
 
-# ---------------------------------------------------------------------------
-# Diagnose
-# ---------------------------------------------------------------------------
+    # --- UPGRADE READINESS ---
+    upgrade = _check_upgrade_readiness(target_path, layout, verbose)
+    result["checks"]["upgrade_readiness"] = upgrade
+    result["findings"].extend(upgrade.get("findings", []))
 
-def diagnose(target_dir="."):
-    """Run full system health check."""
-    td = _target_dir(target_dir)
-    results = []
+    # --- MIGRATION READINESS ---
+    migration = _check_migration_readiness(target_path, layout, verbose)
+    result["checks"]["migration_readiness"] = migration
+    result["findings"].extend(migration.get("findings", []))
 
-    # 1. Python version
-    py_ok = sys.version_info >= REQUIRED_PYTHON
-    results.append(_check(
-        py_ok,
-        "Python version",
-        f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
-        f"Upgrade to Python {'.'.join(str(x) for x in REQUIRED_PYTHON)}+",
-    ))
+    # --- INSTALL HEALTH ---
+    health = _check_install_health(target_path, layout, verbose)
+    result["checks"]["install_health"] = health
+    result["findings"].extend(health.get("findings", []))
 
-    # 2. Required bin files
-    for f in REQUIRED_BIN_FILES:
-        p = os.path.join(td, ".agents/skills/bin", f)
-        results.append(_run_check(
-            p, f"bin/{f}",
-            f"Re-run install-os.sh or copy {f} to .agents/skills/bin/",
-        ))
+    # --- ORPHAN RUNTIME ARTIFACTS ---
+    orphans = _check_orphan_artifacts(target_path, layout, verbose)
+    result["checks"]["orphan_artifacts"] = orphans
+    result["findings"].extend(orphans.get("findings", []))
 
-    # 3. Required hook files
-    for f in REQUIRED_HOOK_FILES:
-        p = os.path.join(td, ".agents/hooks", f)
-        results.append(_run_check(
-            p, f"hooks/{f}",
-            f"Re-run install-os.sh or copy {f} to .agents/hooks/",
-        ))
+    # --- BASELINE INTEGRITY ---
+    baseline = _check_baseline_integrity(target_path, layout, verbose)
+    result["checks"]["baseline_integrity"] = baseline
+    result["findings"].extend(baseline.get("findings", []))
 
-    # 4. Required directories
-    for d in REQUIRED_DIRS:
-        p = os.path.join(td, d)
-        results.append(_run_check(
-            p, f"dir {d}",
-            f"mkdir -p {d}",
-        ))
+    # --- NAMING COMPLIANCE ---
+    naming = _check_naming_compliance(target_path, layout, verbose)
+    result["checks"]["naming_compliance"] = naming
+    result["findings"].extend(naming.get("findings", []))
 
-    # 5. Governance contract files
-    for f in REQUIRED_GOVERNANCE_FILES:
-        p = os.path.join(td, f)
-        results.append(_run_check(
-            p, f"governance {f}",
-            f"Restore {f} from agent-harness repository",
-        ))
+    # Determine overall status
+    severities = [f.get("severity", "info") for f in result["findings"]]
+    if any(s == "critical" for s in severities):
+        result["overall_status"] = "RED"
+    elif any(s == "warning" for s in severities):
+        result["overall_status"] = "YELLOW"
 
-    # 6. HMAC key (security)
-    hmac_key = os.path.join(td, ".agents/management/evidence/security/hmac-key.bin")
-    hmac_exists = os.path.exists(hmac_key)
-    hmac_perm_ok = False
-    if hmac_exists:
-        st = os.stat(hmac_key)
-        hmac_perm_ok = stat.S_IMODE(st.st_mode) == 0o600
-    results.append(_check(
-        hmac_exists,
-        "HMAC key exists",
-        fix="Run: python3 .agents/skills/bin/crypto_seals.py key generate",
-    ))
-    if hmac_exists:
-        results.append(_check(
-            hmac_perm_ok,
-            "HMAC key permissions (0o600)",
-            fix="Run: chmod 600 " + hmac_key,
-        ))
+    # Generate recommendations
+    if result["overall_status"] == "RED":
+        result["recommendations"].append("Resolve critical findings before adoption")
+    if not adoption.get("ready", False):
+        result["recommendations"].append("Run install-os.sh --adopt to establish baseline")
+    if orphans.get("orphan_count", 0) > 5:
+        result["recommendations"].append("Consider cleaning orphan runtime artifacts")
 
-    # 7. AGENTS.md at root
-    results.append(_run_check(
-        os.path.join(td, "AGENTS.md"),
-        "Root AGENTS.md",
-        "Copy scaffolds/AGENTS.md to repository root and customize",
-    ))
-
-    # 8. install-os.sh executable
-    installer = os.path.join(td, "install-os.sh")
-    if os.path.exists(installer):
-        inst_exec = os.access(installer, os.X_OK)
-        results.append(_check(
-            inst_exec,
-            "install-os.sh is executable",
-            fix="chmod +x install-os.sh",
-        ))
-
-    # 9. Evidence directory not bloated (>100MB)
-    evidence_dir = os.path.join(td, ".agents/management/evidence")
-    if os.path.exists(evidence_dir):
-        total_size = sum(
-            os.path.getsize(os.path.join(dirpath, filename))
-            for dirpath, dirnames, filenames in os.walk(evidence_dir)
-            for filename in filenames
-        )
-        size_mb = total_size / (1024 * 1024)
-        results.append(_check(
-            size_mb < 100,
-            f"Evidence size ({size_mb:.1f}MB < 100MB)",
-            fix="Run: python3 .agents/skills/bin/evidence-lifecycle.py compact",
-        ))
-
-    # 10. No shell=True in execution path
-    exec_substrate = os.path.join(td, ".agents/skills/bin/execution-substrate.py")
-    if os.path.exists(exec_substrate):
-        with open(exec_substrate, "r") as f:
-            content = f.read()
-        shell_true = "shell=True" in content
-        results.append(_check(
-            not shell_true,
-            "No shell=True in execution-substrate.py",
-            fix="Use SafeSubprocessRunner from command_sandbox.py",
-        ))
-
-    # Summary
-    passed = sum(1 for r in results if r["status"] == "PASS")
-    failed = sum(1 for r in results if r["status"] == "FAIL")
-
-    print("=" * 70)
-    print(" AGENT HARNESS DIAGNOSTICS")
-    print("=" * 70)
-    for r in results:
-        icon = "OK" if r["status"] == "PASS" else "FAIL"
-        print(f"  [{icon}] {r['label']}: {r['detail']}")
-        if r["fix"]:
-            print(f"         FIX: {r['fix']}")
-    print("-" * 70)
-    print(f"  Results: {passed} passed, {failed} failed, {len(results)} total")
-    print("=" * 70)
-
-    return failed == 0
+    return result
 
 
-# ---------------------------------------------------------------------------
-# Bootstrap
-# ---------------------------------------------------------------------------
-
-def bootstrap(target_dir="."):
-    """One-command onboarding for a new repository."""
-    td = _target_dir(target_dir)
-    steps = []
-
-    # Step 1: Create directory structure
-    for d in REQUIRED_DIRS:
-        p = os.path.join(td, d)
-        if not os.path.exists(p):
-            os.makedirs(p, exist_ok=True)
-            steps.append(f"  Created: {d}")
-
-    # Step 2: Copy skeleton if not present
-    agents_md = os.path.join(td, "AGENTS.md")
-    if not os.path.exists(agents_md):
-        scaffold = os.path.join(os.path.dirname(BIN_DIR), "..", "..", "scaffolds", "AGENTS.md")
-        if os.path.exists(scaffold):
-            shutil.copy2(scaffold, agents_md)
-            steps.append("  Copied: scaffolds/AGENTS.md -> AGENTS.md")
-        else:
-            steps.append("  SKIP: AGENTS.md scaffold not found (copy manually)")
-
-    # Step 3: Create management files
-    mgmt_files = {
-        "CURRENT.md": "# Operational Truth\n\n- Status: BOOTSTRAPPING\n",
-        "STATUS.md": "# Status\n\n- Overall: YELLOW (bootstrapping)\n",
-        "TODO.md": "# TODO\n\n# Backlog items go here\n",
-        "BUGS.md": "# Bugs\n\n# No active bugs\n",
-        "DECISIONS.md": "# Decisions\n\n# Architecture decisions go here\n",
-        "RISKS.md": "# Risks\n\n# Risk register\n",
+def _check_adoption_readiness(target: Path, layout: LayoutDetector, verbose: bool) -> dict[str, Any]:
+    """Check if the target is ready for adoption."""
+    check = {
+        "ready": True,
+        "status": "GREEN",
+        "findings": [],
+        "metrics": {},
     }
-    for name, content in mgmt_files.items():
-        p = os.path.join(td, ".agents/management", name)
-        if not os.path.exists(p):
-            with open(p, "w") as f:
-                f.write(content)
-            steps.append(f"  Created: .agents/management/{name}")
 
-    # Step 4: Generate HMAC key
-    hmac_key = os.path.join(td, ".agents/management/evidence/security/hmac-key.bin")
-    if not os.path.exists(hmac_key):
-        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-        from crypto_seals import HMACKeyManager
-        mgr = HMACKeyManager(target_dir=td)
-        key = mgr.generate_key()
-        mgr.save_key(key)
-        steps.append("  Generated: HMAC-SHA256 key")
+    has_agents = (target / ".agents").is_dir()
+    has_agents_md = (target / "AGENTS.md").is_file()
+    has_evidence = (target / "EVIDENCE").is_dir()
+    has_baseline = layout.baseline_rules.is_dir()
 
-    # Step 5: Verify governance files
-    missing_gov = []
-    for f in REQUIRED_GOVERNANCE_FILES:
-        if not os.path.exists(os.path.join(td, f)):
-            missing_gov.append(f)
-    if missing_gov:
-        steps.append(f"  WARNING: Missing governance files: {', '.join(missing_gov)}")
+    check["metrics"] = {
+        "has_agents": has_agents,
+        "has_agents_md": has_agents_md,
+        "has_evidence": has_evidence,
+        "has_baseline_rules": has_baseline,
+        "detected_layout": layout.name,
+    }
+
+    if has_baseline:
+        check["findings"].append({
+            "severity": "info",
+            "message": "Baseline rules already installed, adoption will be merge-aware",
+        })
+    elif has_agents:
+        check["findings"].append({
+            "severity": "warning",
+            "message": ".agents exists but no baseline rules; adoption will overlay",
+        })
     else:
-        steps.append("  Verified: All core governance files present")
+        check["findings"].append({
+            "severity": "info",
+            "message": "Clean target, adoption will create full baseline",
+        })
 
-    # Step 6: Compile governance index
-    compile_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "compile-governance.py")
-    if os.path.exists(compile_script):
-        import subprocess
-        rc = subprocess.run([sys.executable, compile_script, "--dir", td], capture_output=True, text=True)
-        if rc.returncode == 0:
-            steps.append("  Compiled: governance index")
+    # Check for pre-existing governance conflicts
+    custom_gov = list((target / ".agents").glob("governance/**/*")) if (target / ".agents").is_dir() else []
+    if custom_gov:
+        check["findings"].append({
+            "severity": "info",
+            "message": f"Pre-existing custom governance found ({len(custom_gov)} files)",
+        })
+
+    # Check for interrupted install markers
+    journal_dir = target / ".agents" / "management" / "evidence" / "install-journal"
+    if journal_dir.is_dir():
+        interrupted = list(journal_dir.glob("interrupted-*.json"))
+        if interrupted:
+            check["findings"].append({
+                "severity": "warning",
+                "message": f"{len(interrupted)} interrupted install recovery markers found",
+            })
+
+    return check
+
+
+def _check_upgrade_readiness(target: Path, layout: LayoutDetector, verbose: bool) -> dict[str, Any]:
+    """Check if the target is ready for upgrade."""
+    check = {
+        "ready": False,
+        "status": "RED",
+        "findings": [],
+        "metrics": {},
+    }
+
+    baseline_dir = layout.baseline_rules
+    if not baseline_dir.is_dir():
+        check["findings"].append({
+            "severity": "critical",
+            "message": "No baseline rules found; run --adopt before --upgrade",
+        })
+        return check
+
+    check["ready"] = True
+    check["status"] = "GREEN"
+
+    # Count baseline files
+    baseline_files = list(baseline_dir.rglob("*"))
+    baseline_files = [f for f in baseline_files if f.is_file() and not is_runtime_excluded(str(f))]
+    check["metrics"]["baseline_file_count"] = len(baseline_files)
+
+    # Check for locally modified baseline files
+    # (Would need source comparison — just report count for now)
+    check["metrics"]["baseline_path"] = str(baseline_dir)
+
+    # Check journal for last install version
+    journal_dir = target / ".agents" / "management" / "evidence" / "install-journal"
+    if journal_dir.is_dir():
+        journals = sorted(journal_dir.glob("journal-*.jsonl"))
+        if journals:
+            last_journal = journals[-1]
+            check["metrics"]["last_install_journal"] = last_journal.name
+            check["findings"].append({
+                "severity": "info",
+                "message": f"Last install journal: {last_journal.name}",
+            })
+
+    return check
+
+
+def _check_migration_readiness(target: Path, layout: LayoutDetector, verbose: bool) -> dict[str, Any]:
+    """Check if the target has legacy structures that need migration."""
+    check = {
+        "ready": False,
+        "has_legacy": False,
+        "status": "GREEN",
+        "findings": [],
+        "metrics": {},
+    }
+
+    legacy_items = []
+
+    # Check for legacy management files at old locations
+    mgmt_dir = target / ".agents" / "management"
+    if mgmt_dir.is_dir():
+        for legacy in ["BUGS.md", "TODO.md"]:
+            if (mgmt_dir / legacy).is_file():
+                legacy_items.append(f".agents/management/{legacy}")
+
+    # Check for docs/governance
+    docs_gov = target / "docs" / "governance"
+    if docs_gov.is_dir():
+        legacy_items.append("docs/governance")
+
+    # Check for old harness artifacts
+    for old_artifact in ["merge-files.sh", "verify-governance.sh"]:
+        if (target / old_artifact).is_file():
+            # These are actually current, not legacy
+            pass
+
+    check["metrics"]["legacy_items"] = legacy_items
+    check["has_legacy"] = len(legacy_items) > 0
+
+    if legacy_items:
+        check["ready"] = True
+        check["findings"].append({
+            "severity": "info",
+            "message": f"Legacy structures found: {', '.join(legacy_items)}",
+        })
+        check["findings"].append({
+            "severity": "info",
+            "message": "Run install-os.sh --migrate to archive legacy structures",
+        })
+    else:
+        check["findings"].append({
+            "severity": "info",
+            "message": "No legacy structures detected",
+        })
+
+    return check
+
+
+def _check_install_health(target: Path, layout: LayoutDetector, verbose: bool) -> dict[str, Any]:
+    """Check the health of the current installation."""
+    check = {
+        "status": "GREEN",
+        "findings": [],
+        "metrics": {},
+    }
+
+    required_dirs = [
+        ".agents/.rules",
+        ".agents/management",
+        ".agents/management/evidence",
+        ".agents/management/evidence/validation",
+        ".agents/management/evidence/generated",
+        ".agents/management/evidence/install-journal",
+        ".agents/business-logic",
+        ".agents/language-specific",
+    ]
+
+    # Skills dir: check adopted layout first, then workspace skills
+    skills_bin = _resolve_skills_bin(target)
+    if skills_bin.is_dir():
+        check["metrics"]["skills_bin_path"] = str(skills_bin.relative_to(target))
+    else:
+        required_dirs.append(str(skills_bin.relative_to(target)))
+
+    missing_dirs = []
+    for d in required_dirs:
+        if not (target / d).is_dir():
+            missing_dirs.append(d)
+
+    check["metrics"]["required_dirs_total"] = len(required_dirs)
+    check["metrics"]["required_dirs_present"] = len(required_dirs) - len(missing_dirs)
+    check["metrics"]["required_dirs_missing"] = missing_dirs
+
+    if missing_dirs:
+        check["status"] = "YELLOW"
+        check["findings"].append({
+            "severity": "warning",
+            "message": f"{len(missing_dirs)} required directories missing: {', '.join(missing_dirs)}",
+        })
+
+    # Check for AGENTS.md
+    if not (target / "AGENTS.md").is_file():
+        check["status"] = "RED"
+        check["findings"].append({
+            "severity": "critical",
+            "message": "Root AGENTS.md contract missing",
+        })
+    else:
+        check["metrics"]["agents_md_size"] = (target / "AGENTS.md").stat().st_size
+
+    # Check evidence dashboard
+    evidence_files = ["CURRENT.md", "ACTIVE_PLAN.md", "FLOW.md", "LINKS.md"]
+    present_evidence = []
+    for ef in evidence_files:
+        if (target / "EVIDENCE" / ef).is_file():
+            present_evidence.append(ef)
+
+    check["metrics"]["evidence_dashboard_files"] = f"{len(present_evidence)}/{len(evidence_files)}"
+
+    if len(present_evidence) < len(evidence_files):
+        check["findings"].append({
+            "severity": "warning",
+            "message": f"Incomplete evidence dashboard: {len(present_evidence)}/{len(evidence_files)} files",
+        })
+
+    # Check workspace directories
+    workspace_dirs = [
+        ".agents/memory",
+        ".agents/sessions",
+        ".agents/context/product",
+        ".agents/context/users",
+        ".agents/context/strategy",
+        ".agents/context/stakeholders",
+    ]
+    missing_ws = [d for d in workspace_dirs if not (target / d).is_dir()]
+    check["metrics"]["workspace_dirs_missing"] = len(missing_ws)
+
+    return check
+
+
+def _check_orphan_artifacts(target: Path, layout: LayoutDetector, verbose: bool) -> dict[str, Any]:
+    """Detect orphan runtime artifacts that should be cleaned."""
+    check = {
+        "orphan_count": 0,
+        "status": "GREEN",
+        "findings": [],
+        "orphans": [],
+    }
+
+    # Scan for common orphan patterns
+    orphan_patterns = [
+        ("__pycache__", "Python bytecode cache"),
+        (".pytest_cache", "Pytest cache"),
+        ("*.pyc", "Compiled Python files"),
+        ("*.pyo", "Optimized Python files"),
+        ("replay-snapshot*", "Replay snapshot artifacts"),
+        ("quarantine", "Quarantined artifacts"),
+        ("stress-output*", "Stress test output"),
+        (".DS_Store", "macOS metadata"),
+        ("Thumbs.db", "Windows thumbnails"),
+    ]
+
+    found_orphans = []
+    for pattern, description in orphan_patterns:
+        if "*" in pattern:
+            import fnmatch
+            for root, dirs, files in os.walk(target):
+                # Skip .git and vendor
+                if ".git" in root or "vendor" in root:
+                    continue
+                for f in files:
+                    if fnmatch.fnmatch(f, pattern):
+                        full_path = os.path.join(root, f)
+                        rel = os.path.relpath(full_path, target)
+                        found_orphans.append({"path": rel, "type": description})
+                for d in dirs:
+                    if fnmatch.fnmatch(d, pattern):
+                        full_path = os.path.join(root, d)
+                        rel = os.path.relpath(full_path, target)
+                        found_orphans.append({"path": rel, "type": description})
         else:
-            steps.append(f"  SKIP: governance compilation failed ({rc.stderr.strip()})")
-
-    print("=" * 70)
-    print(" AGENT HARNESS BOOTSTRAP")
-    print("=" * 70)
-    for s in steps:
-        print(s)
-    print("=" * 70)
-    print("  Next: Run 'python3 agent-harness-diagnose.py diagnose' to verify")
-    print("=" * 70)
-    return True
-
-
-# ---------------------------------------------------------------------------
-# Status
-# ---------------------------------------------------------------------------
-
-def status(target_dir="."):
-    """Quick operational status."""
-    td = _target_dir(target_dir)
-
-    # Count executions
-    exec_dir = os.path.join(td, ".agents/management/evidence/execution")
-    exec_count = 0
-    if os.path.exists(exec_dir):
-        exec_count = len([f for f in os.listdir(exec_dir) if f.startswith("execution-manifest-")])
-
-    # Check HMAC chain
-    chain_path = os.path.join(td, ".agents/management/evidence/security/hmac-audit-chain.jsonl")
-    chain_entries = 0
-    if os.path.exists(chain_path):
-        with open(chain_path, "r") as f:
-            chain_entries = sum(1 for line in f if line.strip())
-
-    # Evidence size
-    evidence_dir = os.path.join(td, ".agents/management/evidence")
-    total_size = 0
-    if os.path.exists(evidence_dir):
-        total_size = sum(
-            os.path.getsize(os.path.join(dirpath, filename))
-            for dirpath, dirnames, filenames in os.walk(evidence_dir)
-            for filename in filenames
-        )
-
-    # Governance rules
-    index_path = os.path.join(td, ".agents/management/evidence/generated/governance-index.json")
-    rule_count = 0
-    if os.path.exists(index_path):
-        with open(index_path, "r") as f:
-            data = json.load(f)
-        rule_count = len(data.get("files", {}))
-
-    print("=" * 70)
-    print(" AGENT HARNESS STATUS")
-    print("=" * 70)
-    print(f"  Executions tracked:  {exec_count}")
-    print(f"  HMAC audit entries:  {chain_entries}")
-    print(f"  Evidence size:       {total_size / (1024 * 1024):.1f} MB")
-    print(f"  Governance rules:    {rule_count}")
-    print("=" * 70)
-    return True
-
-
-# ---------------------------------------------------------------------------
-# Self-Heal
-# ---------------------------------------------------------------------------
-
-def self_heal(target_dir="."):
-    """Automatic repair of detected issues."""
-    td = _target_dir(target_dir)
-    fixes_applied = []
-
-    # Fix 1: Create missing directories
-    for d in REQUIRED_DIRS:
-        p = os.path.join(td, d)
-        if not os.path.exists(p):
-            os.makedirs(p, exist_ok=True)
-            fixes_applied.append(f"Created directory: {d}")
-
-    # Fix 2: Fix HMAC key permissions
-    hmac_key = os.path.join(td, ".agents/management/evidence/security/hmac-key.bin")
-    if os.path.exists(hmac_key):
-        st = os.stat(hmac_key)
-        current_mode = stat.S_IMODE(st.st_mode)
-        if current_mode != 0o600:
-            os.chmod(hmac_key, 0o600)
-            fixes_applied.append(f"Fixed HMAC key permissions: {oct(current_mode)} -> 0o600")
-
-    # Fix 3: Compact evidence if bloated
-    evidence_dir = os.path.join(td, ".agents/management/evidence")
-    if os.path.exists(evidence_dir):
-        total_size = sum(
-            os.path.getsize(os.path.join(dirpath, filename))
-            for dirpath, dirnames, filenames in os.walk(evidence_dir)
-            for filename in filenames
-        )
-        if total_size > 100 * 1024 * 1024:
-            # Run evidence lifecycle compaction
-            lifecycle_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "evidence-lifecycle.py")
-            if os.path.exists(lifecycle_script):
-                import subprocess
-                rc = subprocess.run([sys.executable, lifecycle_script, "compact", "--dir", td], capture_output=True, text=True)
-                if rc.returncode == 0:
-                    fixes_applied.append("Compacted evidence (was >100MB)")
-                else:
-                    fixes_applied.append(f"Evidence compaction failed: {rc.stderr.strip()}")
-
-    # Fix 4: Clean expired nonces
-    nonce_path = os.path.join(td, ".agents/management/evidence/security/nonce-registry.jsonl")
-    if os.path.exists(nonce_path):
-        cleaned = 0
-        kept = 0
-        now = time.time()
-        entries = []
-        with open(nonce_path, "r") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
+            for root, dirs, files in os.walk(target):
+                if ".git" in root or "vendor" in root:
                     continue
-                entry = json.loads(line)
-                if entry.get("expires_at", 0) > now:
-                    entries.append(line)
-                    kept += 1
-                else:
-                    cleaned += 1
-        if cleaned > 0:
-            with open(nonce_path, "w") as f:
-                for e in entries:
-                    f.write(e + "\n")
-            fixes_applied.append(f"Cleaned {cleaned} expired nonces ({kept} remaining)")
+                if pattern in dirs:
+                    full_path = os.path.join(root, pattern)
+                    rel = os.path.relpath(full_path, target)
+                    found_orphans.append({"path": rel, "type": description})
+                if pattern in files:
+                    full_path = os.path.join(root, pattern)
+                    rel = os.path.relpath(full_path, target)
+                    found_orphans.append({"path": rel, "type": description})
 
-    # Fix 5: Clean expired revocations
-    revocation_path = os.path.join(td, ".agents/management/evidence/security/revocation-registry.jsonl")
-    if os.path.exists(revocation_path):
-        cleaned = 0
-        now = time.time()
-        entries = []
-        with open(revocation_path, "r") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
+    # Limit to first 20 for display
+    display_limit = 20
+    check["orphan_count"] = len(found_orphans)
+    check["orphans"] = found_orphans[:display_limit]
+
+    if len(found_orphans) > display_limit:
+        check["orphans"].append({"path": f"... and {len(found_orphans) - display_limit} more", "type": ""})
+
+    if found_orphans:
+        check["findings"].append({
+            "severity": "info",
+            "message": f"{len(found_orphans)} orphan runtime artifacts detected",
+        })
+
+    # Check for stale install journal recovery markers
+    journal_dir = target / ".agents" / "management" / "evidence" / "install-journal"
+    if journal_dir.is_dir():
+        interrupted = list(journal_dir.glob("interrupted-*.json"))
+        if interrupted:
+            check["findings"].append({
+                "severity": "warning",
+                "message": f"{len(interrupted)} interrupted install markers (may indicate incomplete adoption)",
+            })
+
+    return check
+
+
+def _check_baseline_integrity(target: Path, layout: LayoutDetector, verbose: bool) -> dict[str, Any]:
+    """Check baseline rules integrity."""
+    check = {
+        "status": "GREEN",
+        "findings": [],
+        "metrics": {},
+    }
+
+    baseline_dir = layout.baseline_rules
+    if not baseline_dir.is_dir():
+        check["status"] = "RED"
+        check["findings"].append({
+            "severity": "critical",
+            "message": "No baseline rules directory found",
+        })
+        return check
+
+    # Check key governance files exist
+    key_files = [
+        "AGENTS.md",
+        "governance/core/quality/quality-gates.md",
+        "governance/profiles/languages",
+        "governance/architecture",
+        "governance/security",
+        "governance/execution",
+    ]
+
+    missing_key = []
+    for kf in key_files:
+        path = baseline_dir / kf
+        if not path.exists():
+            missing_key.append(kf)
+
+    check["metrics"]["key_baseline_components"] = f"{len(key_files) - len(missing_key)}/{len(key_files)}"
+
+    if missing_key:
+        check["status"] = "YELLOW"
+        check["findings"].append({
+            "severity": "warning",
+            "message": f"Missing key baseline components: {', '.join(missing_key)}",
+        })
+
+    # Count total baseline files
+    all_files = list(baseline_dir.rglob("*"))
+    all_files = [f for f in all_files if f.is_file() and not is_runtime_excluded(str(f))]
+    check["metrics"]["total_baseline_files"] = len(all_files)
+
+    # Check for runtime artifacts inside baseline
+    runtime_in_baseline = []
+    for f in all_files:
+        if is_runtime_excluded(str(f)):
+            runtime_in_baseline.append(str(f.relative_to(baseline_dir)))
+
+    if runtime_in_baseline:
+        check["findings"].append({
+            "severity": "warning",
+            "message": f"Runtime artifacts found inside baseline: {', '.join(runtime_in_baseline[:5])}",
+        })
+
+    return check
+
+
+def _check_naming_compliance(target: Path, layout: LayoutDetector, verbose: bool) -> dict[str, Any]:
+    """Check for forbidden directory names in the project."""
+    check = {
+        "status": "GREEN",
+        "findings": [],
+        "metrics": {},
+        "violations": [],
+    }
+
+    forbidden_found = []
+    for root, dirs, _files in os.walk(target):
+        # Skip hidden dirs, git, vendor, node_modules
+        skip_dirs = {".git", "vendor", "node_modules", ".qoder"}
+        root_parts = Path(root).parts
+        if any(sd in root_parts for sd in skip_dirs):
+            continue
+
+        for d in dirs:
+            if d in FORBIDDEN_DIRECTORY_NAMES:
+                full_path = os.path.join(root, d)
+                rel = os.path.relpath(full_path, target)
+                # Check if this is within an allowed ecosystem context
+                parent = Path(root).name
+                if parent in ALLOWED_ECOSYSTEM_TERMS:
                     continue
-                entry = json.loads(line)
-                # Keep revocations for 30 days
-                if now - entry.get("revoked_at", 0) < 30 * 86400:
-                    entries.append(line)
-                else:
-                    cleaned += 1
-        if cleaned > 0:
-            with open(revocation_path, "w") as f:
-                for e in entries:
-                    f.write(e + "\n")
-            fixes_applied.append(f"Cleaned {cleaned} old revocation entries")
+                forbidden_found.append({"path": rel, "name": d})
 
-    if not fixes_applied:
-        print("=" * 70)
-        print(" SELF-HEAL: No issues detected — system is healthy")
-        print("=" * 70)
-    else:
-        print("=" * 70)
-        print(" SELF-HEAL: Applied fixes")
-        print("=" * 70)
-        for fix in fixes_applied:
-            print(f"  [FIX] {fix}")
-        print("=" * 70)
+    check["metrics"]["forbidden_dirs_found"] = len(forbidden_found)
+    check["violations"] = forbidden_found[:20]
 
-    return True
+    if forbidden_found:
+        check["status"] = "YELLOW"
+        sample = ", ".join(v["path"] for v in forbidden_found[:5])
+        check["findings"].append({
+            "severity": "warning",
+            "message": f"{len(forbidden_found)} forbidden directory name(s) found: {sample}",
+        })
 
+    return check
 
-# ---------------------------------------------------------------------------
-# CLI
-# ---------------------------------------------------------------------------
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python3 agent-harness-diagnose.py <command> [--dir <dir>]")
+        print("Usage: python3 agent-harness-diagnose.py /path/to/project [--verbose] [--json]")
+        sys.exit(1)
+
+    target = sys.argv[1]
+    verbose = "--verbose" in sys.argv
+    json_output = "--json" in sys.argv
+
+    if not os.path.isdir(target):
+        print(f"ERROR: {target} is not a directory")
+        sys.exit(1)
+
+    result = diagnose(target, verbose)
+
+    if json_output:
+        print(json.dumps(result, indent=2))
+    else:
+        _print_human_readable(result, verbose)
+
+    # Exit code based on status
+    status = result.get("overall_status", "UNKNOWN")
+    if status == "RED":
+        sys.exit(2)
+    elif status == "YELLOW":
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+def _print_human_readable(result: dict, verbose: bool):
+    """Print human-readable diagnostic report."""
+    print("=" * 60)
+    print("AGENT HARNESS V6 DIAGNOSTICS")
+    print("=" * 60)
+    print(f"Target: {result['target']}")
+    print(f"Timestamp: {result['timestamp']}")
+    print(f"Detected Layout: {result.get('detected_layout', 'unknown')}")
+    print(f"Overall Status: {result['overall_status']}")
+    print()
+
+    # Print check summaries
+    for check_name, check_data in result["checks"].items():
+        status = check_data.get("status", "UNKNOWN")
+        print(f"[{status}] {check_name}")
+
+        if verbose and "metrics" in check_data:
+            for key, value in check_data["metrics"].items():
+                print(f"       {key}: {value}")
+
+        if verbose and "findings" in check_data:
+            for finding in check_data["findings"]:
+                sev = finding.get("severity", "info")
+                msg = finding.get("message", "")
+                print(f"       [{sev}] {msg}")
+
         print()
-        print("Commands:")
-        print("  diagnose    Full system health check with explain-why failures")
-        print("  bootstrap   One-command onboarding for new repositories")
-        print("  status      Quick operational status summary")
-        print("  self-heal   Automatic repair of detected issues")
-        return 1
 
-    command = sys.argv[1]
-    target_dir = "."
-    args = sys.argv[2:]
-    for idx in range(len(args)):
-        if args[idx] == "--dir" and idx + 1 < len(args):
-            target_dir = args[idx + 1]
+    # Print all findings
+    if result["findings"]:
+        print("FINDINGS:")
+        for f in result["findings"]:
+            sev = f.get("severity", "info")
+            msg = f.get("message", "")
+            print(f"  [{sev.upper()}] {msg}")
+        print()
 
-    commands = {
-        "diagnose": diagnose,
-        "bootstrap": bootstrap,
-        "status": status,
-        "self-heal": self_heal,
-    }
+    # Print recommendations
+    if result["recommendations"]:
+        print("RECOMMENDATIONS:")
+        for r in result["recommendations"]:
+            print(f"  - {r}")
+        print()
 
-    if command not in commands:
-        print(f"Unknown command: {command}", file=sys.stderr)
-        return 1
-
-    ok = commands[command](target_dir)
-    return 0 if ok else 1
+    print("=" * 60)
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

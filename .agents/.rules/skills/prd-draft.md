@@ -1,9 +1,7 @@
 # Skill: PRD Draft (`/prd-draft`)
 
 ## Purpose
-
-Translate a rough idea, discussion notes, or feature request into a formal **Product Requirements Document (PRD)** that
-aligns with the project strategy and personas.
+Translate a rough idea, discussion notes, or feature request into a formal **Product Requirements Document (PRD)** that aligns with the project strategy and personas.
 
 ## Trigger
 - User asks for a PRD draft.

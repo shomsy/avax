@@ -1,7 +1,7 @@
 {
   "report_type": "adoption-validation",
   "phase": "Phase 10: Real-World Adoption Validation",
-  "generated_at": "2026-05-17T20:56:55Z",
+  "generated_at": "2026-05-17T21:10:38Z",
   "summary": {
     "total_scenarios_tested": 4,
     "passed": 4,
@@ -19,7 +19,7 @@
       "repo_type": "native-repo",
       "structure": "agent-harness governance-source",
       "install_result": "success",
-      "install_notes": "install-os.sh --validate confirmed baseline integrity (manifests: 57)",
+      "install_notes": "install-os.sh --validate confirmed baseline integrity (manifests: 61)",
       "verify_result": "success",
       "verify_notes": "verify-governance.sh reported structural issue (exit 14); expected during validation run (security checks: 0)",
       "substrate_execution": "success",
@@ -78,7 +78,7 @@
   ],
   "metadata": {
     "test_tool": "tests/adoption-validation.sh",
-    "native_repo_manifests_generated": 57,
+    "native_repo_manifests_generated": 61,
     "native_repo_security_checks": 0
   }
 }

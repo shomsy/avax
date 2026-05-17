@@ -1,9 +1,7 @@
 # Skill: Launch Checklist (`/launch-checklist`)
 
 ## Purpose
-
-Synthesize a comprehensive Launch and Go-To-Market checklist based on current project maturity, strategic context, and
-quality gates.
+Synthesize a comprehensive Launch and Go-To-Market checklist based on current project maturity, strategic context, and quality gates.
 
 ## Trigger
 - User asks for a "Launch Prep" or "Final Check".

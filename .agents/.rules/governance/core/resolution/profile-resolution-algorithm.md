@@ -59,50 +59,38 @@ Inference exists only as a safe fallback.
 
 ## V3 & V4 Resolution Engine & Overlay Architecture Rules
 
-To allow repositories to adopt the Agent Harness OS cleanly while preserving custom local rules, the system defines a
-three-tier overlay architecture:
+To allow repositories to adopt the Agent Harness OS cleanly while preserving custom local rules, the system defines a three-tier overlay architecture:
 
-1. **Root `AGENTS.md`** (Highest Precedence): Contains project-specific rules, local exceptions, and the authoritative
-   applied governance stack.
+1. **Root `AGENTS.md`** (Highest Precedence): Contains project-specific rules, local exceptions, and the authoritative applied governance stack.
 2. **Local Project Governance** (Medium Precedence): Files located in:
-    - `.agents/governance/**` (Local custom rules or overlays of baseline rules)
-    - `.agents/how-to/**` (Local custom operational guidelines)
-    - `.agents/language-specific/**` (Local language overrides)
-3. **Frozen Baseline** (Lowest Precedence): Files located under `.agents/.rules/**`. These are managed by the installer
-   and represent the frozen, universal OS baseline. They are immutable and should never be modified manually.
+   - `.agents/governance/**` (Local custom rules or overlays of baseline rules)
+   - `.agents/how-to/**` (Local custom operational guidelines)
+   - `.agents/language-specific/**` (Local language overrides)
+3. **Frozen Baseline** (Lowest Precedence): Files located under `.agents/.rules/**`. These are managed by the installer and represent the frozen, universal OS baseline. They are immutable and should never be modified manually.
 
 ### Override and Extension Model
-
-- **Shadowing / Overlays**: A local file under `.agents/governance/path/to/rule.md` shadows and overrides the baseline
-  file `.agents/.rules/governance/path/to/rule.md`.
+- **Shadowing / Overlays**: A local file under `.agents/governance/path/to/rule.md` shadows and overrides the baseline file `.agents/.rules/governance/path/to/rule.md`.
 - **Extension**: Local project governance extends the baseline by adding files not present in the baseline.
-- **Immutability of Baseline**: Local developers MUST NOT modify files under `.agents/.rules/**` directly. Any
-  customization of a baseline rule must be done by copying the file to `.agents/governance/` and editing it there.
-- **Verification Gates**: The runtime compiler and verify-governance tools actively validate overlay compliance (
-  preventing illegal mutations, detecting shadowed duplicates, and ensuring no version corruption).
+- **Immutability of Baseline**: Local developers MUST NOT modify files under `.agents/.rules/**` directly. Any customization of a baseline rule must be done by copying the file to `.agents/governance/` and editing it there.
+- **Verification Gates**: The runtime compiler and verify-governance tools actively validate overlay compliance (preventing illegal mutations, detecting shadowed duplicates, and ensuring no version corruption).
 
-1. **Inferred profiles are YELLOW only**: If a profile is inferred rather than declared, the resolution is considered
-   YELLOW. Execute mode is permitted, but the debt must be recorded.
-2. **Execute mode requires explicit profile declaration**: Full GREEN execution requires explicit profile declaration in
-   `AGENTS.md` or `.agents/config/project.json`.
+1. **Inferred profiles are YELLOW only**: If a profile is inferred rather than declared, the resolution is considered YELLOW. Execute mode is permitted, but the debt must be recorded.
+2. **Execute mode requires explicit profile declaration**: Full GREEN execution requires explicit profile declaration in `AGENTS.md` or `.agents/config/project.json`.
 3. **AGENTS.md remains human source of truth**: If config and text disagree, text wins.
 4. **project.json accelerates machine resolution**.
 5. **Local overlays override reusable profiles**.
 
+
 ## Conflict & Incompatibility Detection
 
 When loading profiles, the resolution engine must detect:
-
 - **Missing Profiles**: Declared in config but missing in `.agents/governance/profiles/`. Halts execution (RED).
-- **Incompatible Profiles**: e.g., declaring both `php` and `nodejs` without `monorepo` or separate API boundaries.
-  Triggers YELLOW warning.
-- **Conflict Detection**: Overlapping rules between framework and language. Framework overlays take precedence over
-  generic language rules.
+- **Incompatible Profiles**: e.g., declaring both `php` and `nodejs` without `monorepo` or separate API boundaries. Triggers YELLOW warning.
+- **Conflict Detection**: Overlapping rules between framework and language. Framework overlays take precedence over generic language rules.
 
 ## Resolution Evidence
 
-The output of the resolution algorithm must be recorded in `.agents/management/evidence/raw/profile-resolution.json` for
-diagnostic purposes.
+The output of the resolution algorithm must be recorded in `.agents/management/evidence/raw/profile-resolution.json` for diagnostic purposes.
 
 ## Resolution Order
 
@@ -211,7 +199,6 @@ Inference rules:
 ## Step 4: Resolution Diagnostics & Fallback
 
 If no explicit profiles are found and inference yields no high-confidence match:
-
 - Fallback to generic `quality-gates.md` and `architecture-standard.md`.
 - SDLC state is YELLOW (or RED if operations/security required).
 - Output diagnostic warning: "No profiles resolved. Operating in generic mode."

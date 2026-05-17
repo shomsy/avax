@@ -1,9 +1,7 @@
 # Skill: Stakeholder Update (`/stakeholder-update`)
 
 ## Purpose
-
-Generate tailored progress updates for different stakeholder groups (Executive, Engineering, Customer) based on current
-implementation and strategic context.
+Generate tailored progress updates for different stakeholder groups (Executive, Engineering, Customer) based on current implementation and strategic context.
 
 ## Trigger
 - User asks for a "weekly update" or "status report".

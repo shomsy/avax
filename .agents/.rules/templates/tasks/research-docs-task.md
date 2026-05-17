@@ -15,13 +15,13 @@ Research documentation, API references, and external resources to provide releva
 
 ## Input
 
-| Field               | Description                                              |
-|:--------------------|:---------------------------------------------------------|
-| `task_id`           | Unique task identifier                                   |
-| `session_id`        | Session identifier                                       |
-| `user_prompt`       | Original user request                                    |
-| `research_topic`    | What to research (e.g., "API rate limits", "OAuth flow") |
-| `preferred_sources` | Preferred doc sources (optional)                         |
+| Field | Description |
+|:------|:------------|
+| `task_id` | Unique task identifier |
+| `session_id` | Session identifier |
+| `user_prompt` | Original user request |
+| `research_topic` | What to research (e.g., "API rate limits", "OAuth flow") |
+| `preferred_sources` | Preferred doc sources (optional) |
 
 ---
 
@@ -53,10 +53,10 @@ max_files: 5
 
 1. **Analyze research topic** from user_prompt
 2. **Identify relevant sources:**
-    - Official documentation
-    - API references
-    - MCP-connected resources
-    - Community resources
+   - Official documentation
+   - API references
+   - MCP-connected resources
+   - Community resources
 3. **Fetch and extract** relevant information
 4. **Summarize findings** with source attribution
 5. **Return structured artifact**
@@ -182,12 +182,12 @@ research_topic: "OpenAI API rate limits"
 
 ## Source Priority
 
-| Priority | Source Type                                 |
-|:---------|:--------------------------------------------|
-| 1        | MCP-connected official docs (most reliable) |
-| 2        | Official documentation URLs                 |
-| 3        | Community resources                         |
-| 4        | Blog posts (use with caution)               |
+| Priority | Source Type |
+|:---------|:------------|
+| 1 | MCP-connected official docs (most reliable) |
+| 2 | Official documentation URLs |
+| 3 | Community resources |
+| 4 | Blog posts (use with caution) |
 
 ---
 

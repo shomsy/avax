@@ -16,8 +16,6 @@ Concrete records of executed verification.
 1. `executed_at`: 2026-03-27 20:59 CET
    `scope`: `.agents` agnostic refactor
    `environment`: local shell
-   `checks`: targeted `rg` scan for project-specific terms, duplicate active law paths, and legacy references; final
-   `find` inventory review of `.agents`
+   `checks`: targeted `rg` scan for project-specific terms, duplicate active law paths, and legacy references; final `find` inventory review of `.agents`
    `result`: pass
-   `notes`: no project-specific residue remained in `.agents`; one canonical coding-standards law remained;
-   app-architecture folder now contains only reusable documents
+   `notes`: no project-specific residue remained in `.agents`; one canonical coding-standards law remained; app-architecture folder now contains only reusable documents

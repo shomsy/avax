@@ -1,9 +1,7 @@
 # Skill: Strategy Review (`/strategy-review`)
 
 ## Purpose
-
-Evaluate the current technical and project state against the strategic **Context Library** (Vision, Milestones,
-Personas).
+Evaluate the current technical and project state against the strategic **Context Library** (Vision, Milestones, Personas).
 
 ## Trigger
 - User asks for a "Progress Review" or "Strategy Alignment".

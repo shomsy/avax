@@ -1,14 +1,13 @@
 # Sub-Agent Prompt Template — Repository Mapping
 
-| Element           | Value               |
-|:------------------|:--------------------|
-| **Role**          | Mapper / Researcher |
-| **Model**         | Fast/Mini           |
-| **Context Limit** | Max 5 files         |
+| Element | Value |
+|:---|:---|
+| **Role** | Mapper / Researcher |
+| **Model** | Fast/Mini |
+| **Context Limit** | Max 5 files |
 
 ## Goal
-
-Explore the repository to find the specific files and logic related to:
+Explore the repository to find the specific files and logic related to: 
 {{TASK_DESCRIPTION}}
 
 ## Allowed Tools
@@ -28,15 +27,14 @@ You MUST return the **9-field Artifact** defined in `artifact-standard.md`.
 
 # Sub-Agent Prompt Template — Documentation Research
 
-| Element           | Value                     |
-|:------------------|:--------------------------|
-| **Role**          | Docs / API Researcher     |
-| **Model**         | Fast/Mini                 |
+| Element | Value |
+|:---|:---|
+| **Role** | Docs / API Researcher |
+| **Model** | Fast/Mini |
 | **Context Limit** | Max 1 relevant API source |
 
 ## Goal
-
-Verify the API rules, constraints, or documentation for:
+Verify the API rules, constraints, or documentation for: 
 {{TASK_DESCRIPTION}}
 
 ## Allowed Tools
@@ -55,10 +53,10 @@ You MUST return the **9-field Artifact** defined in `artifact-standard.md`.
 
 # Execution Prompt Template — Codex Implementation
 
-| Element           | Value                |
-|:------------------|:---------------------|
-| **Role**          | Codex Executor       |
-| **Model**         | Primary/Strong       |
+| Element | Value |
+|:---|:---|
+| **Role** | Codex Executor |
+| **Model** | Primary/Strong |
 | **Context Limit** | Pre-pruned by Mapper |
 
 ## Goal

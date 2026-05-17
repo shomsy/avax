@@ -1,0 +1,405 @@
+== Connections full file ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Connections;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\Contracts\DatabaseConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ReadConnection\ReadConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ReadConnection\ReadPdo;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\RunWithConnection\RunWithConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
+use PDO;
+use Throwable;
+
+/**
+ * Public capability owner for database connections and pools.
+ */
+final readonly class Connections
+{
+    private ReadPdo $readPdo;
+
+    private RunWithConnection $runWithConnection;
+
+    public function __construct(
+        private ReadConnection $readConnection,
+        ?ReadPdo $readPdo = null,
+        ?RunWithConnection $runWithConnection = null,
+    ) {
+        $this->readPdo = $readPdo ?? new ReadPdo(readConnection: $this->readConnection);
+        $this->runWithConnection = $runWithConnection ?? new RunWithConnection(readConnection: $this->readConnection);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function connection(?string $name = null): DatabaseConnection
+    {
+        return $this->readConnection->connection(name: $name);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function pdo(?string $name = null): PDO
+    {
+        return $this->readPdo->for(connectionName: $name);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function pool(callable $callback, ?string $name = null): mixed
+    {
+        return $this->runWithConnection->pool(callback: $callback, connectionName: $name);
+    }
+
+    public function withScope(ExecutionScope $executionScope): self
+    {
+        return new self(readConnection: $this->readConnection->withScope(scope: $executionScope));
+    }
+}
+
+== CreateBuilder full file ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Query\CreateBuilder;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Execution\PDOExecutor;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Execution\QueryOrchestrator;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\EventBus;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
+use ReflectionException;
+use Throwable;
+
+/**
+ * Creates connection-bound QueryBuilder instances for the Query capability.
+ */
+final readonly class CreateBuilder
+{
+    public function __construct(
+        private Connections $connections,
+        private GrammarInterface $grammar,
+        private ?EventBus $eventBus = null,
+        private ?ExecutionScope $executionScope = null,
+    ) {}
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function for(?string $connectionName = null) : QueryBuilder
+    {
+        $connection = $this->connections->connection(name: $connectionName);
+        $queryOrchestrator = new QueryOrchestrator(
+            executor: new PDOExecutor(
+                eventBus      : $this->eventBus,
+                connectionName: $connection->getName(),
+                connection    : $connection,
+            ),
+            scope   : $this->executionScope,
+        );
+
+        return new QueryBuilder(
+            grammar     : $this->grammar,
+            orchestrator: $queryOrchestrator,
+        );
+    }
+}
+
+== Connections related files ==
+components/DataStack/Database/System/Capabilities/Connections/ConnectionPool.php
+components/DataStack/Database/System/Capabilities/Connections/Connections.php
+components/DataStack/Database/System/Capabilities/Connections/Contracts/DatabaseConnection.php
+components/DataStack/Database/System/Capabilities/Connections/DatabaseConnection.php
+components/DataStack/Database/System/Capabilities/Connections/Exceptions/ConnectionException.php
+components/DataStack/Database/System/Capabilities/Connections/Exceptions/ConnectionFailure.php
+components/DataStack/Database/System/Capabilities/Connections/Exceptions/PoolLimitReachedException.php
+components/DataStack/Database/System/Capabilities/Connections/MultiTenantPool.php
+components/DataStack/Database/System/Capabilities/Connections/MySQLPool.php
+components/DataStack/Database/System/Capabilities/Connections/OpenConnection/BuildPhysicalConnection.php
+components/DataStack/Database/System/Capabilities/Connections/OpenConnection/OpenConnection.php
+components/DataStack/Database/System/Capabilities/Connections/OpenConnection/PdoConnection.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/ArrayPooledConnection.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/BaseConnectionPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/BorrowedConnection.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/CassandraPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/ClickHousePool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/CockroachDBPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/ConnectionPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/ConnectionPoolInterface.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/Contracts/ConnectionPoolInterface.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/DatabaseConnectionPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/ElasticsearchPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/LazyConnectionPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/MongoDBPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/MultiTenantPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/MySQLPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/Neo4jPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/PoolException.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/PoolFactory.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/PoolState.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/PoolStats.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/PooledConnection.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/PostgreSQLPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/ReadWritePool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/RedisPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/RetryablePool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/SQLServerPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/SQLitePool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/ShardedPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/YugabyteDBPool.php
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/ReadPdo.php
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/ResolveDefaultConnection.php
+components/DataStack/Database/System/Capabilities/Connections/RunWithConnection/RunWithConnection.php
+components/DataStack/Database/System/Capabilities/Connections/ValueObjects/ConnectionConfig.php
+components/DataStack/Database/System/Capabilities/Connections/ValueObjects/Dsn.php
+
+== Connection public methods ==
+components/DataStack/Database/System/Capabilities/Connections/ConnectionPool.php:11:    public function get(): PDO;
+components/DataStack/Database/System/Capabilities/Connections/ConnectionPool.php:13:    public function release(PDO $pdo): void;
+components/DataStack/Database/System/Capabilities/Connections/OpenConnection/BuildPhysicalConnection.php:24:    public function from(array $config): DatabaseConnection
+components/DataStack/Database/System/Capabilities/Connections/OpenConnection/PdoConnection.php:23:    public function __construct(private string $name, private PDO $pdo) {}
+components/DataStack/Database/System/Capabilities/Connections/OpenConnection/PdoConnection.php:29:    public function getConnection(): PDO
+components/DataStack/Database/System/Capabilities/Connections/OpenConnection/PdoConnection.php:38:    public function ping(): bool
+components/DataStack/Database/System/Capabilities/Connections/OpenConnection/PdoConnection.php:53:    public function getName(): string
+components/DataStack/Database/System/Capabilities/Connections/OpenConnection/OpenConnection.php:19:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/OpenConnection/OpenConnection.php:30:    public function using(array $config): DatabaseConnection
+components/DataStack/Database/System/Capabilities/Connections/OpenConnection/OpenConnection.php:55:    public function withEvents(EventBus $eventBus): self
+components/DataStack/Database/System/Capabilities/Connections/OpenConnection/OpenConnection.php:64:    public function withScope(ExecutionScope $executionScope): self
+components/DataStack/Database/System/Capabilities/Connections/Pools/LazyConnectionPool.php:15:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/LazyConnectionPool.php:24:    public function destroy(): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/LazyConnectionPool.php:31:    public function stats(): PoolStats
+components/DataStack/Database/System/Capabilities/Connections/Pools/LazyConnectionPool.php:42:    public function warmup(int $count = 1): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/LazyConnectionPool.php:55:    public function get(): PooledConnection
+components/DataStack/Database/System/Capabilities/Connections/Pools/LazyConnectionPool.php:76:    public function release(PooledConnection $pooledConnection): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/ConnectionPool.php:16:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/ConnectionPool.php:24:    public function get(): PooledConnection
+components/DataStack/Database/System/Capabilities/Connections/Pools/ConnectionPool.php:48:    public function destroy(): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/ConnectionPool.php:55:    public function stats(): PoolStats
+components/DataStack/Database/System/Capabilities/Connections/Pools/ConnectionPool.php:66:    public function warmup(int $count): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/ConnectionPool.php:74:    public function release(PooledConnection $pooledConnection): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/ElasticsearchPool.php:16:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/ElasticsearchPool.php:23:        parent::__construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/Neo4jPool.php:16:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/Neo4jPool.php:23:        parent::__construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/ConnectionPoolInterface.php:9:    public function get(): PooledConnection;
+components/DataStack/Database/System/Capabilities/Connections/Pools/ConnectionPoolInterface.php:11:    public function release(PooledConnection $pooledConnection): void;
+components/DataStack/Database/System/Capabilities/Connections/Pools/ConnectionPoolInterface.php:13:    public function destroy(): void;
+components/DataStack/Database/System/Capabilities/Connections/Pools/ConnectionPoolInterface.php:15:    public function stats(): PoolStats;
+components/DataStack/Database/System/Capabilities/Connections/Pools/BorrowedConnection.php:28:    public function __construct(private readonly DatabaseConnection $databaseConnection, private readonly ConnectionPoolInterface $connectionPool) {}
+components/DataStack/Database/System/Capabilities/Connections/Pools/BorrowedConnection.php:38:    public function getConnection(): PDO
+components/DataStack/Database/System/Capabilities/Connections/Pools/BorrowedConnection.php:49:    public function ping(): bool
+components/DataStack/Database/System/Capabilities/Connections/Pools/BorrowedConnection.php:58:    public function getName(): string
+components/DataStack/Database/System/Capabilities/Connections/Pools/BorrowedConnection.php:66:    public function __destruct()
+components/DataStack/Database/System/Capabilities/Connections/Pools/BorrowedConnection.php:74:    public function release(): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/BorrowedConnection.php:89:    public function getOriginalConnection(): DatabaseConnection
+components/DataStack/Database/System/Capabilities/Connections/Pools/SQLitePool.php:9:    public function __construct(array $config, int $minConnections = 1, int $maxConnections = 5)
+components/DataStack/Database/System/Capabilities/Connections/Pools/SQLitePool.php:11:        parent::__construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/ReadWritePool.php:9:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/ReadWritePool.php:15:    public function getRead(): PooledConnection
+components/DataStack/Database/System/Capabilities/Connections/Pools/ReadWritePool.php:24:    public function getWrite(): PooledConnection
+components/DataStack/Database/System/Capabilities/Connections/Pools/ReadWritePool.php:29:    public function releaseRead(PooledConnection $pooledConnection): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/ReadWritePool.php:34:    public function releaseWrite(PooledConnection $pooledConnection): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/ReadWritePool.php:39:    public function isReadWriteSplitEnabled(): bool
+components/DataStack/Database/System/Capabilities/Connections/Pools/ReadWritePool.php:44:    public function enableReadWriteSplit(bool $enabled = true): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/YugabyteDBPool.php:18:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/YugabyteDBPool.php:25:        parent::__construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/DatabaseConnectionPool.php:40:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/DatabaseConnectionPool.php:57:    public function acquire(): DatabaseConnection
+components/DataStack/Database/System/Capabilities/Connections/Pools/DatabaseConnectionPool.php:111:    public function pruneStaleConnections(): int
+components/DataStack/Database/System/Capabilities/Connections/Pools/DatabaseConnectionPool.php:145:    public function validateConnection(?DatabaseConnection $databaseConnection = null): bool
+components/DataStack/Database/System/Capabilities/Connections/Pools/DatabaseConnectionPool.php:161:    public function ping(): bool
+components/DataStack/Database/System/Capabilities/Connections/Pools/DatabaseConnectionPool.php:182:    public function release(DatabaseConnection $databaseConnection): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/DatabaseConnectionPool.php:213:    public function getName(): string
+components/DataStack/Database/System/Capabilities/Connections/Pools/DatabaseConnectionPool.php:221:    public function withScope(ExecutionScope $executionScope): self
+components/DataStack/Database/System/Capabilities/Connections/Pools/DatabaseConnectionPool.php:235:    public function getMetrics(): ConnectionPoolMetrics
+components/DataStack/Database/System/Capabilities/Connections/Pools/MultiTenantPool.php:15:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/MultiTenantPool.php:20:    public function getForTenant(string $tenantId): ConnectionPoolInterface
+components/DataStack/Database/System/Capabilities/Connections/Pools/MultiTenantPool.php:38:    public function releaseForTenant(string $tenantId, PooledConnection $pooledConnection): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/MultiTenantPool.php:45:    public function closeTenant(string $tenantId): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/MultiTenantPool.php:55:    public function closeAll(): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/MultiTenantPool.php:64:    public function getStats(): array
+components/DataStack/Database/System/Capabilities/Connections/Pools/MultiTenantPool.php:75:    public function getTenantCount(): int
+components/DataStack/Database/System/Capabilities/Connections/Pools/MongoDBPool.php:16:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/MongoDBPool.php:23:        parent::__construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/RedisPool.php:9:    public function __construct(array $config, int $minConnections = 3, int $maxConnections = 10)
+components/DataStack/Database/System/Capabilities/Connections/Pools/RedisPool.php:11:        parent::__construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/RedisPool.php:20:    public function pipeline(callable $commands): array
+components/DataStack/Database/System/Capabilities/Connections/Pools/RedisPool.php:25:    public function transaction(callable $commands): array
+components/DataStack/Database/System/Capabilities/Connections/Pools/PostgreSQLPool.php:16:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/PostgreSQLPool.php:23:        parent::__construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/PoolState.php:51:    public function __construct(private readonly int $maxConnections)
+components/DataStack/Database/System/Capabilities/Connections/Pools/PoolState.php:65:    public function tryReserveSlot(): bool
+components/DataStack/Database/System/Capabilities/Connections/Pools/PoolState.php:84:    public function recordRecycledAcquisition(): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/PoolState.php:96:    public function releaseSlot(): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/CockroachDBPool.php:19:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/CockroachDBPool.php:27:        parent::__construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/CockroachDBPool.php:51:    public function withRetry(?int $maxRetries = null): RetryablePool
+components/DataStack/Database/System/Capabilities/Connections/Pools/CockroachDBPool.php:62:    public function maxRetries(): int
+components/DataStack/Database/System/Capabilities/Connections/Pools/ArrayPooledConnection.php:18:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/ArrayPooledConnection.php:26:    public function getResource() : stdClass
+components/DataStack/Database/System/Capabilities/Connections/Pools/ArrayPooledConnection.php:34:    public function isValid(): bool
+components/DataStack/Database/System/Capabilities/Connections/Pools/ArrayPooledConnection.php:40:    public function getCreatedAt(): float
+components/DataStack/Database/System/Capabilities/Connections/Pools/ArrayPooledConnection.php:46:    public function getLastUsedAt(): float
+components/DataStack/Database/System/Capabilities/Connections/Pools/ArrayPooledConnection.php:52:    public function executeCount(): int
+components/DataStack/Database/System/Capabilities/Connections/Pools/ArrayPooledConnection.php:57:    public function recordExecution(): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/PoolException.php:11:    public static function poolExhausted(): self
+components/DataStack/Database/System/Capabilities/Connections/Pools/PoolException.php:16:    public static function invalidConnection(): self
+components/DataStack/Database/System/Capabilities/Connections/Pools/PoolException.php:21:    public static function timeout(int $timeoutMs): self
+components/DataStack/Database/System/Capabilities/Connections/Pools/CassandraPool.php:16:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/CassandraPool.php:23:        parent::__construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/MySQLPool.php:11:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/MySQLPool.php:18:        parent::__construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/RetryablePool.php:11:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/RetryablePool.php:19:    public function execute(callable $operation): mixed
+components/DataStack/Database/System/Capabilities/Connections/Pools/PoolStats.php:9:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/Contracts/ConnectionPoolInterface.php:36:    public function acquire(): DatabaseConnection;
+components/DataStack/Database/System/Capabilities/Connections/Pools/Contracts/ConnectionPoolInterface.php:43:    public function release(DatabaseConnection $databaseConnection): void;
+components/DataStack/Database/System/Capabilities/Connections/Pools/Contracts/ConnectionPoolInterface.php:48:    public function getName(): string;
+components/DataStack/Database/System/Capabilities/Connections/Pools/SQLServerPool.php:16:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/SQLServerPool.php:23:        parent::__construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/ClickHousePool.php:16:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/ClickHousePool.php:23:        parent::__construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/PoolFactory.php:12:    public static function createLazy(
+components/DataStack/Database/System/Capabilities/Connections/Pools/PoolFactory.php:24:    public static function create(
+components/DataStack/Database/System/Capabilities/Connections/Pools/ShardedPool.php:16:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Pools/ShardedPool.php:25:    public function getForUserId(int $userId): ConnectionPoolInterface
+components/DataStack/Database/System/Capabilities/Connections/Pools/ShardedPool.php:30:    public function getForKey(string $key): ConnectionPoolInterface
+components/DataStack/Database/System/Capabilities/Connections/Pools/ShardedPool.php:46:    public function getForTenant(string $tenantId): ConnectionPoolInterface
+components/DataStack/Database/System/Capabilities/Connections/Pools/ShardedPool.php:51:    public function closeAll(): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/ShardedPool.php:60:    public function getShardCount(): int
+components/DataStack/Database/System/Capabilities/Connections/Pools/ShardedPool.php:65:    public function getStats(): array
+components/DataStack/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:57:    public function __construct(private readonly ConnectionPoolInterface $connectionPool) {}
+components/DataStack/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:63:    public function getConnection(): PDO
+components/DataStack/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:90:    public function acquire(): DatabaseConnection
+components/DataStack/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:101:    public function ping(): bool
+components/DataStack/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:110:    public function getName(): string
+components/DataStack/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:119:    public function release(DatabaseConnection $databaseConnection): void
+components/DataStack/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php:132:    public function __destruct()
+components/DataStack/Database/System/Capabilities/Connections/Pools/PooledConnection.php:9:    public function getResource(): object;
+components/DataStack/Database/System/Capabilities/Connections/Pools/PooledConnection.php:11:    public function isValid(): bool;
+components/DataStack/Database/System/Capabilities/Connections/Pools/PooledConnection.php:13:    public function getCreatedAt(): float;
+components/DataStack/Database/System/Capabilities/Connections/Pools/PooledConnection.php:15:    public function getLastUsedAt(): float;
+components/DataStack/Database/System/Capabilities/Connections/Pools/PooledConnection.php:17:    public function executeCount(): int;
+components/DataStack/Database/System/Capabilities/Connections/MultiTenantPool.php:15:    public function __construct(private readonly array $tenantConfigs) {}
+components/DataStack/Database/System/Capabilities/Connections/MultiTenantPool.php:17:    public function getForTenant(string $tenantId): PDO
+components/DataStack/Database/System/Capabilities/Connections/MultiTenantPool.php:28:    public function get(): PDO
+components/DataStack/Database/System/Capabilities/Connections/MultiTenantPool.php:34:    public function release(PDO $pdo) : void {}
+components/DataStack/Database/System/Capabilities/Connections/MySQLPool.php:14:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/MySQLPool.php:22:    public function get(): PDO
+components/DataStack/Database/System/Capabilities/Connections/MySQLPool.php:32:    public function release(PDO $pdo): void
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:18:    public function read(array $connections, string $name): ?DatabaseConnection
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:26:    public function remember(array &$connections, string $name, DatabaseConnection $databaseConnection): DatabaseConnection
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:36:    public function readPool(array $pools, string $name): ?ConnectionPool
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php:44:    public function rememberPool(array &$pools, string $name, ConnectionPool $connectionPool): ConnectionPool
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/ResolveDefaultConnection.php:15:    public function __construct(private array $config) {}
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/ResolveDefaultConnection.php:17:    public function resolve(?string $connectionName = null): string
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/ReadPdo.php:15:    public function __construct(private ReadConnection $readConnection) {}
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/ReadPdo.php:20:    public function for(?string $connectionName = null): PDO
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:40:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:55:    public function connection(?string $name = null) : DatabaseConnection
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:100:    public function withScope(ExecutionScope $executionScope) : self
+components/DataStack/Database/System/Capabilities/Connections/Contracts/DatabaseConnection.php:42:    public function getConnection(): PDO;
+components/DataStack/Database/System/Capabilities/Connections/Contracts/DatabaseConnection.php:53:    public function ping(): bool;
+components/DataStack/Database/System/Capabilities/Connections/Contracts/DatabaseConnection.php:64:    public function getName(): string;
+components/DataStack/Database/System/Capabilities/Connections/RunWithConnection/RunWithConnection.php:17:    public function __construct(private ReadConnection $readConnection) {}
+components/DataStack/Database/System/Capabilities/Connections/RunWithConnection/RunWithConnection.php:24:    public function run(callable $callback, ?string $connectionName = null): mixed
+components/DataStack/Database/System/Capabilities/Connections/RunWithConnection/RunWithConnection.php:34:    public function pool(callable $callback, ?string $connectionName = null): mixed
+components/DataStack/Database/System/Capabilities/Connections/Connections.php:24:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Connections.php:36:    public function connection(?string $name = null): DatabaseConnection
+components/DataStack/Database/System/Capabilities/Connections/Connections.php:44:    public function pdo(?string $name = null): PDO
+components/DataStack/Database/System/Capabilities/Connections/Connections.php:52:    public function pool(callable $callback, ?string $name = null): mixed
+components/DataStack/Database/System/Capabilities/Connections/Connections.php:57:    public function withScope(ExecutionScope $executionScope): self
+components/DataStack/Database/System/Capabilities/Connections/Exceptions/ConnectionException.php:39:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Exceptions/ConnectionException.php:44:        parent::__construct(message: sprintf('Connection [%s] failed: %s', $this->name, $message), code: 0, previous: $throwable);
+components/DataStack/Database/System/Capabilities/Connections/Exceptions/ConnectionException.php:52:    public function getConnectionName(): string
+components/DataStack/Database/System/Capabilities/Connections/Exceptions/PoolLimitReachedException.php:39:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Exceptions/PoolLimitReachedException.php:43:        parent::__construct(message: sprintf('Connection pool [%s] reached its limit of %d connections.', $this->name, $this->limit));
+components/DataStack/Database/System/Capabilities/Connections/Exceptions/PoolLimitReachedException.php:49:    public function getPoolName(): string
+components/DataStack/Database/System/Capabilities/Connections/Exceptions/PoolLimitReachedException.php:57:    public function getLimit(): int
+components/DataStack/Database/System/Capabilities/Connections/Exceptions/ConnectionFailure.php:39:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/Exceptions/ConnectionFailure.php:44:        parent::__construct(message: $message, code: 0, previous: $throwable);
+components/DataStack/Database/System/Capabilities/Connections/ValueObjects/ConnectionConfig.php:37:    public function __construct(
+components/DataStack/Database/System/Capabilities/Connections/ValueObjects/ConnectionConfig.php:75:    public static function from(array $config): self
+components/DataStack/Database/System/Capabilities/Connections/ValueObjects/Dsn.php:19:    private function __construct(private string $dsn) {}
+components/DataStack/Database/System/Capabilities/Connections/ValueObjects/Dsn.php:31:    public static function for(
+components/DataStack/Database/System/Capabilities/Connections/ValueObjects/Dsn.php:51:    public function toString(): string
+components/DataStack/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:22:    public function __construct(
+components/DataStack/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php:33:    public function for(?string $connectionName = null) : QueryBuilder
+
+== DatabaseBuilder config area ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Configuration;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ReadConnection\ReadConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Migrations;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Schema\Schema;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Query;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Telemetry;
+use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Transactions;
+use Avax\Components\DataStack\Database\System\PublicSurface\Database;
+
+final class DatabaseBuilder
+{
+    private array $config = [];
+
+    public function usingConfig(array $config): self
+    {
+        $this->config = $config;
+
+        return $this;
+    }
+
+    public function addConnection(string $name, array $config): self
+    {
+        $this->config['connections'][$name] = $config;
+
+        return $this;
+    }
+
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
+    public function ready(): Database
+    {
+        $readConnection = new ReadConnection();
+
+        return new Database(
+            connections : new Connections($readConnection),
+            query       : new Query(),
+            schema      : new Schema(),
+            migrations  : new Migrations(),
+            transactions: new Transactions(),
+            telemetry   : new Telemetry(),
+        );
+    }
+}
+
+== Current focused behavior tests ==
+PHPUnit 10.5.63 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.5
+Configuration: /home/shomsy/projects/avax/phpunit.xml
+
+.........                                                           9 / 9 (100%)
+
+Time: 00:00.013, Memory: 10.00 MB
+
+OK (9 tests, 60 assertions)

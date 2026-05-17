@@ -1,0 +1,7 @@
+Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
+/home/shomsy/projects/avax/tooling/refactor/check-component-suite-structure.php:9:Property Avax\Tooling\Refactor\CheckComponentSuiteStructure::$allowedSuites type has no value type specified in iterable type array.
+/home/shomsy/projects/avax/tooling/refactor/check-component-suite-structure.php:22:Property Avax\Tooling\Refactor\CheckComponentSuiteStructure::$allowedBridges type has no value type specified in iterable type array.
+/home/shomsy/projects/avax/tooling/refactor/check-component-suite-structure.php:27:Property Avax\Tooling\Refactor\CheckComponentSuiteStructure::$allowedExperimental type has no value type specified in iterable type array.
+/home/shomsy/projects/avax/tooling/refactor/check-component-suite-structure.php:35:Property Avax\Tooling\Refactor\CheckComponentSuiteStructure::$helperFolders type has no value type specified in iterable type array.
+/home/shomsy/projects/avax/tooling/refactor/check-component-suite-structure.php:44:Property Avax\Tooling\Refactor\CheckComponentSuiteStructure::$errors type has no value type specified in iterable type array.
+/home/shomsy/projects/avax/tooling/refactor/check-component-suite-structure.php:46:Method Avax\Tooling\Refactor\CheckComponentSuiteStructure::check() return type has no value type specified in iterable type array.

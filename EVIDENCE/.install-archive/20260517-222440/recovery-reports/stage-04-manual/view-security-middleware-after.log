@@ -1,0 +1,15 @@
+Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
+/home/shomsy/projects/avax/components/HTTP/Middleware/IpRestrictionMiddleware.php:131:Method Psr\Http\Message\StreamInterface@anonymous/HTTP/Middleware/IpRestrictionMiddleware.php:104::getSize() never returns null so it can be removed from the return type.
+/home/shomsy/projects/avax/components/HTTP/Middleware/IpRestrictionMiddleware.php:151:Removing parent param type is forbidden
+/home/shomsy/projects/avax/components/HTTP/Middleware/IpRestrictionMiddleware.php:177:Removing parent param type is forbidden
+/home/shomsy/projects/avax/components/HTTP/Middleware/IpRestrictionMiddleware.php:194:Removing parent param type is forbidden
+/home/shomsy/projects/avax/components/HTTP/Middleware/IpRestrictionMiddleware.php:210:Removing parent param type is forbidden
+/home/shomsy/projects/avax/components/HTTP/Middleware/IpRestrictionMiddleware.php:218:Offset string on array{} on left side of ?? does not exist.
+/home/shomsy/projects/avax/components/HTTP/Middleware/RateLimiterMiddleware.php:138:Method Psr\Http\Message\StreamInterface@anonymous/HTTP/Middleware/RateLimiterMiddleware.php:108::getSize() never returns null so it can be removed from the return type.
+/home/shomsy/projects/avax/components/HTTP/Middleware/RateLimiterMiddleware.php:158:Removing parent param type is forbidden
+/home/shomsy/projects/avax/components/HTTP/Middleware/RateLimiterMiddleware.php:184:Removing parent param type is forbidden
+/home/shomsy/projects/avax/components/HTTP/Middleware/RateLimiterMiddleware.php:201:Removing parent param type is forbidden
+/home/shomsy/projects/avax/components/HTTP/Middleware/RateLimiterMiddleware.php:217:Removing parent param type is forbidden
+/home/shomsy/projects/avax/components/HTTP/Middleware/RateLimiterMiddleware.php:225:Offset string on array{} on left side of ?? does not exist.
+/home/shomsy/projects/avax/components/Identity/Security/System/Capabilities/Encryption/AesEncrypter.php:36:Parameter #1 $length of function random_bytes expects int<1, max>, int given.
+/home/shomsy/projects/avax/components/Identity/Security/System/Capabilities/Encryption/AesEncrypter.php:60:Parameter $tag of class Avax\Components\Identity\Security\System\Capabilities\Encryption\EncryptedPayload constructor expects string, string|null given.

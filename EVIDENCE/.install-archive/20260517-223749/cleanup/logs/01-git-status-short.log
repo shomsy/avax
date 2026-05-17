@@ -1,0 +1,16 @@
+Script started on 2026-05-13 23:20:26+02:00 [COMMAND="git status --short" <not executed on terminal>]
+ M .codex
+ M avax.txt
+ M components/Application/Cache/System/Capabilities/Compilation/CompiledCache.php
+ M components/Application/Cache/System/Capabilities/CompiledCache/DistributedCompiledCache/CompiledCacheFreshness.php
+ M components/Application/Cache/System/Capabilities/CompiledCache/DistributedCompiledCache/CompiledCacheManifest.php
+ M components/Application/Cache/System/Capabilities/CompiledCache/ManageCompiledCache/CompiledCacheDirectory.php
+ M components/Application/Cache/System/Capabilities/Distribution/UseCacheTiers/L2DistributedCache.php
+ M components/Application/Cache/System/Capabilities/Storage/StoreCachedValues/FileCacheStore.php
+ M components/Application/Cache/System/Configuration/BuildCache.php
+ M components/Application/Cache/System/Configuration/CacheStoreConfiguration.php
+ M components/Application/Container/System/Capabilities/Composition/Assembly/AssembleRuntime.php
+ M tooling/components/check-component-runtime-assembly.php
+?? EVIDENCE/cleanup/
+
+Script done on 2026-05-13 23:20:26+02:00 [COMMAND_EXIT_CODE="0"]

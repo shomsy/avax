@@ -1,0 +1,216 @@
+PHPUnit 10.5.63 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.5
+Configuration: /home/shomsy/projects/avax/phpunit.xml
+
+.............................................................   61 / 8351 (  0%)
+.............................................................  122 / 8351 (  1%)
+.............................................................  183 / 8351 (  2%)
+.............................................................  244 / 8351 (  2%)
+.............................................................  305 / 8351 (  3%)
+.............................................................  366 / 8351 (  4%)
+.............................................................  427 / 8351 (  5%)
+.............................................................  488 / 8351 (  5%)
+.............................................................  549 / 8351 (  6%)
+.............................................................  610 / 8351 (  7%)
+.............................................................  671 / 8351 (  8%)
+.............................................................  732 / 8351 (  8%)
+.............................................................  793 / 8351 (  9%)
+.............................................................  854 / 8351 ( 10%)
+.............................................................  915 / 8351 ( 10%)
+.............................................................  976 / 8351 ( 11%)
+............................................................. 1037 / 8351 ( 12%)
+............................................................. 1098 / 8351 ( 13%)
+............................................................. 1159 / 8351 ( 13%)
+............................................................. 1220 / 8351 ( 14%)
+............................................................. 1281 / 8351 ( 15%)
+............................................................. 1342 / 8351 ( 16%)
+............................................................. 1403 / 8351 ( 16%)
+............................................................. 1464 / 8351 ( 17%)
+............................................................. 1525 / 8351 ( 18%)
+............................................................. 1586 / 8351 ( 18%)
+............................................................. 1647 / 8351 ( 19%)
+............................................................. 1708 / 8351 ( 20%)
+............................................................. 1769 / 8351 ( 21%)
+............................................................. 1830 / 8351 ( 21%)
+............................................................. 1891 / 8351 ( 22%)
+............................................................. 1952 / 8351 ( 23%)
+............................................................. 2013 / 8351 ( 24%)
+............................................................. 2074 / 8351 ( 24%)
+............................................................. 2135 / 8351 ( 25%)
+............................................................. 2196 / 8351 ( 26%)
+...............................After-commit callback failed: Callback failed
+.............................. 2257 / 8351 ( 27%)
+............................................................. 2318 / 8351 ( 27%)
+............................................................. 2379 / 8351 ( 28%)
+............................................................. 2440 / 8351 ( 29%)
+............................................................. 2501 / 8351 ( 29%)
+.[info] health_check
+.[info] health_check
+.[info] health_check
+.......................................................... 2562 / 8351 ( 30%)
+............................................................. 2623 / 8351 ( 31%)
+............................................................. 2684 / 8351 ( 32%)
+............................................................. 2745 / 8351 ( 32%)
+............................................................. 2806 / 8351 ( 33%)
+............................................................. 2867 / 8351 ( 34%)
+............................................................. 2928 / 8351 ( 35%)
+............................................................. 2989 / 8351 ( 35%)
+............................................................. 3050 / 8351 ( 36%)
+............................................................. 3111 / 8351 ( 37%)
+............................................................. 3172 / 8351 ( 37%)
+............................................................. 3233 / 8351 ( 38%)
+............................................................. 3294 / 8351 ( 39%)
+............................................................. 3355 / 8351 ( 40%)
+............................................................. 3416 / 8351 ( 40%)
+............................................................. 3477 / 8351 ( 41%)
+..........................................{"type":"dead_letter","version":1,"queue":"fallback_queue","failure":{"class":"RuntimeException","message":"fallback test","file":"\/home\/shomsy\/projects\/avax\/tests\/Unit\/Framework\/FailureBoundary\/DeadLetterQueueIntegrationTest.php","line":55},"context":{"kind":"queue","target_class":"FallbackHandler","target_method":"handle"},"timestamp":"2026-05-15T15:42:22+00:00"}
+.[FailureBoundary][default][queue] RuntimeException in BoundaryDeadLetterHandler::handle — boundary dead letter
+....[FailureBoundary][default][http] RuntimeException in FallbackController::handle — fallback error
+.[FailureBoundary][default][queue] RuntimeException in EnvelopeController::handle — envelope test
+{"type":"dead_letter","version":1,"queue":"test_queue","failure":{"class":"RuntimeException","message":"envelope test","file":"\/home\/shomsy\/projects\/avax\/tests\/Unit\/Framework\/FailureBoundary\/FailureBoundaryTest.php","line":138},"context":{"kind":"queue","target_class":"EnvelopeController","target_method":"handle"},"timestamp":"2026-05-15T15:42:22+00:00"}
+.[FailureBoundary][default][http] RuntimeException in :: — test error
+.[FailureBoundary][default][http] Error in :: — fatal
+.[FailureBoundary][default][http] InvalidArgumentException in TestController::store — invalid
+.[FailureBoundary][default][http] UnexpectedValueException in AuthController::login — not authed
+.[FailureBoundary][default][http] RuntimeException in RateController::fetch — api down
+.[FailureBoundary][default][queue] RuntimeException in JobHandler::handle — job failed
+{"type":"dead_letter","version":1,"queue":"failed_jobs","failure":{"class":"RuntimeException","message":"job failed","file":"\/home\/shomsy\/projects\/avax\/tests\/Unit\/Framework\/FailureBoundary\/FailureBoundaryTest.php","line":293},"context":{"kind":"queue","target_class":"JobHandler","target_method":"handle"},"timestamp":"2026-05-15T15:42:22+00:00"}
+.[FailureBoundary][default][console] RuntimeException in FlakyService::call — temporary failure
+.[FailureBoundary][default][console] RuntimeException in AlwaysFailing::call — always fails
+..... 3538 / 8351 ( 42%)
+..............[FailureBoundary][default][http] RuntimeException in :: — unexpected
+.[FailureBoundary][default][http] RuntimeException in :: — reported
+.[FailureBoundary][default][console] RuntimeException in RecoveryTestController::handle — primary failed
+.[FailureBoundary][default][console] RuntimeException in PrecedenceController::handle — test
+.[FailureBoundary][default][console] RuntimeException in CaptureController::handle — capture-this-failure
+...[FailureBoundary][default][console] RuntimeException in FlakyService::call — temporary failure
+.[FailureBoundary][default][console] RuntimeException in AlwaysFailing::call — always fails
+.[FailureBoundary][default][console] RuntimeException in FailingService::execute — original-failure-abc123
+.....[FailureBoundary][default][console] Avax\Components\Operations\Resilience\System\Foundation\Failure\OperationTimedOut\OperationTimedOut in SlowController::handle — Operation timed out after 50ms (limit: 10ms).
+................................. 3599 / 8351 ( 43%)
+............................................................. 3660 / 8351 ( 43%)
+...................................D......................... 3721 / 8351 ( 44%)
+............................................................. 3782 / 8351 ( 45%)
+............................................................. 3843 / 8351 ( 46%)
+..........................................HTTP Exception: Cannot resolve request. for URI: ://
+................... 3904 / 8351 ( 46%)
+.................pong............................................ 3965 / 8351 ( 47%)
+............................................................. 4026 / 8351 ( 48%)
+............................................................. 4087 / 8351 ( 48%)
+.............................HTTP Exception: Cannot resolve request. for URI: ://
+................................ 4148 / 8351 ( 49%)
+...........................................................HTTP Exception: Cannot resolve request. for URI: ://
+.. 4209 / 8351 ( 50%)
+............................................................. 4270 / 8351 ( 51%)
+......................................[FailureBoundary][http][http] InvalidArgumentException in Avax\Examples\FailureBoundaryDemo\DemoFailureController::throwsValidation — Email is required
+.[FailureBoundary][default][http] RuntimeException in Avax\Examples\FailureBoundaryDemo\DemoFailureController::throwsRuntime — External API is down
+.[FailureBoundary][default][http] LogicException in Avax\Examples\FailureBoundaryDemo\DemoFailureController::throwsUnhandled — This should propagate
+..[FailureBoundary][http][http] InvalidArgumentException in Avax\Examples\FailureBoundaryDemo\DemoFailureController::throwsValidation — Email is required
+.[FailureBoundary][default][http] InvalidArgumentException in Avax\Examples\FailureBoundaryDemo\DemoFailureController::throwsValidation — Email is required
+..[FailureBoundary][http][http] Avax\Examples\SecureRegistrationApi\ValidationFailed in Avax\Examples\SecureRegistrationApi\RegistrationController::register — Email is required
+.[FailureBoundary][http][http] Avax\Examples\SecureRegistrationApi\ExternalServiceDown in Avax\Examples\SecureRegistrationApi\RegistrationController::verifyIdentity — Identity provider is unavailable
+.[FailureBoundary][http][http] Avax\Examples\SecureRegistrationApi\ValidationFailed in Avax\Examples\SecureRegistrationApi\RegistrationController::register — Email is required
+.[FailureBoundary][http][http] LogicException in Avax\Examples\SecureRegistrationApi\RegistrationController::register — Unexpected logic error
+.[FailureBoundary][default][http] Avax\Examples\SecureRegistrationApi\ValidationFailed in Avax\Examples\SecureRegistrationApi\RegistrationController::register — Email is required
+..[FailureBoundary][http][http] Avax\Examples\SecureRegistrationApi\ValidationFailed in Avax\Examples\SecureRegistrationApi\RegistrationController::register — Password must be at least 8 characters
+...pong....... 4331 / 8351 ( 51%)
+............................................................. 4392 / 8351 ( 52%)
+.................................HTTP Exception: Cannot resolve request. for URI: ://
+............................ 4453 / 8351 ( 53%)
+............................................................. 4514 / 8351 ( 54%)
+............................................................. 4575 / 8351 ( 54%)
+............................................................. 4636 / 8351 ( 55%)
+............................................................. 4697 / 8351 ( 56%)
+............................................................. 4758 / 8351 ( 56%)
+............................................................. 4819 / 8351 ( 57%)
+............................................................. 4880 / 8351 ( 58%)
+............................................................. 4941 / 8351 ( 59%)
+............................................................. 5002 / 8351 ( 59%)
+............................................................. 5063 / 8351 ( 60%)
+............................................................. 5124 / 8351 ( 61%)
+............................................................. 5185 / 8351 ( 62%)
+............................................................. 5246 / 8351 ( 62%)
+............................................................. 5307 / 8351 ( 63%)
+............................................................. 5368 / 8351 ( 64%)
+............................................................. 5429 / 8351 ( 65%)
+............................................................. 5490 / 8351 ( 65%)
+............................................................. 5551 / 8351 ( 66%)
+............................................................. 5612 / 8351 ( 67%)
+............................................................. 5673 / 8351 ( 67%)
+............................................................. 5734 / 8351 ( 68%)
+............................................................. 5795 / 8351 ( 69%)
+............................................................. 5856 / 8351 ( 70%)
+............................................................. 5917 / 8351 ( 70%)
+............................................................. 5978 / 8351 ( 71%)
+............................................................. 6039 / 8351 ( 72%)
+............................................................. 6100 / 8351 ( 73%)
+............................................................. 6161 / 8351 ( 73%)
+............................................................. 6222 / 8351 ( 74%)
+............................................................. 6283 / 8351 ( 75%)
+............................................................. 6344 / 8351 ( 75%)
+............................................................. 6405 / 8351 ( 76%)
+............................................................. 6466 / 8351 ( 77%)
+............................................................. 6527 / 8351 ( 78%)
+............................................................. 6588 / 8351 ( 78%)
+............................................................. 6649 / 8351 ( 79%)
+............................................................. 6710 / 8351 ( 80%)
+...............After-commit callback failed: Callback failed
+.............................................. 6771 / 8351 ( 81%)
+............................................................. 6832 / 8351 ( 81%)
+............................................................. 6893 / 8351 ( 82%)
+............................................................. 6954 / 8351 ( 83%)
+..............................................[info] health_check
+.[info] health_check
+.[info] health_check
+............. 7015 / 8351 ( 84%)
+............................................................. 7076 / 8351 ( 84%)
+............................................................. 7137 / 8351 ( 85%)
+............................................................. 7198 / 8351 ( 86%)
+............................................................. 7259 / 8351 ( 86%)
+............................................................. 7320 / 8351 ( 87%)
+............................................................. 7381 / 8351 ( 88%)
+............................................................. 7442 / 8351 ( 89%)
+............................................................. 7503 / 8351 ( 89%)
+............................................................. 7564 / 8351 ( 90%)
+............................................................. 7625 / 8351 ( 91%)
+............................................................. 7686 / 8351 ( 92%)
+............................................................. 7747 / 8351 ( 92%)
+............................................................. 7808 / 8351 ( 93%)
+............................................................. 7869 / 8351 ( 94%)
+............................................................. 7930 / 8351 ( 94%)
+............................................................. 7991 / 8351 ( 95%)
+..........................{"type":"dead_letter","version":1,"queue":"fallback_queue","failure":{"class":"RuntimeException","message":"fallback test","file":"\/home\/shomsy\/projects\/avax\/tests\/Unit\/Framework\/FailureBoundary\/DeadLetterQueueIntegrationTest.php","line":55},"context":{"kind":"queue","target_class":"FallbackHandler","target_method":"handle"},"timestamp":"2026-05-15T15:42:39+00:00"}
+.[FailureBoundary][default][queue] RuntimeException in BoundaryDeadLetterHandler::handle — boundary dead letter
+....[FailureBoundary][default][http] RuntimeException in FallbackController::handle — fallback error
+.[FailureBoundary][default][queue] RuntimeException in EnvelopeController::handle — envelope test
+{"type":"dead_letter","version":1,"queue":"test_queue","failure":{"class":"RuntimeException","message":"envelope test","file":"\/home\/shomsy\/projects\/avax\/tests\/Unit\/Framework\/FailureBoundary\/FailureBoundaryTest.php","line":138},"context":{"kind":"queue","target_class":"EnvelopeController","target_method":"handle"},"timestamp":"2026-05-15T15:42:39+00:00"}
+.[FailureBoundary][default][http] RuntimeException in :: — test error
+.[FailureBoundary][default][http] Error in :: — fatal
+.[FailureBoundary][default][http] InvalidArgumentException in TestController::store — invalid
+.[FailureBoundary][default][http] UnexpectedValueException in AuthController::login — not authed
+.[FailureBoundary][default][http] RuntimeException in RateController::fetch — api down
+.[FailureBoundary][default][queue] RuntimeException in JobHandler::handle — job failed
+{"type":"dead_letter","version":1,"queue":"failed_jobs","failure":{"class":"RuntimeException","message":"job failed","file":"\/home\/shomsy\/projects\/avax\/tests\/Unit\/Framework\/FailureBoundary\/FailureBoundaryTest.php","line":293},"context":{"kind":"queue","target_class":"JobHandler","target_method":"handle"},"timestamp":"2026-05-15T15:42:39+00:00"}
+.[FailureBoundary][default][console] RuntimeException in FlakyService::call — temporary failure
+.[FailureBoundary][default][console] RuntimeException in AlwaysFailing::call — always fails
+...................[FailureBoundary][default][http] RuntimeException in :: — unexpected
+.[FailureBoundary][default][http] RuntimeException in :: — reported
+. 8052 / 8351 ( 96%)
+[FailureBoundary][default][console] RuntimeException in RecoveryTestController::handle — primary failed
+.[FailureBoundary][default][console] RuntimeException in PrecedenceController::handle — test
+.[FailureBoundary][default][console] RuntimeException in CaptureController::handle — capture-this-failure
+...[FailureBoundary][default][console] RuntimeException in FlakyService::call — temporary failure
+.[FailureBoundary][default][console] RuntimeException in AlwaysFailing::call — always fails
+.[FailureBoundary][default][console] RuntimeException in FailingService::execute — original-failure-abc123
+.....[FailureBoundary][default][console] Avax\Components\Operations\Resilience\System\Foundation\Failure\OperationTimedOut\OperationTimedOut in SlowController::handle — Operation timed out after 50ms (limit: 10ms).
+................................................. 8113 / 8351 ( 97%)
+............................................................. 8174 / 8351 ( 97%)
+............................................................. 8235 / 8351 ( 98%)
+............................................................. 8296 / 8351 ( 99%)
+.......................................................       8351 / 8351 (100%)
+
+Time: 00:20.069, Memory: 86.50 MB
+
+OK, but there were issues!
+Tests: 8351, Assertions: 24026, Deprecations: 1.

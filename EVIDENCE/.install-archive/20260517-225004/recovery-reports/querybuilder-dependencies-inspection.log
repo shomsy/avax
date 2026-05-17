@@ -1,0 +1,437 @@
+== QueryOrchestrator files ==
+components/DataStack/Database/System/Capabilities/Connections/ConnectionPool.php
+components/DataStack/Database/System/Capabilities/Connections/Connections.php
+components/DataStack/Database/System/Capabilities/Connections/Contracts/DatabaseConnection.php
+components/DataStack/Database/System/Capabilities/Connections/DatabaseConnection.php
+components/DataStack/Database/System/Capabilities/Connections/Exceptions/ConnectionException.php
+components/DataStack/Database/System/Capabilities/Connections/Exceptions/ConnectionFailure.php
+components/DataStack/Database/System/Capabilities/Connections/OpenConnection/BuildPhysicalConnection.php
+components/DataStack/Database/System/Capabilities/Connections/OpenConnection/OpenConnection.php
+components/DataStack/Database/System/Capabilities/Connections/OpenConnection/PdoConnection.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/ArrayPooledConnection.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/BaseConnectionPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/BorrowedConnection.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/ConnectionPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/ConnectionPoolInterface.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/Contracts/ConnectionPoolInterface.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/DTO/ConnectionPoolMetrics.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/DatabaseConnectionPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/LazyConnectionPool.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/PooledConnection.php
+components/DataStack/Database/System/Capabilities/Connections/Pools/PooledConnectionAuthority.php
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/RememberConnection.php
+components/DataStack/Database/System/Capabilities/Connections/ReadConnection/ResolveDefaultConnection.php
+components/DataStack/Database/System/Capabilities/Connections/RunWithConnection/RunWithConnection.php
+components/DataStack/Database/System/Capabilities/Connections/ValueObjects/ConnectionConfig.php
+components/DataStack/Database/System/Capabilities/Query/Execution/QueryOrchestrator.php
+components/DataStack/Database/System/Capabilities/Telemetry/Events/ConnectionAcquired.php
+components/DataStack/Database/System/Capabilities/Telemetry/Events/ConnectionFailed.php
+components/DataStack/Database/System/Capabilities/Telemetry/Events/ConnectionOpened.php
+components/DataStack/Database/System/Capabilities/Transactions/OnConnection/OnConnection.php
+components/DataStack/Database/System/Flows/ConnectToDatabase/DatabaseConnectionFailed.php
+components/DataStack/Database/System/Flows/ConnectToDatabase/ResolveConnectionConfiguration.php
+components/DataStack/Database/System/Flows/RunDatabaseQuery/QueryResult.php
+
+== QueryOrchestrator public methods ==
+components/DataStack/Database/System/Capabilities/Query/Execution/QueryOrchestrator.php:25:    public function __construct(
+components/DataStack/Database/System/Capabilities/Query/Execution/QueryOrchestrator.php:37:    public function __clone()
+components/DataStack/Database/System/Capabilities/Query/Execution/QueryOrchestrator.php:47:    public function pretend(bool $value = true): void
+components/DataStack/Database/System/Capabilities/Query/Execution/QueryOrchestrator.php:57:    public function query(string $sql, array $bindings = []): array
+components/DataStack/Database/System/Capabilities/Query/Execution/QueryOrchestrator.php:78:    public function execute(
+components/DataStack/Database/System/Capabilities/Query/Execution/QueryOrchestrator.php:93:    public function withScope(ExecutionScope $executionScope) : self
+components/DataStack/Database/System/Capabilities/Query/Query.php:25:    public function __construct(
+components/DataStack/Database/System/Capabilities/Query/Query.php:44:    public function from(string $table, ?string $connectionName = null) : QueryBuilder
+components/DataStack/Database/System/Capabilities/Query/Query.php:53:    public function builder(?string $connectionName = null) : QueryBuilder
+components/DataStack/Database/System/Capabilities/Query/Query.php:62:    public function raw(string $value, ?string $connectionName = null) : Expression
+components/DataStack/Database/System/Capabilities/Query/Query.php:67:    public function grammar(): GrammarInterface
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:71:    public function __construct(
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:115:    public function withFrom(string $table): self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:127:    public function withColumns(array $columns): self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:139:    public function withDistinct(bool $distinct = true): self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:157:    public function withLimit(?int $limit): self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:175:    public function withOffset(?int $offset): self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:193:    public function withValues(array $values): self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:211:    public function withUpdateColumns(array $columns): self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:229:    public function addJoin(JoinNode $joinNode) : self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:241:    public function addWhere(WhereNode|NestedWhereNode $where): self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:259:    public function addGroup(string $column): self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:277:    public function withGroups(array $groups): self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:295:    public function addHaving(array $having): self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:313:    public function addOrder(OrderNode $orderNode) : self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:320:    public function withCte(string $name, mixed $query, bool $recursive = false): self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:327:    public function withWindow(string $name, mixed $window): self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:339:    public function addBinding(mixed $value): self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:357:    public function mergeBindings(array $values): self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:373:    public function resetBindings() : self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:385:    public function getBindings(): array
+components/DataStack/Database/System/Capabilities/Query/Grammar/MySQLGrammar.php:53:    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
+components/DataStack/Database/System/Capabilities/Query/Grammar/MySQLGrammar.php:76:    public function wrap(mixed $value): string
+components/DataStack/Database/System/Capabilities/Query/Grammar/MySQLGrammar.php:125:    public function compileRandomOrder(): string
+components/DataStack/Database/System/Capabilities/Query/Grammar/MySQLGrammar.php:134:    public function compileTruncate(string $table): string
+components/DataStack/Database/System/Capabilities/Query/Grammar/MySQLGrammar.php:143:    public function compileDropIfExists(string $table): string
+
+== QueryOrchestrator first 220 lines ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Execution;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Query\DTO\ExecutionResult;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
+use Random\RandomException;
+use Throwable;
+
+/**
+ * Coordinates query execution and pretend mode for the Query capability.
+ */
+final class QueryOrchestrator
+{
+    private bool $isPretending = false;
+
+    /**
+     * @param ExecutorInterface   $executor Low-level executor.
+     * @param ExecutionScope|null $executionScope Correlation scope (optional).
+     *
+     * @throws RandomException
+     */
+    public function __construct(
+        private readonly ExecutorInterface $executor,
+        private ?ExecutionScope            $executionScope
+        = null {
+            get {
+                return $this->executionScope;
+            }
+        },
+    ) {
+        $this->executionScope ??= ExecutionScope::fresh();
+    }
+
+    public function __clone()
+    {
+        if ($this->executionScope instanceof ExecutionScope) {
+            $this->executionScope = clone $this->executionScope;
+        }
+    }
+
+    /**
+     * Switch to pretend (dry-run) mode.
+     */
+    public function pretend(bool $value = true): void
+    {
+        $this->isPretending = $value;
+    }
+
+    /**
+     * Execute a SELECT and return rows.
+     *
+     * @throws Throwable
+     */
+    public function query(string $sql, array $bindings = []): array
+    {
+        if ($this->isPretending) {
+            $this->logPretend(sql: $sql);
+
+            return [];
+        }
+
+        return $this->executor->query(sql: $sql, bindings: $bindings, scope: $this->executionScope);
+    }
+
+    private function logPretend(string $sql): void
+    {
+        echo "\033[33m[DRY RUN]\033[0m SQL: {$sql}\n";
+    }
+
+    /**
+     * Execute a mutation (INSERT/UPDATE/DELETE/DDL) and return an execution result.
+     *
+     * @throws Throwable
+     */
+    public function execute(
+        string $sql,
+        ?array $bindings = null,
+    ): ExecutionResult {
+        $bindings ??= [];
+
+        if ($this->isPretending) {
+            $this->logPretend(sql: $sql);
+
+            return ExecutionResult::success(affectedRows: 1);
+        }
+
+        return $this->executor->execute(sql: $sql, bindings: $bindings, scope: $this->executionScope);
+    }
+
+    public function withScope(ExecutionScope $executionScope) : self
+    {
+        return clone (object: $this, withProperties: [
+            'scope' => $executionScope,
+        ]);
+    }
+}
+
+== Query capability first 180 lines ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Query;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\CreateBuilder\CreateBuilder;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\MySQLGrammar;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\ValueObjects\Expression;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Events\EventBus;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Trackers\ExecutionScope;
+use ReflectionException;
+use Throwable;
+
+/**
+ * Public capability owner for Laravel-like query DSL and SQL execution.
+ */
+final readonly class Query
+{
+    private CreateBuilder $createBuilder;
+
+    public function __construct(
+        private Connections $connections,
+        private ?EventBus $eventBus = null,
+        private GrammarInterface $grammar = new MySQLGrammar(),
+        private ?ExecutionScope  $executionScope = null,
+        ?CreateBuilder           $createBuilder = null,
+    ) {
+        $this->createBuilder = $createBuilder ?? new CreateBuilder(
+            connections: $this->connections,
+            grammar    : $this->grammar,
+            eventBus   : $this->eventBus,
+            scope      : $this->executionScope,
+        );
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function from(string $table, ?string $connectionName = null) : QueryBuilder
+    {
+        return $this->builder(connectionName: $connectionName)->from(table: $table);
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function builder(?string $connectionName = null) : QueryBuilder
+    {
+        return $this->createBuilder->for(connectionName: $connectionName);
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws Throwable
+     */
+    public function raw(string $value, ?string $connectionName = null) : Expression
+    {
+        return $this->builder(connectionName: $connectionName)->raw(value: $value);
+    }
+
+    public function grammar(): GrammarInterface
+    {
+        return $this->grammar;
+    }
+}
+
+== QueryState first 180 lines ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Query\State;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Query\State\AST\JoinNode;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\State\AST\NestedWhereNode;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\State\AST\OrderNode;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\State\AST\WhereNode;
+
+/**
+ * Immutable technical state container for database query metadata.
+ *
+ * @see /docs/Foundation/Database/DSL/QueryStates.md
+ */
+final readonly class QueryState
+{
+    public bool $distinct;
+
+    public array $updateColumns;
+
+    public array $values;
+
+    public array $orders;
+
+    public array $havings;
+
+    public array $groups;
+
+    public array $wheres;
+
+    public array $joins;
+
+    public array $columns;
+
+    public array $ctes;
+
+    public array $windows;
+
+    /**
+     * @param string[]                         $columns       The list of technical column identifiers or expressions
+     *                                                        for projection.
+     * @param string|null                      $from          The primary technical identifier for the data source
+     *                                                        (table).
+     * @param JoinNode[]                       $joins         The collection of structural nodes representing source
+     *                                                        relationships.
+     * @param array<WhereNode|NestedWhereNode> $wheres        The hierarchical collection of logical filters and
+     *                                                        branches.
+     * @param string[]                         $groups        The collection of column identifiers used for result
+     *                                                        aggregation.
+     * @param array                            $havings       The collection of logical filters applied to aggregate
+     *                                                        sets.
+     * @param OrderNode[]                      $orders        The collection of structural nodes defining the result
+     *                                                        set sequence.
+     * @param int|null                         $limit         The strictly enforced upper limit of records to be
+     *                                                        retrieved.
+     * @param int|null                         $offset        The number of records to bypass before the retrieval
+     *                                                        window starts.
+     * @param array                            $values        The associative map of column/value pairs for mutation
+     *                                                        operations.
+     * @param string[]                         $updateColumns The specific technical columns targeted for update or
+     *                                                        upsert logic.
+     * @param bool                             $distinct      Toggle indicating if strictly unique records should be
+     *                                                        projected.
+     * @param array                            $ctes          Common Table Expressions (WITH clauses).
+     * @param array                            $windows       Window Function definitions (OVER clauses).
+     * @param BindingBag $bindingBag                          The immutable container for secure, parameterized query
+     *                                                        tokens.
+     */
+    public function __construct(
+        ?array             $columns = null,
+        public ?string     $from = null,
+        ?array             $joins = null,
+        ?array             $wheres = null,
+        ?array             $groups = null,
+        ?array             $havings = null,
+        ?array             $orders = null,
+        public ?int        $limit = null,
+        public ?int        $offset = null,
+        ?array             $values = null,
+        ?array             $updateColumns = null,
+        ?bool              $distinct = null,
+        ?array             $ctes = null,
+        ?array             $windows = null,
+        private BindingBag $bindingBag = new BindingBag(),
+    ) {
+        $columns        ??= ['*'];
+        $joins          ??= [];
+        $wheres         ??= [];
+        $groups         ??= [];
+        $havings        ??= [];
+        $orders         ??= [];
+        $values         ??= [];
+        $updateColumns ??= [];
+        $distinct       ??= false;
+        $this->columns  = $columns;
+        $this->joins    = $joins;
+        $this->wheres   = $wheres;
+        $this->groups   = $groups;
+        $this->havings  = $havings;
+        $this->orders   = $orders;
+        $this->values   = $values;
+        $this->updateColumns = $updateColumns;
+        $this->distinct = $distinct;
+        $this->ctes     = $ctes ?? [];
+        $this->windows  = $windows ?? [];
+    }
+
+    /**
+     * Create a new state with the assigned target table (FROM).
+     *
+     * @param string $table Target table name.
+     */
+    public function withFrom(string $table): self
+    {
+        return new self(
+            ...[...get_object_vars(object: $this), 'from' => $table],
+        );
+    }
+
+    /**
+     * Create a new state with the defined selection (SELECT) columns.
+     *
+     * @param string[] $columns Collection of column identifiers.
+     */
+    public function withColumns(array $columns): self
+    {
+        return new self(
+            ...[...get_object_vars(object: $this), 'columns' => $columns],
+        );
+    }
+
+    /**
+     * Create a new state with the unique records flag (DISTINCT).
+     *
+     * @param bool $distinct Whether to project unique records.
+     */
+    public function withDistinct(bool $distinct = true): self
+    {
+        return new self(
+            ...[...get_object_vars(object: $this), 'distinct' => $distinct],
+        );
+    }
+
+    /**
+     * Coordinate the setting of a strictly enforced record limit.
+     *
+     * -- intent:
+     * Caps the number of records retrieved by the persistence engine,
+     * typically used for pagination or existence checks.
+     *
+     * @param int|null $limit The maximum record volume allowed in the result set.
+     *
+     * @return self A fresh QueryState instance with the applied limit.
+     */
+    public function withLimit(?int $limit): self
+    {
+        return new self(
+            ...[...get_object_vars(object: $this), 'limit' => $limit],
+        );
+    }
+
+    /**
+     * Coordinate the setting of a record bypass offset.
+     *
+     * -- intent:
+     * Skip a specified number of leading records in the retrieval window,
+     * essential for deep-traversal pagination logic.
+     *
+     * @param int|null $offset The technical volume of records to skip.
+     *
+     * @return self A fresh QueryState instance with the applied offset.
+     */
+    public function withOffset(?int $offset): self
+    {
+        return new self(
+            ...[...get_object_vars(object: $this), 'offset' => $offset],
+        );
+    }
+
+== BaseGrammar compile methods first 260 lines ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar;
+
+class BaseGrammar extends Grammar {}

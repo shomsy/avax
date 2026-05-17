@@ -1,0 +1,30 @@
+== Blueprint lines 835-860 ==
+     * -- intent: coordinate the rendering of all designed columns into a CREATE or ALTER command.
+     *
+     * @param GrammarInterface $grammar The dialect technician for wrapping and syntax
+     *
+     * @return array<string> List of SQL statements to execute
+     */
+    public function toSql(GrammarInterface $grammar): array
+    {
+        return $this->creating ? $this->toCreateSql(grammar: $grammar) : $this->toAlterSql(grammar: $grammar);
+    }
+
+    /**
+     * Generate CREATE TABLE statement.
+     */
+    private function toCreateSql(GrammarInterface $grammar): array
+    {
+        $columnSQLRenderer = new ColumnSQLRenderer();
+        $columns           = array_map(
+            callback: static fn (ColumnDefinition $columnDefinition) : string => $columnSQLRenderer->render(grammar: $grammar, column: $columnDefinition),
+            array   : $this->columns,
+        );
+
+        // noinspection SqlNoDataSourceInspection
+        $sql = 'CREATE TABLE ' . $grammar->wrap(value: $this->table) . ' (';
+        $sql .= implode(separator: ', ', array: $columns);
+        $sql .= ')';
+
+== ColumnSQLRenderer signature ==
+25:    public function render(ColumnDefinition $columnDefinition, GrammarInterface $grammar): string

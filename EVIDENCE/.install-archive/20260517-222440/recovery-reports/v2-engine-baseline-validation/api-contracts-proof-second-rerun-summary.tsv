@@ -1,0 +1,3 @@
+order	command	exit	log
+27	vendor/bin/phpunit --no-coverage --filter ApiContractsTest	0	27-phpunit-api-contracts-after-null-narrowing.log
+28	vendor/bin/phpstan analyse components/API/Contracts tests/Unit/Components/API/Contracts --memory-limit=1G --error-format=raw --no-progress	0	28-phpstan-api-contracts-after-null-narrowing.raw

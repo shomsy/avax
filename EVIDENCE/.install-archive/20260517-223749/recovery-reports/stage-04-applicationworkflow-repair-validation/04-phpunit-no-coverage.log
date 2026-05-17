@@ -1,0 +1,14 @@
+PHPUnit 10.5.63 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.5
+Configuration: /home/shomsy/projects/avax/phpunit.xml
+
+.........................pong..............................S.......  63 / 205 ( 30%)
+............................................................... 126 / 205 ( 61%)
+............................................................... 189 / 205 ( 92%)
+................                                                205 / 205 (100%)
+
+Time: 00:00.477, Memory: 16.00 MB
+
+OK, but some tests were skipped!
+Tests: 205, Assertions: 1687, Skipped: 1.

@@ -1,0 +1,8 @@
+How-To Document Structure Gate
+==============================
+
+Scanned files: 19
+Violations found: 0
+
+PASS — all how-to documents have clean structure.
+Exit code: 0

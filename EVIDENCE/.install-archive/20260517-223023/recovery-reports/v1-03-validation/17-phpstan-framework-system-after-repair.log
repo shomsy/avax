@@ -1,0 +1,4 @@
+Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
+/home/shomsy/projects/avax/framework/System/Flows/DiscoverComponents/DiscoverComponents.php:48:Call to method Avax\Framework\System\Capabilities\ComponentManifest\ComponentDiscovery::discover() on a separate line has no effect.
+/home/shomsy/projects/avax/framework/System/Flows/HandleRuntimeFailure/ReportRuntimeFailure.php:185:Trying to invoke 'Sentry…' but it's not a callable.
+/home/shomsy/projects/avax/framework/System/Flows/ListComponents/ListComponents.php:59:Call to method Avax\Framework\System\Capabilities\ComponentManifest\ComponentDiscovery::discover() on a separate line has no effect.

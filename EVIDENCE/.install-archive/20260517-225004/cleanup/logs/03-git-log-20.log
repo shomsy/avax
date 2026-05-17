@@ -1,0 +1,23 @@
+Script started on 2026-05-13 23:20:26+02:00 [COMMAND="git log -20 --oneline" <not executed on terminal>]
+fc499a9e5 (HEAD -> main)  ▪ V5.8.4 DI Classification — Final Status
+5cbd0b2d9 V5.8.3: harden components enterprise maturity
+d2274a507 Bugfixes
+303d5f78f    V5.8.2 Final Output Contract
+a561761e3 V5.8.2: harden runtime cohesion and remove cheap code seams
+b2caad5b6 V5.8: close deferred items — EntityPersister, QueryOrchestrator, Transaction lifecycle wiring, tooling gates, docs
+1f91d2a52 (origin/main, origin/HEAD) V5.8: update governance state — CURRENT_TRUTH, EXECUTION, ACTIVE, TODO
+83a7bdca5 V5.8: implement database lifecycle events and transaction bridge
+afadf83b8 V5.8: lock database lifecycle events design
+4fcf679b9 V5.7: finalize events fluent DSL acceptance
+51de48d3a V5.7-04 through V5.7-08: close event runtime registry dispatch and PSR interop
+94d9c6836 V5.7-03: fluent event DSL onEvent()->do() — GREEN
+8e287c830 V5.7-02: event contracts and foundation — GREEN
+1fee87631 V5.7-01: converge canonical events owner
+f3818bcd7 Current plan lock: reconcile V4 timeout and documentation truth
+21d6f69fd Current plan lock: reconcile V4 timeout and documentation truth
+3fe47d6cd V5.7: lock events DSL and PSR-14 design
+5cef23e2c Current plan lock: close final hardening blockers
+8f52b897e    Final Output Contract
+36949b7ac V5.6: fix failure boundary dogfooding gate
+
+Script done on 2026-05-13 23:20:26+02:00 [COMMAND_EXIT_CODE="0"]

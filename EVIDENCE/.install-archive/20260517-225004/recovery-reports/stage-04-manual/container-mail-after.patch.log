@@ -1,0 +1,4 @@
+Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
+/home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php:133:Call to an undefined method Avax\Components\Application\Container\System\ContainerInterface::engine().
+/home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php:134:Call to an undefined method Avax\Components\Application\Container\System\ContainerInterface::engine().
+/home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php:135:Call to an undefined method Avax\Components\Application\Container\System\ContainerInterface::engine().

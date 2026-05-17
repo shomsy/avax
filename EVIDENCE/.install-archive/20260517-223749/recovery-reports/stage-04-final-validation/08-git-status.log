@@ -1,0 +1,34 @@
+ M .phpunit.cache/test-results
+ M components/Application/Container/System/Capabilities/Composition/Compilation/ArtifactMetadata.php
+ M components/Application/Container/System/Capabilities/Diagnostics/Errors/ContainerException.php
+ M components/Application/Container/tests/Capabilities/Declaration/Bindings/DependencyRegistrySmokeTest.php
+ M components/Application/Container/tests/Capabilities/Runtime/Scopes/AdvancedLifetimeSmokeTest.php
+ M components/Application/Container/tests/Flows/BootProviders/BootProvidersSmokeTest.php
+ M components/Application/Container/tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php
+ M components/Application/Container/tests/Flows/ResolveService/PoolingSemanticsSmokeTest.php
+ M components/Application/Container/tests/Foundation/FoundationSmokeTest.php
+ M components/Application/Container/tests/benchmarks/BenchmarkComparisonSmokeTest.php
+ M components/Application/Container/tests/benchmarks/BenchmarkPeerMatrixSmokeTest.php
+ M components/Application/Container/tests/benchmarks/compare.php
+ M components/Application/Container/tests/benchmarks/peer_matrix.php
+ M components/Application/Container/tests/benchmarks/run.php
+ M components/Application/Container/tests/diagnostics/validate-report-schemas.php
+ M components/Application/Container/tests/fixtures/analysis_hints_fixture.php
+ M components/Application/Container/tests/fixtures/graph_tool_fixture.php
+ M components/Application/Filesystem/System/Foundation/Implementation/LocalFilesystem.php
+ M components/Application/Validation/System/PublicSurface/Validation.php
+ M components/DataStack/Data/System/Foundation/Exceptions/DataException.php
+ M components/HTTP/Middleware/IpRestrictionMiddleware.php
+ M components/HTTP/Middleware/RateLimiterMiddleware.php
+ M components/HTTP/Middleware/System/Configuration/MiddlewareProvider.php
+ M components/HTTP/Middleware/System/Foundation/Failure/MiddlewareFailure.php
+ M components/HTTP/Router/System/Foundation/Failure/RouterFailure.php
+ M components/Identity/Security/System/Capabilities/Encryption/AesEncrypter.php
+ M components/Identity/Security/System/Foundation/Failure/SecurityFailure.php
+ M components/Operations/ApplicationWorkflow/System/Flows/Saga/ConfigureSagaRuntime/RegisterSagaMessageBus.php
+ M components/Operations/ApplicationWorkflow/System/Flows/Saga/ConfigureSagaRuntime/RegisterSagaStore.php
+ M components/Operations/Notifications/System/Capabilities/Channels/MailChannel.php
+ M components/Presentation/View/BladeTemplateEngine.php
+ M components/Presentation/View/TemplateEngine.php
+?? EVIDENCE/recovery-reports/stage-04-final-validation/
+?? EVIDENCE/recovery-reports/stage-04-manual/

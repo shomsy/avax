@@ -1,0 +1,7 @@
+bash tooling/recovery/run_v1_missing_structure_stamp.sh
+Stamped structure: components/Presentation/View
+Stamped structure: components/Operations/Events
+Stamped structure: components/Operations/Observability
+Stamped structure: components/Operations/Notifications
+Stamped structure: components/Application/Localization
+Stamped missing V1 component structures. Structure is not behavior.

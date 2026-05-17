@@ -1,0 +1,420 @@
+# Broken Reference Groups
+
+## TEST-ONLY (41)
+
+- **ActiveConditionalGateway** [MINOR]
+    - components/Application/Container/tests/Flows/ResolveService/ConditionalCompositionSmokeTest.php:44 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/ResolveService/ConditionalCompositionSmokeTest.php:77 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/ResolveService/ConditionalCompositionSmokeTest.php:119 (
+      class-const-fetch)
+- **Avax\Components\Application\Cache\System\Cache** [MINOR]
+    - components/Application/Cache/tests/Unit/Cache/PublicCacheClassesAutoloadTest.php:9 (use-statement)
+    - components/Application/Cache/tests/Unit/Cache/PublicCacheClassesAutoloadTest.php:40 (class-const-fetch)
+- **Avax\Components\Application\Cache\tests\Unit\Cache\Providers\CacheNotConfigured** [MINOR]
+    - components/Application/Cache/tests/Unit/Cache/Providers/CacheServiceProviderTest.php:31 (class-const-fetch)
+    - components/Application/Cache/tests/Unit/Cache/Providers/CacheServiceProviderTest.php:75 (class-const-fetch)
+- **Avax\Components\HTTP\Response\Response** [MINOR]
+    - tests/fixtures/routes_with_null_callable.php:6 (use-statement)
+    - tests/fixtures/routes_with_null_callable.php:22 (static-call)
+- **BenchSharedService** [CRITICAL]
+    - components/Application/Container/tests/benchmarks/run.php:136 (constructor-param)
+    - components/Application/Container/tests/benchmarks/run.php:171 (property-type)
+    - components/Application/Container/tests/benchmarks/run.php:173 (property-type)
+    - components/Application/Container/tests/benchmarks/run.php:176 (param-type)
+    - components/Application/Container/tests/benchmarks/run.php:299 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:300 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:308 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:309 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:317 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:318 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:319 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:330 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:333 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:433 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:442 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:451 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:463 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:466 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:486 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:487 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:490 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:504 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:505 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:508 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:523 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:524 (class-const-fetch)
+    - components/Application/Container/tests/benchmarks/run.php:527 (class-const-fetch)
+- **BlueprintTarget** [MINOR]
+    - components/Application/Container/tests/Capabilities/Declaration/Blueprints/CreateDependencyBlueprintSmokeTest.php:
+      39 (class-const-fetch)
+    - components/Application/Container/tests/Capabilities/Declaration/Blueprints/CreateDependencyBlueprintSmokeTest.php:
+      40 (class-const-fetch)
+    - components/Application/Container/tests/Capabilities/Declaration/Blueprints/CreateDependencyBlueprintSmokeTest.php:
+      44 (class-const-fetch)
+    - components/Application/Container/tests/Capabilities/Declaration/Blueprints/CreateDependencyBlueprintSmokeTest.php:
+      57 (class-const-fetch)
+- **CallArgumentGreeter** [MINOR]
+  -
+  components/Application/Container/tests/Capabilities/Execution/Injection/Invocation/ResolveCallArgumentsSmokeTest.php:
+  34 (class-const-fetch)
+- **CallGreeter** [MINOR]
+    - components/Application/Container/tests/Flows/CallFunction/CallFunctionSmokeTest.php:44 (class-const-fetch)
+- **CloseScopedService** [MINOR]
+    - components/Application/Container/tests/Flows/CloseScope/CloseScopeSmokeTest.php:12 (class-const-fetch)
+    - components/Application/Container/tests/Flows/CloseScope/CloseScopeSmokeTest.php:15 (class-const-fetch)
+    - components/Application/Container/tests/Flows/CloseScope/CloseScopeSmokeTest.php:19 (class-const-fetch)
+- **CompatibilityDependency** [CRITICAL]
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php:19 (
+      constructor-param)
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php:33 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php:34 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledCompatibilitySmokeTest.php:44 (
+      class-const-fetch)
+- **CompileReportDependency** [CRITICAL]
+    - components/Application/Container/tests/Flows/CreateContainer/CompileReportSmokeTest.php:11 (return-type)
+    - components/Application/Container/tests/Flows/CreateContainer/CompileReportSmokeTest.php:32 (constructor-param)
+    - components/Application/Container/tests/Flows/CreateContainer/CompileReportSmokeTest.php:36 (return-type)
+    - components/Application/Container/tests/Flows/CreateContainer/CompileReportSmokeTest.php:55 (class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/CompileReportSmokeTest.php:56 (class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/CompileReportSmokeTest.php:57 (class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/CompileReportSmokeTest.php:90 (class-const-fetch)
+- **CompiledCacheDependency** [CRITICAL]
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledCacheSmokeTest.php:19 (constructor-param)
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledCacheSmokeTest.php:30 (class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledCacheSmokeTest.php:38 (class-const-fetch)
+- **CompiledGreeter** [MINOR]
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledContainerSmokeTest.php:50 (class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledContainerSmokeTest.php:70 (class-const-fetch)
+- **CreateGreeter** [MINOR]
+    - components/Application/Container/tests/Flows/CreateContainer/CreateContainerSmokeTest.php:33 (class-const-fetch)
+- **DecoratedService** [MINOR]
+    - components/Application/Container/tests/Flows/ResolveService/DecoratorAndRuntimeInputSmokeTest.php:32 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/ResolveService/DecoratorAndRuntimeInputSmokeTest.php:79 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/ResolveService/DecoratorAndRuntimeInputSmokeTest.php:115 (instanceof)
+    - components/Application/Container/tests/Flows/ResolveService/DecoratorAndRuntimeInputSmokeTest.php:173 (
+      class-const-fetch)
+- **DefaultRegisterLogger** [MINOR]
+    - components/Application/Container/tests/Flows/RegisterServices/RegisterDependenciesSmokeTest.php:69 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/RegisterServices/RegisterDependenciesSmokeTest.php:72 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/RegisterServices/RegisterDependenciesSmokeTest.php:74 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/RegisterServices/RegisterDependenciesSmokeTest.php:119 (
+      class-const-fetch)
+- **DeferredRegularService** [MINOR]
+    - components/Application/Container/tests/Flows/RegisterServices/DeferredDependenciesSmokeTest.php:25 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/RegisterServices/DeferredDependenciesSmokeTest.php:29 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/RegisterServices/DeferredDependenciesSmokeTest.php:31 (
+      class-const-fetch)
+- **DiagnosticsSchemaDependency** [CRITICAL]
+    - components/Application/Container/tests/diagnostics/validate-report-schemas.php:21 (constructor-param)
+    - components/Application/Container/tests/diagnostics/validate-report-schemas.php:45 (class-const-fetch)
+    - components/Application/Container/tests/diagnostics/validate-report-schemas.php:46 (class-const-fetch)
+- **DiagnosticsService** [MINOR]
+    - components/Application/Container/tests/Flows/ResolveService/ContextAndDiagnosticsSmokeTest.php:48 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/ResolveService/ContextAndDiagnosticsSmokeTest.php:77 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/ResolveService/ContextAndDiagnosticsSmokeTest.php:164 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/ResolveService/ContextAndDiagnosticsSmokeTest.php:174 (
+      class-const-fetch)
+- **ExecutionModeDependency** [CRITICAL]
+    - components/Application/Container/tests/Flows/CreateContainer/ExecutionModeSmokeTest.php:15 (constructor-param)
+    - components/Application/Container/tests/Flows/CreateContainer/ExecutionModeSmokeTest.php:26 (class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/ExecutionModeSmokeTest.php:60 (class-const-fetch)
+- **ExportedSliceGateway** [MINOR]
+    - components/Application/Container/tests/Flows/ResolveService/SliceViewSmokeTest.php:57 (class-const-fetch)
+- **FreshnessDependencyV1** [MINOR]
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledFreshnessSmokeTest.php:48 (class-const-fetch)
+- **GeneratedFixtureDependency** [CRITICAL]
+    - components/Application/Container/tests/fixtures/generated_runtime_fixture.php:18 (constructor-param)
+    - components/Application/Container/tests/fixtures/generated_runtime_fixture.php:32 (class-const-fetch)
+- **GraphToolIdentityService** [CRITICAL]
+    - components/Application/Container/tests/fixtures/graph_tool_fixture.php:19 (constructor-param)
+    - components/Application/Container/tests/fixtures/graph_tool_fixture.php:39 (class-const-fetch)
+    - components/Application/Container/tests/fixtures/graph_tool_fixture.php:69 (class-const-fetch)
+- **HintIdentityService** [CRITICAL]
+    - components/Application/Container/tests/fixtures/analysis_hints_fixture.php:23 (constructor-param)
+    - components/Application/Container/tests/fixtures/analysis_hints_fixture.php:35 (class-const-fetch)
+- **InlineSmokeCompiled** [CRITICAL]
+    - components/Application/Container/tests/Capabilities/Runtime/HotPathInlinerSmokeTest.php:28 (new)
+- **IntegrityDependency** [CRITICAL]
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php:22 (constructor-param)
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php:39 (class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php:40 (class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php:52 (class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php:90 (class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php:91 (class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledIntegritySmokeTest.php:95 (class-const-fetch)
+- **LazyCounter** [MINOR]
+    - components/Application/Container/tests/Flows/ResolveService/LazyProxySmokeTest.php:18 (class-const-fetch)
+    - components/Application/Container/tests/Flows/ResolveService/LazyProxySmokeTest.php:20 (class-const-fetch)
+    - components/Application/Container/tests/Flows/ResolveService/LazyProxySmokeTest.php:22 (class-const-fetch)
+- **LifecycleService** [MINOR]
+    - components/Application/Container/tests/Flows/CreateContainer/ContainerLifecycleSmokeTest.php:36 (
+      class-const-fetch)
+- **OpenScopedService** [MINOR]
+    - components/Application/Container/tests/Flows/OpenScope/OpenScopeSmokeTest.php:12 (class-const-fetch)
+    - components/Application/Container/tests/Flows/OpenScope/OpenScopeSmokeTest.php:15 (class-const-fetch)
+    - components/Application/Container/tests/Flows/OpenScope/OpenScopeSmokeTest.php:16 (class-const-fetch)
+- **OrderingProviderAlpha** [CRITICAL]
+    - components/Application/Container/tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php:25 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php:33 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php:97 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php:97 (new)
+    - components/Application/Container/tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php:102 (
+      class-const-fetch)
+- **PolicyDependencyA** [MINOR]
+    - components/Application/Container/tests/Flows/ResolveService/PolicyAndStructureDiffSmokeTest.php:71 (
+      class-const-fetch)
+- **PoolBucketService** [CRITICAL]
+    - components/Application/Container/tests/Capabilities/Runtime/DependencyPoolSmokeTest.php:39 (new)
+    - components/Application/Container/tests/Capabilities/Runtime/DependencyPoolSmokeTest.php:48 (class-const-fetch)
+- **ProviderState** [CRITICAL]
+    - components/Application/Container/tests/Flows/BootProviders/BootProvidersSmokeTest.php:43 (class-const-fetch)
+    - components/Application/Container/tests/Flows/BootProviders/BootProvidersSmokeTest.php:43 (new)
+    - components/Application/Container/tests/Flows/BootProviders/BootProvidersSmokeTest.php:53 (class-const-fetch)
+    - components/Application/Container/tests/Flows/BootProviders/BootProvidersSmokeTest.php:77 (class-const-fetch)
+    - components/Application/Container/tests/Flows/BootProviders/BootProvidersSmokeTest.php:80 (class-const-fetch)
+    - components/Application/Container/tests/Flows/BootProviders/BootProvidersSmokeTest.php:92 (class-const-fetch)
+    - components/Application/Container/tests/Flows/BootProviders/BootProvidersSmokeTest.php:95 (class-const-fetch)
+    - components/Application/Container/tests/Flows/BootProviders/BootProvidersSmokeTest.php:186 (class-const-fetch)
+- **PrunedDependency** [CRITICAL]
+    - components/Application/Container/tests/Flows/CreateContainer/PruningSmokeTest.php:15 (constructor-param)
+    - components/Application/Container/tests/Flows/CreateContainer/PruningSmokeTest.php:39 (class-const-fetch)
+- **ResolveGreeter** [CRITICAL]
+    - components/Application/Container/tests/Flows/ResolveService/ResolveDependencySmokeTest.php:17 (constructor-param)
+- **SchemaCompatibilityDependency** [CRITICAL]
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php:15 (
+      constructor-param)
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php:29 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php:30 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/CompiledSchemaCompatibilitySmokeTest.php:41 (
+      class-const-fetch)
+- **ScopedService** [MINOR]
+    - components/Application/Container/tests/Capabilities/Runtime/Scopes/ManageScopesSmokeTest.php:16 (
+      class-const-fetch)
+    - components/Application/Container/tests/Capabilities/Runtime/Scopes/ManageScopesSmokeTest.php:31 (
+      class-const-fetch)
+    - components/Application/Container/tests/Capabilities/Runtime/Scopes/ManageScopesSmokeTest.php:37 (
+      class-const-fetch)
+    - components/Application/Container/tests/Capabilities/Runtime/Scopes/ManageScopesSmokeTest.php:38 (
+      class-const-fetch)
+    - components/Application/Container/tests/Capabilities/Runtime/Scopes/ManageScopesSmokeTest.php:47 (
+      class-const-fetch)
+    - components/Application/Container/tests/Capabilities/Runtime/Scopes/ManageScopesSmokeTest.php:51 (
+      class-const-fetch)
+    - components/Application/Container/tests/Capabilities/Runtime/Scopes/ManageScopesSmokeTest.php:54 (
+      class-const-fetch)
+- **SharedOwnershipGateway** [MINOR]
+    - components/Application/Container/tests/Flows/ResolveService/OwnershipCompositionSmokeTest.php:64 (
+      class-const-fetch)
+- **StrictSharedFlowService** [MINOR]
+    - components/Application/Container/tests/Flows/ResolveService/PolicyProfileSmokeTest.php:20 (class-const-fetch)
+    - components/Application/Container/tests/Flows/ResolveService/PolicyProfileSmokeTest.php:34 (class-const-fetch)
+    - components/Application/Container/tests/Flows/ResolveService/PolicyProfileSmokeTest.php:46 (class-const-fetch)
+    - components/Application/Container/tests/Flows/ResolveService/PolicyProfileSmokeTest.php:47 (class-const-fetch)
+- **WorkerSharedService** [MINOR]
+    - components/Application/Container/tests/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php:25 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php:27 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php:30 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php:45 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php:56 (
+      class-const-fetch)
+    - components/Application/Container/tests/Flows/CreateContainer/WorkerRequestLifecycleSmokeTest.php:57 (
+      class-const-fetch)
+
+## DOCS-ONLY (0)
+
+## NON-PRODUCTION (23)
+
+- **Avax\Components\Auth\Interface\HTTP\Middleware\AuthenticationMiddleware** [MINOR]
+    - examples/minimal-http-app/config/middleware.php:12 (use-statement)
+    - examples/minimal-http-app/config/middleware.php:34 (class-const-fetch)
+- **Avax\Components\HTTP\Middleware\CorsMiddleware** [MINOR]
+    - examples/minimal-http-app/config/middleware.php:13 (use-statement)
+    - examples/minimal-http-app/config/middleware.php:31 (class-const-fetch)
+- **Avax\Components\HTTP\Middleware\ExceptionHandlerMiddleware** [MINOR]
+    - examples/minimal-http-app/config/middleware.php:14 (use-statement)
+    - examples/minimal-http-app/config/middleware.php:24 (class-const-fetch)
+- **Avax\Components\HTTP\Middleware\JsonResponseMiddleware** [MINOR]
+    - examples/minimal-http-app/config/middleware.php:15 (use-statement)
+    - examples/minimal-http-app/config/middleware.php:33 (class-const-fetch)
+- **Avax\Components\HTTP\Middleware\SecurityHeadersMiddleware** [MINOR]
+    - examples/minimal-http-app/config/middleware.php:18 (use-statement)
+    - examples/minimal-http-app/config/middleware.php:25 (class-const-fetch)
+- **Avax\Config\Architecture\DDD\AppPath** [MINOR]
+    - examples/minimal-http-app/config/views.php:7 (use-statement)
+    - examples/minimal-http-app/config/views.php:18 (static-call)
+    - examples/minimal-http-app/config/views.php:19 (class-const-fetch)
+    - examples/minimal-http-app/config/filesystems.php:5 (use-statement)
+    - examples/minimal-http-app/config/filesystems.php:13 (static-call)
+- **Avax\Docs\Components\Api\Capabilities\OpenApi\OpenApiGenerator** [CRITICAL]
+    - docs/Components/PublicSurface/ApiDocumentation.php:7 (use-statement)
+    - docs/Components/PublicSurface/ApiDocumentation.php:17 (new)
+- **Avax\Docs\Components\Api\Capabilities\Swagger\SwaggerUi** [CRITICAL]
+    - docs/Components/PublicSurface/ApiDocumentation.php:8 (use-statement)
+    - docs/Components/PublicSurface/ApiDocumentation.php:22 (new)
+- **Avax\Facade\Facades\Route** [MINOR]
+    - examples/minimal-http-app/app/HTTP/routes/web.routes.php:5 (use-statement)
+    - examples/minimal-http-app/app/HTTP/routes/web.routes.php:20 (static-call)
+    - examples/minimal-http-app/app/HTTP/routes/web.routes.php:23 (static-call)
+    - examples/minimal-http-app/app/HTTP/routes/web.routes.php:26 (static-call)
+    - examples/minimal-http-app/app/HTTP/routes/web.routes.php:30 (static-call)
+    - examples/minimal-http-app/app/HTTP/routes/web.routes.php:36 (static-call)
+    - tests/fixtures/routes_with_null_callable.php:7 (use-statement)
+    - tests/fixtures/routes_with_null_callable.php:10 (static-call)
+    - tests/fixtures/routes_with_null_callable.php:15 (static-call)
+- **Avax\HTTP\Response\Response** [MINOR]
+    - examples/minimal-http-app/app/HTTP/routes/web.routes.php:6 (use-statement)
+    - examples/minimal-http-app/app/HTTP/routes/web.routes.php:30 (static-call)
+    - examples/minimal-http-app/app/HTTP/routes/web.routes.php:36 (static-call)
+- **Avax\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStoragePort** [CRITICAL]
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:7 (use-statement)
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:13 (implements)
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:7 (use-statement)
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:10 (implements)
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:7 (
+      use-statement)
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:10 (implements)
+    - labs/Integration/ObjectStorage/System/Capabilities/Health/CheckObjectStorageHealth.php:7 (use-statement)
+    - labs/Integration/ObjectStorage/System/Capabilities/Health/CheckObjectStorageHealth.php:13 (constructor-param)
+- **Avax\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStorageResult** [MINOR]
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:8 (use-statement)
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:35 (return-type)
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:45 (static-call)
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:47 (static-call)
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:8 (use-statement)
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:17 (return-type)
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsInMemory.php:21 (static-call)
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:8 (
+      use-statement)
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:22 (return-type)
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:34 (static-call)
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnLocalFilesystem.php:37 (static-call)
+- **Avax\Tooling\Architecture\FilesystemIterator** [MINOR]
+    - tooling/Architecture/check-runtime-leaks.php:34 (class-const-fetch)
+- **Avax\Tooling\Architecture\SplFileInfo** [MINOR]
+    - tooling/Architecture/check-runtime-leaks.php:38 (instanceof)
+- **Avax\Tooling\DependencyMap\Capabilities\Graph\DependencyGraph** [CRITICAL]
+    - tooling/DependencyMap/System/PublicSurface/DependencyMap.php:7 (use-statement)
+    - tooling/DependencyMap/System/PublicSurface/DependencyMap.php:11 (constructor-param)
+- **Avax\Tooling\Exception** [CRITICAL]
+    - tooling/RefVisitor.php:85 (catch)
+    - tooling/RefVisitor.php:424 (catch)
+- **Avax\Tooling\FilesystemIterator** [MINOR]
+    - tooling/generate-class-map.php:25 (class-const-fetch)
+- **Avax\Tooling\Refactor\FilesystemIterator** [MINOR]
+    - tooling/Refactor/FreezeComponentTaxonomy.php:732 (class-const-fetch)
+    - tooling/Refactor/FreezeRecoveredComponentsTaxonomy.php:480 (class-const-fetch)
+    - tooling/Refactor/RepairTestLayer.php:186 (class-const-fetch)
+- **Avax\Tooling\Refactor\SplFileInfo** [MINOR]
+    - tooling/Refactor/FreezeComponentTaxonomy.php:736 (instanceof)
+    - tooling/Refactor/FreezeRecoveredComponentsTaxonomy.php:484 (instanceof)
+    - tooling/Refactor/RepairTestLayer.php:190 (instanceof)
+- **Avax\Tooling\SplFileInfo** [MINOR]
+    - tooling/RefVisitor.php:43 (instanceof)
+- **Aws\PresignUrlMiddleware** [CRITICAL]
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:9 (use-statement)
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:117 (new)
+- **Aws\S3\S3Client** [CRITICAL]
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:10 (use-statement)
+    - labs/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:136 (new)
+- **Presentation\HTTP\Middleware\OfficeIpRestrictionMiddleware** [MINOR]
+    - examples/minimal-http-app/config/middleware.php:20 (use-statement)
+    - examples/minimal-http-app/config/middleware.php:37 (class-const-fetch)
+
+## VENDOR-EXTERNAL (5)
+
+- **Cron\CronExpression** [CRITICAL]
+    - components/Operations/Scheduler/System/Capabilities/Cron/CronExpression.php:7 (use-statement)
+    - components/Operations/Scheduler/System/Capabilities/Cron/CronExpression.php:14 (new)
+    - components/Operations/Scheduler/System/Capabilities/Cron/CronExpression.php:21 (new)
+    - components/Operations/Scheduler/System/Capabilities/Cron/CronExpression.php:28 (static-call)
+- **Memcached** [CRITICAL]
+    - components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:8 (use-statement)
+    - components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:13 (property-type)
+    - components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:18 (new)
+    - components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:61 (class-const-fetch)
+    - components/Application/Cache/System/Capabilities/Stores/MemcachedCacheStore.php:69 (class-const-fetch)
+- **PhpCsFixer\Config** [CRITICAL]
+    - .php-cs-fixer.dist.php:14 (new)
+- **PhpCsFixer\Finder** [MINOR]
+    - .php-cs-fixer.dist.php:3 (static-call)
+- **Redis** [CRITICAL]
+    - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:7 (use-statement)
+    - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:12 (property-type)
+    - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:21 (class-const-fetch)
+    - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:26 (new)
+    - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:43 (instanceof)
+    - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:59 (instanceof)
+    - components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:78 (instanceof)
+    - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:7 (use-statement)
+    - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:15 (property-type)
+    - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:29 (class-const-fetch)
+    - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:34 (new)
+    - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:64 (instanceof)
+    - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:98 (instanceof)
+    - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:117 (instanceof)
+    - components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:137 (instanceof)
+    - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:7 (use-statement)
+    - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:15 (property-type)
+    - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:36 (instanceof)
+    - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:56 (instanceof)
+    - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:69 (instanceof)
+    - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:80 (instanceof)
+    - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:99 (class-const-fetch)
+    - components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:104 (new)
+    - components/Application/Cache/System/Capabilities/Stores/RedisCacheStore.php:9 (use-statement)
+    - components/Application/Cache/System/Capabilities/Stores/RedisCacheStore.php:14 (property-type)
+    - components/Application/Cache/System/Capabilities/Stores/RedisCacheStore.php:23 (new)
+    - components/Application/Cache/System/Capabilities/Stores/RedisCacheStore.php:102 (return-type)
+    - framework/System/Capabilities/ExternalState/System/Capabilities/Drivers/Redis.php:8 (use-statement)
+    - framework/System/Capabilities/ExternalState/System/Capabilities/Drivers/Redis.php:15 (property-type)
+    - framework/System/Capabilities/ExternalState/System/Capabilities/Drivers/Redis.php:25 (new)
+
+## STALE-NAMESPACE (6)
+
+- **Avax\Components\Documentation\Api\System\PublicSurface\ApiDocumentation** [MINOR]
+    - routes/web.php:5 (use-statement)
+    - routes/web.php:19 (static-call)
+    - routes/web.php:26 (static-call)
+- **Avax\Components\DumpDebugger\System\PublicSurface\Dump** [CRITICAL]
+    - components/compat.php:0 (class_alias target)
+- **Avax\Components\Infrastructure\System\Capabilities\Cache\Driver** [CRITICAL]
+    - components/Identity/Auth/System/Capabilities/Identity/Sessions/Registry/RedisSessionRegistry.php:8 (use-statement)
+    - components/Identity/Auth/System/Capabilities/Identity/Sessions/Registry/RedisSessionRegistry.php:20 (
+      constructor-param)
+- **Avax\Components\Logging\System\Configuration\RegisterLogging** [CRITICAL]
+    - components/compat.php:0 (class_alias target)
+- **Avax\Components\Operations\Monitoring\System\PublicSurface\Monitoring** [MINOR]
+    - routes/web.php:7 (use-statement)
+    - routes/web.php:17 (static-call)
+- **Avax\Components\Persistence\System\Foundation\Failure\PersistenceFailure** [CRITICAL]
+    - components/DataStack/Persistence/AccessPersistentData/AccessPersistentData.php:7 (use-statement)
+    - components/DataStack/Persistence/AccessPersistentData/AccessPersistentData.php:41 (new)
+    - components/DataStack/Persistence/AccessPersistentData/AccessPersistentData.php:48 (new)
+    - components/DataStack/Persistence/AccessPersistentData/AccessPersistentData.php:61 (new)
+
+## REAL-PRODUCTION (0)
+
+

@@ -1,0 +1,21 @@
+{
+  "commands": {
+    "echo": "default",
+    "cat": "default",
+    "ls": "default",
+    "grep": "default",
+    "find": "default",
+    "python3": "default",
+    "python": "default",
+    "node": "default",
+    "bash": "default",
+    "sh": "default",
+    "git": "default",
+    "make": "default",
+    "pip": "default",
+    "npm": "default",
+    "go": "default",
+    "rustc": "default",
+    "cargo": "default"
+  }
+}

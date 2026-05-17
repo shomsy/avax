@@ -1,0 +1,201 @@
+FAIL
+[MEDIUM] framework/System/Flows/HandleIncomingHttp/DispatchConfiguredRoute.php:92 — Resolver instantiation in runtime code
+[MEDIUM] framework/System/Flows/HandleIncomingHttp/DispatchConfiguredRoute.php:93 — Resolver instantiation in runtime code
+[MEDIUM] framework/System/Flows/HandleIncomingHttp/DispatchConfiguredRoute.php:99 — Dispatcher instantiation in runtime code
+[HIGH] framework/System/Capabilities/RuntimeBoundary/ReactPhpAdapter.php:28 — Runtime class discovery (class_exists)
+[HIGH] framework/System/Capabilities/RuntimeBoundary/RoadRunnerAdapter.php:40 — Runtime class discovery (class_exists)
+[HIGH] framework/System/Capabilities/RuntimeSafety/StaticStateScanner.php:35 — Runtime class discovery (class_exists)
+[HIGH] framework/System/Capabilities/RuntimeSafety/ComponentHealthScanner.php:27 — Runtime class discovery (class_exists)
+[HIGH] framework/System/Capabilities/RuntimeSafety/ComponentHealthScanner.php:51 — Runtime class discovery (class_exists)
+[HIGH] framework/System/Capabilities/RuntimeSafety/ComponentHealthScanner.php:71 — Runtime class discovery (class_exists)
+[HIGH] framework/System/Capabilities/RuntimeSafety/StateLeakDetection/StateLeakDetector.php:90 — Runtime class discovery (class_exists)
+[HIGH] framework/System/Capabilities/FailureBoundary/Capabilities/RunRecoveryAction/RunRecoveryAction.php:37 — Runtime class discovery (class_exists)
+[HIGH] framework/System/Capabilities/FailureBoundary/Capabilities/CompileFailurePolicies/CompileFailurePolicies.php:33 — Runtime class discovery (class_exists)
+[HIGH] framework/System/Capabilities/FailureBoundary/Capabilities/HealthCheck/CheckFailureBoundaryHealth.php:73 — Runtime class discovery (class_exists)
+[HIGH] framework/System/Capabilities/FailureBoundary/Capabilities/HealthCheck/CheckFailureBoundaryHealth.php:83 — Runtime class discovery (class_exists)
+[HIGH] framework/System/Capabilities/FailureBoundary/Capabilities/RunFallbackAction/RunFallbackAction.php:31 — Runtime class discovery (class_exists)
+[HIGH] framework/System/Capabilities/FailureBoundary/Foundation/CompiledMethodPolicy.php:111 — Runtime class discovery (class_exists)
+[HIGH] framework/System/Capabilities/FailureBoundary/PublicSurface/FailureBoundary.php:42 — Builder instantiation in runtime code
+[HIGH] framework/System/Capabilities/FailureBoundary/PublicSurface/FailureBoundary.php:42 — Builder build() call in runtime code
+[HIGH] components/Identity/Auth/System/Capabilities/Identity/Session/SessionIdentity.php:50 — Lazy singleton-style composition
+[HIGH] components/Identity/Auth/System/Capabilities/Identity/Session/SessionIdentity.php:51 — Lazy singleton-style composition
+[HIGH] components/Identity/Auth/System/Capabilities/Identity/Session/SessionIdentity.php:52 — Lazy singleton-style composition
+[HIGH] components/Identity/Auth/System/Capabilities/Identity/Session/SessionIdentity.php:53 — Lazy singleton-style composition
+[HIGH] components/Identity/Auth/System/Capabilities/Tokens/TokenStore.php:30 — Lazy singleton-style composition
+[HIGH] components/Identity/Tenancy/System/Capabilities/Runtime/TenantSecurity/RollbackChange/RollbackTenantSecurityChange.php:32 — Null-coalescing fallback to new service
+[HIGH] components/API/OpenAPI/System/Capabilities/SchemaGeneration/BuildOpenApiDocument.php:18 — Builder instantiation in runtime code
+[HIGH] components/API/OpenAPI/System/Capabilities/SchemaGeneration/BuildOpenApiDocument.php:19 — Builder instantiation in runtime code
+[HIGH] components/API/OpenAPI/System/PublicSurface/OpenAPI.php:23 — Builder instantiation in runtime code
+[HIGH] components/API/OpenAPI/System/PublicSurface/OpenAPI.php:24 — Null-coalescing fallback to new service
+[MEDIUM] components/API/Contracts/System/PublicSurface/ApiContracts.php:22 — Registry instantiation in runtime code
+[HIGH] components/API/Contracts/System/PublicSurface/ApiContracts.php:65 — Null-coalescing fallback to new service
+[HIGH] components/API/ApiBlueprint/System/Flows/HandleJsonApiRequest/HandleJsonApiRequest.php:50 — Builder instantiation in runtime code
+[HIGH] components/API/ApiBlueprint/System/Flows/HandleJsonApiRequest/HandleJsonApiRequest.php:53 — Builder instantiation in runtime code
+[HIGH] components/API/ApiBlueprint/System/Flows/HandleJsonApiRequest/HandleJsonApiRequest.php:54 — Builder build() call in runtime code
+[HIGH] components/API/ApiBlueprint/System/Flows/HandleJsonApiRequest/HandleJsonApiRequest.php:55 — Builder build() call in runtime code
+[HIGH] components/API/ApiBlueprint/System/Flows/BuildJsonApiResponse/BuildJsonApiResponse.php:19 — Builder instantiation in runtime code
+[HIGH] components/API/ApiBlueprint/System/Flows/BuildJsonApiResponse/BuildJsonApiResponse.php:21 — Builder build() call in runtime code
+[HIGH] components/API/ApiBlueprint/System/Flows/BuildJsonApiResponse/BuildJsonApiResponse.php:23 — Builder instantiation in runtime code
+[HIGH] components/API/ApiBlueprint/System/Flows/BuildJsonApiResponse/BuildJsonApiResponse.php:25 — Builder build() call in runtime code
+[HIGH] components/API/ApiBlueprint/System/Flows/BuildJsonApiResponse/BuildJsonApiResponse.php:35 — Builder instantiation in runtime code
+[HIGH] components/API/ApiBlueprint/System/Flows/BuildJsonApiResponse/BuildJsonApiResponse.php:38 — Builder instantiation in runtime code
+[HIGH] components/API/ApiBlueprint/System/Flows/BuildJsonApiResponse/BuildJsonApiResponse.php:40 — Builder build() call in runtime code
+[HIGH] components/API/ApiBlueprint/System/Flows/BuildJsonApiResponse/BuildJsonApiResponse.php:45 — Builder build() call in runtime code
+[HIGH] components/API/ApiBlueprint/System/PublicSurface/ApiBlueprint.php:56 — Builder build() call in runtime code
+[HIGH] components/API/ApiBlueprint/System/PublicSurface/ApiSurface.php:58 — Builder instantiation in runtime code
+[HIGH] components/API/GraphQL/System/PublicSurface/GraphQL.php:17 — Builder instantiation in runtime code
+[HIGH] components/API/GraphQL/System/PublicSurface/GraphQL.php:26 — Null-coalescing fallback to new service
+[HIGH] components/API/GraphQL/System/PublicSurface/GraphQL.php:42 — Null-coalescing fallback to new service
+[HIGH] components/API/GraphQL/System/PublicSurface/GraphQLSchema.php:52 — Null-coalescing fallback to new service
+[HIGH] components/API/GraphQL/System/PublicSurface/GraphQLSchema.php:53 — Null-coalescing fallback to new service
+[HIGH] components/API/GraphQL/System/PublicSurface/GraphQLSchema.php:54 — Null-coalescing fallback to new service
+[MEDIUM] components/API/GraphQL/System/PublicSurface/GraphQLExecutor.php:30 — Registry instantiation in runtime code
+[HIGH] components/API/SchemaGeneration/System/Capabilities/ConvertDataObjectShapeToJsonSchema/ConvertDataObjectShapeToJsonSchema.php:104 — Runtime class discovery (class_exists)
+[MEDIUM] components/Integration/ObjectStorage/System/Capabilities/StoreObjects/StoreObjectsOnS3.php:120 — Middleware instantiation in runtime code
+[HIGH] components/Security/Cryptography/System/Capabilities/HealthCheck/CheckCryptographyHealth.php:36 — Runtime class discovery (class_exists)
+[HIGH] components/Security/Cryptography/System/Capabilities/HealthCheck/CheckCryptographyHealth.php:45 — Runtime class discovery (class_exists)
+[MEDIUM] components/Security/Redaction/System/Capabilities/PolicyEngine/PolicyEngine.php:15 — Engine instantiation in runtime code
+[MEDIUM] components/Security/Redaction/System/Capabilities/HealthCheck/CheckRedactionHealth.php:31 — Engine instantiation in runtime code
+[MEDIUM] components/Security/Redaction/System/Flows/RedactLogData/RedactLogData.php:12 — Engine instantiation in runtime code
+[MEDIUM] components/Security/Redaction/System/Flows/ApplyRedactionPolicy/ApplyRedactionPolicy.php:13 — Engine instantiation in runtime code
+[MEDIUM] components/Security/Redaction/System/PublicSurface/Redaction.php:20 — Engine instantiation in runtime code
+[MEDIUM] components/Security/Redaction/System/PublicSurface/Redaction.php:35 — Engine instantiation in runtime code
+[HIGH] components/DataStack/DataTransfer/System/Capabilities/AttributeReading/CompileClassAttributes.php:151 — Runtime class discovery (class_exists)
+[HIGH] components/DataStack/DataTransfer/System/Capabilities/DataShapeInspection/DataFieldType.php:51 — Runtime class discovery (class_exists)
+[HIGH] components/DataStack/DataTransfer/System/Capabilities/DataShapeInspection/DataFieldType.php:100 — Runtime class discovery (class_exists)
+[HIGH] components/DataStack/DataTransfer/System/Capabilities/DataShapeInspection/CompileDataShapeSchema.php:146 — Runtime class discovery (class_exists)
+[HIGH] components/DataStack/DataTransfer/System/Capabilities/DataShapeInspection/DataShapeCompiler.php:188 — Runtime class discovery (class_exists)
+[HIGH] components/DataStack/DataTransfer/System/Capabilities/DataShapeInspection/DataShapeCompiler.php:216 — Runtime class discovery (class_exists)
+[HIGH] components/DataStack/DataTransfer/System/Flows/CreateDataObject/CreateDataObject.php:270 — Runtime class discovery (class_exists)
+[MEDIUM] components/DataStack/Database/System/Capabilities/Migrations/Migrations.php:121 — Repository instantiation in runtime code
+[HIGH] components/DataStack/Database/System/Capabilities/HealthCheck/CheckDatabaseHealth.php:51 — Runtime class discovery (class_exists)
+[HIGH] components/DataStack/Database/System/Capabilities/ORM/Repository.php:79 — Runtime class discovery (class_exists)
+[HIGH] components/DataStack/Database/System/Capabilities/ORM/Hydration/Hydrator.php:35 — Lazy singleton-style composition
+[HIGH] components/DataStack/Database/System/Capabilities/ORM/Metadata/AttributeMetadataReader.php:165 — Null-coalescing fallback to new service
+[HIGH] components/DataStack/Database/System/Capabilities/ORM/DatabaseRepository.php:79 — Runtime class discovery (class_exists)
+[HIGH] components/DataStack/Database/System/Capabilities/Query/IR/IRBuilder.php:19 — Null-coalescing fallback to new service
+[HIGH] components/DataStack/Database/System/Capabilities/Transactions/DeadlockDetector.php:115 — Null-coalescing fallback to new service
+[HIGH] components/DataStack/Database/System/Capabilities/Connections/Pools/LazyConnectionPool.php:33 — Null-coalescing fallback to new service
+[HIGH] components/DataStack/Database/System/Capabilities/Connections/Pools/DatabaseConnectionPool.php:91 — Builder instantiation in runtime code
+[HIGH] components/DataStack/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:103 — Builder instantiation in runtime code
+[HIGH] components/DataStack/Database/System/PublicSurface/ManageEntityPersistence.php:20 — Lazy singleton-style composition
+[MEDIUM] components/DataStack/Database/System/PublicSurface/ManageEntityPersistence.php:28 — Manager instantiation in runtime code
+[HIGH] components/DataStack/Persistence/System/Flows/BuildDataQuery/BuildDataQuery.php:79 — Runtime class discovery (class_exists)
+[HIGH] components/DataStack/Persistence/System/Flows/ExplainDataQuery/ExplainDataQuery.php:25 — Null-coalescing fallback to new service
+[HIGH] components/Foundation/CallableSerialization/System/PublicSurface/CallableSerialization.php:28 — Builder instantiation in runtime code
+[HIGH] components/Foundation/CallableSerialization/System/PublicSurface/CallableSerialization.php:66 — Builder instantiation in runtime code
+[HIGH] components/Foundation/CallableSerialization/System/PublicSurface/CallableSerialization.php:72 — Builder instantiation in runtime code
+[HIGH] components/Foundation/CallableSerialization/System/PublicSurface/CallableSerialization.php:72 — Builder build() call in runtime code
+[HIGH] components/DeveloperTools/TestSupport/System/Capabilities/ContractTesting/Verification/ContractVerifier.php:45 — Runtime class discovery (class_exists)
+[HIGH] components/DeveloperTools/TestSupport/System/Capabilities/ContractTesting/Verification/ContractVerifier.php:45 — Runtime interface discovery (interface_exists)
+[HIGH] components/DeveloperTools/DumpDebugger/System/PublicSurface/shortcuts.php:32 — Runtime class discovery (class_exists)
+[HIGH] components/DeveloperTools/DumpDebugger/System/PublicSurface/shortcuts.php:57 — Runtime class discovery (class_exists)
+[MEDIUM] components/Operations/RuntimeSupervision/System/Capabilities/Supervision/Supervisor.php:28 — Registry instantiation in runtime code
+[MEDIUM] components/Operations/RuntimeSupervision/System/PublicSurface/RuntimeSupervision.php:19 — Registry instantiation in runtime code
+[HIGH] components/Operations/Parallelism/System/Capabilities/RunThroughProcessPool/SymfonyProcessParallelRuntime.php:143 — Null-coalescing fallback to new service
+[HIGH] components/Operations/Parallelism/System/PublicSurface/Parallel.php:19 — Builder instantiation in runtime code
+[HIGH] components/Operations/Parallelism/System/PublicSurface/Parallel.php:19 — Builder build() call in runtime code
+[MEDIUM] components/Operations/Observability/System/Capabilities/Health/ObservabilityHealthCheck.php:63 — Collector instantiation in runtime code
+[HIGH] components/Operations/Observability/System/Capabilities/Health/ObservabilityHealthCheck.php:95 — Runtime class discovery (class_exists)
+[MEDIUM] components/Operations/BackgroundProcesses/System/PublicSurface/BackgroundProcesses.php:21 — Registry instantiation in runtime code
+[HIGH] components/Operations/Queue/System/Capabilities/Queue/Queue.php:27 — Lazy singleton-style composition
+[HIGH] components/Operations/Queue/System/Capabilities/Queue/RedisQueue.php:21 — Runtime class discovery (class_exists)
+[HIGH] components/Operations/Queue/System/Capabilities/Queue/State/QueueState.php:84 — Lazy singleton-style composition
+[MEDIUM] components/Operations/Queue/System/Capabilities/TaskDispatch/TaskDispatch.php:33 — Resolver instantiation in runtime code
+[MEDIUM] components/Operations/Queue/System/Capabilities/TaskDispatch/TaskDispatch.php:41 — Dispatcher instantiation in runtime code
+[MEDIUM] components/Operations/Queue/System/Capabilities/TaskDispatch/TaskDispatch.php:47 — Dispatcher instantiation in runtime code
+[MEDIUM] components/Operations/Queue/System/Capabilities/TaskDispatch/TaskDispatch.php:53 — Dispatcher instantiation in runtime code
+[MEDIUM] components/Operations/Queue/System/Capabilities/TaskDispatch/Dispatchers/DeferredDispatcher.php:31 — Dispatcher instantiation in runtime code
+[HIGH] components/Operations/Queue/System/Capabilities/Driver/SyncDriver.php:32 — Runtime class discovery (class_exists)
+[HIGH] components/Operations/Queue/System/PublicSurface/QueueWorker.php:42 — Runtime class discovery (class_exists)
+[HIGH] components/Operations/Logging/System/Capabilities/HealthCheck/CheckLoggingHealth.php:29 — Runtime class discovery (class_exists)
+[HIGH] components/Operations/Delivery/System/PublicSurface/Delivery.php:16 — Builder instantiation in runtime code
+[HIGH] components/Operations/Resilience/System/Capabilities/Fallback/Fallback.php:55 — Null-coalescing fallback to new service
+[HIGH] components/Operations/Resilience/System/Capabilities/RateLimiter/RedisRateLimiter.php:29 — Runtime class discovery (class_exists)
+[HIGH] components/Operations/Resilience/System/Flows/ExecuteWithReliability/ExecuteWithReliability.php:167 — Null-coalescing fallback to new service
+[HIGH] components/Operations/Tasks/System/PublicSurface/Tasks.php:56 — Null-coalescing fallback to new service
+[MEDIUM] components/Operations/Events/System/Capabilities/HealthCheck/CheckEventsHealth.php:36 — Registry instantiation in runtime code
+[MEDIUM] components/Operations/Events/System/Capabilities/HealthCheck/CheckEventsHealth.php:67 — Registry instantiation in runtime code
+[MEDIUM] components/Operations/Events/System/Flows/CompileEventListeners/CompileEventListeners.php:36 — Registry instantiation in runtime code
+[MEDIUM] components/Operations/Events/System/PublicSurface/Events.php:31 — Registry instantiation in runtime code
+[MEDIUM] components/Operations/Events/System/PublicSurface/Events.php:32 — Dispatcher instantiation in runtime code
+[HIGH] components/HTTP/Router/System/Capabilities/HealthCheck/CheckRouterHealth.php:32 — Runtime class discovery (class_exists)
+[HIGH] components/HTTP/System/Capabilities/Uri/UriBuilder.php:159 — Builder build() call in runtime code
+[HIGH] components/HTTP/System/Capabilities/Kernel/AppKernel.php:83 — Runtime class discovery (class_exists)
+[HIGH] components/HTTP/System/Capabilities/Kernel/AppKernel.php:84 — Runtime class discovery (class_exists)
+[HIGH] components/HTTP/System/Capabilities/Kernel/AppKernel.php:85 — Builder instantiation in runtime code
+[MEDIUM] components/HTTP/System/Capabilities/Kernel/AppKernel.php:86 — Middleware instantiation in runtime code
+[HIGH] components/HTTP/System/Capabilities/Kernel/AppKernel.php:87 — Builder build() call in runtime code
+[MEDIUM] components/HTTP/System/Capabilities/Kernel/AppKernel.php:120 — Middleware instantiation in runtime code
+[MEDIUM] components/HTTP/System/Capabilities/Kernel/AppKernel.php:125 — Middleware instantiation in runtime code
+[MEDIUM] components/HTTP/System/Capabilities/Kernel/AppKernel.php:177 — Middleware instantiation in runtime code
+[HIGH] components/HTTP/Session/System/Capabilities/Storage/RedisSessionStore.php:33 — Runtime class discovery (class_exists)
+[HIGH] components/HTTP/Session/System/PublicSurface/Session.php:225 — Null-coalescing fallback to new service
+[HIGH] components/HTTP/ApiVersioning/System/Capabilities/Resolution/VersionResolver.php:15 — Lazy singleton-style composition
+[MEDIUM] components/HTTP/ApiVersioning/System/Capabilities/Resolution/VersionResolver.php:15 — Registry instantiation in runtime code
+[MEDIUM] components/HTTP/ApiVersioning/System/PublicSurface/ApiVersion.php:24 — Registry instantiation in runtime code
+[MEDIUM] components/HTTP/Context/System/PublicSurface/HttpContext.php:27 — Provider instantiation in runtime code
+[HIGH] components/HTTP/Request/System/Flows/CreateRequestFromRuntime/CreateRequestFromRuntime.php:45 — Null-coalescing fallback to new service
+[HIGH] components/HTTP/Client/System/Capabilities/Transports/CurlTransport.php:35 — Null-coalescing fallback to new service
+[HIGH] components/Application/Filesystem/System/Capabilities/HealthCheck/CheckFilesystemHealth.php:31 — Null-coalescing fallback to new service
+[MEDIUM] components/Application/Pipeline/System/PublicSurface/Pipeline.php:21 — Registry instantiation in runtime code
+[HIGH] components/Application/Container/System/Capabilities/Runtime/CompiledRuntime.php:32 — Lazy singleton-style composition
+[HIGH] components/Application/Container/System/Capabilities/Runtime/LazyProxy.php:22 — Lazy singleton-style composition
+[HIGH] components/Application/Container/System/Capabilities/Runtime/Lazy.php:22 — Lazy singleton-style composition
+[HIGH] components/Application/Container/System/Capabilities/Resolution/ResolveDependency.php:90 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Resolution/ResolveDependencies.php:92 — Null-coalescing fallback to new service
+[HIGH] components/Application/Container/System/Capabilities/Resolution/ServiceResolver.php:90 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Declaration/Blueprints/CreateDependencyBlueprint.php:29 — Lazy singleton-style composition
+[HIGH] components/Application/Container/System/Capabilities/Declaration/Blueprints/CreateDependencyBlueprint.php:40 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Declaration/Blueprints/CreateServiceBlueprint.php:31 — Lazy singleton-style composition
+[HIGH] components/Application/Container/System/Capabilities/Declaration/Blueprints/CreateServiceBlueprint.php:42 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Declaration/Bindings/DependencyRegistry.php:122 — Null-coalescing fallback to new service
+[HIGH] components/Application/Container/System/Capabilities/Declaration/Bindings/DependencyRegistry.php:272 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Declaration/Bindings/DependencyRegistry.php:435 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Declaration/Bindings/DependencyRegistry.php:436 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Declaration/Bindings/DependencyRegistry.php:436 — Runtime interface discovery (interface_exists)
+[HIGH] components/Application/Container/System/Capabilities/Declaration/Bindings/ServiceRegistry.php:122 — Null-coalescing fallback to new service
+[HIGH] components/Application/Container/System/Capabilities/Declaration/Bindings/ServiceRegistry.php:271 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Declaration/Bindings/ServiceRegistry.php:437 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Declaration/Bindings/ServiceRegistry.php:438 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Declaration/Bindings/ServiceRegistry.php:438 — Runtime interface discovery (interface_exists)
+[MEDIUM] components/Application/Container/System/Capabilities/Composition/Assembly/AssembleRuntime.php:36 — Registry instantiation in runtime code
+[HIGH] components/Application/Container/System/Capabilities/Composition/Assembly/AssembleRuntime.php:91 — Builder instantiation in runtime code
+[MEDIUM] components/Application/Container/System/Capabilities/Composition/Assembly/AssembleRuntime.php:108 — Registry instantiation in runtime code
+[HIGH] components/Application/Container/System/Capabilities/Composition/Compilation/DependencyCompiler.php:89 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Composition/Compilation/DependencyCompiler.php:139 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Composition/Compilation/ServiceCompiler.php:101 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Composition/Compilation/ServiceCompiler.php:151 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Composition/Compilation/CompileContainer.php:100 — Null-coalescing fallback to new service
+[HIGH] components/Application/Container/System/Capabilities/Composition/Compilation/CompileContainer.php:459 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Composition/Compilation/CompileContainer.php:467 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Composition/Compilation/CompileContainer.php:568 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Composition/Compilation/CompileContainer.php:576 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Composition/Compilation/CompileContainer.php:619 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Composition/Compilation/CompileContainer.php:623 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/ResolutionPolicy.php:51 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/ResolutionPolicy.php:51 — Runtime interface discovery (interface_exists)
+[HIGH] components/Application/Container/System/Capabilities/ResolveCallable/ResolveCallable.php:198 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Execution/Injection/Invocation/FunctionCaller.php:62 — Null-coalescing fallback to new service
+[HIGH] components/Application/Container/System/Capabilities/Execution/Injection/Invocation/FunctionCaller.php:91 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/Execution/Injection/Invocation/FunctionCaller.php:122 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/ContainerObservability/Observability/ResolutionTimeline.php:22 — Lazy singleton-style composition
+[HIGH] components/Application/Container/System/Capabilities/ContainerObservability/Policy/CheckCompositionPolicies.php:52 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/ContainerObservability/Policy/CheckCompositionPolicies.php:56 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Capabilities/ContainerObservability/Policy/CheckCompositionPolicies.php:208 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Container/System/Flows/BootProviders/BootProviders.php:114 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Cache/System/Capabilities/CompiledCache/DistributedCompiledCache/CompiledCacheFreshness.php:33 — Null-coalescing fallback to new service
+[HIGH] components/Application/Cache/System/Capabilities/Source/ProtectCacheSource/CacheLockTimeout.php:18 — Lazy singleton-style composition
+[HIGH] components/Application/Cache/System/Capabilities/Source/ProtectCacheSource/CacheLockOwner.php:23 — Lazy singleton-style composition
+[HIGH] components/Application/Cache/System/Capabilities/Source/ProtectCacheSource/CacheLockOwner.php:35 — Lazy singleton-style composition
+[HIGH] components/Application/Cache/System/Capabilities/Health/CacheHealthDetector.php:213 — Null-coalescing fallback to new service
+[HIGH] components/Application/Cache/System/Capabilities/Distribution/ReplicateCachedValues/ReadCachedValueFromReplica.php:74 — Null-coalescing fallback to new service
+[HIGH] components/Application/Cache/System/Capabilities/Distribution/UseCacheTiers/L1MemoryCache.php:26 — Null-coalescing fallback to new service
+[HIGH] components/Application/Cache/System/Capabilities/Storage/StoreCachedValues/FileCacheStore.php:36 — Null-coalescing fallback to new service
+[HIGH] components/Application/Cache/System/Capabilities/Storage/StoreCachedValues/StoredCacheRecord.php:31 — Lazy singleton-style composition
+[HIGH] components/Application/Cache/System/Capabilities/Storage/StoreCachedValues/RedisCacheStore.php:43 — Runtime class discovery (class_exists)
+[HIGH] components/Application/Cache/System/Capabilities/Storage/StoreCachedValues/RedisCacheStore.php:63 — Null-coalescing fallback to new service
+[HIGH] components/Application/Cache/System/Flows/Lifecycle/RememberCachedValue/RememberCachedValue.php:31 — Null-coalescing fallback to new service
+[HIGH] components/Application/Cache/System/Flows/Lifecycle/RememberCachedValue/RememberCachedValue.php:32 — Null-coalescing fallback to new service
+[HIGH] components/Application/Cache/System/Flows/Compiled/CompileCache/CompileCache.php:40 — Builder instantiation in runtime code
+[HIGH] components/Application/Cache/System/PublicSurface/CompiledCache.php:59 — Builder instantiation in runtime code

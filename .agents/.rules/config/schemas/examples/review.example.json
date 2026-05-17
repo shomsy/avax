@@ -1,0 +1,23 @@
+{
+  "id": "REV-20260516-001",
+  "timestamp": "2026-05-16T17:30:00Z",
+  "reviewer": "Antigravity",
+  "scope": "phase",
+  "filesReviewed": [
+    "AGENTS.md",
+    "README.md"
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "severity": "MEDIUM",
+      "description": "Installer upgrade not smoke-tested in clean env.",
+      "file": "install-os.sh",
+      "resolved": true
+    }
+  ],
+  "status": "CLEAN",
+  "rerunRequired": false,
+  "unresolvedFindings": 0,
+  "finalDecision": "APPROVED"
+}

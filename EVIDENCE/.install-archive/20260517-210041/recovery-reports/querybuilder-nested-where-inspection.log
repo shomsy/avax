@@ -1,0 +1,262 @@
+== NestedWhereNode ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Query\State\AST;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
+
+/**
+ * Immutable AST node representing a nested logical grouping (SQL parentheses).
+ *
+ * @see /docs/Foundation/Database/DSL/QueryStates.md
+ */
+final readonly class NestedWhereNode
+{
+    /**
+     * @param QueryBuilder $query   The localized builder instance containing the nested logical criteria.
+     * @param string       $boolean The logical joiner used to attach this group to the outer query scope ('AND' or
+     *                              'OR').
+     */
+    public function __construct(public QueryBuilder $query, public string $boolean = 'AND') {
+    }
+}
+
+== QueryBuilder properties / constructor / newQuery area ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Builder;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasAdvancedMutations;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasAdvancedQueries;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasAggregates;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasConditions;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasControlStructures;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasGroups;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasJoins;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasOrders;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasSoftDeletes;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\Macroable;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Exceptions\InvalidCriteriaException;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Execution\QueryOrchestrator;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\State\QueryState;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\ValueObjects\Expression;
+use ReflectionClass;
+use ReflectionException;
+use RuntimeException;
+use Throwable;
+
+/**
+ * Fluent, immutable builder for compiling and executing SQL queries.
+ *
+ * Supports dialect-aware compilation, safe bindings, and pretend mode.
+ *
+ * @see /docs/Foundation/Database/DSL/QueryBuilder.md
+ */
+class QueryBuilder
+{
+    use HasAdvancedMutations;
+    use HasAdvancedQueries;
+    use HasAggregates;
+    use HasConditions;
+    use HasControlStructures;
+    use HasGroups;
+    use HasJoins;
+    use HasOrders;
+    use HasSoftDeletes;
+    use Macroable;
+
+    /** @var QueryState The internal "memory" of all the blocks (table, filters, columns) we've added so far. */
+    public QueryState $state {
+        get {
+            return $this->state;
+        }
+    }
+
+    /**
+     * Set up the builder with its two "helpers".
+     *
+     * @param GrammarInterface  $grammar      The "Translator". It knows how to turn your PHP code into specific SQL
+     *                                        for MySQL/SQLite/etc.
+     * @param QueryOrchestrator $orchestrator The "Conductor". It doesn't write SQL, but it knows how to send the
+     *                                        final SQL to the database and get results back.
+     *
+     * @throws ReflectionException
+     */
+    public function __construct(
+        protected readonly GrammarInterface $grammar,
+        protected QueryOrchestrator         $orchestrator,
+    ) {
+        $this->state   = new QueryState();
+
+        // If this class has a 'tableName' property defined (like in a Model), we use it as the default target.
+        if (property_exists(object_or_class: $this, property: 'tableName')) {
+            $reflectionClass = new ReflectionClass(objectOrClass: $this);
+            $tableName       = $reflectionClass->getProperty(name: 'tableName')->getValue(object: $this);
+
+            if (is_string(value: $tableName) && $tableName !== '') {
+                $this->state = $this->state->withFrom(table: $tableName);
+            }
+        }
+    }
+
+    /**
+     * Create a perfect copy of this builder.
+     *
+     * -- intent:
+     * This is the "Save As" mechanism. It ensures that when you branch off a
+     * common search, you don't mess up the original search object.
+     */
+    public function __clone()
+    {
+        $this->orchestrator = clone $this->orchestrator;
+    }
+
+    /**
+     * Start a brand new, empty query using the same database setup.
+     *
+     * @return static A fresh builder instance with no filters or tables set.
+     *
+     * @throws ReflectionException
+     */
+    public function newQuery(): static
+    {
+        return new static(
+            grammar     : $this->grammar,
+            orchestrator: $this->orchestrator,
+        );
+    }
+
+    /**
+     * Inject a raw SQL fragment without quoting or escaping.
+     *
+     * Use only for trusted literals (e.g., functions/CASE expressions), never for user input.
+     *
+     * @param string $value SQL fragment to include verbatim.
+     *
+     * @throws InvalidCriteriaException When the fragment contains disallowed characters.
+     *
+     * @see /docs/Foundation/Database/DSL/QueryBuilder.md#raw
+     */
+    public function raw(string $value): Expression
+    {
+        $this->assertSafeRawExpression(expression: $value, context: 'raw');
+
+        return new Expression(value: $value);
+    }
+
+    /**
+     * Security Check: Make sure raw SQL fragments aren't dangerous.
+     *
+     * @param string $expression The text to check.
+     * @param string $context    Where this check is happening (for error messages).
+     *
+     * @throws InvalidCriteriaException If dangerous characters are found.
+     */
+    private function assertSafeRawExpression(string $expression, string $context): void
+    {
+        if ($expression === '') {
+            throw new InvalidCriteriaException(method: $context, reason: 'Raw expressions must not be empty.');
+        }
+
+        if (preg_match(pattern: '/[;]|--|\\/\\*/', subject: $expression) === 1) {
+90-        $this->orchestrator = clone $this->orchestrator;
+91-    }
+92-
+93-    /**
+94-     * Start a brand new, empty query using the same database setup.
+95-     *
+96-     * @return static A fresh builder instance with no filters or tables set.
+97-     *
+98-     * @throws ReflectionException
+99-     */
+100:    public function newQuery(): static
+101-    {
+102-        return new static(
+103-            grammar     : $this->grammar,
+104-            orchestrator: $this->orchestrator,
+105-        );
+106-    }
+107-
+108-    /**
+109-     * Inject a raw SQL fragment without quoting or escaping.
+110-     *
+111-     * Use only for trusted literals (e.g., functions/CASE expressions), never for user input.
+112-     *
+113-     * @param string $value SQL fragment to include verbatim.
+114-     *
+115-     * @throws InvalidCriteriaException When the fragment contains disallowed characters.
+116-     *
+117-     * @see /docs/Foundation/Database/DSL/QueryBuilder.md#raw
+118-     */
+119-    public function raw(string $value): Expression
+120-    {
+121-        $this->assertSafeRawExpression(expression: $value, context: 'raw');
+122-
+123-        return new Expression(value: $value);
+124-    }
+125-
+126-    /**
+127-     * Security Check: Make sure raw SQL fragments aren't dangerous.
+128-     *
+129-     * @param string $expression The text to check.
+130-     * @param string $context    Where this check is happening (for error messages).
+131-     *
+132-     * @throws InvalidCriteriaException If dangerous characters are found.
+133-     */
+134-    private function assertSafeRawExpression(string $expression, string $context): void
+135-    {
+136-        if ($expression === '') {
+137-            throw new InvalidCriteriaException(method: $context, reason: 'Raw expressions must not be empty.');
+138-        }
+139-
+140-        if (preg_match(pattern: '/[;]|--|\\/\\*/', subject: $expression) === 1) {
+
+== Grammar nested where area ==
+     * It handles "Nested" filters by putting them in parentheses.
+     * It also uses "?" placeholders for values to keep the SQL secure.
+     */
+    protected function compileWheres(QueryState $queryState) : string
+    {
+        if ($queryState->wheres === []) {
+            return '';
+        }
+
+        $sql = [];
+        foreach ($queryState->wheres as $i => $node) {
+            $prefix  = $i === 0 ? 'WHERE ' : '';
+            $boolean = $i === 0 ? '' : ($this->getWhereBoolean($node) . ' ');
+
+            // If this is a nested block: (condition1 OR condition2).
+            if ($node instanceof NestedWhereNode) {
+                $nestedSql = $this->compileWheres($node->query);
+                if ($nestedSql !== '') {
+                    $sql[] = $prefix . $boolean . '(' . ltrim(string: $nestedSql, characters: 'WHERE ') . ')';
+                }
+
+                continue;
+            }
+
+            if ($node instanceof WhereNode) {
+                $column = $this->wrap(value: $node->column);
+                $operator = $node->operator;
+
+                // Handle specialized null checks: IS NULL / IS NOT NULL.
+                if ($node->type === 'Null') {
+                    $sql[] = $prefix . $boolean . sprintf('%s %s', $column, $operator);
+
+== Current tests still green ==
+PHPUnit 10.5.63 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.5
+Configuration: /home/shomsy/projects/avax/phpunit.xml
+
+......                                                              6 / 6 (100%)
+
+Time: 00:00.006, Memory: 10.00 MB
+
+OK (6 tests, 41 assertions)

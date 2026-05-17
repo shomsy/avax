@@ -1,0 +1,3 @@
+Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
+/home/shomsy/projects/avax/components/Identity/Security/System/Capabilities/Encryption/AesEncrypter.php:54:Strict comparison using === between non-empty-string|null and '' will always evaluate to false.
+/home/shomsy/projects/avax/components/Identity/Security/System/Capabilities/Encryption/AesEncrypter.php:61:Parameter $tag of class Avax\Components\Identity\Security\System\Capabilities\Encryption\EncryptedPayload constructor expects string, string|null given.

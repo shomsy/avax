@@ -1,0 +1,5 @@
+Current Stage: V1 GREEN
+
+Allowed: new V2 components, new V3 components, docs/planning, labs if not production path
+
+Run: php tooling/governance/check-stage-lock.php

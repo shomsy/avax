@@ -1,0 +1,97 @@
+{
+    "stage": "V5.5-10",
+    "type": "framework-comparison-results",
+    "environment": {
+        "php_version": "8.5.5",
+        "opcache": "enabled",
+        "jit": "disable",
+        "git_commit": "unknown",
+        "timestamp": "2026-05-11T20:58:49+00:00"
+    },
+    "results": [
+        {
+            "name": "avax_hello",
+            "iterations": 500,
+            "warmup_iterations": 50,
+            "total_seconds": 0.0055,
+            "metrics": {
+                "avg_ms": 0.0109,
+                "p50_ms": 0.011,
+                "p95_ms": 0.0112,
+                "p99_ms": 0.0141,
+                "min_ms": 0.0098,
+                "max_ms": 0.0241,
+                "rps": 91359.27,
+                "memory_before_bytes": 10485760,
+                "memory_after_bytes": 10485760,
+                "memory_peak_bytes": 13107200,
+                "error_rate": 0
+            },
+            "status": "GREEN",
+            "notes": []
+        },
+        {
+            "name": "avax_json",
+            "iterations": 500,
+            "warmup_iterations": 50,
+            "total_seconds": 0.0056,
+            "metrics": {
+                "avg_ms": 0.0112,
+                "p50_ms": 0.011,
+                "p95_ms": 0.0122,
+                "p99_ms": 0.0141,
+                "min_ms": 0.01,
+                "max_ms": 0.026,
+                "rps": 89157.04,
+                "memory_before_bytes": 10485760,
+                "memory_after_bytes": 10485760,
+                "memory_peak_bytes": 13107200,
+                "error_rate": 0
+            },
+            "status": "GREEN",
+            "notes": []
+        },
+        {
+            "name": "psr15_baseline",
+            "iterations": 50000,
+            "warmup_iterations": 200,
+            "total_seconds": 0.005,
+            "metrics": {
+                "avg_ms": 0.0001,
+                "p50_ms": 0,
+                "p95_ms": 0.001,
+                "p99_ms": 0.0012,
+                "min_ms": 0,
+                "max_ms": 0.011,
+                "rps": 9922649.63,
+                "memory_before_bytes": 10485760,
+                "memory_after_bytes": 10485760,
+                "memory_peak_bytes": 13107200,
+                "error_rate": 0
+            },
+            "status": "GREEN",
+            "notes": []
+        },
+        {
+            "name": "laravel_hello",
+            "status": "YELLOW",
+            "notes": [
+                "Laravel not installed"
+            ]
+        },
+        {
+            "name": "slim_hello",
+            "status": "YELLOW",
+            "notes": [
+                "Slim not installed"
+            ]
+        },
+        {
+            "name": "symfony_hello",
+            "status": "YELLOW",
+            "notes": [
+                "Symfony not installed"
+            ]
+        }
+    ]
+}

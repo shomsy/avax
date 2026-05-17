@@ -1,0 +1,3 @@
+ M .phpunit.cache/test-results
+?? EVIDENCE/recovery-reports/stage-04-console-proof-validation/
+?? tests/Unit/Components/CLI/

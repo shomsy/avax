@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Release Schema",
+  "description": "Release evidence pack for a production deployment.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "version", "timestamp", "status", "approval"],
+  "properties": {
+    "id":              { "type": "string", "description": "Unique release ID, e.g. REL-20260516-001" },
+    "version":         { "type": "string", "description": "Semantic version, e.g. 3.0.0" },
+    "timestamp":       { "type": "string", "format": "date-time" },
+    "status":          { "type": "string", "enum": ["PENDING", "APPROVED", "DEPLOYED", "ROLLED_BACK", "FAILED"] },
+    "validationRefs":  { "type": "array", "items": { "type": "string" }, "description": "Validation evidence IDs" },
+    "evidenceRefs":    { "type": "array", "items": { "type": "string" }, "description": "Phase/review evidence IDs" },
+    "rollbackPlan":    { "type": "string", "description": "Rollback procedure or reference to rollback evidence" },
+    "approval": {
+      "type": "object",
+      "required": ["approvedBy", "timestamp"],
+      "additionalProperties": false,
+      "properties": {
+        "approvedBy":  { "type": "string" },
+        "timestamp":   { "type": "string", "format": "date-time" },
+        "notes":       { "type": "string" }
+      }
+    },
+    "blockers":        { "type": "array", "items": { "type": "string" }, "description": "Any blocking issues at release time" },
+    "deploymentScope": { "type": "string", "enum": ["canary", "staged", "full", "rollback", "hotfix"] },
+    "commitSHA":       { "type": "string", "description": "Git commit SHA of released code" }
+  }
+}

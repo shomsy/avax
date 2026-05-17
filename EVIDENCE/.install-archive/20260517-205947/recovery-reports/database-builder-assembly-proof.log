@@ -1,0 +1,194 @@
+== DatabaseBuilder constructor area ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Configuration;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\ReadConnection\ReadConnection;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Migrations;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Schema\Schema;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Query;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Telemetry;
+use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Transactions;
+use Avax\Components\DataStack\Database\System\PublicSurface\Database;
+
+final class DatabaseBuilder
+{
+    private array $config = [];
+
+    public function usingConfig(array $config): self
+    {
+        $this->config = $config;
+
+        return $this;
+    }
+
+    public function addConnection(string $name, array $config): self
+    {
+        $this->config['connections'][$name] = $config;
+
+        return $this;
+    }
+
+    public function getConfig(): array
+    {
+        return $this->config;
+    }
+
+    public function ready(): Database
+    {
+        $readConnection = new ReadConnection();
+
+        return new Database(
+            connections : new Connections($readConnection),
+            query       : new Query(),
+            schema      : new Schema(),
+            migrations  : new Migrations(),
+            transactions: new Transactions(),
+            telemetry   : new Telemetry(),
+        );
+    }
+}
+
+== Database public surface constructor ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\PublicSurface;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Connections\Connections;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Migrations as MigrationsCapability;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\Schema\Schema as SchemaCapability;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Entities as EntitiesCapability;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Query as QueryCapability;
+use Avax\Components\DataStack\Database\System\Capabilities\Telemetry\Telemetry as TelemetryCapability;
+use Avax\Components\DataStack\Database\System\Capabilities\Transactions\Transactions as TransactionsCapability;
+use Avax\Components\DataStack\Database\System\Configuration\DatabaseBuilder;
+
+/**
+ * Public surface for the Database component.
+ */
+final readonly class Database
+{
+    public function __construct(
+        private Connections $connections,
+        private QueryCapability $queryCapability,
+        private EntitiesCapability $entitiesCapability,
+        private SchemaCapability $schemaCapability,
+        private MigrationsCapability $migrationsCapability,
+        private TransactionsCapability $transactionsCapability,
+        private TelemetryCapability $telemetryCapability,
+    ) {}
+
+    public static function configuration(): DatabaseBuilder
+    {
+        return new DatabaseBuilder();
+    }
+
+    public function connections(): Connections
+    {
+        return $this->connections;
+    }
+
+    public function query(): Query
+    {
+        return new Query(query: $this->queryCapability);
+    }
+
+    public function entities(): Entities
+    {
+        return new Entities(entities: $this->entitiesCapability);
+    }
+
+    public function schema(): Schema
+    {
+        return new Schema(schema: $this->schemaCapability);
+    }
+
+    public function migrations(): Migrations
+    {
+        return new Migrations(migrations: $this->migrationsCapability);
+    }
+
+    public function transactions(): Transactions
+    {
+        return new Transactions(transactions: $this->transactionsCapability);
+    }
+
+    public function telemetry(): Telemetry
+    {
+        return new Telemetry(telemetry: $this->telemetryCapability);
+    }
+
+    public function table(string $table, ?string $connectionName = null) : QueryBuilder
+    {
+        return $this->queryCapability->from(table: $table, connectionName: $connectionName);
+    }
+}
+
+== Entities capability constructor ==
+components/DataStack/Database/System/Capabilities/ORM/Repository.php:19:    public function __construct(protected readonly QueryBuilder $queryBuilder) {}
+components/DataStack/Database/System/Capabilities/ORM/Repositories/EntityRepository.php:20:    public function __construct(
+components/DataStack/Database/System/Capabilities/ORM/Paginator.php:9:    public function __construct(
+components/DataStack/Database/System/Capabilities/ORM/Attributes/ManyToMany.php:15:    public function __construct(
+components/DataStack/Database/System/Capabilities/ORM/Attributes/JoinColumn.php:12:    public function __construct(
+components/DataStack/Database/System/Capabilities/ORM/Attributes/OneToOne.php:15:    public function __construct(
+components/DataStack/Database/System/Capabilities/ORM/Attributes/Column.php:12:    public function __construct(
+components/DataStack/Database/System/Capabilities/ORM/Attributes/Entity.php:12:    public function __construct(public ?string $repositoryClass = null) {}
+components/DataStack/Database/System/Capabilities/ORM/Attributes/OneToMany.php:15:    public function __construct(
+components/DataStack/Database/System/Capabilities/ORM/Attributes/GeneratedValue.php:12:    public function __construct(public string $strategy = 'auto') {}
+components/DataStack/Database/System/Capabilities/ORM/Attributes/ManyToOne.php:15:    public function __construct(
+components/DataStack/Database/System/Capabilities/ORM/Attributes/Table.php:12:    public function __construct(public string $name) {}
+components/DataStack/Database/System/Capabilities/ORM/Proxies/LazyReference.php:18:    public function __construct(private readonly Closure $loader) {}
+components/DataStack/Database/System/Capabilities/ORM/HasMany.php:16:    public function __construct(
+components/DataStack/Database/System/Capabilities/ORM/Relation.php:13:    public function __construct(
+components/DataStack/Database/System/Capabilities/ORM/Relation.php:28:    public function __construct(
+components/DataStack/Database/System/Capabilities/ORM/UnitOfWork/UnitOfWork.php:27:    public function __construct(
+components/DataStack/Database/System/Capabilities/ORM/UnitOfWork/DatabaseUnitOfWork.php:27:    public function __construct(
+components/DataStack/Database/System/Capabilities/ORM/Hydration/Hydrator.php:15:    public function __construct(private IdentityMap $identityMap) {}
+components/DataStack/Database/System/Capabilities/ORM/Metadata/RelationMetadata.php:14:    public function __construct(
+components/DataStack/Database/System/Capabilities/ORM/Metadata/EntityMetadata.php:15:    public function __construct(
+components/DataStack/Database/System/Capabilities/ORM/Metadata/FieldMetadata.php:9:    public function __construct(
+components/DataStack/Database/System/Capabilities/ORM/Persisters/EntityPersister.php:19:    public function __construct(
+components/DataStack/Database/System/Capabilities/ORM/Entities.php:16:readonly class Entities
+components/DataStack/Database/System/Capabilities/ORM/Entities.php:18:    public function __construct(
+components/DataStack/Database/System/Capabilities/ORM/DatabaseRepository.php:19:    public function __construct(protected readonly QueryBuilder $queryBuilder)
+components/DataStack/Database/System/PublicSurface/Entities.php:15:final readonly class Entities
+components/DataStack/Database/System/PublicSurface/Entities.php:17:    public function __construct(
+
+== EventBus constructor ==
+components/DataStack/Database/System/Capabilities/Telemetry/Events/Subscribers/DatabaseLoggerSubscriber.php:17:    public function __construct(private LoggerInterface $logger) {}
+components/DataStack/Database/System/Capabilities/Telemetry/Events/QueryExecuted.php:30:    public function __construct(
+components/DataStack/Database/System/Capabilities/Telemetry/Events/EventBus.php:16:final class EventBus implements EventBusInterface
+components/DataStack/Database/System/Capabilities/Telemetry/Events/EventBus.php:25:    public function __construct(private readonly DispatchStrategyInterface $dispatchStrategy = new SyncDispatchStrategy()) {
+components/DataStack/Database/System/Capabilities/Telemetry/Events/ConnectionOpened.php:19:    public function __construct(
+components/DataStack/Database/System/Capabilities/Telemetry/Events/Event.php:27:    public function __construct(public string $correlationId)
+components/DataStack/Database/System/Capabilities/Telemetry/Events/Strategy/SyncDispatchStrategy.php:35:    public function __construct(private ?LoggerInterface $logger = null)
+components/DataStack/Database/System/Capabilities/Telemetry/Events/ConnectionAcquired.php:21:    public function __construct(
+components/DataStack/Database/System/Capabilities/Telemetry/Events/ConnectionFailed.php:22:    public function __construct(
+
+== DatabaseBuilder assembly test ==
+PHPUnit 10.5.63 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.5
+Configuration: /home/shomsy/projects/avax/phpunit.xml
+
+E                                                                   1 / 1 (100%)
+
+Time: 00:00.010, Memory: 10.00 MB
+
+There was 1 error:
+
+1) Avax\Tests\Unit\Components\DataStack\Database\DatabaseBuilderAssemblyTest::test_database_builder_assembles_sqlite_database_runtime
+ArgumentCountError: Too few arguments to function Avax\Components\DataStack\Database\System\Capabilities\Connections\ReadConnection\ReadConnection::__construct(), 0 passed in /home/shomsy/projects/avax/components/DataStack/Database/System/Configuration/DatabaseBuilder.php on line 41 and at least 1 expected
+
+/home/shomsy/projects/avax/components/DataStack/Database/System/Capabilities/Connections/ReadConnection/ReadConnection.php:41
+/home/shomsy/projects/avax/components/DataStack/Database/System/Configuration/DatabaseBuilder.php:41
+/home/shomsy/projects/avax/tests/Unit/Components/DataStack/Database/DatabaseBuilderAssemblyTest.php:31
+
+ERRORS!
+Tests: 1, Assertions: 0, Errors: 1.

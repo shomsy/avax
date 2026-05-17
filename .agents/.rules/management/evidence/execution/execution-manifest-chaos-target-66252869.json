@@ -1,0 +1,45 @@
+{
+  "execution_id": "chaos-target-66252869",
+  "lifecycle_state": "FAILED",
+  "task": "chaos_test_target",
+  "trust_tier": "WORKSPACE_WRITE",
+  "lifecycle_history": [
+    {
+      "state": "REPLAYABLE",
+      "timestamp": 1779038534.0336258
+    },
+    {
+      "state": "EXECUTING",
+      "timestamp": 1779038534.0338507
+    },
+    {
+      "state": "FAILED",
+      "timestamp": 1779038534.0338511,
+      "signal": "SIGKILL",
+      "exit_code": -9
+    }
+  ],
+  "mutation_journal": {
+    "journal_id": "journal-chaos-target-66252869",
+    "execution_id": "chaos-target-66252869",
+    "mutations": {
+      "created": [],
+      "modified": [],
+      "deleted": []
+    },
+    "violations_detected": [],
+    "rollback_executed": false,
+    "symlinks_created": []
+  },
+  "replay_contract": {
+    "contract_id": "replay-chaos-target-66252869",
+    "execution_id": "chaos-target-66252869",
+    "nonce": "f17dd590-0a39-4fc7-9771-e99cfec395e9",
+    "payload_command": "echo test",
+    "expected_exit_code": 0,
+    "expected_mutation_count": 0,
+    "original_checksum": "CORRUPTED_996143c014b14bfeb121324f0205d625"
+  },
+  "telemetry": {
+    "total_duration_ms": 5.0,
+    "command_execut

@@ -1,0 +1,13 @@
+{
+  "type": "upgrade",
+  "from_version": "5.1.1",
+  "to_version": "5.2.0",
+  "safe": false,
+  "warnings": [
+    "Runtime compatibility issue: ['Version 5.2.0 not found in compatibility matrix']"
+  ],
+  "steps": [
+    "Bump minor to 5.2.0"
+  ],
+  "planned_at": "2026-05-17T16:43:35.536615+00:00"
+}

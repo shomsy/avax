@@ -1,0 +1,6 @@
+{"file": "shared_target.txt", "conflicting_executions": ["race-exec-99256908", "race-exec-39e0292e"], "conflict_type": "shared_file_mutation", "detected_at": "2026-05-17T16:32:23.291348+00:00"}
+{"file": ".agents/governance/core/quality/quality-gates.md", "conflicting_executions": ["gov-race-7d3c3c13", "gov-race-5efd6077"], "conflict_type": "shared_file_mutation", "detected_at": "2026-05-17T16:32:23.291354+00:00"}
+{"file": ".agents/AGENTS.md", "conflicting_executions": ["gov-race-7d3c3c13", "gov-race-5efd6077"], "conflict_type": "shared_file_mutation", "detected_at": "2026-05-17T16:32:23.291356+00:00"}
+{"file": "shared_target.txt", "conflicting_executions": ["race-exec-99256908", "race-exec-39e0292e"], "conflict_type": "shared_file_mutation", "detected_at": "2026-05-17T16:33:42.265779+00:00"}
+{"file": ".agents/governance/core/quality/quality-gates.md", "conflicting_executions": ["gov-race-7d3c3c13", "gov-race-5efd6077"], "conflict_type": "shared_file_mutation", "detected_at": "2026-05-17T16:33:42.265784+00:00"}
+{"file": ".agents/AGENTS.md", "conflicting_executions": ["gov-race-7d3c3c13", "gov-race-5efd6077"], "conflict_type": "shared_file_mutation", "detected_at": "2026-05-17T16:33:42.265786+00:00"}

@@ -1,0 +1,61 @@
+{
+  "execution_id": "chaos-target-12fc04fa",
+  "lifecycle_state": "FAILED",
+  "task": "chaos_test_target",
+  "trust_tier": "WORKSPACE_WRITE",
+  "lifecycle_history": [
+    {
+      "state": "REPLAYABLE",
+      "timestamp": 1779035677.2389073
+    },
+    {
+      "state": "EXECUTING",
+      "timestamp": 1779035677.2391622
+    },
+    {
+      "state": "FAILED",
+      "timestamp": 1779035677.2391624,
+      "signal": "SIGKILL",
+      "exit_code": -9
+    }
+  ],
+  "mutation_journal": {
+    "journal_id": "journal-chaos-target-12fc04fa",
+    "execution_id": "chaos-target-12fc04fa",
+    "mutations": {
+      "created": [],
+      "modified": [],
+      "deleted": []
+    },
+    "violations_detected": [],
+    "rollback_executed": false,
+    "symlinks_created": []
+  },
+  "replay_contract": {
+    "contract_id": "replay-chaos-target-12fc04fa",
+    "execution_id": "chaos-target-12fc04fa",
+    "nonce": "43bd0050-c60a-4833-ae8b-f240730c3eeb",
+    "payload_command": "echo test",
+    "expected_exit_code": 0,
+    "expected_mutation_count": 0,
+    "original_checksum": "CORRUPTED_69ff6ba75ef54209931064b225ec17a3"
+  },
+  "telemetry": {
+    "total_duration_ms": 5.0,
+    "command_execution_duration_ms": 2.0,
+    "governance_resolution_overhead_ms": 3.0,
+    "context_expansion_budget_bytes": 0,
+    "memory_usage_mb": 1.0,
+    "lease_expired_during_execution": false,
+    "sanitized_env_vars_removed": 0
+  },
+  "integrity_seal": "INVALID_cad5a8344aea4b95a71997677fc312f4",
+  "chaos_injection": {
+    "type": "CORRUPTED_ARTIFACT",
+    "injected_at": "2026-05-17T16:34:37.239476+00:00",
+    "corrupted_fields": [
+      "replay_contract.original_checksum",
+      "integrity_seal"
+    ]
+  }
+}

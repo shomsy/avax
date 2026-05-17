@@ -1,0 +1,6 @@
+Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
+/home/shomsy/projects/avax/components/API/GraphQL/System/Capabilities/BatchFieldLoading/BatchLoadFields.php:31:Parameter #2 $length of function array_chunk expects int<1, max>, int given.
+/home/shomsy/projects/avax/components/API/GraphQL/System/Capabilities/BatchFieldLoading/BatchLoadFields.php:34:Call to function is_array() with array<int|string, mixed> will always evaluate to true.
+/home/shomsy/projects/avax/components/API/GraphQL/System/Capabilities/GraphQLSchemaModel/ParseGraphQLOperation.php:256:Method Avax\Components\API\GraphQL\System\Capabilities\GraphQLSchemaModel\ParseGraphQLOperation::peekNext() is unused.
+
+EXIT_CODE=1

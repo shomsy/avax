@@ -1,0 +1,73 @@
+{
+  "report_type": "adoption-adversarial",
+  "version": "6.0.0",
+  "generated_at": "2026-05-17T20:56:09Z",
+  "summary": {
+    "total_tests": 12,
+    "passed": 12,
+    "failed": 0,
+    "pass_rate": "100.0%"
+  },
+  "tests": [
+    {
+      "test": "existing-agents",
+      "status": "pass",
+      "details": "Custom governance preserved, baseline installed"
+    },
+    {
+      "test": "interrupted-recovery",
+      "status": "pass",
+      "details": "Re-entered interrupted install successfully (exit 0)"
+    },
+    {
+      "test": "rerun-idempotent",
+      "status": "pass",
+      "details": "Second run exit 0, created=1 updated=2 skipped=1 preserved=2"
+    },
+    {
+      "test": "stale-generated-excluded",
+      "status": "pass",
+      "details": "Runtime artifacts preserved, excluded count=26"
+    },
+    {
+      "test": "dirty-worktree",
+      "status": "pass",
+      "details": "Dirty worktree survived, preserved=2"
+    },
+    {
+      "test": "conflicting-governance",
+      "status": "pass",
+      "details": "Local AGENTS.md preserved alongside new baseline"
+    },
+    {
+      "test": "existing-evidence",
+      "status": "pass",
+      "details": "Evidence trees preserved without prune"
+    },
+    {
+      "test": "clean-install",
+      "status": "pass",
+      "details": "Clean install succeeded with all structures"
+    },
+    {
+      "test": "upgrade-baseline",
+      "status": "pass",
+      "details": "Upgrade completed, baseline replaced"
+    },
+    {
+      "test": "evidence-prune",
+      "status": "pass",
+      "details": "Prune replaced stale evidence, preserve kept it"
+    },
+    {
+      "test": "dry-run-noop",
+      "status": "pass",
+      "details": "Dry run produced zero disk changes"
+    },
+    {
+      "test": "install-journal",
+      "status": "pass",
+      "details": "Journal created with 1 entries"
+    }
+  ]
+}

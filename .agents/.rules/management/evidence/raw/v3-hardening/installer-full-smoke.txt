@@ -1,0 +1,33 @@
+=== INSTALLER FULL SMOKE TEST ===
+Date: 2026-05-16
+Harness: /home/shomsy/projects/agent-harness
+
+SCENARIO 1: Clean install with Go profile + Claude adapter
+Command: ./install-os.sh /tmp/harness-fresh-target --language=go --platform=claude
+Result: EXIT 0 — PASS
+Output: AGENTS.md, CLAUDE.md, EVIDENCE/, merge-files.sh created; go profile selected
+
+SCENARIO 2: Validate installed target
+Command: ./install-os.sh /tmp/harness-fresh-target --validate
+Result: EXIT 0 — "OS Validation Passed." — PASS
+
+SCENARIO 3: Upgrade (re-copy .rules engine)
+Command: ./install-os.sh /tmp/harness-fresh-target --upgrade
+Result: EXIT 0 — "OS Engine upgraded." — PASS
+Verification: .rules/ directory re-populated (AGENTS.md, governance, config, etc.)
+
+SCENARIO 4: Migrate (archive legacy TODO/BUGS)
+Setup: Created TODO.md and BUGS.md in .agents/management/
+Command: ./install-os.sh /tmp/harness-fresh-target --migrate
+Result: EXIT 0 — "Legacy structures archived." — PASS
+Verification: BUGS.md, TODO.md found in .agents/archive/legacy/
+
+SCENARIO 5: Invalid profile warns clearly
+Command: ./install-os.sh /tmp/x --language=nonexistent --dry-run
+Result: EXIT 0 — "Unknown reusable language profile: nonexistent" — PASS
+
+SCENARIO 6: Dry-run changes nothing
+Command: ./install-os.sh /tmp/x --dry-run
+Result: EXIT 0 — "DRY RUN MODE: No files will be modified." — PASS
+
+OVERALL: 6/6 PASS

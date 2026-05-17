@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Status Schema",
+  "description": "Point-in-time SDLC health snapshot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "timestamp", "overallStatus", "activePhase", "nextAllowedAction"],
+  "properties": {
+    "id":               { "type": "string", "description": "Unique status snapshot ID" },
+    "timestamp":        { "type": "string", "format": "date-time" },
+    "overallStatus":    { "type": "string", "enum": ["FULL_GREEN", "GREEN_WITH_DEBT", "YELLOW", "RED"] },
+    "green":            { "type": "array", "items": { "type": "string" }, "description": "Passing domains" },
+    "yellow":           { "type": "array", "items": { "type": "string" }, "description": "Accepted YELLOW debt items" },
+    "red":              { "type": "array", "items": { "type": "string" }, "description": "Blocking items" },
+    "activePhase":      { "type": "string" },
+    "blockers":         { "type": "array", "items": { "type": "string" } },
+    "nextAllowedAction":{ "type": "string", "description": "Concrete next action. Not vague. e.g. 'Commit phase-3 changes'" },
+    "evidenceRefs":     { "type": "array", "items": { "type": "string" } },
+    "commitSHA":        { "type": "string" }
+  }
+}

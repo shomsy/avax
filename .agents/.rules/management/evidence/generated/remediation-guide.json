@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-05-17T16:45:12.451519+00:00",
+  "total_executions": 8,
+  "failed": 0,
+  "rolled_back": 0,
+  "expired": 0,
+  "replayable": 8,
+  "health_score": 100.0,
+  "violations_by_category": {},
+  "top_violation_category": "none"
+}

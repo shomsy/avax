@@ -1,0 +1,162 @@
+== QueryState binding area ==
+    public function withCte(string $name, mixed $query, bool $recursive = false): self
+    {
+        return new self(
+            ...[...get_object_vars(object: $this), 'ctes' => [...$this->ctes, ['name' => $name, 'query' => $query, 'recursive' => $recursive]]],
+        );
+    }
+
+    public function withWindow(string $name, mixed $window): self
+    {
+        return new self(
+            ...[...get_object_vars(object: $this), 'windows' => [...$this->windows, $name => $window]],
+        );
+    }
+
+    /**
+     * Create a new state with a securely attached parameter token.
+     *
+     * @param mixed $value Raw data to be bound.
+     */
+    public function addBinding(mixed $value): self
+    {
+        return new self(
+            ...[...get_object_vars(object: $this), 'bindings' => $this->bindingBag->with(value: $value)],
+        );
+    }
+
+    /**
+     * Coordinate the secure bulk attachment of technical parameter tokens.
+     *
+     * -- intent:
+     * Facilitates the mass-parameterization of query values while
+     * maintaining immutable state transitions.
+     *
+     * @param array $values The collection of raw data tokens to be secured.
+     *
+     * @return self A fresh QueryState instance with the merged parameter tokens.
+     */
+    public function mergeBindings(array $values): self
+    {
+        return new self(
+            ...[...get_object_vars(object: $this), 'bindings' => $this->bindingBag->merge(parameters: $values)],
+        );
+    }
+
+    /**
+     * Coordinate the complete reset of the secure parameter bag.
+     *
+     * -- intent:
+     * Provides a clean slate for parameterization, typically used when a
+     * query is reused or forked for a significantly different compilation.
+     *
+     * @return self A fresh QueryState instance with a cleared parameter bag.
+     */
+    public function resetBindings() : self
+    {
+        return new self(
+            ...[...get_object_vars(object: $this), 'bindings' => new BindingBag()],
+        );
+    }
+
+    /**
+     * Retrieve the linearized collection of secure parameter values.
+     *
+     * @return array<array-key, mixed>
+     */
+    public function getBindings(): array
+    {
+        return $this->bindingBag->all();
+    }
+}
+
+== BindingBag file ==
+components/DataStack/Database/System/Capabilities/Query/State/BindingBag.php
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Query\State;
+
+/**
+ * Immutable container for query parameter bindings.
+ *
+ * @see /docs/Foundation/Database/DSL/QueryStates.md
+ */
+final readonly class BindingBag
+{
+    /**
+     * @param array<array-key, mixed> $values The internal storage for raw, sanitized query parameters.
+     */
+    public function __construct(private array $values = []) {
+    }
+
+    /**
+     * Create a new bag with an additional parameter value.
+     */
+    public function with(mixed $value): self
+    {
+        $values = $this->values;
+        $values[] = $value;
+
+        return new self(values: $values);
+    }
+
+    /**
+     * Merge multiple parameters into a new bag instance.
+     */
+    public function merge(array $parameters): self
+    {
+        return new self(values: array_merge($this->values, $parameters));
+    }
+
+    /**
+     * Retrieve all bound parameters as an ordered array.
+     */
+    public function all(): array
+    {
+        return $this->values;
+    }
+
+    /**
+     * Check if the bag contains no bindings.
+     */
+    public function isEmpty(): bool
+    {
+        return $this->values === [];
+    }
+}
+
+== bindings named argument usages in QueryState area ==
+components/DataStack/Database/System/Capabilities/Query/State/BindingBag.php:8: * Immutable container for query parameter bindings.
+components/DataStack/Database/System/Capabilities/Query/State/BindingBag.php:48:     * Check if the bag contains no bindings.
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:68:     * @param BindingBag $bindingBag                          The immutable container for secure, parameterized query
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:86:        private BindingBag $bindingBag = new BindingBag(),
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:339:    public function addBinding(mixed $value): self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:342:            ...[...get_object_vars(object: $this), 'bindings' => $this->bindingBag->with(value: $value)],
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:357:    public function mergeBindings(array $values): self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:360:            ...[...get_object_vars(object: $this), 'bindings' => $this->bindingBag->merge(parameters: $values)],
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:373:    public function resetBindings() : self
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:376:            ...[...get_object_vars(object: $this), 'bindings' => new BindingBag()],
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:385:    public function getBindings(): array
+components/DataStack/Database/System/Capabilities/Query/State/QueryState.php:387:        return $this->bindingBag->all();
+components/DataStack/Database/System/Capabilities/Query/Builder/Concerns/HasConditions.php:73:            $clone->state = $clone->state->addBinding(value: $value);
+components/DataStack/Database/System/Capabilities/Query/Builder/Concerns/HasConditions.php:114:        $clone->state = $clone->state->mergeBindings(values: $query->state->getBindings());
+components/DataStack/Database/System/Capabilities/Query/Builder/Concerns/HasConditions.php:180:        $clone->state = $clone->state->mergeBindings(values: $values);
+components/DataStack/Database/System/Capabilities/Query/Builder/Concerns/HasConditions.php:224:        $clone->state = $clone->state->mergeBindings(values: $values);
+components/DataStack/Database/System/Capabilities/Query/Builder/Concerns/HasAdvancedMutations.php:73:            bindings: $this->extractMutationBindings(values: $values),
+components/DataStack/Database/System/Capabilities/Query/Builder/Concerns/HasGroups.php:77:        $clone->state = $clone->state->addBinding(value: $value);
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:30: * Supports dialect-aware compilation, safe bindings, and pretend mode.
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:181:     * @param array  $bindings Parameter bindings for the command.
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:187:    public function statement(string $query, array $bindings = []): bool
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:189:        return $this->orchestrator->execute(sql: $query, bindings: $bindings)->isSuccessful();
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:272:        $result = $instance->orchestrator->query(sql: $sql, bindings: $instance->state->getBindings());
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:313:            bindings: $clone->extractMutationBindings(values: $values),
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:330:        $bindings = [];
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:342:                $bindings[] = $value;
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:346:        return $bindings;
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:366:            bindings: $clone->extractMutationBindings(values: $values),
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:406:            bindings: array_merge(
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:408:                $instance->state->getBindings(),
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:432:            bindings: $instance->state->getBindings(),
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:482:        return $instance->orchestrator->query(sql: $sql, bindings: $instance->state->getBindings());

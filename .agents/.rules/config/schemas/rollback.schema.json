@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Agent Harness Rollback Registry",
+  "type": "object",
+  "required": ["rollback_id", "target_commit", "reason", "authorization"],
+  "properties": {
+    "rollback_id": { "type": "string" },
+    "target_commit": { "type": "string" },
+    "reason": { "type": "string" },
+    "authorization": { "type": "string", "description": "Who/What authorized this rollback" },
+    "successful": { "type": "boolean" }
+  }
+}

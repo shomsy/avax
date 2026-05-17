@@ -1,0 +1,9 @@
+V1 Kernel Green: NOT PROVEN (V1-03 targeted static-integrity gates are green; later kernel gates remain)
+V2 Implementation: LOCKED
+V3 Implementation: LOCKED
+Active Stage: Stage 04 (Component Completion): ACTIVE / YELLOW
+
+Allowed: active V1/stage work, docs/planning, evidence updates
+FORBIDDEN: V2/V3/V4 production implementation
+
+Run: php tooling/governance/check-stage-lock.php

@@ -1,0 +1,28 @@
+{
+  "entries": [
+    {
+      "version": "5.1.0",
+      "type": "added",
+      "description": "Release & Evolution Discipline (Phase 9)",
+      "date": "2026-05-17"
+    },
+    {
+      "version": "5.1.0",
+      "type": "added",
+      "description": "SemanticVersionManager with semver validation",
+      "date": "2026-05-17"
+    },
+    {
+      "version": "5.1.0",
+      "type": "added",
+      "description": "RuntimeCompatibilityGuarantees with compatibility matrix",
+      "date": "2026-05-17"
+    },
+    {
+      "version": "5.1.0",
+      "type": "fixed",
+      "description": "Version comparison handles 2-part and 3-part versions",
+      "date": "2026-05-17"
+    }
+  ]
+}

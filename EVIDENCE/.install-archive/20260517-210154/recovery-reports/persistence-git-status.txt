@@ -1,0 +1,6 @@
+ M .phpunit.cache/test-results
+?? EVIDENCE/recovery-reports/
+?? EVIDENCE/recovery-staging/
+?? Makefile.recovery
+?? tests/Unit/Generated/
+?? tooling/recovery/

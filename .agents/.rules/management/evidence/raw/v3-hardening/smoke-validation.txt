@@ -1,0 +1,8 @@
+=== FINAL VALIDATION RUN ===
+OK: .agents/config/schemas/debt.schema.json
+OK: .agents/config/schemas/evidence.schema.json
+OK: .agents/config/schemas/release.schema.json
+OK: .agents/config/schemas/review.schema.json
+OK: .agents/config/schemas/risk.schema.json
+OK: .agents/config/schemas/status.schema.json
+OK: .agents/config/schemas/validation.schema.json

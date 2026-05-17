@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Debt Schema",
+  "description": "Accepted technical or governance debt entry (YELLOW debt).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "timestamp", "owner", "severity", "reason", "acceptedBy", "expiry", "status"],
+  "properties": {
+    "id":              { "type": "string", "description": "Unique debt ID, e.g. DEBT-20260516-001" },
+    "timestamp":       { "type": "string", "format": "date-time" },
+    "owner":           { "type": "string" },
+    "severity":        { "type": "string", "enum": ["MEDIUM", "LOW"], "description": "Debt can only be MEDIUM or LOW; BLOCKER/HIGH must be fixed" },
+    "reason":          { "type": "string", "description": "Why this is deferred, not fixed" },
+    "acceptedBy":      { "type": "string", "description": "Human or role who formally accepted this debt" },
+    "target":          { "type": "string", "description": "What the resolution looks like when complete" },
+    "expiry":          { "type": "string", "format": "date", "description": "Must be resolved by this date (max 30 days)" },
+    "mitigation":      { "type": "string", "description": "What reduces risk until resolved" },
+    "evidence":        { "type": "array", "items": { "type": "string" }, "description": "Evidence IDs for the original finding" },
+    "blockingDecision":{ "type": "string", "description": "Explicit acceptance text from DECISIONS.md" },
+    "status":          { "type": "string", "enum": ["ACTIVE", "RESOLVED", "EXPIRED", "ESCALATED"] }
+  }
+}

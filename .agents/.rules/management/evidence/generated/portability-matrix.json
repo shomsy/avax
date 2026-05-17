@@ -1,0 +1,43 @@
+{
+  "portability_matrix": {
+    "platform": "linux",
+    "path_portability": {
+      "check": "path_portability",
+      "platform": "linux",
+      "known_platform_issues": [
+        "Alpine Linux uses musl libc \u2014 some glibc binaries won't work",
+        "BusyBox environments have limited command options",
+        "SELinux/AppArmor may restrict subprocess execution"
+      ],
+      "detected_issues": [],
+      "issue_count": 0
+    },
+    "encoding_portability": {
+      "check": "encoding_portability",
+      "filesystem_encoding": "utf-8",
+      "filesystem_errors": "surrogateescape",
+      "default_encoding": "utf-8",
+      "stdin_encoding": "utf-8",
+      "stdout_encoding": "utf-8",
+      "utf8_compatible": true,
+      "utf8_filename_test": "passed"
+    },
+    "symlink_support": {
+      "check": "symlink_support",
+      "platform": "linux",
+      "symlink_create": "supported",
+      "symlink_read": true,
+      "dir_symlink_create": "supported"
+    },
+    "subprocess_features": {
+      "check": "subprocess_features",
+      "platform": "linux",
+      "basic_subprocess": "passed",
+      "shell_subprocess": "passed",
+      "stdin_pipe": "passed",
+      "env_passing": "passed",
+      "timeout_support": "passed"
+    },
+    "generated_at": 1779038218.75194
+  }
+}

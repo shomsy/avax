@@ -1,0 +1,25 @@
+# How-To Coverage Gaps
+
+Date: 2026-05-13
+Status: YELLOW
+
+| Source                                                    | Why it was not fully applied                                                                | Safe now? | Follow-up/gate needed                                             | Blocks V5.9? |
+|-----------------------------------------------------------|---------------------------------------------------------------------------------------------|-----------|-------------------------------------------------------------------|-------------:|
+| `how-to-architecture.md`                                  | Full architectural audit of every component was not completed                               | No        | Stage B/J full inventory and status lock rebuild                  |          YES |
+| `how-to-architecture-extension-with-ddd.md`               | DDD concept usage was checked only by existing folder gates, not manually across all code   | Mostly    | Naming/duplicate/skeleton audit                                   |           NO |
+| `how-to-clean-code.md`                                    | Clean-code review was focused on touched files only                                         | Mostly    | Stage J manual audit for Manager/Service/Handler/Processor smells |           NO |
+| `how-to-code-review.md`                                   | This was an implementation cleanup, not a full code-review matrix                           | Yes       | Use strict review matrix before accepting final GREEN             |           NO |
+| `how-to-code-style.md`                                    | Style was validated by PHPStan/PHPUnit, not a formatter or full style audit                 | Yes       | Add/identify style gate if required                               |           NO |
+| `how-to-coding-standards.md`                              | Applied to modified PHP files, not every PHP file manually                                  | Yes       | Full static/style gate inventory                                  |           NO |
+| `how-to-dependency-injection.md`                          | Runtime assembly gate now passes, but exhaustive grep classification was not fully ledgered | No        | Stage C full grep ledger                                          |          YES |
+| `how-to-design-components.md`                             | Component status lock was not rebuilt for all components                                    | No        | Stage B full component lock                                       |          YES |
+| `how-to-document.md`                                      | Full docs/truth reconciliation was not completed                                            | No        | Stage K truth consistency gate and docs status review             |          YES |
+| `how-to-dogfooding.md`                                    | Raw-file MUST FIX fixed, but 16 design-decision findings remain                             | No        | Classify all raw-file warnings                                    |          YES |
+| `how-to-events-listeners-event-sourcing-cqrs-realtime.md` | Existing event gates were used; manual deep review not repeated                             | Yes       | Keep event gates in final audit                                   |           NO |
+| `how-to-modern-php-attributes-di.md`                      | Applied to touched constructor/DI changes only                                              | Yes       | Stage C full DI classification                                    |           NO |
+| `how-to-production-readiness.md`                          | Health/doctor and truth agreement are not green                                             | No        | Stage H/K/L                                                       |          YES |
+| `how-to-system-performance.md`                            | Performance gate warnings are unclassified                                                  | No        | Stage E/F/J sleep warning ledger                                  |          YES |
+| `how-to-system-security.md`                               | Security gates passed, but health checks for security components are missing                | No        | Security component health/doctor checks                           |          YES |
+| `how-to-unit-test.md`                                     | Full tests pass, but new Filesystem metadata flows have no focused tests                    | Mostly    | Add focused Filesystem metadata tests if Stage A patch is kept    |           NO |
+| `how-to-use-advanced-architecture-patterns.md`            | Existing folder gate passed; deeper pattern audit not completed                             | Mostly    | Stage J architecture rot audit                                    |           NO |
+| `how-to.txt`                                              | Used only as local index/notes                                                              | Yes       | None unless local governance says it is normative                 |           NO |

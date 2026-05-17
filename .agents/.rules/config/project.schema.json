@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Agent Harness Project Configuration",
+  "description": "Machine-readable project configuration to accelerate profile resolution. AGENTS.md remains the human source of truth.",
+  "type": "object",
+  "properties": {
+    "languages": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Declared languages for this project. Values must match profile filenames in profiles/languages/.",
+      "examples": [["php"], ["typescript", "nodejs", "css"], ["go"]]
+    },
+    "frameworks": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Declared frameworks or runtimes. Values must match profile filenames in profiles/frameworks/.",
+      "examples": [["laravel"], ["react", "nextjs"], ["express"]]
+    },
+    "projectTypes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Declared project types. Values must match profile filenames in profiles/project-types/.",
+      "examples": [["web-app"], ["library"], ["api-service", "monorepo"]]
+    },
+    "repositoryProfiles": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Declared repository-kind profiles. Values must match profile filenames in profiles/repository-kinds/.",
+      "examples": [["governance-source"]]
+    },
+    "evidenceModel": {
+      "type": "string",
+      "enum": ["v1", "v2"],
+      "default": "v2",
+      "description": "Evidence model version. V2 uses human dashboard + machine evidence separation."
+    },
+    "securityRequired": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether security governance is mandatory for this project."
+    },
+    "operationsRequired": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether operations governance is mandatory for this project."
+    }
+  },
+  "additionalProperties": false
+}

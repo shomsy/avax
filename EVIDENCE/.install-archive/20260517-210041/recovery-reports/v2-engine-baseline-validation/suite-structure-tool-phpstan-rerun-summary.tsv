@@ -1,0 +1,3 @@
+order	command	exit	log
+48	php tooling/refactor/check-component-suite-structure.php	0	48-check-component-suite-structure-after-tool-types.log
+49	vendor/bin/phpstan analyse tooling/refactor/check-component-suite-structure.php --memory-limit=1G --error-format=raw --no-progress	0	49-phpstan-suite-structure-tool-after-types.raw

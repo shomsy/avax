@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Review Schema",
+  "description": "Machine record of a recursive governance review.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "timestamp", "reviewer", "scope", "status", "finalDecision"],
+  "properties": {
+    "id":                { "type": "string", "description": "Unique review ID, e.g. REV-20260516-001" },
+    "timestamp":         { "type": "string", "format": "date-time" },
+    "reviewer":          { "type": "string", "description": "Agent or human reviewer ID" },
+    "scope":             { "type": "string", "description": "Scope of review: commit, PR, phase, release" },
+    "filesReviewed":     { "type": "array", "items": { "type": "string" } },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "severity", "description"],
+        "additionalProperties": false,
+        "properties": {
+          "id":          { "type": "string" },
+          "severity":    { "type": "string", "enum": ["BLOCKER", "HIGH", "MEDIUM", "LOW"] },
+          "description": { "type": "string" },
+          "file":        { "type": "string" },
+          "resolved":    { "type": "boolean" }
+        }
+      }
+    },
+    "status":            { "type": "string", "enum": ["CLEAN", "FINDINGS", "BLOCKED"] },
+    "rerunRequired":     { "type": "boolean" },
+    "unresolvedFindings":{ "type": "integer", "minimum": 0 },
+    "acceptedDebtRefs":  { "type": "array", "items": { "type": "string" }, "description": "Debt IDs for accepted MEDIUM findings" },
+    "finalDecision":     { "type": "string", "enum": ["APPROVED", "BLOCKED", "APPROVED_WITH_DEBT"] }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Validation Schema",
+  "description": "Machine record of a validation run (test, lint, static analysis, smoke).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "timestamp", "command", "exitCode", "status"],
+  "properties": {
+    "id":              { "type": "string", "description": "Unique validation ID, e.g. VAL-20260516-001" },
+    "timestamp":       { "type": "string", "format": "date-time" },
+    "command":         { "type": "string", "description": "Exact command that was run" },
+    "exitCode":        { "type": "integer", "description": "Process exit code" },
+    "status":          { "type": "string", "enum": ["PASS", "FAIL", "ERROR", "SKIP"] },
+    "stdoutRef":       { "type": "string", "description": "Path to captured stdout artifact" },
+    "stderrRef":       { "type": "string", "description": "Path to captured stderr artifact" },
+    "artifactRefs":    { "type": "array", "items": { "type": "string" }, "description": "Generated artifact paths" },
+    "environment": {
+      "type": "object",
+      "description": "Runtime environment snapshot",
+      "additionalProperties": { "type": "string" }
+    },
+    "blockingDecision":{ "type": "string", "description": "NONE if not blocking; else owner and reason" },
+    "commitSHA":       { "type": "string", "description": "Git commit SHA at validation time" }
+  }
+}

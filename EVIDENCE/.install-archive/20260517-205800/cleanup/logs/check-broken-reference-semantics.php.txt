@@ -1,0 +1,30 @@
+=== BROKEN REFERENCE SEMANTICS AUDIT ===
+
+SKIPPED (EXCLUDED_PATH): 13 refs
+  - Avax\Components\Auth\Interface\HTTP\Middleware\AuthenticationMiddleware
+  - Avax\Components\HTTP\Middleware\CorsMiddleware
+  - Avax\Components\HTTP\Middleware\ExceptionHandlerMiddleware
+  - Avax\Components\HTTP\Middleware\JsonResponseMiddleware
+  - Avax\Components\HTTP\Middleware\SecurityHeadersMiddleware
+  - Avax\Config\Architecture\DDD\AppPath
+  - Avax\Facade\Facades\Route
+  - Avax\HTTP\Response\Response
+  - Avax\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStoragePort
+  - Avax\Integration\ObjectStorage\System\Capabilities\Ports\ObjectStorageResult
+  - PhpCsFixer\Config
+  - PhpCsFixer\Finder
+  - Presentation\HTTP\Middleware\OfficeIpRestrictionMiddleware
+
+SKIPPED (OPTIONAL_PHP_EXTENSION): 2 refs
+  - Memcached
+  - Redis
+
+SKIPPED (TEST_FIXTURE): 1 refs
+  - NonExistentResourceType
+
+SKIPPED (OPTIONAL_VENDOR): 3 refs
+  - Spiral\RoadRunner\Http\PSR7Worker
+  - Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample
+  - Symplify\RuleDocGenerator\ValueObject\RuleDefinition
+
+PASS: 0 active broken references (19 total refs classified)

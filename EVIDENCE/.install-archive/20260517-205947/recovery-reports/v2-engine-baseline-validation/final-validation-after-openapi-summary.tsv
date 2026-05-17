@@ -1,0 +1,18 @@
+order	command	exit	log
+97	composer validate --no-check-publish	0	97-composer-validate-final-openapi.log
+98	composer dump-autoload -o	0	98-composer-dump-autoload-final-openapi.log
+99	vendor/bin/phpstan analyse framework components tests --memory-limit=1G --error-format=raw --no-progress	0	99-phpstan-framework-components-tests-final-openapi.raw
+100	vendor/bin/phpunit --no-coverage	0	100-phpunit-no-coverage-final-openapi.log
+101	php tooling/audit_broken_refs.php	0	101-audit-broken-refs-final-openapi.log
+102	php avax runtime:doctor	0	102-runtime-doctor-final-openapi.log
+103	php tooling/governance/check-stage-lock.php	0	103-check-stage-lock-final-openapi.log
+104	php tooling/refactor/check-component-suite-structure.php	0	104-check-component-suite-structure-final-openapi.log
+105	php tooling/refactor/check-duplicate-owners.php	0	105-check-duplicate-owners-final-openapi.log
+106	php tooling/refactor/check-namespace-drift.php	0	106-check-namespace-drift-final-openapi.log
+107	php tooling/refactor/check-public-surface.php	0	107-check-public-surface-final-openapi.log
+108	php tooling/refactor/check-runtime-leaks.php	0	108-check-runtime-leaks-final-openapi.log
+109	php tooling/governance/check-governance-index-current.php	0	109-check-governance-index-current-final-openapi.log
+110	php tooling/refactor/check-component-canonical-shape.php	0	110-check-component-canonical-shape-final-openapi.log
+111	php tooling/refactor/check-advanced-pattern-folder-violations.php	0	111-check-advanced-pattern-folder-violations-final-openapi.log
+112	php tooling/security/check-security-naming.php	0	112-check-security-naming-final-openapi.log
+113	php tooling/performance/check-performance-naming.php	0	113-check-performance-naming-final-openapi.log

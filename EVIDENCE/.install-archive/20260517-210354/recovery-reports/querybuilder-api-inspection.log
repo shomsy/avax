@@ -1,0 +1,331 @@
+== QueryBuilder public methods ==
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:64:    public function __construct(
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:88:    public function __clone()
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:100:    public function newQuery(): static
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:119:    public function raw(string $value): Expression
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:169:    public function pretend(): self
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:187:    public function statement(string $query, array $bindings = []): bool
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:197:    public function from(string $table): self
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:213:    public function selectRaw(string ...$expressions): self
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:229:    public function distinct(): self
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:247:    public function offset(int $offset): self
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:263:    public function exists(): bool
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:284:    public function limit(int $limit): self
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:304:    public function insert(array $values): bool
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:354:    public function insertGetId(array $values): int|string
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:395:    public function update(array $values): bool
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:420:    public function delete(): bool
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:444:    public function pluck(string $value, ?string $key = null) : array
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:472:    public function get(): array
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:490:    public function select(string ...$columns): self
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:505:    public function value(string $column, mixed $default = null): mixed
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:520:    public function first(string|callable|null $key = null, mixed $default = null) : mixed
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:564:    public function count(string $column = '*') : int
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:582:    public function find(mixed $id, string $column = 'id'): mixed
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php:587:    public function getGrammar(): GrammarInterface
+components/DataStack/Database/System/PublicSurface/Query.php:16:    public function __construct(
+components/DataStack/Database/System/PublicSurface/Query.php:21:    public function on(?string $connectionName = null) : self
+components/DataStack/Database/System/PublicSurface/Query.php:26:    public function builder(?string $connectionName = null) : QueryBuilder
+components/DataStack/Database/System/PublicSurface/Query.php:31:    public function table(string $table, ?string $connectionName = null) : QueryBuilder
+components/DataStack/Database/System/PublicSurface/Query.php:36:    public function from(string $table, ?string $connectionName = null) : QueryBuilder
+components/DataStack/Database/System/PublicSurface/Query.php:41:    public function raw(string $value, ?string $connectionName = null) : Expression
+components/DataStack/Database/System/Capabilities/Query/Grammar/MySQLGrammar.php:53:    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
+components/DataStack/Database/System/Capabilities/Query/Grammar/MySQLGrammar.php:76:    public function wrap(mixed $value): string
+components/DataStack/Database/System/Capabilities/Query/Grammar/MySQLGrammar.php:125:    public function compileRandomOrder(): string
+components/DataStack/Database/System/Capabilities/Query/Grammar/MySQLGrammar.php:134:    public function compileTruncate(string $table): string
+components/DataStack/Database/System/Capabilities/Query/Grammar/MySQLGrammar.php:143:    public function compileDropIfExists(string $table): string
+components/DataStack/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:28:    public function __construct()
+components/DataStack/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:46:    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update) : string
+components/DataStack/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:67:    public function wrap(mixed $value): string
+components/DataStack/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:99:    public function compileRandomOrder(): string
+components/DataStack/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:105:    public function compileTruncate(string $table): string
+components/DataStack/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:111:    public function compileDropIfExists(string $table): string
+components/DataStack/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:117:    public function compileCreateDatabase(string $name): string
+components/DataStack/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:123:    public function compileDropDatabase(string $name): string
+components/DataStack/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:128:    public function compileReturning(array $columns): string
+components/DataStack/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:139:    public function supportsWindowFunctions(): bool
+components/DataStack/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:144:    public function supportsCTE(): bool
+components/DataStack/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:149:    public function supportsReturning(): bool
+components/DataStack/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:154:    public function compileWindowFunction(string $function, ?string $partitionBy = null, string $orderBy = '') : string
+components/DataStack/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:178:    public function compileWithRecursive(string $name, string $columns, string $initialQuery, string $recursiveQuery): string
+components/DataStack/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php:187:    public function compileRegexp(string $column, string $pattern): string
+components/DataStack/Database/System/Capabilities/Query/Grammar/GrammarInterface.php:40:    public function compileSelect(QueryState $queryState): string;
+components/DataStack/Database/System/Capabilities/Query/Grammar/GrammarInterface.php:53:    public function compileInsert(QueryState $queryState): string;
+components/DataStack/Database/System/Capabilities/Query/Grammar/GrammarInterface.php:66:    public function compileUpdate(QueryState $queryState): string;
+components/DataStack/Database/System/Capabilities/Query/Grammar/GrammarInterface.php:79:    public function compileDelete(QueryState $queryState): string;
+components/DataStack/Database/System/Capabilities/Query/Grammar/GrammarInterface.php:94:    public function compileUpsert(QueryState $queryState, array $uniqueBy, array $update): string;
+components/DataStack/Database/System/Capabilities/Query/Grammar/GrammarInterface.php:107:    public function compileTruncate(string $table): string;
+components/DataStack/Database/System/Capabilities/Query/Grammar/GrammarInterface.php:119:    public function compileDropIfExists(string $table): string;
+components/DataStack/Database/System/Capabilities/Query/Grammar/GrammarInterface.php:128:    public function compileCreateDatabase(string $name): string;
+components/DataStack/Database/System/Capabilities/Query/Grammar/GrammarInterface.php:137:    public function compileDropDatabase(string $name): string;
+components/DataStack/Database/System/Capabilities/Query/Grammar/GrammarInterface.php:144:    public function compileRandomOrder(): string;
+components/DataStack/Database/System/Capabilities/Query/Grammar/GrammarInterface.php:157:    public function wrap(mixed $value): string;
+
+== QueryBuilder first 220 lines ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\Query\Builder;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasAdvancedMutations;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasAdvancedQueries;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasAggregates;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasConditions;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasControlStructures;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasGroups;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasJoins;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasOrders;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\HasSoftDeletes;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\Concerns\Macroable;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Exceptions\InvalidCriteriaException;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Execution\QueryOrchestrator;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Grammar\GrammarInterface;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\State\QueryState;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\ValueObjects\Expression;
+use ReflectionClass;
+use ReflectionException;
+use RuntimeException;
+use Throwable;
+
+/**
+ * Fluent, immutable builder for compiling and executing SQL queries.
+ *
+ * Supports dialect-aware compilation, safe bindings, and pretend mode.
+ *
+ * @see /docs/Foundation/Database/DSL/QueryBuilder.md
+ */
+class QueryBuilder
+{
+    use HasAdvancedMutations;
+    use HasAdvancedQueries;
+    use HasAggregates;
+    use HasConditions;
+    use HasControlStructures;
+    use HasGroups;
+    use HasJoins;
+    use HasOrders;
+    use HasSoftDeletes;
+    use Macroable;
+
+    /** @var QueryState The internal "memory" of all the blocks (table, filters, columns) we've added so far. */
+    public QueryState $state {
+        get {
+            return $this->state;
+        }
+    }
+
+    /**
+     * Set up the builder with its two "helpers".
+     *
+     * @param GrammarInterface  $grammar      The "Translator". It knows how to turn your PHP code into specific SQL
+     *                                        for MySQL/SQLite/etc.
+     * @param QueryOrchestrator $orchestrator The "Conductor". It doesn't write SQL, but it knows how to send the
+     *                                        final SQL to the database and get results back.
+     *
+     * @throws ReflectionException
+     */
+    public function __construct(
+        protected readonly GrammarInterface $grammar,
+        protected QueryOrchestrator         $orchestrator,
+    ) {
+        $this->state   = new QueryState();
+
+        // If this class has a 'tableName' property defined (like in a Model), we use it as the default target.
+        if (property_exists(object_or_class: $this, property: 'tableName')) {
+            $reflectionClass = new ReflectionClass(objectOrClass: $this);
+            $tableName       = $reflectionClass->getProperty(name: 'tableName')->getValue(object: $this);
+
+            if (is_string(value: $tableName) && $tableName !== '') {
+                $this->state = $this->state->withFrom(table: $tableName);
+            }
+        }
+    }
+
+    /**
+     * Create a perfect copy of this builder.
+     *
+     * -- intent:
+     * This is the "Save As" mechanism. It ensures that when you branch off a
+     * common search, you don't mess up the original search object.
+     */
+    public function __clone()
+    {
+        $this->orchestrator = clone $this->orchestrator;
+    }
+
+    /**
+     * Start a brand new, empty query using the same database setup.
+     *
+     * @return static A fresh builder instance with no filters or tables set.
+     *
+     * @throws ReflectionException
+     */
+    public function newQuery(): static
+    {
+        return new static(
+            grammar     : $this->grammar,
+            orchestrator: $this->orchestrator,
+        );
+    }
+
+    /**
+     * Inject a raw SQL fragment without quoting or escaping.
+     *
+     * Use only for trusted literals (e.g., functions/CASE expressions), never for user input.
+     *
+     * @param string $value SQL fragment to include verbatim.
+     *
+     * @throws InvalidCriteriaException When the fragment contains disallowed characters.
+     *
+     * @see /docs/Foundation/Database/DSL/QueryBuilder.md#raw
+     */
+    public function raw(string $value): Expression
+    {
+        $this->assertSafeRawExpression(expression: $value, context: 'raw');
+
+        return new Expression(value: $value);
+    }
+
+    /**
+     * Security Check: Make sure raw SQL fragments aren't dangerous.
+     *
+     * @param string $expression The text to check.
+     * @param string $context    Where this check is happening (for error messages).
+     *
+     * @throws InvalidCriteriaException If dangerous characters are found.
+     */
+    private function assertSafeRawExpression(string $expression, string $context): void
+    {
+        if ($expression === '') {
+            throw new InvalidCriteriaException(method: $context, reason: 'Raw expressions must not be empty.');
+        }
+
+        if (preg_match(pattern: '/[;]|--|\\/\\*/', subject: $expression) === 1) {
+            throw new InvalidCriteriaException(
+                method: $context,
+                reason: 'Raw expressions must not contain statement terminators or comments.',
+            );
+        }
+
+        if (preg_match(pattern: '/[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]/', subject: $expression) === 1) {
+            throw new InvalidCriteriaException(
+                method: $context,
+                reason: 'Raw expressions must not contain control characters.',
+            );
+        }
+
+        if (preg_match(pattern: '/^[\\x20-\\x7E]+$/', subject: $expression) !== 1) {
+            throw new InvalidCriteriaException(
+                method: $context,
+                reason: 'Raw expressions must be plain ASCII characters to allow safe inspection.',
+            );
+        }
+    }
+
+    /**
+     * Enable dry-run mode that logs SQL without executing it.
+     *
+     * @see /docs/Foundation/Database/DSL/QueryBuilder.md#pretend
+     *
+     * @return self Builder clone in pretend mode.
+     */
+    public function pretend(): self
+    {
+        $clone = clone $this;
+        $clone->orchestrator->pretend(value: true);
+
+        return $clone;
+    }
+
+    /**
+     * Execute a raw SQL "Statement" that doesn't return data (e.g., cleanup commands).
+     *
+     * @param string $query    SQL command to run.
+     * @param array  $bindings Parameter bindings for the command.
+     *
+     * @return bool True if the database accepted the command.
+     *
+     * @throws Throwable
+     */
+    public function statement(string $query, array $bindings = []): bool
+    {
+        return $this->orchestrator->execute(sql: $query, bindings: $bindings)->isSuccessful();
+    }
+
+    /**
+     * Set the target table.
+     *
+     * @param string $table Table name.
+     */
+    public function from(string $table): self
+    {
+        return clone (object: $this, withProperties: [
+            'state' => $this->state->withFrom(table: $table),
+        ]);
+    }
+
+    /**
+     * Mix raw SQL into your column selection.
+     *
+     * @param string ...$expressions Raw SQL snippets for selection.
+     *
+     * @throws InvalidCriteriaException When the fragment contains disallowed characters.
+     *
+     * @see /docs/Foundation/Database/DSL/QueryBuilder.md#selectraw
+     */
+    public function selectRaw(string ...$expressions): self
+    {
+        foreach ($expressions as $expression) {
+            $this->assertSafeRawExpression(expression: $expression, context: 'selectRaw');
+        }
+
+        return clone (object: $this, withProperties: [
+            'state' => $this->state->withColumns(columns: array_merge($this->state->columns, $expressions)),
+
+== PublicSurface Query first 180 lines ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\PublicSurface;
+
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Query as QueryCapability;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\ValueObjects\Expression;
+
+/**
+ * Public surface for Querying operations.
+ */
+final readonly class Query
+{
+    public function __construct(
+        private QueryCapability $queryCapability,
+        private ?string $connectionName = null,
+    ) {}
+
+    public function on(?string $connectionName = null) : self
+    {
+        return new self($this->queryCapability, $connectionName);
+    }
+
+    public function builder(?string $connectionName = null) : QueryBuilder
+    {
+        return $this->queryCapability->builder($connectionName ?? $this->connectionName);
+    }
+
+    public function table(string $table, ?string $connectionName = null) : QueryBuilder
+    {
+        return $this->from($table, $connectionName);
+    }
+
+    public function from(string $table, ?string $connectionName = null) : QueryBuilder
+    {
+        return $this->queryCapability->from($table, $connectionName ?? $this->connectionName);
+    }
+
+    public function raw(string $value, ?string $connectionName = null) : Expression
+    {
+        return $this->queryCapability->raw($value, $connectionName ?? $this->connectionName);
+    }
+}

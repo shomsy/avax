@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Evidence Schema",
+  "description": "Machine evidence record for a completed agent work phase or validation step.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "timestamp", "author", "stage", "phase", "status", "summary"],
+  "properties": {
+    "id":              { "type": "string", "description": "Unique evidence ID, e.g. EVD-20260516-001" },
+    "timestamp":       { "type": "string", "format": "date-time" },
+    "author":          { "type": "string", "description": "Agent or human that produced this evidence" },
+    "stage":           { "type": "string", "description": "SDLC stage, e.g. implementation, validation, review, release" },
+    "phase":           { "type": "string", "description": "Phase or task reference, e.g. v3-hardening-phase-3" },
+    "status":          { "type": "string", "enum": ["PASS", "FAIL", "PARTIAL", "PENDING", "BLOCKED"] },
+    "summary":         { "type": "string", "description": "Human-readable summary of what this evidence proves" },
+    "sourceFiles":     { "type": "array", "items": { "type": "string" }, "description": "Files touched or verified" },
+    "commands":        { "type": "array", "items": { "type": "string" }, "description": "Commands run to produce this evidence" },
+    "rawArtifacts":    { "type": "array", "items": { "type": "string" }, "description": "Paths to raw output files" },
+    "relatedReviews":  { "type": "array", "items": { "type": "string" }, "description": "Review IDs related to this evidence" },
+    "relatedRisks":    { "type": "array", "items": { "type": "string" }, "description": "Risk IDs related to this evidence" },
+    "validationResult":{ "type": "string", "enum": ["PASS", "FAIL", "SKIP", "N/A"] },
+    "blockingDecision":{ "type": "string", "description": "If blocking: reason and owner. If not blocking: 'NONE'." }
+  }
+}

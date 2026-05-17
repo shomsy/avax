@@ -1,0 +1,2 @@
+Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
+/home/shomsy/projects/avax/framework/System/Flows/HandleRuntimeFailure/ReportRuntimeFailure.php:184:Call to function is_callable() with 'Sentry…' will always evaluate to false.

@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-05-16T18:19:17Z",
+  "skill": "verify-checksum",
+  "file": "truth.txt",
+  "status": "MATCH",
+  "actual": "79b34958ceb4c40c5f1fd853e0835946c1068db73a14175a39f9223d208a5559",
+  "expected": "79b34958ceb4c40c5f1fd853e0835946c1068db73a14175a39f9223d208a5559"
+}

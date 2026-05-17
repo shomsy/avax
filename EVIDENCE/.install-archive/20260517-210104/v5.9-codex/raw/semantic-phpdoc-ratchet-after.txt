@@ -1,0 +1,21 @@
+Semantic PHPDoc Gate
+====================
+
+Mode: ratchet
+Scanned files: 3658
+Excluded files: 0
+Changed production files: 0
+Violations found: 9823
+Blocking touched/new violations: 0
+Legacy ratchet violations: 9823
+Baseline violation floor: 9823
+
+[YELLOW] Legacy untouched semantic PHPDoc debt remains visible under ratchet.
+Owner: AvaX governance owner
+Target: reduce opportunistically when files are touched; PublicSurface/runtime/security-sensitive files first
+Risk: architecture readability debt; does not block V5.9 unless touched/new scope regresses
+Expiry: next touched-file pass or dedicated documentation hardening phase
+
+PASS_WITH_YELLOW_RATCHET - no touched/new violations and no baseline regression.
+
+Exit code: 0

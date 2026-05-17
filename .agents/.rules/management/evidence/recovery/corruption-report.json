@@ -1,0 +1,10 @@
+{
+  "report_id": "corruption-report-dd4b765a-d3ce-4c3f-9bba-55812dbb35f4",
+  "generated_at": "2026-05-17T16:32:23.212459+00:00",
+  "summary": {
+    "total_scanned": 93,
+    "corrupted_count": 0,
+    "healthy_count": 93
+  },
+  "corrupted_files": []
+}

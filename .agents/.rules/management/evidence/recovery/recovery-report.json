@@ -1,0 +1,10 @@
+{
+  "report_id": "recovery-c3d6490a-8d6b-4838-bf2a-89a968ac3710",
+  "generated_at": "2026-05-17T16:33:42.265083+00:00",
+  "summary": {
+    "total_executions": 4,
+    "interrupted_count": 0,
+    "healthy_count": 4
+  },
+  "interrupted_executions": []
+}

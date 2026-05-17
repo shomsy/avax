@@ -1,0 +1,20 @@
+{
+  "generated_at": 1779035464.0265682,
+  "generated_at_iso": "2026-05-17T16:31:04Z",
+  "period_days": 7,
+  "total_executions": 2,
+  "status_breakdown": {
+    "unknown": 1,
+    "REPLAYABLE": 1
+  },
+  "tier_breakdown": {
+    "unknown": 1,
+    "READ_ONLY": 1
+  },
+  "scope_breakdown": {
+    "unknown": 1,
+    "security": 1
+  },
+  "avg_duration_ms": 418.36,
+  "total_duration_ms": 418.36
+}

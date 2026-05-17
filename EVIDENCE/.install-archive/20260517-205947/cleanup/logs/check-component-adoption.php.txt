@@ -1,0 +1,14 @@
+COMPONENT ADOPTION GATE
+============================================================
+
+DOCUMENTED:
+  ✓ Queue failed jobs: explicit FailedJobsStore interface exists (verified)
+  ✓ Queue static state: reset() method exists (verified) — static facade is lightweight, canonical runtime uses instance-scoped MemoryQueue
+  ✓ Queue failed jobs: useFailedJobsStore() injection exists (verified)
+  ✓ Storage: uses Filesystem for file I/O (verified)
+  ✓ Filesystem: does not depend on Storage (verified)
+  ✓ Logging/Observability: file writers use Filesystem (verified)
+  ✓ Raw file gate: MIGRATE_TO_FILESYSTEM = 0 (verified)
+  ✓ Raw file gate: MIGRATE_TO_STORAGE = 0 (verified)
+
+Result: PASS — 8 checks verified

@@ -1,0 +1,97 @@
+{
+    "stage": "V5.5-02",
+    "type": "microbenchmark-results",
+    "environment": {
+        "php_version": "8.5.5",
+        "opcache": "enabled",
+        "jit": "disable",
+        "git_commit": "unknown",
+        "timestamp": "2026-05-11T20:58:48+00:00"
+    },
+    "results": [
+        {
+            "name": "array_operations",
+            "iterations": 5000,
+            "warmup_iterations": 200,
+            "total_seconds": 0.0662,
+            "metrics": {
+                "avg_ms": 0.0132,
+                "p50_ms": 0.0131,
+                "p95_ms": 0.0141,
+                "p99_ms": 0.021,
+                "min_ms": 0.0119,
+                "max_ms": 0.03,
+                "rps": 75488.99,
+                "memory_before_bytes": 10485760,
+                "memory_after_bytes": 10485760,
+                "memory_peak_bytes": 10485760,
+                "error_rate": 0
+            },
+            "status": "GREEN",
+            "notes": []
+        },
+        {
+            "name": "object_creation",
+            "iterations": 50000,
+            "warmup_iterations": 200,
+            "total_seconds": 0.0039,
+            "metrics": {
+                "avg_ms": 0,
+                "p50_ms": 0,
+                "p95_ms": 0,
+                "p99_ms": 0.001,
+                "min_ms": 0,
+                "max_ms": 0.0012,
+                "rps": 12939791.45,
+                "memory_before_bytes": 10485760,
+                "memory_after_bytes": 10485760,
+                "memory_peak_bytes": 13107200,
+                "error_rate": 0
+            },
+            "status": "GREEN",
+            "notes": []
+        },
+        {
+            "name": "json_roundtrip",
+            "iterations": 5000,
+            "warmup_iterations": 200,
+            "total_seconds": 0.0129,
+            "metrics": {
+                "avg_ms": 0.0025,
+                "p50_ms": 0.0029,
+                "p95_ms": 0.0031,
+                "p99_ms": 0.0041,
+                "min_ms": 0.0019,
+                "max_ms": 0.0119,
+                "rps": 388678.18,
+                "memory_before_bytes": 10485760,
+                "memory_after_bytes": 10485760,
+                "memory_peak_bytes": 13107200,
+                "error_rate": 0
+            },
+            "status": "GREEN",
+            "notes": []
+        },
+        {
+            "name": "hash_sha256",
+            "iterations": 50000,
+            "warmup_iterations": 200,
+            "total_seconds": 0.0345,
+            "metrics": {
+                "avg_ms": 0.0007,
+                "p50_ms": 0.001,
+                "p95_ms": 0.0012,
+                "p99_ms": 0.0012,
+                "min_ms": 0,
+                "max_ms": 0.0381,
+                "rps": 1448399.42,
+                "memory_before_bytes": 10485760,
+                "memory_after_bytes": 10485760,
+                "memory_peak_bytes": 13107200,
+                "error_rate": 0
+            },
+            "status": "GREEN",
+            "notes": []
+        }
+    ]
+}

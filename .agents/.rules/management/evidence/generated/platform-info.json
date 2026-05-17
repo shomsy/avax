@@ -1,0 +1,12 @@
+{
+  "os": "linux",
+  "os_version": "6.17.0-29-generic",
+  "architecture": "x86_64",
+  "shell": "/bin/bash",
+  "bash_version": "GNU bash, version 5.2.37(1)-release (x86_64-pc-linux-gnu)",
+  "python_version": "3.13.7",
+  "python_path": "/usr/bin/python3",
+  "busybox": false,
+  "wsl": false,
+  "detected_at": 1779038217.7059462
+}

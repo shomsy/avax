@@ -1,0 +1,24 @@
+{
+  "matrix": {
+    "5.0.0": {
+      "python_min": "3.10",
+      "python_max": null,
+      "governance_schemas": [
+        "5.0"
+      ],
+      "breaking_changes": false,
+      "notes": "Initial v5 platform release"
+    },
+    "5.1.0": {
+      "python_min": "3.10",
+      "python_max": null,
+      "governance_schemas": [
+        "5.0",
+        "5.1"
+      ],
+      "breaking_changes": false,
+      "notes": "Phase 9 release discipline"
+    }
+  },
+  "updated_at": "2026-05-17T16:41:32.178265+00:00"
+}

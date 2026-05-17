@@ -1,0 +1,4 @@
+FAIL: 3 runtime assembly violations found:
+  - [FORBIDDEN CONTEXT] components/API/GraphQL/System/PublicSurface/GraphQLSchema.php:52 — null-coalescing new: $this->fieldAssembler   = $fieldAssembler ?? new AssembleFieldsFromMap();
+  - [FORBIDDEN CONTEXT] components/API/GraphQL/System/PublicSurface/GraphQLSchema.php:53 — null-coalescing new: $this->schemaSerializer = $schemaSerializer ?? new SchemaToArray();
+  - [FORBIDDEN CONTEXT] components/API/GraphQL/System/PublicSurface/GraphQLSchema.php:54 — null-coalescing new: $this->schemaRouter = $schemaRouter ?? new SchemaRouter();

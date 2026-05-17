@@ -1,0 +1,1385 @@
+{
+  "generated_at": "2026-05-17T17:22:00.997166+00:00",
+  "summary": {
+    "total_files": 135,
+    "referenced": 21,
+    "unreferenced": 114,
+    "archived": 0,
+    "pruned": 0,
+    "orphans": 30
+  },
+  "by_classification": {
+    "REFERENCE": {
+      "count": 111,
+      "files": [
+        ".rules/governance/agents/orchestration/society-of-mind-pattern.md",
+        ".rules/governance/agents/roles/agent-roles.md",
+        ".rules/governance/architecture/adoption-model.md",
+        ".rules/governance/architecture/architecture-standard.md",
+        ".rules/governance/architecture/contract-linting.md",
+        ".rules/governance/architecture/execution-profiles.md",
+        ".rules/governance/architecture/migration-governance.md",
+        ".rules/governance/architecture/profiles/frameworks/express.md",
+        ".rules/governance/architecture/profiles/frameworks/laravel.md",
+        ".rules/governance/architecture/profiles/frameworks/nextjs.md",
+        ".rules/governance/architecture/profiles/frameworks/react.md",
+        ".rules/governance/architecture/profiles/frameworks/v-web-components.md",
+        ".rules/governance/architecture/profiles/languages/javascript.md",
+        ".rules/governance/architecture/profiles/languages/php.md",
+        ".rules/governance/architecture/profiles/languages/typescript.md",
+        ".rules/governance/architecture/runtime-hardening.md",
+        ".rules/governance/core/bootstrap/agent-bootstrap.md",
+        ".rules/governance/core/bootstrap/canonical-bootstrap-lifecycle.md",
+        ".rules/governance/core/flags/feature-flags.md",
+        ".rules/governance/core/quality/quality-gates.md",
+        ".rules/governance/core/resolution/profile-resolution-algorithm.md",
+        ".rules/governance/delivery/operations/backup-and-restore-runbook.md",
+        ".rules/governance/delivery/operations/enterprise-operational-lifecycle.md",
+        ".rules/governance/delivery/operations/management-model.md",
+        ".rules/governance/delivery/operations/observability-and-error-envelope.md",
+        ".rules/governance/delivery/operations/runtime-handoff-contract.md",
+        ".rules/governance/delivery/operations/security-launch-checklist.md",
+        ".rules/governance/delivery/operations/staging-smoke-checklist.md",
+        ".rules/governance/delivery/release/advanced-deployment-policy.md",
+        ".rules/governance/delivery/release/release-and-rollback-policy.md",
+        ".rules/governance/delivery/workflows/workflow-pipelines.md",
+        ".rules/governance/execution/approvals/approval-policy.md",
+        ".rules/governance/execution/hooks/hooks-policy.md",
+        ".rules/governance/execution/policy/execution-policy.md",
+        ".rules/governance/execution/routing/prompt-to-governance-flow.md",
+        ".rules/governance/execution/sandbox/sandbox-boundary-policy.md",
+        ".rules/governance/integrations/mcp/mcp-integration-policy.md",
+        ".rules/governance/integrations/platforms/platform-compatibility.md",
+        ".rules/governance/intelligence/context/artifact-contract.md",
+        ".rules/governance/intelligence/context/artifact-standard.md",
+        ".rules/governance/intelligence/context/context-management.md",
+        ".rules/governance/intelligence/context/subagent-delegation-policy.md",
+        ".rules/governance/intelligence/context/system-rules.md",
+        ".rules/governance/intelligence/context/tooling-integration.md",
+        ".rules/governance/intelligence/learning/continuous-learning.md",
+        ".rules/governance/intelligence/learning/instincts-policy.md",
+        ".rules/governance/intelligence/learning/metrics-standard.md",
+        ".rules/governance/intelligence/memory/universal-memory-standard.md",
+        ".rules/governance/intelligence/memory/v3-intelligence-lifecycle.md",
+        ".rules/governance/product/standards/product-management-standard.md",
+        ".rules/governance/profiles/architecture/feature-first.md",
+        ".rules/governance/profiles/architecture/layered.md",
+        ".rules/governance/profiles/architecture/package-library.md",
+        ".rules/governance/profiles/architecture/vertical-slice.md",
+        ".rules/governance/profiles/frameworks/express.md",
+        ".rules/governance/profiles/frameworks/laravel.md",
+        ".rules/governance/profiles/frameworks/nextjs.md",
+        ".rules/governance/profiles/frameworks/react.md",
+        ".rules/governance/profiles/frameworks/v-web-components.md",
+        ".rules/governance/profiles/languages/css.md",
+        ".rules/governance/profiles/languages/go.md",
+        ".rules/governance/profiles/languages/javascript.md",
+        ".rules/governance/profiles/languages/php.md",
+        ".rules/governance/profiles/languages/typescript.md",
+        ".rules/governance/profiles/overlays/enterprise-regulated.md",
+        ".rules/governance/profiles/overlays/experimental.md",
+        ".rules/governance/profiles/overlays/high-performance.md",
+        ".rules/governance/profiles/overlays/strict-security.md",
+        ".rules/governance/profiles/project-types/api-service.md",
+        ".rules/governance/profiles/project-types/cli.md",
+        ".rules/governance/profiles/project-types/framework.md",
+        ".rules/governance/profiles/project-types/infrastructure.md",
+        ".rules/governance/profiles/project-types/library.md",
+        ".rules/governance/profiles/project-types/monorepo.md",
+        ".rules/governance/profiles/project-types/web-app.md",
+        ".rules/governance/profiles/repository-kinds/governance-source.md",
+        ".rules/governance/profiles/roles/engineering-reviewer.md",
+        ".rules/governance/profiles/roles/legal-executive-reviewer.md",
+        ".rules/governance/profiles/roles/ux-ui-reviewer.md",
+        ".rules/governance/security/authentication-and-session-security.md",
+        ".rules/governance/security/ci-cd-and-supply-chain-security.md",
+        ".rules/governance/security/owasp-web-and-api-baseline.md",
+        ".rules/governance/security/secrets-and-key-management.md",
+        ".rules/governance/security/secure-development-lifecycle.md",
+        ".rules/governance/security/security-operating-model.md",
+        ".rules/governance/security/threat-modeling-and-abuse-case-policy.md",
+        ".rules/governance/security/tool-and-plugin-capability-isolation.md",
+        ".rules/governance/security/vulnerability-and-incident-response.md",
+        ".rules/governance/skills/contract/skill-contract.md",
+        ".rules/governance/standards/coding/codex-usage-policy.md",
+        ".rules/governance/standards/coding/how-to-coding-standards.md",
+        ".rules/governance/standards/coding/naming-standard.md",
+        ".rules/governance/standards/documentation/evidence-model.md",
+        ".rules/governance/standards/documentation/how-to-document-flow.md",
+        ".rules/governance/standards/documentation/how-to-document.md",
+        ".rules/governance/standards/governance/canonical-governance-map.md",
+        ".rules/governance/standards/governance/capability-maturity-model.md",
+        ".rules/governance/standards/governance/entropy-control-policy.md",
+        ".rules/governance/standards/governance/governance-authoring-standard.md",
+        ".rules/governance/standards/governance/governance-evolution-policy.md",
+        ".rules/governance/standards/review/how-to-code-review.md",
+        ".rules/governance/standards/review/how-to-strict-review.md",
+        ".rules/governance/standards/review/recursive-review-contract.md",
+        "governance/architecture/runtime-kernel.md",
+        "governance/architecture/survivability-analysis.md",
+        "governance/core/bootstrap/agent-bootstrap.md",
+        "governance/core/bootstrap/canonical-bootstrap-lifecycle.md",
+        "governance/core/flags/feature-flags.md",
+        "governance/profiles/integrations/mcp-example.md",
+        "governance/standards/coding/ai-coding-contract.md",
+        "governance/standards/documentation/evidence-model.md"
+      ]
+    },
+    "TEMPLATE": {
+      "count": 3,
+      "files": [
+        ".rules/governance/architecture/ARCHITECTURE.md",
+        ".rules/governance/intelligence/memory/memory-lifecycle.md",
+        ".rules/governance/profiles/languages/nodejs.md"
+      ]
+    }
+  },
+  "by_category": {
+    "README.md": {
+      "total": 2,
+      "referenced": 2,
+      "unreferenced": 0
+    },
+    "agents": {
+      "total": 3,
+      "referenced": 1,
+      "unreferenced": 2
+    },
+    "architecture": {
+      "total": 17,
+      "referenced": 2,
+      "unreferenced": 15
+    },
+    "bootstrap": {
+      "total": 2,
+      "referenced": 0,
+      "unreferenced": 2
+    },
+    "coding": {
+      "total": 1,
+      "referenced": 0,
+      "unreferenced": 1
+    },
+    "core": {
+      "total": 6,
+      "referenced": 1,
+      "unreferenced": 5
+    },
+    "delivery": {
+      "total": 12,
+      "referenced": 2,
+      "unreferenced": 10
+    },
+    "documentation": {
+      "total": 1,
+      "referenced": 0,
+      "unreferenced": 1
+    },
+    "execution": {
+      "total": 7,
+      "referenced": 2,
+      "unreferenced": 5
+    },
+    "flags": {
+      "total": 1,
+      "referenced": 0,
+      "unreferenced": 1
+    },
+    "integrations": {
+      "total": 4,
+      "referenced": 1,
+      "unreferenced": 3
+    },
+    "intelligence": {
+      "total": 13,
+      "referenced": 1,
+      "unreferenced": 12
+    },
+    "product": {
+      "total": 2,
+      "referenced": 1,
+      "unreferenced": 1
+    },
+    "profiles": {
+      "total": 32,
+      "referenced": 2,
+      "unreferenced": 30
+    },
+    "quality": {
+      "total": 1,
+      "referenced": 1,
+      "unreferenced": 0
+    },
+    "resolution": {
+      "total": 1,
+      "referenced": 1,
+      "unreferenced": 0
+    },
+    "runtime-kernel.md": {
+      "total": 1,
+      "referenced": 0,
+      "unreferenced": 1
+    },
+    "security": {
+      "total": 10,
+      "referenced": 1,
+      "unreferenced": 9
+    },
+    "skills": {
+      "total": 2,
+      "referenced": 1,
+      "unreferenced": 1
+    },
+    "standards": {
+      "total": 16,
+      "referenced": 2,
+      "unreferenced": 14
+    },
+    "survivability-analysis.md": {
+      "total": 1,
+      "referenced": 0,
+      "unreferenced": 1
+    }
+  },
+  "unreferenced_files": [
+    {
+      "file": ".rules/governance/agents/orchestration/society-of-mind-pattern.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/agents/roles/agent-roles.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/architecture/ARCHITECTURE.md",
+      "classification": "TEMPLATE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/architecture/adoption-model.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/architecture/architecture-standard.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/architecture/contract-linting.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/architecture/execution-profiles.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/architecture/migration-governance.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/architecture/profiles/frameworks/express.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/architecture/profiles/frameworks/laravel.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/architecture/profiles/frameworks/nextjs.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/architecture/profiles/frameworks/react.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/architecture/profiles/frameworks/v-web-components.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/architecture/profiles/languages/javascript.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/architecture/profiles/languages/php.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/architecture/profiles/languages/typescript.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/architecture/runtime-hardening.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/core/bootstrap/agent-bootstrap.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": [
+        "governance/core/resolution/profile-resolution-algorithm.md"
+      ]
+    },
+    {
+      "file": ".rules/governance/core/bootstrap/canonical-bootstrap-lifecycle.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/core/flags/feature-flags.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/core/quality/quality-gates.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/core/resolution/profile-resolution-algorithm.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": [
+        "governance/core/quality/quality-gates.md"
+      ]
+    },
+    {
+      "file": ".rules/governance/delivery/operations/backup-and-restore-runbook.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/delivery/operations/enterprise-operational-lifecycle.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/delivery/operations/management-model.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/delivery/operations/observability-and-error-envelope.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/delivery/operations/runtime-handoff-contract.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/delivery/operations/security-launch-checklist.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/delivery/operations/staging-smoke-checklist.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/delivery/release/advanced-deployment-policy.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/delivery/release/release-and-rollback-policy.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/delivery/workflows/workflow-pipelines.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/execution/approvals/approval-policy.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/execution/hooks/hooks-policy.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/execution/policy/execution-policy.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/execution/routing/prompt-to-governance-flow.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/execution/sandbox/sandbox-boundary-policy.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/integrations/mcp/mcp-integration-policy.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/integrations/platforms/platform-compatibility.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/intelligence/context/artifact-contract.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/intelligence/context/artifact-standard.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/intelligence/context/context-management.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/intelligence/context/subagent-delegation-policy.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/intelligence/context/system-rules.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/intelligence/context/tooling-integration.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/intelligence/learning/continuous-learning.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/intelligence/learning/instincts-policy.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/intelligence/learning/metrics-standard.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/intelligence/memory/memory-lifecycle.md",
+      "classification": "TEMPLATE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/intelligence/memory/universal-memory-standard.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/intelligence/memory/v3-intelligence-lifecycle.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/product/standards/product-management-standard.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/architecture/feature-first.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/architecture/layered.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/architecture/package-library.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/architecture/vertical-slice.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/frameworks/express.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/frameworks/laravel.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/frameworks/nextjs.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/frameworks/react.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/frameworks/v-web-components.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/languages/css.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/languages/go.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/languages/javascript.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/languages/nodejs.md",
+      "classification": "TEMPLATE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/languages/php.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/languages/typescript.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/overlays/enterprise-regulated.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/overlays/experimental.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/overlays/high-performance.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/overlays/strict-security.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/project-types/api-service.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/project-types/cli.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/project-types/framework.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/project-types/infrastructure.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/project-types/library.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/project-types/monorepo.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/project-types/web-app.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/repository-kinds/governance-source.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/roles/engineering-reviewer.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/roles/legal-executive-reviewer.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/profiles/roles/ux-ui-reviewer.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/security/authentication-and-session-security.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/security/ci-cd-and-supply-chain-security.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/security/owasp-web-and-api-baseline.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/security/secrets-and-key-management.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/security/secure-development-lifecycle.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/security/security-operating-model.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/security/threat-modeling-and-abuse-case-policy.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/security/tool-and-plugin-capability-isolation.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/security/vulnerability-and-incident-response.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/skills/contract/skill-contract.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/standards/coding/codex-usage-policy.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/standards/coding/how-to-coding-standards.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/standards/coding/naming-standard.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/standards/documentation/evidence-model.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/standards/documentation/how-to-document-flow.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/standards/documentation/how-to-document.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/standards/governance/canonical-governance-map.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/standards/governance/capability-maturity-model.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/standards/governance/entropy-control-policy.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/standards/governance/governance-authoring-standard.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/standards/governance/governance-evolution-policy.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/standards/review/how-to-code-review.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/standards/review/how-to-strict-review.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": ".rules/governance/standards/review/recursive-review-contract.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": "governance/architecture/runtime-kernel.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": "governance/architecture/survivability-analysis.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": "governance/core/bootstrap/agent-bootstrap.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": [
+        "governance/core/resolution/profile-resolution-algorithm.md"
+      ]
+    },
+    {
+      "file": "governance/core/bootstrap/canonical-bootstrap-lifecycle.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": "governance/core/flags/feature-flags.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": "governance/profiles/integrations/mcp-example.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": "governance/standards/coding/ai-coding-contract.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    },
+    {
+      "file": "governance/standards/documentation/evidence-model.md",
+      "classification": "REFERENCE",
+      "referenced_by": [],
+      "references": []
+    }
+  ],
+  "orphaned_files": [
+    ".rules/governance/architecture/ARCHITECTURE.md",
+    ".rules/governance/architecture/adoption-model.md",
+    ".rules/governance/architecture/architecture-standard.md",
+    ".rules/governance/architecture/contract-linting.md",
+    ".rules/governance/architecture/execution-profiles.md",
+    ".rules/governance/architecture/migration-governance.md",
+    ".rules/governance/architecture/runtime-hardening.md",
+    ".rules/governance/delivery/operations/backup-and-restore-runbook.md",
+    ".rules/governance/delivery/operations/enterprise-operational-lifecycle.md",
+    ".rules/governance/delivery/operations/management-model.md",
+    ".rules/governance/delivery/operations/observability-and-error-envelope.md",
+    ".rules/governance/delivery/operations/runtime-handoff-contract.md",
+    ".rules/governance/delivery/operations/security-launch-checklist.md",
+    ".rules/governance/delivery/operations/staging-smoke-checklist.md",
+    ".rules/governance/execution/routing/prompt-to-governance-flow.md",
+    ".rules/governance/profiles/repository-kinds/governance-source.md",
+    ".rules/governance/security/authentication-and-session-security.md",
+    ".rules/governance/security/ci-cd-and-supply-chain-security.md",
+    ".rules/governance/security/owasp-web-and-api-baseline.md",
+    ".rules/governance/security/secrets-and-key-management.md",
+    ".rules/governance/security/secure-development-lifecycle.md",
+    ".rules/governance/security/security-operating-model.md",
+    ".rules/governance/security/threat-modeling-and-abuse-case-policy.md",
+    ".rules/governance/security/tool-and-plugin-capability-isolation.md",
+    ".rules/governance/security/vulnerability-and-incident-response.md",
+    ".rules/governance/standards/governance/canonical-governance-map.md",
+    ".rules/governance/standards/governance/capability-maturity-model.md",
+    ".rules/governance/standards/governance/entropy-control-policy.md",
+    ".rules/governance/standards/governance/governance-authoring-standard.md",
+    ".rules/governance/standards/governance/governance-evolution-policy.md"
+  ],
+  "archived_files": [],
+  "roots": [
+    ".rules/governance/README.md",
+    ".rules/governance/agents/README.md",
+    ".rules/governance/agents/orchestration/society-of-mind-pattern.md",
+    ".rules/governance/agents/roles/agent-roles.md",
+    ".rules/governance/architecture/ARCHITECTURE.md",
+    ".rules/governance/architecture/README.md",
+    ".rules/governance/architecture/adoption-model.md",
+    ".rules/governance/architecture/architecture-standard.md",
+    ".rules/governance/architecture/contract-linting.md",
+    ".rules/governance/architecture/execution-profiles.md",
+    ".rules/governance/architecture/migration-governance.md",
+    ".rules/governance/architecture/profiles/README.md",
+    ".rules/governance/architecture/profiles/frameworks/express.md",
+    ".rules/governance/architecture/profiles/frameworks/laravel.md",
+    ".rules/governance/architecture/profiles/frameworks/nextjs.md",
+    ".rules/governance/architecture/profiles/frameworks/react.md",
+    ".rules/governance/architecture/profiles/frameworks/v-web-components.md",
+    ".rules/governance/architecture/profiles/languages/javascript.md",
+    ".rules/governance/architecture/profiles/languages/php.md",
+    ".rules/governance/architecture/profiles/languages/typescript.md",
+    ".rules/governance/architecture/runtime-hardening.md",
+    ".rules/governance/core/README.md",
+    ".rules/governance/core/bootstrap/agent-bootstrap.md",
+    ".rules/governance/core/bootstrap/canonical-bootstrap-lifecycle.md",
+    ".rules/governance/core/flags/feature-flags.md",
+    ".rules/governance/core/quality/quality-gates.md",
+    ".rules/governance/core/resolution/profile-resolution-algorithm.md",
+    ".rules/governance/delivery/README.md",
+    ".rules/governance/delivery/operations/README.md",
+    ".rules/governance/delivery/operations/backup-and-restore-runbook.md",
+    ".rules/governance/delivery/operations/enterprise-operational-lifecycle.md",
+    ".rules/governance/delivery/operations/management-model.md",
+    ".rules/governance/delivery/operations/observability-and-error-envelope.md",
+    ".rules/governance/delivery/operations/runtime-handoff-contract.md",
+    ".rules/governance/delivery/operations/security-launch-checklist.md",
+    ".rules/governance/delivery/operations/staging-smoke-checklist.md",
+    ".rules/governance/delivery/release/advanced-deployment-policy.md",
+    ".rules/governance/delivery/release/release-and-rollback-policy.md",
+    ".rules/governance/delivery/workflows/workflow-pipelines.md",
+    ".rules/governance/execution/README.md",
+    ".rules/governance/execution/approvals/approval-policy.md",
+    ".rules/governance/execution/hooks/hooks-policy.md",
+    ".rules/governance/execution/policy/execution-policy.md",
+    ".rules/governance/execution/routing/README.md",
+    ".rules/governance/execution/routing/prompt-to-governance-flow.md",
+    ".rules/governance/execution/sandbox/sandbox-boundary-policy.md",
+    ".rules/governance/integrations/README.md",
+    ".rules/governance/integrations/mcp/mcp-integration-policy.md",
+    ".rules/governance/integrations/platforms/platform-compatibility.md",
+    ".rules/governance/intelligence/README.md",
+    ".rules/governance/intelligence/context/artifact-contract.md",
+    ".rules/governance/intelligence/context/artifact-standard.md",
+    ".rules/governance/intelligence/context/context-management.md",
+    ".rules/governance/intelligence/context/subagent-delegation-policy.md",
+    ".rules/governance/intelligence/context/system-rules.md",
+    ".rules/governance/intelligence/context/tooling-integration.md",
+    ".rules/governance/intelligence/learning/continuous-learning.md",
+    ".rules/governance/intelligence/learning/instincts-policy.md",
+    ".rules/governance/intelligence/learning/metrics-standard.md",
+    ".rules/governance/intelligence/memory/memory-lifecycle.md",
+    ".rules/governance/intelligence/memory/universal-memory-standard.md",
+    ".rules/governance/intelligence/memory/v3-intelligence-lifecycle.md",
+    ".rules/governance/product/README.md",
+    ".rules/governance/product/standards/product-management-standard.md",
+    ".rules/governance/profiles/README.md",
+    ".rules/governance/profiles/architecture/feature-first.md",
+    ".rules/governance/profiles/architecture/layered.md",
+    ".rules/governance/profiles/architecture/package-library.md",
+    ".rules/governance/profiles/architecture/vertical-slice.md",
+    ".rules/governance/profiles/frameworks/express.md",
+    ".rules/governance/profiles/frameworks/laravel.md",
+    ".rules/governance/profiles/frameworks/nextjs.md",
+    ".rules/governance/profiles/frameworks/react.md",
+    ".rules/governance/profiles/frameworks/v-web-components.md",
+    ".rules/governance/profiles/languages/css.md",
+    ".rules/governance/profiles/languages/go.md",
+    ".rules/governance/profiles/languages/javascript.md",
+    ".rules/governance/profiles/languages/nodejs.md",
+    ".rules/governance/profiles/languages/php.md",
+    ".rules/governance/profiles/languages/typescript.md",
+    ".rules/governance/profiles/overlays/enterprise-regulated.md",
+    ".rules/governance/profiles/overlays/experimental.md",
+    ".rules/governance/profiles/overlays/high-performance.md",
+    ".rules/governance/profiles/overlays/strict-security.md",
+    ".rules/governance/profiles/project-types/api-service.md",
+    ".rules/governance/profiles/project-types/cli.md",
+    ".rules/governance/profiles/project-types/framework.md",
+    ".rules/governance/profiles/project-types/infrastructure.md",
+    ".rules/governance/profiles/project-types/library.md",
+    ".rules/governance/profiles/project-types/monorepo.md",
+    ".rules/governance/profiles/project-types/web-app.md",
+    ".rules/governance/profiles/repository-kinds/README.md",
+    ".rules/governance/profiles/repository-kinds/governance-source.md",
+    ".rules/governance/profiles/roles/engineering-reviewer.md",
+    ".rules/governance/profiles/roles/legal-executive-reviewer.md",
+    ".rules/governance/profiles/roles/ux-ui-reviewer.md",
+    ".rules/governance/security/README.md",
+    ".rules/governance/security/authentication-and-session-security.md",
+    ".rules/governance/security/ci-cd-and-supply-chain-security.md",
+    ".rules/governance/security/owasp-web-and-api-baseline.md",
+    ".rules/governance/security/secrets-and-key-management.md",
+    ".rules/governance/security/secure-development-lifecycle.md",
+    ".rules/governance/security/security-operating-model.md",
+    ".rules/governance/security/threat-modeling-and-abuse-case-policy.md",
+    ".rules/governance/security/tool-and-plugin-capability-isolation.md",
+    ".rules/governance/security/vulnerability-and-incident-response.md",
+    ".rules/governance/skills/README.md",
+    ".rules/governance/skills/contract/skill-contract.md",
+    ".rules/governance/standards/README.md",
+    ".rules/governance/standards/coding/codex-usage-policy.md",
+    ".rules/governance/standards/coding/how-to-coding-standards.md",
+    ".rules/governance/standards/coding/naming-standard.md",
+    ".rules/governance/standards/documentation/evidence-model.md",
+    ".rules/governance/standards/documentation/how-to-document-flow.md",
+    ".rules/governance/standards/documentation/how-to-document.md",
+    ".rules/governance/standards/governance/README.md",
+    ".rules/governance/standards/governance/canonical-governance-map.md",
+    ".rules/governance/standards/governance/capability-maturity-model.md",
+    ".rules/governance/standards/governance/entropy-control-policy.md",
+    ".rules/governance/standards/governance/governance-authoring-standard.md",
+    ".rules/governance/standards/governance/governance-evolution-policy.md",
+    ".rules/governance/standards/review/how-to-code-review.md",
+    ".rules/governance/standards/review/how-to-strict-review.md",
+    ".rules/governance/standards/review/recursive-review-contract.md",
+    "governance/architecture/runtime-kernel.md",
+    "governance/architecture/survivability-analysis.md",
+    "governance/core/README.md",
+    "governance/core/bootstrap/agent-bootstrap.md",
+    "governance/core/bootstrap/canonical-bootstrap-lifecycle.md",
+    "governance/core/flags/feature-flags.md",
+    "governance/profiles/integrations/mcp-example.md",
+    "governance/standards/coding/ai-coding-contract.md",
+    "governance/standards/documentation/evidence-model.md"
+  ],
+  "leaves": [
+    ".rules/governance/README.md",
+    ".rules/governance/agents/README.md",
+    ".rules/governance/agents/orchestration/society-of-mind-pattern.md",
+    ".rules/governance/agents/roles/agent-roles.md",
+    ".rules/governance/architecture/ARCHITECTURE.md",
+    ".rules/governance/architecture/README.md",
+    ".rules/governance/architecture/adoption-model.md",
+    ".rules/governance/architecture/architecture-standard.md",
+    ".rules/governance/architecture/contract-linting.md",
+    ".rules/governance/architecture/execution-profiles.md",
+    ".rules/governance/architecture/migration-governance.md",
+    ".rules/governance/architecture/profiles/README.md",
+    ".rules/governance/architecture/profiles/frameworks/express.md",
+    ".rules/governance/architecture/profiles/frameworks/laravel.md",
+    ".rules/governance/architecture/profiles/frameworks/nextjs.md",
+    ".rules/governance/architecture/profiles/frameworks/react.md",
+    ".rules/governance/architecture/profiles/frameworks/v-web-components.md",
+    ".rules/governance/architecture/profiles/languages/javascript.md",
+    ".rules/governance/architecture/profiles/languages/php.md",
+    ".rules/governance/architecture/profiles/languages/typescript.md",
+    ".rules/governance/architecture/runtime-hardening.md",
+    ".rules/governance/core/README.md",
+    ".rules/governance/core/bootstrap/canonical-bootstrap-lifecycle.md",
+    ".rules/governance/core/flags/feature-flags.md",
+    ".rules/governance/core/quality/quality-gates.md",
+    ".rules/governance/delivery/README.md",
+    ".rules/governance/delivery/operations/README.md",
+    ".rules/governance/delivery/operations/backup-and-restore-runbook.md",
+    ".rules/governance/delivery/operations/enterprise-operational-lifecycle.md",
+    ".rules/governance/delivery/operations/management-model.md",
+    ".rules/governance/delivery/operations/observability-and-error-envelope.md",
+    ".rules/governance/delivery/operations/runtime-handoff-contract.md",
+    ".rules/governance/delivery/operations/security-launch-checklist.md",
+    ".rules/governance/delivery/operations/staging-smoke-checklist.md",
+    ".rules/governance/delivery/release/advanced-deployment-policy.md",
+    ".rules/governance/delivery/release/release-and-rollback-policy.md",
+    ".rules/governance/delivery/workflows/workflow-pipelines.md",
+    ".rules/governance/execution/README.md",
+    ".rules/governance/execution/approvals/approval-policy.md",
+    ".rules/governance/execution/hooks/hooks-policy.md",
+    ".rules/governance/execution/policy/execution-policy.md",
+    ".rules/governance/execution/routing/README.md",
+    ".rules/governance/execution/routing/prompt-to-governance-flow.md",
+    ".rules/governance/execution/sandbox/sandbox-boundary-policy.md",
+    ".rules/governance/integrations/README.md",
+    ".rules/governance/integrations/mcp/mcp-integration-policy.md",
+    ".rules/governance/integrations/platforms/platform-compatibility.md",
+    ".rules/governance/intelligence/README.md",
+    ".rules/governance/intelligence/context/artifact-contract.md",
+    ".rules/governance/intelligence/context/artifact-standard.md",
+    ".rules/governance/intelligence/context/context-management.md",
+    ".rules/governance/intelligence/context/subagent-delegation-policy.md",
+    ".rules/governance/intelligence/context/system-rules.md",
+    ".rules/governance/intelligence/context/tooling-integration.md",
+    ".rules/governance/intelligence/learning/continuous-learning.md",
+    ".rules/governance/intelligence/learning/instincts-policy.md",
+    ".rules/governance/intelligence/learning/metrics-standard.md",
+    ".rules/governance/intelligence/memory/memory-lifecycle.md",
+    ".rules/governance/intelligence/memory/universal-memory-standard.md",
+    ".rules/governance/intelligence/memory/v3-intelligence-lifecycle.md",
+    ".rules/governance/product/README.md",
+    ".rules/governance/product/standards/product-management-standard.md",
+    ".rules/governance/profiles/README.md",
+    ".rules/governance/profiles/architecture/feature-first.md",
+    ".rules/governance/profiles/architecture/layered.md",
+    ".rules/governance/profiles/architecture/package-library.md",
+    ".rules/governance/profiles/architecture/vertical-slice.md",
+    ".rules/governance/profiles/frameworks/express.md",
+    ".rules/governance/profiles/frameworks/laravel.md",
+    ".rules/governance/profiles/frameworks/nextjs.md",
+    ".rules/governance/profiles/frameworks/react.md",
+    ".rules/governance/profiles/frameworks/v-web-components.md",
+    ".rules/governance/profiles/languages/css.md",
+    ".rules/governance/profiles/languages/go.md",
+    ".rules/governance/profiles/languages/javascript.md",
+    ".rules/governance/profiles/languages/nodejs.md",
+    ".rules/governance/profiles/languages/php.md",
+    ".rules/governance/profiles/languages/typescript.md",
+    ".rules/governance/profiles/overlays/enterprise-regulated.md",
+    ".rules/governance/profiles/overlays/experimental.md",
+    ".rules/governance/profiles/overlays/high-performance.md",
+    ".rules/governance/profiles/overlays/strict-security.md",
+    ".rules/governance/profiles/project-types/api-service.md",
+    ".rules/governance/profiles/project-types/cli.md",
+    ".rules/governance/profiles/project-types/framework.md",
+    ".rules/governance/profiles/project-types/infrastructure.md",
+    ".rules/governance/profiles/project-types/library.md",
+    ".rules/governance/profiles/project-types/monorepo.md",
+    ".rules/governance/profiles/project-types/web-app.md",
+    ".rules/governance/profiles/repository-kinds/README.md",
+    ".rules/governance/profiles/repository-kinds/governance-source.md",
+    ".rules/governance/profiles/roles/engineering-reviewer.md",
+    ".rules/governance/profiles/roles/legal-executive-reviewer.md",
+    ".rules/governance/profiles/roles/ux-ui-reviewer.md",
+    ".rules/governance/security/README.md",
+    ".rules/governance/security/authentication-and-session-security.md",
+    ".rules/governance/security/ci-cd-and-supply-chain-security.md",
+    ".rules/governance/security/owasp-web-and-api-baseline.md",
+    ".rules/governance/security/secrets-and-key-management.md",
+    ".rules/governance/security/secure-development-lifecycle.md",
+    ".rules/governance/security/security-operating-model.md",
+    ".rules/governance/security/threat-modeling-and-abuse-case-policy.md",
+    ".rules/governance/security/tool-and-plugin-capability-isolation.md",
+    ".rules/governance/security/vulnerability-and-incident-response.md",
+    ".rules/governance/skills/README.md",
+    ".rules/governance/skills/contract/skill-contract.md",
+    ".rules/governance/standards/README.md",
+    ".rules/governance/standards/coding/codex-usage-policy.md",
+    ".rules/governance/standards/coding/how-to-coding-standards.md",
+    ".rules/governance/standards/coding/naming-standard.md",
+    ".rules/governance/standards/documentation/evidence-model.md",
+    ".rules/governance/standards/documentation/how-to-document-flow.md",
+    ".rules/governance/standards/documentation/how-to-document.md",
+    ".rules/governance/standards/governance/README.md",
+    ".rules/governance/standards/governance/canonical-governance-map.md",
+    ".rules/governance/standards/governance/capability-maturity-model.md",
+    ".rules/governance/standards/governance/entropy-control-policy.md",
+    ".rules/governance/standards/governance/governance-authoring-standard.md",
+    ".rules/governance/standards/governance/governance-evolution-policy.md",
+    ".rules/governance/standards/review/how-to-code-review.md",
+    ".rules/governance/standards/review/how-to-strict-review.md",
+    ".rules/governance/standards/review/recursive-review-contract.md",
+    "governance/architecture/runtime-kernel.md",
+    "governance/architecture/survivability-analysis.md",
+    "governance/core/README.md",
+    "governance/core/bootstrap/canonical-bootstrap-lifecycle.md",
+    "governance/core/flags/feature-flags.md",
+    "governance/core/quality/quality-gates.md",
+    "governance/profiles/integrations/mcp-example.md",
+    "governance/standards/coding/ai-coding-contract.md",
+    "governance/standards/documentation/evidence-model.md"
+  ],
+  "precedence_files": [],
+  "recommendations": [
+    {
+      "priority": "medium",
+      "action": "link",
+      "detail": "Add references to 111 useful but unreferenced files",
+      "files": [
+        ".rules/governance/agents/orchestration/society-of-mind-pattern.md",
+        ".rules/governance/agents/roles/agent-roles.md",
+        ".rules/governance/architecture/adoption-model.md",
+        ".rules/governance/architecture/architecture-standard.md",
+        ".rules/governance/architecture/contract-linting.md",
+        ".rules/governance/architecture/execution-profiles.md",
+        ".rules/governance/architecture/migration-governance.md",
+        ".rules/governance/architecture/profiles/frameworks/express.md",
+        ".rules/governance/architecture/profiles/frameworks/laravel.md",
+        ".rules/governance/architecture/profiles/frameworks/nextjs.md",
+        ".rules/governance/architecture/profiles/frameworks/react.md",
+        ".rules/governance/architecture/profiles/frameworks/v-web-components.md",
+        ".rules/governance/architecture/profiles/languages/javascript.md",
+        ".rules/governance/architecture/profiles/languages/php.md",
+        ".rules/governance/architecture/profiles/languages/typescript.md",
+        ".rules/governance/architecture/runtime-hardening.md",
+        ".rules/governance/core/bootstrap/agent-bootstrap.md",
+        ".rules/governance/core/bootstrap/canonical-bootstrap-lifecycle.md",
+        ".rules/governance/core/flags/feature-flags.md",
+        ".rules/governance/core/quality/quality-gates.md",
+        ".rules/governance/core/resolution/profile-resolution-algorithm.md",
+        ".rules/governance/delivery/operations/backup-and-restore-runbook.md",
+        ".rules/governance/delivery/operations/enterprise-operational-lifecycle.md",
+        ".rules/governance/delivery/operations/management-model.md",
+        ".rules/governance/delivery/operations/observability-and-error-envelope.md",
+        ".rules/governance/delivery/operations/runtime-handoff-contract.md",
+        ".rules/governance/delivery/operations/security-launch-checklist.md",
+        ".rules/governance/delivery/operations/staging-smoke-checklist.md",
+        ".rules/governance/delivery/release/advanced-deployment-policy.md",
+        ".rules/governance/delivery/release/release-and-rollback-policy.md",
+        ".rules/governance/delivery/workflows/workflow-pipelines.md",
+        ".rules/governance/execution/approvals/approval-policy.md",
+        ".rules/governance/execution/hooks/hooks-policy.md",
+        ".rules/governance/execution/policy/execution-policy.md",
+        ".rules/governance/execution/routing/prompt-to-governance-flow.md",
+        ".rules/governance/execution/sandbox/sandbox-boundary-policy.md",
+        ".rules/governance/integrations/mcp/mcp-integration-policy.md",
+        ".rules/governance/integrations/platforms/platform-compatibility.md",
+        ".rules/governance/intelligence/context/artifact-contract.md",
+        ".rules/governance/intelligence/context/artifact-standard.md",
+        ".rules/governance/intelligence/context/context-management.md",
+        ".rules/governance/intelligence/context/subagent-delegation-policy.md",
+        ".rules/governance/intelligence/context/system-rules.md",
+        ".rules/governance/intelligence/context/tooling-integration.md",
+        ".rules/governance/intelligence/learning/continuous-learning.md",
+        ".rules/governance/intelligence/learning/instincts-policy.md",
+        ".rules/governance/intelligence/learning/metrics-standard.md",
+        ".rules/governance/intelligence/memory/universal-memory-standard.md",
+        ".rules/governance/intelligence/memory/v3-intelligence-lifecycle.md",
+        ".rules/governance/product/standards/product-management-standard.md",
+        ".rules/governance/profiles/architecture/feature-first.md",
+        ".rules/governance/profiles/architecture/layered.md",
+        ".rules/governance/profiles/architecture/package-library.md",
+        ".rules/governance/profiles/architecture/vertical-slice.md",
+        ".rules/governance/profiles/frameworks/express.md",
+        ".rules/governance/profiles/frameworks/laravel.md",
+        ".rules/governance/profiles/frameworks/nextjs.md",
+        ".rules/governance/profiles/frameworks/react.md",
+        ".rules/governance/profiles/frameworks/v-web-components.md",
+        ".rules/governance/profiles/languages/css.md",
+        ".rules/governance/profiles/languages/go.md",
+        ".rules/governance/profiles/languages/javascript.md",
+        ".rules/governance/profiles/languages/php.md",
+        ".rules/governance/profiles/languages/typescript.md",
+        ".rules/governance/profiles/overlays/enterprise-regulated.md",
+        ".rules/governance/profiles/overlays/experimental.md",
+        ".rules/governance/profiles/overlays/high-performance.md",
+        ".rules/governance/profiles/overlays/strict-security.md",
+        ".rules/governance/profiles/project-types/api-service.md",
+        ".rules/governance/profiles/project-types/cli.md",
+        ".rules/governance/profiles/project-types/framework.md",
+        ".rules/governance/profiles/project-types/infrastructure.md",
+        ".rules/governance/profiles/project-types/library.md",
+        ".rules/governance/profiles/project-types/monorepo.md",
+        ".rules/governance/profiles/project-types/web-app.md",
+        ".rules/governance/profiles/repository-kinds/governance-source.md",
+        ".rules/governance/profiles/roles/engineering-reviewer.md",
+        ".rules/governance/profiles/roles/legal-executive-reviewer.md",
+        ".rules/governance/profiles/roles/ux-ui-reviewer.md",
+        ".rules/governance/security/authentication-and-session-security.md",
+        ".rules/governance/security/ci-cd-and-supply-chain-security.md",
+        ".rules/governance/security/owasp-web-and-api-baseline.md",
+        ".rules/governance/security/secrets-and-key-management.md",
+        ".rules/governance/security/secure-development-lifecycle.md",
+        ".rules/governance/security/security-operating-model.md",
+        ".rules/governance/security/threat-modeling-and-abuse-case-policy.md",
+        ".rules/governance/security/tool-and-plugin-capability-isolation.md",
+        ".rules/governance/security/vulnerability-and-incident-response.md",
+        ".rules/governance/skills/contract/skill-contract.md",
+        ".rules/governance/standards/coding/codex-usage-policy.md",
+        ".rules/governance/standards/coding/how-to-coding-standards.md",
+        ".rules/governance/standards/coding/naming-standard.md",
+        ".rules/governance/standards/documentation/evidence-model.md",
+        ".rules/governance/standards/documentation/how-to-document-flow.md",
+        ".rules/governance/standards/documentation/how-to-document.md",
+        ".rules/governance/standards/governance/canonical-governance-map.md",
+        ".rules/governance/standards/governance/capability-maturity-model.md",
+        ".rules/governance/standards/governance/entropy-control-policy.md",
+        ".rules/governance/standards/governance/governance-authoring-standard.md",
+        ".rules/governance/standards/governance/governance-evolution-policy.md",
+        ".rules/governance/standards/review/how-to-code-review.md",
+        ".rules/governance/standards/review/how-to-strict-review.md",
+        ".rules/governance/standards/review/recursive-review-contract.md",
+        "governance/architecture/runtime-kernel.md",
+        "governance/architecture/survivability-analysis.md",
+        "governance/core/bootstrap/agent-bootstrap.md",
+        "governance/core/bootstrap/canonical-bootstrap-lifecycle.md",
+        "governance/core/flags/feature-flags.md",
+        "governance/profiles/integrations/mcp-example.md",
+        "governance/standards/coding/ai-coding-contract.md",
+        "governance/standards/documentation/evidence-model.md"
+      ]
+    },
+    {
+      "priority": "low",
+      "action": "keep",
+      "detail": "Keep 3 template files for external projects",
+      "files": [
+        ".rules/governance/architecture/ARCHITECTURE.md",
+        ".rules/governance/intelligence/memory/memory-lifecycle.md",
+        ".rules/governance/profiles/languages/nodejs.md"
+      ]
+    },
+    {
+      "priority": "medium",
+      "action": "index",
+      "detail": "Add 30 orphaned files to their parent README indexes",
+      "files": [
+        ".rules/governance/architecture/ARCHITECTURE.md",
+        ".rules/governance/architecture/adoption-model.md",
+        ".rules/governance/architecture/architecture-standard.md",
+        ".rules/governance/architecture/contract-linting.md",
+        ".rules/governance/architecture/execution-profiles.md",
+        ".rules/governance/architecture/migration-governance.md",
+        ".rules/governance/architecture/runtime-hardening.md",
+        ".rules/governance/delivery/operations/backup-and-restore-runbook.md",
+        ".rules/governance/delivery/operations/enterprise-operational-lifecycle.md",
+        ".rules/governance/delivery/operations/management-model.md"
+      ]
+    }
+  ]
+}

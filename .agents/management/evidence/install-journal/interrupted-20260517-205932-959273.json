@@ -1,0 +1,10 @@
+{
+    "recovery": true,
+    "install_version": "6.0.0",
+    "target": "/home/shomsy/projects/avax",
+    "mode": "ADOPT",
+    "journal": "/home/shomsy/projects/avax/.agents/management/evidence/install-journal/journal-20260517-205913-959273.jsonl",
+    "created_files": [],
+    "updated_files": [],
+    "timestamp": "2026-05-17T20:59:32Z"
+}

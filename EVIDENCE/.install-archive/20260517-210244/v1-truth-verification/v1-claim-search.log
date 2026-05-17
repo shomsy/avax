@@ -1,0 +1,177 @@
+
+== V1 CLAIM SEARCH ==
+CURRENT_TRUTH.md:9:V1 Kernel Green: NOT PROVEN
+CURRENT_TRUTH.md:81:7. V1 Kernel Green is not proven; V2 and V3 production implementation remain forbidden.
+TODO.md:26:V2 Implementation: UNLOCKED
+TODO.md:63:V1 Kernel Green: NOT PROVEN
+TODO.md:111:[ ] Do not implement V2 until V1 Kernel Green is proven.
+TODO.md:112:[ ] Do not implement V3 until V1 Kernel Green and V2 platform baseline are proven.
+TODO.md:217:[ ] CURRENT_TRUTH.md says V1 Kernel Green NOT PROVEN unless all gates pass.
+TODO.md:1080:A muscular, production-ready kernel framework.
+TODO.md:1090:[ ] V1 Kernel Green is PROVEN.
+TODO.md:1300:[ ] V1 Kernel Green is proven.
+TODO.md:1459:[ ] V1-G Run V1 Kernel Green Proof
+TODO.md:1490:V1 Kernel Green is NOT PROVEN.
+EVIDENCE/v1-integrity/test-coverage-reality-report.md:9:The current PHPUnit pass of 12 tests is a false positive for V1 Kernel Green because the coverage is functionally near-zero against an 8875-class codebase. The test suite does not actually test the framework boot cycle or core components.
+EVIDENCE/v1-integrity/test-coverage-reality-report.md:38:Before V1 Kernel Green can be claimed, the Missing Kernel Feature Tests and Missing Public API Tests MUST be implemented and pass. The test suite MUST grow to cover the major public surfaces.
+EVIDENCE/v1-integrity/v1-completion-report.md:85:- V1 Kernel Green: PROVEN
+EVIDENCE/v1-integrity/v1-completion-report.md:86:- V2 Implementation: UNLOCKED
+EVIDENCE/v1-lockdown/v1-current-truth-correction-report.md:100:V1 Kernel Green: NOT PROVEN
+EVIDENCE/v1-lockdown/v1-current-truth-correction-report.md:132:- `CURRENT_TRUTH.md` now marks V1 Kernel Green as NOT PROVEN.
+EVIDENCE/v1-lockdown/v1-current-truth-correction-report.md:161:V2 and V3 production implementation remain locked until V1 Kernel Green and the later V2 baseline gates are proven.
+EVIDENCE/muscle-recovery/backup-files/components.txt:5020: * A production-ready PSR-11 compatible service container.
+EVIDENCE/muscle-recovery/backup-files/Framework.txt:4429: * A production-ready PSR-11 compatible service container.
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:33696:production-ready claim.
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:40427:close only when the scope is genuinely production-ready or explicitly
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:40594:- use strict review for production-ready claims, major convergence, or explicit first-principles challenge review
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:53439:  mutation signal is not production-ready yet: critical slices currently show low MSI, many escaped mutants, and
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:53570:  production-ready claim; the latest covered mutation run reports `MSI 59%`, `394` escaped mutants, and `63` timeouts
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:63439:- `scope`: production-ready re-check against `EVIDENCE/review.md` with repository code as source of truth
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:68896:production-ready claim.
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:75627:close only when the scope is genuinely production-ready or explicitly
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:75794:- use strict review for production-ready claims, major convergence, or explicit first-principles challenge review
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:88465:  mutation signal is not production-ready yet: critical slices currently show low MSI, many escaped mutants, and
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:88596:  production-ready claim; the latest covered mutation run reports `MSI 59%`, `394` escaped mutants, and `63` timeouts
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:151776:Final production-ready re-check completed on 2026-04-22 00:00 CEST.
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:186475:This page records how the historical `REFAKTOR.md` master checklist was closed during the 2026-04-21 production-ready
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:253405:Observability makes the difference between a black box and a production-ready system. Metrics and tracing help diagnose
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:262493:production-ready claim.
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:269224:close only when the scope is genuinely production-ready or explicitly
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:269391:- use strict review for production-ready claims, major convergence, or explicit first-principles challenge review
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:284775:production-ready claim.
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:291270:close only when the scope is genuinely production-ready or explicitly
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:291437:- use strict review for production-ready claims, major convergence, or explicit first-principles challenge review
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:440446: * a production-ready HTTP application runtime.
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:469783:The Avax HTTP Router is a production-ready, type-safe HTTP request router designed for modern PHP applications. It
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:487010:The Avax HTTP Router is a production-ready, type-safe HTTP request router designed for modern PHP applications. It
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:539868:### 4. Napravi production-ready migracije
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:539941:**Sada imaš KOMPLETNU, production-ready migration sistem sa:**
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:576655:production-ready claim.
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:583386:close only when the scope is genuinely production-ready or explicitly
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:583553:- use strict review for production-ready claims, major convergence, or explicit first-principles challenge review
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:596398:  mutation signal is not production-ready yet: critical slices currently show low MSI, many escaped mutants, and
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:596529:  production-ready claim; the latest covered mutation run reports `MSI 59%`, `394` escaped mutants, and `63` timeouts
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:606398:- `scope`: production-ready re-check against `EVIDENCE/review.md` with repository code as source of truth
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:611855:production-ready claim.
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:618586:close only when the scope is genuinely production-ready or explicitly
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:618753:- use strict review for production-ready claims, major convergence, or explicit first-principles challenge review
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:631424:  mutation signal is not production-ready yet: critical slices currently show low MSI, many escaped mutants, and
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:631555:  production-ready claim; the latest covered mutation run reports `MSI 59%`, `394` escaped mutants, and `63` timeouts
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:694735:Final production-ready re-check completed on 2026-04-22 00:00 CEST.
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:729360:This page records how the historical `REFAKTOR.md` master checklist was closed during the 2026-04-21 production-ready
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:795971:Observability makes the difference between a black box and a production-ready system. Metrics and tracing help diagnose
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:805382:production-ready claim.
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:812113:close only when the scope is genuinely production-ready or explicitly
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:812280:- use strict review for production-ready claims, major convergence, or explicit first-principles challenge review
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:827664:production-ready claim.
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:834159:close only when the scope is genuinely production-ready or explicitly
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:834326:- use strict review for production-ready claims, major convergence, or explicit first-principles challenge review
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:978583: * a production-ready HTTP application runtime.
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:1007715:The Avax HTTP Router is a production-ready, type-safe HTTP request router designed for modern PHP applications. It
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:1023490:The Avax HTTP Router is a production-ready, type-safe HTTP request router designed for modern PHP applications. It
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:1036872: * a production-ready HTTP application runtime.
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:1084263:### 4. Napravi production-ready migracije
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:1084336:**Sada imaš KOMPLETNU, production-ready migration sistem sa:**
+EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:1098014:- DONE: adapter shells are production-ready with Worker contracts.
+EVIDENCE/avax-master-development-plan-v1.md:5:“production-ready” means.
+EVIDENCE/avax-master-development-plan-v1.md:22:4. A production-ready PHP runtime layer.
+EVIDENCE/EXECUTION.md:127:V1 Kernel Green: NOT PROVEN
+EVIDENCE/EXECUTION.md:285:Stages 20 through 23 remain planning-only until V1 Kernel Green and V2 platform baseline are at least YELLOW/GREEN.
+EVIDENCE/EXECUTION.md:448:It must not be marked production-ready.
+EVIDENCE/EXECUTION.md:454:V2 work is locked until V1 Kernel Green.
+EVIDENCE/EXECUTION.md:480:[ ] V1 Kernel Green.
+EVIDENCE/avax-v3-executable-system-design-framework-plan.md:123:[ ] V1 Kernel Green.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:3:CURRENT_TRUTH.md:9:V1 Kernel Green: NOT PROVEN
+EVIDENCE/v1-truth-verification/v1-claim-search.log:4:CURRENT_TRUTH.md:81:7. V1 Kernel Green is not proven; V2 and V3 production implementation remain forbidden.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:5:TODO.md:26:V2 Implementation: UNLOCKED
+EVIDENCE/v1-truth-verification/v1-claim-search.log:6:TODO.md:63:V1 Kernel Green: NOT PROVEN
+EVIDENCE/v1-truth-verification/v1-claim-search.log:7:TODO.md:111:[ ] Do not implement V2 until V1 Kernel Green is proven.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:8:TODO.md:112:[ ] Do not implement V3 until V1 Kernel Green and V2 platform baseline are proven.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:9:TODO.md:217:[ ] CURRENT_TRUTH.md says V1 Kernel Green NOT PROVEN unless all gates pass.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:10:TODO.md:1080:A muscular, production-ready kernel framework.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:11:TODO.md:1090:[ ] V1 Kernel Green is PROVEN.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:12:TODO.md:1300:[ ] V1 Kernel Green is proven.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:13:TODO.md:1459:[ ] V1-G Run V1 Kernel Green Proof
+EVIDENCE/v1-truth-verification/v1-claim-search.log:14:TODO.md:1490:V1 Kernel Green is NOT PROVEN.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:15:EVIDENCE/v1-integrity/test-coverage-reality-report.md:9:The current PHPUnit pass of 12 tests is a false positive for V1 Kernel Green because the coverage is functionally near-zero against an 8875-class codebase. The test suite does not actually test the framework boot cycle or core components.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:16:EVIDENCE/v1-integrity/test-coverage-reality-report.md:38:Before V1 Kernel Green can be claimed, the Missing Kernel Feature Tests and Missing Public API Tests MUST be implemented and pass. The test suite MUST grow to cover the major public surfaces.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:17:EVIDENCE/v1-integrity/v1-completion-report.md:85:- V1 Kernel Green: PROVEN
+EVIDENCE/v1-truth-verification/v1-claim-search.log:18:EVIDENCE/v1-integrity/v1-completion-report.md:86:- V2 Implementation: UNLOCKED
+EVIDENCE/v1-truth-verification/v1-claim-search.log:19:EVIDENCE/v1-lockdown/v1-current-truth-correction-report.md:100:V1 Kernel Green: NOT PROVEN
+EVIDENCE/v1-truth-verification/v1-claim-search.log:20:EVIDENCE/v1-lockdown/v1-current-truth-correction-report.md:132:- `CURRENT_TRUTH.md` now marks V1 Kernel Green as NOT PROVEN.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:21:EVIDENCE/v1-lockdown/v1-current-truth-correction-report.md:161:V2 and V3 production implementation remain locked until V1 Kernel Green and the later V2 baseline gates are proven.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:22:EVIDENCE/muscle-recovery/backup-files/components.txt:5020: * A production-ready PSR-11 compatible service container.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:23:EVIDENCE/muscle-recovery/backup-files/Framework.txt:4429: * A production-ready PSR-11 compatible service container.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:24:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:33696:production-ready claim.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:25:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:40427:close only when the scope is genuinely production-ready or explicitly
+EVIDENCE/v1-truth-verification/v1-claim-search.log:26:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:40594:- use strict review for production-ready claims, major convergence, or explicit first-principles challenge review
+EVIDENCE/v1-truth-verification/v1-claim-search.log:27:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:53439:  mutation signal is not production-ready yet: critical slices currently show low MSI, many escaped mutants, and
+EVIDENCE/v1-truth-verification/v1-claim-search.log:28:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:53570:  production-ready claim; the latest covered mutation run reports `MSI 59%`, `394` escaped mutants, and `63` timeouts
+EVIDENCE/v1-truth-verification/v1-claim-search.log:29:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:63439:- `scope`: production-ready re-check against `EVIDENCE/review.md` with repository code as source of truth
+EVIDENCE/v1-truth-verification/v1-claim-search.log:30:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:68896:production-ready claim.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:31:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:75627:close only when the scope is genuinely production-ready or explicitly
+EVIDENCE/v1-truth-verification/v1-claim-search.log:32:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:75794:- use strict review for production-ready claims, major convergence, or explicit first-principles challenge review
+EVIDENCE/v1-truth-verification/v1-claim-search.log:33:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:88465:  mutation signal is not production-ready yet: critical slices currently show low MSI, many escaped mutants, and
+EVIDENCE/v1-truth-verification/v1-claim-search.log:34:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:88596:  production-ready claim; the latest covered mutation run reports `MSI 59%`, `394` escaped mutants, and `63` timeouts
+EVIDENCE/v1-truth-verification/v1-claim-search.log:35:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:151776:Final production-ready re-check completed on 2026-04-22 00:00 CEST.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:36:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:186475:This page records how the historical `REFAKTOR.md` master checklist was closed during the 2026-04-21 production-ready
+EVIDENCE/v1-truth-verification/v1-claim-search.log:37:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:253405:Observability makes the difference between a black box and a production-ready system. Metrics and tracing help diagnose
+EVIDENCE/v1-truth-verification/v1-claim-search.log:38:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:262493:production-ready claim.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:39:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:269224:close only when the scope is genuinely production-ready or explicitly
+EVIDENCE/v1-truth-verification/v1-claim-search.log:40:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:269391:- use strict review for production-ready claims, major convergence, or explicit first-principles challenge review
+EVIDENCE/v1-truth-verification/v1-claim-search.log:41:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:284775:production-ready claim.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:42:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:291270:close only when the scope is genuinely production-ready or explicitly
+EVIDENCE/v1-truth-verification/v1-claim-search.log:43:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:291437:- use strict review for production-ready claims, major convergence, or explicit first-principles challenge review
+EVIDENCE/v1-truth-verification/v1-claim-search.log:44:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:440446: * a production-ready HTTP application runtime.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:45:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:469783:The Avax HTTP Router is a production-ready, type-safe HTTP request router designed for modern PHP applications. It
+EVIDENCE/v1-truth-verification/v1-claim-search.log:46:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:487010:The Avax HTTP Router is a production-ready, type-safe HTTP request router designed for modern PHP applications. It
+EVIDENCE/v1-truth-verification/v1-claim-search.log:47:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:539868:### 4. Napravi production-ready migracije
+EVIDENCE/v1-truth-verification/v1-claim-search.log:48:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:539941:**Sada imaš KOMPLETNU, production-ready migration sistem sa:**
+EVIDENCE/v1-truth-verification/v1-claim-search.log:49:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:576655:production-ready claim.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:50:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:583386:close only when the scope is genuinely production-ready or explicitly
+EVIDENCE/v1-truth-verification/v1-claim-search.log:51:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:583553:- use strict review for production-ready claims, major convergence, or explicit first-principles challenge review
+EVIDENCE/v1-truth-verification/v1-claim-search.log:52:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:596398:  mutation signal is not production-ready yet: critical slices currently show low MSI, many escaped mutants, and
+EVIDENCE/v1-truth-verification/v1-claim-search.log:53:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:596529:  production-ready claim; the latest covered mutation run reports `MSI 59%`, `394` escaped mutants, and `63` timeouts
+EVIDENCE/v1-truth-verification/v1-claim-search.log:54:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:606398:- `scope`: production-ready re-check against `EVIDENCE/review.md` with repository code as source of truth
+EVIDENCE/v1-truth-verification/v1-claim-search.log:55:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:611855:production-ready claim.
+EVIDENCE/v1-truth-verification/v1-claim-search.log:56:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:618586:close only when the scope is genuinely production-ready or explicitly
+EVIDENCE/v1-truth-verification/v1-claim-search.log:57:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:618753:- use strict review for production-ready claims, major convergence, or explicit first-principles challenge review
+EVIDENCE/v1-truth-verification/v1-claim-search.log:58:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:631424:  mutation signal is not production-ready yet: critical slices currently show low MSI, many escaped mutants, and
+EVIDENCE/v1-truth-verification/v1-claim-search.log:59:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:631555:  production-ready claim; the latest covered mutation run reports `MSI 59%`, `394` escaped mutants, and `63` timeouts
+EVIDENCE/v1-truth-verification/v1-claim-search.log:60:EVIDENCE/muscle-recovery/backup-files/avax-backup.txt:694735:Final production-ready re-check completed on 2026-04-22 00:00 CEST.
+EVIDENCE/master-plan/stage-01-final-project-tree-freeze-report.md:68:V1 Kernel Green: NOT PROVEN
+EVIDENCE/master-plan/component-completion-matrix.md:67:| Operations     | RuntimeSupervision  | V2 draft            | LOCKED           | Wait for V1 Kernel Green.                                                   |
+EVIDENCE/master-plan/component-completion-matrix.md:68:| Operations     | MemoryLifecycle     | V2 draft            | LOCKED           | Wait for V1 Kernel Green.                                                   |
+EVIDENCE/master-plan/component-completion-matrix.md:69:| Operations     | Delivery            | V2 draft            | LOCKED           | Wait for V1 Kernel Green.                                                   |
+EVIDENCE/master-plan/component-completion-matrix.md:75:| Integration    | ObjectStorage       | V2 draft            | LOCKED           | Wait for V1 Kernel Green.                                                   |
+EVIDENCE/master-plan/component-owner-map.md:12:non-production recovery material. This does not mark any component complete and does not prove V1 Kernel Green.
+EVIDENCE/master-plan/avax-master-project-tree.md:291:`labs/SystemDesignKit` remains planning-only until V1 Kernel Green and the V2 platform baseline gates allow V3 work.
+EVIDENCE/component-taxonomy/stage-02-taxonomy-integrity-report.md:57:Repository remains RED for V1 Kernel Green.
+EVIDENCE/truth-reconciliation/truth-reconciliation-report.md:89:V1 Kernel Green:
+EVIDENCE/truth-reconciliation/truth-reconciliation-report.md:105:1. **composer validate fails** → V1 Kernel Green = NOT PROVEN
+EVIDENCE/truth-reconciliation/truth-reconciliation-report.md:106:2. **PHPStan over framework/components/tests fails** (1000+ errors) → V1 Kernel Green = NOT PROVEN
+EVIDENCE/truth-reconciliation/truth-reconciliation-report.md:111:However, the static analysis and broken references failures alone are sufficient to block V1 Kernel Green.
+EVIDENCE/truth-reconciliation/truth-reconciliation-findings.md:86:- exact status: V1 Kernel Green NOT PROVEN
+EVIDENCE/truth-reconciliation/truth-reconciliation-findings.md:94:Decision: **NO CONTRADICTION.** CURRENT_TRUTH.md correctly states V1 Kernel Green is NOT PROVEN. Commands confirm.
+EVIDENCE/truth-reconciliation/truth-reconciliation-findings.md:164:Decision: **REAL BLOCKER.** composer.json and composer.lock disagree on phpstan version. Additionally, psalm is required but not present in lock file. This means `composer validate` fails, which is a V1 Kernel Green blocker.
+.agents/skills/validation/SKILL.md:5:This skill proves that code is green, safe, and production-ready.
+.agents/management/strategy/refactor.md:3256:- DONE: adapter shells are production-ready with Worker contracts.
+.agents/how-to/how-to-system-security.md:42:Security must be proven before production-ready claims are made.
+.agents/how-to/how-to-architecture-extension-with-ddd.md:1537:A DDD concept may exist temporarily as yellow during active design, but it must not be called production-ready until its behavior is proven.
+.agents/how-to/how-to-architecture-extension-with-ddd.md:2028:A concept is called production-ready without proof.
+.agents/how-to/how-to-design-components.md:1947:It must not be marked production-ready.
+.agents/how-to/how-to-use-advanced-architecture-patterns.md:570:It must not be treated as production-ready.
+.agents/how-to/how-to-use-advanced-architecture-patterns.md:585:A completed component cannot be marked production-ready without tests and validation evidence.
+.agents/how-to/how-to-use-advanced-architecture-patterns.md:1962:Pattern is called production-ready without tests.
+.agents/how-to/how-to-production-readiness.md:22:What still blocks AvaX from being called production-ready?
+.agents/how-to/how-to-production-readiness.md:25:AvaX is production-ready only when:
+.agents/how-to/how-to-production-readiness.md:714:RED = not production-ready
+.agents/how-to/how-to-production-readiness.md:803:Text-audit clean does not mean production-ready.
+.agents/review/legacy/review.md:429:speculative abstractions prevent it from being production-ready.
+.agents/review/legacy/review.md:529:- **Consequences:** Preserves existing investment, faster time to production-ready
+.agents/review/legacy/stabilization/addendum-coverage-report.md:5:**Status: GREEN (100% old audit coverage)**
+.agents/.rules/governance/standards/review/how-to-code-review.md:9:close only when the scope is genuinely production-ready or explicitly
+.agents/.rules/governance/standards/review/how-to-code-review.md:176:- use strict review for production-ready claims, major convergence, or explicit first-principles challenge review
+.agents/.rules/governance/delivery/operations/security-launch-checklist.md:7:production-ready claim.
+.agents/AI_PREFLIGHT.md:22:Status: GREEN / YELLOW / RED
+.agents/AI_PREFLIGHT.md:102:Status: GREEN / YELLOW / RED / BLOCKER

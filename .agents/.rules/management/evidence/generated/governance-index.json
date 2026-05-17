@@ -1,0 +1,1820 @@
+{
+  "files": {
+    ".agents/.rules/governance/README.md": {
+      "path": ".agents/.rules/governance/README.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "3cb68bf00eae791142c22b7a8e6e825db149419336d97d99130bf78488475039"
+    },
+    ".agents/.rules/governance/agents/README.md": {
+      "path": ".agents/.rules/governance/agents/README.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "52b3037fbf4ead7588c9285f3c534b87a41f09da4c5136f0c2182390da42d143"
+    },
+    ".agents/.rules/governance/agents/orchestration/society-of-mind-pattern.md": {
+      "path": ".agents/.rules/governance/agents/orchestration/society-of-mind-pattern.md",
+      "frontmatter": {
+        "description": "\"Society of Mind - Multi-Agent Orchestration & Lifecycle\"",
+        "version": "3.0.0"
+      },
+      "links": [],
+      "rule_ids": [],
+      "checksum": "cf70b7fca05e09e6e9950fbd28890de545b2006fc59d7c81a85fd0bae041f8ab"
+    },
+    ".agents/.rules/governance/agents/roles/agent-roles.md": {
+      "path": ".agents/.rules/governance/agents/roles/agent-roles.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "3d54d3e0e1a982b3e8246cfdb3be8665e679f8a4c7d939e40557dcaf1fb85ee0"
+    },
+    ".agents/.rules/governance/architecture/ARCHITECTURE.md": {
+      "path": ".agents/.rules/governance/architecture/ARCHITECTURE.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "0b2f36ec583b75d5560b162a1d951fae59918e1c241b6cf0e2d21c5e69199b43"
+    },
+    ".agents/.rules/governance/architecture/README.md": {
+      "path": ".agents/.rules/governance/architecture/README.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "28d99b7857d68dcd310652e07b9f30c3843d8f76862ab6565edff5bd5500b141"
+    },
+    ".agents/.rules/governance/architecture/adoption-model.md": {
+      "path": ".agents/.rules/governance/architecture/adoption-model.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "f99844a1e180c9ac0224f10826cdf1d2cba8b42d142bb4c699da1acbf6cf38cf"
+    },
+    ".agents/.rules/governance/architecture/architecture-standard.md": {
+      "path": ".agents/.rules/governance/architecture/architecture-standard.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "f4038323f02656c9ad6b5e316f4400860e8213b10dd513db559ed45cbf58778a"
+    },
+    ".agents/.rules/governance/architecture/contract-linting.md": {
+      "path": ".agents/.rules/governance/architecture/contract-linting.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "4155558f683621f127bd4400c7cecb4be4b330745b3d9d1ec31d021edbc1b85e"
+    },
+    ".agents/.rules/governance/architecture/execution-profiles.md": {
+      "path": ".agents/.rules/governance/architecture/execution-profiles.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "c933833a7f992a6a4d10847bfd3c394b9015bed0c58dbe71e3b874c676df1340"
+    },
+    ".agents/.rules/governance/architecture/migration-governance.md": {
+      "path": ".agents/.rules/governance/architecture/migration-governance.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "02cee32bd0c9549748bdfaae7b728fbc5277a9aa997ee122b32e3c71535cc4ed"
+    },
+    ".agents/.rules/governance/architecture/profiles/README.md": {
+      "path": ".agents/.rules/governance/architecture/profiles/README.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "cea1b7fd3cda7082b5223516ca12dc96a7fef0701d30af64dbcce860509fee24"
+    },
+    ".agents/.rules/governance/architecture/profiles/frameworks/express.md": {
+      "path": ".agents/.rules/governance/architecture/profiles/frameworks/express.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "73a7689531f53f6246531e0074ea20a1b71622934c017933321d27b3f0ff35e8"
+    },
+    ".agents/.rules/governance/architecture/profiles/frameworks/laravel.md": {
+      "path": ".agents/.rules/governance/architecture/profiles/frameworks/laravel.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "5a3b4bbb67d1ce87bad766bfa098a3b493424e2ff25a663bec71f01a423f5a9c"
+    },
+    ".agents/.rules/governance/architecture/profiles/frameworks/nextjs.md": {
+      "path": ".agents/.rules/governance/architecture/profiles/frameworks/nextjs.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "80dd91ac19b6cb0cb0d2df97e0f8f99f044a1d5ab034ad17842cb5d82452ab09"
+    },
+    ".agents/.rules/governance/architecture/profiles/frameworks/react.md": {
+      "path": ".agents/.rules/governance/architecture/profiles/frameworks/react.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "211630b2019b357402233914419a4159a846874fcfb0d7fd41732dbd5a5870f9"
+    },
+    ".agents/.rules/governance/architecture/profiles/frameworks/v-web-components.md": {
+      "path": ".agents/.rules/governance/architecture/profiles/frameworks/v-web-components.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "ad2ecafb89c69939d11b689853dac727e4d180b15625c9adc97342143cbe7e3b"
+    },
+    ".agents/.rules/governance/architecture/profiles/languages/javascript.md": {
+      "path": ".agents/.rules/governance/architecture/profiles/languages/javascript.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "a6197d5d28a2adbd6b4fca7978ec9e483f03a268b60dc3dd91321cdfcda767ce"
+    },
+    ".agents/.rules/governance/architecture/profiles/languages/php.md": {
+      "path": ".agents/.rules/governance/architecture/profiles/languages/php.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "7ff2f8b64f817d77cab2cbd9be418bfa86bfb7d2332936ce0b307c9ab5d11998"
+    },
+    ".agents/.rules/governance/architecture/profiles/languages/typescript.md": {
+      "path": ".agents/.rules/governance/architecture/profiles/languages/typescript.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "c87c32301657ce78f29a1a8427a531fae8bd1b34e4647a14a47bb8d243db15ca"
+    },
+    ".agents/.rules/governance/architecture/runtime-hardening.md": {
+      "path": ".agents/.rules/governance/architecture/runtime-hardening.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "48c85b606bb25e91b324a93dcb20f5e5ecb7929004bcb816dd2ba3c88fc2d9b5"
+    },
+    ".agents/governance/architecture/survivability-analysis.md": {
+      "path": ".agents/governance/architecture/survivability-analysis.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "c4b29f5b2be95776d1b4cb741f15d06b70eff24b5f6cf8482ce053cf5c524e16"
+    },
+    ".agents/governance/core/README.md": {
+      "path": ".agents/governance/core/README.md",
+      "frontmatter": {
+        "owner": "governance-core",
+        "status": "active",
+        "machine-enforced": "true"
+      },
+      "links": [],
+      "rule_ids": [],
+      "checksum": "c45664a09bdc7b7c49836b956e85a2da750ec8f311845c084e3e7a56dff720ac"
+    },
+    ".agents/governance/core/bootstrap/agent-bootstrap.md": {
+      "path": ".agents/governance/core/bootstrap/agent-bootstrap.md",
+      "frontmatter": {
+        "owner": "governance-core",
+        "status": "active",
+        "machine-enforced": "true"
+      },
+      "links": [],
+      "rule_ids": [],
+      "checksum": "1e6634f58e3e62cbc8cd4492984db6d821f147bb02748d365f3e62ed0f8c3c8e"
+    },
+    ".agents/governance/core/bootstrap/canonical-bootstrap-lifecycle.md": {
+      "path": ".agents/governance/core/bootstrap/canonical-bootstrap-lifecycle.md",
+      "frontmatter": {
+        "owner": "governance-core",
+        "status": "active",
+        "machine-enforced": "true"
+      },
+      "links": [],
+      "rule_ids": [],
+      "checksum": "c89a7df3a679cae06cd8d2146ca0c5c3561a8607e5a33b2ab348156c895d97c0"
+    },
+    ".agents/governance/core/flags/feature-flags.md": {
+      "path": ".agents/governance/core/flags/feature-flags.md",
+      "frontmatter": {
+        "owner": "governance-core",
+        "status": "active",
+        "machine-enforced": "true"
+      },
+      "links": [],
+      "rule_ids": [],
+      "checksum": "7e35f20134015dc389ee0f39f7226889b85c28d446509a59ee036c90b64d5083"
+    },
+    ".agents/governance/core/quality/quality-gates.md": {
+      "path": ".agents/governance/core/quality/quality-gates.md",
+      "frontmatter": {
+        "owner": "governance-core",
+        "status": "active",
+        "machine-enforced": "true"
+      },
+      "links": [],
+      "rule_ids": [],
+      "checksum": "692951b125dad60f9cef052c558085389aa50934f88ccfb2d1368e59aee07cec"
+    },
+    ".agents/governance/core/resolution/profile-resolution-algorithm.md": {
+      "path": ".agents/governance/core/resolution/profile-resolution-algorithm.md",
+      "frontmatter": {
+        "owner": "governance-core",
+        "status": "active",
+        "machine-enforced": "true"
+      },
+      "links": [],
+      "rule_ids": [],
+      "checksum": "1991209999fbfb20ab4ac99e5dce0056137583b898303f09f359507392a252fc"
+    },
+    ".agents/.rules/governance/delivery/README.md": {
+      "path": ".agents/.rules/governance/delivery/README.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "56492901fb0fa0dcf6566b48c7aacfa29db33113f7c6132b7d49dfd81f40bc2e"
+    },
+    ".agents/.rules/governance/delivery/operations/README.md": {
+      "path": ".agents/.rules/governance/delivery/operations/README.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "666bf029f5472e96cc821ad67975d9aff5c28f6516ca7f869f9bac5857fc73fe"
+    },
+    ".agents/.rules/governance/delivery/operations/backup-and-restore-runbook.md": {
+      "path": ".agents/.rules/governance/delivery/operations/backup-and-restore-runbook.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "a8f07a6bb94049f91b9c7414e7919da9af13c2c8fcfb953b487393bc96af0498"
+    },
+    ".agents/.rules/governance/delivery/operations/enterprise-operational-lifecycle.md": {
+      "path": ".agents/.rules/governance/delivery/operations/enterprise-operational-lifecycle.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "fe2901f8123beae931c25f9a1b191805513b9b308b397268b2a436a48196ffab"
+    },
+    ".agents/.rules/governance/delivery/operations/management-model.md": {
+      "path": ".agents/.rules/governance/delivery/operations/management-model.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "0b9a97562b9a58d1cb633f55effab2b7c56449a898b2dd71a8d7b6bc8fea2a24"
+    },
+    ".agents/.rules/governance/delivery/operations/observability-and-error-envelope.md": {
+      "path": ".agents/.rules/governance/delivery/operations/observability-and-error-envelope.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "a31a98105f3093f166056c47482782c2847aa334ef2e32a8d13b550bf3166d5d"
+    },
+    ".agents/.rules/governance/delivery/operations/runtime-handoff-contract.md": {
+      "path": ".agents/.rules/governance/delivery/operations/runtime-handoff-contract.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "cceccf7813a195d6b0df1676e6ba41b30e2f07c980b2b5a9b3c44fd49c9c4b38"
+    },
+    ".agents/.rules/governance/delivery/operations/security-launch-checklist.md": {
+      "path": ".agents/.rules/governance/delivery/operations/security-launch-checklist.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "23c202ce18da8a346e341eb611889331ca7169c3afa3d83948a5f91e78e14fa3"
+    },
+    ".agents/.rules/governance/delivery/operations/staging-smoke-checklist.md": {
+      "path": ".agents/.rules/governance/delivery/operations/staging-smoke-checklist.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "25628083277048d25d3a7576afbd0e5215a570417a0f93fb2e3523fc40734bc5"
+    },
+    ".agents/.rules/governance/delivery/release/advanced-deployment-policy.md": {
+      "path": ".agents/.rules/governance/delivery/release/advanced-deployment-policy.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "4b8b80bc44b73bb9f7920a18738843ad66dd54cfd4b5daa39b3aa95e8d60feb3"
+    },
+    ".agents/.rules/governance/delivery/release/release-and-rollback-policy.md": {
+      "path": ".agents/.rules/governance/delivery/release/release-and-rollback-policy.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "6004dcaa57a005dc6a786fad08c792bfeff752e8c64820758fe22a621ef2c606"
+    },
+    ".agents/.rules/governance/delivery/workflows/workflow-pipelines.md": {
+      "path": ".agents/.rules/governance/delivery/workflows/workflow-pipelines.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "f3a5100aea38f6622b6c57e1ea196074e35000961df1db922daf355ed6ddfbba"
+    },
+    ".agents/.rules/governance/execution/README.md": {
+      "path": ".agents/.rules/governance/execution/README.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "0908ea683191504f3196fb39dec46fd7e4b461c4342b43b22fb811904ff0e8be"
+    },
+    ".agents/.rules/governance/execution/approvals/approval-policy.md": {
+      "path": ".agents/.rules/governance/execution/approvals/approval-policy.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "135abb976df9d7b88abe9896f5eba124a5006d150297ba34fb44f66a44863217"
+    },
+    ".agents/.rules/governance/execution/hooks/hooks-policy.md": {
+      "path": ".agents/.rules/governance/execution/hooks/hooks-policy.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "9d77b67696d4f9ef4c3f9a49aab08878ec66920bb587ee931cf0b79d7a82de26"
+    },
+    ".agents/.rules/governance/execution/policy/execution-policy.md": {
+      "path": ".agents/.rules/governance/execution/policy/execution-policy.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "eaa1b0790863c79a4350d919ef2eb32eabaf7aaebd1a94e64ab52c04dfb95d2a"
+    },
+    ".agents/.rules/governance/execution/routing/README.md": {
+      "path": ".agents/.rules/governance/execution/routing/README.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "3984700c3d87cdecf2493893387a42946451459ed06925d39865447704097a2a"
+    },
+    ".agents/.rules/governance/execution/routing/prompt-to-governance-flow.md": {
+      "path": ".agents/.rules/governance/execution/routing/prompt-to-governance-flow.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "170f439984b0997fefd3f973cac98d08cc9ef7a6eeab2e0cace7149122f44a67"
+    },
+    ".agents/.rules/governance/execution/sandbox/sandbox-boundary-policy.md": {
+      "path": ".agents/.rules/governance/execution/sandbox/sandbox-boundary-policy.md",
+      "frontmatter": {
+        "description": "\"Agent Code Execution Sandbox Boundaries\"",
+        "version": "3.0.0"
+      },
+      "links": [],
+      "rule_ids": [],
+      "checksum": "c562cc5c998af7224a37d821327e0828a137c987c26eea70e7234b832920d66c"
+    },
+    ".agents/.rules/governance/integrations/README.md": {
+      "path": ".agents/.rules/governance/integrations/README.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "490bcfa59070541fe294078cad6a4d0e86eada80d4bf621aaa4e36546181a2c2"
+    },
+    ".agents/.rules/governance/integrations/mcp/mcp-integration-policy.md": {
+      "path": ".agents/.rules/governance/integrations/mcp/mcp-integration-policy.md",
+      "frontmatter": {
+        "description": "\"Model Context Protocol (MCP) Integration Policy\"",
+        "version": "1.0.0"
+      },
+      "links": [],
+      "rule_ids": [],
+      "checksum": "23fca41daad2fce1a72ee9e72d9d8487e2ffc8ea54bd556966ef72a235bf864b"
+    },
+    ".agents/.rules/governance/integrations/platforms/platform-compatibility.md": {
+      "path": ".agents/.rules/governance/integrations/platforms/platform-compatibility.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "49d6c19514e1026d22dea609fe526d5f9f2328705b8088b7a7f1887ad1b367a1"
+    },
+    ".agents/.rules/governance/intelligence/README.md": {
+      "path": ".agents/.rules/governance/intelligence/README.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "24b8d075facda9048349a4d4e7d77e7c592aacae2faf1157d782047ec9f4bfea"
+    },
+    ".agents/.rules/governance/intelligence/context/artifact-contract.md": {
+      "path": ".agents/.rules/governance/intelligence/context/artifact-contract.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "68ebf4ad0b565adf4b097b88d33632f99b3ef644905f51a0ee364e8b51de4554"
+    },
+    ".agents/.rules/governance/intelligence/context/artifact-standard.md": {
+      "path": ".agents/.rules/governance/intelligence/context/artifact-standard.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "c32c5f5bb5d3a8a9595160159f2c9a2fc0155714e45f5f9683972c73a5f2ee22"
+    },
+    ".agents/.rules/governance/intelligence/context/context-management.md": {
+      "path": ".agents/.rules/governance/intelligence/context/context-management.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "621b3d5570c8c7427d873ffc824b902e7f8a7d657042f29b4171703055c76d59"
+    },
+    ".agents/.rules/governance/intelligence/context/subagent-delegation-policy.md": {
+      "path": ".agents/.rules/governance/intelligence/context/subagent-delegation-policy.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "28de8f72887e76d674d785b902d0654e039269919de87b8458c6ecd81ac4784b"
+    },
+    ".agents/.rules/governance/intelligence/context/system-rules.md": {
+      "path": ".agents/.rules/governance/intelligence/context/system-rules.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "acc33f7e6646b7cdc97a0595e71949f81b8907c7966a84436c0e4746db05c306"
+    },
+    ".agents/.rules/governance/intelligence/context/tooling-integration.md": {
+      "path": ".agents/.rules/governance/intelligence/context/tooling-integration.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "6a5d3b0a1c1ddc6e74bf5e0979b6d46395dd26dbac1bbfd029020f923fd9a6ec"
+    },
+    ".agents/.rules/governance/intelligence/learning/continuous-learning.md": {
+      "path": ".agents/.rules/governance/intelligence/learning/continuous-learning.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "8f0ab5525edd7666c1d9bd973e8e0060c41ec35e5f324277ea1348d500eeb609"
+    },
+    ".agents/.rules/governance/intelligence/learning/instincts-policy.md": {
+      "path": ".agents/.rules/governance/intelligence/learning/instincts-policy.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "1c94c9f8b21d7f7d8ecab5483fccbd455019b04df2cda8d59d03b32ea9501b96"
+    },
+    ".agents/.rules/governance/intelligence/learning/metrics-standard.md": {
+      "path": ".agents/.rules/governance/intelligence/learning/metrics-standard.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "5bbcadd1159ea755e47172b9de29cd738121f053ffa26ebd1bd7af560df8575c"
+    },
+    ".agents/.rules/governance/intelligence/memory/memory-lifecycle.md": {
+      "path": ".agents/.rules/governance/intelligence/memory/memory-lifecycle.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "7a9bd6528236c2588d93b21ce97b5d0dcbeeecb5eab920492a2e1b0e2b9e5244"
+    },
+    ".agents/.rules/governance/intelligence/memory/universal-memory-standard.md": {
+      "path": ".agents/.rules/governance/intelligence/memory/universal-memory-standard.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "9dc4a4a19aa5c74a7232e83344523f9f8610c1eb075d0670692862dad13fb1c3"
+    },
+    ".agents/.rules/governance/intelligence/memory/v3-intelligence-lifecycle.md": {
+      "path": ".agents/.rules/governance/intelligence/memory/v3-intelligence-lifecycle.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "1f0f5e037c4e78fe3dcb6b252e571eda3b6148e4133b12221cf8d884d2751b91"
+    },
+    ".agents/.rules/governance/product/README.md": {
+      "path": ".agents/.rules/governance/product/README.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "b653b783ba63e04e408df7749895ac492b7417539f64efa05369c82b53cd24b7"
+    },
+    ".agents/.rules/governance/product/standards/product-management-standard.md": {
+      "path": ".agents/.rules/governance/product/standards/product-management-standard.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "b02cd012d9b5322f74a82117194b168fd25f81ca032f7ac55eb14c9c7c20cde2"
+    },
+    ".agents/.rules/governance/profiles/README.md": {
+      "path": ".agents/.rules/governance/profiles/README.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "c4d2afc69223dcb07fec71e9262214c6253cd59673c964fe722a128784ea23db"
+    },
+    ".agents/.rules/governance/profiles/architecture/feature-first.md": {
+      "path": ".agents/.rules/governance/profiles/architecture/feature-first.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "98a96d95f12712f12f576274b2655249f44e61467479529db4d62a7008c6012e"
+    },
+    ".agents/.rules/governance/profiles/architecture/layered.md": {
+      "path": ".agents/.rules/governance/profiles/architecture/layered.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "51ed3ae69a7f3c6cb7ceba83193d554411ef6967cbdc55268a86262935672d5c"
+    },
+    ".agents/.rules/governance/profiles/architecture/package-library.md": {
+      "path": ".agents/.rules/governance/profiles/architecture/package-library.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "480c28f40960362266aacfb42fc9016336818d26616e911ab5cfdb0620ebfc5a"
+    },
+    ".agents/.rules/governance/profiles/architecture/vertical-slice.md": {
+      "path": ".agents/.rules/governance/profiles/architecture/vertical-slice.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "196743bd62a6eec202b814aa7ce0cc6b737eeddb6e1b87c0a90841b12f1c7c34"
+    },
+    ".agents/.rules/governance/profiles/frameworks/express.md": {
+      "path": ".agents/.rules/governance/profiles/frameworks/express.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "f7b5e2b3b0babfd48c2a5937ede38d0d84a8576d8a114f568d3018154bc3b683"
+    },
+    ".agents/.rules/governance/profiles/frameworks/laravel.md": {
+      "path": ".agents/.rules/governance/profiles/frameworks/laravel.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "0352d4551d12c4575cb2cf6b7c169076d44caaa64f9cc5f9e078779f4f84e551"
+    },
+    ".agents/.rules/governance/profiles/frameworks/nextjs.md": {
+      "path": ".agents/.rules/governance/profiles/frameworks/nextjs.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "0590be1c07088abf949dbe6e32d84f0acd0213b7c99282baf1ade48587d0dd59"
+    },
+    ".agents/.rules/governance/profiles/frameworks/react.md": {
+      "path": ".agents/.rules/governance/profiles/frameworks/react.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "a5f8a3baa0e31f1109227965ab653d6218a1545ad992e1e71ccd735ad63e37c0"
+    },
+    ".agents/.rules/governance/profiles/frameworks/v-web-components.md": {
+      "path": ".agents/.rules/governance/profiles/frameworks/v-web-components.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "6cc88545bf251983044fc408fd8a507c7d5a5f290a4e42dfdb1795136dfe5b9f"
+    },
+    ".agents/governance/profiles/integrations/mcp-example.md": {
+      "path": ".agents/governance/profiles/integrations/mcp-example.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [
+        "PROFILE-MCP-EXAMPLE"
+      ],
+      "checksum": "8382a0e8ea06dca836407b663b36ae06a5793f813c224545fc4f553cb4bc2c87"
+    },
+    ".agents/.rules/governance/profiles/languages/css.md": {
+      "path": ".agents/.rules/governance/profiles/languages/css.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "5b2d1078b0ccf72b45ca99d9c8282518d4374deba04676507876c00c37518615"
+    },
+    ".agents/.rules/governance/profiles/languages/go.md": {
+      "path": ".agents/.rules/governance/profiles/languages/go.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "69c9c1d479be9faab028da263ce1aaefe1b3b769220c450d1f53d6984c9eea36"
+    },
+    ".agents/.rules/governance/profiles/languages/javascript.md": {
+      "path": ".agents/.rules/governance/profiles/languages/javascript.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "88f224825e6d70c2233d87045fa6a4d124b7f21d0afbe0462b2c8975a7176fa0"
+    },
+    ".agents/.rules/governance/profiles/languages/nodejs.md": {
+      "path": ".agents/.rules/governance/profiles/languages/nodejs.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "e75cfa716d2ab1c30db8d9a0ad2a4baa0edc5014d53ef469c9640651ff3b02e1"
+    },
+    ".agents/.rules/governance/profiles/languages/php.md": {
+      "path": ".agents/.rules/governance/profiles/languages/php.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "e94c74ed252455f80ba9127bdf31e75ac7ae2f0662f1dcbc59ff6d83674db65a"
+    },
+    ".agents/.rules/governance/profiles/languages/typescript.md": {
+      "path": ".agents/.rules/governance/profiles/languages/typescript.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "3f4a382a1248dcba868d174636f359884b43a7140330477966f51657a5b7d01f"
+    },
+    ".agents/.rules/governance/profiles/overlays/enterprise-regulated.md": {
+      "path": ".agents/.rules/governance/profiles/overlays/enterprise-regulated.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "7101427959ba137568cf56476ac80eb88fbc3ec78fd73b4c6665e0e57890b3f4"
+    },
+    ".agents/.rules/governance/profiles/overlays/experimental.md": {
+      "path": ".agents/.rules/governance/profiles/overlays/experimental.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "94f96b1e19f5f0b26b66d4f9c27665b76358bf89b02f6c2ec160e5ead1137fd3"
+    },
+    ".agents/.rules/governance/profiles/overlays/high-performance.md": {
+      "path": ".agents/.rules/governance/profiles/overlays/high-performance.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "5eb7764d0ad57ffafcba0439bace62bb31d0530ca1f3a8cf7c0346c62ccf8394"
+    },
+    ".agents/.rules/governance/profiles/overlays/strict-security.md": {
+      "path": ".agents/.rules/governance/profiles/overlays/strict-security.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "51d7fa8c53ef36e3e065af119a5530d559d72413abede3ddfbca08937e101114"
+    },
+    ".agents/.rules/governance/profiles/project-types/api-service.md": {
+      "path": ".agents/.rules/governance/profiles/project-types/api-service.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "cc9047aebdeb3437ff4b269520b4e2b7f53a116c011d8a29eb4ac0c50f2317cf"
+    },
+    ".agents/.rules/governance/profiles/project-types/cli.md": {
+      "path": ".agents/.rules/governance/profiles/project-types/cli.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "81ea77e1a372730fc36b0ba88f9b3919c3fed18bb4c5ede35d85f7f53f2affc2"
+    },
+    ".agents/.rules/governance/profiles/project-types/framework.md": {
+      "path": ".agents/.rules/governance/profiles/project-types/framework.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "d2c8c2857dda50fd73f362a9e3549d62cc122579c6d6f8dfe3b03a165d25b507"
+    },
+    ".agents/.rules/governance/profiles/project-types/infrastructure.md": {
+      "path": ".agents/.rules/governance/profiles/project-types/infrastructure.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "690a32dae5bff1968210ecb0d6c0272d21f1c2e0f4994fd5952e873c331fcd79"
+    },
+    ".agents/.rules/governance/profiles/project-types/library.md": {
+      "path": ".agents/.rules/governance/profiles/project-types/library.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "a0be454289d29bea35c1d73684470d8c05020dba1997325366657b3eccf29e71"
+    },
+    ".agents/.rules/governance/profiles/project-types/monorepo.md": {
+      "path": ".agents/.rules/governance/profiles/project-types/monorepo.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "b6a32555b85d59bd212f6707cfde3f59d1086e226d74857d626e833c94df0ea1"
+    },
+    ".agents/.rules/governance/profiles/project-types/web-app.md": {
+      "path": ".agents/.rules/governance/profiles/project-types/web-app.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "b4db558eccfa34a1dc647fc299422183f4349dcf31a40f4501b3e87dd3869f86"
+    },
+    ".agents/.rules/governance/profiles/repository-kinds/README.md": {
+      "path": ".agents/.rules/governance/profiles/repository-kinds/README.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "5b6a4e69f199d1a3d34ada5b4c8c79e7f4330df724198ed70a605d8740e72e7d"
+    },
+    ".agents/.rules/governance/profiles/repository-kinds/governance-source.md": {
+      "path": ".agents/.rules/governance/profiles/repository-kinds/governance-source.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "1a42c16908175963f9373891cf634f3a0718ba26c119458d10a5d96872500847"
+    },
+    ".agents/.rules/governance/profiles/roles/engineering-reviewer.md": {
+      "path": ".agents/.rules/governance/profiles/roles/engineering-reviewer.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "7d0da55282ff24ceef00e9d0b908d8b0329f987cf9ee9b1d74a128399d7df854"
+    },
+    ".agents/.rules/governance/profiles/roles/legal-executive-reviewer.md": {
+      "path": ".agents/.rules/governance/profiles/roles/legal-executive-reviewer.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "5160c2622b624399511bcfeb1322fc9f7b068e5ec2cb9f6c8b1e43ba47077b53"
+    },
+    ".agents/.rules/governance/profiles/roles/ux-ui-reviewer.md": {
+      "path": ".agents/.rules/governance/profiles/roles/ux-ui-reviewer.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "e0f4d77049243199834251f1c066744aeaff47ba2056350476a772019617970f"
+    },
+    ".agents/.rules/governance/security/README.md": {
+      "path": ".agents/.rules/governance/security/README.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "3fe6b8558f5ba77d401917415a4f6350d5987a5f2a6b951e102090ee89b64f3f"
+    },
+    ".agents/.rules/governance/security/authentication-and-session-security.md": {
+      "path": ".agents/.rules/governance/security/authentication-and-session-security.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "fc60d2d580283a147b74e1c322cadbeede1a1a964eccf88f83941f9e0b9f4cc7"
+    },
+    ".agents/.rules/governance/security/ci-cd-and-supply-chain-security.md": {
+      "path": ".agents/.rules/governance/security/ci-cd-and-supply-chain-security.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "d6fe30a6871f4fcadc9ea61f8b2ddf5dfdfee425772b5ad35818362c6b49533e"
+    },
+    ".agents/.rules/governance/security/owasp-web-and-api-baseline.md": {
+      "path": ".agents/.rules/governance/security/owasp-web-and-api-baseline.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "13d0b91b60e3896d6d29e7a386558e671e6e906ebf410b227b837e88be0f7524"
+    },
+    ".agents/.rules/governance/security/secrets-and-key-management.md": {
+      "path": ".agents/.rules/governance/security/secrets-and-key-management.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "b37d9c0aa0b93009e5eb40f1bf808e62228c583ce41b58555fe3315b925f5790"
+    },
+    ".agents/.rules/governance/security/secure-development-lifecycle.md": {
+      "path": ".agents/.rules/governance/security/secure-development-lifecycle.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "81cdf18ba993691091147f4f47938847f8ecbc3e4e9254a1a7baeb0e7a0bbc74"
+    },
+    ".agents/.rules/governance/security/security-operating-model.md": {
+      "path": ".agents/.rules/governance/security/security-operating-model.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "fdbe18b5fa70b1e165f9b2edd77fb9e62453bcbbae86eba86a678e93fcda4b5f"
+    },
+    ".agents/.rules/governance/security/threat-modeling-and-abuse-case-policy.md": {
+      "path": ".agents/.rules/governance/security/threat-modeling-and-abuse-case-policy.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "1072a30cb7c13c03c4f6f83099d90f6ee4487dc5f902c376300b1d757e09828b"
+    },
+    ".agents/.rules/governance/security/tool-and-plugin-capability-isolation.md": {
+      "path": ".agents/.rules/governance/security/tool-and-plugin-capability-isolation.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "2a783d7fc637838bf202358b0e700f72991264d451e877e58a871678702c9828"
+    },
+    ".agents/.rules/governance/security/vulnerability-and-incident-response.md": {
+      "path": ".agents/.rules/governance/security/vulnerability-and-incident-response.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "6c06ef48488b7db3397ca1291438976e25625adf4899b5fc7db6d81f26379518"
+    },
+    ".agents/.rules/governance/skills/README.md": {
+      "path": ".agents/.rules/governance/skills/README.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "8e7caaf6924333e5eba6c2e009c311c51ffdc976118b67c67be6007f745b2211"
+    },
+    ".agents/.rules/governance/skills/contract/skill-contract.md": {
+      "path": ".agents/.rules/governance/skills/contract/skill-contract.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "d2877ab50c0500da11b514425c16e45cba2ad7e1f6780f6c61d56df61557b66a"
+    },
+    ".agents/.rules/governance/standards/README.md": {
+      "path": ".agents/.rules/governance/standards/README.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "d53175e07998c6c1ed46c33dd74bd647ba96216fce6c0f7121b764ec4030dfab"
+    },
+    ".agents/governance/standards/coding/ai-coding-contract.md": {
+      "path": ".agents/governance/standards/coding/ai-coding-contract.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "1ece177197a369703fd53a5253bdbc7dad40932c10d9c7305688fd3bdc20aabe"
+    },
+    ".agents/.rules/governance/standards/coding/codex-usage-policy.md": {
+      "path": ".agents/.rules/governance/standards/coding/codex-usage-policy.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "9e579ec8f08d4d34a22a3ef425d5ebc0d647763c041e5f40731a6b96cb66665e"
+    },
+    ".agents/.rules/governance/standards/coding/how-to-coding-standards.md": {
+      "path": ".agents/.rules/governance/standards/coding/how-to-coding-standards.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "2b487fb2eb3757d801c0500147b45dcd6a36f7879fb4a540afe90da7b929416d"
+    },
+    ".agents/.rules/governance/standards/coding/naming-standard.md": {
+      "path": ".agents/.rules/governance/standards/coding/naming-standard.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "d0a489a2930d5604a03858a6a480af6f7a0665c860cbdae9c4cfd5968790fc62"
+    },
+    ".agents/governance/standards/documentation/evidence-model.md": {
+      "path": ".agents/governance/standards/documentation/evidence-model.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "083171a4fca543e7f05aa5964ea7296b30046f2795036893bd21078224b15338"
+    },
+    ".agents/.rules/governance/standards/documentation/how-to-document-flow.md": {
+      "path": ".agents/.rules/governance/standards/documentation/how-to-document-flow.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "227562db2a9ef74b8417229a379dfb14f9dbce7c881dbe335c203aac37b53ae5"
+    },
+    ".agents/.rules/governance/standards/documentation/how-to-document.md": {
+      "path": ".agents/.rules/governance/standards/documentation/how-to-document.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "e47e86d02c5aa92a6a7b460d2417f07adfef742dcb55fd47ba2916800eee7920"
+    },
+    ".agents/.rules/governance/standards/governance/README.md": {
+      "path": ".agents/.rules/governance/standards/governance/README.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "84cdb75b1fdb4d680797ac675e3ae1d6c9b7020d1cdcf34f98f4990a2f180f0f"
+    },
+    ".agents/.rules/governance/standards/governance/canonical-governance-map.md": {
+      "path": ".agents/.rules/governance/standards/governance/canonical-governance-map.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "26e8e061f665eb530bef1b7c54ccdd514888825b222a6b763511f4f95db358bd"
+    },
+    ".agents/.rules/governance/standards/governance/capability-maturity-model.md": {
+      "path": ".agents/.rules/governance/standards/governance/capability-maturity-model.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "dbfbbcb9518874923466388412216e17b676116cf3201ea36070f2c3cb5ae1ce"
+    },
+    ".agents/.rules/governance/standards/governance/entropy-control-policy.md": {
+      "path": ".agents/.rules/governance/standards/governance/entropy-control-policy.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "682b11fd7d301b61e7533f237e10398d4eceb02d2e2ffa4fed8a72b8dcad4ae6"
+    },
+    ".agents/.rules/governance/standards/governance/governance-authoring-standard.md": {
+      "path": ".agents/.rules/governance/standards/governance/governance-authoring-standard.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "ca63d690c7fe9bd9b0df0b833fd8a795808cabaa36f412a504fd99409d299226"
+    },
+    ".agents/.rules/governance/standards/governance/governance-evolution-policy.md": {
+      "path": ".agents/.rules/governance/standards/governance/governance-evolution-policy.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "11bc9c9fec8bda4fc4adf05bdccab34378598e142219ba548802cea79db74445"
+    },
+    ".agents/.rules/governance/standards/review/how-to-code-review.md": {
+      "path": ".agents/.rules/governance/standards/review/how-to-code-review.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "24abd6da251c74d2a80faaab67cf18565e00d503a0889aa337cc14824a34b3b9"
+    },
+    ".agents/.rules/governance/standards/review/how-to-strict-review.md": {
+      "path": ".agents/.rules/governance/standards/review/how-to-strict-review.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "7f97a37f827bce35233b1eba3a867b35f0e5740e726541d3a22afd58016c4c59"
+    },
+    ".agents/.rules/governance/standards/review/recursive-review-contract.md": {
+      "path": ".agents/.rules/governance/standards/review/recursive-review-contract.md",
+      "frontmatter": {},
+      "links": [],
+      "rule_ids": [],
+      "checksum": "5ecc6a2604df38b3fa2a1cb8b46d508c90b9f3851d66d266a0b15b515f88a423"
+    }
+  },
+  "graph": {
+    ".agents/.rules/governance/README.md": [],
+    ".agents/.rules/governance/agents/README.md": [],
+    ".agents/.rules/governance/agents/orchestration/society-of-mind-pattern.md": [],
+    ".agents/.rules/governance/agents/roles/agent-roles.md": [],
+    ".agents/.rules/governance/architecture/ARCHITECTURE.md": [],
+    ".agents/.rules/governance/architecture/README.md": [],
+    ".agents/.rules/governance/architecture/adoption-model.md": [],
+    ".agents/.rules/governance/architecture/architecture-standard.md": [],
+    ".agents/.rules/governance/architecture/contract-linting.md": [],
+    ".agents/.rules/governance/architecture/execution-profiles.md": [],
+    ".agents/.rules/governance/architecture/migration-governance.md": [],
+    ".agents/.rules/governance/architecture/profiles/README.md": [],
+    ".agents/.rules/governance/architecture/profiles/frameworks/express.md": [],
+    ".agents/.rules/governance/architecture/profiles/frameworks/laravel.md": [],
+    ".agents/.rules/governance/architecture/profiles/frameworks/nextjs.md": [],
+    ".agents/.rules/governance/architecture/profiles/frameworks/react.md": [],
+    ".agents/.rules/governance/architecture/profiles/frameworks/v-web-components.md": [],
+    ".agents/.rules/governance/architecture/profiles/languages/javascript.md": [],
+    ".agents/.rules/governance/architecture/profiles/languages/php.md": [],
+    ".agents/.rules/governance/architecture/profiles/languages/typescript.md": [],
+    ".agents/.rules/governance/architecture/runtime-hardening.md": [],
+    ".agents/governance/architecture/survivability-analysis.md": [],
+    ".agents/governance/core/README.md": [],
+    ".agents/governance/core/bootstrap/agent-bootstrap.md": [],
+    ".agents/governance/core/bootstrap/canonical-bootstrap-lifecycle.md": [],
+    ".agents/governance/core/flags/feature-flags.md": [],
+    ".agents/governance/core/quality/quality-gates.md": [],
+    ".agents/governance/core/resolution/profile-resolution-algorithm.md": [],
+    ".agents/.rules/governance/delivery/README.md": [],
+    ".agents/.rules/governance/delivery/operations/README.md": [],
+    ".agents/.rules/governance/delivery/operations/backup-and-restore-runbook.md": [],
+    ".agents/.rules/governance/delivery/operations/enterprise-operational-lifecycle.md": [],
+    ".agents/.rules/governance/delivery/operations/management-model.md": [],
+    ".agents/.rules/governance/delivery/operations/observability-and-error-envelope.md": [],
+    ".agents/.rules/governance/delivery/operations/runtime-handoff-contract.md": [],
+    ".agents/.rules/governance/delivery/operations/security-launch-checklist.md": [],
+    ".agents/.rules/governance/delivery/operations/staging-smoke-checklist.md": [],
+    ".agents/.rules/governance/delivery/release/advanced-deployment-policy.md": [],
+    ".agents/.rules/governance/delivery/release/release-and-rollback-policy.md": [],
+    ".agents/.rules/governance/delivery/workflows/workflow-pipelines.md": [],
+    ".agents/.rules/governance/execution/README.md": [],
+    ".agents/.rules/governance/execution/approvals/approval-policy.md": [],
+    ".agents/.rules/governance/execution/hooks/hooks-policy.md": [],
+    ".agents/.rules/governance/execution/policy/execution-policy.md": [],
+    ".agents/.rules/governance/execution/routing/README.md": [],
+    ".agents/.rules/governance/execution/routing/prompt-to-governance-flow.md": [],
+    ".agents/.rules/governance/execution/sandbox/sandbox-boundary-policy.md": [],
+    ".agents/.rules/governance/integrations/README.md": [],
+    ".agents/.rules/governance/integrations/mcp/mcp-integration-policy.md": [],
+    ".agents/.rules/governance/integrations/platforms/platform-compatibility.md": [],
+    ".agents/.rules/governance/intelligence/README.md": [],
+    ".agents/.rules/governance/intelligence/context/artifact-contract.md": [],
+    ".agents/.rules/governance/intelligence/context/artifact-standard.md": [],
+    ".agents/.rules/governance/intelligence/context/context-management.md": [],
+    ".agents/.rules/governance/intelligence/context/subagent-delegation-policy.md": [],
+    ".agents/.rules/governance/intelligence/context/system-rules.md": [],
+    ".agents/.rules/governance/intelligence/context/tooling-integration.md": [],
+    ".agents/.rules/governance/intelligence/learning/continuous-learning.md": [],
+    ".agents/.rules/governance/intelligence/learning/instincts-policy.md": [],
+    ".agents/.rules/governance/intelligence/learning/metrics-standard.md": [],
+    ".agents/.rules/governance/intelligence/memory/memory-lifecycle.md": [],
+    ".agents/.rules/governance/intelligence/memory/universal-memory-standard.md": [],
+    ".agents/.rules/governance/intelligence/memory/v3-intelligence-lifecycle.md": [],
+    ".agents/.rules/governance/product/README.md": [],
+    ".agents/.rules/governance/product/standards/product-management-standard.md": [],
+    ".agents/.rules/governance/profiles/README.md": [],
+    ".agents/.rules/governance/profiles/architecture/feature-first.md": [],
+    ".agents/.rules/governance/profiles/architecture/layered.md": [],
+    ".agents/.rules/governance/profiles/architecture/package-library.md": [],
+    ".agents/.rules/governance/profiles/architecture/vertical-slice.md": [],
+    ".agents/.rules/governance/profiles/frameworks/express.md": [],
+    ".agents/.rules/governance/profiles/frameworks/laravel.md": [],
+    ".agents/.rules/governance/profiles/frameworks/nextjs.md": [],
+    ".agents/.rules/governance/profiles/frameworks/react.md": [],
+    ".agents/.rules/governance/profiles/frameworks/v-web-components.md": [],
+    ".agents/governance/profiles/integrations/mcp-example.md": [],
+    ".agents/.rules/governance/profiles/languages/css.md": [],
+    ".agents/.rules/governance/profiles/languages/go.md": [],
+    ".agents/.rules/governance/profiles/languages/javascript.md": [],
+    ".agents/.rules/governance/profiles/languages/nodejs.md": [],
+    ".agents/.rules/governance/profiles/languages/php.md": [],
+    ".agents/.rules/governance/profiles/languages/typescript.md": [],
+    ".agents/.rules/governance/profiles/overlays/enterprise-regulated.md": [],
+    ".agents/.rules/governance/profiles/overlays/experimental.md": [],
+    ".agents/.rules/governance/profiles/overlays/high-performance.md": [],
+    ".agents/.rules/governance/profiles/overlays/strict-security.md": [],
+    ".agents/.rules/governance/profiles/project-types/api-service.md": [],
+    ".agents/.rules/governance/profiles/project-types/cli.md": [],
+    ".agents/.rules/governance/profiles/project-types/framework.md": [],
+    ".agents/.rules/governance/profiles/project-types/infrastructure.md": [],
+    ".agents/.rules/governance/profiles/project-types/library.md": [],
+    ".agents/.rules/governance/profiles/project-types/monorepo.md": [],
+    ".agents/.rules/governance/profiles/project-types/web-app.md": [],
+    ".agents/.rules/governance/profiles/repository-kinds/README.md": [],
+    ".agents/.rules/governance/profiles/repository-kinds/governance-source.md": [],
+    ".agents/.rules/governance/profiles/roles/engineering-reviewer.md": [],
+    ".agents/.rules/governance/profiles/roles/legal-executive-reviewer.md": [],
+    ".agents/.rules/governance/profiles/roles/ux-ui-reviewer.md": [],
+    ".agents/.rules/governance/security/README.md": [],
+    ".agents/.rules/governance/security/authentication-and-session-security.md": [],
+    ".agents/.rules/governance/security/ci-cd-and-supply-chain-security.md": [],
+    ".agents/.rules/governance/security/owasp-web-and-api-baseline.md": [],
+    ".agents/.rules/governance/security/secrets-and-key-management.md": [],
+    ".agents/.rules/governance/security/secure-development-lifecycle.md": [],
+    ".agents/.rules/governance/security/security-operating-model.md": [],
+    ".agents/.rules/governance/security/threat-modeling-and-abuse-case-policy.md": [],
+    ".agents/.rules/governance/security/tool-and-plugin-capability-isolation.md": [],
+    ".agents/.rules/governance/security/vulnerability-and-incident-response.md": [],
+    ".agents/.rules/governance/skills/README.md": [],
+    ".agents/.rules/governance/skills/contract/skill-contract.md": [],
+    ".agents/.rules/governance/standards/README.md": [],
+    ".agents/governance/standards/coding/ai-coding-contract.md": [],
+    ".agents/.rules/governance/standards/coding/codex-usage-policy.md": [],
+    ".agents/.rules/governance/standards/coding/how-to-coding-standards.md": [],
+    ".agents/.rules/governance/standards/coding/naming-standard.md": [],
+    ".agents/governance/standards/documentation/evidence-model.md": [],
+    ".agents/.rules/governance/standards/documentation/how-to-document-flow.md": [],
+    ".agents/.rules/governance/standards/documentation/how-to-document.md": [],
+    ".agents/.rules/governance/standards/governance/README.md": [],
+    ".agents/.rules/governance/standards/governance/canonical-governance-map.md": [],
+    ".agents/.rules/governance/standards/governance/capability-maturity-model.md": [],
+    ".agents/.rules/governance/standards/governance/entropy-control-policy.md": [],
+    ".agents/.rules/governance/standards/governance/governance-authoring-standard.md": [],
+    ".agents/.rules/governance/standards/governance/governance-evolution-policy.md": [],
+    ".agents/.rules/governance/standards/review/how-to-code-review.md": [],
+    ".agents/.rules/governance/standards/review/how-to-strict-review.md": [],
+    ".agents/.rules/governance/standards/review/recursive-review-contract.md": [],
+    "AGENTS.md": [],
+    ".agents/AGENTS.md": []
+  },
+  "precedence": {
+    ".agents/.rules/governance/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/agents/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/agents/orchestration/society-of-mind-pattern.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/agents/roles/agent-roles.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/ARCHITECTURE.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/adoption-model.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/architecture-standard.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/contract-linting.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/execution-profiles.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/migration-governance.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/profiles/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/profiles/frameworks/express.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/profiles/frameworks/laravel.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/profiles/frameworks/nextjs.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/profiles/frameworks/react.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/profiles/frameworks/v-web-components.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/profiles/languages/javascript.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/profiles/languages/php.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/profiles/languages/typescript.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/runtime-hardening.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/governance/architecture/survivability-analysis.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/governance/core/README.md": {
+      "won": true,
+      "shadowed_path": ".agents/.rules/governance/core/README.md",
+      "reason": "Local override preempts frozen baseline rule under Priority Overlay Shadowing contract."
+    },
+    ".agents/governance/core/bootstrap/agent-bootstrap.md": {
+      "won": true,
+      "shadowed_path": ".agents/.rules/governance/core/bootstrap/agent-bootstrap.md",
+      "reason": "Local override preempts frozen baseline rule under Priority Overlay Shadowing contract."
+    },
+    ".agents/governance/core/bootstrap/canonical-bootstrap-lifecycle.md": {
+      "won": true,
+      "shadowed_path": ".agents/.rules/governance/core/bootstrap/canonical-bootstrap-lifecycle.md",
+      "reason": "Local override preempts frozen baseline rule under Priority Overlay Shadowing contract."
+    },
+    ".agents/governance/core/flags/feature-flags.md": {
+      "won": true,
+      "shadowed_path": ".agents/.rules/governance/core/flags/feature-flags.md",
+      "reason": "Local override preempts frozen baseline rule under Priority Overlay Shadowing contract."
+    },
+    ".agents/governance/core/quality/quality-gates.md": {
+      "won": true,
+      "shadowed_path": ".agents/.rules/governance/core/quality/quality-gates.md",
+      "reason": "Local override preempts frozen baseline rule under Priority Overlay Shadowing contract."
+    },
+    ".agents/governance/core/resolution/profile-resolution-algorithm.md": {
+      "won": true,
+      "shadowed_path": ".agents/.rules/governance/core/resolution/profile-resolution-algorithm.md",
+      "reason": "Local override preempts frozen baseline rule under Priority Overlay Shadowing contract."
+    },
+    ".agents/.rules/governance/delivery/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/operations/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/operations/backup-and-restore-runbook.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/operations/enterprise-operational-lifecycle.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/operations/management-model.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/operations/observability-and-error-envelope.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/operations/runtime-handoff-contract.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/operations/security-launch-checklist.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/operations/staging-smoke-checklist.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/release/advanced-deployment-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/release/release-and-rollback-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/workflows/workflow-pipelines.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/execution/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/execution/approvals/approval-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/execution/hooks/hooks-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/execution/policy/execution-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/execution/routing/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/execution/routing/prompt-to-governance-flow.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/execution/sandbox/sandbox-boundary-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/integrations/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/integrations/mcp/mcp-integration-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/integrations/platforms/platform-compatibility.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/context/artifact-contract.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/context/artifact-standard.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/context/context-management.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/context/subagent-delegation-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/context/system-rules.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/context/tooling-integration.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/learning/continuous-learning.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/learning/instincts-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/learning/metrics-standard.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/memory/memory-lifecycle.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/memory/universal-memory-standard.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/memory/v3-intelligence-lifecycle.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/product/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/product/standards/product-management-standard.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/architecture/feature-first.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/architecture/layered.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/architecture/package-library.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/architecture/vertical-slice.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/frameworks/express.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/frameworks/laravel.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/frameworks/nextjs.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/frameworks/react.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/frameworks/v-web-components.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/governance/profiles/integrations/mcp-example.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/languages/css.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/languages/go.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/languages/javascript.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/languages/nodejs.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/languages/php.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/languages/typescript.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/overlays/enterprise-regulated.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/overlays/experimental.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/overlays/high-performance.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/overlays/strict-security.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/project-types/api-service.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/project-types/cli.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/project-types/framework.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/project-types/infrastructure.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/project-types/library.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/project-types/monorepo.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/project-types/web-app.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/repository-kinds/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/repository-kinds/governance-source.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/roles/engineering-reviewer.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/roles/legal-executive-reviewer.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/roles/ux-ui-reviewer.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/authentication-and-session-security.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/ci-cd-and-supply-chain-security.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/owasp-web-and-api-baseline.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/secrets-and-key-management.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/secure-development-lifecycle.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/security-operating-model.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/threat-modeling-and-abuse-case-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/tool-and-plugin-capability-isolation.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/vulnerability-and-incident-response.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/skills/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/skills/contract/skill-contract.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/governance/standards/coding/ai-coding-contract.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/coding/codex-usage-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/coding/how-to-coding-standards.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/coding/naming-standard.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/governance/standards/documentation/evidence-model.md": {
+      "won": true,
+      "shadowed_path": ".agents/.rules/governance/standards/documentation/evidence-model.md",
+      "reason": "Local override preempts frozen baseline rule under Priority Overlay Shadowing contract."
+    },
+    ".agents/.rules/governance/standards/documentation/how-to-document-flow.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/documentation/how-to-document.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/governance/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/governance/canonical-governance-map.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/governance/capability-maturity-model.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/governance/entropy-control-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/governance/governance-authoring-standard.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/governance/governance-evolution-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/review/how-to-code-review.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/review/how-to-strict-review.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/review/recursive-review-contract.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    }
+  },
+  "shadowed_rules": {
+    ".agents/.rules/governance/core/README.md": ".agents/governance/core/README.md",
+    ".agents/.rules/governance/core/bootstrap/agent-bootstrap.md": ".agents/governance/core/bootstrap/agent-bootstrap.md",
+    ".agents/.rules/governance/core/bootstrap/canonical-bootstrap-lifecycle.md": ".agents/governance/core/bootstrap/canonical-bootstrap-lifecycle.md",
+    ".agents/.rules/governance/core/flags/feature-flags.md": ".agents/governance/core/flags/feature-flags.md",
+    ".agents/.rules/governance/core/quality/quality-gates.md": ".agents/governance/core/quality/quality-gates.md",
+    ".agents/.rules/governance/core/resolution/profile-resolution-algorithm.md": ".agents/governance/core/resolution/profile-resolution-algorithm.md",
+    ".agents/.rules/governance/standards/documentation/evidence-model.md": ".agents/governance/standards/documentation/evidence-model.md"
+  },
+  "duplicate_rules": [],
+  "dead_rules": [],
+  "circular_loops": [],
+  "unreferenced_rules": [
+    ".agents/.rules/governance/agents/orchestration/society-of-mind-pattern.md",
+    ".agents/.rules/governance/agents/roles/agent-roles.md",
+    ".agents/.rules/governance/architecture/ARCHITECTURE.md",
+    ".agents/.rules/governance/architecture/adoption-model.md",
+    ".agents/.rules/governance/architecture/architecture-standard.md",
+    ".agents/.rules/governance/architecture/contract-linting.md",
+    ".agents/.rules/governance/architecture/execution-profiles.md",
+    ".agents/.rules/governance/architecture/migration-governance.md",
+    ".agents/.rules/governance/architecture/profiles/frameworks/express.md",
+    ".agents/.rules/governance/architecture/profiles/frameworks/laravel.md",
+    ".agents/.rules/governance/architecture/profiles/frameworks/nextjs.md",
+    ".agents/.rules/governance/architecture/profiles/frameworks/react.md",
+    ".agents/.rules/governance/architecture/profiles/frameworks/v-web-components.md",
+    ".agents/.rules/governance/architecture/profiles/languages/javascript.md",
+    ".agents/.rules/governance/architecture/profiles/languages/php.md",
+    ".agents/.rules/governance/architecture/profiles/languages/typescript.md",
+    ".agents/.rules/governance/architecture/runtime-hardening.md",
+    ".agents/governance/architecture/survivability-analysis.md",
+    ".agents/governance/core/bootstrap/agent-bootstrap.md",
+    ".agents/governance/core/bootstrap/canonical-bootstrap-lifecycle.md",
+    ".agents/governance/core/flags/feature-flags.md",
+    ".agents/governance/core/quality/quality-gates.md",
+    ".agents/governance/core/resolution/profile-resolution-algorithm.md",
+    ".agents/.rules/governance/delivery/operations/backup-and-restore-runbook.md",
+    ".agents/.rules/governance/delivery/operations/enterprise-operational-lifecycle.md",
+    ".agents/.rules/governance/delivery/operations/management-model.md",
+    ".agents/.rules/governance/delivery/operations/observability-and-error-envelope.md",
+    ".agents/.rules/governance/delivery/operations/runtime-handoff-contract.md",
+    ".agents/.rules/governance/delivery/operations/security-launch-checklist.md",
+    ".agents/.rules/governance/delivery/operations/staging-smoke-checklist.md",
+    ".agents/.rules/governance/delivery/release/advanced-deployment-policy.md",
+    ".agents/.rules/governance/delivery/release/release-and-rollback-policy.md",
+    ".agents/.rules/governance/delivery/workflows/workflow-pipelines.md",
+    ".agents/.rules/governance/execution/approvals/approval-policy.md",
+    ".agents/.rules/governance/execution/hooks/hooks-policy.md",
+    ".agents/.rules/governance/execution/policy/execution-policy.md",
+    ".agents/.rules/governance/execution/routing/prompt-to-governance-flow.md",
+    ".agents/.rules/governance/execution/sandbox/sandbox-boundary-policy.md",
+    ".agents/.rules/governance/integrations/mcp/mcp-integration-policy.md",
+    ".agents/.rules/governance/integrations/platforms/platform-compatibility.md",
+    ".agents/.rules/governance/intelligence/context/artifact-contract.md",
+    ".agents/.rules/governance/intelligence/context/artifact-standard.md",
+    ".agents/.rules/governance/intelligence/context/context-management.md",
+    ".agents/.rules/governance/intelligence/context/subagent-delegation-policy.md",
+    ".agents/.rules/governance/intelligence/context/system-rules.md",
+    ".agents/.rules/governance/intelligence/context/tooling-integration.md",
+    ".agents/.rules/governance/intelligence/learning/continuous-learning.md",
+    ".agents/.rules/governance/intelligence/learning/instincts-policy.md",
+    ".agents/.rules/governance/intelligence/learning/metrics-standard.md",
+    ".agents/.rules/governance/intelligence/memory/memory-lifecycle.md",
+    ".agents/.rules/governance/intelligence/memory/universal-memory-standard.md",
+    ".agents/.rules/governance/intelligence/memory/v3-intelligence-lifecycle.md",
+    ".agents/.rules/governance/product/standards/product-management-standard.md",
+    ".agents/.rules/governance/profiles/architecture/feature-first.md",
+    ".agents/.rules/governance/profiles/architecture/layered.md",
+    ".agents/.rules/governance/profiles/architecture/package-library.md",
+    ".agents/.rules/governance/profiles/architecture/vertical-slice.md",
+    ".agents/.rules/governance/profiles/frameworks/express.md",
+    ".agents/.rules/governance/profiles/frameworks/laravel.md",
+    ".agents/.rules/governance/profiles/frameworks/nextjs.md",
+    ".agents/.rules/governance/profiles/frameworks/react.md",
+    ".agents/.rules/governance/profiles/frameworks/v-web-components.md",
+    ".agents/governance/profiles/integrations/mcp-example.md",
+    ".agents/.rules/governance/profiles/languages/css.md",
+    ".agents/.rules/governance/profiles/languages/go.md",
+    ".agents/.rules/governance/profiles/languages/javascript.md",
+    ".agents/.rules/governance/profiles/languages/nodejs.md",
+    ".agents/.rules/governance/profiles/languages/php.md",
+    ".agents/.rules/governance/profiles/languages/typescript.md",
+    ".agents/.rules/governance/profiles/overlays/enterprise-regulated.md",
+    ".agents/.rules/governance/profiles/overlays/experimental.md",
+    ".agents/.rules/governance/profiles/overlays/high-performance.md",
+    ".agents/.rules/governance/profiles/overlays/strict-security.md",
+    ".agents/.rules/governance/profiles/project-types/api-service.md",
+    ".agents/.rules/governance/profiles/project-types/cli.md",
+    ".agents/.rules/governance/profiles/project-types/framework.md",
+    ".agents/.rules/governance/profiles/project-types/infrastructure.md",
+    ".agents/.rules/governance/profiles/project-types/library.md",
+    ".agents/.rules/governance/profiles/project-types/monorepo.md",
+    ".agents/.rules/governance/profiles/project-types/web-app.md",
+    ".agents/.rules/governance/profiles/repository-kinds/governance-source.md",
+    ".agents/.rules/governance/profiles/roles/engineering-reviewer.md",
+    ".agents/.rules/governance/profiles/roles/legal-executive-reviewer.md",
+    ".agents/.rules/governance/profiles/roles/ux-ui-reviewer.md",
+    ".agents/.rules/governance/security/authentication-and-session-security.md",
+    ".agents/.rules/governance/security/ci-cd-and-supply-chain-security.md",
+    ".agents/.rules/governance/security/owasp-web-and-api-baseline.md",
+    ".agents/.rules/governance/security/secrets-and-key-management.md",
+    ".agents/.rules/governance/security/secure-development-lifecycle.md",
+    ".agents/.rules/governance/security/security-operating-model.md",
+    ".agents/.rules/governance/security/threat-modeling-and-abuse-case-policy.md",
+    ".agents/.rules/governance/security/tool-and-plugin-capability-isolation.md",
+    ".agents/.rules/governance/security/vulnerability-and-incident-response.md",
+    ".agents/.rules/governance/skills/contract/skill-contract.md",
+    ".agents/governance/standards/coding/ai-coding-contract.md",
+    ".agents/.rules/governance/standards/coding/codex-usage-policy.md",
+    ".agents/.rules/governance/standards/coding/how-to-coding-standards.md",
+    ".agents/.rules/governance/standards/coding/naming-standard.md",
+    ".agents/governance/standards/documentation/evidence-model.md",
+    ".agents/.rules/governance/standards/documentation/how-to-document-flow.md",
+    ".agents/.rules/governance/standards/documentation/how-to-document.md",
+    ".agents/.rules/governance/standards/governance/canonical-governance-map.md",
+    ".agents/.rules/governance/standards/governance/capability-maturity-model.md",
+    ".agents/.rules/governance/standards/governance/entropy-control-policy.md",
+    ".agents/.rules/governance/standards/governance/governance-authoring-standard.md",
+    ".agents/.rules/governance/standards/governance/governance-evolution-policy.md",
+    ".agents/.rules/governance/standards/review/how-to-code-review.md",
+    ".agents/.rules/governance/standards/review/how-to-strict-review.md",
+    ".agents/.rules/governance/standards/review/recursive-review-contract.md"
+  ],
+  "graph_sha": "99b041676605fdcda8abf505fc64a75473dd862f6e8fdc459f520a6af79878c8"
+}

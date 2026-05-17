@@ -1,0 +1,61 @@
+{
+  "suite_id": "chaos-suite-7b6647a6-03f0-46a1-a090-3eb90ad4e80d",
+  "started_at": "2026-05-17T17:22:14.033606+00:00",
+  "simulations": [
+    {
+      "simulation_id": "chaos-sigkill-9c26ba19-df4b-4b3d-a625-565a4c5c2617",
+      "type": "SIGKILL_SIMULATION",
+      "exec_id": "chaos-target-66252869",
+      "timestamp": "2026-05-17T17:22:14.033801+00:00",
+      "result": "INJECTED",
+      "original_state": "REPLAYABLE",
+      "injected_state": "FAILED",
+      "backup_path": "./.agents/management/evidence/execution/execution-manifest-chaos-target-66252869.json.pre-chaos"
+    },
+    {
+      "simulation_id": "chaos-corrupted-artifact-381935bc-2e61-4f49-86e7-519f550770df",
+      "type": "CORRUPTED_ARTIFACT_SIMULATION",
+      "exec_id": "chaos-target-66252869",
+      "timestamp": "2026-05-17T17:22:14.034079+00:00",
+      "result": "INJECTED",
+      "corrupted_fields": [
+        "replay_contract.original_checksum",
+        "integrity_seal"
+      ],
+      "backup_path": "./.agents/management/evidence/execution/execution-manifest-chaos-target-66252869.json.pre-chaos"
+    },
+    {
+      "simulation_id": "chaos-partial-write-afcb274e-23c3-4c0a-a1cd-85420f8dfbfb",
+      "type": "PARTIAL_WRITE_SIMULATION",
+      "exec_id": "chaos-target-66252869",
+      "timestamp": "2026-05-17T17:22:14.035133+00:00",
+      "corruption_verified": true,
+      "result": "INJECTED",
+      "original_size": 1675,
+      "truncated_size": 1172,
+      "backup_path": "./.agents/management/evidence/execution/execution-manifest-chaos-target-66252869.json.pre-chaos"
+    },
+    {
+      "simulation_id": "chaos-race-df481c23-5572-4b03-8e67-644e09230215",
+      "type": "TOCTOU_RACE_SIMULATION",
+      "timestamp": "2026-05-17T17:22:14.035334+00:00",
+      "result": "INJECTED",
+      "race_file": "shared_target.txt",
+      "created_executions": 2
+    },
+    {
+      "simulation_id": "chaos-gov-mutation-bbd797b6-1af1-41d7-9057-40a8330c490e",
+      "type": "CONCURRENT_GOV_MUTATION_SIMULATION",
+      "timestamp": "2026-05-17T17:22:14.035523+00:00",
+      "result": "INJECTED",
+      "governance_paths": [
+        ".agents/AGENTS.md",
+        ".agents/governance/core/quality/quality-gates.md"
+      ],
+      "created_executions": 2
+    }
+  ],
+  "completed_at": "2026-05-17T17:22:14.035680+00:00",
+  "total_simulations": 5,
+  "successful_injections": 5
+}

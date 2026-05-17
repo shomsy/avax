@@ -1,0 +1,3 @@
+Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
+/home/shomsy/projects/avax/tests/Unit/Components/API/Contracts/ApiContractsTest.php:67:Cannot call method isDeprecated() on Avax\Components\API\Contracts\System\Capabilities\EndpointContracts\EndpointDeprecation|null.
+/home/shomsy/projects/avax/tests/Unit/Components/API/Contracts/ApiContractsTest.php:68:Cannot call method severity() on Avax\Components\API\Contracts\System\Capabilities\EndpointContracts\EndpointDeprecation|null.

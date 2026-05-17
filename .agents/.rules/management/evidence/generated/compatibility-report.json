@@ -1,0 +1,36 @@
+{
+  "compatibility_report": {
+    "checks": [
+      {
+        "check": "python_compat",
+        "min_required": "3.8",
+        "current": "3.13.7",
+        "passed": true
+      },
+      {
+        "check": "bash_compat",
+        "min_required": "4.0",
+        "current": "5.2.37",
+        "passed": true
+      },
+      {
+        "check": "disk_space",
+        "min_required_mb": 50,
+        "available_mb": 119344.18,
+        "passed": true
+      },
+      {
+        "check": "memory",
+        "min_required_mb": 100,
+        "available_mb": 6748.89,
+        "passed": true,
+        "note": ""
+      }
+    ],
+    "all_passed": true,
+    "total_checks": 4,
+    "passed_count": 4,
+    "failed_count": 0,
+    "timestamp": 1779038217.707146
+  }
+}

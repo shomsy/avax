@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Risk Schema",
+  "description": "Risk register entry for a known technical, security, or governance risk.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "timestamp", "owner", "severity", "description", "status"],
+  "properties": {
+    "id":              { "type": "string", "description": "Unique risk ID, e.g. RISK-20260516-001" },
+    "timestamp":       { "type": "string", "format": "date-time" },
+    "owner":           { "type": "string" },
+    "severity":        { "type": "string", "enum": ["BLOCKER", "HIGH", "MEDIUM", "LOW"] },
+    "description":     { "type": "string" },
+    "impact":          { "type": "string" },
+    "likelihood":      { "type": "string", "enum": ["HIGH", "MEDIUM", "LOW"] },
+    "mitigation":      { "type": "string" },
+    "expiry":          { "type": "string", "format": "date", "description": "Date by which risk must be resolved" },
+    "evidence":        { "type": "array", "items": { "type": "string" }, "description": "Evidence IDs supporting this risk" },
+    "blockingDecision":{ "type": "string", "description": "Explicit acceptance decision text if MEDIUM+ accepted" },
+    "status":          { "type": "string", "enum": ["OPEN", "MITIGATED", "ACCEPTED", "RESOLVED", "EXPIRED"] }
+  }
+}

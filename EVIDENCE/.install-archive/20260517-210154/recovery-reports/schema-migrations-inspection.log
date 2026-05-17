@@ -1,0 +1,419 @@
+== CURRENT SCHEMA / MIGRATION FILES ==
+components/DataStack/Database/Schema/Blueprint.php
+components/DataStack/Database/System/Capabilities/Migrations/CLI/SchemaCommand.php
+components/DataStack/Database/System/Capabilities/Migrations/CreateMigration/MigrationGenerator.php
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/Render/ColumnSQLRenderer.php
+components/DataStack/Database/System/Capabilities/Migrations/Design/Migration.php
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/TableDefinition.php
+components/DataStack/Database/System/Capabilities/Migrations/Exceptions/MigrationException.php
+components/DataStack/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php
+components/DataStack/Database/System/Capabilities/Migrations/MigrationEngine.php
+components/DataStack/Database/System/Capabilities/Migrations/MigrationRepository.php
+components/DataStack/Database/System/Capabilities/Migrations/Migrations.php
+components/DataStack/Database/System/Capabilities/Migrations/ReadMigrationStatus/ReadMigrationStatus.php
+components/DataStack/Database/System/Capabilities/Migrations/RollbackMigrations/RollbackMigrations.php
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRunner.php
+components/DataStack/Database/System/Capabilities/Migrations/Schema/DropTable.php
+components/DataStack/Database/System/Capabilities/Migrations/Schema/Schema.php
+components/DataStack/Database/System/Capabilities/Migrations/Schema/SchemaBuilder.php
+components/DataStack/Database/System/Capabilities/Migrations/Schema/TruncateTable.php
+components/DataStack/Database/System/Capabilities/ORM/Attributes/Column.php
+components/DataStack/Database/System/Capabilities/ORM/Attributes/JoinColumn.php
+components/DataStack/Database/System/Capabilities/ORM/Attributes/Table.php
+components/DataStack/Database/System/Capabilities/Query/Projections/Column.php
+components/DataStack/Database/System/Capabilities/Query/ValueObjects/ColumnIdentifier.php
+components/DataStack/Database/System/Capabilities/Query/ValueObjects/TableIdentifier.php
+components/DataStack/Database/System/Flows/BuildDatabaseSchema/AlterTable.php
+components/DataStack/Database/System/Flows/BuildDatabaseSchema/CreateTable.php
+components/DataStack/Database/System/Flows/RunDatabaseMigration/RunDatabaseMigration.php
+components/DataStack/Database/System/PublicSurface/Migrations.php
+components/DataStack/Database/System/PublicSurface/Schema.php
+components/DataStack/Database/System/PublicSurface/SchemaBuilder.php
+
+== PUBLIC SURFACE DATABASE FILES ==
+components/DataStack/Database/System/PublicSurface/Database.php
+components/DataStack/Database/System/PublicSurface/DatabaseInterface.php
+components/DataStack/Database/System/PublicSurface/Entities.php
+components/DataStack/Database/System/PublicSurface/EntityManager.php
+components/DataStack/Database/System/PublicSurface/Migrations.php
+components/DataStack/Database/System/PublicSurface/Query.php
+components/DataStack/Database/System/PublicSurface/Schema.php
+components/DataStack/Database/System/PublicSurface/SchemaBuilder.php
+components/DataStack/Database/System/PublicSurface/Telemetry.php
+components/DataStack/Database/System/PublicSurface/Transactions.php
+components/DataStack/Database/System/PublicSurface/shortcuts.php
+
+== PUBLIC SURFACE Schema/Migrations API ==
+components/DataStack/Database/System/PublicSurface/Schema.php:14:    public function __construct(
+components/DataStack/Database/System/PublicSurface/Schema.php:18:    public function create(string $table, callable $callback, ?string $connectionName = null) : void
+components/DataStack/Database/System/PublicSurface/Schema.php:23:    public function table(string $table, callable $callback, ?string $connectionName = null) : void
+components/DataStack/Database/System/PublicSurface/Schema.php:28:    public function drop(string $table, ?string $connectionName = null) : void
+components/DataStack/Database/System/PublicSurface/Schema.php:33:    public function dropIfExists(string $table, ?string $connectionName = null) : void
+components/DataStack/Database/System/PublicSurface/Schema.php:38:    public function truncate(string $table, ?string $connectionName = null) : void
+components/DataStack/Database/System/PublicSurface/Schema.php:43:    public function createDatabase(string $name, ?string $connectionName = null) : void
+components/DataStack/Database/System/PublicSurface/Schema.php:48:    public function dropDatabase(string $name, ?string $connectionName = null) : void
+components/DataStack/Database/System/PublicSurface/Migrations.php:14:    public function __construct(
+components/DataStack/Database/System/PublicSurface/Migrations.php:18:    public function status(?string $connectionName = null) : array
+components/DataStack/Database/System/PublicSurface/Migrations.php:23:    public function migrate(?string $connectionName = null) : void
+components/DataStack/Database/System/PublicSurface/Migrations.php:28:    public function rollback(?string $connectionName = null, int $steps = 1) : void
+components/DataStack/Database/System/PublicSurface/Migrations.php:33:    public function seed(string $class, ?string $connectionName = null) : void
+
+== SCHEMA / MIGRATION CAPABILITY API ==
+components/DataStack/Database/System/Capabilities/Migrations/RollbackMigrations/RollbackMigrations.php:17:    public function __construct(
+components/DataStack/Database/System/Capabilities/Migrations/RollbackMigrations/RollbackMigrations.php:28:    public function run(string $path, int $steps = 1): array
+components/DataStack/Database/System/Capabilities/Migrations/Schema/SchemaBuilder.php:9:    public function create(string $table): void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/SchemaBuilder.php:15:    public function drop(string $table): void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/DropTable.php:15:    public function __construct(private QueryBuilder $queryBuilder) {}
+components/DataStack/Database/System/Capabilities/Migrations/Schema/DropTable.php:20:    public function named(string $table): void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/CreateDatabase.php:15:    public function __construct(private QueryBuilder $queryBuilder) {}
+components/DataStack/Database/System/Capabilities/Migrations/Schema/CreateDatabase.php:20:    public function named(string $name): void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/TruncateTable.php:15:    public function __construct(private QueryBuilder $queryBuilder) {}
+components/DataStack/Database/System/Capabilities/Migrations/Schema/TruncateTable.php:20:    public function named(string $table): void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/DropDatabase.php:15:    public function __construct(private QueryBuilder $queryBuilder) {}
+components/DataStack/Database/System/Capabilities/Migrations/Schema/DropDatabase.php:20:    public function named(string $name): void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/Schema.php:18:    public function __construct(private Query $query) {}
+components/DataStack/Database/System/Capabilities/Migrations/Schema/Schema.php:23:    public function create(string $table, callable $callback, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/Schema.php:67:    public function table(string $table, callable $callback, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/Schema.php:81:    public function drop(string $table, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/Schema.php:92:    public function dropIfExists(string $table, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/Schema.php:102:    public function truncate(string $table, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/Schema.php:112:    public function createDatabase(string $name, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/Schema.php:122:    public function dropDatabase(string $name, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRunner.php:19:    public function __construct(private MigrationRepository $migrationRepository, private QueryBuilder $queryBuilder, private Transactions $transactions, private ?string $connectionName = null) {}
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRunner.php:21:    public function up(array $migrations, string $path, bool $dryRun = false): void
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRunner.php:81:    public function rollback(array $migrations, int $steps = 1): void
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:20:    public function __construct(private readonly QueryBuilder $queryBuilder, private readonly Schema $schema) {
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:26:    public function getRan(): array
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:36:    public function getLastBatch(int $steps = 1): array
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:51:    public function getNextBatchNumber(): int
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:59:    public function log(string $name, int $batch, string $checksum): void
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:71:    public function remove(string $name): void
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:79:    public function ensureTableExists(): void
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:91:    public function createRepository(): void
+components/DataStack/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php:20:    public function getChecksum(string $name, string $path): string
+components/DataStack/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php:31:    public function getPending(string $path, array $ran): array
+components/DataStack/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php:44:    public function load(string $path): array
+components/DataStack/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php:100:    public function getMigrationName(string $file): string
+components/DataStack/Database/System/Capabilities/Migrations/MigrationEngine.php:9:    public function __construct(
+components/DataStack/Database/System/Capabilities/Migrations/MigrationEngine.php:14:    public function migrate(): void
+components/DataStack/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:17:    public function __construct(private PDO $pdo) {}
+components/DataStack/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:31:    public function exportToSql(string $path, ?string $table = null): string
+components/DataStack/Database/System/Capabilities/Migrations/CreateMigration/MigrationGenerator.php:27:    public function generate(string $name, string $path, ?string $table = null, bool $create = false) : string
+components/DataStack/Database/System/Capabilities/Migrations/CreateMigration/Stubs/create.stub:16:    public function up() : void
+components/DataStack/Database/System/Capabilities/Migrations/CreateMigration/Stubs/create.stub:27:    public function down() : void
+components/DataStack/Database/System/Capabilities/Migrations/CreateMigration/Stubs/update.stub:16:    public function up() : void
+components/DataStack/Database/System/Capabilities/Migrations/CreateMigration/Stubs/update.stub:26:    public function down() : void
+components/DataStack/Database/System/Capabilities/Migrations/CreateMigration/Stubs/blank.stub:15:    public function up() : void
+components/DataStack/Database/System/Capabilities/Migrations/CreateMigration/Stubs/blank.stub:23:    public function down() : void
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/TableDefinition.php:21:    public function __construct(public string $name) {}
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:34:    public function __construct(private readonly string $table) {}
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:39:    public function setAlterMode(): self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:53:    public function id(string $name = 'id'): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:85:    public function tinyInteger(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:97:    public function smallInteger(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:109:    public function integer(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:121:    public function bigInteger(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:135:    public function decimal(string $name, ?int $precision = null, int $scale = 2): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:149:    public function float(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:161:    public function double(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:173:    public function boolean(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:185:    public function mediumInteger(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:197:    public function serial(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:209:    public function bigSerial(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:221:    public function real(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:238:    public function string(string $name, int $length = 255): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:251:    public function char(string $name, int $length = 255): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:263:    public function text(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:275:    public function mediumText(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:287:    public function longText(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:299:    public function tinyText(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:312:    public function nchar(string $name, int $length = 255): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:325:    public function nvarchar(string $name, int $length = 255): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:337:    public function ntext(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:350:    public function binary(string $name, int $length = 255): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:362:    public function uuid(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:374:    public function uuidNative(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:387:    public function varbinary(string $name, int $length = 255): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:399:    public function blob(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:411:    public function tinyBlob(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:423:    public function mediumBlob(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:435:    public function longBlob(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:447:    public function bytea(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:460:    public function bit(string $name, int $length = 1): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:476:    public function date(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:488:    public function datetime(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:500:    public function timestamp(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:512:    public function time(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:524:    public function year(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:536:    public function interval(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:546:    public function timestamps(): void
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:559:    public function softDeletes(string $name = 'deleted_at'): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:575:    public function json(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:587:    public function jsonb(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:600:    public function enum(string $name, array $values): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:615:    public function set(string $name, array $values): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:629:    public function xml(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:645:    public function point(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:657:    public function lineString(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:669:    public function polygon(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:681:    public function geometry(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:693:    public function geography(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:709:    public function inet(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:721:    public function cidr(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:733:    public function macaddr(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:745:    public function tsvector(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:757:    public function tsquery(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:773:    public function money(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:785:    public function smallMoney(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:797:    public function uniqueIdentifier(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:809:    public function rowVersion(string $name = 'row_version'): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:817:    public function dropColumn(string ...$names): void
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:827:    public function renameColumn(string $from, string $to): void
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:841:    public function toSql(GrammarInterface $grammar): array
+components/DataStack/Database/System/Capabilities/Migrations/Design/Migration.php:33:    public function setQueryBuilder(QueryBuilder $queryBuilder) : void
+components/DataStack/Database/System/Capabilities/Migrations/Design/Migration.php:41:    abstract public function up(): void;
+components/DataStack/Database/System/Capabilities/Migrations/Design/Migration.php:46:    abstract public function down(): void;
+components/DataStack/Database/System/Capabilities/Migrations/Design/Enums/FieldType.php:69:    public static function fromInput(string|self|null $value): ?self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Enums/ForeignAction.php:15:    public static function fromInput(string|self|null $value): ?self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Enums/FieldModifier.php:25:    public static function fromInput(string|self|null $value): ?self
+components/DataStack/Database/System/Capabilities/Migrations/Design/TypeMapping/SQLToPHPTypeMapper.php:101:    public function toDocBlockType(string $sqlType, bool $nullable = false): string
+components/DataStack/Database/System/Capabilities/Migrations/Design/TypeMapping/SQLToPHPTypeMapper.php:116:    public function toPhpType(string $sqlType): string
+components/DataStack/Database/System/Capabilities/Migrations/Design/TypeMapping/SQLToPHPTypeMapper.php:144:    public function suggestValueObject(string $sqlType): ?string
+components/DataStack/Database/System/Capabilities/Migrations/Design/TypeMapping/SQLToPHPTypeMapper.php:166:    public function shouldUseValueObject(string $sqlType): bool
+components/DataStack/Database/System/Capabilities/Migrations/Design/TypeMapping/SQLToPHPTypeMapper.php:184:    public function getSupportedTypes(): array
+components/DataStack/Database/System/Capabilities/Migrations/Design/TypeMapping/SQLToPHPTypeMapper.php:189:    public function isSupported(string $sqlType): bool
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php:23:    public function __construct(public readonly string $name, public readonly string $type, public array $attributes = []) {}
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php:34:    public function nullable(bool $value = true): self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php:50:    public function default(mixed $value): self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php:64:    public function autoIncrement(): self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php:78:    public function unsigned(): self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php:92:    public function primary(): self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php:106:    public function unique(): self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php:122:    public function index(?string $name = null): self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php:138:    public function charset(string $charset): self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php:154:    public function collation(string $collation): self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php:168:    public function useCurrent(): self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php:182:    public function useCurrentOnUpdate(): self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php:196:    public function storedAs(string $expression): self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php:210:    public function virtualAs(string $expression): self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php:229:    public function references(string $table, ?string $column = null, ?string $onDelete = null, string $onUpdate = 'CASCADE'): self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php:252:    public function comment(string $text): self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Column/Render/ColumnSQLRenderer.php:25:    public function render(ColumnDefinition $columnDefinition, GrammarInterface $grammar): string
+components/DataStack/Database/System/Capabilities/Migrations/Migrations.php:29:    public function __construct(
+components/DataStack/Database/System/Capabilities/Migrations/Migrations.php:40:    public function create(string $table, callable $callback, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/Migrations.php:45:    public function schema(): Schema
+components/DataStack/Database/System/Capabilities/Migrations/Migrations.php:54:    public function dropIfExists(string $table, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/Migrations.php:63:    public function truncate(string $table, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/Migrations.php:72:    public function createDatabase(string $name, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/Migrations.php:81:    public function dropDatabase(string $name, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/Migrations.php:86:    public function generator(): MigrationGenerator
+components/DataStack/Database/System/Capabilities/Migrations/Migrations.php:95:    public function exporter(?string $connectionName = null) : DatabaseExporter
+components/DataStack/Database/System/Capabilities/Migrations/Migrations.php:104:    public function rollbacker(?string $connectionName = null) : RollbackMigrations
+components/DataStack/Database/System/Capabilities/Migrations/Migrations.php:117:    public function repository(?string $connectionName = null) : MigrationRepository
+components/DataStack/Database/System/Capabilities/Migrations/Migrations.php:129:    public function builder(?string $connectionName = null) : QueryBuilder
+components/DataStack/Database/System/Capabilities/Migrations/Migrations.php:138:    public function runner(?string $connectionName = null) : MigrationRunner
+components/DataStack/Database/System/Capabilities/Migrations/Migrations.php:148:    public function loader(): MigrationLoader
+components/DataStack/Database/System/Capabilities/Migrations/Migrations.php:157:    public function status(?string $connectionName = null) : ReadMigrationStatus
+components/DataStack/Database/System/Capabilities/Migrations/Migrations.php:169:    public function seed(Seeder|string $seeder, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/MigrationRepository.php:11:    public function __construct(private PDO $pdo) {}
+components/DataStack/Database/System/Capabilities/Migrations/MigrationRepository.php:13:    public function ensureTableExists(): void
+components/DataStack/Database/System/Capabilities/Migrations/MigrationRepository.php:22:    public function getRan(): array
+components/DataStack/Database/System/Capabilities/Migrations/MigrationRepository.php:27:    public function log(string $migration, int $batch): void
+components/DataStack/Database/System/Capabilities/Migrations/MigrationRepository.php:33:    public function getLastBatchNumber(): int
+components/DataStack/Database/System/Capabilities/Migrations/ReadMigrationStatus/ReadMigrationStatus.php:16:    public function __construct(
+components/DataStack/Database/System/Capabilities/Migrations/ReadMigrationStatus/ReadMigrationStatus.php:29:    public function read(string $path): array
+components/DataStack/Database/System/Capabilities/Migrations/CLI/SchemaCommand.php:12:    public function create(string $table, Closure $callback): bool
+components/DataStack/Database/System/Capabilities/Migrations/CLI/SchemaCommand.php:22:    public function drop(): bool
+components/DataStack/Database/System/Capabilities/Migrations/CLI/SchemaCommand.php:27:    public function table(string $table, Closure $callback): bool
+components/DataStack/Database/System/Capabilities/Migrations/CLI/MigrateCommand.php:15:    public function __construct()
+components/DataStack/Database/System/Capabilities/Migrations/CLI/MigrateCommand.php:20:    public function up(): array
+components/DataStack/Database/System/Capabilities/Migrations/CLI/MigrateCommand.php:69:    public function down(int $steps = 1): array
+components/DataStack/Database/System/Capabilities/Migrations/CLI/MigrateCommand.php:101:    public function fresh(): array
+components/DataStack/Database/System/Capabilities/Migrations/CLI/MigrateCommand.php:111:    public function status(): array
+components/DataStack/Database/System/Capabilities/Migrations/CLI/MigrateCommand.php:131:    public function create(string $table, Closure $callback): bool
+components/DataStack/Database/System/Capabilities/Migrations/CLI/MigrateCommand.php:141:    public function drop(): bool
+components/DataStack/Database/System/Capabilities/Migrations/CLI/MigrateCommand.php:146:    public function table(string $table, Closure $callback): bool
+components/DataStack/Database/System/Capabilities/Migrations/CLI/MigrateCommand.php:157:    public function run(): array
+components/DataStack/Database/System/Capabilities/Migrations/CLI/SeederCommand.php:11:    public function run(): array
+components/DataStack/Database/System/Capabilities/Migrations/SeedDatabase/Seeder.php:22:    public function call(string $class): void
+components/DataStack/Database/System/Capabilities/Migrations/SeedDatabase/Seeder.php:32:    abstract public function run(): void;
+components/DataStack/Database/System/Capabilities/Migrations/SeedDatabase/Seeder.php:34:    public function withBuilder(QueryBuilder $queryBuilder): static
+components/DataStack/Database/System/Capabilities/Migrations/Exceptions/MigrationException.php:27:    public function __construct(
+components/DataStack/Database/System/Capabilities/Migrations/Exceptions/MigrationException.php:33:        parent::__construct(message: sprintf('Migration [%s] failed: %s', $this->migrationClass, $message), code: 0, previous: $throwable);
+components/DataStack/Database/System/Capabilities/Migrations/Exceptions/MigrationException.php:41:    public function getMigrationClass(): string
+components/DataStack/Database/System/Capabilities/Migrations/Exceptions/MigrationException.php:51:    public function getSql(): ?string
+components/DataStack/Database/System/Capabilities/Migrations/RollbackMigrations/RollbackMigrations.php:17:    public function __construct(
+components/DataStack/Database/System/Capabilities/Migrations/RollbackMigrations/RollbackMigrations.php:28:    public function run(string $path, int $steps = 1): array
+components/DataStack/Database/System/Capabilities/Migrations/Schema/SchemaBuilder.php:9:    public function create(string $table): void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/SchemaBuilder.php:15:    public function drop(string $table): void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/DropTable.php:15:    public function __construct(private QueryBuilder $queryBuilder) {}
+components/DataStack/Database/System/Capabilities/Migrations/Schema/DropTable.php:20:    public function named(string $table): void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/CreateDatabase.php:15:    public function __construct(private QueryBuilder $queryBuilder) {}
+components/DataStack/Database/System/Capabilities/Migrations/Schema/CreateDatabase.php:20:    public function named(string $name): void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/TruncateTable.php:15:    public function __construct(private QueryBuilder $queryBuilder) {}
+components/DataStack/Database/System/Capabilities/Migrations/Schema/TruncateTable.php:20:    public function named(string $table): void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/DropDatabase.php:15:    public function __construct(private QueryBuilder $queryBuilder) {}
+components/DataStack/Database/System/Capabilities/Migrations/Schema/DropDatabase.php:20:    public function named(string $name): void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/Schema.php:18:    public function __construct(private Query $query) {}
+components/DataStack/Database/System/Capabilities/Migrations/Schema/Schema.php:23:    public function create(string $table, callable $callback, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/Schema.php:67:    public function table(string $table, callable $callback, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/Schema.php:81:    public function drop(string $table, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/Schema.php:92:    public function dropIfExists(string $table, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/Schema.php:102:    public function truncate(string $table, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/Schema.php:112:    public function createDatabase(string $name, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/Schema/Schema.php:122:    public function dropDatabase(string $name, ?string $connectionName = null) : void
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRunner.php:19:    public function __construct(private MigrationRepository $migrationRepository, private QueryBuilder $queryBuilder, private Transactions $transactions, private ?string $connectionName = null) {}
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRunner.php:21:    public function up(array $migrations, string $path, bool $dryRun = false): void
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRunner.php:81:    public function rollback(array $migrations, int $steps = 1): void
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:20:    public function __construct(private readonly QueryBuilder $queryBuilder, private readonly Schema $schema) {
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:26:    public function getRan(): array
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:36:    public function getLastBatch(int $steps = 1): array
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:51:    public function getNextBatchNumber(): int
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:59:    public function log(string $name, int $batch, string $checksum): void
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:71:    public function remove(string $name): void
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:79:    public function ensureTableExists(): void
+components/DataStack/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php:91:    public function createRepository(): void
+components/DataStack/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php:20:    public function getChecksum(string $name, string $path): string
+components/DataStack/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php:31:    public function getPending(string $path, array $ran): array
+components/DataStack/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php:44:    public function load(string $path): array
+components/DataStack/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php:100:    public function getMigrationName(string $file): string
+components/DataStack/Database/System/Capabilities/Migrations/MigrationEngine.php:9:    public function __construct(
+components/DataStack/Database/System/Capabilities/Migrations/MigrationEngine.php:14:    public function migrate(): void
+components/DataStack/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:17:    public function __construct(private PDO $pdo) {}
+components/DataStack/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php:31:    public function exportToSql(string $path, ?string $table = null): string
+components/DataStack/Database/System/Capabilities/Migrations/CreateMigration/MigrationGenerator.php:27:    public function generate(string $name, string $path, ?string $table = null, bool $create = false) : string
+components/DataStack/Database/System/Capabilities/Migrations/CreateMigration/Stubs/create.stub:16:    public function up() : void
+components/DataStack/Database/System/Capabilities/Migrations/CreateMigration/Stubs/create.stub:27:    public function down() : void
+components/DataStack/Database/System/Capabilities/Migrations/CreateMigration/Stubs/update.stub:16:    public function up() : void
+components/DataStack/Database/System/Capabilities/Migrations/CreateMigration/Stubs/update.stub:26:    public function down() : void
+components/DataStack/Database/System/Capabilities/Migrations/CreateMigration/Stubs/blank.stub:15:    public function up() : void
+components/DataStack/Database/System/Capabilities/Migrations/CreateMigration/Stubs/blank.stub:23:    public function down() : void
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/TableDefinition.php:21:    public function __construct(public string $name) {}
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:34:    public function __construct(private readonly string $table) {}
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:39:    public function setAlterMode(): self
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:53:    public function id(string $name = 'id'): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:85:    public function tinyInteger(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:97:    public function smallInteger(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:109:    public function integer(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:121:    public function bigInteger(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:135:    public function decimal(string $name, ?int $precision = null, int $scale = 2): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:149:    public function float(string $name): ColumnDefinition
+components/DataStack/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php:161:    public function double(string $name): ColumnDefinition
+
+== BACKUP/STAGING SCHEMA / MIGRATION FILES ==
+EVIDENCE/recovery-staging/from-backup/database/components/Database/Integrations/Console/MakeMigrationCommand.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/Migrations.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/Schema.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/CreateMigration/MigrationGenerator.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Design/BaseMigration.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Design/Column/Render/ColumnSQLRenderer.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Design/Table/TableDefinition.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Exceptions/MigrationException.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Migrations.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/ReadMigrationStatus/ReadMigrationStatus.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/RollbackMigrations/RollbackMigrations.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/RunMigrations/MigrationRunner.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Schema/DropTable.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Schema/Schema.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Migrations/Schema/TruncateTable.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/ORM/Attributes/Column.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/ORM/Attributes/JoinColumn.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/ORM/Attributes/Table.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Projections/Column.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/ValueObjects/ColumnIdentifier.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/ValueObjects/TableIdentifier.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Migrations.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/Schema.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/SchemaBuilder.php
+
+== OLD TO NEW MAP Schema/Migration lines ==
+| `components/Database/Integrations/Console/MakeMigrationCommand.php` | `components/DataStack/Database/System/Capabilities/Migrations/MakeMigrationCommand.php` | restore/slice | pending |
+| `components/Database/Migrations.php` | `components/DataStack/Database/System/Capabilities/Migrations/Migrations.php` | restore/slice | pending |
+| `components/Database/Schema.php` | `components/DataStack/Database/System/Capabilities/SchemaBuilding/Schema.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/CreateMigration/MigrationGenerator.php` | `components/DataStack/Database/System/Capabilities/Migrations/MigrationGenerator.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/CreateMigration/Stubs/blank.stub` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/blank.stub` | review | pending |
+| `components/Database/System/Capabilities/Migrations/CreateMigration/Stubs/create.stub` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/create.stub` | review | pending |
+| `components/Database/System/Capabilities/Migrations/CreateMigration/Stubs/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Migrations/CreateMigration/Stubs/update.stub` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/update.stub` | review | pending |
+| `components/Database/System/Capabilities/Migrations/CreateMigration/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Migrations/Design/BaseMigration.php` | `components/DataStack/Database/System/Capabilities/Migrations/BaseMigration.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/Design/Column/DSL/ColumnDefinition.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/ColumnDefinition.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/Design/Column/DSL/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Migrations/Design/Column/Render/ColumnSQLRenderer.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/ColumnSQLRenderer.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/Design/Column/Render/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Migrations/Design/Column/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Migrations/Design/Enums/FieldModifier.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/FieldModifier.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/Design/Enums/FieldType.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/FieldType.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/Design/Enums/ForeignAction.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/ForeignAction.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/Design/Enums/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Migrations/Design/Table/Blueprint.php` | `components/DataStack/Database/System/Capabilities/SchemaBuilding/Blueprint.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/Design/Table/TableDefinition.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/TableDefinition.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/Design/Table/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Migrations/Design/TypeMapping/SQLToPHPTypeMapper.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/SQLToPHPTypeMapper.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/Design/TypeMapping/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Migrations/Design/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Migrations/Exceptions/MigrationException.php` | `components/DataStack/Database/System/Capabilities/Migrations/MigrationException.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/Exceptions/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Migrations/ExportDatabase/DatabaseExporter.php` | `components/DataStack/Database/System/PublicSurface/DatabaseExporter.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/ExportDatabase/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Migrations/LoadMigrations/MigrationLoader.php` | `components/DataStack/Database/System/Capabilities/Migrations/MigrationLoader.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/LoadMigrations/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Migrations/Migrations.php` | `components/DataStack/Database/System/Capabilities/Migrations/Migrations.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/ReadMigrationStatus/ReadMigrationStatus.php` | `components/DataStack/Database/System/Capabilities/Migrations/ReadMigrationStatus.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/ReadMigrationStatus/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Migrations/RollbackMigrations/RollbackMigrations.php` | `components/DataStack/Database/System/Capabilities/Migrations/RollbackMigrations.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/RollbackMigrations/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Migrations/RunMigrations/MigrationRepository.php` | `components/DataStack/Database/System/Capabilities/Migrations/MigrationRepository.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/RunMigrations/MigrationRunner.php` | `components/DataStack/Database/System/Capabilities/Migrations/MigrationRunner.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/RunMigrations/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Migrations/Schema/CreateDatabase.php` | `components/DataStack/Database/System/PublicSurface/CreateDatabase.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/Schema/DropDatabase.php` | `components/DataStack/Database/System/PublicSurface/DropDatabase.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/Schema/DropTable.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/DropTable.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/Schema/Schema.php` | `components/DataStack/Database/System/Capabilities/SchemaBuilding/Schema.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/Schema/TruncateTable.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/TruncateTable.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/Schema/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Migrations/SeedDatabase/Seeder.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/Seeder.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Migrations/SeedDatabase/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Migrations/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/ORM/Attributes/Column.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/Column.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/ORM/Attributes/JoinColumn.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/JoinColumn.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/ORM/Attributes/Table.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/Table.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Projections/Column.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/Column.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/ValueObjects/ColumnIdentifier.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/ColumnIdentifier.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/ValueObjects/TableIdentifier.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/TableIdentifier.php` | restore/slice | pending |
+| `components/Database/System/PublicSurface/Migrations.php` | `components/DataStack/Database/System/Capabilities/Migrations/Migrations.php` | restore/slice | pending |
+| `components/Database/System/PublicSurface/Schema.php` | `components/DataStack/Database/System/Capabilities/SchemaBuilding/Schema.php` | restore/slice | pending |
+| `components/Database/System/PublicSurface/SchemaBuilder.php` | `components/DataStack/Database/System/Capabilities/SchemaBuilding/SchemaBuilder.php` | restore/slice | pending |
+
+== FOCUSED PHPSTAN Schema/Migrations ==
+
+== GIT STATUS ==
+ M components/DataStack/Database/System/Capabilities/Query/Builder/Concerns/HasAdvancedMutations.php
+ M components/DataStack/Database/System/Capabilities/Query/Builder/Concerns/HasConditions.php
+ M components/DataStack/Database/System/Capabilities/Query/Builder/Concerns/HasControlStructures.php
+ M components/DataStack/Database/System/Capabilities/Query/Builder/Concerns/HasGroups.php
+ M components/DataStack/Database/System/Capabilities/Query/Builder/Concerns/HasJoins.php
+ M components/DataStack/Database/System/Capabilities/Query/Builder/Concerns/HasOrders.php
+ M components/DataStack/Database/System/Capabilities/Query/Builder/Concerns/HasSoftDeletes.php
+ M components/DataStack/Database/System/Capabilities/Query/Builder/Concerns/Macroable.php
+ M components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php
+ M components/DataStack/Database/System/Capabilities/Query/Grammar/Grammar.php
+ M components/DataStack/Database/System/Capabilities/Query/State/QueryState.php
+?? EVIDENCE/recovery-reports/
+?? Makefile.recovery
+?? components/Application/Localization/
+?? components/Operations/Events/how-this-works.md
+?? components/Operations/Notifications/how-this-works.md
+?? components/Operations/Observability/how-this-works.md
+?? tests/Unit/Components/DataStack/Database/QueryBuilderReadHelpersTest.php
+?? tests/Unit/Components/DataStack/Database/QueryBuilderSelectTest.php
+?? tests/Unit/Components/DataStack/Database/QueryBuilderWriteTest.php
+?? tests/Unit/Generated/
+?? tooling/recovery/

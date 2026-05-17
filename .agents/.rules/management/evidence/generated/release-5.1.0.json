@@ -1,0 +1,49 @@
+{
+  "version": "5.1.0",
+  "created_at": "2026-05-17T16:41:49.454462+00:00",
+  "artifacts": {
+    "version.json": {
+      "path": "/home/shomsy/projects/agent-harness/.agents/management/evidence/generated/version.json",
+      "exists": true
+    },
+    "compatibility-matrix.json": {
+      "path": "/home/shomsy/projects/agent-harness/.agents/management/evidence/generated/compatibility-matrix.json",
+      "exists": true
+    },
+    "CHANGELOG.md": {
+      "path": "/home/shomsy/projects/agent-harness/.agents/management/evidence/generated/CHANGELOG.md",
+      "exists": true
+    },
+    "deprecations.json": {
+      "path": "/home/shomsy/projects/agent-harness/.agents/management/evidence/generated/deprecations.json",
+      "exists": true
+    },
+    "schema-version.json": {
+      "path": "/home/shomsy/projects/agent-harness/.agents/management/evidence/generated/schema-version.json",
+      "exists": true
+    }
+  },
+  "schema_version": "5.1",
+  "compatibility": {
+    "5.0.0": {
+      "python_min": "3.10",
+      "python_max": null,
+      "governance_schemas": [
+        "5.0"
+      ],
+      "breaking_changes": false,
+      "notes": "Initial v5 platform release"
+    },
+    "5.1.0": {
+      "python_min": "3.10",
+      "python_max": null,
+      "governance_schemas": [
+        "5.0",
+        "5.1"
+      ],
+      "breaking_changes": false,
+      "notes": "Phase 9 release discipline"
+    }
+  },
+  "changes": []
+}

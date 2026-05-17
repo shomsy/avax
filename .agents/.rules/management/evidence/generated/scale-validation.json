@@ -1,0 +1,66 @@
+{
+  "scale_validation": {
+    "large_repo": {
+      "test": "validate_large_repo",
+      "max_files_configured": 100000,
+      "actual_files": 4016,
+      "scan_time_ms": 33.26,
+      "cost_per_file_ms": 0.008282,
+      "estimated_time_at_max_ms": 828.21,
+      "within_budget": true
+    },
+    "huge_evidence_store": {
+      "test": "validate_huge_evidence_store",
+      "max_files_configured": 10000,
+      "files_created": 1000,
+      "create_time_ms": 19.18,
+      "files_scanned": 1000,
+      "scan_time_ms": 0.34,
+      "ms_per_file": 0.0003
+    },
+    "high_delegation_volume": {
+      "test": "validate_high_delegation_volume",
+      "delegation_count": 100,
+      "chain_depth": 100,
+      "build_time_ms": 0.09,
+      "verify_time_ms": 0.0081,
+      "chain_valid": true
+    },
+    "concurrent_stress": {
+      "test": "validate_concurrent_stress",
+      "workers": 5,
+      "results": [
+        {
+          "worker": 0,
+          "elapsed_ms": 8.56,
+          "hash": "8814b41e6a2d90038f713e91f70b2a914497069c3519e1f1e4973b6f2e215e98"
+        },
+        {
+          "worker": 1,
+          "elapsed_ms": 9.98,
+          "hash": "51406d74814ac3151ee5490b7f898436c90ae45fc8257ded1de77fa6400d5070"
+        },
+        {
+          "worker": 2,
+          "elapsed_ms": 8.76,
+          "hash": "45535f1badab23feb4364a2ccd626f7a03d7294e9910d6825d86249787ca428c"
+        },
+        {
+          "worker": 3,
+          "elapsed_ms": 8.83,
+          "hash": "5c30351e52580ebb0b31338b14869ada8ff992af7d66731d74e2c32714d04c27"
+        },
+        {
+          "worker": 4,
+          "elapsed_ms": 8.65,
+          "hash": "8056da7fea7f967f09b40eb2406be1439b49fe9e4e17022f911402e75a40f4ce"
+        }
+      ],
+      "total_time_ms": 44.82,
+      "worker_min_ms": 8.56,
+      "worker_max_ms": 9.98,
+      "worker_avg_ms": 8.96
+    },
+    "timestamp": 1779038219.647966
+  }
+}

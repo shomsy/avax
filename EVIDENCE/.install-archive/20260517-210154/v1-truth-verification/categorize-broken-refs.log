@@ -1,0 +1,6 @@
+COMMAND: php tooling/refactor/categorize-broken-refs.php
+DATE: Wed May  6 15:02:12 CEST 2026
+
+Categorization complete. Output written to EVIDENCE/v1-integrity/broken-reference-groups.md
+
+EXIT_CODE=0

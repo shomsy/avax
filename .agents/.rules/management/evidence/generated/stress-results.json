@@ -1,0 +1,266 @@
+{
+  "stress_results": {
+    "execution": {
+      "test": "stress_execution",
+      "count": 50,
+      "timings_ms": [
+        8.780956268310547,
+        8.560419082641602,
+        8.701801300048828,
+        8.410930633544922,
+        9.043693542480469,
+        8.176803588867188,
+        8.160829544067383,
+        8.522510528564453,
+        8.945226669311523,
+        8.806705474853516,
+        8.72492790222168,
+        8.412837982177734,
+        9.464740753173828,
+        8.622169494628906,
+        8.810758590698242,
+        9.141683578491211,
+        8.951187133789062,
+        8.807897567749023,
+        10.851383209228516,
+        14.772653579711914,
+        11.16943359375,
+        10.597705841064453,
+        9.83738899230957,
+        11.599540710449219,
+        9.136676788330078,
+        9.787559509277344,
+        9.437084197998047,
+        10.069131851196289,
+        9.29403305053711,
+        10.303020477294922,
+        9.705781936645508,
+        9.239435195922852,
+        10.162353515625,
+        8.670330047607422,
+        9.150266647338867,
+        9.241342544555664,
+        10.132551193237305,
+        9.422540664672852,
+        9.819746017456055,
+        8.846044540405273,
+        9.742021560668945,
+        8.689641952514648,
+        9.33837890625,
+        8.750677108764648,
+        9.012937545776367,
+        9.754657745361328,
+        10.55908203125,
+        8.529424667358398,
+        9.341239929199219,
+        9.381771087646484
+      ],
+      "min_ms": 8.16,
+      "max_ms": 14.77,
+      "avg_ms": 9.43,
+      "p50_ms": 9.24,
+      "p95_ms": 11.17,
+      "p99_ms": 14.77,
+      "total_ms": 471.39
+    },
+    "replay": {
+      "test": "stress_replay",
+      "count": 20,
+      "results": [
+        {
+          "iteration": 0,
+          "elapsed_ms": 0.0534,
+          "hash_match": true
+        },
+        {
+          "iteration": 1,
+          "elapsed_ms": 0.0086,
+          "hash_match": true
+        },
+        {
+          "iteration": 2,
+          "elapsed_ms": 0.0055,
+          "hash_match": true
+        },
+        {
+          "iteration": 3,
+          "elapsed_ms": 0.0043,
+          "hash_match": true
+        },
+        {
+          "iteration": 4,
+          "elapsed_ms": 0.0043,
+          "hash_match": true
+        },
+        {
+          "iteration": 5,
+          "elapsed_ms": 0.0038,
+          "hash_match": true
+        },
+        {
+          "iteration": 6,
+          "elapsed_ms": 0.0041,
+          "hash_match": true
+        },
+        {
+          "iteration": 7,
+          "elapsed_ms": 0.0041,
+          "hash_match": true
+        },
+        {
+          "iteration": 8,
+          "elapsed_ms": 0.0036,
+          "hash_match": true
+        },
+        {
+          "iteration": 9,
+          "elapsed_ms": 0.0038,
+          "hash_match": true
+        },
+        {
+          "iteration": 10,
+          "elapsed_ms": 0.0038,
+          "hash_match": true
+        },
+        {
+          "iteration": 11,
+          "elapsed_ms": 0.0041,
+          "hash_match": true
+        },
+        {
+          "iteration": 12,
+          "elapsed_ms": 0.0038,
+          "hash_match": true
+        },
+        {
+          "iteration": 13,
+          "elapsed_ms": 0.0036,
+          "hash_match": true
+        },
+        {
+          "iteration": 14,
+          "elapsed_ms": 0.0038,
+          "hash_match": true
+        },
+        {
+          "iteration": 15,
+          "elapsed_ms": 0.0033,
+          "hash_match": true
+        },
+        {
+          "iteration": 16,
+          "elapsed_ms": 0.0036,
+          "hash_match": true
+        },
+        {
+          "iteration": 17,
+          "elapsed_ms": 0.0036,
+          "hash_match": true
+        },
+        {
+          "iteration": 18,
+          "elapsed_ms": 0.0036,
+          "hash_match": true
+        },
+        {
+          "iteration": 19,
+          "elapsed_ms": 0.0036,
+          "hash_match": true
+        }
+      ],
+      "min_ms": 0.0033,
+      "max_ms": 0.0534,
+      "avg_ms": 0.0066,
+      "consistency": "all_hashes_matched"
+    },
+    "governance_load": {
+      "test": "stress_governance_load",
+      "files_scanned": 3534,
+      "files_hashed": 100,
+      "scan_time_ms": 36.6,
+      "hash_time_ms": 1.34,
+      "total_time_ms": 37.93
+    },
+    "graph_traversal": {
+      "test": "stress_graph_traversal",
+      "max_nodes": 100,
+      "nodes_created": 100,
+      "edges_created": 188,
+      "nodes_visited": 100,
+      "traversal_time_ms": 0.3252,
+      "traversal_order_sample": [
+        "node-0",
+        "node-1",
+        "node-2",
+        "node-11",
+        "node-3",
+        "node-12",
+        "node-21",
+        "node-4",
+        "node-13",
+        "node-22"
+      ]
+    },
+    "telemetry_growth": {
+      "test": "stress_telemetry_growth",
+      "iterations": 10,
+      "sizes": [
+        {
+          "iteration": 0,
+          "json_size_bytes": 2254,
+          "json_size_kb": 2.2012
+        },
+        {
+          "iteration": 1,
+          "json_size_bytes": 2343,
+          "json_size_kb": 2.2881
+        },
+        {
+          "iteration": 2,
+          "json_size_bytes": 2398,
+          "json_size_kb": 2.3418
+        },
+        {
+          "iteration": 3,
+          "json_size_bytes": 2416,
+          "json_size_kb": 2.3594
+        },
+        {
+          "iteration": 4,
+          "json_size_bytes": 2424,
+          "json_size_kb": 2.3672
+        },
+        {
+          "iteration": 5,
+          "json_size_bytes": 2432,
+          "json_size_kb": 2.375
+        },
+        {
+          "iteration": 6,
+          "json_size_bytes": 2434,
+          "json_size_kb": 2.377
+        },
+        {
+          "iteration": 7,
+          "json_size_bytes": 2437,
+          "json_size_kb": 2.3799
+        },
+        {
+          "iteration": 8,
+          "json_size_bytes": 2438,
+          "json_size_kb": 2.3809
+        },
+        {
+          "iteration": 9,
+          "json_size_bytes": 2440,
+          "json_size_kb": 2.3828
+        }
+      ],
+      "min_size_bytes": 2254,
+      "max_size_bytes": 2440,
+      "avg_size_bytes": 2401.6,
+      "growth_rate": "linear"
+    },
+    "timestamp": 1779038219.2625368
+  }
+}

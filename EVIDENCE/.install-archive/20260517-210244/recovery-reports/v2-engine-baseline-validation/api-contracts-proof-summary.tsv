@@ -1,0 +1,5 @@
+order	command	exit	log
+21	vendor/bin/phpunit --no-coverage --filter ApiContractsTest	0	21-phpunit-api-contracts.log
+22	vendor/bin/phpstan analyse components/API/Contracts tests/Unit/Components/API/Contracts --memory-limit=1G --error-format=raw --no-progress	1	22-phpstan-api-contracts.raw
+23	php tooling/refactor/check-component-canonical-shape.php	0	23-check-component-canonical-shape-after-api-contracts.log
+24	php tooling/refactor/check-advanced-pattern-folder-violations.php	0	24-check-advanced-pattern-folder-violations-after-api-contracts.log

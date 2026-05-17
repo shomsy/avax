@@ -1,0 +1,298 @@
+== ORM constructors before patch ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata;
+
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Column;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Entity;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\GeneratedValue;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Id;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\JoinColumn;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\ManyToMany;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\ManyToOne;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\OneToMany;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\OneToOne;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Attributes\Table;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Relations\RelationKind;
+use ReflectionClass;
+use RuntimeException;
+
+final class AttributeMetadataReader
+{
+    /** @var array<class-string, EntityMetadata> */
+    private array $cache = [];
+
+    /**
+     * @param class-string $entityClass
+     */
+    public function for(string $entityClass): EntityMetadata
+    {
+        return $this->cache[$entityClass] ??= $this->read(entityClass: $entityClass);
+    }
+
+    /**
+     * @param class-string $entityClass
+     */
+    private function read(string $entityClass): EntityMetadata
+    {
+        $reflectionClass = new ReflectionClass(objectOrClass: $entityClass);
+
+        $entityAttribute = $reflectionClass->getAttributes(name: Entity::class)[0] ?? null;
+        if ($entityAttribute === null) {
+            throw new RuntimeException(message: sprintf('Entity class %s must declare #[Entity].', $entityClass));
+        }
+
+        $tableAttribute = $reflectionClass->getAttributes(name: Table::class)[0] ?? null;
+        $table = $tableAttribute !== null
+            ? $tableAttribute->newInstance()->name
+            : strtolower(string: $reflectionClass->getShortName()) . 's';
+
+        $entity = $entityAttribute->newInstance();
+        $fields = [];
+        $relations = [];
+
+        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+            $columnAttribute = $reflectionProperty->getAttributes(name: Column::class)[0] ?? null;
+            $idAttribute     = $reflectionProperty->getAttributes(name: Id::class)[0] ?? null;
+            $generatedAttribute = $reflectionProperty->getAttributes(name: GeneratedValue::class)[0] ?? null;
+
+            if ($columnAttribute !== null || $idAttribute !== null) {
+                $column                                 = $columnAttribute?->newInstance() ?? new Column(name: $reflectionProperty->getName());
+                $fields[$reflectionProperty->getName()] = new FieldMetadata(
+                    property : $reflectionProperty->getName(),
+                    column   : $column->name ?? $reflectionProperty->getName(),
+                    type     : $column->type,
+                    id       : $idAttribute !== null,
+                    generated: $generatedAttribute !== null,
+                    nullable : $column->nullable,
+                );
+            }
+
+            $joinColumn = $reflectionProperty->getAttributes(name: JoinColumn::class)[0] ?? null;
+            $relation        = $reflectionProperty->getAttributes(name: ManyToOne::class)[0]
+                ?? $reflectionProperty->getAttributes(name: OneToMany::class)[0]
+                ?? $reflectionProperty->getAttributes(name: OneToOne::class)[0]
+                ?? $reflectionProperty->getAttributes(name: ManyToMany::class)[0]
+                ?? null;
+
+            if ($relation === null) {
+                continue;
+            }
+
+            $instance = $relation->newInstance();
+            $kind            = match (true) {
+                $instance instanceof ManyToOne => RelationKind::ManyToOne,
+                $instance instanceof OneToMany => RelationKind::OneToMany,
+                $instance instanceof OneToOne => RelationKind::OneToOne,
+                default                       => RelationKind::ManyToMany,
+            };
+
+            $relations[$reflectionProperty->getName()] = new RelationMetadata(
+                property        : $reflectionProperty->getName(),
+                targetEntity    : $instance->targetEntity,
+                mappedBy        : $instance->mappedBy ?? null,
+                inversedBy      : $instance->inversedBy ?? null,
+                joinColumn      : $joinColumn?->newInstance()->name ?? null,
+                referencedColumn: $joinColumn?->newInstance()->referencedColumnName ?? 'id',
+                cascade         : $instance->cascade ?? [],
+                lazy            : $instance->lazy ?? true,
+                kind            : $kind,
+            );
+        }
+
+        return new EntityMetadata(
+            className      : $entityClass,
+            table          : $table,
+            fields         : $fields,
+            relations      : $relations,
+            repositoryClass: $entity->repositoryClass,
+        );
+    }
+}
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\ORM\IdentityMap;
+
+final class IdentityMap
+{
+    /** @var array<string, array<string, object>> */
+    private array $entities = [];
+
+    public function get(string $entityClass, mixed $id): ?object
+    {
+        return $this->entities[$entityClass][(string) $id] ?? null;
+    }
+
+    public function put(string $entityClass, mixed $id, object $entity): void
+    {
+        $this->entities[$entityClass][(string) $id] = $entity;
+    }
+
+    public function remove(string $entityClass, mixed $id): void
+    {
+        unset($this->entities[$entityClass][(string) $id]);
+    }
+
+    public function clear(): void
+    {
+        $this->entities = [];
+    }
+}
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\ORM\Hydration;
+
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\IdentityMap\IdentityMap;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata\EntityMetadata;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata\FieldMetadata;
+use ReflectionClass;
+use ReflectionProperty;
+
+final readonly class Hydrator
+{
+    public function __construct(private IdentityMap $identityMap) {}
+
+    /**
+     * @param class-string         $entityClass
+     * @param array<string, mixed> $row
+     */
+    public function hydrate(string $entityClass, array $row, EntityMetadata $entityMetadata) : object
+    {
+        $identifier = $entityMetadata->identifierField();
+        $entity = null;
+
+        if ($identifier instanceof FieldMetadata && array_key_exists(key: $identifier->column, array: $row)) {
+            $entity = $this->identityMap->get(
+                entityClass: $entityClass,
+                id         : $row[$identifier->column],
+            );
+        }
+
+        $entity ??= new ReflectionClass(objectOrClass: $entityClass)->newInstanceWithoutConstructor();
+
+        foreach ($entityMetadata->fields as $field) {
+            if (! array_key_exists(key: $field->column, array: $row)) {
+                continue;
+            }
+
+            $property = new ReflectionProperty(class: $entityClass, property: $field->property);
+            $property->setValue(objectOrValue: $entity, value: $row[$field->column]);
+        }
+
+        if ($identifier instanceof FieldMetadata && array_key_exists(key: $identifier->column, array: $row)) {
+            $this->identityMap->put(
+                entityClass: $entityClass,
+                id         : $row[$identifier->column],
+                entity     : $entity,
+            );
+        }
+
+        return $entity;
+    }
+}
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\ORM\Persisters;
+
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Hydration\Hydrator;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata\AttributeMetadataReader;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata\EntityMetadata;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata\FieldMetadata;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Query;
+use ReflectionException;
+use ReflectionProperty;
+use RuntimeException;
+use Throwable;
+
+final readonly class EntityPersister
+{
+    public function __construct(
+        private Query $query,
+        private AttributeMetadataReader $attributeMetadataReader,
+        private Hydrator $hydrator,
+    ) {}
+
+    /**
+     * @throws Throwable
+     */
+    public function insert(object $entity, ?string $connectionName = null): void
+    {
+        $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
+        $identifier = $entityMetadata->identifierField();
+        $payload = $this->payload(entity: $entity, includeIdentifier: false, metadata: $entityMetadata);
+
+        $queryBuilder = $this->query->builder(connectionName: $connectionName)->from(table: $entityMetadata->table);
+        $generatedId  = $queryBuilder->insertGetId(values: $payload);
+
+        if ($identifier instanceof FieldMetadata && $identifier->generated) {
+            $this->setPropertyValue(entity: $entity, property: $identifier->property, value: $generatedId);
+        }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function payload(object $entity, EntityMetadata $entityMetadata, bool $includeIdentifier): array
+    {
+        $payload = [];
+
+        foreach ($entityMetadata->fields as $field) {
+            if (! $includeIdentifier && ($field->id || $field->generated)) {
+                continue;
+            }
+
+            $payload[$field->column] = $this->propertyValue(entity: $entity, property: $field->property);
+        }
+
+        return $payload;
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    private function propertyValue(object $entity, string $property): mixed
+    {
+        $reflectionProperty = new ReflectionProperty(class: $entity, property: $property);
+
+        return $reflectionProperty->getValue(object: $entity);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    private function setPropertyValue(object $entity, string $property, mixed $value): void
+    {
+        $reflectionProperty = new ReflectionProperty(class: $entity, property: $property);
+        $reflectionProperty->setValue(objectOrValue: $entity, value: $value);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function update(object $entity, ?string $connectionName = null): void
+    {
+        $entityMetadata = $this->attributeMetadataReader->for(entityClass: $entity::class);
+        $identifier = $entityMetadata->identifierField();
+
+        if (! $identifier instanceof FieldMetadata) {
+            throw new RuntimeException(message: sprintf('Entity %s has no identifier mapping.', $entity::class));
+        }
+
+        $identifierValue = $this->propertyValue(entity: $entity, property: $identifier->property);
+        if ($identifierValue === null) {
+            throw new RuntimeException(message: 'Cannot update an entity without an identifier value.');
+        }
+
+        $payload = $this->payload(entity: $entity, includeIdentifier: false, metadata: $entityMetadata);
+
+        $this->query->builder(connectionName: $connectionName)
+            ->from(table: $entityMetadata->table)
+            ->where(column: $identifier->column, operator: '=', value: $identifierValue)

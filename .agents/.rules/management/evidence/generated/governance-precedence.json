@@ -1,0 +1,648 @@
+{
+  "precedence": {
+    ".agents/.rules/governance/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/agents/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/agents/orchestration/society-of-mind-pattern.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/agents/roles/agent-roles.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/ARCHITECTURE.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/adoption-model.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/architecture-standard.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/contract-linting.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/execution-profiles.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/migration-governance.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/profiles/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/profiles/frameworks/express.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/profiles/frameworks/laravel.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/profiles/frameworks/nextjs.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/profiles/frameworks/react.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/profiles/frameworks/v-web-components.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/profiles/languages/javascript.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/profiles/languages/php.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/profiles/languages/typescript.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/architecture/runtime-hardening.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/governance/architecture/survivability-analysis.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/governance/core/README.md": {
+      "won": true,
+      "shadowed_path": ".agents/.rules/governance/core/README.md",
+      "reason": "Local override preempts frozen baseline rule under Priority Overlay Shadowing contract."
+    },
+    ".agents/governance/core/bootstrap/agent-bootstrap.md": {
+      "won": true,
+      "shadowed_path": ".agents/.rules/governance/core/bootstrap/agent-bootstrap.md",
+      "reason": "Local override preempts frozen baseline rule under Priority Overlay Shadowing contract."
+    },
+    ".agents/governance/core/bootstrap/canonical-bootstrap-lifecycle.md": {
+      "won": true,
+      "shadowed_path": ".agents/.rules/governance/core/bootstrap/canonical-bootstrap-lifecycle.md",
+      "reason": "Local override preempts frozen baseline rule under Priority Overlay Shadowing contract."
+    },
+    ".agents/governance/core/flags/feature-flags.md": {
+      "won": true,
+      "shadowed_path": ".agents/.rules/governance/core/flags/feature-flags.md",
+      "reason": "Local override preempts frozen baseline rule under Priority Overlay Shadowing contract."
+    },
+    ".agents/governance/core/quality/quality-gates.md": {
+      "won": true,
+      "shadowed_path": ".agents/.rules/governance/core/quality/quality-gates.md",
+      "reason": "Local override preempts frozen baseline rule under Priority Overlay Shadowing contract."
+    },
+    ".agents/governance/core/resolution/profile-resolution-algorithm.md": {
+      "won": true,
+      "shadowed_path": ".agents/.rules/governance/core/resolution/profile-resolution-algorithm.md",
+      "reason": "Local override preempts frozen baseline rule under Priority Overlay Shadowing contract."
+    },
+    ".agents/.rules/governance/delivery/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/operations/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/operations/backup-and-restore-runbook.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/operations/enterprise-operational-lifecycle.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/operations/management-model.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/operations/observability-and-error-envelope.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/operations/runtime-handoff-contract.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/operations/security-launch-checklist.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/operations/staging-smoke-checklist.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/release/advanced-deployment-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/release/release-and-rollback-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/delivery/workflows/workflow-pipelines.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/execution/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/execution/approvals/approval-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/execution/hooks/hooks-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/execution/policy/execution-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/execution/routing/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/execution/routing/prompt-to-governance-flow.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/execution/sandbox/sandbox-boundary-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/integrations/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/integrations/mcp/mcp-integration-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/integrations/platforms/platform-compatibility.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/context/artifact-contract.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/context/artifact-standard.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/context/context-management.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/context/subagent-delegation-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/context/system-rules.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/context/tooling-integration.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/learning/continuous-learning.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/learning/instincts-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/learning/metrics-standard.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/memory/memory-lifecycle.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/memory/universal-memory-standard.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/intelligence/memory/v3-intelligence-lifecycle.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/product/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/product/standards/product-management-standard.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/architecture/feature-first.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/architecture/layered.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/architecture/package-library.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/architecture/vertical-slice.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/frameworks/express.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/frameworks/laravel.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/frameworks/nextjs.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/frameworks/react.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/frameworks/v-web-components.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/governance/profiles/integrations/mcp-example.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/languages/css.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/languages/go.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/languages/javascript.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/languages/nodejs.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/languages/php.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/languages/typescript.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/overlays/enterprise-regulated.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/overlays/experimental.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/overlays/high-performance.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/overlays/strict-security.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/project-types/api-service.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/project-types/cli.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/project-types/framework.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/project-types/infrastructure.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/project-types/library.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/project-types/monorepo.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/project-types/web-app.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/repository-kinds/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/repository-kinds/governance-source.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/roles/engineering-reviewer.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/roles/legal-executive-reviewer.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/profiles/roles/ux-ui-reviewer.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/authentication-and-session-security.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/ci-cd-and-supply-chain-security.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/owasp-web-and-api-baseline.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/secrets-and-key-management.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/secure-development-lifecycle.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/security-operating-model.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/threat-modeling-and-abuse-case-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/tool-and-plugin-capability-isolation.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/security/vulnerability-and-incident-response.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/skills/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/skills/contract/skill-contract.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/governance/standards/coding/ai-coding-contract.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/coding/codex-usage-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/coding/how-to-coding-standards.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/coding/naming-standard.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/governance/standards/documentation/evidence-model.md": {
+      "won": true,
+      "shadowed_path": ".agents/.rules/governance/standards/documentation/evidence-model.md",
+      "reason": "Local override preempts frozen baseline rule under Priority Overlay Shadowing contract."
+    },
+    ".agents/.rules/governance/standards/documentation/how-to-document-flow.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/documentation/how-to-document.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/governance/README.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/governance/canonical-governance-map.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/governance/capability-maturity-model.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/governance/entropy-control-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/governance/governance-authoring-standard.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/governance/governance-evolution-policy.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/review/how-to-code-review.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/review/how-to-strict-review.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    },
+    ".agents/.rules/governance/standards/review/recursive-review-contract.md": {
+      "won": true,
+      "shadowed_path": null,
+      "reason": "Canonical rule cleanly resolved (no local shadowing override detected)."
+    }
+  },
+  "shadowed_rules": {
+    ".agents/.rules/governance/core/README.md": ".agents/governance/core/README.md",
+    ".agents/.rules/governance/core/bootstrap/agent-bootstrap.md": ".agents/governance/core/bootstrap/agent-bootstrap.md",
+    ".agents/.rules/governance/core/bootstrap/canonical-bootstrap-lifecycle.md": ".agents/governance/core/bootstrap/canonical-bootstrap-lifecycle.md",
+    ".agents/.rules/governance/core/flags/feature-flags.md": ".agents/governance/core/flags/feature-flags.md",
+    ".agents/.rules/governance/core/quality/quality-gates.md": ".agents/governance/core/quality/quality-gates.md",
+    ".agents/.rules/governance/core/resolution/profile-resolution-algorithm.md": ".agents/governance/core/resolution/profile-resolution-algorithm.md",
+    ".agents/.rules/governance/standards/documentation/evidence-model.md": ".agents/governance/standards/documentation/evidence-model.md"
+  }
+}

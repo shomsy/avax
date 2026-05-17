@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-05-17T16:42:27.903850+00:00",
+  "total_executions": 8,
+  "replayable_executions": 8,
+  "replayed_executions": 0,
+  "replay_success_count": 0,
+  "replay_success_rate": 0,
+  "total_drift_count": 0,
+  "drift_rate": 0.0,
+  "corruption_count": 1
+}

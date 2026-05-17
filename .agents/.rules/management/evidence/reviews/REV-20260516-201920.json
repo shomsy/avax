@@ -1,0 +1,14 @@
+{
+  "review_id": "REV-20260516-201920",
+  "timestamp": "2026-05-16T18:19:20Z",
+  "target": ".",
+  "findings": [
+    {
+      "severity": "BLOCKER",
+      "category": "VERSION_DRIFT",
+      "message": "Found stale Version 1.1.0 references in canonical governance.",
+      "remediation": "Run truth-reconciliation pass and bump to 3.0.0."
+    }
+  ],
+  "status": "RED"
+}

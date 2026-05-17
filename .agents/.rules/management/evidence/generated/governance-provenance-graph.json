@@ -1,0 +1,12 @@
+{
+  "nodes": {
+    ".agents/management/evidence/validation/checksums.json": {
+      "type": "active_raw_trace",
+      "checksum": "142e5b43fc0b06c896825d75d73b25875aa189441a373358c6928da775e9cc94",
+      "timestamp": "2026-05-16T18:19:17Z",
+      "command": "unknown",
+      "git_commit": "unknown"
+    }
+  },
+  "edges": []
+}

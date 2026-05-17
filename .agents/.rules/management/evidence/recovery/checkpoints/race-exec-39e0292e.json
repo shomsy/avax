@@ -1,0 +1,17 @@
+{
+  "checkpoint_id": "checkpoint-race-exec-39e0292e-d12161ea",
+  "execution_id": "race-exec-39e0292e",
+  "state": {
+    "lifecycle_state": "REPLAYABLE",
+    "lifecycle_history": [
+      {
+        "state": "REPLAYABLE",
+        "timestamp": 1779035536.320499
+      }
+    ],
+    "task": "race_simulator_0"
+  },
+  "saved_at": "2026-05-17T16:32:44.335816+00:00",
+  "saved_at_epoch": 1779035564.3358324,
+  "checksum": "721a8b3ae0659cf4e79648dea2e45eb768196440e7c14134f669e9c391069ec3"
+}

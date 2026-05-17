@@ -1,0 +1,27 @@
+PHPUnit 10.5.63 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.5.5
+Configuration: /home/shomsy/projects/avax/phpunit.xml
+
+.........................pong..............................S.......  63 / 222 ( 28%)
+............................................................... 126 / 222 ( 56%)
+...........................................E................... 189 / 222 ( 85%)
+.................................                               222 / 222 (100%)
+
+Time: 00:00.491, Memory: 16.00 MB
+
+There was 1 error:
+
+1) Avax\Tests\Unit\Components\CLI\Console\ConsoleCapabilitiesTest::test_registered_command_receives_arguments_options_and_propagates_exit_code
+TypeError: Avax\Components\CLI\Console\System\PublicSurface\Command::argument(): Argument #1 ($key) must be of type string, int given, called in /home/shomsy/projects/avax/tests/Unit/Components/CLI/Console/ConsoleCapabilitiesTest.php on line 164
+
+/home/shomsy/projects/avax/components/CLI/Console/System/PublicSurface/Command.php:108
+/home/shomsy/projects/avax/tests/Unit/Components/CLI/Console/ConsoleCapabilitiesTest.php:164
+/home/shomsy/projects/avax/components/CLI/Console/System/PublicSurface/Command.php:56
+/home/shomsy/projects/avax/components/CLI/Console/System/PublicSurface/Console.php:116
+/home/shomsy/projects/avax/tests/Unit/Components/CLI/Console/ConsoleCapabilitiesTest.php:87
+/home/shomsy/projects/avax/tests/Unit/Components/CLI/Console/ConsoleCapabilitiesTest.php:181
+/home/shomsy/projects/avax/tests/Unit/Components/CLI/Console/ConsoleCapabilitiesTest.php:86
+
+ERRORS!
+Tests: 222, Assertions: 1732, Errors: 1, Skipped: 1.

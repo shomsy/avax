@@ -1,0 +1,158 @@
+== ORM Entities full file ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\Capabilities\ORM;
+
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Hydration\Hydrator;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata\AttributeMetadataReader;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Persisters\EntityPersister;
+use Avax\Components\DataStack\Database\System\Capabilities\Query\Query;
+use Throwable;
+
+/**
+ * Coordinates entity lifecycle: find, persist, update, delete, and refresh.
+ */
+readonly class Entities
+{
+    public function __construct(
+        Query $query,
+        AttributeMetadataReader $attributeMetadataReader,
+        Hydrator $hydrator,
+        private EntityPersister $entityPersister,
+    ) {}
+
+    /**
+     * @param class-string $entityClass
+     */
+    public function find(string $entityClass, mixed $id, ?string $connection = null): ?object
+    {
+        return $this->entityPersister->find(entityClass: $entityClass, id: $id, connectionName: $connection);
+    }
+
+    /**
+     * @param class-string         $entityClass
+     * @param array<string, mixed> $criteria
+     *
+     * @return list<object>
+     */
+    public function findBy(
+        string $entityClass,
+        array $criteria,
+        ?string $orderBy = null,
+        ?string $direction = null,
+        ?int $limit = null,
+        ?int $offset = null,
+        ?string $connection = null,
+    ): array {
+        return $this->entityPersister->findBy(
+            entityClass   : $entityClass,
+            criteria      : $criteria,
+            orderBy       : $orderBy,
+            direction     : $direction,
+            limit         : $limit,
+            offset        : $offset,
+            connectionName: $connection,
+        );
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function insert(object $entity, ?string $connection = null): void
+    {
+        $this->entityPersister->insert(entity: $entity, connectionName: $connection);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function update(object $entity, ?string $connection = null): void
+    {
+        $this->entityPersister->update(entity: $entity, connectionName: $connection);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function delete(object $entity, ?string $connection = null): void
+    {
+        $this->entityPersister->delete(entity: $entity, connectionName: $connection);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function refresh(object $entity, ?string $connection = null): object
+    {
+        return $this->entityPersister->refresh(entity: $entity, connectionName: $connection);
+    }
+}
+
+== PublicSurface Entities full file ==
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\DataStack\Database\System\PublicSurface;
+
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\EntityManager as EntitiesCapability;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Metadata\EntityMetadata;
+use Avax\Components\DataStack\Database\System\Capabilities\ORM\Repositories\EntityRepository;
+
+/**
+ * Entities - Public surface for the Entity Persistence (ORM).
+ * Renamed from EntityManager to comply with "No Managers" rule.
+ */
+final readonly class Entities
+{
+    public function __construct(
+        private EntitiesCapability $entitiesCapability,
+    ) {}
+
+    public function metadata(string $entityClass): EntityMetadata
+    {
+        return $this->entitiesCapability->metadata($entityClass);
+    }
+
+    public function find(string $entityClass, mixed $id, ?string $connectionName = null) : ?object
+    {
+        return $this->entitiesCapability->find($entityClass, $id, $connectionName);
+    }
+
+    public function persist(object $entity): void
+    {
+        $this->entitiesCapability->persist($entity);
+    }
+
+    public function remove(object $entity): void
+    {
+        $this->entitiesCapability->remove($entity);
+    }
+
+    public function flush(?string $connectionName = null) : void
+    {
+        $this->entitiesCapability->flush($connectionName);
+    }
+
+    public function clear(): void
+    {
+        $this->entitiesCapability->clear();
+    }
+
+    public function refresh(object $entity, ?string $connectionName = null) : object
+    {
+        return $this->entitiesCapability->refresh($entity, $connectionName);
+    }
+
+    public function repository(string $entityClass): EntityRepository
+    {
+        return $this->entitiesCapability->repository($entityClass);
+    }
+
+    public function transactional(callable $callback, ?string $connectionName = null) : mixed
+    {
+        return $this->entitiesCapability->transactional($callback, $connectionName);
+    }
+}

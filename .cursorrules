@@ -1,0 +1,4 @@
+# Cursor Rules — Agent Harness Profile
+- Read AGENTS.md on every session start.
+- Follow .agents/governance/ standards strictly.
+- Evidence all changes in .agents/management/evidence/.

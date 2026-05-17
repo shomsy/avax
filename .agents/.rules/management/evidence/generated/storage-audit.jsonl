@@ -1,0 +1,4 @@
+{"timestamp": 1779035464.0267, "timestamp_iso": "2026-05-17T16:31:04Z", "action": "summarize_executions", "details": {"days": 7, "total": 2, "output": ".agents/management/evidence/summaries/executions-summary.json"}}
+{"timestamp": 1779035464.0278308, "timestamp_iso": "2026-05-17T16:31:04Z", "action": "summarize_failures", "details": {"days": 7, "total_failures": 0, "output": ".agents/management/evidence/summaries/failures-summary.json"}}
+{"timestamp": 1779035464.0289145, "timestamp_iso": "2026-05-17T16:31:04Z", "action": "summarize_performance", "details": {"days": 7, "samples": 1, "output": ".agents/management/evidence/summaries/performance-summary.json"}}
+{"timestamp": 1779035464.0300322, "timestamp_iso": "2026-05-17T16:31:04Z", "action": "summarize_trust_violations", "details": {"days": 7, "total": 0, "output": ".agents/management/evidence/summaries/trust-violations-summary.json"}}

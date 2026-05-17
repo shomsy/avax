@@ -1,0 +1,50 @@
+{
+  "execution_id": "gov-race-3fc39608",
+  "lifecycle_state": "REPLAYABLE",
+  "task": "governance_mutation_simulator_1",
+  "trust_tier": "GOVERNANCE_WRITE",
+  "domain_scope": "governance",
+  "lifecycle_history": [
+    {
+      "state": "REPLAYABLE",
+      "timestamp": 1779038219.8367724
+    }
+  ],
+  "mutation_journal": {
+    "journal_id": "journal-gov-race-3fc39608",
+    "execution_id": "gov-race-3fc39608",
+    "mutations": {
+      "created": [],
+      "modified": [
+        ".agents/AGENTS.md",
+        ".agents/governance/core/quality/quality-gates.md"
+      ],
+      "deleted": []
+    },
+    "violations_detected": [],
+    "rollback_executed": false,
+    "symlinks_created": []
+  },
+  "replay_contract": {
+    "contract_id": "replay-gov-race-3fc39608",
+    "execution_id": "gov-race-3fc39608",
+    "nonce": "15a61839-7245-4fc4-88dc-b7918a8e909f",
+    "payload_command": "echo gov_1",
+    "expected_exit_code": 0,
+    "expected_mutation_count": 2,
+    "original_checksum": "9c4b860513d21ae014134d475b9ca5be817a2eeea98f208279bcabd826ec09c5"
+  },
+  "telemetry": {
+    "total_duration_ms": 15.0,
+    "command_execution_duration_ms": 8.0,
+    "governance_resolution_overhead_ms": 7.0,
+    "context_expansion_budget_bytes": 0,
+    "memory_usage_mb": 1.0,
+    "lease_expired_during_execution": false,
+    "sanitized_env_vars_removed": 0
+  },
+  "hmac_seal": "e93790de11f66aef5d7c899d0fd2643ce7b1c2c8b6908e52cc06aa5fcd8c5435",
+  "key_id": "a70c062d816f",
+  "sealed_at": 1779038534.06665,
+  "seal_algorithm": "HMAC-SHA256"
+}

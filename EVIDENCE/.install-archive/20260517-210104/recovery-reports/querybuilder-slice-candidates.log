@@ -1,0 +1,133 @@
+== CURRENT QUERY BUILDER FILES ==
+components/DataStack/Database/System/Capabilities/Migrations/Schema/SchemaBuilder.php
+components/DataStack/Database/System/Capabilities/Query/Advanced/CTE/CTEBuilder.php
+components/DataStack/Database/System/Capabilities/Query/Advanced/Upsert/UpsertBuilder.php
+components/DataStack/Database/System/Capabilities/Query/Advanced/WindowFunctions/PartitionBuilder.php
+components/DataStack/Database/System/Capabilities/Query/Advanced/WindowFunctions/WindowBuilder.php
+components/DataStack/Database/System/Capabilities/Query/Builder/QueryBuilder.php
+components/DataStack/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php
+components/DataStack/Database/System/Capabilities/Query/Enums/QueryBuilderEnum.php
+components/DataStack/Database/System/Capabilities/Query/Grammar/BaseGrammar.php
+components/DataStack/Database/System/Capabilities/Query/Grammar/CassandraGrammar.php
+components/DataStack/Database/System/Capabilities/Query/Grammar/ClickHouseGrammar.php
+components/DataStack/Database/System/Capabilities/Query/Grammar/CockroachDBGrammar.php
+components/DataStack/Database/System/Capabilities/Query/Grammar/ElasticsearchGrammar.php
+components/DataStack/Database/System/Capabilities/Query/Grammar/Grammar.php
+components/DataStack/Database/System/Capabilities/Query/Grammar/GrammarInterface.php
+components/DataStack/Database/System/Capabilities/Query/Grammar/MongoDBGrammar.php
+components/DataStack/Database/System/Capabilities/Query/Grammar/MySQLGrammar.php
+components/DataStack/Database/System/Capabilities/Query/Grammar/Neo4jGrammar.php
+components/DataStack/Database/System/Capabilities/Query/Grammar/PostgreSQLGrammar.php
+components/DataStack/Database/System/Capabilities/Query/Grammar/RedisGrammar.php
+components/DataStack/Database/System/Capabilities/Query/Grammar/SQLServerGrammar.php
+components/DataStack/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php
+components/DataStack/Database/System/Capabilities/Query/Grammar/YugabyteDBGrammar.php
+components/DataStack/Database/System/Capabilities/Query/IR/IRBuilder.php
+components/DataStack/Database/System/Capabilities/Query/Projections/ProjectionBuilder.php
+components/DataStack/Database/System/Capabilities/Telemetry/OpenTelemetry/SpanBuilder.php
+components/DataStack/Database/System/Configuration/DatabaseBuilder.php
+components/DataStack/Database/System/PublicSurface/SchemaBuilder.php
+
+== BACKUP/STAGING QUERY BUILDER FILES ==
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Advanced/CTE/CTEBuilder.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Advanced/Upsert/UpsertBuilder.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Advanced/WindowFunctions/PartitionBuilder.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Advanced/WindowFunctions/WindowBuilder.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Builder/QueryBuilder.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Enums/QueryBuilderEnum.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/BaseGrammar.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/CassandraGrammar.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/ClickHouseGrammar.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/CockroachDBGrammar.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/ElasticsearchGrammar.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/GrammarInterface.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/MongoDBGrammar.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/MySQLGrammar.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/Neo4jGrammar.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/PostgreSQLGrammar.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/RedisGrammar.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/SQLServerGrammar.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Grammar/YugabyteDBGrammar.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/IR/IRBuilder.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Query/Projections/ProjectionBuilder.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Capabilities/Telemetry/OpenTelemetry/SpanBuilder.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/Configuration/DatabaseBuilder.php
+EVIDENCE/recovery-staging/from-backup/database/components/Database/System/PublicSurface/SchemaBuilder.php
+
+== OLD TO NEW MAP QUERY BUILDER LINES ==
+| `components/Database/Query.php` | `components/DataStack/Database/System/Capabilities/QueryBuilding/Query.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Advanced/CTE/CTEBuilder.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/CTEBuilder.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Advanced/Upsert/UpsertBuilder.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/UpsertBuilder.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Advanced/WindowFunctions/PartitionBuilder.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/PartitionBuilder.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Advanced/WindowFunctions/WindowBuilder.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/WindowBuilder.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Builder/Concerns/HasAdvancedMutations.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/HasAdvancedMutations.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Builder/Concerns/HasAdvancedQueries.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/HasAdvancedQueries.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Builder/Concerns/HasAggregates.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/HasAggregates.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Builder/Concerns/HasConditions.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/HasConditions.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Builder/Concerns/HasControlStructures.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/HasControlStructures.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Builder/Concerns/HasGroups.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/HasGroups.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Builder/Concerns/HasJoins.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/HasJoins.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Builder/Concerns/HasOrders.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/HasOrders.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Builder/Concerns/HasSoftDeletes.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/HasSoftDeletes.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Builder/Concerns/Macroable.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/Macroable.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Builder/Concerns/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Query/Builder/JoinClause.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/JoinClause.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Builder/QueryBuilder.php` | `components/DataStack/Database/System/PublicSurface/QueryBuilder.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Builder/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Query/CreateBuilder/CreateBuilder.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/CreateBuilder.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/CreateBuilder/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Query/Enums/QueryBuilderEnum.php` | `components/DataStack/Database/System/PublicSurface/QueryBuilderEnum.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Exceptions/QueryException.php` | `components/DataStack/Database/System/Capabilities/QueryBuilding/QueryException.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Execution/QueryOrchestrator.php` | `components/DataStack/Database/System/Capabilities/QueryBuilding/QueryOrchestrator.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Grammar/BaseGrammar.php` | `components/DataStack/Database/System/Capabilities/Grammar/BaseGrammar.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Grammar/CassandraGrammar.php` | `components/DataStack/Database/System/Capabilities/Grammar/CassandraGrammar.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Grammar/ClickHouseGrammar.php` | `components/DataStack/Database/System/Capabilities/Grammar/ClickHouseGrammar.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Grammar/CockroachDBGrammar.php` | `components/DataStack/Database/System/Capabilities/Grammar/CockroachDBGrammar.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Grammar/DatabaseType.php` | `components/DataStack/Database/System/PublicSurface/DatabaseType.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Grammar/Dialect.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/Dialect.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Grammar/DialectFactory.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/DialectFactory.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Grammar/ElasticsearchGrammar.php` | `components/DataStack/Database/System/Capabilities/Grammar/ElasticsearchGrammar.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Grammar/GrammarInterface.php` | `components/DataStack/Database/System/Capabilities/Grammar/GrammarInterface.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Grammar/MongoDBGrammar.php` | `components/DataStack/Database/System/Capabilities/Grammar/MongoDBGrammar.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Grammar/MySQLGrammar.php` | `components/DataStack/Database/System/Capabilities/Grammar/MySQLGrammar.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Grammar/Neo4jGrammar.php` | `components/DataStack/Database/System/Capabilities/Grammar/Neo4jGrammar.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Grammar/PostgreSQLGrammar.php` | `components/DataStack/Database/System/Capabilities/Grammar/PostgreSQLGrammar.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Grammar/RedisGrammar.php` | `components/DataStack/Database/System/Capabilities/Grammar/RedisGrammar.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Grammar/SQLServerGrammar.php` | `components/DataStack/Database/System/Capabilities/Grammar/SQLServerGrammar.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Grammar/SQLiteGrammar.php` | `components/DataStack/Database/System/Capabilities/Grammar/SQLiteGrammar.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Grammar/YugabyteDBGrammar.php` | `components/DataStack/Database/System/Capabilities/Grammar/YugabyteDBGrammar.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Grammar/how-this-works.md` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/how-this-works.md` | review | pending |
+| `components/Database/System/Capabilities/Query/IR/IRBuilder.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/IRBuilder.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/IR/Nodes/QueryNode.php` | `components/DataStack/Database/System/Capabilities/QueryBuilding/QueryNode.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Projections/ProjectionBuilder.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/ProjectionBuilder.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/Query.php` | `components/DataStack/Database/System/Capabilities/QueryBuilding/Query.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Query/State/QueryState.php` | `components/DataStack/Database/System/Capabilities/QueryBuilding/QueryState.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Telemetry/Events/QueryExecuted.php` | `components/DataStack/Database/System/Capabilities/QueryBuilding/QueryExecuted.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Telemetry/N1QueryDetector.php` | `components/DataStack/Database/System/Capabilities/QueryBuilding/N1QueryDetector.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Telemetry/OpenTelemetry/QuerySpan.php` | `components/DataStack/Database/System/Capabilities/QueryBuilding/QuerySpan.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Telemetry/OpenTelemetry/SpanBuilder.php` | `components/DataStack/Database/System/Capabilities/NeedsHumanDecision/SpanBuilder.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Telemetry/QueryFingerprint.php` | `components/DataStack/Database/System/Capabilities/QueryBuilding/QueryFingerprint.php` | restore/slice | pending |
+| `components/Database/System/Capabilities/Telemetry/SlowQueryDetector.php` | `components/DataStack/Database/System/Capabilities/QueryBuilding/SlowQueryDetector.php` | restore/slice | pending |
+| `components/Database/System/Configuration/DatabaseBuilder.php` | `components/DataStack/Database/System/PublicSurface/DatabaseBuilder.php` | restore/slice | pending |
+| `components/Database/System/Flows/RunDatabaseQuery/QueryResult.php` | `components/DataStack/Database/System/Capabilities/QueryBuilding/QueryResult.php` | restore/slice | pending |
+| `components/Database/System/PublicSurface/Query.php` | `components/DataStack/Database/System/Capabilities/QueryBuilding/Query.php` | restore/slice | pending |
+| `components/Database/System/PublicSurface/SchemaBuilder.php` | `components/DataStack/Database/System/Capabilities/SchemaBuilding/SchemaBuilder.php` | restore/slice | pending |
+
+== CURRENT PUBLIC SURFACE ==
+components/DataStack/Database/System/PublicSurface/Database.php
+components/DataStack/Database/System/PublicSurface/DatabaseInterface.php
+components/DataStack/Database/System/PublicSurface/Entities.php
+components/DataStack/Database/System/PublicSurface/EntityManager.php
+components/DataStack/Database/System/PublicSurface/Migrations.php
+components/DataStack/Database/System/PublicSurface/Query.php
+components/DataStack/Database/System/PublicSurface/Schema.php
+components/DataStack/Database/System/PublicSurface/SchemaBuilder.php
+components/DataStack/Database/System/PublicSurface/Telemetry.php
+components/DataStack/Database/System/PublicSurface/Transactions.php
+components/DataStack/Database/System/PublicSurface/shortcuts.php
+
+== GENERATED SMOKE TESTS ==
+tests/Unit/Generated/DataStackDatabasePublicSurfaceSmokeTest.php
+tests/Unit/Generated/DataStackPersistencePublicSurfaceSmokeTest.php

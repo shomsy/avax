@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Agent Harness Delegation Manifest",
+  "type": "object",
+  "required": [
+    "objective",
+    "trust_tier",
+    "allowed_tools",
+    "expected_artifact"
+  ],
+  "properties": {
+    "objective": {
+      "type": "string",
+      "description": "The clear goal for the delegated agent task."
+    },
+    "trust_tier": {
+      "type": "string",
+      "enum": ["SANDBOXED", "READ_ONLY", "TRUSTED", "FULL_ACCESS"],
+      "description": "The execution boundary for the sub-agent."
+    },
+    "allowed_tools": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Explicit list of allowed skills or tools."
+    },
+    "max_files_modified": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 10,
+      "description": "Blast radius protection."
+    },
+    "context_budget": {
+      "type": "integer",
+      "description": "Max tokens or lines of context allowed."
+    },
+    "escalation_conditions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "expected_artifact": {
+      "type": "string",
+      "description": "The JSON file path where evidence must be written."
+    },
+    "rollback_policy": {
+      "type": "string",
+      "enum": ["AUTO_REVERT", "MANUAL_REVIEW", "NO_ROLLBACK"],
+      "default": "MANUAL_REVIEW"
+    }
+  }
+}

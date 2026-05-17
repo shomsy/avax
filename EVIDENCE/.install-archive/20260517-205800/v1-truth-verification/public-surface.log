@@ -1,0 +1,6 @@
+COMMAND: php tooling/refactor/check-public-surface.php
+DATE: Wed May  6 15:02:09 CEST 2026
+
+PASS
+
+EXIT_CODE=0

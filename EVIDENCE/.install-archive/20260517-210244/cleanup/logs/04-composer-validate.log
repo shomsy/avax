@@ -1,0 +1,4 @@
+Script started on 2026-05-13 23:49:16+02:00 [COMMAND="composer validate --no-check-publish" <not executed on terminal>]
+^@[32m./composer.json is valid[39m
+
+Script done on 2026-05-13 23:49:17+02:00 [COMMAND_EXIT_CODE="0"]

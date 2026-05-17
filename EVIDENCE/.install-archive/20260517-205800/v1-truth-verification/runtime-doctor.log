@@ -1,0 +1,9 @@
+COMMAND: php avax runtime:doctor
+DATE: Wed May  6 15:02:15 CEST 2026
+
+[33mAvax Runtime Doctor[0m
+Mode: development
+
+[32mNo runtime safety issues detected.[0m
+
+EXIT_CODE=0

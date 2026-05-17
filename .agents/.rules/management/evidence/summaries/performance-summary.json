@@ -1,0 +1,26 @@
+{
+  "generated_at": 1779035464.028824,
+  "generated_at_iso": "2026-05-17T16:31:04Z",
+  "period_days": 7,
+  "sample_size": 1,
+  "duration": {
+    "avg_ms": 418.36,
+    "min_ms": 418.36,
+    "max_ms": 418.36
+  },
+  "overhead": {
+    "avg_ms": 417.34,
+    "min_ms": 417.34,
+    "max_ms": 417.34
+  },
+  "context_budget": {
+    "avg_bytes": 534639.0,
+    "max_bytes": 534639.0
+  },
+  "time_series": [
+    {
+      "timestamp": 1779035052.8021405,
+      "duration_ms": 418.3638095855713
+    }
+  ]
+}

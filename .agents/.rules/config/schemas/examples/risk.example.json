@@ -1,0 +1,12 @@
+{
+  "id": "RISK-20260516-001",
+  "timestamp": "2026-05-16T17:00:00Z",
+  "owner": "maintainer",
+  "severity": "MEDIUM",
+  "description": "Partial smoke coverage for installer migration path.",
+  "impact": "Possible failure during real migration if target has unique structure.",
+  "likelihood": "LOW",
+  "mitigation": "Dry-run mode is verified and safe.",
+  "expiry": "2026-06-16",
+  "status": "RESOLVED"
+}

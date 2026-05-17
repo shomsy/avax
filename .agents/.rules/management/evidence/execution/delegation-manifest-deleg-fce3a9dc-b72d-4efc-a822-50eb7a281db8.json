@@ -1,0 +1,23 @@
+{
+  "delegation_id": "deleg-fce3a9dc-b72d-4efc-a822-50eb7a281db8",
+  "execution_id": "exec-b42b91e4-1031-4526-a1d4-40f7c225608f",
+  "nonce": "45a66037-69b5-401f-8a2a-f92d339091ce",
+  "token": {
+    "token_id": "token-exec-b42b91e4-1031-4526-a1d4-40f7c225608f",
+    "lease_duration_sec": 600,
+    "max_memory_mb": 512,
+    "allowed_tools": [
+      "view_file",
+      "search_web",
+      "write_to_file",
+      "replace_file_content"
+    ],
+    "allowed_scopes": [
+      "security"
+    ],
+    "trust_tier": "READ_ONLY",
+    "issued_at": 1779035052.3838506,
+    "signature": "5e28497379b83669816187cc7d4bb050b5ac782fc98b59d024be668bc108aa37"
+  },
+  "status": "SUCCESS"
+}

@@ -1,0 +1,21 @@
+{
+  "graph_id": "audit-d95ff0ed-ea22-42d5-8a11-c44ce0b83e48",
+  "built_at": 1779035622.1801558,
+  "target_dir": ".",
+  "identities": [],
+  "delegations": [],
+  "narrowing_proofs": [],
+  "ephemeral_tokens": [],
+  "authority_graph": {
+    "nodes": {},
+    "edges": []
+  },
+  "summary": {
+    "total_identities": 0,
+    "total_delegations": 0,
+    "total_narrowing_proofs": 0,
+    "total_ephemeral_tokens": 0,
+    "authority_nodes": 0,
+    "authority_edges": 0
+  }
+}

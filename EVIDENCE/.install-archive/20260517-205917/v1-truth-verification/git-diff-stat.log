@@ -1,0 +1,23 @@
+
+== GIT DIFF STAT ==
+ .phpunit.cache/test-results                        |   2 +-
+ .../v1-integrity/broken-reference-groups.md        | 111 +-----------
+ .../static-integrity-closure-report.md             | 187 +++++----------------
+ TODO.md                                            |  15 +-
+ .../Facade/System/Foundation/BaseFacade.php        |  51 +++++-
+ .../System/Capabilities/Extract/ExtractDigits.php  |   2 +-
+ .../System/Capabilities/Extract/ExtractLetters.php |   2 +-
+ .../Capabilities/Transform/TransformLimit.php      |   4 +-
+ .../Capabilities/Transform/TransformReplace.php    |   2 +-
+ .../Capabilities/Transform/TransformToAscii.php    |   2 +-
+ .../Capabilities/Transform/TransformToCamel.php    |   4 +-
+ .../Capabilities/Transform/TransformToLower.php    |   4 +-
+ .../Capabilities/Transform/TransformToPlural.php   |   6 +-
+ .../Capabilities/Transform/TransformToSingular.php |   8 +-
+ .../Capabilities/Transform/TransformToSlug.php     |   2 +-
+ .../Capabilities/Transform/TransformToSnake.php    |   2 +-
+ .../Capabilities/Transform/TransformToStudly.php   |   2 +-
+ .../Capabilities/Transform/TransformToUpper.php    |   4 +-
+ .../Capabilities/Transform/TransformTrim.php       |   2 +-
+ how-to-write-avax.md                               |   2 +-
+ 20 files changed, 132 insertions(+), 282 deletions(-)

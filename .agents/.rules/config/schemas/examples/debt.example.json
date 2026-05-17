@@ -1,0 +1,11 @@
+{
+  "id": "DEBT-20260516-001",
+  "timestamp": "2026-05-16T17:00:00Z",
+  "owner": "maintainer",
+  "severity": "MEDIUM",
+  "reason": "Prioritizing root contract alignment over full installer suite expansion.",
+  "acceptedBy": "Project Lead",
+  "expiry": "2026-06-16",
+  "status": "RESOLVED",
+  "evidence": ["EVD-20260516-005"]
+}

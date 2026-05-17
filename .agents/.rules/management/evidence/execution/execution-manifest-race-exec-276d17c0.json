@@ -1,0 +1,48 @@
+{
+  "execution_id": "race-exec-276d17c0",
+  "lifecycle_state": "REPLAYABLE",
+  "task": "race_simulator_1",
+  "trust_tier": "WORKSPACE_WRITE",
+  "lifecycle_history": [
+    {
+      "state": "REPLAYABLE",
+      "timestamp": 1779035677.240007
+    }
+  ],
+  "mutation_journal": {
+    "journal_id": "journal-race-exec-276d17c0",
+    "execution_id": "race-exec-276d17c0",
+    "mutations": {
+      "created": [
+        "shared_target.txt"
+      ],
+      "modified": [],
+      "deleted": []
+    },
+    "violations_detected": [],
+    "rollback_executed": false,
+    "symlinks_created": []
+  },
+  "replay_contract": {
+    "contract_id": "replay-race-exec-276d17c0",
+    "execution_id": "race-exec-276d17c0",
+    "nonce": "9c27f3ce-c387-4d3d-8b2f-6d7dcaf0ebe3",
+    "payload_command": "echo race_1",
+    "expected_exit_code": 0,
+    "expected_mutation_count": 1,
+    "original_checksum": "a63b3a8d64a3e1766ab2e2d11916f70e62ff5ae561d5254f0d4e508e1d28a3ac"
+  },
+  "telemetry": {
+    "total_duration_ms": 10.0,
+    "command_execution_duration_ms": 5.0,
+    "governance_resolution_overhead_ms": 5.0,
+    "context_expansion_budget_bytes": 0,
+    "memory_usage_mb": 1.0,
+    "lease_expired_during_execution": false,
+    "sanitized_env_vars_removed": 0
+  },
+  "hmac_seal": "72fda411e47b782e49acc60e84556820d5eb0f52a08ce19d1e70e1edeedd7437",
+  "key_id": "a70c062d816f",
+  "sealed_at": 1779037849.2255354,
+  "seal_algorithm": "HMAC-SHA256"
+}

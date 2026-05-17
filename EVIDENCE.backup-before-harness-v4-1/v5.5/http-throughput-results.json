@@ -1,0 +1,90 @@
+{
+  "stage": "V5.5-04",
+  "type": "http-throughput-results",
+  "environment": {
+    "php_version": "8.5.5",
+    "opcache": "enabled",
+    "jit": "disable",
+    "git_commit": "unknown",
+    "timestamp": "2026-05-11T20:58:48+00:00"
+  },
+  "results": [
+    {
+      "name": "hello_throughput",
+      "iterations": 500,
+      "warmup_iterations": 50,
+      "total_seconds": 0.0055,
+      "metrics": {
+        "avg_ms": 0.0109,
+        "p50_ms": 0.011,
+        "p95_ms": 0.0112,
+        "p99_ms": 0.0141,
+        "min_ms": 0.0098,
+        "max_ms": 0.015,
+        "rps": 91140.9,
+        "memory_before_bytes": 10485760,
+        "memory_after_bytes": 10485760,
+        "memory_peak_bytes": 13107200,
+        "error_rate": 0
+      },
+      "status": "GREEN",
+      "notes": []
+    },
+    {
+      "name": "json_api_throughput",
+      "iterations": 500,
+      "warmup_iterations": 50,
+      "total_seconds": 0.0056,
+      "metrics": {
+        "avg_ms": 0.0111,
+        "p50_ms": 0.011,
+        "p95_ms": 0.0119,
+        "p99_ms": 0.0141,
+        "min_ms": 0.01,
+        "max_ms": 0.0179,
+        "rps": 89848.42,
+        "memory_before_bytes": 10485760,
+        "memory_after_bytes": 10485760,
+        "memory_peak_bytes": 13107200,
+        "error_rate": 0
+      },
+      "status": "GREEN",
+      "notes": []
+    },
+    {
+      "name": "param_throughput",
+      "iterations": 500,
+      "warmup_iterations": 50,
+      "total_seconds": 0.0064,
+      "metrics": {
+        "avg_ms": 0.0127,
+        "p50_ms": 0.0129,
+        "p95_ms": 0.0131,
+        "p99_ms": 0.016,
+        "min_ms": 0.0119,
+        "max_ms": 0.0181,
+        "rps": 78492.1,
+        "memory_before_bytes": 10485760,
+        "memory_after_bytes": 10485760,
+        "memory_peak_bytes": 13107200,
+        "error_rate": 0
+      },
+      "status": "GREEN",
+      "notes": []
+    },
+    {
+      "name": "roadrunner",
+      "status": "YELLOW",
+      "notes": [
+        "ROADMAP"
+      ]
+    },
+    {
+      "name": "frankenphp",
+      "status": "YELLOW",
+      "notes": [
+        "ROADMAP"
+      ]
+    }
+  ]
+}

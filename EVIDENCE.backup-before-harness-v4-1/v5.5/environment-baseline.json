@@ -1,0 +1,11 @@
+{
+  "cpu": "AMD Ryzen 7 7700X 8-Core Processor",
+  "ram": "30.0GB",
+  "os": "Debian GNU/Linux 13 (trixie)",
+  "php_version": "8.5.5",
+  "opcache": "enabled",
+  "jit": "disable",
+  "server": "cli",
+  "git_commit": "unknown",
+  "timestamp": "2026-05-11T20:59:10+00:00"
+}

@@ -1,0 +1,1490 @@
+{
+  "version": "1.0.0",
+  "description": "Framework Dictionary \u2014 legitimate ecosystem terms with context-aware naming rules",
+  "terms": {
+    "Daemon": {
+      "classification": "Infrastructure \u2014 Long-Running Process",
+      "purpose": "A background process that runs continuously, independent of user interaction, providing services such as scheduling, monitoring, or request handling.",
+      "why_allowed": "The daemon concept originates from Unix system design and remains fundamental to infrastructure architecture. In modern systems, daemons power service discovery (consul agent), container orchestration (kubelet, containerd), message queuing (rabbitmq-server, redis-server), logging (rsyslog, fluentd), monitoring (prometheus, node_exporter), and CI/CD agents (github-runner, gitlab-runner). A daemon has clear characteristics: it starts at boot or on demand, runs in the background, handles requests or events continuously, manages its own lifecycle (restart on failure, graceful shutdown), and often communicates over IPC, sockets, or HTTP. It is not a one-shot script or a cron job.",
+      "ecosystem": [
+        "infrastructure"
+      ],
+      "allowed_contexts": [
+        "Unix system daemons (systemd services, init.d scripts)",
+        "Container runtime daemons (containerd, dockerd)",
+        "Service mesh sidecars (envoy, linkerd-proxy)",
+        "Monitoring daemons (prometheus, node_exporter, datadog-agent)",
+        "CI/CD runner daemons (github-runner, gitlab-runner)",
+        "Message broker daemons (rabbitmq, kafka, nats-server)",
+        "Cache daemons (redis-server, memcached)",
+        "Log collection daemons (fluentd, logstash, vector)"
+      ],
+      "forbidden_misuse": [
+        "Naming a short-lived CLI script a \"daemon\" when it exits after a single operation",
+        "Creating a Daemons/ folder for general utility scripts",
+        "Calling a cron job a \"daemon\" when it runs on a schedule and exits rather than running continuously",
+        "Using \"daemon\" to describe a thread or goroutine that is managed by a parent process lifecycle"
+      ],
+      "references": [
+        "https://www.freedesktop.org/software/systemd/man/systemd.service.html",
+        "https://containerd.io/",
+        "https://www.consul.io/docs/agent",
+        "https://prometheus.io/docs/introduction/overview/",
+        "https://docs.fluentd.org/"
+      ],
+      "allowed_patterns": [
+        "consulAgentDaemon",
+        "prometheusScraperDaemon",
+        "runnerRegistrationDaemon",
+        "logCollectorDaemon",
+        "healthCheckDaemon",
+        "certRotationDaemon"
+      ],
+      "forbidden_patterns": [
+        "Daemon (as a folder name)",
+        "DaemonManager",
+        "TaskDaemon (too vague \u2014 should specify what the daemon manages)",
+        "DaemonHelper",
+        "GenericDaemon"
+      ]
+    },
+    "Pipeline": {
+      "classification": "Infrastructure \u2014 Data Flow Pattern",
+      "purpose": "A ordered sequence of processing stages where the output of each stage becomes the input of the next, enabling complex transformations to be composed from simple, single-purpose steps.",
+      "why_allowed": "The pipeline pattern is ubiquitous in infrastructure and software engineering. Unix pipes compose simple commands into complex data processing chains. CI/CD pipelines (GitHub Actions, GitLab CI, Jenkins) sequence build, test, and deployment stages. Data engineering pipelines (Apache Airflow, dbt, Spark) transform raw data into analytics-ready formats. Build tool pipelines (PostCSS, Babel, webpack loader chains) transform source code through sequential stages. Log processing pipelines (Fluentd, Logstash, Vector) ingest, parse, filter, and route log events. A pipeline has a clear structure: it defines an ordered flow of stages, each stage has a single responsibility, data flows unidirectionally (or with defined feedback loops), and failures in any stage can halt or redirect the entire flow. It is not a DAG (which allows arbitrary dependency graphs) or a simple function call chain.",
+      "ecosystem": [
+        "infrastructure"
+      ],
+      "allowed_contexts": [
+        "CI/CD pipelines (GitHub Actions, GitLab CI, Jenkins, Azure Pipelines)",
+        "Data transformation pipelines (Apache Airflow, dbt, Apache Spark, Pandas pipelines)",
+        "Build tool pipelines (PostCSS plugin chain, Babel plugin pipeline, webpack loader chain)",
+        "Log processing pipelines (Fluentd, Logstash, Vector, OpenTelemetry Collector)",
+        "ETL and data engineering pipelines (AWS Glue, Apache Beam, Flink)",
+        "HTTP middleware pipelines (Express, Fastify, ASP.NET Core middleware pipeline)",
+        "Stream processing pipelines (Kafka Streams, Apache Flink, Reactor)"
+      ],
+      "forbidden_misuse": [
+        "Naming a single function with multiple sequential operations a \"pipeline\" when it has no composable stages",
+        "Creating a Pipelines/ folder for arbitrary utility scripts that do not form a data flow",
+        "Calling a nested function call chain a \"pipeline\" when stages are not independently configurable or replaceable",
+        "Using \"pipeline\" to describe a simple array.map().filter() chain when no stage abstraction exists"
+      ],
+      "references": [
+        "https://docs.github.com/en/actions/using-workflows",
+        "https://docs.gitlab.com/ee/ci/pipelines/",
+        "https://airflow.apache.org/",
+        "https://postcss.org/",
+        "https://www.elastic.co/logstash",
+        "https://kafka.apache.org/documentation/streams/"
+      ],
+      "allowed_patterns": [
+        "ciBuildPipeline",
+        "dataTransformPipeline",
+        "logProcessingPipeline",
+        "cssTransformPipeline",
+        "etlIngestionPipeline",
+        "httpMiddlewarePipeline"
+      ],
+      "forbidden_patterns": [
+        "Pipeline (as a folder name)",
+        "PipelineManager",
+        "DataPipeline (too vague \u2014 should specify what data is being processed)",
+        "PipelineHelper",
+        "GenericPipeline"
+      ]
+    },
+    "Runtime": {
+      "classification": "Infrastructure \u2014 Execution Environment",
+      "purpose": "The environment in which code executes, providing the language semantics, standard library, memory management, and system interfaces available to running programs.",
+      "why_allowed": "The runtime concept is central to all software execution. In the JavaScript world, Node.js provides a V8-based server-side runtime. Bun provides a Zig-based runtime with built-in tooling. Deno provides a secure-by-default runtime with native TypeScript support. In infrastructure, runtimes include language VMs (JVM, CLR), container runtimes (containerd, crun, gVisor), WebAssembly runtimes (Wasmtime, Wasmer), and serverless runtimes (AWS Lambda runtime environment, Cloudflare Workers isolate runtime). A runtime defines what code can do: what APIs are available, how memory is managed, how I/O is performed, and what security boundaries exist. It is not a build tool, a framework, or a library \u2014 it is the execution substrate itself.",
+      "ecosystem": [
+        "infrastructure"
+      ],
+      "allowed_contexts": [
+        "Language runtimes (Node.js, Bun, Deno, JVM, CLR, Python interpreter)",
+        "Container runtimes (containerd, crun, gVisor, Kata Containers)",
+        "WebAssembly runtimes (Wasmtime, Wasmer, WasmEdge)",
+        "Serverless runtimes (AWS Lambda, Cloudflare Workers, Vercel Edge Runtime)",
+        "Browser JavaScript runtimes (V8 in Chrome, SpiderMonkey in Firefox, JavaScriptCore in Safari)",
+        "PHP runtimes (PHP-FPM, FrankenPHP, RoadRunner, Swoole, ReactPHP)",
+        "Application runtimes (Erlang/OTP BEAM, Elixir)"
+      ],
+      "forbidden_misuse": [
+        "Naming a library or framework a \"runtime\" when it does not provide an execution environment",
+        "Creating a Runtimes/ folder for configuration files or deployment scripts",
+        "Calling a build-time dependency a \"runtime\" when it only affects compilation, not execution",
+        "Using \"runtime\" to describe a single configuration value or environment variable"
+      ],
+      "references": [
+        "https://nodejs.org/",
+        "https://bun.sh/",
+        "https://deno.com/",
+        "https://containerd.io/",
+        "https://wasmtime.dev/",
+        "https://developers.cloudflare.com/workers/"
+      ],
+      "allowed_patterns": [
+        "nodeRuntime",
+        "containerdRuntime",
+        "wasiRuntime",
+        "edgeWorkerRuntime",
+        "phpFpmRuntime",
+        "isolateRuntime"
+      ],
+      "forbidden_patterns": [
+        "Runtime (as a folder name)",
+        "RuntimeManager",
+        "AppRuntime (too vague \u2014 should specify which runtime environment)",
+        "RuntimeHelper",
+        "GenericRuntime"
+      ]
+    },
+    "Sandbox": {
+      "classification": "Infrastructure \u2014 Isolation Boundary",
+      "purpose": "An isolated execution environment that restricts what running code can access, preventing it from affecting the host system, other processes, or unauthorized resources.",
+      "why_allowed": "Sandboxing is a fundamental security and reliability primitive in infrastructure. Browsers sandbox web pages with same-origin policies and process isolation. Container runtimes sandbox processes with namespaces, cgroups, and seccomp filters. Code evaluation services sandbox untrusted code with VMs, Firecracker microVMs, or WASI sandboxes. CI/CD systems sandbox builds to prevent cross-contamination between jobs. Test frameworks sandbox individual test cases to prevent state leakage. A sandbox has a precise security purpose: it defines a boundary of trust, restricts capabilities (filesystem, network, syscalls, memory), and enforces isolation through OS-level or language-level mechanisms. It is not a general-purpose environment or a feature flag.",
+      "ecosystem": [
+        "infrastructure"
+      ],
+      "allowed_contexts": [
+        "Browser security sandboxes (same-origin policy, process isolation, Site Isolation)",
+        "Container sandboxes (Docker namespaces, cgroups, seccomp, AppArmor)",
+        "Code evaluation sandboxes (Firecracker microVMs, gVisor, WASI)",
+        "CI/CD build sandboxes (isolated runners, ephemeral environments)",
+        "Test execution sandboxes (isolated test processes, temporary filesystems)",
+        "Plugin and extension sandboxes (VS Code extension host, browser extension isolation)",
+        "Multi-tenant service sandboxes (namespace isolation, resource quotas)"
+      ],
+      "forbidden_misuse": [
+        "Naming a staging or preview environment a \"sandbox\" when it provides no isolation guarantees",
+        "Creating a Sandboxes/ folder for development or scratch directories",
+        "Calling a configuration profile a \"sandbox\" when it only changes feature flags, not isolation",
+        "Using \"sandbox\" to describe any test or development environment without actual security boundaries"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy",
+        "https://docs.docker.com/engine/security/",
+        "https://github.com/firecracker-microvm/firecracker",
+        "https://gvisor.dev/",
+        "https://wasi.dev/",
+        "https://code.visualstudio.com/api/extension-guides/web-extensions"
+      ],
+      "allowed_patterns": [
+        "codeExecutionSandbox",
+        "containerSandbox",
+        "testIsolationSandbox",
+        "pluginExecutionSandbox",
+        "multiTenantSandbox",
+        "wasmSandbox"
+      ],
+      "forbidden_patterns": [
+        "Sandbox (as a folder name)",
+        "SandboxManager",
+        "DevSandbox (too vague unless it provides actual isolation)",
+        "SandboxHelper",
+        "GenericSandbox"
+      ]
+    },
+    "Scheduler": {
+      "classification": "Infrastructure \u2014 Orchestration Component",
+      "purpose": "A component that decides when, where, and in what order tasks, jobs, or workloads should execute based on constraints such as timing, priority, resource availability, or dependency graphs.",
+      "why_allowed": "Scheduling is a core infrastructure concern across computing. Operating systems schedule threads and processes (CFS in Linux, Windows scheduler). Container orchestrators schedule pods onto nodes (Kubernetes scheduler with affinity, taints, and resource constraints). CI/CD systems schedule pipeline jobs across runners. Task queues schedule deferred work (Celery, Bull, Sidekiq, cron-based schedulers). Database query optimizers include execution schedulers. A scheduler has a well-defined responsibility: it accepts a set of pending work items, applies scheduling policy (FIFO, priority, fair-share, deadline, constraint-based), and dispatches them to available executors. It does not execute the work itself \u2014 it decides when and where work runs.",
+      "ecosystem": [
+        "infrastructure"
+      ],
+      "allowed_contexts": [
+        "OS process and thread schedulers (Linux CFS, Windows scheduler, Go runtime scheduler)",
+        "Container orchestration schedulers (Kubernetes scheduler, Nomad)",
+        "CI/CD job schedulers (GitHub Actions, GitLab CI, Jenkins)",
+        "Task queue schedulers (Celery, Bull, Sidekiq, Hangfire)",
+        "Cron and time-based schedulers (systemd timers, cron, APScheduler)",
+        "Database query schedulers (query execution planning, connection pool scheduling)",
+        "Distributed work schedulers (Ray, Apache Airflow, Temporal)"
+      ],
+      "forbidden_misuse": [
+        "Naming a simple setTimeout or setInterval wrapper a \"scheduler\" when it performs no policy-based decision",
+        "Creating a Schedulers/ folder for general timing utilities",
+        "Calling a retry mechanism a \"scheduler\" when it only repeats failed work without deciding placement or ordering",
+        "Using \"scheduler\" to describe a static cron entry that has no dynamic decision logic"
+      ],
+      "references": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/",
+        "https://www.kernel.org/doc/html/latest/scheduler/index.html",
+        "https://docs.celeryproject.org/",
+        "https://airflow.apache.org/",
+        "https://nomadproject.io/"
+      ],
+      "allowed_patterns": [
+        "podScheduler",
+        "jobQueueScheduler",
+        "cronTaskScheduler",
+        "workloadScheduler",
+        "retryBackoffScheduler",
+        "resourceAwareScheduler"
+      ],
+      "forbidden_patterns": [
+        "Scheduler (as a folder name)",
+        "SchedulerManager",
+        "TaskScheduler (too vague \u2014 should specify what is being scheduled)",
+        "SchedulerHelper",
+        "GenericScheduler"
+      ]
+    },
+    "Support": {
+      "classification": "Testing/Helper Infrastructure",
+      "purpose": "Provides test helpers, fixtures, factories, and shared test utilities that support the testing infrastructure. Support code in this context exists solely to make tests easier to write, more readable, and more maintainable \u2014 it is not production behavior.",
+      "why_allowed": "\"Support\" is a standard convention in testing frameworks across languages for test utilities and helpers that reduce duplication and improve test readability. PHPUnit ecosystems use test support traits and base test classes. Symfony has test support classes for functional testing, kernel testing, and browser testing. Laravel provides test support through TestCase base classes, factory definitions, and testing helpers. Ruby on Rails has `test/support` for shared test configuration and helpers. Jest and testing libraries across JavaScript ecosystems use support files for test setup, mocks, and shared fixtures. In test contexts, \"Support\" has a clear, narrow meaning: code that exists to make tests better, not code that exists to make production work. Support code is never on the production path \u2014 it is loaded only during test execution, it is not autoloaded in production, and it does not affect runtime behavior. This is fundamentally different from a production \"Support\" folder, which would be a forbidden generic utility bucket.",
+      "ecosystem": [
+        "infrastructure"
+      ],
+      "allowed_contexts": [
+        "Test helpers and shared test utilities (base test classes, test traits)",
+        "Test fixtures and test data factories",
+        "Test factories for model and entity creation",
+        "Shared test configuration and environment setup",
+        "Mock builders and stub generators for testing",
+        "Test assertions and custom test matchers"
+      ],
+      "forbidden_misuse": [
+        "As a production code support folder or utility bucket",
+        "As a generic helper location outside of test contexts",
+        "Naming production classes with \"Support\" suffix",
+        "Creating a Support/ folder in production code paths",
+        "Using \"Support\" to describe infrastructure that serves production code"
+      ],
+      "references": [
+        "https://phpunit.de/manual/current/en/test-doubles.html",
+        "https://symfony.com/doc/current/testing.html",
+        "https://laravel.com/docs/testing#generating-urls-during-testing",
+        "https://guides.rubyonrails.org/testing.html"
+      ],
+      "allowed_patterns": [
+        "TestSupport",
+        "SupportTestCase",
+        "FactorySupport",
+        "DatabaseTestSupport",
+        "HttpTestSupport",
+        "MockSupport"
+      ],
+      "forbidden_patterns": [
+        "Support/ (in production code paths)",
+        "SupportManager (managers are forbidden; support is helper infrastructure, not management)",
+        "AppSupport (vague \u2014 support for what?)",
+        "Support/Support (recursive, meaningless)"
+      ]
+    },
+    "Worker": {
+      "classification": "Infrastructure \u2014 Execution Unit",
+      "purpose": "A long-lived process or thread that pulls work from a queue, channel, or event stream and executes it, reporting results or failures back to the coordinating system.",
+      "why_allowed": "Workers are a fundamental pattern in distributed and concurrent systems. Message queue workers process jobs from RabbitMQ, Kafka, Redis (Bull, Sidekiq), or AWS SQS. Web server workers handle incoming HTTP requests in PHP-FPM, Gunicorn, or Puma. Background job workers execute deferred tasks (Celery, Hangfire, BullMQ). Build system workers compile files in parallel (webpack workers, esbuild workers). CI/CD runners are workers that execute pipeline jobs. A worker has clear characteristics: it runs continuously, pulls or receives work items from a source, executes them, reports success or failure, and handles backpressure, retries, and graceful shutdown. It is distinct from a daemon (which provides services) and a scheduler (which decides work placement).",
+      "ecosystem": [
+        "infrastructure"
+      ],
+      "allowed_contexts": [
+        "Message queue workers (BullMQ, Sidekiq, Celery, RabbitMQ consumers)",
+        "Web server workers (PHP-FPM, Gunicorn, Puma, Uvicorn workers)",
+        "Background job workers (Hangfire, Bull, agenda, node-cron workers)",
+        "Build system workers (webpack parallel workers, esbuild workers)",
+        "CI/CD runner workers (GitHub Actions runner, GitLab runner)",
+        "Browser Web Workers and Service Workers",
+        "Distributed task workers (Ray workers, Dask workers, Temporal workers)"
+      ],
+      "forbidden_misuse": [
+        "Naming a one-shot script a \"worker\" when it does not run continuously and pull work from a source",
+        "Creating a Workers/ folder for general utility functions",
+        "Calling a CLI command a \"worker\" when it is invoked manually and exits after a single operation",
+        "Using \"worker\" to describe a thread that is directly spawned and managed inline without a work queue"
+      ],
+      "references": [
+        "https://github.com/OptimalBits/bull",
+        "https://sidekiq.org/",
+        "https://docs.celeryq.dev/",
+        "https://www.php.net/manual/en/book.fpm.php",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API",
+        "https://docs.github.com/en/actions/hosting-your-own-runners"
+      ],
+      "allowed_patterns": [
+        "jobQueueWorker",
+        "httpServerWorker",
+        "buildParallelWorker",
+        "ciRunnerWorker",
+        "mailProcessingWorker",
+        "eventStreamWorker"
+      ],
+      "forbidden_patterns": [
+        "Worker (as a folder name)",
+        "WorkerManager",
+        "TaskWorker (too vague \u2014 should specify what work is being processed)",
+        "WorkerHelper",
+        "GenericWorker"
+      ]
+    },
+    "Adapter": {
+      "classification": "JavaScript/Node \u2014 Boundary Pattern",
+      "purpose": "A module that translates between two incompatible interfaces, allowing a component to interact with an external system, library, or protocol without coupling to its specific API.",
+      "why_allowed": "The Adapter pattern is a canonical GoF pattern with a well-established presence in the JavaScript and Node.js ecosystems. It appears in database drivers (e.g., Sequelize adapters for MySQL, PostgreSQL, SQLite), ORM abstractions (Prisma engine adapters), HTTP client wrappers (Axios adapters for XHR, Node http, fetch), testing mock adapters (MSW, Nock), storage abstractions (ioredis-compatible adapters), and framework integration layers. A real adapter has a clear responsibility: it accepts calls in one interface shape and translates them to another. It is not a general-purpose wrapper or a place to stash unrelated code.",
+      "ecosystem": [
+        "javascript"
+      ],
+      "allowed_contexts": [
+        "Database driver adapters (ORM to database engine translation)",
+        "HTTP client adapters (unified API over XHR, fetch, Node http)",
+        "Storage adapters (key-value, file, S3 behind a common interface)",
+        "Authentication adapters (OAuth, SAML, JWT behind a unified auth interface)",
+        "Testing mock adapters (MSW handlers, Nock interceptors)",
+        "Framework integration adapters (connecting external libraries into framework lifecycle)",
+        "Message broker adapters (unified pub/sub over Redis, Kafka, RabbitMQ)"
+      ],
+      "forbidden_misuse": [
+        "Naming a thin wrapper around a single function call an \"adapter\" when no interface translation occurs",
+        "Creating an Adapters/ folder as a dumping ground for any code that touches external systems",
+        "Calling a configuration loader an \"adapter\" when it performs no interface translation",
+        "Using \"adapter\" to describe a component that owns full business logic rather than just translating interfaces"
+      ],
+      "references": [
+        "https://sequelize.org/docs/v/7/other-topics/other-databases/",
+        "https://www.prisma.io/docs/orm/overview/databases/database-drivers",
+        "https://axios-http.com/docs/adapter",
+        "https://mswjs.io/docs/",
+        "https://github.com/nock/nock"
+      ],
+      "allowed_patterns": [
+        "postgresAdapter",
+        "fetchHttpClientAdapter",
+        "redisCacheAdapter",
+        "oauthGoogleAdapter",
+        "s3StorageAdapter",
+        "kafkaMessageBrokerAdapter"
+      ],
+      "forbidden_patterns": [
+        "Adapter (as a folder name)",
+        "DatabaseAdapter (too broad \u2014 should specify which database)",
+        "AdapterHelper",
+        "UniversalAdapter (unless it genuinely adapts multiple specific interfaces)",
+        "AdapterManager"
+      ]
+    },
+    "Bundler": {
+      "classification": "JavaScript/Node \u2014 Build Tool",
+      "purpose": "A tool that analyzes module dependency graphs, combines multiple source files into optimized output bundles, and applies transformations such as tree-shaking, code splitting, and minification.",
+      "why_allowed": "Module bundling is a defining concern in the JavaScript ecosystem due to the module-based nature of modern web applications. webpack pioneered comprehensive bundling with a rich plugin ecosystem. Vite uses Rollup for production bundling while leveraging native ES modules in development. esbuild and SWC provide high-performance bundling alternatives. Parcel offers zero-configuration bundling. A bundler has a precise responsibility: it starts from entry points, traverses import/require dependencies, resolves modules, transforms them through loaders or plugins, and emits optimized output bundles. It is distinct from a compiler (which transforms single files) and a task runner (which orchestrates arbitrary shell commands).",
+      "ecosystem": [
+        "javascript"
+      ],
+      "allowed_contexts": [
+        "Application bundlers (webpack, Vite/Rollup, esbuild, Parcel, Browserify)",
+        "Library bundlers (Rollup, tsup, microbundle, unbuild)",
+        "Server-side bundling (SSR bundle builds, edge function bundlers)",
+        "Code splitting and chunk configuration",
+        "Tree-shaking and dead code elimination",
+        "Asset bundling (CSS, images, fonts alongside JavaScript)",
+        "Monorepo workspace bundling"
+      ],
+      "forbidden_misuse": [
+        "Naming a simple file concatenation script a \"bundler\" when it performs no dependency analysis or transformation",
+        "Creating a Bundlers/ folder for general build scripts that do not produce module bundles",
+        "Calling a minifier a \"bundler\" when it only compresses output without analyzing dependencies",
+        "Using \"bundler\" to describe a deployment packaging tool that zips files"
+      ],
+      "references": [
+        "https://webpack.js.org/",
+        "https://vitejs.dev/guide/build.html",
+        "https://rollupjs.org/",
+        "https://esbuild.github.io/",
+        "https://parceljs.org/",
+        "https://github.com/egoist/tsup"
+      ],
+      "allowed_patterns": [
+        "appBundler",
+        "libraryBundler",
+        "serverBundleConfig",
+        "vendorChunkBundler",
+        "ssrEntryBundler",
+        "edgeFunctionBundler"
+      ],
+      "forbidden_patterns": [
+        "Bundler (as a folder name)",
+        "BundlerManager",
+        "BuildBundler (redundant and vague)",
+        "BundlerHelper",
+        "GenericBundler"
+      ]
+    },
+    "Compiler": {
+      "classification": "JavaScript/Node \u2014 Transformation Engine",
+      "purpose": "A tool or module that transforms source code from one language, syntax, or representation into another, typically as part of a build or transpilation pipeline.",
+      "why_allowed": "Compilers and compiler-related tooling are central to modern JavaScript development. Babel transforms modern JavaScript into backward-compatible output. TypeScript compiles typed TypeScript into plain JavaScript. SWC and esbuild provide high-performance compilation for JavaScript, TypeScript, and JSX. Template compilers (Handlebars, Pug, EJS) transform markup templates into render functions. AST-based tools (acorn, meriyah, ts-morph) parse and transform code structures. A compiler has a precise responsibility: it accepts source in one format and produces output in another format, preserving semantics while changing representation. It is not a linter, formatter, or runtime executor.",
+      "ecosystem": [
+        "javascript"
+      ],
+      "allowed_contexts": [
+        "JavaScript transpilers (Babel, SWC, TypeScript, esbuild)",
+        "Template compilers (Handlebars, Pug, EJS, JSX transform)",
+        "CSS compilers (PostCSS with plugins, Sass, Less, Stylus)",
+        "AST parsing and transformation tools (acorn, meriyah, recast, ts-morph)",
+        "WebAssembly compilers (AssemblyScript)",
+        "Markdown-to-HTML compilers (unified/remark/rehype pipelines)",
+        "Macro and code generation compilers"
+      ],
+      "forbidden_misuse": [
+        "Naming a simple string replacement function a \"compiler\" when it performs no structured transformation",
+        "Creating a Compilers/ folder for general utility functions that happen to process strings",
+        "Calling a template renderer a \"compiler\" if it does not produce a separate compiled output (rendering is not compiling)",
+        "Using \"compiler\" to describe a bundler that only concatenates files without transformation"
+      ],
+      "references": [
+        "https://babeljs.io/",
+        "https://www.typescriptlang.org/docs/handbook/compiler-options.html",
+        "https://swc.rs/docs/",
+        "https://esbuild.github.io/",
+        "https://unifiedjs.com/",
+        "https://handlebarsjs.com/"
+      ],
+      "allowed_patterns": [
+        "babelCompiler",
+        "typescriptCompiler",
+        "handlebarsTemplateCompiler",
+        "sassStyleCompiler",
+        "jsxTransformCompiler",
+        "markdownContentCompiler"
+      ],
+      "forbidden_patterns": [
+        "Compiler (as a folder name)",
+        "CompilerManager",
+        "DataCompiler (too vague \u2014 should specify source and target formats)",
+        "CompilerHelper",
+        "GenericCompiler"
+      ]
+    },
+    "Loader": {
+      "classification": "JavaScript/Node \u2014 Import and Transformation Pattern",
+      "purpose": "A module that intercepts file imports or resource requests, reads the raw content, transforms it if necessary, and returns it in a format the runtime or build tool can consume.",
+      "why_allowed": "Loaders are a core concept in the JavaScript build and runtime ecosystem. webpack loaders transform files at import time (babel-loader, css-loader, file-loader). Node.js supports ES module loaders via the --experimental-loader flag for custom import resolution and transformation. Build tools like Vite, Rollup, and esbuild have loader concepts for handling non-JavaScript assets (images, fonts, CSS, markdown, YAML). A loader's responsibility is narrow and well-defined: it sits at the import boundary, reads a resource, optionally transforms it, and returns it in a consumable format. It is not a general file reader or a data fetcher.",
+      "ecosystem": [
+        "javascript"
+      ],
+      "allowed_contexts": [
+        "webpack loaders (babel-loader, css-loader, ts-loader, sass-loader)",
+        "Node.js ES module loaders (--experimental-loaders, register() API)",
+        "Build tool resource loaders (Vite, Rollup, esbuild asset handling)",
+        "Static site generator content loaders (Markdown, MDX, YAML frontmatter)",
+        "Font and image loaders in asset pipelines",
+        "WebAssembly module loaders"
+      ],
+      "forbidden_misuse": [
+        "Naming a database query function a \"loader\" when it does not intercept imports or load resources",
+        "Creating a Loaders/ folder for general data-fetching utilities",
+        "Calling a UI data prefetch hook a \"loader\" when it performs no file or module transformation",
+        "Using \"loader\" to describe any function that reads data from any source"
+      ],
+      "references": [
+        "https://webpack.js.org/concepts/loaders/",
+        "https://nodejs.org/api/module.html#customization-hooks-api",
+        "https://vitejs.dev/guide/features.html#static-assets",
+        "https://esbuild.github.io/content-types/",
+        "https://mdxjs.com/"
+      ],
+      "allowed_patterns": [
+        "babelLoader",
+        "cssModuleLoader",
+        "markdownLoader",
+        "wasmLoader",
+        "imageAssetLoader",
+        "yamlConfigLoader"
+      ],
+      "forbidden_patterns": [
+        "Loader (as a folder name)",
+        "DataLoader (too broad \u2014 should specify what is being loaded)",
+        "LoaderManager",
+        "LoaderHelper",
+        "UniversalLoader"
+      ]
+    },
+    "Middleware": {
+      "classification": "Request Processing Pipeline Component",
+      "purpose": "Intercepts, inspects, and optionally transforms HTTP requests and responses as they pass through a layered pipeline before reaching or after leaving the application core.",
+      "why_allowed": "Middleware is one of the most universally recognized terms in web frameworks. PSR-15 (Middleware Interface) formalized it as a PHP-FIG standard. Laravel, Slim, PSR-15 implementations, Zend Expressive, Mezzio, and Symfony (via kernel listeners) all rely on this concept. Middleware describes a specific pipeline behavior: each layer decides whether to pass, short-circuit, modify, or reject the request. It is not a folder for random code \u2014 it is a well-defined contract with `handle(request, next)` semantics.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "HTTP request/response filtering",
+        "Authentication and authorization checks",
+        "CORS, rate limiting, caching headers",
+        "Request transformation and validation",
+        "Logging, timing, and telemetry injection",
+        "Session management and CSRF protection"
+      ],
+      "forbidden_misuse": [
+        "As a general \"helper\" for code that runs before controllers",
+        "As a place to put business logic that should live in a flow or capability",
+        "As a substitute for proper routing or controller design",
+        "Middleware that does not call `$next` or return a response (broken chain)"
+      ],
+      "references": [
+        "https://www.php-fig.org/psr/psr-15/",
+        "https://laravel.com/docs/middleware",
+        "https://www.slimframework.com/docs/v4/concepts/middleware.html"
+      ],
+      "allowed_patterns": [
+        "AuthenticateRequest",
+        "EnforceRateLimit",
+        "ApplyCorsHeaders",
+        "TrimStrings",
+        "VerifyCsrfToken"
+      ],
+      "forbidden_patterns": [
+        "Helpers/Middleware (generic bucket)",
+        "Utils/Middleware (concept dumping ground)",
+        "CommonMiddleware (unclear responsibility)"
+      ]
+    },
+    "Plugin": {
+      "classification": "JavaScript/Node \u2014 Extension Mechanism",
+      "purpose": "A self-contained module that registers itself with a host system to extend, modify, or hook into its behavior without altering the host's core code.",
+      "why_allowed": "The plugin pattern is deeply established across the JavaScript ecosystem. Build tools (webpack, Vite, Rollup, esbuild), linters (ESLint, Stylelint), test frameworks (Jest, Vitest), package managers (pnpm, npm), editors (VS Code extensions), and browsers (WebExtensions API) all use plugins as their primary extension mechanism. A plugin has a clear contract: the host defines a lifecycle or hook interface, and the plugin implements one or more hooks to contribute behavior. Plugins are not arbitrary modules \u2014 they must conform to a host-defined registration API and lifecycle.",
+      "ecosystem": [
+        "javascript"
+      ],
+      "allowed_contexts": [
+        "Build tool plugins (webpack, Vite, Rollup, esbuild, Babel, PostCSS)",
+        "Linter and formatter plugins (ESLint, Stylelint, Prettier)",
+        "Test framework plugins (Jest, Vitest, Playwright)",
+        "Browser extensions and WebExtensions",
+        "Editor/IDE extensions (VS Code, Monaco)",
+        "Package manager plugins and hooks",
+        "Framework plugin systems (AdonisJS, Fastify, Strapi)"
+      ],
+      "forbidden_misuse": [
+        "Naming any loosely-coupled module a \"plugin\" when it never registers with a host lifecycle",
+        "Creating a Plugin/ folder as a catch-all for independent utilities",
+        "Calling a configuration object a \"plugin\" when it has no hook or lifecycle behavior",
+        "Using \"plugin\" to describe a dependency that is simply imported and called directly"
+      ],
+      "references": [
+        "https://vitejs.dev/guide/api-plugin.html",
+        "https://webpack.js.org/contribute/writing-a-plugin/",
+        "https://eslint.org/docs/latest/extend/plugins",
+        "https://www.fastify.io/docs/latest/Reference/Plugins/",
+        "https://rollupjs.org/plugin-development/"
+      ],
+      "allowed_patterns": [
+        "vitePluginSsr",
+        "eslintPluginSecurity",
+        "webpackPluginMinify",
+        "babelPluginTransformOptionalChaining",
+        "jestPluginSnapshotDiff",
+        "fastifyPluginCors"
+      ],
+      "forbidden_patterns": [
+        "Plugin (as a folder name)",
+        "PluginManager (unless it genuinely manages plugin registration lifecycle)",
+        "PluginHelper",
+        "GenericPlugin",
+        "PluginUtility"
+      ]
+    },
+    "Resolver": {
+      "classification": "JavaScript/Node \u2014 Lookup and Resolution Pattern",
+      "purpose": "A function or module responsible for locating, computing, or selecting a value, module, route, or configuration from a set of candidates or a lookup strategy.",
+      "why_allowed": "The term \"resolver\" is widely used across the JavaScript ecosystem with consistent semantics. Module bundlers use resolvers to determine how to locate imported files (webpack resolve, Vite resolve, esbuild resolve). GraphQL uses resolvers to compute field values from a schema. Dependency injection containers use resolvers to locate and instantiate services. URL and path resolvers appear in routing libraries, CSS processors (postcss-import), and build tooling. A resolver has a narrow responsibility: given an input (identifier, path, key, query), return the resolved target or report failure. It does not own the lifecycle of what it resolves.",
+      "ecosystem": [
+        "javascript"
+      ],
+      "allowed_contexts": [
+        "Module resolution in build tools (webpack, Vite, Rollup, esbuild)",
+        "GraphQL field resolvers (Apollo, GraphQL Yoga, urql)",
+        "Dependency injection and service location resolvers",
+        "Route and URL resolvers in routing libraries",
+        "DNS and hostname resolvers in network tooling",
+        "Configuration value resolvers (environment, file, remote config merging)",
+        "Import map and package resolution (import maps, Node.js resolution algorithm)"
+      ],
+      "forbidden_misuse": [
+        "Naming a general query handler a \"resolver\" when it performs no lookup or selection",
+        "Creating a Resolvers/ folder that contains full business logic handlers instead of pure resolution",
+        "Calling a data transformer a \"resolver\" when it does not locate or select from candidates",
+        "Using \"resolver\" to describe a component that both resolves and mutates state"
+      ],
+      "references": [
+        "https://webpack.js.org/configuration/resolve/",
+        "https://graphql.org/learn/execution/",
+        "https://vitejs.dev/config/shared-options.html#resolve",
+        "https://esbuild.github.io/api/#resolve-extensions",
+        "https://nodejs.org/api/modules.html#all-together"
+      ],
+      "allowed_patterns": [
+        "moduleResolver",
+        "graphqlUserResolver",
+        "routeResolver",
+        "dnsResolver",
+        "packageResolver",
+        "configValueResolver"
+      ],
+      "forbidden_patterns": [
+        "Resolver (as a folder name)",
+        "ResolverManager",
+        "DataResolver (too vague \u2014 should specify what is being resolved)",
+        "ResolverHelper",
+        "GlobalResolver"
+      ]
+    },
+    "Command": {
+      "classification": "Console / CLI Action Component",
+      "purpose": "Defines a named console or CLI action that can be invoked from the terminal, scheduled by a cron-like scheduler, or dispatched through a command bus to execute a specific operation.",
+      "why_allowed": "Command is a dual-meaning term in PHP frameworks. In the console context, Laravel, Symfony Console, and CakePHP all use command classes to handle CLI operations \u2014 each with a signature, arguments, options, and a handle/execute method. In the CQRS context, commands represent write intents dispatched through a bus. Both meanings are legitimate ecosystem terms with clear contracts. Console commands are entrypoints for background work, maintenance, and automation. CQRS commands represent explicit user or system intentions.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "CLI/console operations (artisan commands, symfony console commands)",
+        "Scheduled tasks and cron-like jobs",
+        "CQRS command bus dispatch (write intents)",
+        "Migration, seeding, and maintenance operations",
+        "Queue job dispatchers triggered from console"
+      ],
+      "forbidden_misuse": [
+        "As a generic \"action\" class for HTTP request handling (use flows or controllers)",
+        "As a dumping ground for scripts that do not fit elsewhere",
+        "Commands that do not define clear input/output contracts",
+        "Commands with hidden I/O or undocumented side effects"
+      ],
+      "references": [
+        "https://laravel.com/docs/artisan#defining-commands",
+        "https://symfony.com/doc/current/console.html",
+        "https://simple-bus.com/ (CQRS command bus pattern)"
+      ],
+      "allowed_patterns": [
+        "MigrateDatabaseCommand",
+        "SendScheduledReportsCommand",
+        "CreateAdminUserCommand",
+        "ClearExpiredCacheCommand"
+      ],
+      "forbidden_patterns": [
+        "DoEverythingCommand (unbounded scope)",
+        "GenericCommand (too vague \u2014 what does it do?)",
+        "Command/Command (recursive, meaningless)"
+      ]
+    },
+    "Contract": {
+      "classification": "Interface Definition Pattern",
+      "purpose": "Defines a public API promise or interface that implementations must fulfill. A contract specifies the shape, methods, and behavioral guarantees that any conforming implementation must provide, without dictating how those guarantees are achieved.",
+      "why_allowed": "Contract is the standard term for interfaces that define public API guarantees in PHP frameworks. Laravel uses Contracts extensively through its `laravel/contracts` package, where interfaces like `Cache`, `Queue`, `Session`, and `Mail` define the framework's service abstractions. PSR standards published by PHP-FIG are contracts \u2014 PSR-3 (Logger Interface), PSR-6/PSR-16 (Caching), PSR-7 (HTTP Message), PSR-11 (Container), PSR-14 (Event Dispatcher), and PSR-18 (HTTP Client) are all contracts that implementations agree to fulfill. Symfony uses interfaces with similar semantic meaning, though it prefers the \"Interface\" suffix. The term \"Contract\" communicates a stronger guarantee than \"Interface\" \u2014 it implies a formal agreement between the framework and its consumers, a stable public surface, and backward compatibility promises. A contract is not a generic interface \u2014 it defines a boundary that implementations must respect and that consumers can depend on.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "Interface definitions that represent public API guarantees",
+        "Framework integration points where multiple implementations are supported",
+        "Component boundaries where the public surface is explicitly defined",
+        "PSR-compatible abstractions and interoperability layers",
+        "Service abstractions that allow swapable implementations"
+      ],
+      "forbidden_misuse": [
+        "As a generic bucket for unrelated interfaces that do not represent public API guarantees",
+        "As a dumping ground for types, DTOs, or value objects that do not fit elsewhere",
+        "Creating a Contracts/ folder that collects every interface in the system without discrimination",
+        "Naming concrete classes with \"Contract\" suffix (contracts are interfaces, not implementations)",
+        "Using \"Contract\" to describe implementation details rather than public promises"
+      ],
+      "references": [
+        "https://laravel.com/docs/contracts",
+        "https://www.php-fig.org/psr/",
+        "https://github.com/laravel/framework/blob/11.x/src/Illuminate/Contracts",
+        "https://symfony.com/doc/current/contributing/code/interface.html"
+      ],
+      "allowed_patterns": [
+        "CacheContract",
+        "EventContract",
+        "RepositoryContract",
+        "SessionContract",
+        "MailerContract",
+        "QueueContract"
+      ],
+      "forbidden_patterns": [
+        "Contracts/ (as folder for random interfaces without public API significance)",
+        "ContractManager (managers are forbidden; contracts are interfaces, not managers)",
+        "DataContract (too vague \u2014 what data? what guarantee?)",
+        "Contract/Contract (recursive, meaningless)"
+      ]
+    },
+    "Controller": {
+      "classification": "Request Handler / Routing Endpoint",
+      "purpose": "Receives an HTTP request, delegates to domain or application logic, and returns an HTTP response \u2014 acting as the thin coordination layer between the web layer and the application core.",
+      "why_allowed": "Controller is a core MVC pattern term used across virtually every PHP framework: Laravel, Symfony, Yii, CodeIgniter, Zend/Mezzio, and Slim. It describes a specific responsibility \u2014 handling a request at a route boundary and producing a response. In modern architecture, controllers are intentionally thin: they parse input, invoke flows or use cases, and format output. The term is not a generic bucket; it is a well-defined layer in the request-response cycle.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "HTTP route handlers that coordinate request parsing, delegation, and response formatting",
+        "API endpoint controllers that return JSON/XML responses",
+        "CLI command controllers for console routes",
+        "Web page controllers that render views or templates",
+        "Form request handlers that validate and dispatch"
+      ],
+      "forbidden_misuse": [
+        "As a dumping ground for business logic (fat controllers)",
+        "As a service registry or dependency container",
+        "As a place for database queries that should be in repositories or capabilities",
+        "As a catch-all for code triggered by events, queues, or background jobs (those are not HTTP controllers)"
+      ],
+      "references": [
+        "https://laravel.com/docs/controllers",
+        "https://symfony.com/doc/current/controller.html",
+        "https://www.slimframework.com/docs/v4/objects/routing.html"
+      ],
+      "allowed_patterns": [
+        "UserController (handles user-related HTTP routes)",
+        "OrderApiController (handles order API endpoints)",
+        "HealthCheckController (exposes health check endpoint)"
+      ],
+      "forbidden_patterns": [
+        "Services/Controller (generic bucket)",
+        "CommonController (unclear responsibility)",
+        "BaseController with unrelated shared logic (use composition instead)"
+      ]
+    },
+    "Diagnostic": {
+      "classification": "Observability Component",
+      "purpose": "Health checks, status reporting, and system introspection capabilities. A diagnostic component probes the system to determine whether it is operating correctly, reports the current health state, and provides information useful for debugging and troubleshooting.",
+      "why_allowed": "Diagnostics is a standard term in observability and system health monitoring across the software industry. .NET provides a comprehensive diagnostics framework (`System.Diagnostics`, `Microsoft.Extensions.Diagnostics.HealthChecks`) for health checks, activity tracing, and metrics. Go includes runtime diagnostics through `runtime/pprof`, `net/http/pprof`, and `expvar` for profiling and monitoring. PHP itself includes opcache diagnostics, error reporting, and the `phpinfo()` function for introspection. Framework health check systems in Laravel (`spatie/laravel-health`), Symfony (`symfony/health-check`), and ASP.NET Core (`Microsoft.Extensions.Diagnostics.HealthChecks`) all use diagnostics terminology to describe components that verify system health. A diagnostic component has clear characteristics: it probes a specific subsystem, reports a health status (healthy, degraded, unhealthy), provides details about the failure or success, and is designed to be executed on demand or on a schedule. It is not a generic utility \u2014 it is purposeful system introspection.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "Health checks for subsystems (database, cache, queue, filesystem, external APIs)",
+        "System introspection and status reporting",
+        "Debugging tooling and developer diagnostics",
+        "Observability and monitoring integrations",
+        "Pre-flight checks and readiness probes",
+        "Configuration validation and environment verification"
+      ],
+      "forbidden_misuse": [
+        "As a generic utility bucket for code that does not fit elsewhere",
+        "As a dumping ground for unrelated debug code, logging helpers, or print statements",
+        "Naming business logic classes as \"diagnostics\" when they do not perform health checks",
+        "Creating a Diagnostics/ folder that collects every debugging-related snippet",
+        "Using \"Diagnostic\" to describe error handling or exception management"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/diagnostics/",
+        "https://pkg.go.dev/net/http/pprof",
+        "https://github.com/spatie/laravel-health",
+        "https://symfony.com/doc/current/components/health_check.html"
+      ],
+      "allowed_patterns": [
+        "CheckCacheHealth",
+        "DiagnoseCacheConfiguration",
+        "SystemDiagnostics",
+        "DatabaseHealthDiagnostic",
+        "QueueConnectivityDiagnostic",
+        "DiagnoseExternalApiConnectivity"
+      ],
+      "forbidden_patterns": [
+        "Diagnostics/ (as folder for random utilities or debug helpers)",
+        "DiagnosticManager (managers are forbidden; diagnostics are capabilities, not managers)",
+        "GenericDiagnostic (too vague \u2014 what is being diagnosed?)",
+        "DiagnosticHelper (redundant \u2014 diagnostic already implies helper behavior)"
+      ]
+    },
+    "Domain": {
+      "classification": "DDD Bounded Context",
+      "purpose": "Represents a bounded context or domain layer in Domain-Driven Design architecture. A domain encapsulates a specific area of business knowledge, containing the models, rules, language, and behavior that define how that area of the business operates.",
+      "why_allowed": "Domain is a core DDD (Domain-Driven Design) concept originating from Eric Evans's seminal work. It represents a specific area of business knowledge with its own ubiquitous language, models, and rules. In PHP, DDD implementations use domain layers to separate business logic from infrastructure concerns. Symfony DDD bundles and enterprise architecture patterns organize code around domain boundaries rather than technical layers. A domain has clear characteristics: it owns its own language (ubiquitous language), it defines its own models and invariants, it encapsulates business rules, it has explicit boundaries with other domains, and it is not a technical layer but a business concept. Domains communicate through well-defined interfaces \u2014 events, contracts, or published APIs \u2014 rather than direct coupling. The term \"Domain\" is not a generic bucket \u2014 it represents a deliberate architectural decision to organize around business capabilities rather than technical concerns.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "DDD bounded contexts with clear business boundaries",
+        "Domain model layer containing aggregates, entities, and value objects",
+        "Business logic encapsulation that belongs to a specific domain area",
+        "Aggregate roots and domain services within a bounded context",
+        "Domain events that represent significant business occurrences",
+        "Domain repositories that abstract persistence for aggregate roots"
+      ],
+      "forbidden_misuse": [
+        "As a generic business logic dumping ground for anything vaguely business-related",
+        "As a catch-all for code that does not fit in technical layers",
+        "Creating a Domain/ folder that contains everything without bounded context boundaries",
+        "Using \"Domain\" to describe infrastructure concerns (database, caching, HTTP)",
+        "Mixing multiple unrelated business areas in a single domain without clear boundaries"
+      ],
+      "references": [
+        "https://domainlanguage.com/ddd/",
+        "https://www.amazon.com/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215",
+        "https://symfony.com/doc/current/best_practices/domain-entities.html",
+        "https://github.com/ddd-by-examples"
+      ],
+      "allowed_patterns": [
+        "OrderDomain",
+        "UserManagementDomain",
+        "BillingDomain",
+        "InventoryDomain",
+        "PaymentProcessingDomain"
+      ],
+      "forbidden_patterns": [
+        "Domain/ (as folder for everything business-related without bounded context)",
+        "DomainManager (managers are forbidden; domains are bounded contexts, not managers)",
+        "CommonDomain (too vague \u2014 which domain? what is \"common\"?)",
+        "Domain/Domain (recursive, meaningless)"
+      ]
+    },
+    "DTO": {
+      "classification": "Data Transfer Object",
+      "purpose": "Carries data between processes, layers, or boundaries without behavior, providing a typed, immutable, and validated container for structured data exchange.",
+      "why_allowed": "DTO (Data Transfer Object) is a well-established pattern in PHP, especially in enterprise applications, API development, and DDD-influenced architectures. PHP 8's constructor promotion, readonly properties, and typed declarations make DTOs particularly elegant. DTOs are used in API request/response objects, message payloads, form data carriers, and inter-service communication. They differ from entities (which have identity and lifecycle) and value objects (which emphasize equality by value, not just data carriage). Frameworks like Symfony, Laravel, and API Platform all embrace DTOs for clean data boundaries.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "API request and response data carriers",
+        "Form input data objects",
+        "Inter-service or inter-process message payloads",
+        "Command bus command objects (CQRS)",
+        "Event payload carriers",
+        "Data validation boundaries (typed input before domain logic)"
+      ],
+      "forbidden_misuse": [
+        "As a substitute for domain entities with identity and lifecycle",
+        "As a place to put business logic (DTOs should be anemic)",
+        "As a generic \"data bag\" without type safety or validation",
+        "DTOs that are mutable after construction when immutability is expected"
+      ],
+      "references": [
+        "https://symfony.com/doc/current/messenger.html#creating-a-message-handler",
+        "https://laravel.com/docs/requests (form request DTOs)",
+        "https://api-platform.com/docs/core/dto/"
+      ],
+      "allowed_patterns": [
+        "CreateUserDto",
+        "OrderResponseDto",
+        "PaymentIntentDto",
+        "SearchFilterDto"
+      ],
+      "forbidden_patterns": [
+        "DataDto (redundant \u2014 DTO already implies data)",
+        "GenericDto (too vague \u2014 what data?)",
+        "Dto/Dto (recursive, meaningless)"
+      ]
+    },
+    "EntityManager": {
+      "classification": "Data Access / ORM Component",
+      "purpose": "Manages the lifecycle, persistence, and retrieval of entity objects, acting as the primary interface between domain objects and the database in an ORM context.",
+      "why_allowed": "EntityManager is the central class in Doctrine ORM, the most widely used PHP object-relational mapper. It is responsible for persisting, removing, finding, and tracking entities within a unit of work. Doctrine's EntityManager implements the Unit of Work pattern, providing transactional consistency, change tracking, and lazy loading. It is also referenced in Hibernate (Java) and other ORM ecosystems. The term describes a specific ORM responsibility \u2014 managing entity state transitions \u2014 not a generic \"entity manager\" bucket for unrelated code.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "Doctrine ORM entity persistence and retrieval",
+        "Unit of work and transaction management",
+        "Entity lifecycle management (persist, merge, remove, refresh)",
+        "DQL and native query execution through the ORM",
+        "Entity manager proxies for lazy loading",
+        "Second-level cache integration with entity manager"
+      ],
+      "forbidden_misuse": [
+        "As a repository replacement (entities should be queried through repositories)",
+        "As a place to put business logic that belongs in domain services",
+        "As a generic data access class unrelated to ORM entity management",
+        "EntityManagers that bypass the unit of work for raw SQL operations"
+      ],
+      "references": [
+        "https://www.doctrine-project.org/projects/doctrine-orm/en/stable/reference/working-with-objects.html",
+        "https://www.doctrine-project.org/projects/doctrine-orm/en/stable/reference/unitofwork.html",
+        "https://hibernate.org/ (Java EntityManager reference)"
+      ],
+      "allowed_patterns": [
+        "EntityManager (Doctrine's canonical class)",
+        "EntityManagerDecorator (custom decoration)",
+        "EntityManagerProxy (lazy-loading proxy)"
+      ],
+      "forbidden_patterns": [
+        "DataEntityManager (too vague \u2014 which entity set?)",
+        "UserManager (should be UserRepository instead)",
+        "EntityManager/EntityManager (recursive, meaningless)"
+      ]
+    },
+    "EventListener": {
+      "classification": "Event Dispatching Component",
+      "purpose": "Handles a single specific event type when dispatched by an event system, executing a focused reaction such as sending a notification, logging activity, or triggering a downstream process.",
+      "why_allowed": "EventListener is a core pattern in PHP event-driven architectures. Laravel, Symfony, PSR-14 implementations, and Zend all use listeners to react to events. Unlike subscribers (which handle multiple events), a listener focuses on one event type with a single `handle` or `__invoke` method. This single-responsibility design makes listeners easy to test, compose, and reason about. The pattern is well-defined: receive an event, perform a reaction, optionally return nothing or a response.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "Single-event reactions (SendWelcomeEmail on UserRegistered)",
+        "Side effects triggered by domain events",
+        "Notifications, alerts, and messaging after state changes",
+        "Audit logging and metrics emission",
+        "Cache warming or invalidation on data changes"
+      ],
+      "forbidden_misuse": [
+        "As a place to put core business logic that should be in the flow that raised the event",
+        "Listeners that modify the event state in ways that affect other listeners",
+        "Listeners with unbounded side effects (infinite loops, unbounded retries)",
+        "Listeners that silently swallow exceptions instead of failing or reporting"
+      ],
+      "references": [
+        "https://laravel.com/docs/events#defining-listeners",
+        "https://symfony.com/doc/current/event_dispatcher.html#creating-an-event-listener",
+        "https://www.php-fig.org/psr/psr-14/"
+      ],
+      "allowed_patterns": [
+        "SendPasswordResetNotification",
+        "InvalidateProductCache",
+        "LogOrderPlacedEvent",
+        "UpdateInventoryAfterPurchase"
+      ],
+      "forbidden_patterns": [
+        "HandleEverythingListener (violates single responsibility)",
+        "GenericEventListener (too vague \u2014 which event?)",
+        "Listener/Listener (recursive, meaningless)"
+      ]
+    },
+    "EventSubscriber": {
+      "classification": "Event Dispatching Component",
+      "purpose": "Registers itself with an event dispatcher to listen to multiple related events, grouping event handling logic into a single cohesive unit rather than scattering listeners across separate classes.",
+      "why_allowed": "EventSubscriber is a standard pattern in PHP frameworks. Symfony defines it as a formal interface (`EventSubscriberInterface`) with a `getSubscribedEvents()` method that maps events to handlers. Laravel supports the same pattern through subscriber classes registered in the `EventServiceProvider`. The subscriber pattern is distinct from individual listeners \u2014 it bundles related event reactions together, making it easier to see all reactions to a domain concept in one place. It is a well-defined contract, not a generic event bucket.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "Grouping multiple related event reactions for a single domain concept",
+        "Cross-cutting event reactions (logging, auditing, notifications)",
+        "Plugin or module event registration",
+        "System-level event handling (cache invalidation, stats updates)",
+        "Package-level event subscription with clear boundaries"
+      ],
+      "forbidden_misuse": [
+        "As a catch-all for unrelated events from different domains",
+        "As a place to put business logic that should be in flows or capabilities",
+        "Subscribers that mutate events in ways that break other subscribers",
+        "Subscribers with side effects that are not idempotent or retry-safe"
+      ],
+      "references": [
+        "https://symfony.com/doc/current/event_dispatcher.html#creating-an-event-subscriber",
+        "https://laravel.com/docs/events#event-subscribers",
+        "https://www.php-fig.org/psr/psr-14/"
+      ],
+      "allowed_patterns": [
+        "UserActivityEventSubscriber",
+        "OrderLifecycleEventSubscriber",
+        "CacheInvalidationEventSubscriber",
+        "AuditLogEventSubscriber"
+      ],
+      "forbidden_patterns": [
+        "GlobalEventSubscriber (unbounded scope)",
+        "EverythingSubscriber (catch-all anti-pattern)",
+        "EventSubscriber/EventSubscriber (recursive, meaningless)"
+      ]
+    },
+    "Event": {
+      "classification": "Pub/Sub Messaging Component",
+      "purpose": "Represents a domain occurrence that interested parties can subscribe to and react to. An event captures a fact that something has happened in the system, enabling loose coupling between the component that raised the event and the components that respond to it.",
+      "why_allowed": "Events are fundamental to event-driven architecture and are used universally in modern PHP frameworks. Laravel provides a comprehensive events and listeners system where events represent domain occurrences and listeners react to them, supporting synchronous and queued handling, event broadcasting, and event discovery. Symfony's EventDispatcher component is a mature implementation of the Mediator pattern, widely used throughout the framework lifecycle (kernel events, form events, console events). PSR-14 (Event Dispatcher) standardizes event dispatching across PHP implementations, defining a common interface for event dispatchers and event objects. Event sourcing patterns (broadway, event-store) use events as the source of truth for state changes. An event has clear characteristics: it represents a fact that has already happened (past tense), it is immutable, it carries data about the occurrence, and it does not expect a return value from its listeners. It is not a command (which represents an intent to do something) \u2014 it is a notification that something was done.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "Event dispatching and pub/sub systems",
+        "Domain events in DDD (something significant happened in the domain)",
+        "Integration events for cross-component or cross-service communication",
+        "Lifecycle events (boot, shutdown, request handled, response sent)",
+        "Event sourcing (events as the authoritative state log)",
+        "Broadcasting events to external systems (WebSockets, webhooks)"
+      ],
+      "forbidden_misuse": [
+        "As a generic notification system for coupling unrelated components",
+        "As a dumping ground for messages, commands, and requests mixed together",
+        "Naming state-mutation intents as \"events\" when they should be commands",
+        "Creating an Events/ folder for random functions or callbacks",
+        "Using events to return data or expect synchronous responses from listeners"
+      ],
+      "references": [
+        "https://laravel.com/docs/events",
+        "https://symfony.com/doc/current/event_dispatcher.html",
+        "https://www.php-fig.org/psr/psr-14/",
+        "https://eventstore.com/docs/introduction/event-sourcing"
+      ],
+      "allowed_patterns": [
+        "UserRegistered",
+        "OrderPlaced",
+        "CacheCleared",
+        "PaymentProcessed",
+        "ArticlePublished",
+        "UserPasswordChanged"
+      ],
+      "forbidden_patterns": [
+        "Events/ (as folder for random functions, callbacks, or non-event code)",
+        "EventManager (managers are forbidden; use EventDispatcher per PSR-14)",
+        "HandleEvent (events are dispatched, not handled directly \u2014 use listeners)",
+        "GenericEvent (too vague \u2014 what happened?)"
+      ]
+    },
+    "Facade": {
+      "classification": "Static Access Proxy Pattern",
+      "purpose": "Provides a static-like interface to an underlying class or service resolved from the container, enabling concise, expressive syntax while maintaining testability through container-backed resolution.",
+      "why_allowed": "Facade is a prominent pattern in Laravel, where it provides static-access proxies to container-resolved services (e.g., `Cache::get()`, `Mail::send()`). While it shares a name with the GoF Facade structural pattern, the Laravel Facade is distinct \u2014 it is a static proxy, not a simplified interface to a subsystem. Symfony avoids facades in favor of explicit dependency injection, but the Laravel facade is a well-documented, widely-used ecosystem pattern. It provides developer experience benefits while remaining testable via mocking and container swaps.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "Static-access proxies to container-resolved services (Laravel style)",
+        "Simplified interfaces to complex subsystems (GoF Facade pattern)",
+        "Developer experience improvements for frequently-used services",
+        "Testing-friendly static access (mockable via container)",
+        "Public API entrypoints that hide complex internal wiring"
+      ],
+      "forbidden_misuse": [
+        "As a substitute for proper dependency injection in testable code",
+        "As a way to bypass container resolution and create hidden dependencies",
+        "Facades that do not proxy to a real underlying service",
+        "Facades that add business logic instead of delegating to the real service"
+      ],
+      "references": [
+        "https://laravel.com/docs/facades",
+        "https://refactoring.guru/design-patterns/facade",
+        "https://symfony.com/doc/current/service_container.html (DI alternative)"
+      ],
+      "allowed_patterns": [
+        "Cache (proxy to cache service)",
+        "Mail (proxy to mailer service)",
+        "Log (proxy to logger service)",
+        "ConfigSubsystemFacade (GoF-style facade to a complex subsystem)"
+      ],
+      "forbidden_patterns": [
+        "ServicesFacade (too vague \u2014 which service?)",
+        "Facade/Facade (recursive, meaningless)",
+        "HelperFacade (helpers are not facades)"
+      ]
+    },
+    "Guard": {
+      "classification": "Authentication / Authorization Component",
+      "purpose": "Intercepts a request or operation to verify identity, enforce access rules, or validate permissions before allowing the request to proceed to its intended target.",
+      "why_allowed": "Guard is a recognized authentication pattern in PHP and broader web frameworks. Laravel introduced it as an authentication guard system (`SessionGuard`, `TokenGuard`, `SanctumGuard`) that defines how users are authenticated per request. Symfony uses firewall listeners and authenticators for similar behavior. ASP.NET Core also uses guards in its authentication pipeline. A guard answers \"who is this user, and are they authenticated?\" \u2014 it is distinct from middleware (which handles broader request concerns) and policies (which handle resource-level authorization). Guards focus on identity verification and session management.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "Per-request user authentication and session resolution",
+        "Token-based authentication (JWT, API tokens, OAuth)",
+        "Multi-auth guard switching (admin, api, web)",
+        "Custom authentication mechanisms (header-based, cookie-based)",
+        "Guard composition for layered authentication strategies"
+      ],
+      "forbidden_misuse": [
+        "As a general-purpose request filter (use middleware instead)",
+        "As a place to put authorization logic (use policies or voters)",
+        "Guards that modify request data instead of verifying identity",
+        "Guards with hidden side effects or unbounded I/O"
+      ],
+      "references": [
+        "https://laravel.com/docs/authentication#adding-custom-guards",
+        "https://symfony.com/doc/current/security/authenticator_manager.html",
+        "https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware/ (guard-like behavior)"
+      ],
+      "allowed_patterns": [
+        "SessionGuard",
+        "TokenGuard",
+        "JwtGuard",
+        "ApiKeyGuard"
+      ],
+      "forbidden_patterns": [
+        "RequestGuard (too vague \u2014 which authentication mechanism?)",
+        "SecurityGuard (redundant \u2014 guard already implies security)",
+        "Guard/Guard (recursive, meaningless)"
+      ]
+    },
+    "Kernel": {
+      "classification": "Framework Core / Bootstrap Component",
+      "purpose": "Acts as the central bootstrap and dispatch engine for a framework, responsible for loading configuration, registering providers, processing the HTTP or console lifecycle, and coordinating the application's core runtime behavior.",
+      "why_allowed": "Kernel is a foundational term in PHP frameworks. Laravel defines both an HTTP Kernel and a Console Kernel, each responsible for bootstrapping the application, loading middleware, and dispatching requests or commands. Symfony uses a similar concept in its HttpKernel component, which handles the core request-response lifecycle. The kernel is the application's central coordinator \u2014 it is not a generic class but a well-defined framework entrypoint with clear responsibilities: bootstrap, dispatch, and terminate.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "HTTP request lifecycle coordination (HTTP Kernel)",
+        "Console command lifecycle coordination (Console Kernel)",
+        "Framework bootstrap, provider loading, and configuration assembly",
+        "Middleware pipeline registration and execution",
+        "Application termination and cleanup",
+        "Long-lived worker boot and warm-start sequences"
+      ],
+      "forbidden_misuse": [
+        "As a place to put business logic or application flows",
+        "As a generic \"core\" folder for miscellaneous code",
+        "Kernel classes that do not actually bootstrap or dispatch anything",
+        "Kernels that leak framework internals to application code"
+      ],
+      "references": [
+        "https://laravel.com/docs/lifecycle",
+        "https://symfony.com/doc/current/components/http_kernel.html",
+        "https://laravel.com/docs/artisan#the-kernel"
+      ],
+      "allowed_patterns": [
+        "HttpKernel",
+        "ConsoleKernel",
+        "FrameworkKernel",
+        "WorkerKernel"
+      ],
+      "forbidden_patterns": [
+        "CoreKernel (redundant \u2014 kernel already implies core)",
+        "ApplicationKernel (ambiguous \u2014 which lifecycle?)",
+        "Kernel/Kernel (recursive, meaningless)"
+      ]
+    },
+    "Migration": {
+      "classification": "Database Schema Versioning Component",
+      "purpose": "Defines a reversible, versioned change to the database schema (tables, columns, indexes, constraints) so that schema evolution is tracked, repeatable, and deployable across environments.",
+      "why_allowed": "Migration is a standard term in PHP frameworks and ORMs. Laravel, Doctrine, Symfony, Phinx, CakePHP, and Yii all use migrations as the primary mechanism for schema version control. A migration encodes `up` (apply) and `down` (rollback) operations, enabling teams to move databases forward and backward safely. The term describes a concrete, bounded responsibility \u2014 one schema change per class \u2014 not a generic utility.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "Creating, altering, or dropping database tables and columns",
+        "Adding or removing indexes, foreign keys, and constraints",
+        "Seeding initial schema-required data that is structural (not business data)",
+        "Rolling back schema changes in development or controlled deployments",
+        "Schema version tracking and migration ordering"
+      ],
+      "forbidden_misuse": [
+        "As a place to put data manipulation logic that belongs in seeders or commands",
+        "As a mechanism for runtime schema changes (schema should be stable at runtime)",
+        "Migrations that are not reversible (missing down method)",
+        "Migrations that depend on application models instead of raw schema operations"
+      ],
+      "references": [
+        "https://laravel.com/docs/migrations",
+        "https://www.doctrine-project.org/projects/doctrine-migrations/en/latest/",
+        "https://phinx.org/"
+      ],
+      "allowed_patterns": [
+        "CreateUsersTable",
+        "AddStatusColumnToOrders",
+        "DropDeprecatedLogsTable",
+        "RenameUserIdToAuthorIdInPosts"
+      ],
+      "forbidden_patterns": [
+        "MigrateUserData (data manipulation belongs in seeders/commands)",
+        "FixEverythingMigration (unclear, unbounded scope)",
+        "RuntimeMigration (schema changes at runtime are dangerous)"
+      ]
+    },
+    "Normalizer": {
+      "classification": "Data Transformation Component",
+      "purpose": "Converts complex objects or structured data into a simplified, flat, or standardized array representation suitable for encoding, and optionally reconstructs objects from that representation (denormalization).",
+      "why_allowed": "Normalizer is a core concept in the Symfony Serializer component and is widely used in PHP data transformation pipelines. Unlike a serializer (which handles the full object-to-string conversion), a normalizer focuses on the structural transformation: object-to-array (normalize) and array-to-object (denormalize). This separation of concerns allows format-specific encoders (JSON, XML) to work with a common normalized representation. Doctrine, API Platform, and many validation libraries use normalizers to bridge between domain objects and transport formats.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "Object-to-array transformation for encoding pipelines",
+        "Denormalization of arrays into typed objects",
+        "API Platform data transformation",
+        "Form data normalization and denormalization",
+        "Validation input preparation",
+        "Type coercion and property mapping during transformation"
+      ],
+      "forbidden_misuse": [
+        "As a general data mapper between domain models",
+        "As a place to put business logic or computed properties",
+        "Normalizers that mutate objects instead of producing new representations",
+        "Normalizers that silently drop required fields without validation"
+      ],
+      "references": [
+        "https://symfony.com/doc/current/components/serializer.html#normalizers",
+        "https://api-platform.com/docs/core/serialization/",
+        "https://laravel.com/docs/eloquent-resources (similar concept)"
+      ],
+      "allowed_patterns": [
+        "DateTimeNormalizer",
+        "ObjectNormalizer",
+        "GetSetMethodNormalizer",
+        "ArrayDenormalizer"
+      ],
+      "forbidden_patterns": [
+        "DataNormalizer (too vague \u2014 what data?)",
+        "EverythingNormalizer (unbounded scope)",
+        "Normalizer/Normalizer (recursive, meaningless)"
+      ]
+    },
+    "Policy": {
+      "classification": "Authorization Logic Component",
+      "purpose": "Encapsulates authorization rules and access decision logic for specific resources. A policy determines whether a given user or actor is permitted to perform a specific action on a specific resource, answering yes/no to authorization questions.",
+      "why_allowed": "Policy is the standard Laravel authorization pattern, formalized through its Gate and Policy system. Laravel policy classes map methods to actions (e.g., `view`, `create`, `update`, `delete`, `viewAny`) and receive a user and a model instance to make authorization decisions. This pattern is also used in ASP.NET Core authorization (policy-based authorization handlers), Kubernetes RBAC (policies define access rules), cloud IAM systems (AWS IAM policies, GCP IAM policies), and Open Policy Agent (Rego policies for infrastructure and application authorization). A policy has clear characteristics: it is bounded to a specific resource or model, it answers yes/no authorization questions, it is testable in isolation, it does not perform side effects, and it separates authorization logic from business logic. A policy is not a generic rule holder \u2014 it is a focused authorization component that makes access decisions based on the user, the resource, and the requested action.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "Authorization rules for specific resources or models",
+        "Access control decisions (can this user do this thing to this resource?)",
+        "Resource-level permissions (ownership, role-based, attribute-based)",
+        "RBAC and ABAC systems where policies define the authorization matrix",
+        "Pre-authorization checks before business logic execution",
+        "Post-authorization hooks for audit logging or conditional behavior"
+      ],
+      "forbidden_misuse": [
+        "As a generic business rules holder for non-authorization logic",
+        "As a catch-all for any conditional logic or if/else branching",
+        "Policies that perform side effects (sending emails, modifying data, creating records)",
+        "Policies that depend on request state instead of user and resource",
+        "Using \"Policy\" to describe validation, formatting, or transformation rules"
+      ],
+      "references": [
+        "https://laravel.com/docs/authorization#creating-policies",
+        "https://learn.microsoft.com/en-us/aspnet/core/security/authorization/policies",
+        "https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
+        "https://www.openpolicyagent.org/"
+      ],
+      "allowed_patterns": [
+        "UserPolicy",
+        "PostPolicy",
+        "OrderPolicy",
+        "TeamPolicy",
+        "InvoicePolicy",
+        "WorkspacePolicy"
+      ],
+      "forbidden_patterns": [
+        "Policies/ (as folder for random conditionals or non-authorization logic)",
+        "PolicyManager (managers are forbidden; policies are evaluated, not managed)",
+        "BusinessPolicy (too vague \u2014 which resource? what authorization?)",
+        "ValidationPolicy (validation is not authorization \u2014 use validators)",
+        "Policy/Policy (recursive, meaningless)"
+      ]
+    },
+    "QueryBuilder": {
+      "classification": "Data Access / Query Construction Component",
+      "purpose": "Provides a fluent, type-safe API for constructing database queries programmatically, enabling dynamic query building with method chaining while abstracting SQL dialect differences.",
+      "why_allowed": "QueryBuilder is a standard pattern in PHP frameworks and ORMs. Doctrine provides a QueryBuilder for DQL (Doctrine Query Language), Laravel offers a fluent QueryBuilder on top of Eloquent and the database layer, and Symfony uses it for repository queries. The pattern enables dynamic query construction without raw SQL strings, supports parameter binding for security, and allows method chaining for readable query composition. It is a well-defined contract with `select`, `where`, `join`, `orderBy`, and similar methods \u2014 not a generic query bucket.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "Dynamic query construction with method chaining",
+        "Repository internal query building",
+        "Filter, sort, and pagination query composition",
+        "Cross-database compatibility abstraction",
+        "Parameterized query construction for SQL injection prevention",
+        "Complex join and subquery composition"
+      ],
+      "forbidden_misuse": [
+        "As a replacement for simple find-by-id or basic CRUD operations (use repositories)",
+        "As a place to put business logic that should be in domain services",
+        "QueryBuilders that leak raw SQL into application code",
+        "QueryBuilders that do not use parameter binding for user input"
+      ],
+      "references": [
+        "https://www.doctrine-project.org/projects/doctrine-orm/en/stable/reference/query-builder.html",
+        "https://laravel.com/docs/queries",
+        "https://symfony.com/doc/current/doctrine/repository.html"
+      ],
+      "allowed_patterns": [
+        "OrderQueryBuilder",
+        "ReportQueryBuilder",
+        "UserSearchQueryBuilder",
+        "ProductFilterQueryBuilder"
+      ],
+      "forbidden_patterns": [
+        "GenericQueryBuilder (anti-pattern \u2014 should be scoped to a domain)",
+        "DataQueryBuilder (too vague \u2014 what data?)",
+        "QueryBuilder/QueryBuilder (recursive, meaningless)"
+      ]
+    },
+    "Repository": {
+      "classification": "Data Access Pattern",
+      "purpose": "Abstracts data persistence and retrieval behind a collection-like interface, decoupling business logic from the underlying storage mechanism (database, API, cache, file).",
+      "why_allowed": "Repository is one of the most influential patterns in PHP, popularized by Domain-Driven Design and implemented in Doctrine ORM as `EntityManager` and repository classes. Laravel, Symfony, Yii, and many enterprise PHP applications use repositories to isolate data access from domain services. The pattern has a clear contract: it provides find, save, delete, and query operations against an aggregate or entity type. It is not a generic data bucket \u2014 it represents a specific architectural boundary between domain logic and persistence.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "Data access abstraction for a specific aggregate or entity type",
+        "Encapsulating complex queries behind simple method names",
+        "Switching persistence backends without changing domain logic",
+        "Unit testing domain logic with in-memory or fake repositories",
+        "Read/write separation (CQRS read repositories vs write repositories)"
+      ],
+      "forbidden_misuse": [
+        "As a dumping ground for all database queries regardless of entity",
+        "As a thin wrapper around raw SQL with no abstraction benefit",
+        "As a place to put business logic that belongs in domain services or flows",
+        "Repositories that expose raw query builders or leak persistence details"
+      ],
+      "references": [
+        "https://www.doctrine-project.org/projects/doctrine-orm/en/stable/reference/working-with-objects.html",
+        "https://laravel.com/docs/eloquent",
+        "https://martinfowler.com/eaaCatalog/repository.html"
+      ],
+      "allowed_patterns": [
+        "UserRepository",
+        "OrderRepository",
+        "ProductCatalogRepository",
+        "CachedSessionRepository"
+      ],
+      "forbidden_patterns": [
+        "DataRepository (too vague \u2014 what data?)",
+        "GenericRepository (anti-pattern \u2014 defeats purpose of typed repositories)",
+        "Repository/Repository (recursive, meaningless name)"
+      ]
+    },
+    "Seeder": {
+      "classification": "Database Data Population Component",
+      "purpose": "Populates the database with initial, test, or reference data so that applications have predictable data for development, testing, or first-run scenarios.",
+      "why_allowed": "Seeder is a well-established term in PHP frameworks, most prominently in Laravel but also in Doctrine fixtures, Symfony, and CakePHP. It describes a specific responsibility: inserting data into already-migrated schema. Seeders are distinct from migrations \u2014 migrations change structure, seeders insert data. They are essential for reproducible test environments, demo data, and reference tables (roles, permissions, countries, etc.).",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "Populating reference/lookup tables (roles, statuses, countries, currencies)",
+        "Inserting demo or sample data for development environments",
+        "Creating test fixtures for integration and functional tests",
+        "Initial admin or system user creation on first run",
+        "Data required by default configuration or feature flags"
+      ],
+      "forbidden_misuse": [
+        "As a replacement for migrations (seeders should not alter schema)",
+        "As a production data import tool for real user data",
+        "As a place to put business logic or data transformation rules",
+        "Seeders that depend on runtime state or external APIs without guards"
+      ],
+      "references": [
+        "https://laravel.com/docs/seeding",
+        "https://www.doctrine-project.org/projects/doctrine-data-fixtures/en/latest/",
+        "https://symfony.com/doc/current/bundles/DoctrineFixturesBundle/index.html"
+      ],
+      "allowed_patterns": [
+        "RoleAndPermissionSeeder",
+        "CountryReferenceSeeder",
+        "DemoOrderDataSeeder",
+        "DefaultAdminUserSeeder"
+      ],
+      "forbidden_patterns": [
+        "DataSeeder (too vague \u2014 what data?)",
+        "ProductionDataImporter (seeders are not production ETL)",
+        "EverythingSeeder (unbounded scope)"
+      ]
+    },
+    "Serializer": {
+      "classification": "Data Transformation Component",
+      "purpose": "Converts complex objects, arrays, or data structures into a transportable format (JSON, XML, YAML, binary) for storage, transmission, or interchange, and optionally reconstructs objects from that format.",
+      "why_allowed": "Serializer is a standard term across PHP frameworks and libraries. Symfony provides a Serializer component with normalization, denormalization, and encoding capabilities. Laravel uses serialization for queue payloads, session data, and API responses. JMS Serializer, Doctrine, and many API platforms rely on serializers to transform objects into wire formats. A serializer is not a generic transformer \u2014 it has a clear contract: object-to-string (serialize) and string-to-object (deserialize), with support for type mapping, circular reference handling, and format negotiation.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "API response encoding (object to JSON/XML)",
+        "Queue payload serialization for job transport",
+        "Session data serialization and restoration",
+        "Cache value serialization",
+        "Event/message payload encoding for distributed systems",
+        "Configuration file serialization/deserialization"
+      ],
+      "forbidden_misuse": [
+        "As a general data transformation utility unrelated to format conversion",
+        "As a place to put business logic for data manipulation",
+        "Serializers that leak internal state or secrets into output",
+        "Serializers that do not support round-trip (serialize then deserialize loses data)"
+      ],
+      "references": [
+        "https://symfony.com/doc/current/components/serializer.html",
+        "https://laravel.com/docs/queues#job-serialization",
+        "https://github.com/schmittjoh/serializer (JMS Serializer)"
+      ],
+      "allowed_patterns": [
+        "JsonApiSerializer",
+        "QueuePayloadSerializer",
+        "EventEnvelopeSerializer",
+        "ConfigSerializer"
+      ],
+      "forbidden_patterns": [
+        "DataSerializer (too vague \u2014 what data, what format?)",
+        "GenericSerializer (anti-pattern \u2014 serializers should be format-aware)",
+        "Serializer/Serializer (recursive, meaningless)"
+      ]
+    },
+    "ServiceProvider": {
+      "classification": "Framework Lifecycle Component",
+      "purpose": "Registers, configures, and boots framework services into the application container so they are available for dependency injection and runtime use.",
+      "why_allowed": "ServiceProvider is a foundational term in the PHP framework ecosystem. Laravel popularized it as the primary assembly mechanism \u2014 every package, component, or first-party feature registers itself through a service provider. Symfony achieves the same via bundles and extension classes, but Laravel's `ServiceProvider` is the canonical naming convention. Phalcon, Yii, and Slim also use provider-like registration patterns. The term describes a concrete lifecycle responsibility (register + boot), not a generic dumping ground.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "Framework bootstrapping and assembly",
+        "Package/component registration into a DI container",
+        "Deferred or lazy service registration",
+        "Configuration binding and convention setup",
+        "Event and middleware registration during boot phase"
+      ],
+      "forbidden_misuse": [
+        "As a general-purpose \"service holder\" that accumulates unrelated logic",
+        "As a substitute for proper class design (putting business logic inside register/boot methods)",
+        "As a catch-all for code that does not fit elsewhere",
+        "Creating providers that do not actually register or boot anything"
+      ],
+      "references": [
+        "https://laravel.com/docs/providers",
+        "https://symfony.com/doc/current/bundles.html",
+        "https://www.phalcon.io/docs"
+      ],
+      "allowed_patterns": [
+        "CacheServiceProvider",
+        "RouteServiceProvider",
+        "EventServiceProvider",
+        "AuthServiceProvider",
+        "RepositoryServiceProvider"
+      ],
+      "forbidden_patterns": [
+        "Services/ServiceProvider (generic bucket)",
+        "Managers/ServiceProvider (concept dumping ground)",
+        "CommonServiceProvider (unclear responsibility)"
+      ]
+    },
+    "ValueObject": {
+      "classification": "Domain Building Block",
+      "purpose": "Represents a concept whose equality is determined by its attribute values rather than identity, providing immutable, self-validating domain primitives that encapsulate both data and behavior.",
+      "why_allowed": "ValueObject is a foundational Domain-Driven Design pattern, widely used in PHP enterprise applications. Doctrine ORM supports embedded value objects. Money libraries (e.g., `moneyphp/money`) implement value objects for currency and amount. Email, Address, UserId, and similar domain primitives are classic value objects. Unlike DTOs (which are passive data carriers), value objects encapsulate domain behavior: validation on construction, computed properties, and equality comparison by value. They are immutable by design \u2014 any modification produces a new instance rather than mutating state.",
+      "ecosystem": [
+        "php"
+      ],
+      "allowed_contexts": [
+        "Domain primitives (Email, Money, UserId, Address, DateRange)",
+        "Embedded value objects in Doctrine entities",
+        "Typed identifiers that carry domain meaning",
+        "Currency, measurement units, and quantity representations",
+        "Any concept where equality is structural, not identity-based"
+      ],
+      "forbidden_misuse": [
+        "As a mutable data container (value objects must be immutable)",
+        "As a substitute for entities when identity and lifecycle matter",
+        "As a generic typed wrapper without domain behavior or validation",
+        "Value objects that expose setters or allow state mutation"
+      ],
+      "references": [
+        "https://www.doctrine-project.org/projects/doctrine-orm/en/stable/tutorials/embeddables.html",
+        "https://github.com/moneyphp/money",
+        "https://martinfowler.com/bliki/ValueObject.html"
+      ],
+      "allowed_patterns": [
+        "Email",
+        "Money",
+        "UserId",
+        "DateRange",
+        "Address",
+        "CurrencyCode"
+      ],
+      "forbidden_patterns": [
+        "ValueObject (too generic \u2014 should be named after the concept)",
+        "GenericValueObject (anti-pattern)",
+        "DataValueObject (redundant, vague)"
+      ]
+    }
+  },
+  "total_terms": 36,
+  "ecosystems": [
+    "infrastructure",
+    "javascript",
+    "php"
+  ]
+}

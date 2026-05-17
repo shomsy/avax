@@ -10,6 +10,7 @@ import os
 import sys
 import json
 import re
+from pathlib import Path
 
 OUTPUT_DIR = ".agents/management/evidence/generated"
 CONFIG_FILE = ".agents/config/project.json"
@@ -133,6 +134,145 @@ def audit_codebase_steering(target_dir, allowances):
                         
     return violations, semantic_exceptions
 
+# --- Framework Dictionary Integration ---
+
+FORBIDDEN_DIRECTORY_NAMES = {
+    "Services", "Helpers", "Utils", "Common", "Shared",
+    "Managers", "Core", "Support", "Adapters", "Contracts",
+    "Handlers", "Processors", "Commands", "Queries",
+    "Domain", "Entities", "ValueObjects", "Aggregates",
+    "Repositories", "Events", "CQRS", "EventSourcing",
+    "Sagas", "Policies", "Specifications",
+    "Diagnostics", "Tests", "Docs",
+    "InternalSystem", "ExportedCapabilities",
+}
+
+
+def _load_framework_dictionary(target_dir):
+    """Load the framework dictionary index.json if available."""
+    candidates = [
+        os.path.join(target_dir, ".agents", ".rules", "governance", "framework-dictionary", "index.json"),
+        os.path.join(target_dir, ".agents", "governance", "framework-dictionary", "index.json"),
+    ]
+    for path in candidates:
+        if os.path.isfile(path):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except (json.JSONDecodeError, OSError):
+                pass
+    return None
+
+
+def _term_matches_dir_name(term, dir_name):
+    """Check if a dictionary term matches a directory name (case-insensitive, plural-aware)."""
+    if term.lower() == dir_name.lower():
+        return True
+    plural_dir = dir_name.rstrip("s") if dir_name.endswith("s") else dir_name
+    if term.lower() == plural_dir.lower():
+        return True
+    if (term + "s").lower() == dir_name.lower():
+        return True
+    return False
+
+
+def _path_matches_contexts(rel_path, allowed_contexts):
+    """Check if a directory path context matches dictionary allowed contexts."""
+    path_parts = tuple(rel_path.replace("\\", "/").split("/"))
+    context_keywords = set()
+    for ctx in allowed_contexts:
+        for word in ctx.lower().split():
+            if len(word) > 3:
+                context_keywords.add(word)
+    for part in path_parts:
+        part_lower = part.lower()
+        if part_lower in context_keywords:
+            return True
+        for kw in context_keywords:
+            if kw in part_lower:
+                return True
+    if "components" in path_parts:
+        return True
+    if "tests" in path_parts:
+        return True
+    if "evidence" in path_parts and (".install-archive" in path_parts or "archive" in path_parts):
+        return True
+    return False
+
+
+def audit_directory_naming(target_dir, dictionary):
+    """Audit directory names using the framework dictionary for context-aware evaluation.
+
+    Returns: (violations, dictionary_allowed, suspicious)
+    """
+    violations = []
+    dictionary_allowed = []
+    suspicious = []
+
+    dict_terms = dictionary.get("terms", {}) if dictionary else {}
+    # Also include legacy ecosystem allowances
+    legacy_allowances = load_naming_allowances(target_dir)
+
+    ignored_dirs = {
+        ".git", "vendor", "node_modules", "projects",
+        "storage", "bootstrap", "database", "dist", "build", "artifacts",
+    }
+
+    for root, dirs, _files in os.walk(target_dir):
+        # Skip hidden dirs and ignored dirs
+        dirs[:] = [d for d in dirs if d not in ignored_dirs and not d.startswith(".")]
+
+        for d in dirs:
+            if d not in FORBIDDEN_DIRECTORY_NAMES:
+                continue
+
+            full_path = os.path.join(root, d)
+            rel_path = os.path.relpath(full_path, target_dir)
+
+            # Check framework dictionary
+            dict_match = None
+            for term, entry in dict_terms.items():
+                if _term_matches_dir_name(term, d):
+                    dict_match = (term, entry)
+                    break
+
+            if dict_match:
+                term_name, entry = dict_match
+                allowed_contexts = entry.get("allowed_contexts", [])
+                if _path_matches_contexts(rel_path, allowed_contexts):
+                    dictionary_allowed.append({
+                        "path": rel_path,
+                        "name": d,
+                        "term": term_name,
+                        "classification": entry.get("classification", "ecosystem"),
+                    })
+                else:
+                    suspicious.append({
+                        "path": rel_path,
+                        "name": d,
+                        "term": term_name,
+                        "reason": "Dictionary term used outside allowed contexts",
+                    })
+            elif any(d.endswith(a) for a in legacy_allowances):
+                dictionary_allowed.append({
+                    "path": rel_path,
+                    "name": d,
+                    "term": d,
+                    "classification": "Legacy ecosystem allowance",
+                })
+            else:
+                violations.append({
+                    "path": rel_path,
+                    "name": d,
+                    "severity": "MEDIUM",
+                    "message": f"Forbidden directory name '{d}' with no dictionary justification",
+                })
+
+    return violations, dictionary_allowed, suspicious
+
+
+# --- End Framework Dictionary Integration ---
+
 def lint_governance(target_dir="."):
     index_path = os.path.join(target_dir, OUTPUT_DIR, "governance-index.json")
     if not os.path.exists(index_path):
@@ -176,6 +316,21 @@ def lint_governance(target_dir="."):
         
     for viol in steering_violations:
         errors.append(viol)
+
+    # 5. Framework Dictionary Directory Naming Audit
+    dictionary = _load_framework_dictionary(target_dir)
+    print("📖  [ENGINE] Executing Framework Dictionary Directory Audit...")
+    dir_violations, dir_allowed, dir_suspicious = audit_directory_naming(target_dir, dictionary)
+    
+    if dir_allowed:
+        print(f"  ℹ️  {len(dir_allowed)} directory name(s) allowed via framework dictionary")
+    if dir_suspicious:
+        print(f"  ⚠️  {len(dir_suspicious)} dictionary term(s) in suspicious context")
+        for s in dir_suspicious[:5]:
+            print(f"      - {s['path']}: {s['reason']}")
+    
+    for viol in dir_violations:
+        errors.append(f"{viol['severity']}: {viol['message']} at {viol['path']}")
 
     print("----------------------------------------------------------------------")
     if errors:

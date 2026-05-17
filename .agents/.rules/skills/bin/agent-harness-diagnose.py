@@ -609,16 +609,113 @@ def _check_baseline_integrity(target: Path, layout: LayoutDetector, verbose: boo
     return check
 
 
+def _resolve_framework_dictionary(target: Path) -> Path | None:
+    """Find the framework dictionary index.json, adopted layout first."""
+    candidates = [
+        target / ".agents" / ".rules" / "governance" / "framework-dictionary" / "index.json",
+        target / ".agents" / "governance" / "framework-dictionary" / "index.json",
+    ]
+    for c in candidates:
+        if c.is_file():
+            return c
+    return None
+
+
+def _load_framework_dictionary(target: Path) -> dict[str, Any] | None:
+    """Load the framework dictionary index.json if available."""
+    index_path = _resolve_framework_dictionary(target)
+    if index_path is None:
+        return None
+    try:
+        with open(index_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return None
+
+
+def _term_matches_dir_name(term: str, dir_name: str) -> bool:
+    """Check if a dictionary term matches a directory name (case-insensitive, plural-aware)."""
+    # Direct match
+    if term.lower() == dir_name.lower():
+        return True
+    # Singular/plural: Contracts matches Contract, Repositories matches Repository
+    singular = term
+    plural_dir = dir_name.rstrip("s") if dir_name.endswith("s") else dir_name
+    if singular.lower() == plural_dir.lower():
+        return True
+    # Also try adding 's' to the term
+    if (term + "s").lower() == dir_name.lower():
+        return True
+    return False
+
+
+def _path_context_matches(target: Path, dir_path: str, allowed_contexts: list[str]) -> bool:
+    """Check if the directory path context matches any allowed context from the dictionary.
+
+    Checks if the relative path contains keywords that align with allowed contexts.
+    """
+    path_lower = dir_path.lower()
+    path_parts = Path(dir_path).parts
+
+    # Build a set of context keywords from the allowed contexts
+    context_keywords = set()
+    for ctx in allowed_contexts:
+        for word in ctx.lower().split():
+            if len(word) > 3:  # Skip short words like "in", "of", "for"
+                context_keywords.add(word)
+
+    # Check if any path part or path segment matches context keywords
+    for part in path_parts:
+        part_lower = part.lower()
+        # Direct keyword match in path
+        if part_lower in context_keywords:
+            return True
+        # Check if the full path contains context-relevant segments
+        for kw in context_keywords:
+            if kw in part_lower:
+                return True
+
+    # Special case: framework-dictionary terms in components/ are generally legitimate
+    # because components follow capability-based naming
+    if "components" in path_parts:
+        return True
+
+    # Special case: terms in tests/ following the component structure are acceptable
+    # (tests mirror production structure)
+    if "tests" in path_parts:
+        return True
+
+    # Special case: EVIDENCE archive paths are historical, not active violations
+    if "evidence" in path_parts and (".install-archive" in path_parts or "archive" in path_parts):
+        return True
+
+    return False
+
+
 def _check_naming_compliance(target: Path, layout: LayoutDetector, verbose: bool) -> dict[str, Any]:
-    """Check for forbidden directory names in the project."""
+    """Check for forbidden directory names in the project using framework dictionary.
+
+    Uses the framework dictionary to distinguish legitimate ecosystem usage
+    from generic dumping ground naming.
+    """
     check = {
         "status": "GREEN",
         "findings": [],
         "metrics": {},
         "violations": [],
+        "dictionary_exceptions": [],
     }
 
+    # Load framework dictionary
+    dictionary = _load_framework_dictionary(target)
+    dict_terms = {}
+    if dictionary:
+        dict_terms = dictionary.get("terms", {})
+
     forbidden_found = []
+    dictionary_allowed = []
+    suspicious = []
+
     for root, dirs, _files in os.walk(target):
         # Skip hidden dirs, git, vendor, node_modules
         skip_dirs = {".git", "vendor", "node_modules", ".qoder"}
@@ -630,21 +727,74 @@ def _check_naming_compliance(target: Path, layout: LayoutDetector, verbose: bool
             if d in FORBIDDEN_DIRECTORY_NAMES:
                 full_path = os.path.join(root, d)
                 rel = os.path.relpath(full_path, target)
-                # Check if this is within an allowed ecosystem context
-                parent = Path(root).name
-                if parent in ALLOWED_ECOSYSTEM_TERMS:
-                    continue
-                forbidden_found.append({"path": rel, "name": d})
+
+                # Check against framework dictionary
+                dict_match = None
+                for term, entry in dict_terms.items():
+                    if _term_matches_dir_name(term, d):
+                        dict_match = (term, entry)
+                        break
+
+                if dict_match:
+                    term_name, entry = dict_match
+                    allowed_contexts = entry.get("allowed_contexts", [])
+                    if _path_context_matches(target, rel, allowed_contexts):
+                        # GREEN: legitimate ecosystem usage in correct context
+                        dictionary_allowed.append({
+                            "path": rel,
+                            "name": d,
+                            "term": term_name,
+                            "reason": f"Legitimate {entry.get('classification', 'ecosystem')} term in allowed context",
+                        })
+                    else:
+                        # YELLOW: term exists but context is suspicious
+                        suspicious.append({
+                            "path": rel,
+                            "name": d,
+                            "term": term_name,
+                            "reason": f"Dictionary term used outside allowed contexts",
+                        })
+                elif d in ALLOWED_ECOSYSTEM_TERMS:
+                    # Fallback: legacy ecosystem allowance
+                    dictionary_allowed.append({
+                        "path": rel,
+                        "name": d,
+                        "term": d,
+                        "reason": "Allowed ecosystem term (legacy allowance)",
+                    })
+                else:
+                    # RED: forbidden name with no dictionary justification
+                    forbidden_found.append({"path": rel, "name": d})
 
     check["metrics"]["forbidden_dirs_found"] = len(forbidden_found)
+    check["metrics"]["dictionary_exceptions"] = len(dictionary_allowed)
+    check["metrics"]["suspicious_contexts"] = len(suspicious)
     check["violations"] = forbidden_found[:20]
+    check["dictionary_exceptions"] = dictionary_allowed[:20]
 
+    # Build overall status
     if forbidden_found:
         check["status"] = "YELLOW"
         sample = ", ".join(v["path"] for v in forbidden_found[:5])
         check["findings"].append({
             "severity": "warning",
-            "message": f"{len(forbidden_found)} forbidden directory name(s) found: {sample}",
+            "message": f"{len(forbidden_found)} forbidden directory name(s) with no dictionary justification: {sample}",
+        })
+
+    if suspicious:
+        if check["status"] == "GREEN":
+            check["status"] = "YELLOW"
+        sample = ", ".join(v["path"] for v in suspicious[:3])
+        check["findings"].append({
+            "severity": "warning",
+            "message": f"{len(suspicious)} dictionary term(s) used in suspicious context: {sample}",
+        })
+
+    if dictionary_allowed and verbose:
+        sample = ", ".join(v["path"] for v in dictionary_allowed[:3])
+        check["findings"].append({
+            "severity": "info",
+            "message": f"{len(dictionary_allowed)} directory name(s) allowed via framework dictionary: {sample}",
         })
 
     return check

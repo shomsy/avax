@@ -8,10 +8,10 @@ Use this when initializing `.agents` in a new repository.
 - copy or sync `merge-files.sh` from the OS source and keep the latest version
 - rewrite `business-logic/` for target domain
 - declare the applied governance stack in root `AGENTS.md`
-- adopt the timestamp format and estimation law from `management/TIMELINE.md`
-- choose relevant architecture overlays under
-  `governance/architecture/profiles/**`
-- choose relevant coding profiles under `governance/profiles/**`
+- configure `.agents/config/project.json` for machine resolution
+- adopt the timestamp format and estimation law from `.agents/management/TIMELINE.md`
+- choose relevant architecture overlays under `.agents/governance/architecture/profiles/**`
+- choose relevant profiles under `.agents/governance/profiles/**` (Languages, Frameworks, Project Types)
 - decide whether `governance/security/**` is mandatory on day one for the
   target repository
 - adapt `governance/architecture/ARCHITECTURE.md` to real repo boundaries

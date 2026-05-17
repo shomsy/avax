@@ -1,3 +1,9 @@
+---
+owner: governance-core
+status: active
+machine-enforced: true
+---
+
 # Feature Flags — Conditional Governance Activation
 
 Version: 1.0.0
@@ -48,7 +54,6 @@ Flags are resolved in the following priority order (highest wins):
 4. **Default** — The value in the table above.
 
 ### Override Syntax
-
 In root `AGENTS.md`, flags are overridden under the project definitions:
 
 ```markdown
@@ -65,12 +70,10 @@ In root `AGENTS.md`, flags are overridden under the project definitions:
 ## 3) Flag Semantics
 
 ### ON
-
 The governance subsystem is active. All rules from the referenced document
 are enforced.
 
 ### OFF
-
 The governance subsystem is inactive. Its rules are still documented but
 not enforced. The agent MAY note when it would have triggered a disabled
 gate:

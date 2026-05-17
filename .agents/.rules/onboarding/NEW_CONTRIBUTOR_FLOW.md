@@ -4,25 +4,23 @@
 
 1. `.agents/README.md`
 2. `AGENTS.md`
-3. `.agents/governance/README.md`
-4. `.agents/governance/core/quality/quality-gates.md`
-5. `.agents/governance/core/resolution/profile-resolution-algorithm.md`
-6. `.agents/governance/security/README.md`
-7. `.agents/governance/architecture/README.md`
-8. `.agents/governance/architecture/ARCHITECTURE.md`
-9. `.agents/governance/standards/review/how-to-code-review.md`
-10. `.agents/governance/delivery/release/release-and-rollback-policy.md`
-11. `.agents/business-logic/README.md`
-12. `.agents/management/README.md`
-13. `.agents/management/TIMELINE.md`
+3. `.agents/governance/core/bootstrap/agent-bootstrap.md`
+4. `.agents/governance/core/resolution/profile-resolution-algorithm.md`
+5. `.agents/governance/standards/review/recursive-review-contract.md`
+6. `.agents/governance/standards/documentation/evidence-model.md`
+7. `.agents/governance/delivery/operations/management-model.md`
+8. `.agents/governance/architecture/README.md`
+9. `.agents/governance/security/README.md`
+10. `EVIDENCE/README.md`
 
 ## Step 2: Understand Current State
 
-- check active tasks in `management/TODO.md`
-- check active bugs in `management/BUGS.md`
-- check current board state in `management/ACTIVE.md`
-- check latest evidence in `management/evidence/CHANGELOG.md`
-- check release and test evidence when the task touches runtime or deployment
+- check active tasks in `.agents/management/TODO.md`
+- check active bugs in `.agents/management/BUGS.md`
+- check current board state in `.agents/management/ACTIVE.md`
+- check system truth in `.agents/management/CURRENT.md`
+- check human summaries in `EVIDENCE/`
+- check machine validation in `.agents/management/evidence/validation/`
 
 ## Step 3: Deliver Safely
 

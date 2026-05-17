@@ -1,3 +1,9 @@
+---
+owner: governance-core
+status: active
+machine-enforced: true
+---
+
 # Universal Quality Gates
 
 Version: 1.3.0

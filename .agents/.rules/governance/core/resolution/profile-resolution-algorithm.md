@@ -1,6 +1,12 @@
+---
+owner: governance-core
+status: active
+machine-enforced: true
+---
+
 # Profile Resolution Algorithm
 
-Version: 1.0.0
+Version: 3.0.0
 Status: Normative
 
 ## Purpose
@@ -10,6 +16,7 @@ repository tree, and the current user task, the agent must be able to resolve:
 
 - the active SDLC lane
 - the applicable repository-kind profiles
+- the applicable project-type profiles
 - the applicable language profiles
 - the applicable framework or runtime profiles
 - the applicable architecture overlays
@@ -25,7 +32,7 @@ It must resolve the rule pack in a predictable order.
 
 The target is:
 
-`task lane -> repository kind -> stack -> architecture -> coding rules -> security -> release or evidence`
+`task lane -> repository kind -> project type -> stack -> architecture -> coding rules -> security -> release or evidence`
 
 ## Required Child-Repo Declaration
 
@@ -34,6 +41,7 @@ Every adopting repository should declare this explicitly in its root
 
 - delivery kind or system kind
 - applied repository profiles
+- project types (web-app, library, cli, api-service, monorepo)
 - languages
 - frameworks or runtimes
 - applied coding profiles
@@ -42,8 +50,59 @@ Every adopting repository should declare this explicitly in its root
 - whether `delivery/operations/**` is mandatory
 - canonical validation, development, and release entrypoints
 
+Optionally, the project may also provide `.agents/config/project.json` as a
+machine-readable configuration to accelerate profile resolution. The JSON
+config is advisory — `AGENTS.md` remains the human source of truth.
+
 Explicit declaration is preferred over inference.
 Inference exists only as a safe fallback.
+
+## V3 & V4 Resolution Engine & Overlay Architecture Rules
+
+To allow repositories to adopt the Agent Harness OS cleanly while preserving custom local rules, the system defines a
+three-tier overlay architecture:
+
+1. **Root `AGENTS.md`** (Highest Precedence): Contains project-specific rules, local exceptions, and the authoritative
+   applied governance stack.
+2. **Local Project Governance** (Medium Precedence): Files located in:
+    - `.agents/governance/**` (Local custom rules or overlays of baseline rules)
+    - `.agents/how-to/**` (Local custom operational guidelines)
+    - `.agents/language-specific/**` (Local language overrides)
+3. **Frozen Baseline** (Lowest Precedence): Files located under `.agents/.rules/**`. These are managed by the installer
+   and represent the frozen, universal OS baseline. They are immutable and should never be modified manually.
+
+### Override and Extension Model
+
+- **Shadowing / Overlays**: A local file under `.agents/governance/path/to/rule.md` shadows and overrides the baseline
+  file `.agents/.rules/governance/path/to/rule.md`.
+- **Extension**: Local project governance extends the baseline by adding files not present in the baseline.
+- **Immutability of Baseline**: Local developers MUST NOT modify files under `.agents/.rules/**` directly. Any
+  customization of a baseline rule must be done by copying the file to `.agents/governance/` and editing it there.
+- **Verification Gates**: The runtime compiler and verify-governance tools actively validate overlay compliance (
+  preventing illegal mutations, detecting shadowed duplicates, and ensuring no version corruption).
+
+1. **Inferred profiles are YELLOW only**: If a profile is inferred rather than declared, the resolution is considered
+   YELLOW. Execute mode is permitted, but the debt must be recorded.
+2. **Execute mode requires explicit profile declaration**: Full GREEN execution requires explicit profile declaration in
+   `AGENTS.md` or `.agents/config/project.json`.
+3. **AGENTS.md remains human source of truth**: If config and text disagree, text wins.
+4. **project.json accelerates machine resolution**.
+5. **Local overlays override reusable profiles**.
+
+## Conflict & Incompatibility Detection
+
+When loading profiles, the resolution engine must detect:
+
+- **Missing Profiles**: Declared in config but missing in `.agents/governance/profiles/`. Halts execution (RED).
+- **Incompatible Profiles**: e.g., declaring both `php` and `nodejs` without `monorepo` or separate API boundaries.
+  Triggers YELLOW warning.
+- **Conflict Detection**: Overlapping rules between framework and language. Framework overlays take precedence over
+  generic language rules.
+
+## Resolution Evidence
+
+The output of the resolution algorithm must be recorded in `.agents/management/evidence/raw/profile-resolution.json` for
+diagnostic purposes.
 
 ## Resolution Order
 
@@ -105,10 +164,14 @@ Read the local root `AGENTS.md` and extract:
 - declared languages
 - declared frameworks or runtimes
 - declared repository-kind profiles
+- declared project-type profiles
 - declared architecture profiles
 - declared system kind such as `web app`, `API`, `worker`, `CLI`, `library`,
   `design system`, or `monolith`
 - declared required security and operations lanes
+
+If `.agents/config/project.json` exists, read it to supplement or accelerate
+resolution. If the JSON config and `AGENTS.md` disagree, `AGENTS.md` wins.
 
 If the root file declares a profile, that declaration is authoritative unless it
 is obviously stale relative to the repo tree.
@@ -143,8 +206,17 @@ Inference rules:
 - if evidence is weak, stay at the broader language or architecture baseline
 - if the repo is polyglot, compose all clearly-owned profiles instead of
   pretending there is only one
+- **Inferred profiles flag the SDLC context as YELLOW.**
 
-## Step 4: Resolve Architecture Overlays
+## Step 4: Resolution Diagnostics & Fallback
+
+If no explicit profiles are found and inference yields no high-confidence match:
+
+- Fallback to generic `quality-gates.md` and `architecture-standard.md`.
+- SDLC state is YELLOW (or RED if operations/security required).
+- Output diagnostic warning: "No profiles resolved. Operating in generic mode."
+
+## Step 5: Resolve Architecture Overlays
 
 Architecture resolution order is:
 

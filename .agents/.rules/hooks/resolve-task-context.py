@@ -616,35 +616,10 @@ def classify_prompt(prompt: str) -> dict[str, Any]:
     }
 
 
-PIPELINE_BY_KIND = {
-    "brainstorm": "Minimal Supervisor Flow",
-    "planning": "Minimal Supervisor Flow",
-    "feature": "Minimal Supervisor Flow",
-    "bugfix": "Minimal Supervisor Flow",
-    "refactoring": "Minimal Supervisor Flow",
-    "documentation": "Minimal Supervisor Flow",
-    "review": "Minimal Supervisor Flow",
-    "governance": "Minimal Supervisor Flow",
-    "operations": "Minimal Supervisor Flow",
-    "release": "Minimal Supervisor Flow",
-    "investigation": "Minimal Supervisor Flow",
-    "security": "Minimal Supervisor Flow",
-    "exploration": "Minimal Supervisor Flow",
-}
-
-STARTING_ROLE_BY_PIPELINE = {
-    "Minimal Supervisor Flow": "supervisor",
-}
-
-ROLE_CHAIN_BY_PIPELINE = {
-    "Minimal Supervisor Flow": [
-        "supervisor",
-        "mapper",
-        "docs-researcher",
-        "codex-executor",
-        "reviewer",
-    ],
-}
+# All task kinds use the same pipeline — no branching needed.
+PIPELINE = "Minimal Supervisor Flow"
+ROLE_CHAIN = ["supervisor", "mapper", "docs-researcher", "codex-executor", "reviewer"]
+STARTING_ROLE = "supervisor"
 
 # Model Mapping for v1 Alignment
 MODEL_BY_ROLE = {
@@ -659,11 +634,7 @@ MODEL_BY_ROLE = {
 def select_pipeline_and_roles(
     classification: dict[str, Any],
 ) -> tuple[str, str, list[str]]:
-    task_kind = classification["task_kind"]
-    pipeline = PIPELINE_BY_KIND.get(task_kind, "Standard Feature Pipeline")
-    starting_role = STARTING_ROLE_BY_PIPELINE[pipeline]
-    role_chain = ROLE_CHAIN_BY_PIPELINE[pipeline]
-    return pipeline, starting_role, role_chain
+    return PIPELINE, STARTING_ROLE, ROLE_CHAIN
 
 
 def select_trust(primary_lane: str, task_kind: str, prompt: str) -> tuple[str, str]:

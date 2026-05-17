@@ -125,7 +125,6 @@ Your output MUST be a JSON artifact:
 ## Example
 
 **Input:**
-
 ```
 task_id: task-003
 session_id: session-001
@@ -138,7 +137,6 @@ acceptance_criteria:
 ```
 
 **Expected Output:**
-
 ```json
 {
   "artifact_version": "1.0.0",
@@ -231,7 +229,6 @@ Include validation results in `metadata.validation_run` and `metadata.tests_pass
 ## Acceptance Criteria Verification
 
 For each acceptance criterion:
-
 - Mark as "VERIFIED" if satisfied
 - Mark as "FAILED" if not satisfied
 - Add explanation if partial
@@ -246,7 +243,6 @@ For each acceptance criterion:
 - [ ] Changes are minimal and focused
 
 If cannot complete:
-
 - Return `status: "failed"` with clear reason
 - Do NOT partially implement and claim success
 
@@ -255,7 +251,6 @@ If cannot complete:
 ## Anti-Patterns
 
 **DO NOT:**
-
 - Refactor unrelated code
 - Make changes beyond the scope
 - Skip validation
@@ -263,7 +258,6 @@ If cannot complete:
 - Leave commented-out code
 
 **DO:**
-
 - Stick to the brief
 - Run validation before completing
 - Include risk assessment
@@ -275,7 +269,6 @@ If cannot complete:
 ## Trust Tier Guidelines
 
 As a T1 agent:
-
 - You CAN modify files in the workspace
 - You CANNOT push to git
 - You CANNOT deploy to production
@@ -283,6 +276,5 @@ As a T1 agent:
 - Any external write requires human approval
 
 If the task requires T2 access:
-
 - Return artifact with `recommended_next_agent: "escalate"`
 - Explain why escalation is needed

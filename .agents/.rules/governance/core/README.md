@@ -1,3 +1,9 @@
+---
+owner: governance-core
+status: active
+machine-enforced: true
+---
+
 # Core Governance
 
 Use this folder for the reusable control plane:

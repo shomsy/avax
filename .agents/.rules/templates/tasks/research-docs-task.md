@@ -118,7 +118,6 @@ Your output MUST be a JSON artifact:
 ## Example
 
 **Input:**
-
 ```
 task_id: task-002
 session_id: session-001
@@ -127,7 +126,6 @@ research_topic: "OpenAI API rate limits"
 ```
 
 **Expected Output:**
-
 ```json
 {
   "artifact_version": "1.0.0",
@@ -200,7 +198,6 @@ research_topic: "OpenAI API rate limits"
 - [ ] Token budget NOT exceeded
 
 If token budget is exhausted:
-
 - Return `status: "partial"`
 - Include what was found so far
 - Include `remaining_work` in `status_reason`
@@ -210,7 +207,6 @@ If token budget is exhausted:
 ## Anti-Patterns
 
 **DO NOT:**
-
 - Return documentation without source URL
 - Use outdated sources without noting
 - Fetch entire documents (extract only relevant parts)
@@ -218,7 +214,6 @@ If token budget is exhausted:
 - Skip `source_type` field
 
 **DO:**
-
 - Always include source URL
 - Mark source reliability
 - Extract only relevant excerpts

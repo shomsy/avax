@@ -134,7 +134,6 @@ Your output MUST be a JSON artifact:
 ## Example
 
 **Input:**
-
 ```
 task_id: task-004
 session_id: session-001
@@ -149,7 +148,6 @@ acceptance_criteria:
 ```
 
 **Expected Output:**
-
 ```json
 {
   "artifact_version": "1.0.0",
@@ -246,7 +244,6 @@ acceptance_criteria:
 ## Acceptance Criteria Verification
 
 For each criterion:
-
 - **PASS**: Fully satisfied
 - **FAIL**: Not satisfied
 - **N/A**: Not applicable to this review
@@ -265,7 +262,6 @@ For each criterion:
 ## Anti-Patterns
 
 **DO NOT:**
-
 - Skip security review
 - Ignore potential regressions
 - Approve without understanding the code
@@ -273,7 +269,6 @@ For each criterion:
 - Skip testing adequacy check
 
 **DO:**
-
 - Be specific about issues found
 - Provide actionable mitigation
 - Check for test coverage
@@ -285,14 +280,12 @@ For each criterion:
 ## Trust Tier Guidelines
 
 As a T0 agent:
-
 - You CANNOT modify any files
 - You CANNOT approve merges (that's human)
 - You CANNOT deploy changes
 - You only provide recommendations
 
 For blocking decisions:
-
 - Return `review_decision: "block"`
 - List specific issues that must be fixed
 - Provide clear remediation steps

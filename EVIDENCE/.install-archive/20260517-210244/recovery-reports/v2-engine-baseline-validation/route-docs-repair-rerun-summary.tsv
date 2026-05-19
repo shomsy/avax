@@ -1,3 +1,0 @@
-order	command	exit	log
-69	php tooling/audit_broken_refs.php	0	69-audit-broken-refs-after-route-docs-repair.log
-70	vendor/bin/phpstan analyse routes docs/Components components/DeveloperTools/Documentation/Api --memory-limit=1G --error-format=raw --no-progress	0	70-phpstan-doc-route-api-docs-after-repair.raw

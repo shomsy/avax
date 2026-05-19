@@ -1,1 +1,0 @@
-GREEN: All components follow canonical shape.

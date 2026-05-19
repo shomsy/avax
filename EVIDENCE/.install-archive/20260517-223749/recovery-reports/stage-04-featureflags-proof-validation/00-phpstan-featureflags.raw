@@ -1,3 +1,0 @@
-Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
-/home/shomsy/projects/avax/tests/Unit/Components/Application/FeatureFlags/FeatureFlagsTest.php:65:Property Avax\Components\Application\FeatureFlags\System\PublicSurface\FlagStoreInterface@anonymous/tests/Unit/Components/Application/FeatureFlags/FeatureFlagsTest.php:64::$flags type has no value type specified in iterable type array.
-/home/shomsy/projects/avax/tests/Unit/Components/Application/FeatureFlags/FeatureFlagsTest.php:79:Method Avax\Components\Application\FeatureFlags\System\PublicSurface\FlagStoreInterface@anonymous/tests/Unit/Components/Application/FeatureFlags/FeatureFlagsTest.php:64::all() return type has no value type specified in iterable type array.

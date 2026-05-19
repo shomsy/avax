@@ -1,2 +1,0 @@
-Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
-/home/shomsy/projects/avax/tests/Unit/Components/API/Contracts/ApiContractsTest.php:68:Using nullsafe method call on non-nullable type Avax\Components\API\Contracts\System\Capabilities\EndpointContracts\EndpointDeprecation. Use -> instead.

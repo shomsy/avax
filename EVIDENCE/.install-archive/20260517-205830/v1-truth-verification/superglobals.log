@@ -1,6 +1,0 @@
-COMMAND: php tooling/check-superglobals.php
-DATE: Wed May  6 15:02:40 CEST 2026
-
-No unauthorized superglobal usage detected.
-
-EXIT_CODE=0

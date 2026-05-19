@@ -1,6 +1,0 @@
-order	command	exit	log
-88	vendor/bin/phpunit --no-coverage --filter OpenAPITest	0	88-phpunit-openapi.log
-89	vendor/bin/phpstan analyse components/API/OpenAPI tests/Unit/Components/API/OpenAPI --memory-limit=1G --error-format=raw --no-progress	1	89-phpstan-openapi.raw
-90	php tooling/refactor/check-component-suite-structure.php	0	90-check-component-suite-structure-after-openapi.log
-91	php tooling/refactor/check-component-canonical-shape.php	0	91-check-component-canonical-shape-after-openapi.log
-92	php tooling/refactor/check-advanced-pattern-folder-violations.php	0	92-check-advanced-pattern-folder-violations-after-openapi.log

@@ -1,6 +1,0 @@
-CHECK 1: CURRENT_TRUTH says V5.9 is BLOCKED (not prematurely READY) — PASS
-CHECK 2: EXECUTION.md says V5.9 BLOCKED — PASS
-CHECK 3: Component status lock has 95 entries — PASS
-CHECK 4: 34 cleanup evidence files — PASS
-
-PASS: Truth consistency verified

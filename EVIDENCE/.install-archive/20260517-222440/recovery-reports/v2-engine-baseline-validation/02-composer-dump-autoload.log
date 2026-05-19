@@ -1,5 +1,0 @@
-Generating optimized autoload files
-Class Avax\Components\Documentation\Api\System\Capabilities\OpenApi\OpenApiGenerator located in ./components/DeveloperTools/Documentation/Api/System/Capabilities/OpenApi/OpenApiGenerator.php does not comply with psr-4 autoloading standard (rule: Avax\Components\ => ./components). Skipping.
-Class Avax\Components\Documentation\Api\System\Capabilities\Swagger\SwaggerUi located in ./components/DeveloperTools/Documentation/Api/System/Capabilities/Swagger/SwaggerUi.php does not comply with psr-4 autoloading standard (rule: Avax\Components\ => ./components). Skipping.
-Class Avax\Components\Documentation\Api\System\PublicSurface\ApiDocumentation located in ./components/DeveloperTools/Documentation/Api/System/PublicSurface/ApiDocumentation.php does not comply with psr-4 autoloading standard (rule: Avax\Components\ => ./components). Skipping.
-Generated optimized autoload files containing 6581 classes

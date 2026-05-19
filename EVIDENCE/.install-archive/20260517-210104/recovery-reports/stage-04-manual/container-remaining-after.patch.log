@@ -1,4 +1,0 @@
-Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
-/home/shomsy/projects/avax/components/Application/Container/System/Capabilities/Composition/Compilation/CompileContainer.php:1288:Offset 'name' on array{name: string, shared: bool, scoped: bool, transient: bool, pooled?: bool, poolSize?: int, poolResetBeforeReuse?: bool} on left side of ?? always exists and is not nullable.
-/home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php:134:Missing parameter $container (Avax\Components\Application\Container\System\ContainerInterface) in call to OrderingProviderAlpha constructor.
-/home/shomsy/projects/avax/components/Application/Container/tests/Flows/CreateContainer/DeterministicOrderingSmokeTest.php:134:Unknown parameter $app in call to OrderingProviderAlpha constructor.

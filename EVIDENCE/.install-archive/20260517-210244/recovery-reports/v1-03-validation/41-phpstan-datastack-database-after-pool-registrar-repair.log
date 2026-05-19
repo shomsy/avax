@@ -1,3 +1,0 @@
-Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
-/home/shomsy/projects/avax/components/DataStack/Database/System/Capabilities/Connections/Pools/ElasticsearchPool.php:16:Method Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\ElasticsearchPool::__construct() has parameter $config with no value type specified in iterable type array.
-/home/shomsy/projects/avax/components/DataStack/Database/System/Capabilities/Connections/Pools/Neo4jPool.php:16:Method Avax\Components\DataStack\Database\System\Capabilities\Connections\Pools\Neo4jPool::__construct() has parameter $config with no value type specified in iterable type array.

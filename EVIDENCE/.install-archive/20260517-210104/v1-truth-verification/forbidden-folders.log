@@ -1,6 +1,0 @@
-COMMAND: php tooling/architecture/check-forbidden-folders.php
-DATE: Wed May  6 15:02:40 CEST 2026
-
-Forbidden folder checks passed.
-
-EXIT_CODE=0

@@ -1,2 +1,0 @@
-Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
-/home/shomsy/projects/avax/tests/Unit/Components/CLI/Console/ConsoleCapabilitiesTest.php:164:Parameter #1 $key of method Avax\Components\CLI\Console\System\PublicSurface\Command::argument() expects string, int given.

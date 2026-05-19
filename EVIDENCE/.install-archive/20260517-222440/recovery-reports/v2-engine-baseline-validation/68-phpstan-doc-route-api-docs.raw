@@ -1,4 +1,0 @@
-Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
-/home/shomsy/projects/avax/docs/Components/Capabilities/OpenApi/OpenApiGenerator.php:18:Method Avax\Docs\Components\Capabilities\OpenApi\OpenApiGenerator::generate() return type has no value type specified in iterable type array.
-/home/shomsy/projects/avax/docs/Components/PublicSurface/ApiDocumentation.php:15:Method Avax\Docs\Components\PublicSurface\ApiDocumentation::openApi() return type has no value type specified in iterable type array.
-/home/shomsy/projects/avax/routes/web.php:17:Call to static method health() on an unknown class Avax\Components\Operations\Monitoring\System\PublicSurface\Monitoring.

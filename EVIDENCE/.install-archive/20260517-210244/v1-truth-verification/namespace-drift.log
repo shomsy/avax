@@ -1,6 +1,0 @@
-COMMAND: php tooling/refactor/check-namespace-drift.php
-DATE: Wed May  6 15:02:09 CEST 2026
-
-PASS
-
-EXIT_CODE=0

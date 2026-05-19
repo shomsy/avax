@@ -1,3 +1,0 @@
-Generating optimized autoload files
-Class xhp_ located in ./framework/System/Foundation/compat.php does not comply with psr-4 autoloading standard (rule: Avax\Framework\ => ./framework). Skipping.
-Generated optimized autoload files containing 9341 classes

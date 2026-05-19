@@ -1,8 +1,0 @@
-COMPONENT STATUS LOCK COVERAGE
-==============================
-
-Discovered components: 76
-Locked components: 80
-Missing from lock: 0
-
-PASS: All 76 discovered components have status lock entries

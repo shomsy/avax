@@ -1,7 +1,0 @@
-COMMAND: composer dump-autoload -o
-DATE: Wed May  6 15:02:07 CEST 2026
-
-Generating optimized autoload files
-Generated optimized autoload files containing 6519 classes
-
-EXIT_CODE=0

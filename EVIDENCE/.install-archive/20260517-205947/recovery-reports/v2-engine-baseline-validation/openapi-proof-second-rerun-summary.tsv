@@ -1,3 +1,0 @@
-order	command	exit	log
-95	vendor/bin/phpunit --no-coverage --filter OpenAPITest	0	95-phpunit-openapi-after-response-key-type.log
-96	vendor/bin/phpstan analyse components/API/OpenAPI tests/Unit/Components/API/OpenAPI --memory-limit=1G --error-format=raw --no-progress	0	96-phpstan-openapi-after-response-key-type.raw

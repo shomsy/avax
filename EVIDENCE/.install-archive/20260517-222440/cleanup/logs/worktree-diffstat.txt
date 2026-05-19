@@ -1,8 +1,0 @@
- EVIDENCE/cleanup/logs/worktree-diffstat.txt                      | 3 ---
- EVIDENCE/cleanup/logs/worktree-pre.txt                           | 5 +++++
- .../Application/Cache/System/PublicSurface/CacheFacade.php       | 9 ---------
- .../Application/Cache/System/PublicSurface/CacheRegistry.php     | 9 ---------
- .../Cache/System/PublicSurface/CompiledCacheTarget.php           | 9 ---------
- .../Application/Cache/System/PublicSurface/ReadFromCache.php     | 9 ---------
- .../Cache/System/PublicSurface/RuntimeCacheTarget.php            | 9 ---------
- 7 files changed, 5 insertions(+), 48 deletions(-)

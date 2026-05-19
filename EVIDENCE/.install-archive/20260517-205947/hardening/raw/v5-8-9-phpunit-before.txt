@@ -1,5 +1,0 @@
-
-Time: 00:20.710, Memory: 86.50 MB
-
-OK, but there were issues!
-Tests: 8351, Assertions: 24008, Deprecations: 1.

@@ -1,8 +1,0 @@
-== Composer validate ==
-composer_validate_exit=0
-composer_autoload_exit=0
-phpstan_full_exit=0
-phpunit_full_exit=0
-broken_refs_exit=0
-runtime_doctor_exit=0
-stage_lock_exit=0

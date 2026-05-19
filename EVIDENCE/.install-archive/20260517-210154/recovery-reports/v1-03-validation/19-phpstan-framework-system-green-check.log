@@ -1,2 +1,0 @@
-Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
-/home/shomsy/projects/avax/framework/System/Flows/HandleRuntimeFailure/ReportRuntimeFailure.php:174:Method Avax\Framework\System\Flows\HandleRuntimeFailure\ReportRuntimeFailure::reportToExternalTrackers() returns void but does not have any side effects.

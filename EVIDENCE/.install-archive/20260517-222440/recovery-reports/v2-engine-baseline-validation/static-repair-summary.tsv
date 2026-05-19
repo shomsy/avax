@@ -1,4 +1,0 @@
-order	command	exit	log
-18	composer dump-autoload -o	0	18-composer-dump-autoload-after-static-repair.log
-19	php tooling/governance/check-stage-lock.php	0	19-check-stage-lock-after-truth-repair.log
-20	vendor/bin/phpstan analyse components/DeveloperTools/Documentation/Api --memory-limit=1G --error-format=raw --no-progress	0	20-phpstan-developer-tools-documentation-api.raw

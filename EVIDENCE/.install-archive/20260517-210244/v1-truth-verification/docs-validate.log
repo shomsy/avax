@@ -1,6 +1,0 @@
-COMMAND: php tooling/docs/validate-docs.php
-DATE: Wed May  6 15:02:40 CEST 2026
-
-Documentation ownership checks passed.
-
-EXIT_CODE=0

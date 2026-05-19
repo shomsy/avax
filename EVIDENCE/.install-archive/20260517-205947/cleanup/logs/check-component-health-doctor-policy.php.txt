@@ -1,1 +1,0 @@
-PASS: 12 runtime-critical components checked, all have health checks

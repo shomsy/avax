@@ -1,2 +1,0 @@
-Note: Using configuration file /home/shomsy/projects/avax/phpstan.neon.
-/home/shomsy/projects/avax/components/API/OpenAPI/System/Capabilities/SchemaGeneration/BuildOpenApiDocument.php:109:Method Avax\Components\API\OpenAPI\System\Capabilities\SchemaGeneration\BuildOpenApiDocument::responses() should return array<string, mixed> but returns array<int|string, array<string, mixed>>.

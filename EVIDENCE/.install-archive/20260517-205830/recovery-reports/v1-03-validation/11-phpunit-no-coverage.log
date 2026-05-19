@@ -1,6 +1,0 @@
-Script started on 2026-05-06 01:36:44+02:00 [COMMAND="vendor/bin/phpunit --no-coverage" <not executed on terminal>]
-^@PHPUnit 10.5.63 by Sebastian Bergmann and contributors.
-
-Test directory "/home/shomsy/projects/avax/tests/Unit/Framework/System/Capabilities/ComponentRegistry" not found
-
-Script done on 2026-05-06 01:36:44+02:00 [COMMAND_EXIT_CODE="2"]

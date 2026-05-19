@@ -783,10 +783,10 @@ private function handleCorruption(string $reason): void
 
         return <<<PHP
             declare(strict_types=1);
-            
-            namespace Avax\\Components\\Application\\Container\\DI\\Capabilities\\Composition\\Compilation\\Generated;
-            
-            return new class extends \\Avax\\Container\\Capabilities\\Composition\\Compilation\\CompiledContainer
+
+            namespace Avax\\Components\\Application\\Container\\DI\\Capabilities\\Composition\\Generated;
+
+            return new class extends \\Avax\\Components\\Application\\Container\\System\\Capabilities\\Composition\\Compilation\\CompiledContainer
             {
                 protected string \$fingerprint = '{$snapshot['fingerprint']}';
             

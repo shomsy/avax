@@ -25,7 +25,7 @@ final class MethodEmitter
     public function emitDynamicMethod(string $methodName): string
     {
         return <<<PHP
-            public function {$methodName}(\\Avax\\Container\\Capabilities\\Resolution\\ResolveDependency \$resolver, \\Avax\\Container\\Capabilities\\Resolution\\ResolveRequest \$request, array \$overrides = []) : mixed
+            public function {$methodName}(\\Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency \$resolver, \\Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveRequest \$request, array \$overrides = []) : mixed
             {
                 return \$resolver->resolveDynamicRequest(\$request);
             }
@@ -45,14 +45,14 @@ final class MethodEmitter
         bool $needsFinish,
     ): string {
         $className = '\\'.ltrim(string: $class, characters: '\\');
-        $arguments = $this->emitArguments(serviceId: $serviceId, plan: $resolvePlan);
+        $arguments = $this->emitArguments(resolvePlan: $resolvePlan, serviceId: $serviceId);
         $compiledRegistrationArguments = $registrationArguments
                 |> serialize(...)
                 |> base64_encode(...)
-                |> $this(...);
+                |> (static fn (string $value): string => var_export(value: $value, return: true));
 
         $body = <<<PHP
-            public function {$methodName}(\\Avax\\Container\\Capabilities\\Resolution\\ResolveDependency \$resolver, \\Avax\\Container\\Capabilities\\Resolution\\ResolveRequest \$request, array \$overrides = []) : mixed
+            public function {$methodName}(\\Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveDependency \$resolver, \\Avax\\Components\\Application\\Container\\System\\Capabilities\\Resolution\\ResolveRequest \$request, array \$overrides = []) : mixed
             {
                 \$arguments = \\array_replace(
                     \\unserialize(\\base64_decode({$compiledRegistrationArguments}), ['allowed_classes' => false]),
@@ -148,7 +148,7 @@ final class MethodEmitter
             return 'null';
         }
 
-        return 'throw new \\Avax\\Container\\Capabilities\\Diagnostics\\Errors\\ContainerException('
+        return 'throw new \\Avax\\Components\\Application\\Container\\System\\Capabilities\\ContainerObservability\\Errors\\ContainerException('
             .$this->export(value: sprintf('Cannot resolve parameter [$%s] for service [%s].', $parameter['name'], $serviceId))
             .')';
     }

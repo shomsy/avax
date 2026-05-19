@@ -9,7 +9,7 @@ namespace Avax\Tooling\Refactor;
  * Moves remaining non-canonical production roots and suite-level files.
  * 1:1 with avax-master-development-plan-v1.md.
  */
-final class FinishStage02Taxonomy
+final class finish_stage02_taxonomy
 {
     private string $basePath;
 

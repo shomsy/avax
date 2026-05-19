@@ -11,7 +11,7 @@ use RecursiveIteratorIterator;
  * Detects 'use' statements that point to a namespace (folder) instead of a class.
  * Auto-fixes them by appending the class name if it exists in that folder.
  */
-final class FixBrokenImports
+final class fix_broken_imports
 {
     private string $root;
 

@@ -10,7 +10,7 @@ use RecursiveIteratorIterator;
 /**
  * Normalizes tooling folder names and namespaces.
  */
-final class NormalizeTooling
+final class normalize_tooling
 {
     private string $root;
 

@@ -173,38 +173,54 @@
     },
     ".agents/.rules/governance/core/README.md": {
       "path": ".agents/.rules/governance/core/README.md",
-      "frontmatter": {},
+      "frontmatter": {
+        "status": "active"
+      },
       "links": [],
       "rule_ids": [],
-      "checksum": "273807f15e5f6b39f9dc610b43ca85e1c1171d7b41eda0d392f6f9b30e4d2d0c"
+      "checksum": "cda30a56445f699bdecbd1d9cf38aae2dab8c5f5588c55a4d43f3305fdfa3bfe"
     },
     ".agents/.rules/governance/core/architecture-law.md": {
       "path": ".agents/.rules/governance/core/architecture-law.md",
-      "frontmatter": {},
+      "frontmatter": {
+        "status": "active",
+        "version": "2.0.0",
+        "scope": "all"
+      },
       "links": [],
       "rule_ids": [],
-      "checksum": "8ea4d0574247db1b58f91612fcdc05bf07a6878ff95c363df5a8d388411fbe2d"
+      "checksum": "209ca4a9542a528aa44128efcb98730f261ebc46eaba122bcd7c429bc703653c"
     },
     ".agents/.rules/governance/core/bootstrap/agent-bootstrap.md": {
       "path": ".agents/.rules/governance/core/bootstrap/agent-bootstrap.md",
-      "frontmatter": {},
+      "frontmatter": {
+        "status": "active",
+        "version": "1.0.0"
+      },
       "links": [],
       "rule_ids": [],
-      "checksum": "5789ec663906ccb0fa5b5580c192856efa0dab5066fb77bbb6b0095bca016a1a"
+      "checksum": "edbd4c922546e3926a325a4c73ed28737be76fc5bc8c8d35fb72177d0ee49e76"
     },
     ".agents/.rules/governance/core/bootstrap/canonical-bootstrap-lifecycle.md": {
       "path": ".agents/.rules/governance/core/bootstrap/canonical-bootstrap-lifecycle.md",
-      "frontmatter": {},
+      "frontmatter": {
+        "status": "active",
+        "version": "3.0.0"
+      },
       "links": [],
       "rule_ids": [],
-      "checksum": "cb395565730c263060ce1b5f824d76610a7af61290358b1d446618a53d275f7e"
+      "checksum": "44f5e103f1972c7ca132b57f376fd99324583ef7c38d7f9bad36c393fcad219f"
     },
     ".agents/.rules/governance/core/flags/feature-flags.md": {
       "path": ".agents/.rules/governance/core/flags/feature-flags.md",
-      "frontmatter": {},
+      "frontmatter": {
+        "status": "active",
+        "version": "1.0.0",
+        "scope": ".agents/governance"
+      },
       "links": [],
       "rule_ids": [],
-      "checksum": "76f241c351d2ae380bdae482a300b33ffd67eb4bff7626fbbc618d9c1ad45d91"
+      "checksum": "e94b4dc68967c84ed35feea4d2520703baf4768282645e39fc1f95a47440f259"
     },
     ".agents/.rules/governance/core/quality/quality-gates.md": {
       "path": ".agents/.rules/governance/core/quality/quality-gates.md",

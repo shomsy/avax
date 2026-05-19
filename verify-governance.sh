@@ -90,8 +90,8 @@ for f in "$TARGET_DIR/EVIDENCE/"*; do
     [ -e "$f" ] || continue
     basename_f=$(basename "$f")
     case "$basename_f" in
-        CURRENT.md|ACTIVE_PLAN.md|FLOW.md|LINKS.md|README.md|EXECUTION.md|accepted-exceptions-ledger.md|cleanup_execution_report.md|.gitkeep)
-            # Valid canonical files (EXECUTION.md is canonical execution control, accepted-exceptions-ledger.md and cleanup_execution_report.md are AvaX governance)
+        CURRENT.md|ACTIVE_PLAN.md|FLOW.md|LINKS.md|README.md|EXECUTION.md|accepted-exceptions-ledger.md|cleanup_execution_report.md|route-cache-plan.md|.gitkeep)
+            # Valid canonical files (EXECUTION.md is canonical execution control, accepted-exceptions-ledger.md and cleanup_execution_report.md are AvaX governance, route-cache-plan.md is V4-04 DX planning guard)
             ;;
         *)
             echo "❌ ERROR [ERR_ORPHAN_EVIDENCE]: Orphan/legacy evidence file detected: EVIDENCE/$basename_f"

@@ -98,7 +98,15 @@ $noisePatterns = [
     'cache',
 ];
 
+// Known legitimate files that match noise patterns but are valid evidence
+$allowedFiles = [
+    'route-cache-plan.md', // V4-04 DX route cache architecture plan
+];
+
 foreach (array_merge($dirs, $files) as $name) {
+    if (in_array($name, $allowedFiles, true)) {
+        continue;
+    }
     foreach ($noisePatterns as $pattern) {
         if (str_contains(strtolower($name), strtolower($pattern))) {
             $failures[] = "Runtime noise detected: {$name}";

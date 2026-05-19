@@ -30,13 +30,15 @@ use PHPUnit\Framework\TestCase;
  */
 final class CallableSerializationProofTest extends TestCase
 {
+    private const string TEST_SECRET_KEY = 'test-secret-key-for-closure-serialization';
+
     // ============================================================
     // 1. CLOSURE SERIALIZATION ROUND-TRIP
     // ============================================================
 
     public function test_serialize_and_unserialize_simple_closure() : void
     {
-        $serializer = new SerializeClosureThroughLibrary();
+        $serializer = new SerializeClosureThroughLibrary(secretKey: self::TEST_SECRET_KEY);
         $closure = fn() => 'hello world';
 
         $encoded = $serializer->serialize($closure);
@@ -47,7 +49,7 @@ final class CallableSerializationProofTest extends TestCase
 
     public function test_serialize_closure_with_captured_variables() : void
     {
-        $serializer = new SerializeClosureThroughLibrary();
+        $serializer = new SerializeClosureThroughLibrary(secretKey: self::TEST_SECRET_KEY);
         $name = 'AvaX';
         $closure = fn() => "Hello, {$name}!";
 
@@ -59,7 +61,7 @@ final class CallableSerializationProofTest extends TestCase
 
     public function test_serialize_closure_with_use_keyword() : void
     {
-        $serializer = new SerializeClosureThroughLibrary();
+        $serializer = new SerializeClosureThroughLibrary(secretKey: self::TEST_SECRET_KEY);
         $x = 10;
         $y = 20;
         $closure = fn() => $x + $y;
@@ -72,7 +74,7 @@ final class CallableSerializationProofTest extends TestCase
 
     public function test_serialize_closure_returning_array() : void
     {
-        $serializer = new SerializeClosureThroughLibrary();
+        $serializer = new SerializeClosureThroughLibrary(secretKey: self::TEST_SECRET_KEY);
         $closure = fn() => ['a', 'b', 'c'];
 
         $encoded = $serializer->serialize($closure);
@@ -126,7 +128,7 @@ final class CallableSerializationProofTest extends TestCase
     public function test_encode_produces_signed_json_payload() : void
     {
         $config = (new CallableSerializationConfig())->withSigningKey('test-key');
-        $serializer = new SerializeClosureThroughLibrary();
+        $serializer = new SerializeClosureThroughLibrary(secretKey: 'test-key');
         $compute = new ComputeHmacSignature();
         $encoder = new EncodeCallable($serializer, $compute, $config);
 
@@ -143,7 +145,7 @@ final class CallableSerializationProofTest extends TestCase
     public function test_decode_verifies_signature_and_restores_closure() : void
     {
         $config = (new CallableSerializationConfig())->withSigningKey('test-key');
-        $serializer = new SerializeClosureThroughLibrary();
+        $serializer = new SerializeClosureThroughLibrary(secretKey: 'test-key');
         $compute = new ComputeHmacSignature();
         $verify = new VerifyHmacSignature();
         $reject = new RejectUnsafeCallable();
@@ -163,7 +165,7 @@ final class CallableSerializationProofTest extends TestCase
     public function test_decode_rejects_tampered_payload() : void
     {
         $config = (new CallableSerializationConfig())->withSigningKey('test-key');
-        $serializer = new SerializeClosureThroughLibrary();
+        $serializer = new SerializeClosureThroughLibrary(secretKey: 'test-key');
         $compute = new ComputeHmacSignature();
         $verify = new VerifyHmacSignature();
         $reject = new RejectUnsafeCallable();
@@ -192,7 +194,7 @@ final class CallableSerializationProofTest extends TestCase
     public function test_decode_rejects_unsigned_payload_when_key_configured() : void
     {
         $config = (new CallableSerializationConfig())->withSigningKey('test-key');
-        $serializer = new SerializeClosureThroughLibrary();
+        $serializer = new SerializeClosureThroughLibrary(secretKey: 'test-key');
         $verify = new VerifyHmacSignature();
         $reject = new RejectUnsafeCallable();
 
@@ -304,10 +306,11 @@ final class CallableSerializationProofTest extends TestCase
 
     public function test_public_surface_works_without_signing_key() : void
     {
-        // Reset static state
-        CallableSerialization::configure('');
+        // Reset static state to test default key behavior
+        CallableSerialization::reset();
 
         $closure = fn() => 'no-signing';
+        // When no key is passed, the builder uses a default key internally
         $jsonPayload = CallableSerialization::encode($closure);
         $result = CallableSerialization::decode($jsonPayload);
 
@@ -379,7 +382,7 @@ final class CallableSerializationProofTest extends TestCase
     public function test_payload_survives_json_encode_decode_transport() : void
     {
         $config = (new CallableSerializationConfig())->withSigningKey('transport-key');
-        $serializer = new SerializeClosureThroughLibrary();
+        $serializer = new SerializeClosureThroughLibrary(secretKey: 'transport-key');
         $compute = new ComputeHmacSignature();
         $verify = new VerifyHmacSignature();
         $reject = new RejectUnsafeCallable();

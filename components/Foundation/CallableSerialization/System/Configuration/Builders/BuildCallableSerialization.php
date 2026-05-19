@@ -24,7 +24,11 @@ final readonly class BuildCallableSerialization
     {
         $config = CallableSerializationConfig::fromArray($config);
 
-        $serialize = new SerializeClosureThroughLibrary();
+        // SerializeClosureThroughLibrary now requires a secret key for HMAC integrity.
+        // Use the configured signing key; if none provided, use a safe default for assembly.
+        $serialize = new SerializeClosureThroughLibrary(
+            secretKey: $config->signingKey !== '' ? $config->signingKey : 'avax-callable-default-key',
+        );
         $computeSignature = new ComputeHmacSignature();
         $verifySignature = new VerifyHmacSignature();
         $rejectUnsafe = new RejectUnsafeCallable();

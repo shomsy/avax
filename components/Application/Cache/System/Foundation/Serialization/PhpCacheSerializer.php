@@ -45,7 +45,19 @@ public function unserialize(SerializedCachePayload $serializedCachePayload): mix
             );
         }
 
-        $result = unserialize($serializedCachePayload->data, ['allowed_classes' => true]);
+        // Fail-closed: reject object instantiation from cached payloads.
+        // PHP native serialization is only safe for scalar/array data here.
+        // Callers needing typed objects must use JsonCacheSerializer with explicit schema.
+        /** @var mixed $result */
+        $result = @unserialize($serializedCachePayload->data, ['allowed_classes' => []]);
+
+        // With allowed_classes => [], objects become __PHP_Incomplete_Class instead of returning false.
+        // We must detect and reject these as they indicate attempted object injection.
+        if ($result instanceof \__PHP_Incomplete_Class) {
+            throw new CachePayloadCouldNotBeSerialized(
+                message: 'Failed to unserialize payload data: object instantiation rejected',
+            );
+        }
 
         if ($result === false && $serializedCachePayload->data !== 'b:0;') {
             throw new CachePayloadCouldNotBeSerialized(

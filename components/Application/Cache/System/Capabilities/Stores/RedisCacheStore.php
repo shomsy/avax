@@ -87,7 +87,19 @@ private function connect(): void
     {
         $value = $this->redis->get($this->prefix.$key);
 
-        return $value === false ? null : unserialize($value);
+        if ($value === false) {
+            return null;
+        }
+
+        // Fail-closed: reject object instantiation from raw Redis values.
+        // Cache values stored here should be scalar/array data only.
+        $result = unserialize($value, ['allowed_classes' => false]);
+
+        if ($result === false && $value !== 'b:0;') {
+            return null;
+        }
+
+        return $result;
     }
 
     #[Override]

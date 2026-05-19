@@ -177,6 +177,26 @@ def compile_governance(target_dir="."):
             
     index["unreferenced_rules"] = unreferenced_rules
 
+    # Tag reference/lookup files that are excluded from unreferenced counting
+    # These are framework dictionary entries, profile lookup tables, etc.
+    # They are consumed programmatically, not via markdown cross-references.
+    REFERENCE_PREFIXES = [
+        "governance/framework-dictionary/",
+        "governance/profiles/languages/",
+        "governance/profiles/frameworks/",
+        "governance/profiles/project-types/",
+        "governance/profiles/overlays/",
+        "governance/profiles/repository-kinds/",
+        "governance/profiles/roles/",
+    ]
+
+    excluded_from_unreferenced = []
+    for filepath in unreferenced_rules:
+        if any(prefix in filepath for prefix in REFERENCE_PREFIXES):
+            excluded_from_unreferenced.append(filepath)
+
+    index["excluded_from_unreferenced"] = excluded_from_unreferenced
+
     # Circular loop detection
     loops = find_circular_dependencies(index["graph"])
     index["circular_loops"] = loops

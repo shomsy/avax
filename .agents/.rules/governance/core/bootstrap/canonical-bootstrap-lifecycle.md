@@ -1,3 +1,8 @@
+---
+status: active
+version: 3.0.0
+---
+
 # Canonical Bootstrap Lifecycle
 
 Version: 3.0.0

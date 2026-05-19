@@ -1,3 +1,9 @@
+---
+status: active
+version: 2.0.0
+scope: all
+---
+
 # Architecture Law
 
 ## Universal Naming, Ownership, and Structural Governance

@@ -1,3 +1,9 @@
+---
+status: active
+version: 1.0.0
+scope: .agents/governance
+---
+
 # Feature Flags — Conditional Governance Activation
 
 Version: 1.0.0

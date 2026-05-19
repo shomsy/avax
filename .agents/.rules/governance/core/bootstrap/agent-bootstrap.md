@@ -1,3 +1,8 @@
+---
+status: active
+version: 1.0.0
+---
+
 # Agent Bootstrap Contract
 
 Version: 1.0.0

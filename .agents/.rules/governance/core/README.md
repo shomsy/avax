@@ -1,3 +1,7 @@
+---
+status: active
+---
+
 # Core Governance
 
 Use this folder for the reusable control plane:

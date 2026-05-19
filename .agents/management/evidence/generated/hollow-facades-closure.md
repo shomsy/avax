@@ -4,12 +4,18 @@
 **Batch:** Production Governance Closure — Hollow Facades First
 **Stage:** V1 Kernel Green maintenance
 **Mode:** Harness-Full
+**Status:** SUPERSEDED — see `facade-dsl-naming-correction.md` for corrected approach
 
 ## Executive Summary
 
 Resolved 7 BLOCKER hollow/fake facade findings from `verify-governance.sh`.
 All hollow facade BLOCKERs are now eliminated.
 No new RED/HIGH/MEDIUM issues introduced by this batch.
+
+> **Correction Note:** The `CacheFacade` → `CacheGateway` rename and `Facade/` → `Gateways/`
+> directory rename in this batch were incorrect. `Facade` is a legitimate framework dictionary
+> term. The hollow facade problem was about empty forwarding classes, not the Facade pattern.
+> See `facade-dsl-naming-correction.md` for the correction.
 
 ## Findings and Classification
 
@@ -33,9 +39,9 @@ No new RED/HIGH/MEDIUM issues introduced by this batch.
 - `components/Application/Facade/System/PublicSurface/SessionFacade.php`
 - `components/Application/Cache/System/PublicSurface/CacheContractFacade.php`
 
-### Renamed (1 directory + 1 file)
-- `components/Application/Cache/System/PublicSurface/Facade/` → `Gateways/`
-- `CacheFacade.php` → `CacheGateway.php` (class renamed `CacheFacade` → `CacheGateway`)
+### Renamed (1 directory + 1 file) — CORRECTED in subsequent pass
+- `components/Application/Cache/System/PublicSurface/Facade/` → `Gateways/` → **restored to `Facade/`**
+- `CacheFacade.php` → `CacheGateway.php` → **restored to `CacheFacade.php`**
 
 ### Modified (5 files — namespace and class reference updates)
 - `components/Application/Cache/System/PublicSurface/Gateways/CacheRegistry.php` — namespace updated
@@ -101,9 +107,8 @@ All 7 BLOCKER hollow facade issues: RESOLVED
 
 - No empty forwarding classes remain from this batch.
 - No fake OOP — deleted classes had no meaningful behavior.
-- No mechanical rename — `CacheFacade` → `CacheGateway` reflects actual gateway behavior (multi-store coordination, compiled cache routing, read strategy).
-- PublicSurface remains thin but meaningful — `CacheGateway` owns a real public API boundary.
-- Internal capability moved to honest boundary — `Facade/` → `Gateways/`.
+- ~~No mechanical rename — `CacheFacade` → `CacheGateway` reflects actual gateway behavior~~ **CORRECTED**: `Gateway` is for external boundaries only. `CacheFacade` restored. `Facade` is a dictionary term.
+- ~~Internal capability moved to honest boundary — `Facade/` → `Gateways/`~~ **CORRECTED**: `Facade/` restored as legitimate framework directory name.
 - No test weakening — all existing tests pass.
 - No blind suppression — all BLOCKERs resolved by structural change.
 

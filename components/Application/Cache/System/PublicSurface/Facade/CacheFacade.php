@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Cache\System\PublicSurface\Gateways;
+namespace Avax\Components\Application\Cache\System\PublicSurface\Facade;
 
 use Avax\Components\Application\Cache\System\PublicSurface\CacheContract;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
@@ -10,7 +10,7 @@ use Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\ReadFromCache;
 use DateInterval;
 
-readonly class CacheGateway
+readonly class CacheFacade
 {
     public function __construct(
         private CacheRegistry $cacheRegistry,

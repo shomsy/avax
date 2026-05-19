@@ -9,8 +9,8 @@ use Avax\Components\Application\Cache\System\PublicSurface\CacheContract;
 use Avax\Components\Application\Cache\System\PublicSurface\Cache;
 use Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget;
 use Avax\Components\Application\Cache\System\PublicSurface\CompiledCache;
-use Avax\Components\Application\Cache\System\PublicSurface\Gateways\CacheGateway;
-use Avax\Components\Application\Cache\System\PublicSurface\Gateways\CacheRegistry;
+use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheFacade;
+use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheRegistry;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\CompiledCacheTarget;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\ReadFromCache;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\RuntimeCacheTarget;
@@ -29,7 +29,7 @@ final class PublicCacheClassesAutoloadTest extends TestCase
 
     public function test_public_surface_classes_are_autoloadable() : void
     {
-        self::assertTrue(class_exists(CacheGateway::class));
+        self::assertTrue(class_exists(CacheFacade::class));
         self::assertTrue(class_exists(CacheRegistry::class));
         self::assertTrue(class_exists(RuntimeCacheTarget::class));
         self::assertTrue(class_exists(CompiledCacheTarget::class));

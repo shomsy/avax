@@ -7,5 +7,6 @@
   "securityRequired": true,
   "operationsRequired": false,
   "name": "avax",
-  "displayName": "Avax"
+  "displayName": "Avax",
+  "naming_allowances": ["ServiceProvider", "Migration", "Kernel", "Configuration", "Controller", "Application", "Facade"]
 }

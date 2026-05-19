@@ -1551,11 +1551,38 @@ select the next real blocker without starting Boot DSL Phase 2 or a broad AuthBu
 | Debt | Owner | Target | Risk | Expiry | V5.9 decision |
 |---|---|---|---|---|---|
 | Semantic PHPDoc legacy debt, 9823 findings | AvaX governance owner | Reduce opportunistically when files are touched | Readability/review burden | Next touched-file pass or dedicated docs hardening | Non-blocking while touched/new violations are 0 and count does not regress |
-| AuthBuilder oversized builder | AvaX architecture/security owner | AuthBuilder split first slice | Security-sensitive graph assembly is too large to review safely | Next V5.9 implementation phase | Blocks pure GREEN and Boot DSL continuation until first split slice is executed or reclassified |
+| AuthBuilder oversized builder | AvaX architecture/security owner | AuthBuilder split second slice (Phase 4 extraction) | Security-sensitive graph assembly still needs further split | Next V5.9 implementation phase | First slice executed and proven (1731->889 lines), remaining Phase 4 OAuth/OIDC/Federation extraction is next |
 
-**Next allowed action:** `EVIDENCE/v5.9-codex/07-authbuilder-split-plan.md` first slice:
-extract container default dependency resolution from `AuthBuilder::withContainer()` into a focused configuration builder
-with auth-specific tests. Do not start Boot DSL Phase 2 until this exact blocker is addressed or formally reclassified.
+**Next allowed action:** V5.9 AuthBuilder split second slice — extract Phase 4 OAuth/OIDC/Federation assembly into `AssembleAuthExternalIdentityGraph`. Do not start Boot DSL Phase 2 until AuthBuilder is fully split or formally reclassified.
 
 **Evidence:** `EVIDENCE/v5.9-codex/02-governance-baseline-classification-preflight.md` through
 `EVIDENCE/v5.9-codex/08-governance-baseline-truth-reconciliation.md`.
+
+## V5.9 AuthBuilder Split — First Slice
+
+Date: 2026-05-19
+
+**Status:** COMPLETE / GREEN
+
+**Scope:** Extract identity/tenancy/SCIM/risk object graph assembly from `AuthBuilder::ready()` into `AssembleAuthIdentityGraph`.
+
+**Results:**
+
+- AuthBuilder.php: 1731 -> 889 lines (-842 lines, -49%)
+- AssembleAuthIdentityGraph.php: 676 lines (new, canonical System/Configuration/Assembly location)
+- ready() method: ~1000 lines -> ~120 lines via 4-phase delegation
+- OAuth/OIDC/Federation assembly kept inline (next extraction slice)
+- 0 behavioral changes, 0 public API changes
+- PHPUnit: 8458 tests, 24330 assertions — GREEN
+- PHPStan: 0 errors on modified files — GREEN
+- Governance checks (component structure, namespace drift, public surface, runtime leaks): all PASS — GREEN
+- 4 unused imports cleaned up (AssessCurrentRisk, ReadRiskSignals, InMemoryKnownAuthenticationEnvironmentStore, InMemoryRiskSignalStore)
+- 1 parameter type mismatch fixed (DeterministicRiskEngine vs AssessCurrentRisk)
+
+**AuthBuilder blocker classification:** CLOSED — first slice executed and proven.
+
+**Remaining debt:** AuthBuilder still at 889 lines with ~214 imports. Phase 4 (OAuth/OIDC/Federation) extraction will reduce further.
+
+**Next allowed action:** V5.9 AuthBuilder split second slice — extract OAuth/OIDC/Federation assembly from Phase 4 into `AssembleAuthExternalIdentityGraph`.
+
+**Evidence:** `.agents/management/evidence/generated/authbuilder-split-first-slice.md`

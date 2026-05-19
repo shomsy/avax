@@ -36,34 +36,20 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Sessions;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\ProvisionableUserSourceInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\IdentitySync;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\InMemoryLifecycleStore;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleOrchestrator;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleStoreInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Provisioning\Provisioning;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\InMemoryScimDirectoryStore;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\InMemoryScimProvisionedIdentityStore;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimDirectoryStoreInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimProvisionedIdentityStoreInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\ProvisioningRuntime\DeprovisionUser\DeprovisionUser;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\ProvisioningRuntime\ReactivateUser\ReactivateUser;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\ProvisioningRuntime\SuspendUser\SuspendUser;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\RunScimBulk;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\DeleteUser\DeleteScimUser;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\MarkOutage\MarkScimDirectoryOutage;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser\ProvisionScimUser;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ReadDirectories\ReadScimDirectories;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ReadGroups\ReadScimGroups;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ReadUsers\ReadScimUsers;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RecoverOutage\RecoverScimDirectoryOutage;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RegisterDirectory\RegisterScimDirectory;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RotateToken\RotateScimToken;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\SyncGroups\SyncScimGroups;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\SCIM;
 use Avax\Components\Identity\Auth\System\Configuration\Readiness\AuthBootstrapValidator;
 use Avax\Components\Identity\Auth\System\Configuration\Readiness\AuthCapabilityReadiness;
 use Avax\Components\Identity\Auth\System\Configuration\Readiness\AuthCapabilityRequests;
 use Avax\Components\Identity\Auth\System\Configuration\Assembly\AssembleAuthIdentityGraph;
+use Avax\Components\Identity\Auth\System\Configuration\Assembly\AssembleAuthExternalIdentityGraph;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\BeginEmailChange;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\ConfirmEmailChange;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\EmailChangeStoreInterface;
@@ -134,56 +120,6 @@ use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\Com
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\ListPasskeys\ListPasskeys;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\RenamePasskey\RenamePasskey;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\RevokePasskey\RevokePasskey;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\ExternalIdentity;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\AuthorizationCodeStoreInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\InMemoryAuthorizationCodeStore;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\InMemoryOAuthClientRegistry;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClientRegistryInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\OAuth;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\ApproveClientRegistration\ApproveClientRegistration;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\AuthorizeCode\AuthorizeCode;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\DisableClient\DisableClient;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\ExchangeAuthorizationCode\ExchangeAuthorizationCode;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\ExchangeClientCredentials\ExchangeClientCredentials;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\ExchangeRefreshToken\ExchangeRefreshToken;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\IntrospectToken\IntrospectToken;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\ReadClients\ReadClients;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\ReadWorkloadIdentities\ReadWorkloadIdentities;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\RegisterClient\RegisterClient;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\RevokeToken\RevokeToken;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\RotateClientSecret\RotateClientSecret;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Runtime\UpdateClient\UpdateClient;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\OpenIDConnect;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\InMemoryOidcRequestObjectStore;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\OidcProviderInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\OidcRequestObjectStoreInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Runtime\BackChannelLogout\BackChannelLogout;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Runtime\FrontChannelLogout\FrontChannelLogout;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Runtime\JarmResponse\BuildJarmResponse;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Runtime\Logout\Logout as OidcLogout;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Runtime\PushAuthorizationRequest\PushAuthorizationRequest;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Runtime\ReadJsonWebKeySet\ReadOidcJsonWebKeySet;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Runtime\ReadProviderMetadata\ReadOidcProviderMetadata;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Runtime\ReadUserInfo\ReadOidcUserInfo;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Runtime\ValidateRequestObject\ValidateRequestObject;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederatedIdentityLinkStoreInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationConnectionStoreInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationHealthCheckInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationMetadataRuntimeInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationRuntimeInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\GroupRoleMappingValidator;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\InMemoryFederatedIdentityLinkStore;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\InMemoryFederationConnectionStore;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationRuntime\CheckHealth\CheckFederationConnectionHealth;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationRuntime\CompleteFederatedLogin\CompleteFederatedLogin;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationRuntime\DiscoverConnection\DiscoverFederationConnection;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationRuntime\EvaluateBreakGlass\EvaluateFederationBreakGlassBypass;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationRuntime\ReadConnections\ReadFederationConnections;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationRuntime\RegisterConnection\RegisterFederationConnection;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationRuntime\StartFederatedLogin\StartFederatedLogin;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationRuntime\SyncMetadata\SyncFederationMetadata;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\FederationRuntime\VerifyDomain\VerifyFederationDomain;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\SingleSignOn;
 use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\AdminElevationStoreInterface;
 use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\InMemoryAdminElevationStore;
 use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime\BeginAdminElevation\BeginAdminElevation;
@@ -214,6 +150,20 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurity
 use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurityConfigurationStoreInterface;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Tenancy;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Tenants\Tenants;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationConnectionStoreInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederatedIdentityLinkStoreInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\InMemoryFederationConnectionStore;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\InMemoryFederatedIdentityLinkStore;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClientRegistryInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\AuthorizationCodeStoreInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\InMemoryOAuthClientRegistry;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\InMemoryAuthorizationCodeStore;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\OidcProviderInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\OidcRequestObjectStoreInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\InMemoryOidcRequestObjectStore;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationRuntimeInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationMetadataRuntimeInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationHealthCheckInterface;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Flow\RefreshAuthentication;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\RefreshTokenStoreInterface;
 use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
@@ -794,77 +744,35 @@ final class AuthBuilder
         $lifecycle                = $graph['lifecycle'];
         $requireAdminElevation    = new RequireAdminElevation(currentAuthentication: $currentAuthentication, adminElevationStore: $adminElevationStore, clock: $clock);
 
-        // Phase 4: OAuth/OIDC/Federation assembly (kept inline — next extraction slice)
-        $registerClient            = new RegisterClient(auditLog: $auditLog, clock: $clock, oAuthClientRegistry: $oauthClientRegistry);
-        $approveClientRegistration = new ApproveClientRegistration(auditLog: $auditLog, clock: $clock, oAuthClientRegistry: $oauthClientRegistry);
-        $updateClient              = new UpdateClient(auditLog: $auditLog, clock: $clock, oAuthClientRegistry: $oauthClientRegistry);
-        $disableClient             = new DisableClient(auditLog: $auditLog, clock: $clock, oAuthClientRegistry: $oauthClientRegistry);
-        $rotateClientSecret        = new RotateClientSecret(auditLog: $auditLog, clock: $clock, oAuthClientRegistry: $oauthClientRegistry);
-        $readClients               = new ReadClients(oAuthClientRegistry: $oauthClientRegistry);
-        $readWorkloadIdentities    = new ReadWorkloadIdentities(oAuthClientRegistry: $oauthClientRegistry);
-        $readOidcProviderMetadata  = $this->oidcProvider instanceof OidcProviderInterface ? new ReadOidcProviderMetadata(oidcProvider: $this->oidcProvider) : null;
-        $readOidcJsonWebKeySet     = $this->oidcProvider instanceof OidcProviderInterface ? new ReadOidcJsonWebKeySet(oidcProvider: $this->oidcProvider) : null;
-        $jwtIdentity               = $identity->jwtIdentity();
-        $readOidcUserInfo          = $jwtIdentity instanceof JwtIdentityInterface && $this->oidcProvider instanceof OidcProviderInterface ? new ReadOidcUserInfo(jwtIdentity: $jwtIdentity, oidcProvider: $this->oidcProvider) : null;
-        $oidcRequestObjectStore    = $this->oidcProvider instanceof OidcProviderInterface ? ($this->oidcRequestObjectStore ?? throw ConfigurationException::missingDependency('OidcRequestObjectStore', 'withOidcRequestObjectStore() or AuthServiceProvider')) : null;
-        $pushOidcAuthorizationRequest = $oidcRequestObjectStore instanceof OidcRequestObjectStoreInterface ? new PushAuthorizationRequest(oidcRequestObjectStore: $oidcRequestObjectStore, auditLog: $auditLog, clock: $clock, oAuthClientRegistry: $oauthClientRegistry, oidcProvider: $this->oidcProvider) : null;
-        $validateRequestObject     = $oidcRequestObjectStore instanceof OidcRequestObjectStoreInterface ? new ValidateRequestObject(oidcRequestObjectStore: $oidcRequestObjectStore, oAuthClientRegistry: $oauthClientRegistry) : null;
-        $oidcLogout                = $this->oidcProvider instanceof OidcProviderInterface ? new OidcLogout(
-            frontChannelLogout: new FrontChannelLogout(currentAuthentication: $currentAuthentication, identity: $identity, auditLog: $auditLog, clock: $clock, sessionRegistry: $this->sessionRegistry, refreshTokenStore: $this->refreshTokenStore, oidcProvider: $this->oidcProvider, oAuthClientRegistry: $oauthClientRegistry),
-            backChannelLogout: new BackChannelLogout(currentAuthentication: $currentAuthentication, identity: $identity, auditLog: $auditLog, clock: $clock, sessionRegistry: $this->sessionRegistry, refreshTokenStore: $this->refreshTokenStore, oidcProvider: $this->oidcProvider, oAuthClientRegistry: $oauthClientRegistry),
-        ) : null;
-        $buildOidcJarmResponse     = $this->oidcProvider instanceof OidcProviderInterface ? new BuildJarmResponse(oidcProvider: $this->oidcProvider, clock: $clock) : null;
-        $authorizeCode             = new AuthorizeCode(currentAuthentication: $currentAuthentication, userSource: $this->userSource, oAuthClientRegistry: $oauthClientRegistry, authorizationCodeStore: $authorizationCodeStore, auditLog: $auditLog, clock: $clock, oidcProvider: $this->oidcProvider, validateRequestObject: $validateRequestObject);
-
-        $oauth = new OAuth(
-            registerClient: $authCapabilityReadiness->oauth() ? $registerClient : null,
-            approveClientRegistration: $authCapabilityReadiness->oauth() ? $approveClientRegistration : null,
-            updateClient: $authCapabilityReadiness->oauth() ? $updateClient : null,
-            disableClient: $authCapabilityReadiness->oauth() ? $disableClient : null,
-            rotateClientSecret: $authCapabilityReadiness->oauth() ? $rotateClientSecret : null,
-            readClients: $authCapabilityReadiness->oauth() ? $readClients : null,
-            readWorkloadIdentities: $authCapabilityReadiness->oauth() ? $readWorkloadIdentities : null,
-            authorizeCode: $authCapabilityReadiness->oauth() ? $authorizeCode : null,
-            exchangeAuthorizationCode: $authCapabilityReadiness->oauth() ? new ExchangeAuthorizationCode(oAuthClientRegistry: $oauthClientRegistry, authorizationCodeStore: $authorizationCodeStore, userSource: $this->userSource, jwtIdentity: $jwtIdentity ?? throw ConfigurationException::missingCapabilityDependency(capability: 'oauth', requirement: 'jwt_identity', buildPath: 'AuthBuilder::ready()', option: 'withIdentityBackends(jwtIdentity: ...) or withIdentity(new Identity(jwtIdentity: ...))', cause: 'OAuth capability assembly was attempted.'), refreshTokenStore: $this->refreshTokenStore ?? throw ConfigurationException::missingCapabilityDependency(capability: 'oauth', requirement: 'refresh_token_store', buildPath: 'AuthBuilder::ready()', option: 'withRefreshTokenStore()', cause: 'OAuth capability assembly was attempted.'), auditLog: $auditLog, clock: $clock, currentAuthentication: $currentAuthentication, oidcProvider: $this->oidcProvider) : null,
-            exchangeClientCredentials: $authCapabilityReadiness->oauth() ? new ExchangeClientCredentials(oAuthClientRegistry: $oauthClientRegistry, jwtIdentity: $jwtIdentity ?? throw ConfigurationException::missingCapabilityDependency(capability: 'oauth', requirement: 'jwt_identity', buildPath: 'AuthBuilder::ready()', option: 'withIdentityBackends(jwtIdentity: ...) or withIdentity(new Identity(jwtIdentity: ...))', cause: 'OAuth capability assembly was attempted.'), auditLog: $auditLog, clock: $clock) : null,
-            exchangeRefreshToken: $authCapabilityReadiness->oauth() ? new ExchangeRefreshToken(oAuthClientRegistry: $oauthClientRegistry, refreshTokenStore: $this->refreshTokenStore ?? throw ConfigurationException::missingCapabilityDependency(capability: 'oauth', requirement: 'refresh_token_store', buildPath: 'AuthBuilder::ready()', option: 'withRefreshTokenStore()', cause: 'OAuth capability assembly was attempted.'), userSource: $this->userSource, jwtIdentity: $jwtIdentity ?? throw ConfigurationException::missingCapabilityDependency(capability: 'oauth', requirement: 'jwt_identity', buildPath: 'AuthBuilder::ready()', option: 'withIdentityBackends(jwtIdentity: ...) or withIdentity(new Identity(jwtIdentity: ...))', cause: 'OAuth capability assembly was attempted.'), auditLog: $auditLog, clock: $clock, deterministicRiskEngine: $this->deterministicRiskEngine) : null,
-            revokeToken: $authCapabilityReadiness->oauth() ? new RevokeToken(oAuthClientRegistry: $oauthClientRegistry, refreshTokenStore: $this->refreshTokenStore ?? throw ConfigurationException::missingCapabilityDependency(capability: 'oauth', requirement: 'refresh_token_store', buildPath: 'AuthBuilder::ready()', option: 'withRefreshTokenStore()', cause: 'OAuth capability assembly was attempted.'), jwtIdentity: $jwtIdentity ?? throw ConfigurationException::missingCapabilityDependency(capability: 'oauth', requirement: 'jwt_identity', buildPath: 'AuthBuilder::ready()', option: 'withIdentityBackends(jwtIdentity: ...) or withIdentity(new Identity(jwtIdentity: ...))', cause: 'OAuth capability assembly was attempted.'), auditLog: $auditLog, clock: $clock) : null,
-            introspectToken: $authCapabilityReadiness->oauth() ? new IntrospectToken(oAuthClientRegistry: $oauthClientRegistry, jwtIdentity: $jwtIdentity ?? throw ConfigurationException::missingCapabilityDependency(capability: 'oauth', requirement: 'jwt_identity', buildPath: 'AuthBuilder::ready()', option: 'withIdentityBackends(jwtIdentity: ...) or withIdentity(new Identity(jwtIdentity: ...))', cause: 'OAuth capability assembly was attempted.'), auditLog: $auditLog, clock: $clock) : null,
-        );
-
-        $openIDConnect = new OpenIDConnect(
-            pushAuthorizationRequest: $authCapabilityReadiness->oauth() ? $pushOidcAuthorizationRequest : null,
-            logout: $authCapabilityReadiness->oauth() ? $oidcLogout : null,
-            buildJarmResponse: $authCapabilityReadiness->oauth() ? $buildOidcJarmResponse : null,
-            readOidcProviderMetadata: $authCapabilityReadiness->oauth() ? $readOidcProviderMetadata : null,
-            readOidcJsonWebKeySet: $authCapabilityReadiness->oauth() ? $readOidcJsonWebKeySet : null,
-            readOidcUserInfo: $authCapabilityReadiness->oauth() ? $readOidcUserInfo : null,
-        );
-
-        $groupRoleMappingValidator = new GroupRoleMappingValidator();
-
-        $singleSignOn = new SingleSignOn(
-            startFederatedLogin: $authCapabilityReadiness->federation() ? new StartFederatedLogin(auditLog: $auditLog, clock: $clock, federationConnectionStore: $federationConnectionStore, federationRuntime: $this->federationRuntime ?? throw ConfigurationException::missingCapabilityDependency(capability: 'federation', requirement: 'runtime', buildPath: 'AuthBuilder::ready()', option: 'withFederationRuntime()', cause: 'Federation capability assembly was attempted.')) : null,
-            completeFederatedLogin: $authCapabilityReadiness->federation() ? new CompleteFederatedLogin(userSource: $this->userSource, identity: $identity, projectAuthenticatedUser: $projectAuthenticatedUser, currentAuthentication: $currentAuthentication, passwordHasher: $passwordHasher, idGenerator: $this->idGenerator ?? throw ConfigurationException::missingDependency('IdGenerator', 'usingIdGenerator() or AuthServiceProvider'), auditLog: $auditLog, clock: $clock, federationConnectionStore: $federationConnectionStore, federationRuntime: $this->federationRuntime ?? throw ConfigurationException::missingCapabilityDependency(capability: 'federation', requirement: 'runtime', buildPath: 'AuthBuilder::ready()', option: 'withFederationRuntime()', cause: 'Federation capability assembly was attempted.'), federatedIdentityLinkStore: $federatedIdentityLinkStore, deterministicRiskEngine: $this->deterministicRiskEngine, lifecycleOrchestrator: $lifecycle) : null,
-            registerFederationConnection: $authCapabilityReadiness->federation() ? new RegisterFederationConnection(groupRoleMappingValidator: $groupRoleMappingValidator, auditLog: $auditLog, clock: $clock, federationConnectionStore: $federationConnectionStore) : null,
-            readFederationConnections: $authCapabilityReadiness->federation() ? new ReadFederationConnections(federationConnectionStore: $federationConnectionStore) : null,
-            verifyFederationDomain: $authCapabilityReadiness->federation() ? new VerifyFederationDomain(auditLog: $auditLog, clock: $clock, federationConnectionStore: $federationConnectionStore) : null,
-            syncFederationMetadata: $authCapabilityReadiness->federation() && $this->federationRuntime instanceof FederationMetadataRuntimeInterface ? new SyncFederationMetadata(auditLog: $auditLog, clock: $clock, federationConnectionStore: $federationConnectionStore, federationMetadataRuntime: $this->federationRuntime) : null,
-            checkFederationConnectionHealth: $authCapabilityReadiness->federation() && $this->federationRuntime instanceof FederationHealthCheckInterface ? new CheckFederationConnectionHealth(auditLog: $auditLog, clock: $clock, federationConnectionStore: $federationConnectionStore, federationHealthCheck: $this->federationRuntime) : null,
-            evaluateFederationBreakGlassBypass: $authCapabilityReadiness->federation() ? new EvaluateFederationBreakGlassBypass(auditLog: $auditLog, clock: $clock, federationConnectionStore: $federationConnectionStore) : null,
-            discoverFederationConnection: $authCapabilityReadiness->federation() ? new DiscoverFederationConnection(federationConnectionStore: $federationConnectionStore) : null,
-        );
-
-        $externalIdentity = new ExternalIdentity(oauth: $oauth, openIDConnect: $openIDConnect, singleSignOn: $singleSignOn);
-
-        $provisioning = new Provisioning(
-            suspendUser: $provisionableUserSource instanceof ProvisionableUserSourceInterface ? new SuspendUser(provisionableUserSource: $provisionableUserSource, requireAdminElevation: $requireAdminElevation, auditLog: $auditLog, clock: $clock, lifecycleOrchestrator: $lifecycle) : null,
-            reactivateUser: $provisionableUserSource instanceof ProvisionableUserSourceInterface ? new ReactivateUser(provisionableUserSource: $provisionableUserSource, requireAdminElevation: $requireAdminElevation, auditLog: $auditLog, clock: $clock, lifecycleOrchestrator: $lifecycle) : null,
-            deprovisionUser: $provisionableUserSource instanceof ProvisionableUserSourceInterface ? new DeprovisionUser(provisionableUserSource: $provisionableUserSource, requireAdminElevation: $requireAdminElevation, auditLog: $auditLog, clock: $clock, sessionRegistry: $this->sessionRegistry, refreshTokenStore: $this->refreshTokenStore, adminElevationStore: $adminElevationStore, lifecycleOrchestrator: $lifecycle) : null,
-        );
-
-        $identitySync = new IdentitySync(scim: $scim, provisioning: $provisioning);
-        $diagnostics = new Diagnostics(authIssueExplainer: new AuthIssueExplainer());
+        // Phase 4: Delegate OAuth/OIDC/Federation assembly to extracted class
+        (new AssembleAuthExternalIdentityGraph(
+            oauthClientRegistry: $oauthClientRegistry,
+            authorizationCodeStore: $authorizationCodeStore,
+            oidcProvider: $this->oidcProvider,
+            oidcRequestObjectStore: $this->oidcRequestObjectStore,
+            federationConnectionStore: $federationConnectionStore,
+            federatedIdentityLinkStore: $federatedIdentityLinkStore,
+            federationRuntime: $this->federationRuntime,
+            federationMetadataRuntime: $this->federationRuntime instanceof FederationMetadataRuntimeInterface ? $this->federationRuntime : null,
+            federationHealthCheck: $this->federationRuntime instanceof FederationHealthCheckInterface ? $this->federationRuntime : null,
+            userSource: $this->userSource,
+            identity: $identity,
+            auditLog: $auditLog,
+            clock: $clock,
+            passwordHasher: $passwordHasher,
+            idGenerator: $this->idGenerator ?? throw ConfigurationException::missingDependency('IdGenerator', 'usingIdGenerator() or AuthServiceProvider'),
+            sessionRegistry: $this->sessionRegistry ?? throw ConfigurationException::missingDependency('SessionRegistry', 'withSessionRegistry() or AuthServiceProvider'),
+            refreshTokenStore: $this->refreshTokenStore ?? throw ConfigurationException::missingDependency('RefreshTokenStore', 'withRefreshTokenStore() or AuthServiceProvider'),
+            deterministicRiskEngine: $riskEngine,
+            currentAuthentication: $currentAuthentication,
+            projectAuthenticatedUser: $projectAuthenticatedUser,
+            authCapabilityReadiness: $authCapabilityReadiness,
+            provisionableUserSource: $provisionableUserSource,
+            lifecycle: $lifecycle,
+            scim: $scim,
+            requireAdminElevation: $requireAdminElevation,
+            adminElevationStore: $adminElevationStore,
+        ))->assemble();
 
         return new Auth(identity: $identity);
     }

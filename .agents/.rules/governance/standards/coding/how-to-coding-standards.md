@@ -1,6 +1,6 @@
 # How To Coding Standards
 
-Version: 1.1.0
+Version: 3.0.0
 Status: Normative
 
 ## Core Rules

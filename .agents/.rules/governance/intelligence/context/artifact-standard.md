@@ -4,8 +4,7 @@ Version: 1.0.0
 Status: Normative
 Scope: `.agents/tasks/**`, `.agents/management/artifacts/**`
 
-This document defines the mandatory **9-field schema** that every specialized sub-agent (Mapper, Docs Researcher) MUST
-return. This structure ensures that the Supervisor and Codex Executor receive optimized, actionable inputs.
+This document defines the mandatory **9-field schema** that every specialized sub-agent (Mapper, Docs Researcher) MUST return. This structure ensures that the Supervisor and Codex Executor receive optimized, actionable inputs.
 
 ---
 
@@ -13,17 +12,17 @@ return. This structure ensures that the Supervisor and Codex Executor receive op
 
 Every sub-task result MUST be formatted as a structured Markdown or JSON body containing:
 
-|            Field             | Content                                                     |
-|:----------------------------:|:------------------------------------------------------------|
-|       **`task_type`**        | The nature of the sub-task (Mapping, Research, Debug).      |
-|          **`goal`**          | The primary objective the sub-agent was pursuing.           |
-|     **`relevant_files`**     | Exact file paths needed for the next step (max 5).          |
-|     **`excluded_files`**     | Files analyzed but found IRRELEVANT (prevents duplication). |
-|      **`constraints`**       | Any limitations discovered during the task.                 |
-|     **`docs_findings`**      | Key API/Documentation facts (no raw dumps).                 |
-|         **`risks`**          | Any potential side effects or blockers identified.          |
-| **`recommended_next_agent`** | Which role should handle the next stage (e.g., Codex).      |
-|  **`acceptance_criteria`**   | Definition of Done for this sub-task.                       |
+| Field | Content |
+|:---:|:---|
+| **`task_type`** | The nature of the sub-task (Mapping, Research, Debug). |
+| **`goal`** | The primary objective the sub-agent was pursuing. |
+| **`relevant_files`** | Exact file paths needed for the next step (max 5). |
+| **`excluded_files`** | Files analyzed but found IRRELEVANT (prevents duplication). |
+| **`constraints`** | Any limitations discovered during the task. |
+| **`docs_findings`** | Key API/Documentation facts (no raw dumps). |
+| **`risks`** | Any potential side effects or blockers identified. |
+| **`recommended_next_agent`** | Which role should handle the next stage (e.g., Codex). |
+| **`acceptance_criteria`** | Definition of Done for this sub-task. |
 
 ## 2) Why Use This Format?
 
@@ -56,8 +55,8 @@ Every sub-task result MUST be formatted as a structured Markdown or JSON body co
 
 ## 4) Relationship to Other Standards
 
-| Standard                        | Relationship                                      |
-|:--------------------------------|:--------------------------------------------------|
-| `agent-roles.md`                | Defines the roles that produce these artifacts.   |
-| `workflow-pipelines.md`         | Defines the handoff points for artifacts.         |
+| Standard | Relationship |
+|:---|:---|
+| `agent-roles.md` | Defines the roles that produce these artifacts. |
+| `workflow-pipelines.md` | Defines the handoff points for artifacts. |
 | `subagent-delegation-policy.md` | Defines how to trigger the production of a brief. |

@@ -16,30 +16,45 @@ placeholders after installation.
 In any project using the `.agents` OS, agents MUST follow this order:
 
 1. **`AGENTS.md`** (project-specific local overrides)
-2. **`.agents/AGENTS.md`** (this file — global shared rules)
+2. **`.agents/AGENTS.md`** (this file - global shared rules)
 3. `.agents/governance/core/quality/quality-gates.md`
 4. `.agents/governance/core/bootstrap/agent-bootstrap.md`
 5. `.agents/governance/core/resolution/profile-resolution-algorithm.md`
-6. `.agents/governance/standards/documentation/evidence-model.md`
-7. `.agents/management/TODO.md` | `.agents/management/BUGS.md`
-8. `EVIDENCE/**`
-9. `README.md`
-
-**Governance directories** (files within these are loaded on demand by profile
-resolution, not by precedence order):
-
-- `.agents/governance/profiles/**` — language, framework, project-type profiles
-- `.agents/governance/architecture/**` — architecture profiles and standards
-- `.agents/governance/security/**` — threat models, abuse cases, security lanes
-- `.agents/governance/delivery/operations/**` — runbooks, operational procedures
-- `.agents/governance/core/flags/` — feature flag definitions
-
-All other governance paths (execution policy, routing, approvals, coding
-standards, review contracts, memory lifecycle, skill contracts, agent roles,
-workflows, context management, learning, integrations, sandbox policy,
-orchestration patterns) are **optional** and only apply when the adopting
-repository creates them. The precedence chain MUST NOT reference files that
-do not exist on disk.
+6. `.agents/governance/profiles/**`
+7. `.agents/governance/architecture/**`
+8. `.agents/governance/security/**`
+9. `.agents/governance/execution/policy/execution-policy.md`
+10. `.agents/governance/execution/routing/prompt-to-governance-flow.md`
+11. `.agents/governance/execution/hooks/hooks-policy.md`
+12. `.agents/governance/execution/approvals/approval-policy.md`
+13. `.agents/governance/core/flags/feature-flags.md`
+14. `.agents/governance/standards/review/how-to-code-review.md`
+15. `.agents/governance/standards/review/how-to-strict-review.md`
+16. `.agents/governance/standards/review/recursive-review-contract.md`
+17. `.agents/governance/standards/coding/how-to-coding-standards.md`
+18. `.agents/governance/standards/coding/naming-standard.md`
+19. `.agents/governance/standards/documentation/how-to-document-flow.md`
+20. `.agents/governance/standards/documentation/how-to-document.md`
+21. `.agents/governance/standards/documentation/evidence-model.md`
+22. `.agents/governance/standards/governance/governance-authoring-standard.md`
+23. `.agents/governance/standards/governance/governance-evolution-policy.md`
+24. `.agents/governance/delivery/release/release-and-rollback-policy.md`
+25. `.agents/governance/delivery/operations/management-model.md`
+26. `.agents/governance/intelligence/memory/memory-lifecycle.md`
+27. `.agents/governance/skills/contract/skill-contract.md`
+28. `.agents/governance/agents/roles/agent-roles.md`
+29. `.agents/governance/delivery/workflows/workflow-pipelines.md`
+30. `.agents/governance/intelligence/context/context-management.md`
+31. `.agents/governance/intelligence/learning/continuous-learning.md`
+32. `.agents/governance/intelligence/learning/instincts-policy.md`
+33. `.agents/governance/integrations/platforms/platform-compatibility.md`
+34. `.agents/governance/integrations/mcp/mcp-integration-policy.md`
+35. `.agents/governance/execution/sandbox/sandbox-boundary-policy.md`
+36. `.agents/governance/agents/orchestration/society-of-mind-pattern.md`
+37. `.agents/governance/delivery/operations/**`
+38. `.agents/management/TODO.md` | `.agents/management/BUGS.md`
+39. `EVIDENCE/**`
+40. `README.md`
 
 ## 1) Agent Bootstrap
 
@@ -84,7 +99,7 @@ Evidence is split into two layers:
 - **`.agents/management/evidence/`** — machine evidence. Verbose, detailed.
 
 Rules: root dashboard summarizes and links. Raw data stays in machine evidence.
-Evidence duplication is forbidden. See `.agents/governance/standards/documentation/evidence-model.md` for full spec.
+Evidence duplication is forbidden. See `evidence-model.md` for full spec.
 
 ## 4) Non-Negotiable Rules (Shared)
 

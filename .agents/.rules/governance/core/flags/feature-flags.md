@@ -1,9 +1,3 @@
----
-owner: governance-core
-status: active
-machine-enforced: true
----
-
 # Feature Flags — Conditional Governance Activation
 
 Version: 1.0.0

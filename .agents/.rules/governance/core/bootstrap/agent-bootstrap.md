@@ -1,9 +1,3 @@
----
-owner: governance-core
-status: active
-machine-enforced: true
----
-
 # Agent Bootstrap Contract
 
 Version: 1.0.0

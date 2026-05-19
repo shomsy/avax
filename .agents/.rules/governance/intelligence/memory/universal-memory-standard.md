@@ -19,7 +19,6 @@ for specific managed memory files.
 ## 1) Phase 1: Process Launch & Session Init
 
 Every interaction must belong to a **Session**.
-
 - A unique `SESSION_ID` must be generated or resolved.
 - The agent must verify the presence of `.agent/` structure.
 - Initialization rituals (cache warming, rule discovery) must precede execution.
@@ -37,7 +36,6 @@ Agents must resolve rules and context in a hierarchical order (highest priority 
 ## 3) Phase 3: Context Assembly
 
 Before an API call, the agent must assemble the context:
-
 - **System Prompt**: Core governance and identity.
 - **Memory Section**: Relevant snippets from Phase 2.
 - **User Context**: Current task and cursor state.
@@ -46,7 +44,6 @@ Before an API call, the agent must assemble the context:
 ## 4) Phase 4: Direct Memory Operations
 
 The agent is authorized to perform CRUD operations on memory files:
-
 - `Read`: Fetch topic-specific memory (e.g., `coding-patterns.md`).
 - `Write/Edit`: Update memories with new facts or corrections.
 - `Search`: Grep through the `.agent/memory/` directory for relevance.
@@ -54,7 +51,6 @@ The agent is authorized to perform CRUD operations on memory files:
 ## 5) Phase 5: Post-Response Background Extraction
 
 After a response is generated, a background process (or the agent itself) must:
-
 - Extract key learnings, recurring bugs, or architectural decisions.
 - Append these to the active session log or relevant memory topic.
 - Update `SESSION_HISTORY.md` or equivalent.
@@ -62,7 +58,6 @@ After a response is generated, a background process (or the agent itself) must:
 ## 6) Phase 6: Compaction & Integration
 
 To manage context window limits:
-
 - Old or redundant session messages must be summarized.
 - Summaries are integrated into the "Long-Term Memory" (`MEMORY.md`).
 - Ephemeral details are pruned.
@@ -70,7 +65,6 @@ To manage context window limits:
 ## 7) Phase 7: Persistence Layer Layout
 
 Standard directory structure:
-
 ```markdown
 .agent/
 ├── memory/
@@ -93,7 +87,6 @@ Standard directory structure:
 ## 8) Phase 8: Cross-Session Feedback Loop
 
 The memory system forms a **Self-Improving Loop**:
-
 - Session N extracts `->` Session Memory.
 - Session Memory consolidates `->` Project Memory.
 - Session N+1 reads Project Memory `->` Improved Performance.
@@ -101,7 +94,6 @@ The memory system forms a **Self-Improving Loop**:
 ## Completion Criteria
 
 A memory operation is complete only when:
-
 1. Facts are verified against the real code (no hallucinations).
 2. The `.agent/` structure remains consistent.
 3. The "Self-Improving Loop" is updated with the latest evidence.

@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Finding Decision",
+  "description": "Machine-verifiable decision record for a scanner-detected finding. Prevents Markdown-only closure anti-pattern.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "tool", "findingFingerprint", "decision",
+    "decisionSeverity", "classification", "reason",
+    "createdAt", "updatedAt", "status"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^FD-[0-9]{8}-[0-9]{3}$",
+      "description": "Unique decision ID, format: FD-YYYYMMDD-NNN"
+    },
+    "tool": {
+      "type": "string",
+      "description": "Name of the detecting tool (e.g., verify-governance.sh, check-profile-leakage.sh)"
+    },
+    "findingFingerprint": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 of canonical fingerprint: tool:file:line:pattern"
+    },
+    "file": {
+      "type": "string",
+      "description": "File path where the finding was detected"
+    },
+    "line": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "description": "Line number, if applicable"
+    },
+    "pattern": {
+      "type": ["string", "null"],
+      "description": "Matched pattern or rule ID, if applicable"
+    },
+    "originalSeverity": {
+      "type": "string",
+      "enum": ["critical", "high", "medium", "low", "info"],
+      "description": "Severity as reported by the detecting tool"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "FIXED",
+        "ACCEPTED_EXCEPTION",
+        "DEFERRED",
+        "FALSE_POSITIVE",
+        "COMPOSITION_ROOT_ALLOWED",
+        "SCAFFOLD_DEFERRED",
+        "TOOLING_BUG"
+      ],
+      "description": "Resolution decision type"
+    },
+    "decisionSeverity": {
+      "type": "string",
+      "enum": ["RED", "YELLOW", "INFO", "GREEN"],
+      "description": "Severity after decision is applied"
+    },
+    "classification": {
+      "type": "string",
+      "description": "Human-readable classification of the finding"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Why this decision was made"
+    },
+    "owner": {
+      "type": ["string", "null"],
+      "description": "Person or role who approved this decision"
+    },
+    "expiry": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "ISO-8601 expiry date. Null for permanent decisions."
+    },
+    "mitigation": {
+      "type": ["string", "null"],
+      "description": "Compensating control or workaround, if applicable"
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Paths to supporting evidence files in .agents/management/evidence/"
+    },
+    "approvedBy": {
+      "type": ["string", "null"],
+      "description": "Person or agent who approved this decision"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 creation timestamp"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 last update timestamp"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "expired", "revoked", "superseded"],
+      "description": "Current lifecycle status"
+    }
+  }
+}

@@ -1,9 +1,3 @@
----
-owner: governance-core
-status: active
-machine-enforced: true
----
-
 # Canonical Bootstrap Lifecycle
 
 Version: 3.0.0
@@ -35,7 +29,7 @@ This is the canonical lifecycle flow an AI agent MUST traverse when invoked in a
 2. Adhere to Profile rules (e.g., Go formatting, PHP standards, React folder structures).
 
 ## 5. Verification Phase (Validation)
-1. Run Canonical Validation (`npm test`, `go test`, `./verify.sh`).
+1. Run Canonical Validation (`<package-manager> test`, `go test`, `./verify.sh`).
 2. Run Quality Gates (`quality-gates.md`).
 3. Store raw validation output in `.agents/management/evidence/validation/`.
 

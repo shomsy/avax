@@ -5,5 +5,7 @@
   "repositoryProfiles": [],
   "evidenceModel": "v2",
   "securityRequired": true,
-  "operationsRequired": false
+  "operationsRequired": false,
+  "name": "avax",
+  "displayName": "Avax"
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Application\Cache\System\PublicSurface\Facade;
+namespace Avax\Components\Application\Cache\System\PublicSurface\Gateways;
 
 use Avax\Components\Application\Cache\System\PublicSurface\CacheContract;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigured;

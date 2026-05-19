@@ -7,7 +7,7 @@ namespace Avax\Components\Application\Cache\System\PublicSurface\Read;
 use Avax\Components\Application\Cache\System\Capabilities\CompiledCache\ManageCompiledCache\CompiledCacheContract;
 use Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget;
 use Avax\Components\Application\Cache\System\PublicSurface\Exception\CompiledNotConfigured;
-use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheRegistry;
+use Avax\Components\Application\Cache\System\PublicSurface\Gateways\CacheRegistry;
 
 readonly class ReadFromCache
 {

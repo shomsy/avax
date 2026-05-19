@@ -14,8 +14,8 @@ use Avax\Components\Application\Cache\System\PublicSurface\AvaxCache;
 use Avax\Components\Application\Cache\System\PublicSurface\Cache;
 use Avax\Components\Application\Cache\System\PublicSurface\CacheContract;
 use Avax\Components\Application\Cache\System\PublicSurface\CompiledCache;
-use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheFacade;
-use Avax\Components\Application\Cache\System\PublicSurface\Facade\CacheRegistry;
+use Avax\Components\Application\Cache\System\PublicSurface\Gateways\CacheGateway;
+use Avax\Components\Application\Cache\System\PublicSurface\Gateways\CacheRegistry;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\ReadFromCache;
 use Avax\Components\Application\Container\System\Capabilities\Providers\BaseRegisterDependency;
 use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
@@ -47,7 +47,7 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
             return $cacheRegistry;
         });
 
-        $this->container->singleton(abstract: CacheFacade::class, concrete: function (ContainerInterface $app): CacheFacade {
+        $this->container->singleton(abstract: CacheGateway::class, concrete: function (ContainerInterface $app): CacheGateway {
             /** @var CacheRegistry $cacheRegistry */
             $cacheRegistry = $app->get(id: CacheRegistry::class);
 
@@ -56,7 +56,7 @@ final class RegisterCacheDependencies extends BaseRegisterDependency
                 ? $app->get(id: CompiledCacheContract::class)
                 : null;
 
-            return new CacheFacade($cacheRegistry, $compiledCache);
+            return new CacheGateway($cacheRegistry, $compiledCache);
         });
 
         $this->container->singleton(abstract: ReadFromCache::class, concrete: function (ContainerInterface $app): ReadFromCache {

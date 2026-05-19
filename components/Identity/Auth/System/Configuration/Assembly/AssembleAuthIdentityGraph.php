@@ -90,6 +90,7 @@ use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\Lis
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\RenamePasskey\RenamePasskey;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\RevokePasskey\RevokePasskey;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationConnectionStoreInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationRuntimeInterface;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\GroupRoleMappingValidator;
 use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\AdminElevationStoreInterface;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Runtime\Tenant\AcceptInvite\AcceptTenantInvite;
@@ -164,6 +165,7 @@ final class AssembleAuthIdentityGraph
         private TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore,
         private TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore,
         private FederationConnectionStoreInterface $federationConnectionStore,
+        private FederationRuntimeInterface|null $federationRuntime = null,
         private LoginRateLimit|null $loginRateLimit = null,
         private string $mfaIssuer = 'Avax Auth',
         private string $passkeyRpId = 'localhost',
@@ -223,7 +225,7 @@ final class AssembleAuthIdentityGraph
             jwtIdentity            : $this->identity->jwtIdentity(),
             refreshTokenStore      : $this->refreshTokenStore,
             passkeyRuntime         : $this->passkeyRuntime,
-            federationRuntime      : null,
+            federationRuntime      : $this->federationRuntime,
             provisionableUserSource: $provisionableUserSource,
         );
 

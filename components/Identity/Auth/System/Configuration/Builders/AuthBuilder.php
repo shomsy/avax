@@ -776,7 +776,7 @@ final class AuthBuilder
             scimDirectoryStore: $scimDirectoryStore, scimProvisionedIdentityStore: $scimProvisionedIdentityStore,
             tenantStore: $tenantStore,
             tenantSecurityConfigurationStore: $tenantSecurityConfigurationStore, tenantSecurityChangeRequestStore: $tenantSecurityChangeRequestStore,
-            federationConnectionStore: $federationConnectionStore,
+            federationConnectionStore: $federationConnectionStore, federationRuntime: $this->federationRuntime,
             loginRateLimit: $this->loginRateLimit, mfaIssuer: $this->mfaIssuer, passkeyRpId: $this->passkeyRpId, passkeyRpName: $this->passkeyRpName,
             currentAuthentication: $currentAuthentication, projectAuthenticatedUser: $projectAuthenticatedUser,
             requireFreshMfa: $requireFreshMfa, generateBackupCodes: $generateBackupCodes,

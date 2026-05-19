@@ -46,7 +46,7 @@ final readonly class AuthenticationContext
         return new self(
             authenticated: false,
             reason       : $reason,
-            mode         : AuthenticationMode::NONE,
+            authenticationMode         : AuthenticationMode::NONE,
         );
     }
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tooling\Refactor;
 
-class autoload_fixer
+class AutoloadFixer
 {
     public static function fix(): void
     {

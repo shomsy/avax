@@ -12,7 +12,7 @@ use SplFileInfo;
  * Robust PSR-4 Namespace Fixer.
  * Matches directory structure to namespace exactly.
  */
-final class ensure_psr4_namespaces
+final class EnsurePsr4Namespaces
 {
     private array $psr4Map
         = [

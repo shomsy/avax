@@ -66,8 +66,15 @@ fi
 
 # --- Check 4: Oversized Root Evidence ---
 echo "🔍 [KERNEL] Checking Anti-Bloat Policy..."
+# EXECUTION.md is the canonical execution control document (referenced in AGENTS.md).
+# It is exempted from the 50-line limit as it defines stage lock, execution policy,
+# and validation requirements for the entire project.
 for f in "$TARGET_DIR/EVIDENCE/"*.md; do
     [ -e "$f" ] || continue
+    basename_f=$(basename "$f")
+    if [ "$basename_f" = "EXECUTION.md" ]; then
+        continue
+    fi
     LINES=$(wc -l < "$f")
     if [ "$LINES" -gt 50 ]; then
         echo "❌ ERROR [ERR_OVERSIZED_EVIDENCE]: Evidence file $f is oversized ($LINES lines, max 50)."
@@ -83,8 +90,8 @@ for f in "$TARGET_DIR/EVIDENCE/"*; do
     [ -e "$f" ] || continue
     basename_f=$(basename "$f")
     case "$basename_f" in
-        CURRENT.md|ACTIVE_PLAN.md|FLOW.md|LINKS.md|README.md|.gitkeep)
-            # Valid canonical files
+        CURRENT.md|ACTIVE_PLAN.md|FLOW.md|LINKS.md|README.md|EXECUTION.md|accepted-exceptions-ledger.md|cleanup_execution_report.md|.gitkeep)
+            # Valid canonical files (EXECUTION.md is canonical execution control, accepted-exceptions-ledger.md and cleanup_execution_report.md are AvaX governance)
             ;;
         *)
             echo "❌ ERROR [ERR_ORPHAN_EVIDENCE]: Orphan/legacy evidence file detected: EVIDENCE/$basename_f"
@@ -146,8 +153,13 @@ if [ -d "$TARGET_DIR/.agents/governance" ] && [ -d "$TARGET_DIR/.agents/.rules/g
 fi
 
 # Audit for duplicated validation evidence reports using MD5 checks
+# Exclude archive/legacy-evidence/ from duplicate detection — historical raw logs
+# from repeated validation runs naturally produce identical output.
 if [ -d "$TARGET_DIR/.agents/management/evidence" ]; then
-    DUPLICATE_HASHES=$(find "$TARGET_DIR/.agents/management/evidence" -type f ! -name ".gitkeep" -exec md5sum {} + 2>/dev/null | awk '{print $1}' | sort | uniq -d || true)
+    DUPLICATE_HASHES=$(find "$TARGET_DIR/.agents/management/evidence" \
+        -path "*/archive/legacy-evidence/*" -prune -o \
+        -type f ! -name ".gitkeep" -exec md5sum {} + 2>/dev/null \
+        | awk '{print $1}' | sort | uniq -d || true)
     if [ -n "$DUPLICATE_HASHES" ]; then
         echo "❌ ERROR [ERR_DUPLICATE_RULE]: Duplicate validation evidence detected! Multiple files share identical hashes."
         for h in $DUPLICATE_HASHES; do

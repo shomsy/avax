@@ -66,7 +66,12 @@ final class V4SecurityPolicyTest extends TestCase
 
         $payload = $signer->sign('POST', '/api/users', '{"name":"test"}', [], $nonce, $timestamp);
 
-        $verifier = new VerifyInternalRequestSignature($secret, 300, new NonceStore(), $timestamp->epochSeconds);
+        $verifier = new VerifyInternalRequestSignature(
+            secretKey: $secret,
+            nonceStore: new NonceStore(),
+            toleranceSeconds: 300,
+            currentTime: $timestamp->epochSeconds,
+        );
         $headers = $payload->toHeaders();
 
         $result = $verifier->verify('POST', '/api/users', '{"name":"test"}', $headers);
@@ -85,7 +90,12 @@ final class V4SecurityPolicyTest extends TestCase
 
         $payload = $signer->sign('POST', '/api/users', '{"name":"test"}', [], $nonce, $timestamp);
 
-        $verifier = new VerifyInternalRequestSignature($secret, 300, new NonceStore(), $timestamp->epochSeconds);
+        $verifier = new VerifyInternalRequestSignature(
+            secretKey: $secret,
+            nonceStore: new NonceStore(),
+            toleranceSeconds: 300,
+            currentTime: $timestamp->epochSeconds,
+        );
         $headers = $payload->toHeaders();
 
         // Tamper with body
@@ -105,7 +115,12 @@ final class V4SecurityPolicyTest extends TestCase
 
         $payload = $signer->sign('GET', '/api/health', '', [], $nonce, $oldTimestamp);
 
-        $verifier = new VerifyInternalRequestSignature($secret, 300, new NonceStore(), time());
+        $verifier = new VerifyInternalRequestSignature(
+            secretKey: $secret,
+            nonceStore: new NonceStore(),
+            toleranceSeconds: 300,
+            currentTime: time(),
+        );
         $headers = $payload->toHeaders();
 
         $result = $verifier->verify('GET', '/api/health', '', $headers);
@@ -124,7 +139,12 @@ final class V4SecurityPolicyTest extends TestCase
         $nonceStore = new NonceStore();
 
         $payload = $signer->sign('GET', '/api/data', '', [], $nonce, $timestamp);
-        $verifier = new VerifyInternalRequestSignature($secret, 300, $nonceStore, $timestamp->epochSeconds);
+        $verifier = new VerifyInternalRequestSignature(
+            secretKey: $secret,
+            nonceStore: $nonceStore,
+            toleranceSeconds: 300,
+            currentTime: $timestamp->epochSeconds,
+        );
         $headers = $payload->toHeaders();
 
         // First verification should succeed
@@ -140,7 +160,11 @@ final class V4SecurityPolicyTest extends TestCase
     #[Test]
     public function missing_signature_headers_fail(): void
     {
-        $verifier = new VerifyInternalRequestSignature('secret', 300, new NonceStore());
+        $verifier = new VerifyInternalRequestSignature(
+            secretKey: 'secret',
+            nonceStore: new NonceStore(),
+            toleranceSeconds: 300,
+        );
 
         $result = $verifier->verify('GET', '/api/test', '', []);
 

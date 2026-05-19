@@ -12,8 +12,8 @@ final readonly class VerifyInternalRequestSignature
 {
     public function __construct(
         private string $secretKey,
-        private int $toleranceSeconds = 300,
         private NonceStore $nonceStore,
+        private int $toleranceSeconds = 300,
         private int|null $currentTime = null,
     ) {
     }

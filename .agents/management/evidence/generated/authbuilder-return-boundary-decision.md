@@ -111,5 +111,5 @@ Decision: DEFER typed result object to second extraction slice. Accept current a
 | Array return from AssembleAuthIdentityGraph | INTERNAL CONTRACT, DEFER TYPING | ACCEPTED_YELLOW |
 | Federation readiness bug | FIXED | GREEN |
 | No public DSL changes | MAINTAINED | GREEN |
-| Characterization tests | ADDED (5 tests, 18 assertions) | GREEN |
+| Characterization tests | ADDED (9 tests, 76 assertions, 8 scenarios) + 3 original Auth tests maintained | GREEN |
 | AuthenticationContext named parameter bug | FIXED | GREEN |

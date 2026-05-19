@@ -3,13 +3,13 @@
 Date: 2026-05-19
 Branch: main
 Mode: STANDARD
-Status: GREEN — Behavioral equivalence proven, no regressions, review closure complete
+Status: GREEN_WITH_ACCEPTED_YELLOW_DEBT — First slice stabilized, review closure complete, 9/8 characterization scenarios covered
 
 ## Executive Summary
 
 Extracted the identity/tenancy/SCIM/risk object graph assembly from `AuthBuilder::ready()` into a dedicated assembly class `AssembleAuthIdentityGraph`. This closes the remaining ACTIVE BLOCKER from fix-this.md (AuthBuilder was ~1730 lines).
 
-**Result: AuthBuilder reduced from 1731 to 889 lines. 54 Auth tests pass (49 original + 5 characterization). 8458+ total tests pass. PHPStan clean. Governance checks pass. Federation readiness bug fixed. AuthenticationContext named parameter bug fixed.**
+**Result: AuthBuilder reduced from 1731 to 889 lines. 12 Auth component tests pass (3 original + 9 characterization). 8458+ total tests pass. PHPStan clean. Governance checks pass. Federation readiness bug fixed. AuthenticationContext named parameter bug fixed.**
 
 ---
 
@@ -80,16 +80,20 @@ Added `FederationRuntimeInterface|null $federationRuntime = null` constructor pa
 
 ### New Test File
 
-`tests/Unit/Components/Identity/Auth/AuthBuilderReadyGraphCharacterizationTest.php` (311 lines)
+`tests/Unit/Components/Identity/Auth/AuthBuilderReadyGraphCharacterizationTest.php` (510 lines)
 
-5 characterization tests proving the AuthBuilder first-slice boundary:
-1. `federationRuntimeConfigurationEnablesFederationReadiness` — federation() returns true when runtime is configured
-2. `federationReadinessIsFalseWithoutRuntime` — federation() returns false without runtime
-3. `scimConfigurationEnablesScimReadiness` — scim() returns true with provisionable user source
-4. `mfaPrimitivesAreWiredConsistently` — MFA and challenge objects are non-null
-5. `authCapabilityReadinessDefaultsAreConsistent` — all defaults are false without runtimes
+9 characterization tests proving the AuthBuilder first-slice boundary, covering 8 required scenarios:
+1. `assembleGraphProducesAllExpectedKeys` — scenario 1: assembly produces all 14 expected graph keys
+2. `fluentDslMethodsReturnSelf` — scenario 2: fluent DSL chain returns $this at each step
+3. `missingRequiredDependencyThrowsConfigurationException` — scenario 3: missing dep throws
+4. `federationRuntimeConfigurationEnablesFederationReadiness` — scenario 4: federation() true when runtime configured
+5. `federationReadinessIsFalseWithoutRuntime` — scenario 4: federation() false without runtime
+6. `scimConfigurationEnablesScimReadiness` — scenario 5: scim() true with provisionable user source
+7. `mfaPrimitivesAreWiredConsistently` — scenario 6: MFA objects are wired correctly
+8. `publicAuthDoesNotExposeInternalAssemblyClasses` — scenario 7: no internal types in Auth return types
+9. `authCapabilityReadinessDefaultsAreConsistent` — scenario 8: all capability defaults are false without runtimes
 
-5 tests, 18 assertions — all passing.
+9 tests, 76 assertions — all passing. No PHPStan suppressions.
 
 ### Design Decision: Shared Primitives
 
@@ -109,9 +113,9 @@ Fixed parameter type mismatch: `ExchangeRefreshToken` and `CompleteFederatedLogi
 
 ## Validation Evidence
 
-### PHPUnit — Auth Tests
+### PHPUnit — Auth Component Tests
 ```
-54 tests (49 original + 5 characterization), 123 assertions — OK
+12 tests (3 original + 9 characterization), 81 assertions — OK
 ```
 
 ### PHPUnit — Full Suite
@@ -135,15 +139,18 @@ php tooling/refactor/check-runtime-leaks.php — PASS
 
 ---
 
-## Behavioral Equivalence Proof
+## Behavior Proof Improved
 
-- All 49 original Auth tests pass without modification
+- All 3 original Auth component tests pass without modification
+- All 9 characterization tests pass (8 scenarios covered)
 - All 8458+ tests pass without modification
 - No public API changes
 - No behavior changes — only delegation structure changed
 - OAuth/OIDC/Federation assembly kept inline (unchanged logic, next extraction slice)
 - Federation readiness bug fixed: federation() now correctly returns true when runtime is configured
 - AuthenticationContext named parameter bug fixed: guest() factory no longer crashes
+- 9 characterization tests added covering 8 required scenarios
+- No PHPStan suppressions in characterization tests
 
 ---
 
@@ -174,6 +181,6 @@ php tooling/refactor/check-runtime-leaks.php — PASS
 | AuthBuilder.php | 1731 | 889 | -842 |
 | AssembleAuthIdentityGraph.php | 0 | 676 | +676 |
 | AuthenticationContext.php | — | — | Bug fix (1 line) |
-| AuthBuilderReadyGraphCharacterizationTest.php | 0 | 311 | +311 |
+| AuthBuilderReadyGraphCharacterizationTest.php | 0 | 510 | +510 |
 | authbuilder-return-boundary-decision.md | 0 | ~115 | +115 |
 | **Net** | **1731** | **1876** | **+145** |

@@ -87,6 +87,31 @@ translations, flow vs capability decisions, etc.
 - Namespace ownership rules
 - Test naming conventions
 
+### 3.1 Facade DSL Naming
+
+AvaX uses Laravel-inspired facades and fluent/DSL public APIs.
+The Facade pattern is a legitimate framework dictionary term.
+
+**Rules:**
+
+- `Facade` is an allowed framework dictionary term and architectural role.
+- Folder expresses the architectural role: `Facade/`
+- Class expresses the public DSL noun: `Cache`, `Route`, `Config`, `Event`, `Log`, `App`
+- Correct: `Facade/Cache.php` with `class Cache`
+- Incorrect: `Facade/CacheFacade.php` — redundant, folder already says Facade
+- Incorrect: `Gateways/CacheGateway.php` for local framework DSL — Gateway is for external boundaries only
+- `Gateway` is reserved for external/integration/provider boundaries (StripeGateway, SmtpGateway, GitHubGateway)
+- Hollow/fake facade behavior is forbidden — empty forwarding classes must be eliminated
+- The Facade pattern itself is not forbidden — only hollow/fake instances
+
+**Rationale:**
+
+- Folder says architectural role (Facade)
+- Class says public API word (Cache)
+- Function says exact action (get, put, remember)
+- `Cache::remember(...)` is the public DSL, not `CacheFacade::remember(...)` or `CacheGateway::remember(...)`
+- `Facade/` already communicates the pattern; repeating `Facade` in the class name is redundant
+
 ---
 
 ## 4. Local Runtime/Execution Rules

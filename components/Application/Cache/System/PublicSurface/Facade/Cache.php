@@ -10,7 +10,7 @@ use Avax\Components\Application\Cache\System\PublicSurface\CacheReadTarget;
 use Avax\Components\Application\Cache\System\PublicSurface\Read\ReadFromCache;
 use DateInterval;
 
-readonly class CacheFacade
+readonly class Cache
 {
     public function __construct(
         private CacheRegistry $cacheRegistry,

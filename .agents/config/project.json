@@ -8,5 +8,5 @@
   "operationsRequired": false,
   "name": "avax",
   "displayName": "Avax",
-  "naming_allowances": ["ServiceProvider", "Migration", "Kernel", "Configuration", "Controller", "Application", "Facade"]
+  "naming_allowances": ["ServiceProvider", "Migration", "Kernel", "Configuration", "Controller", "Application"]
 }

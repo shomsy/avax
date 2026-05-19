@@ -10,7 +10,7 @@ use Avax\Components\Application\Cache\System\PublicSurface\Exception\NotConfigur
 use Avax\Tests\TestCase;
 use Override;
 
-final class CacheFacadeTest extends TestCase
+final class CacheStaticFacadeTest extends TestCase
 {
     public function test_it_throws_when_no_cache_configured() : void
     {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\ReadCompiledFailurePolicies;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\CompiledMethodPolicy;
 
 /**
@@ -13,6 +14,7 @@ final readonly class ReadCompiledFailurePolicies
 {
     public function __construct(
         private string $artifactDir,
+        private Filesystem $filesystem,
     ) {
     }
 
@@ -22,14 +24,11 @@ final readonly class ReadCompiledFailurePolicies
         $safeKey = str_replace(['\\', '::'], ['_', '__'], $key);
         $path = $this->artifactDir . '/' . $safeKey . '.json';
 
-        if (!file_exists($path)) {
+        if (!$this->filesystem->exists($path)) {
             return null;
         }
 
-        $json = file_get_contents($path);
-        if ($json === false) {
-            return null;
-        }
+        $json = $this->filesystem->read($path);
 
         $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
 

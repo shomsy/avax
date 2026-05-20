@@ -96,7 +96,7 @@ final readonly class FileSessionStore implements SessionStoreInterface
                     continue;
                 }
 
-                $mtime = filemtime($file);
+                $mtime = $this->filesystem->modificationTime($file);
                 if ($mtime !== false && $mtime < $now - $maxLifetime) {
                     if ($this->filesystem->delete($file)) {
                         $removed++;

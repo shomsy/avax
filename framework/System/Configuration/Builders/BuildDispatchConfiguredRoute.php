@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Configuration\Builders;
 
 use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ActionResolution\ControllerResolver;
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ArgumentResolution\ArgumentResolver;
 use Avax\Components\HTTP\Dispatcher\System\Flows\DispatchRouteAction\DispatchRouteAction;
@@ -36,6 +37,11 @@ use Psr\Http\Message\ResponseInterface;
  */
 final class BuildDispatchConfiguredRoute
 {
+    public function __construct(
+        private Filesystem|null $filesystem = null,
+    ) {
+    }
+
     /**
      * Assemble DispatchConfiguredRoute from a routes file path.
      *
@@ -43,7 +49,9 @@ final class BuildDispatchConfiguredRoute
      */
     public function fromRoutesFile(string $routesFile, CreateHttpResponse $createHttpResponse): DispatchConfiguredRoute
     {
-        if (! is_file(filename: $routesFile)) {
+        $filesystem = $this->filesystem ?? new Filesystem();
+
+        if (! $filesystem->isFile($routesFile)) {
             throw new FrameworkMisconfigured(
                 message: sprintf('HTTP routes file "%s" does not exist.', $routesFile),
             );

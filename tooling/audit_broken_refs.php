@@ -29,7 +29,10 @@ use PhpParser\ParserFactory;
 
 require_once dirname(__DIR__).'/vendor/autoload.php';
 
-$baseDir = dirname(__DIR__);
+// Allow baseDir override for git worktree support.
+// PHP __DIR__ resolves to the main repo in worktree contexts,
+// so we need to use the real worktree filesystem path.
+$baseDir = $_OVERRIDE_BASEDIR ?? dirname(__DIR__);
 $parser = new ParserFactory()->createForNewestSupportedVersion();
 $externalPrefixes = loadExternalPrefixes($baseDir);
 

@@ -1,0 +1,30 @@
+# Generated merge snapshot
+Foundation/Container/Container.txt
+
+# Stakpak session files
+.stakpak/session*
+
+# Dependencies
+vendor/
+
+# Generated/backup artifacts
+*.cache
+.phpunit.result.cache
+.phpunit.cache/
+.php-cs-fixer.cache
+.ruff_cache/
+var/
+*backup*.txt
+
+# IDE
+.idea/
+.vscode/
+.gigaide/
+.aider*
+.env
+.env
+
+.qoder/worktrees/
+
+# Local aggregate dumps
+avax.part-*.txt

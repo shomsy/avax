@@ -24,9 +24,11 @@ final readonly class RegisterCallableSerializationDefaults
         // Serialization capability
         $container->singleton(
             SerializeClosureThroughLibrary::class,
-            static fn (ContainerInterface $c) : SerializeClosureThroughLibrary => new SerializeClosureThroughLibrary(
-                secretKey: $c->get(CallableSerializationConfig::class)->signingKey,
-            ),
+            static function (ContainerInterface $c) : SerializeClosureThroughLibrary {
+                /** @var CallableSerializationConfig $config */
+                $config = $c->get(CallableSerializationConfig::class);
+                return new SerializeClosureThroughLibrary(secretKey: $config->signingKey);
+            },
         );
 
         // Reject unsafe callable capability

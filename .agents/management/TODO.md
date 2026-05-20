@@ -25,6 +25,16 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: POST-ROUND-002-MERGES
+- `created_at`: 2026-05-20
+- `updated_at`: 2026-05-20
+- `status`: done
+- `estimate`: small
+- `actual`: 3 branches merged into main sequentially with validation
+- `outcome`: Post-Round-002 branches merged into main — Phase0 truth reconciliation, TODO-004 dynamic class-loading hardening, TODO-004-b container migration hardening. All focused security improvements with tests and evidence.
+- `acceptance`: 3 branches merged in order with validation after each. Phase0 / CURRENT_TRUTH reconciliation: DONE. TODO-004 dynamic class-loading boundaries: DONE. TODO-004-b: integrated as TODO-004 sub-slice. Accepted LOW: TODO-004-b missing test-proof.md summary file (tests exist in diff). Pre-existing YELLOW: check-direct-instantiation.php (163 constructor default parameter findings across framework), check-runtime-composition-leaks.php (4 HIGH findings for guarded class_exists calls in TODO-004-b hardened paths — expected for dynamic class-loading security).
+- `links`: `.agents/management/evidence/generated/post-round-002-ready-merge/main-merge-validation.md`, `.agents/management/evidence/generated/post-round-002-ready-review/summary.md`, `.agents/management/evidence/generated/post-round-002-ready-review/todo-004-review.md`, `.agents/management/evidence/generated/post-round-002-ready-review/todo-004-b-review.md`, `.agents/management/evidence/generated/post-round-002-ready-review/phase0-review.md`
+
 - `id`: V5.9-AUTHBUILDER-SPLIT-FIRST-SLICE
 - `created_at`: 2026-05-16
 - `updated_at`: 2026-05-16

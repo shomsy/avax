@@ -600,7 +600,6 @@ final class AuthBuilderReadyGraphCharacterizationTest extends TestCase
             }
         }
     }
-}
 
     /**
      * Scenario 12: assembly graph classes follow governance naming.

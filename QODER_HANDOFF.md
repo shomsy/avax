@@ -1,63 +1,65 @@
-# Qoder Handoff — Autonomous Backlog Closure Loop
+# Qoder Handoff — Backlog Truth Reconciliation Complete
 
 Date: 2026-05-20
 
 ## Current State
 
-- **main HEAD**: bae9269c9
-- **Final git status**: clean, ahead of origin/main by 2 commits
+- **main HEAD**: 80d62bfcc — docs(governance): reconcile TODO.md, fix-this.md, CURRENT_TRUTH.md after autonomous sessions
+- **Final git status**: clean, ahead of origin/main by 5 commits
 - **Pushed**: NO (auth failure — HTTPS without credential helper)
 
-## Closed TODOs This Run
+## What Was Done This Session
 
-- TODO-006: Confirmed CLOSED (was already closed)
-- TODO-007: Confirmed CLOSED (git-proven, tracking was stale)
-- TODO-008: Confirmed CLOSED (git-proven, tracking was stale)
-- TODO-015: Confirmed CLOSED (git-proven, tracking was stale)
-- TODO-009 through TODO-013: SUBSTANTIALLY CLOSED by TODO-015 ServiceProviders
+**Backlog Truth Reconciliation** — All tracking files reconciled against git-proven evidence:
 
-## Partial/Blocked TODOs
+1. Created `.agents/management/evidence/generated/backlog-truth-reconciliation/current-truth.md` — comprehensive truth snapshot
+2. Created `.agents/management/evidence/generated/backlog-truth-reconciliation/reconciliation-summary.md` — reconciliation summary
+3. Updated `TODO.md` — corrected 15 TODO statuses against git state
+4. Updated `fix-this.md` — corrected TODO-007, 008, 015 statuses, updated global counts and execution order
+5. Updated `CURRENT_TRUTH.md` — replaced stale GREEN claims with current P0 closure status
 
-- TODO-014: Constructor defaults — 529 findings, too large for autonomous
-- TODO-020: Constructor bloat — 483 findings, too large for autonomous
-- TODO-022: Forbidden folders — requires governance decisions
-- TODO-021, 023, 024, 025, 028, 029: Need per-case dedicated sessions
+## Reconciled TODO Statuses
 
-## Passing TODOs
+| TODO | Old Status | New Status | Proof |
+|------|-----------|------------|-------|
+| TODO-004 | PENDING | DONE | Commits 43c5e6883 + 634b552e5 |
+| TODO-005 | PENDING | DONE | Commit 3f55d597d |
+| TODO-007 | PENDING/OPEN | DONE | Commit 0a98822e3 |
+| TODO-008 | PENDING/OPEN | DONE | Commit 482b9e3cb |
+| TODO-009-013 | PENDING/OPEN | PARTIALLY_RESOLVED | ServiceProviders from TODO-015 |
+| TODO-014 | PENDING | READY_ANALYSIS_FIRST | 529 findings, per-component |
+| TODO-015 | PENDING/OPEN | DONE | Commit 8171bfe2d |
+| TODO-017 | PENDING | DONE | Commit 182074351 |
+| TODO-018 | PENDING | DONE | Commit 40b954daf |
+| TODO-019 | PENDING | DONE | Commit c79c4df0b |
+| TODO-020 | PENDING | READY_ANALYSIS_FIRST | 483 findings, per-component |
+| TODO-027 | PENDING | PASS_WITH_YELLOW | 0 new violations |
+| TODO-030 | PENDING | PASSING | Evidence hygiene GREEN |
 
-- TODO-027: Semantic PHPDoc — PASS_WITH_YELLOW_RATCHET (0 new violations)
-- TODO-030: Low-risk cleanup — Evidence hygiene GREEN
+## Current TODO Summary
 
-## Accepted YELLOW
+- **P0 BLOCKERs**: 0/7 remaining — ALL CLOSED
+- **P1 HIGH**: 6 items (009-013 PARTIALLY_RESOLVED, 014 READY_ANALYSIS_FIRST)
+- **P2 MEDIUM**: 8 items (027 PASS_WITH_YELLOW, 7 NEEDS_DEDICATED_SESSION)
+- **P3 LOW**: 1 item (030 PASSING)
+- **ACCEPTED_YELLOW**: 2 items (027, 032)
+- **VERIFIED**: 2 items (026, 031)
+- **DONE**: 13 items
+- **PARTIALLY_RESOLVED**: 5 items (009-013)
 
-- TODO-027: Semantic PHPDoc ratchet
-- TODO-032: Semantic PHPDoc legacy ratchet (9810 violations)
+## Validation
 
-## Branches
-
-- main (active)
-- backup/main-before-delete (recovery)
-- master (corrupt)
-- recovery/clean-before-harness-v6 (has remote)
-
-## Evidence
-
-`.agents/management/evidence/generated/autonomous-backlog-continuation/`
-- source-of-truth-decision-closure-loop.md
-- final-report-closure-loop.md
-
-## Validation State
-
-- PHPUnit: Pre-existing Parallelism failures only (6)
-- PHPStan: Clean
-- All governance gates: GREEN or expected YELLOW
+- composer validate: PASS
+- check-governance-index-current.php: GREEN
+- check-root-evidence-hygiene.php: GREEN
+- No production code changed — governance/tracking/evidence only
 
 ## Exact Next TODO
 
 **TODO-014** — Constructor default parameter instantiation (529 findings)
 - Per-component-owner approach required
 - NOT mechanical — each needs dependency direction analysis
-- Start with smallest component: Application/FeatureFlags (1 finding), then work up
+- Start with smallest component suite, validate per-component
 
 ## Continuation Commands
 
@@ -78,4 +80,4 @@ git status --short
 
 ## One-Sentence Truth
 
-All 7 P0 BLOCKERs are closed, TODO-015 ServiceProviders complete, remaining 16 TODOs require either per-case human decisions or dedicated component-by-component sessions — no safe autonomous slices remain.
+All tracking files now reflect git-proven state: 13 DONE, 5 PARTIALLY_RESOLVED, 0 P0 remaining — next actionable is TODO-014 (constructor defaults, per-component approach).

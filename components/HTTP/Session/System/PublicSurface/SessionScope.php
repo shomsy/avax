@@ -76,9 +76,10 @@ final class SessionScope
 
     private function sync() : void
     {
-        if ($this->started) {
-            $_SESSION = $this->data;
-        }
+        // In-memory state is kept in $this->data.
+        // Persistence is handled exclusively by SessionStoreInterface via save().
+        // Direct $_SESSION writes here would conflict with NativeSessionStore
+        // and break long-lived worker isolation.
     }
 
     public function forget(string $key) : void

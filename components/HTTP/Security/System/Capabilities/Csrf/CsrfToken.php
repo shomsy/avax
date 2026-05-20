@@ -4,32 +4,23 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\Security\System\Capabilities\Csrf;
 
+/**
+ * CsrfToken — pure value class for CSRF token generation.
+ *
+ * This class performs NO session I/O.
+ * Session storage is the responsibility of CsrfTokens,
+ * which delegates through the Session PublicSurface authority.
+ */
 final readonly class CsrfToken
 {
-    private const string SESSION_KEY = '_token';
-
-    public static function token() : string
-    {
-        return self::generate();
-    }
-
+    /**
+     * Generate a fresh cryptographically secure CSRF token string.
+     *
+     * Does NOT write to session. Callers must store the returned
+     * token via CsrfTokens or the Session authority.
+     */
     public static function generate() : string
     {
-        if (session_status() !== PHP_SESSION_ACTIVE && PHP_SAPI !== 'cli') {
-            session_start();
-        }
-
-        if (! isset($_SESSION[self::SESSION_KEY])) {
-            $_SESSION[self::SESSION_KEY] = bin2hex(random_bytes(length: 32));
-        }
-
-        return $_SESSION[self::SESSION_KEY];
-    }
-
-    public static function rotate() : string
-    {
-        $_SESSION[self::SESSION_KEY] = bin2hex(random_bytes(length: 32));
-
-        return $_SESSION[self::SESSION_KEY];
+        return bin2hex(random_bytes(length: 32));
     }
 }

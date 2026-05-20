@@ -5,42 +5,55 @@ declare(strict_types=1);
 namespace Avax\Components\HTTP\Security\System\Capabilities\Csrf;
 
 /**
- * CsrfTokenGenerator - generates and stores CSRF tokens in session.
- * Provides a simpler interface than CsrfTokens for basic use cases.
+ * CsrfTokenGenerator — thin adapter for single-token CSRF workflows.
+ *
+ * This class performs NO session I/O.
+ * It delegates token generation to CsrfToken (pure value class)
+ * and uses timing-safe comparison for validation.
+ *
+ * Session storage is the responsibility of CsrfTokens,
+ * which delegates through the Session PublicSurface authority.
+ *
+ * For multi-token workflows with expiration and consumption,
+ * use CsrfTokens instead.
  */
 final class CsrfTokenGenerator
 {
-    private const string SESSION_KEY = '_csrf_token';
-
-    public function validate(string|null $token) : bool
+    /**
+     * Validate a token against the expected token.
+     * Returns false for null or empty tokens (fail-closed).
+     */
+    public function validate(string|null $token, string $expectedToken) : bool
     {
         if ($token === null || $token === '') {
             return false;
         }
 
-        return hash_equals($this->token(), $token);
+        return hash_equals($expectedToken, $token);
     }
 
-    public function token() : string
-    {
-        return $_SESSION[self::SESSION_KEY] ?? $this->generate();
-    }
-
+    /**
+     * Generate a fresh CSRF token.
+     * Does NOT write to session.
+     */
     public function generate() : string
     {
-        $token = bin2hex(random_bytes(32));
-        $this->storeToken($token);
-
-        return $token;
+        return CsrfToken::generate();
     }
 
-    private function storeToken(string $token) : void
+    /**
+     * Alias for generate().
+     * Does NOT write to session.
+     */
+    public function token() : string
     {
-        if (session_status() === PHP_SESSION_ACTIVE) {
-            $_SESSION[self::SESSION_KEY] = $token;
-        }
+        return $this->generate();
     }
 
+    /**
+     * Alias for generate().
+     * Does NOT write to session.
+     */
     public function regenerate() : string
     {
         return $this->generate();

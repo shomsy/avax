@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\WriteCompiledFailurePolicies;
 
+use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\CompiledMethodPolicy;
 
 /**
@@ -15,6 +16,7 @@ final readonly class WriteCompiledFailurePolicies
 {
     public function __construct(
         private string $artifactDir,
+        private Filesystem $filesystem,
     ) {
     }
 
@@ -27,11 +29,11 @@ final readonly class WriteCompiledFailurePolicies
         $data = $policy->toArray();
         $json = json_encode($data, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR);
 
-        if (!is_dir($this->artifactDir)) {
-            mkdir($this->artifactDir, 0755, true);
+        if (!$this->filesystem->isDirectory($this->artifactDir)) {
+            $this->filesystem->createDirectory($this->artifactDir);
         }
 
-        file_put_contents($path, $json, LOCK_EX);
+        $this->filesystem->write($path, $json);
 
         return $path;
     }

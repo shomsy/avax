@@ -1,0 +1,22 @@
+# Agent Context Loaded
+
+- AGENTS.md read: YES
+- AvaX Enterprise Remediation Skill loaded: YES
+- how-to-ai-assisted-execution.md read: YES
+- how-to files discovered: 20+
+- how-to files read: 6 (how-to-system-security, how-to-design-components, how-to-coding-standards, how-to-clean-code, how-to-architecture, how-to-use-ai-assisted-execution)
+- skills discovered: 1
+- skills used: avax-enterprise-remediation
+- memory/learning files discovered: 0
+- memory/learning files used: NONE
+- project truth files read: fix-this.md (TODO-017), .agents/management/TODO.md
+- review evidence read: post-round-002-worktree-inventory/summary.md
+- assigned fix-this TODO: TODO-017
+- source clusters read: CLUSTER-013 (raw filesystem/path operations)
+- source finding IDs read: SCR-0043, SCR-0044, SCR-0045, HTD-0043, HTD-0044, HTD-0045, SAI-0141, SAI-0142, SAI-0160, OLD-FIX-002, OLD-FIX-118, OLD-FIX-121
+- applicable governance warnings: CLUSTER-013 — raw filesystem ops must route through Filesystem boundary
+- accepted YELLOW constraints: stream wrapper ops (php://input, php://temp), PSR-7 upload idioms (move_uploaded_file), path parsing (dirname/basename) accepted as intentional exceptions
+- pre-existing dirty files: CLEAN
+- branch: cleanup/todo-017-filesystem-boundaries
+- worktree: ../avax-todo-017
+- base commit: 0b67ef44e

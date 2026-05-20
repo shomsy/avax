@@ -38,6 +38,17 @@ Load together with:
 - `security` skill when relevant
 - `performance` skill when relevant
 - `avax-component-dogfooding` for component reuse and platform coherence
+- `avax-runtime-performance-cache` for performance-sensitive work
+
+## Runtime Performance and Cache Gate
+
+Production code must consider runtime performance and cache safety.
+
+HLD/LLD must classify hot path impact.
+
+Caching requires `cache-design.md`.
+
+Performance-sensitive work must load `avax-runtime-performance-cache`.
 
 ## Component Dogfooding Gate
 

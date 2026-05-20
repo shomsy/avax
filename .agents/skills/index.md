@@ -20,6 +20,9 @@ This file routes tasks to the correct skill.
 | cohesion, coupling, HLD, LLD, system design, 11++, enterprise quality|                            |
 | component change, architecture cleanup, dogfooding, AvaX eats AvaX,  | avax-component-dogfooding   |
 | filesystem/cache/logging/events/config/security/runtime/HTTP work    |                            |
+| performance, cache, hot path, runtime, long-lived worker,            | avax-runtime-performance-cache|
+| compilation, warmup, benchmark, latency, throughput, memory,         |                            |
+| Swoole, RoadRunner, FrankenPHP, AvaX JIT, compiled runtime plans     |                            |
 
 ## Skill Files
 
@@ -29,6 +32,7 @@ This file routes tasks to the correct skill.
 | AvaX Autonomous Backlog Loop| `.agents/skills/avax-autonomous-backlog-loop/SKILL.md`       | Autonomous task-by-task execution |
 | AvaX Enterprise Codecraft   | `.agents/skills/avax-enterprise-codecraft/SKILL.md`          | HLD/LLD/OOP/SOLID/design quality  |
 | AvaX Component Dogfooding   | `.agents/skills/avax-component-dogfooding/SKILL.md`          | component reuse/platform coherence|
+| AvaX Runtime Performance Cache| `.agents/skills/avax-runtime-performance-cache/SKILL.md`   | hot-path/cache/worker/benchmark   |
 | Recovery                   | `.agents/skills/recovery/SKILL.md`                            | Restore old behavior              |
 | Validation                 | `.agents/skills/validation/SKILL.md`                          | Prove code is green               |
 | Review                     | `.agents/skills/review/SKILL.md`                              | Systematic review                 |

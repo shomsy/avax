@@ -178,6 +178,7 @@ This skill must be loaded together with:
 - `avax-enterprise-remediation`
 - `avax-autonomous-backlog-loop` for autonomous sweeps
 - `avax-enterprise-codecraft` for production-code changes
+- `avax-runtime-performance-cache` when caching or performance primitives are involved
 - `review` skill
 - `validation` skill
 - `testing` skill

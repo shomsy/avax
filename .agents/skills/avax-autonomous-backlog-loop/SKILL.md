@@ -107,9 +107,9 @@ no staging local files
 ## Per-Slice Flow
 
 1. **Plan** — select TODO, read evidence, determine safe slice
-2. **Implement** — obey governance, how-to rules, and skill routing; load `avax-component-dogfooding` when component reuse may be involved
+2. **Implement** — obey governance, how-to rules, and skill routing; load `avax-component-dogfooding` when component reuse may be involved; load `avax-runtime-performance-cache` when runtime/cache/performance is relevant
 3. **Test** — run focused validation
-4. **Evidence** — write proof of what was done; re-run component dogfooding review per slice
+4. **Evidence** — write proof of what was done; re-run component dogfooding review per slice; preserve performance/cache evidence per slice
 5. **Governance review** — check against applicable how-to rules
 6. **Commit** — only if validation GREEN and review clean
 7. **Self-review** — verify no unrelated files, no skipped rules

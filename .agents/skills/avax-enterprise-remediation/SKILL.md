@@ -18,6 +18,10 @@ For autonomous backlog execution, this skill must route to `avax-autonomous-back
 
 For component/refactor/architecture tasks, this skill must route to `avax-component-dogfooding`.
 
+For runtime/cache/performance tasks, this skill must route to `avax-runtime-performance-cache`.
+
+Bootloader alone is insufficient for performance-sensitive work.
+
 Agents must not use only this skill when task-specific skills exist.
 
 Agents must discover and apply all task-relevant `.agents` resources including skills, how-to rules, learning, memory, evidence, TODO.md, and fix-this.md.

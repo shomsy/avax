@@ -1186,6 +1186,20 @@ The `avax-component-dogfooding` skill enforces this rule.
 
 ---
 
+## 24.4 Runtime Performance and Cache Discipline Rule
+
+Runtime hot paths must avoid reflection, filesystem scanning, config parsing, env reads, dynamic discovery, and runtime object graph assembly unless explicitly justified.
+
+Caching requires owner, scope, key, invalidation, lifecycle, memory bound, worker-safety, and proof.
+
+Long-lived worker state leaks are blocking findings.
+
+Performance-sensitive code must include performance/cache evidence and validation.
+
+The `avax-runtime-performance-cache` skill enforces this rule.
+
+---
+
 ## 25. Security Rule
 
 Security is a property of every boundary.

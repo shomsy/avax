@@ -1,36 +1,37 @@
 # CURRENT_TRUTH
 
-Date of Truth: 2026-05-15
+Date of Truth: 2026-05-20
 Branch: main
-Commit: V5.7 Final Acceptance — Events Fluent DSL, Dogfooding, CQRS Projection, Event-History Proof
+Commit: 0b67ef44e — docs(governance): close Round 002 — all 4 branches merged and validated
 
-## Cleanup Program Override
+## ⚠️ STALE FILE — TRUTH RECONCILIATION REQUIRED
 
-Date: 2026-05-14
-Evidence: `EVIDENCE/cleanup/13-final-whole-system-acceptance-audit.md`
-Status: GREEN
+This file was last updated on 2026-05-15 and claims FULL GREEN status.
 
-V5.9 Boot DSL is UNBLOCKED — AvaX Full Enterprise Cleanup Program is GREEN.
+**Current actual status per `fix-this.md` (2026-05-20): RED / BLOCKED_BY_HOW_TO / TARGETED_REDESIGN**
 
-Current validation:
+This file is **not current truth**. The canonical project status is defined by `fix-this.md` and `TODO.md`.
 
-- Composer validate: GREEN.
-- Optimized autoload: GREEN.
-- PHPUnit: GREEN.
-- PHPStan over `framework components tests labs/SystemDesignKit`: GREEN, 0 errors.
-- Runtime assembly gate: GREEN, 3166 files scanned.
-- Health/doctor policy: GREEN, runtime-critical components have real health checks.
-- Hollow public surfaces: GREEN, removed.
-- Static state worker safety: GREEN.
-- Router/HTTP runtime stability: GREEN.
-- PHPStan type system: GREEN, 0 errors (baseline cleanup complete).
-- Component maturity gates: GREEN, all 22 gates PASS.
-- Naming/duplicates/skeletons: GREEN.
-- Component status lock: GREEN.
-- Broken-reference audit: GREEN (main tree).
-- Stage lock: GREEN.
+### Key discrepancies
 
-Next allowed action: V5.9 Boot DSL may begin (Governance Hardening complete).
+| Claim in THIS file | Actual status | Source |
+|---|---|---|
+| Status: GREEN | RED / BLOCKED | `fix-this.md` line 10 |
+| Full suite GREEN | 4 P0 remaining, 14 P1 remaining | `TODO.md` Appendix A |
+| Next: V5.9 Boot DSL | Remediation active (Round 002 complete, Phase 1 P0 remaining) | `TODO.md` line 35 |
+
+### Reconciliation directive
+
+- This file is preserved as **historical record** of V1-V5 development.
+- Do NOT use GREEN claims from this file as current evidence.
+- Canonical remediation backlog: `fix-this.md`
+- Operational execution board: `TODO.md`
+- Execution control: `EVIDENCE/EXECUTION.md`
+- Active mode: Remediation — Stage locked by fix-this.md cleanup execution order
+
+### What follows is historical record only
+
+All sections below are preserved as evidence of prior stages. They describe what was true on 2026-05-15. They do not describe current project status. For current status, see `fix-this.md` and `TODO.md`.
 
 ## Core Status
 

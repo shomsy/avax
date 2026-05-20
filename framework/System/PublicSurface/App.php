@@ -6,7 +6,6 @@ namespace Avax\Framework\System\PublicSurface;
 
 use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\CreateRequestFromGlobals;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
-use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Framework\System\Capabilities\PreCommit\Configuration\PreCommitConfig;
 use Avax\Framework\System\Capabilities\PreCommit\PreCommit;
@@ -16,8 +15,9 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResult;
 use Avax\Framework\System\Capabilities\StateReset\StateResetReport;
 use Avax\Framework\System\Flows\HandleIncomingHttp\CloseHttpRequestScope;
+use Avax\Framework\System\Flows\HandleIncomingHttp\CreateRuntimeRequestFromHttpRequest;
+use Avax\Framework\System\Flows\HandleIncomingHttp\FrameworkRouteRegistrar;
 use Avax\Framework\System\Flows\HandleIncomingHttp\OpenHttpRequestScope;
-use Avax\Framework\System\Flows\HandleIncomingHttp\RegisteredHttpRoutes;
 use Avax\Framework\System\Flows\ResetApplicationState\ResetApplicationState;
 use Avax\Framework\System\Flows\RunApplication\RunApplication;
 use Avax\Framework\System\Flows\RunConsoleCommand\RunConsoleCommand;
@@ -60,11 +60,6 @@ use Throwable;
 final class App
 {
     /**
-     * @var list<RouteDefinition>
-     */
-    private array $routeDefinitions = [];
-
-    /**
      * @var list<Closure>
      */
     private array $globalMiddleware = [];
@@ -79,6 +74,10 @@ final class App
         private readonly CreateHttpResponse $createHttpResponse,
         private readonly CreateRequestFromGlobals $createRequestFromGlobals,
         private readonly RunApplication $dispatcher,
+        private readonly FrameworkRouteRegistrar $routeRegistrar,
+        private readonly OpenHttpRequestScope $openRequestScope,
+        private readonly CloseHttpRequestScope $closeRequestScope,
+        private readonly CreateRuntimeRequestFromHttpRequest $createRuntimeRequest,
     ) {
     }
 
@@ -137,9 +136,7 @@ final class App
      */
     public function any(string $path, mixed $action): self
     {
-        foreach (RouteMethod::cases() as $method) {
-            $this->registerRoute(method: $method, path: $path, action: $action);
-        }
+        $this->routeRegistrar->anyExpanded(path: $path, action: $action);
 
         return $this;
     }
@@ -196,18 +193,12 @@ final class App
      */
     public function handle(RuntimeRequest $request): ResponseInterface
     {
-        $openScope = new OpenHttpRequestScope(
-            requestScopes: $this->runtime->requestScopes(),
-            runtimeContext: $this->runtime->context(),
-        );
-        $closeScope = new CloseHttpRequestScope(requestScopes: $this->runtime->requestScopes());
-
-        $openScope->open(request: $request);
+        $this->openRequestScope->open(request: $request);
 
         try {
             $response = $this->dispatcher->handle(
                 runtimeRequest: $request,
-                routes: $this->buildRegisteredRoutes(),
+                routes: $this->routeRegistrar->collectRoutes(),
             );
 
             $this->runtime->context()->finishRequest(
@@ -218,7 +209,7 @@ final class App
         } catch (Throwable $e) {
             return $this->handleException($e);
         } finally {
-            $closeScope->close();
+            $this->closeRequestScope->close();
         }
     }
 
@@ -279,29 +270,15 @@ final class App
 
     private function registerRoute(RouteMethod $method, string $path, mixed $action): void
     {
-        $definition = new RouteDefinition(
-            method: $method,
-            uri: $path,
-            action: $action,
-        );
-
-        $this->routeDefinitions[] = $definition;
-    }
-
-    private function buildRegisteredRoutes(): RegisteredHttpRoutes
-    {
-        $routesByMethod = [];
-
-        foreach ($this->routeDefinitions as $definition) {
-            $method = strtoupper($definition->method()->value);
-            $routesByMethod[$method] ??= [];
-            $routesByMethod[$method][] = $definition;
-        }
-
-        return new RegisteredHttpRoutes(
-            routesByMethod: $routesByMethod,
-            fallback: null,
-        );
+        match ($method) {
+            RouteMethod::GET => $this->routeRegistrar->get(path: $path, action: $action),
+            RouteMethod::POST => $this->routeRegistrar->post(path: $path, action: $action),
+            RouteMethod::PUT => $this->routeRegistrar->put(path: $path, action: $action),
+            RouteMethod::PATCH => $this->routeRegistrar->patch(path: $path, action: $action),
+            RouteMethod::DELETE => $this->routeRegistrar->delete(path: $path, action: $action),
+            RouteMethod::OPTIONS => $this->routeRegistrar->options(path: $path, action: $action),
+            RouteMethod::HEAD => $this->routeRegistrar->head(path: $path, action: $action),
+        };
     }
 
     private function handleRequest(): ResponseInterface
@@ -310,15 +287,7 @@ final class App
         // App.php must not access $_SERVER/$_GET/$_POST/$_FILES/php://input directly.
         $avaxRequest = $this->createRequestFromGlobals->execute();
 
-        /** @var array<string, list<string>> $headers */
-        $headers = $avaxRequest->getHeaders();
-
-        $request = new RuntimeRequest(
-            method: $avaxRequest->getMethod(),
-            uri: (string) $avaxRequest->getUri(),
-            headers: $headers,
-            body: (string) $avaxRequest->getBody(),
-        );
+        $request = $this->createRuntimeRequest->create(request: $avaxRequest);
 
         return $this->handle(request: $request);
     }

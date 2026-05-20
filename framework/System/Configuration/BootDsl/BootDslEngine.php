@@ -15,7 +15,11 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeState;
 use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
 use Avax\Framework\System\Capabilities\StateReset\StaticStateReset;
 use Avax\Framework\System\Configuration\Builders\BuildRunApplication;
+use Avax\Framework\System\Flows\HandleIncomingHttp\CloseHttpRequestScope;
+use Avax\Framework\System\Flows\HandleIncomingHttp\CreateRuntimeRequestFromHttpRequest;
+use Avax\Framework\System\Flows\HandleIncomingHttp\FrameworkRouteRegistrar;
 use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
+use Avax\Framework\System\Flows\HandleIncomingHttp\OpenHttpRequestScope;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\Foundation\Paths\ProjectPath;
 use Avax\Framework\System\Foundation\Time\Clock;
@@ -207,6 +211,13 @@ final class BootDslEngine
             createHttpResponse     : $createHttpResponse,
             createRequestFromGlobals: $createRequestFromGlobals,
             dispatcher             : $dispatcher,
+            routeRegistrar         : new FrameworkRouteRegistrar(),
+            openRequestScope       : new OpenHttpRequestScope(
+                requestScopes: $runtime->requestScopes(),
+                runtimeContext: $runtime->context(),
+            ),
+            closeRequestScope      : new CloseHttpRequestScope(requestScopes: $runtime->requestScopes()),
+            createRuntimeRequest   : new CreateRuntimeRequestFromHttpRequest(),
         );
     }
 

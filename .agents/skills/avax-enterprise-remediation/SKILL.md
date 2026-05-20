@@ -16,9 +16,13 @@ This is a bootloader skill.
 
 For autonomous backlog execution, this skill must route to `avax-autonomous-backlog-loop`.
 
+For component/refactor/architecture tasks, this skill must route to `avax-component-dogfooding`.
+
 Agents must not use only this skill when task-specific skills exist.
 
 Agents must discover and apply all task-relevant `.agents` resources including skills, how-to rules, learning, memory, evidence, TODO.md, and fix-this.md.
+
+Agents must not bypass existing AvaX components with raw PHP unless exception is documented per `avax-component-dogfooding` Raw PHP Exception Rule.
 
 This skill composes with other skills when the task matches their scope.
 

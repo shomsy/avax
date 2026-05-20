@@ -18,6 +18,8 @@ This file routes tasks to the correct skill.
 | radi sto vise, nastavi sam, maximum sweep, autonomous backlog loop   | avax-autonomous-backlog-loop|
 | production-code change, architecture change, refactor, OOP, SOLID,   | avax-enterprise-codecraft   |
 | cohesion, coupling, HLD, LLD, system design, 11++, enterprise quality|                            |
+| component change, architecture cleanup, dogfooding, AvaX eats AvaX,  | avax-component-dogfooding   |
+| filesystem/cache/logging/events/config/security/runtime/HTTP work    |                            |
 
 ## Skill Files
 
@@ -26,6 +28,7 @@ This file routes tasks to the correct skill.
 | AvaX Enterprise Remediation| `.agents/skills/avax-enterprise-remediation/SKILL.md`         | Master skill for AI-assisted tasks|
 | AvaX Autonomous Backlog Loop| `.agents/skills/avax-autonomous-backlog-loop/SKILL.md`       | Autonomous task-by-task execution |
 | AvaX Enterprise Codecraft   | `.agents/skills/avax-enterprise-codecraft/SKILL.md`          | HLD/LLD/OOP/SOLID/design quality  |
+| AvaX Component Dogfooding   | `.agents/skills/avax-component-dogfooding/SKILL.md`          | component reuse/platform coherence|
 | Recovery                   | `.agents/skills/recovery/SKILL.md`                            | Restore old behavior              |
 | Validation                 | `.agents/skills/validation/SKILL.md`                          | Prove code is green               |
 | Review                     | `.agents/skills/review/SKILL.md`                              | Systematic review                 |

@@ -1168,6 +1168,24 @@ PARTIAL is not a stop condition unless a hard blocker exists.
 
 ---
 
+## 24.3 Component Dogfooding Rule
+
+AvaX components should use existing AvaX components/capabilities where architecturally appropriate.
+
+AvaX components must dogfood AvaX capabilities.
+
+Raw PHP primitives, global helpers, and duplicated local infrastructure are forbidden unless they live in Foundation/adapter boundaries or have an explicit accepted exception.
+
+Dependencies must go through stable PublicSurface, approved Capability APIs, Configuration/Assembly/Provider boundaries, or documented internal component boundaries.
+
+Circular component dependencies are blocking findings.
+
+Every production-code task must document component reuse, bypasses, raw primitives, and dependency direction.
+
+The `avax-component-dogfooding` skill enforces this rule.
+
+---
+
 ## 25. Security Rule
 
 Security is a property of every boundary.

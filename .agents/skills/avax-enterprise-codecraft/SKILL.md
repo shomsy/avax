@@ -37,6 +37,17 @@ Load together with:
 - `validation` skill
 - `security` skill when relevant
 - `performance` skill when relevant
+- `avax-component-dogfooding` for component reuse and platform coherence
+
+## Component Dogfooding Gate
+
+Production code must pass component dogfooding review.
+
+Before creating new logic, check whether an AvaX component/capability already owns the concern.
+
+Advanced OOP means high cohesion, low coupling, and first-party component reuse through correct boundaries.
+
+See `avax-component-dogfooding` for detailed rules.
 
 ## High-Level Design Gate (HLD / System Design)
 

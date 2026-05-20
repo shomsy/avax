@@ -10,6 +10,7 @@ use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\CompiledPolicy
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureAction;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureContext;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureDecision;
+use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureHandler;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailurePipelineResult;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailurePolicy;
 use Avax\Framework\System\Capabilities\FailureBoundary\PublicSurface\FailureBoundary as FailureBoundaryFacade;
@@ -366,12 +367,118 @@ final class FailureBoundaryTest extends TestCase
 
         self::assertSame('facade-ok', $result);
     }
+
+    public function testRejectsFallbackHandlerNotImplementingInterface(): void
+    {
+        $policy = new FailurePolicy(
+            fallbackClass: TestInvalidHandler::class,
+        );
+        $compiled = new CompiledMethodPolicy(
+            targetClass: 'InsecureController',
+            targetMethod: 'fetch',
+            policy: $policy,
+            checksum: 'test',
+            sourceMtime: 0,
+            compiledAt: time(),
+        );
+        CompiledPolicyCache::put('InsecureController::fetch', $compiled);
+
+        $boundary = (new BuildFailureBoundary())->build();
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(FailureHandler::class);
+
+        $boundary->run(
+            action: static fn () => throw new \RuntimeException('fail'),
+            context: FailureContext::forHttp(
+                new ServerRequest('GET', '/insecure'),
+                'InsecureController',
+                'fetch',
+            ),
+        );
+    }
+
+    public function testRejectsRecoveryHandlerNotImplementingInterface(): void
+    {
+        $policy = new FailurePolicy(
+            recoverWithClass: TestInvalidRecoveryHandler::class,
+        );
+        $compiled = new CompiledMethodPolicy(
+            targetClass: 'InsecureRecoveryController',
+            targetMethod: 'handle',
+            policy: $policy,
+            checksum: 'test',
+            sourceMtime: 0,
+            compiledAt: time(),
+        );
+        CompiledPolicyCache::put('InsecureRecoveryController::handle', $compiled);
+
+        $boundary = (new BuildFailureBoundary())->build();
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(FailureHandler::class);
+
+        $boundary->run(
+            action: static fn () => throw new \RuntimeException('fail'),
+            context: FailureContext::forHttp(
+                new ServerRequest('GET', '/insecure-recovery'),
+                'InsecureRecoveryController',
+                'handle',
+            ),
+        );
+    }
+
+    public function testRejectsFallbackClassNotFound(): void
+    {
+        $policy = new FailurePolicy(
+            fallbackClass: 'NonExistentFallbackHandler',
+        );
+        $compiled = new CompiledMethodPolicy(
+            targetClass: 'MissingController',
+            targetMethod: 'handle',
+            policy: $policy,
+            checksum: 'test',
+            sourceMtime: 0,
+            compiledAt: time(),
+        );
+        CompiledPolicyCache::put('MissingController::handle', $compiled);
+
+        $boundary = (new BuildFailureBoundary())->build();
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('not found');
+
+        $boundary->run(
+            action: static fn () => throw new \RuntimeException('fail'),
+            context: FailureContext::forHttp(
+                new ServerRequest('GET', '/missing'),
+                'MissingController',
+                'handle',
+            ),
+        );
+    }
 }
 
-final class TestFallbackHandler
+final class TestFallbackHandler implements FailureHandler
 {
     public function __invoke(\Throwable $failure, FailureContext $context): string
     {
         return 'fallback-result';
+    }
+}
+
+final class TestInvalidHandler
+{
+    public function __invoke(\Throwable $failure, FailureContext $context): string
+    {
+        return 'should-not-reach';
+    }
+}
+
+final class TestInvalidRecoveryHandler
+{
+    public function __invoke(\Throwable $failure, FailureContext $context): string
+    {
+        return 'should-not-reach';
     }
 }

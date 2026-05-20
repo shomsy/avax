@@ -9,6 +9,7 @@ use Avax\Framework\System\Capabilities\FailureBoundary\Configuration\Builders\Bu
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\CompiledMethodPolicy;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\CompiledPolicyCache;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureContext;
+use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureHandler;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailurePolicy;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -122,7 +123,7 @@ final class RecoverWithEnforcementTest extends TestCase
         $context = FailureContext::forConsole('Test', 'handle');
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Recovery class must implement __invoke');
+        $this->expectExceptionMessage('Recovery class must implement ' . FailureHandler::class);
 
         $action->execute(new RuntimeException('test'), $context, $policy);
     }
@@ -134,7 +135,7 @@ final class RecoverWithEnforcementTest extends TestCase
 }
 
 /** Test recovery handler that formats the failure message */
-final class RecoverWithTestRecoveryHandler
+final class RecoverWithTestRecoveryHandler implements FailureHandler
 {
     public function __invoke(Throwable $failure, mixed $context) : string
     {
@@ -143,7 +144,7 @@ final class RecoverWithTestRecoveryHandler
 }
 
 /** Test fallback handler (should not be used when RecoverWith is present) */
-final class RecoverWithTestFallbackHandler
+final class RecoverWithTestFallbackHandler implements FailureHandler
 {
     public function __invoke(Throwable $failure, mixed $context) : string
     {
@@ -152,7 +153,7 @@ final class RecoverWithTestFallbackHandler
 }
 
 /** Recovery handler that captures the failure details for assertions */
-final class RecoverWithCapturingRecoveryHandler
+final class RecoverWithCapturingRecoveryHandler implements FailureHandler
 {
     public static string $lastFailureMessage = '';
     public static string $lastTargetClass    = '';
@@ -166,5 +167,5 @@ final class RecoverWithCapturingRecoveryHandler
     }
 }
 
-/** Invalid recovery handler without __invoke */
+/** Invalid recovery handler without FailureHandler interface */
 final class RecoverWithInvalidRecoveryHandler {}

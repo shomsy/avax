@@ -15,12 +15,12 @@ use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCred
 use SensitiveParameter;
 
 /**
- * Configuration sub-builder for credential-related dependencies.
+ * Configuration assembly graph for credential-related dependencies.
  *
  * Owns: MFA store, TOTP, challenge store, attempt limits, throttles,
  * passkey runtime, stores, and relying party configuration.
  */
-final class BuildCredentialGraph
+final class CredentialAuthenticationGraph
 {
     private MfaStoreInterface|null $mfaStore = null;
     private MfaChallengeStoreInterface|null $mfaChallengeStore = null;
@@ -129,7 +129,7 @@ final class BuildCredentialGraph
      *     passkeyRpName: string,
      * }
      */
-    public function build() : array
+    public function assemble() : array
     {
         return [
             'mfaStore'                 => $this->mfaStore,

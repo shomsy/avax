@@ -11,12 +11,12 @@ use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Director
 use SensitiveParameter;
 
 /**
- * Configuration sub-builder for SCIM provisioning-related dependencies.
+ * Configuration assembly graph for SCIM provisioning-related dependencies.
  *
  * Owns: SCIM directory stores, provisioned identity stores,
  * lifecycle store, and SCIM throttle.
  */
-final class BuildScimGraph
+final class ScimProvisioningGraph
 {
     private ScimDirectoryStoreInterface|null $scimDirectoryStore = null;
     private ScimProvisionedIdentityStoreInterface|null $scimProvisionedIdentityStore = null;
@@ -59,7 +59,7 @@ final class BuildScimGraph
      *     scimThrottle: AttemptThrottle|null,
      * }
      */
-    public function build() : array
+    public function assemble() : array
     {
         return [
             'scimDirectoryStore'           => $this->scimDirectoryStore,

@@ -12,12 +12,12 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurity
 use SensitiveParameter;
 
 /**
- * Configuration sub-builder for tenancy and admin elevation dependencies.
+ * Configuration assembly graph for tenancy and admin elevation dependencies.
  *
  * Owns: tenant stores, tenant security configuration, admin elevation,
  * and risk engine.
  */
-final class BuildTenancyGraph
+final class TenancyAdministrationGraph
 {
     private TenantStoreInterface|null $tenantStore = null;
     private TenantSecurityConfigurationStoreInterface|null $tenantSecurityConfigurationStore = null;
@@ -78,7 +78,7 @@ final class BuildTenancyGraph
      *     adminPhishingResistantRequired: bool,
      * }
      */
-    public function build() : array
+    public function assemble() : array
     {
         return [
             'tenantStore'                        => $this->tenantStore,

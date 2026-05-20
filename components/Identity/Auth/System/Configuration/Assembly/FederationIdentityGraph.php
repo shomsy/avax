@@ -9,11 +9,11 @@ use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\F
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationRuntimeInterface;
 
 /**
- * Configuration sub-builder for federation and external identity dependencies.
+ * Configuration assembly graph for federation and external identity dependencies.
  *
  * Owns: federation runtime, connection store, federated identity links.
  */
-final class BuildFederationGraph
+final class FederationIdentityGraph
 {
     private FederationRuntimeInterface|null $federationRuntime = null;
     private FederationConnectionStoreInterface|null $federationConnectionStore = null;
@@ -47,7 +47,7 @@ final class BuildFederationGraph
      *     federatedIdentityLinkStore: FederatedIdentityLinkStoreInterface|null,
      * }
      */
-    public function build() : array
+    public function assemble() : array
     {
         return [
             'federationRuntime'          => $this->federationRuntime,

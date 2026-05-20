@@ -12,12 +12,12 @@ use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\Ref
 use SensitiveParameter;
 
 /**
- * Configuration sub-builder for OAuth, OIDC, and token-related dependencies.
+ * Configuration assembly graph for OAuth, OIDC, and token-related dependencies.
  *
  * Owns: OAuth client registry, authorization code store,
  * OIDC provider, OIDC request object store, and refresh token store.
  */
-final class BuildOAuthGraph
+final class OAuthIdentityGraph
 {
     private OAuthClientRegistryInterface|null $oAuthClientRegistry = null;
     private AuthorizationCodeStoreInterface|null $authorizationCodeStore = null;
@@ -69,7 +69,7 @@ final class BuildOAuthGraph
      *     oidcRequestObjectStore: OidcRequestObjectStoreInterface|null,
      * }
      */
-    public function build() : array
+    public function assemble() : array
     {
         return [
             'oAuthClientRegistry'      => $this->oAuthClientRegistry,

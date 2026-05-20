@@ -601,3 +601,28 @@ final class AuthBuilderReadyGraphCharacterizationTest extends TestCase
         }
     }
 }
+
+    /**
+     * Scenario 12: assembly graph classes follow governance naming.
+     */
+    #[Test]
+    public function assemblyGraphClassesFollowGovernanceNaming(): void
+    {
+        $graphClasses = [
+            \Avax\Components\Identity\Auth\System\Configuration\Assembly\CredentialAuthenticationGraph::class,
+            \Avax\Components\Identity\Auth\System\Configuration\Assembly\OAuthIdentityGraph::class,
+            \Avax\Components\Identity\Auth\System\Configuration\Assembly\FederationIdentityGraph::class,
+            \Avax\Components\Identity\Auth\System\Configuration\Assembly\ScimProvisioningGraph::class,
+            \Avax\Components\Identity\Auth\System\Configuration\Assembly\TenancyAdministrationGraph::class,
+        ];
+
+        foreach ($graphClasses as $class) {
+            $reflection = new \ReflectionClass($class);
+            $shortName = $reflection->getShortName();
+            self::assertMatchesRegularExpression('/^[A-Z][a-zA-Z]+Graph$/', $shortName, sprintf('%s should be noun+Graph, not Build*Graph', $shortName));
+            self::assertStringNotContainsString('Build', $shortName, sprintf('%s should not contain "Build" prefix', $shortName));
+            self::assertTrue($reflection->hasMethod('assemble'), sprintf('%s should have assemble() method', $shortName));
+            self::assertFalse($reflection->hasMethod('build'), sprintf('%s should not have build() method', $shortName));
+        }
+    }
+}

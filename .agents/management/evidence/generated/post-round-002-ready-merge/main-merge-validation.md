@@ -74,4 +74,28 @@ None.
 
 ## Final Main Validation Summary
 
-To be completed after full validation run.
+| Check | Result |
+|-------|--------|
+| composer validate --no-check-publish | GREEN |
+| composer dump-autoload -o | GREEN (9362 classes) |
+| vendor/bin/phpunit --no-coverage | 12 FAILURES (pre-existing ProcessPoolParallelismProofTest — closure serialization, not from merges) |
+| vendor/bin/phpstan analyse framework components tests --memory-limit=1G | 65 findings (pre-existing test type warnings, not from merges) |
+| php tooling/refactor/check-direct-instantiation.php | FAIL (pre-existing, 163 constructor default parameter findings) |
+| php tooling/refactor/check-runtime-composition-leaks.php | FAIL (4 HIGH — guarded class_exists in TODO-004-b hardened paths, expected) |
+| php tooling/refactor/check-broken-reference-semantics.php | PASS (0 active broken refs) |
+| php tooling/refactor/check-namespace-drift.php | PASS |
+| php tooling/governance/check-governance-index-current.php | GREEN |
+| php tooling/governance/check-root-evidence-hygiene.php | GREEN |
+
+### PHPUnit Details
+- 8780 tests, 25042 assertions
+- 12 failures: All in ProcessPoolParallelismProofTest (closure deserialization failures — pre-existing, not modified by merges)
+- 1 risky test: RuntimeCompositionFacadeFixtureTest (no assertions — pre-existing)
+
+### PHPStan Details
+- 65 findings, all pre-existing test type warnings and reference semantics notes
+- No new findings introduced by merges
+
+### Final Status: YELLOW_WITH_ACCEPTED_FINDINGS
+
+All merge-related changes are validated and clean. Pre-existing findings are documented and not introduced by these merges.

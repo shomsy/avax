@@ -5,11 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Configuration\BootDsl;
 
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
-use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
-use Avax\Framework\System\Foundation\Environment\EnvironmentName;
-use Avax\Framework\System\Foundation\Paths\ProjectPath;
 use Avax\Framework\System\Foundation\Time\Clock;
-use Avax\Framework\System\Foundation\Time\SystemClock;
 use Avax\Framework\System\PublicSurface\App;
 use Closure;
 
@@ -136,33 +132,19 @@ final class BootDslBuilder
      */
     public function create(): App
     {
-        if ($this->projectPath === null) {
+        $projectPath = $this->projectPath;
+        if ($projectPath === null) {
             throw new \LogicException('Project path is required. Call ->from() before ->create().');
         }
 
-        $clock = $this->clock ?? new SystemClock();
-        $projectPath = new ProjectPath(value: $this->projectPath);
-        $environmentName = EnvironmentName::fromString($this->environmentName);
-
-        // Build the HandleIncomingHttp service.
-        $createHttpResponse = new \Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse();
-        $handleIncomingHttp = new HandleIncomingHttp(createHttpResponse: $createHttpResponse);
-
-        // Build the provider registry.
-        $providerRegistry = new ProviderRegistry();
-        $providerRegistry->pinFrameworkProvider(\Avax\Framework\System\Configuration\FrameworkServiceProvider::class);
-        $providerRegistry->registerUserProviders($this->providers);
-
-        // Execute the boot engine.
-        $engine = new BootDslEngine(
-            providerRegistry   : $providerRegistry,
-            projectPath        : $projectPath,
-            environmentName    : $environmentName,
-            clock              : $clock,
-            runtimeName        : $this->runtimeName,
-            handleIncomingHttp : $handleIncomingHttp,
-            httpHandler        : $this->httpHandler,
-            consoleCommands    : $this->consoleCommands,
+        $engine = BuildBootDslEngine::fromBootOptions(
+            projectPath     : $projectPath,
+            environmentName : $this->environmentName,
+            clock           : $this->clock,
+            runtimeName     : $this->runtimeName,
+            httpHandler     : $this->httpHandler,
+            providers       : $this->providers,
+            consoleCommands : $this->consoleCommands,
         );
 
         return $engine->boot();

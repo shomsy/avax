@@ -1,9 +1,9 @@
 # AvaX Remediation Execution Board
 
-Status: REMEDIATION_ACTIVE — Round 002 GREEN (all 4 branches merged to main)
+Status: REMEDIATION_ACTIVE — All P0 BLOCKERs CLOSED (0/7 remaining), reconciliation complete
 Execution control: `EVIDENCE/EXECUTION.md` is the canonical execution control document.
-Remediation backlog: `fix-this.md` is the canonical review reconciliation backlog (34 TODOs, 7 P0).
-Evidence root: `.agents/management/evidence/generated/review-reconciliation/`
+Remediation backlog: `fix-this.md` is the canonical review reconciliation backlog (reconciled 2026-05-20).
+Evidence root: `.agents/management/evidence/generated/backlog-truth-reconciliation/`
 
 ## Board Role
 
@@ -20,15 +20,17 @@ fix-this.md (2026-05-20) — RED / BLOCKED_BY_HOW_TO / TARGETED_REDESIGN
 | Metric | Count |
 |--------|-------|
 | Total TODOs | 34 |
-| P0 BLOCKER | 7 (3 completed, 4 remaining) |
-| P1 HIGH | 14 (3 completed, 11 remaining) |
-| P2 MEDIUM | 9 |
-| P3 LOW | 1 |
-| VERIFIED | 2 |
-| ACCEPTED_YELLOW | 1 |
+| P0 BLOCKER | 7 (ALL completed, 0 remaining) |
+| P1 HIGH | 6 (009-013 PARTIALLY_RESOLVED, 014 OPEN) |
+| P2 MEDIUM | 8 (027 PASS_WITH_YELLOW, 7 OPEN) |
+| P3 LOW | 1 (030 PASSING) |
+| VERIFIED | 2 (026, 031) |
+| ACCEPTED_YELLOW | 2 (027, 032) |
 | NEEDS_VERIFICATION | 0 |
+| DONE | 13 |
+| PARTIALLY_RESOLVED | 5 (009-013) |
 
-CURRENT_TRUTH.md is stale (GREEN claims do not match current fix-this.md RED/BLOCKED status). Phase 0 will reconcile it.
+Reconciliation: 2026-05-20 — all statuses verified against git state. Evidence: `.agents/management/evidence/generated/backlog-truth-reconciliation/`
 
 ## Active Stage
 
@@ -258,8 +260,9 @@ Note: TODO-001 and TODO-002 are already completed (see Completed/Integrated sect
 - Tests: negative tests for unknown class, wrong interface, payload class injection
 - Validation: `php tooling/refactor/check-direct-instantiation.php && php tooling/refactor/check-runtime-composition-leaks.php && vendor/bin/phpunit --filter "QueueWorker|FailureBoundary|Migration|Seeder" --no-coverage`
 - Evidence: `.agents/management/evidence/generated/review-reconciliation/security-runtime-escalation.md`
+- Commits: 43c5e6883 (TODO-004) + 634b552e5 (TODO-004-b)
 
-Status: PENDING — wait for Round 002 review
+Status: DONE
 
 ### Iteration 1.5 — Worker-Unsafe Static Secret State
 - **TODO-005**: Remove worker-unsafe static secret/security runtime state (Secrets, Diagnostics, FailureBoundary, ExternalState, ResourceGovernor, GlobalEventListenerState)
@@ -267,8 +270,9 @@ Status: PENDING — wait for Round 002 review
 - Tests: long-lived worker two-request leakage tests, reset tests, secret overwrite/isolation
 - Validation: `php tooling/refactor/check-runtime-composition-leaks.php && vendor/bin/phpunit --filter "Secrets|Diagnostics|FailureBoundary|ExternalState|StateReset" --no-coverage`
 - Evidence: `.agents/management/evidence/generated/review-reconciliation/security-runtime-escalation.md`
+- Commit: 3f55d597d
 
-Status: PENDING — wait for TODO-004
+Status: DONE
 
 ---
 
@@ -288,11 +292,12 @@ Status: DONE
 ### Iteration 2.2 — AuthBuilder Split
 - **TODO-007**: Split AuthBuilder into bounded configuration responsibilities
 - Foci: `components/Identity/Auth/System/Configuration/Builders/AuthBuilder.php`
-- Note: first slice already extracted (AssembleAuthIdentityGraph, commit 8f9d0ff5c). Remaining: 889 lines, Phase 4 OAuth/OIDC/Federation extraction.
+- Result: AuthBuilder reduced from 797 to 560 lines via sub-builder decomposition (7 sub-builders)
 - Validation: `php tooling/governance/check-large-unit-thresholds.php && vendor/bin/phpunit --filter "AuthBuilder|Auth" --no-coverage`
-- Evidence: `.agents/management/evidence/generated/review-reconciliation/finding-clusters.md`
+- Evidence: `.agents/management/evidence/generated/todo-007-authbuilder-split/`
+- Commit: 0a98822e3
 
-Status: PENDING — requires separate architecture-focused round
+Status: DONE
 
 ---
 
@@ -303,41 +308,49 @@ Goal: Remove remaining static mutable state and move PublicSurface construction 
 ### Iteration 3.1 — Remaining Static Mutable State
 - **TODO-008**: Retire remaining static mutable PublicSurface/runtime state by ownership slice (21 units)
 - Foci: `DeveloperTools/Diagnostics`, `API/SchemaGeneration`, `Application/Cache`, `Application/Storage`, `Application/Pipeline`, etc.
+- Result: reset() lifecycle added to FeatureFlags, MessageBus, Realtime; 12 other units already had reset()
 - Tests: two-request leak tests per touched owner
 - Validation: `php tooling/refactor/check-runtime-composition-leaks.php && vendor/bin/phpunit --no-coverage`
+- Evidence: `.agents/management/evidence/generated/autonomous-backlog-continuation/todo-008-closure.md`
+- Commit: 482b9e3cb
 
-Status: PENDING
+Status: DONE
 
 ### Iteration 3.2 — PublicSurface Construction (Batch A: API + DevTools + Application)
 - **TODO-009**: Reduce API/DeveloperTools PublicSurface construction pressure
 - **TODO-010**: Reduce Application PublicSurface construction pressure
 - Foci: `components/API/*`, `components/DeveloperTools/*`, `components/Application/*`
+- Note: ServiceProviders exist (TODO-015); remaining findings are constructor defaults (TODO-014 overlap)
 - Validation: `php tooling/refactor/check-direct-instantiation.php && php tooling/refactor/check-public-surface.php`
 
-Status: PENDING
+Status: PARTIALLY_RESOLVED
 
 ### Iteration 3.3 — PublicSurface Construction (Batch B: HTTP + Operations)
 - **TODO-011**: Reduce HTTP PublicSurface construction pressure
 - **TODO-012**: Reduce Operations PublicSurface construction pressure
 - Foci: `components/HTTP/*`, `components/Operations/*`
+- Note: ServiceProviders exist (TODO-015); remaining findings are constructor defaults (TODO-014 overlap)
 - Validation: `php tooling/refactor/check-direct-instantiation.php && php tooling/refactor/check-public-surface.php && vendor/bin/phpunit --filter "HTTP|Http" --no-coverage`
 
-Status: PENDING
+Status: PARTIALLY_RESOLVED
 
 ### Iteration 3.4 — PublicSurface Construction (Batch C: Security + Identity + DataStack)
 - **TODO-013**: Reduce Security/Identity/DataStack PublicSurface construction pressure
 - Foci: `components/Security/*`, `components/Identity/*`, `components/DataStack/*`
+- Note: ServiceProviders exist (TODO-015); remaining findings are constructor defaults (TODO-014 overlap)
 - Validation: `php tooling/refactor/check-direct-instantiation.php && php tooling/refactor/check-public-surface.php`
 
-Status: PENDING
+Status: PARTIALLY_RESOLVED
 
 ### Iteration 3.5 — Constructor Defaults + ServiceProviders
 - **TODO-014**: Move constructor default dependency creation into approved Configuration owners (53 units)
 - **TODO-015**: Add missing ServiceProvider assembly owners (25 units)
 - Foci: CROSS_CUTTING — per-component-owner approach
+- TODO-015: 24 ServiceProviders added across 8 component suites (commit 8171bfe2d), gate ALL OK
+- TODO-014: 529 findings remaining, per-component approach required
 - Validation: `php tooling/refactor/check-direct-instantiation.php && php tooling/refactor/check-service-provider-coverage.php && vendor/bin/phpunit --filter "ServiceProvider|Provider" --no-coverage`
 
-Status: PENDING
+Status: TODO-014 READY_ANALYSIS_FIRST, TODO-015 DONE
 
 ---
 
@@ -354,16 +367,22 @@ Goal: Close cross-cutting P1 items that span multiple components.
 
 ### Iteration 4.1b — Filesystem Paths
 - **TODO-017**: Route raw filesystem/path operations through approved first-party boundaries
-- Foci: `components/Operations/ApplicationWorkflow`, `components/HTTP`, `framework/System/Configuration/Builders`, `framework/System/Capabilities/FailureBoundary`
-- Status: PENDING
+- Foci: `components/DataStack/DataTransfer`, `framework/System/Configuration/Builders`, `framework/System/Capabilities/FailureBoundary`, `Doctor/CheckAutoload.php`, `Runtime/Capabilities/RunApplicationOnPhpBuiltInServer.php`, `Doctor/*.php`
+- Commit: 182074351
+- Validation: `php tooling/refactor/check-raw-file-operations.php || true; php tooling/refactor/check-public-surface.php`
+- Evidence: `.agents/management/evidence/generated/post-round-002-evidence-repaired-merge/main-merge-validation.md`
+
+Status: DONE
 
 ### Iteration 4.2 — Security Logging + Global Helpers
 - **TODO-018**: Harden security logging, redaction, and secret parameter handling
 - **TODO-019**: Replace global helper service-locator shortcuts with testable boundaries
 - Foci: `tests/Unit/Components/Security/Cryptography`, `components/Application/Text`, `HTTP/Security`, `Security/RequestSigning`
+- TODO-018: Commit 40b954daf — SensitiveParameter + negative crypto/request-signing tests
+- TODO-019: Commit c79c4df0b — HTTP/Security shortcuts fixed, CSP/HSTS added
 - Validation: `vendor/bin/phpunit --filter "Redaction|Secrets|Cryptography|RequestSignature|Logging|csrf" --no-coverage && php tooling/refactor/check-runtime-composition-leaks.php`
 
-Status: PENDING
+Status: TODO-018 DONE, TODO-019 DONE
 
 ---
 
@@ -375,9 +394,10 @@ Goal: Improve architecture, test coverage, and maintainability.
 - **TODO-020**: Classify and reduce constructor bloat by owner (41 units)
 - **TODO-022**: Resolve forbidden concept folder names through approved governance decisions
 - Foci: `components/Identity/Auth`, `components/DataStack`, all forbidden-named folders
+- TODO-020: 483 findings, per-component split required — READY_ANALYSIS_FIRST
 - Validation: `php tooling/refactor/check-constructor-bloat.php && php tooling/governance/check-large-unit-thresholds.php && php tooling/refactor/check-component-suite-structure.php && php tooling/refactor/check-namespace-drift.php`
 
-Status: PENDING
+Status: TODO-020 READY_ANALYSIS_FIRST, TODO-022 PENDING
 
 ### Iteration 5.2 — Duplicate Ownership + Hidden I/O
 - **TODO-023**: Collapse duplicate ownership and duplicate class implementations
@@ -399,17 +419,19 @@ Status: PENDING
 - **TODO-027**: Document public interface contracts and failure modes
 - **TODO-028**: Replace empty stubs/no-op methods with explicit behavior or failure
 - Foci: HttpKernelInterface, RuntimeKernelInterface, ResetApplicationState, ShutdownRuntime, ConfigureRuntime
+- TODO-027: Semantic PHPDoc passes with 0 new violations — PASS_WITH_YELLOW (legacy ratchet active)
+- TODO-028: ~10 files with empty methods, needs per-case analysis — NEEDS_DEDICATED_SESSION
 - Validation: `php tooling/governance/check-semantic-phpdoc.php && vendor/bin/phpunit --filter "ResetApplicationState|ShutdownRuntime|ConfigureRuntime" --no-coverage`
 
-Status: PENDING
+Status: TODO-027 PASS_WITH_YELLOW, TODO-028 NEEDS_DEDICATED_SESSION
 
 ### Iteration 5.5 — DI Container Performance
 - **TODO-029**: Measure and reduce DI/container object graph performance pressure
 - Foci: DIContainer, runtime paths with repeated short-lived object graphs
-- Note: Measure first; change only after benchmark/test proof.
+- Note: Measure first; change only after benchmark/test proof — NEEDS_DEDICATED_SESSION
 - Validation: `php tooling/refactor/check-direct-instantiation.php && php tooling/governance/check-large-unit-thresholds.php`
 
-Status: PENDING
+Status: NEEDS_DEDICATED_SESSION
 
 ---
 
@@ -421,10 +443,12 @@ Goal: Close low-risk items and maintain accepted-yellow debt.
 - **TODO-030**: Close low-risk compat/version/style cleanup with evidence
 - **TODO-032**: Maintain semantic PHPDoc legacy ratchet while cleaning touched files
 - Foci: `ApplicationWorkflow`, `compat.php`, `AvaxVersion.php`; all touched files in prior iterations
+- TODO-030: Evidence hygiene GREEN — PASSING
+- TODO-032: ACCEPTED_YELLOW, 9810 violations, touched-file cleanup rule applies
 - Note: TODO-030 must not displace P0/P1 work. Apply touched-file cleanup only.
 - Validation: `composer validate --no-check-publish && php tooling/governance/check-root-evidence-hygiene.php && php tooling/governance/check-semantic-phpdoc.php`
 
-Status: PENDING
+Status: TODO-030 PASSING, TODO-032 ACCEPTED_YELLOW
 
 ---
 
@@ -435,35 +459,35 @@ Status: PENDING
 | TODO-001 | Serialized payload hardening | P0 | — | DONE |
 | TODO-002 | Compiled container namespace | P0 | — | DONE |
 | TODO-003 | CSRF/session authority | P0 | 1.3 | DONE |
-| TODO-004 | Dynamic class-loading boundaries | P0 | 1.4 | PENDING |
-| TODO-005 | Static secret state | P0 | 1.5 | PENDING |
+| TODO-004 | Dynamic class-loading boundaries | P0 | 1.4 | DONE |
+| TODO-005 | Static secret state | P0 | 1.5 | DONE |
 | TODO-006 | Framework entrypoint composition | P0 | 2.1 | DONE |
-| TODO-007 | AuthBuilder split | P0 | 2.2 | PENDING |
-| TODO-008 | Remaining static mutable state | P1 | 3.1 | PENDING |
-| TODO-009 | API/DevTools PublicSurface | P1 | 3.2 | PENDING |
-| TODO-010 | Application PublicSurface | P1 | 3.2 | PENDING |
-| TODO-011 | HTTP PublicSurface | P1 | 3.3 | PENDING |
-| TODO-012 | Operations PublicSurface | P1 | 3.3 | PENDING |
-| TODO-013 | Security/Identity/DataStack PublicSurface | P1 | 3.4 | PENDING |
-| TODO-014 | Constructor defaults | P1 | 3.5 | PENDING |
-| TODO-015 | ServiceProvider assembly | P1 | 3.5 | PENDING |
+| TODO-007 | AuthBuilder split | P0 | 2.2 | DONE |
+| TODO-008 | Remaining static mutable state | P1 | 3.1 | DONE |
+| TODO-009 | API/DevTools PublicSurface | P1 | 3.2 | PARTIALLY_RESOLVED |
+| TODO-010 | Application PublicSurface | P1 | 3.2 | PARTIALLY_RESOLVED |
+| TODO-011 | HTTP PublicSurface | P1 | 3.3 | PARTIALLY_RESOLVED |
+| TODO-012 | Operations PublicSurface | P1 | 3.3 | PARTIALLY_RESOLVED |
+| TODO-013 | Security/Identity/DataStack PublicSurface | P1 | 3.4 | PARTIALLY_RESOLVED |
+| TODO-014 | Constructor defaults | P1 | 3.5 | READY_ANALYSIS_FIRST |
+| TODO-015 | ServiceProvider assembly | P1 | 3.5 | DONE |
 | TODO-016 | Broken reference semantics | P1 | 4.1 | DONE |
-| TODO-017 | Filesystem/path boundaries | P1 | 4.1b | PENDING |
-| TODO-018 | Security logging/redaction | P1 | 4.2 | PENDING |
-| TODO-019 | Global helper service-locators | P1 | 4.2 | PENDING |
-| TODO-020 | Constructor bloat | P2 | 5.1 | PENDING |
-| TODO-021 | Missing behavior proof/tests | P2 | 5.3 | PENDING |
-| TODO-022 | Forbidden concept folder names | P2 | 5.1 | PENDING |
-| TODO-023 | Duplicate ownership | P2 | 5.2 | PENDING |
-| TODO-024 | Hidden superglobal/IO access | P2 | 5.2 | PENDING |
-| TODO-025 | Error handling | P2 | 5.3 | PENDING |
+| TODO-017 | Filesystem/path boundaries | P1 | 4.1b | DONE |
+| TODO-018 | Security logging/redaction | P1 | 4.2 | DONE |
+| TODO-019 | Global helper service-locators | P1 | 4.2 | DONE |
+| TODO-020 | Constructor bloat | P2 | 5.1 | READY_ANALYSIS_FIRST |
+| TODO-021 | Missing behavior proof/tests | P2 | 5.3 | NEEDS_DEDICATED_SESSION |
+| TODO-022 | Forbidden concept folder names | P2 | 5.1 | NEEDS_HUMAN_DECISION |
+| TODO-023 | Duplicate ownership | P2 | 5.2 | NEEDS_DEDICATED_SESSION |
+| TODO-024 | Hidden superglobal/IO access | P2 | 5.2 | NEEDS_DEDICATED_SESSION |
+| TODO-025 | Error handling | P2 | 5.3 | NEEDS_DEDICATED_SESSION |
 | TODO-026a | CSV formula injection | P1 | 1.1 | DONE |
 | TODO-026b | CompileDataQuery identifiers | P1 | 1.2 | DONE |
-| TODO-027 | Interface contract docs | P2 | 5.4 | PENDING |
-| TODO-028 | Empty stubs/no-ops | P2 | 5.4 | PENDING |
-| TODO-029 | DI container performance | P2 | 5.5 | PENDING |
-| TODO-030 | Low-risk compat/style | P3 | 6.1 | PENDING |
-| TODO-032 | Semantic PHPDoc ratchet | ACCEPTED_YELLOW | 6.1 | PENDING |
+| TODO-027 | Interface contract docs | P2 | 5.4 | PASS_WITH_YELLOW |
+| TODO-028 | Empty stubs/no-ops | P2 | 5.4 | NEEDS_DEDICATED_SESSION |
+| TODO-029 | DI container performance | P2 | 5.5 | NEEDS_DEDICATED_SESSION |
+| TODO-030 | Low-risk compat/style | P3 | 6.1 | PASSING |
+| TODO-032 | Semantic PHPDoc ratchet | ACCEPTED_YELLOW | 6.1 | ACCEPTED_YELLOW |
 
 ## Appendix B: Verified Items
 

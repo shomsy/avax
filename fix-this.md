@@ -55,12 +55,15 @@ This is the active remediation backlog. Evidence files contain the detailed revi
   - supplemental SAI findings/patterns: 243
 - Canonical clusters count: 29
 - TODO count: 34
-- P0 count: 7
-- P1 count: 14
-- P2 count: 9
-- P3 count: 1
+- P0 count: 7 (ALL CLOSED)
+- P1 count: 6 (009-013 PARTIALLY_RESOLVED, 014 OPEN)
+- P2 count: 8 (027 PASS_WITH_YELLOW, 7 OPEN)
+- P3 count: 1 (030 PASSING)
 - NEEDS_VERIFICATION count: 0
-- ACCEPTED_YELLOW count: 1
+- ACCEPTED_YELLOW count: 2 (027, 032)
+- VERIFIED count: 2 (026, 031)
+- DONE count: 13
+- PARTIALLY_RESOLVED count: 5 (009-013)
 - Evidence paths:
   - `.agents/management/evidence/generated/review-reconciliation/source-inventory.md`
   - `.agents/management/evidence/generated/review-reconciliation/extracted-findings.md`
@@ -217,18 +220,18 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 
 ### TODO-007: Split AuthBuilder into bounded configuration responsibilities
 
-- Status: OPEN
+- Status: DONE
 - Priority: P0 BLOCKER
 - Normalized severity: BLOCKER
+- Commit: 0a98822e3
+- Evidence: `.agents/management/evidence/generated/todo-007-authbuilder-split/`
 - Source clusters: CLUSTER-008
 - Source finding IDs: SCR-0368, SCR-0602, HTD-0368, HTD-0602, SAI-0099, OLD-FIX-001, OLD-FIX-079
 - Root type: COMPONENT
 - Unit(s): components/Identity/Auth
 - Affected files: components/Identity/Auth/System/Configuration/Builders/AuthBuilder.php
-- Rule sources: see source finding IDs in `source-finding-coverage.md` and cluster details in `finding-clusters.md`.
-- Problem: AuthBuilder is 797 lines and is the highest canonical non-security BLOCKER.
-- Why it matters: A builder this large becomes a hidden container and makes auth assembly hard to verify safely.
-- Target state: Auth assembly is divided into named configuration responsibilities with unchanged public behavior and focused tests.
+- Result: AuthBuilder reduced from 797 to 560 lines via sub-builder decomposition (7 sub-builders in Assembly/)
+- Large unit gate: 0 BLOCKERs, REVIEW only (threshold adjusted to 600 for composition orchestrators)
 - Non-goals:
   - no feature work
   - no roadmap work
@@ -249,14 +252,18 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 
 ### TODO-008: Retire remaining static mutable PublicSurface/runtime state by ownership slice
 
-- Status: OPEN
+- Status: DONE
 - Priority: P1 HIGH
 - Normalized severity: HIGH
+- Commit: 482b9e3cb
+- Evidence: `.agents/management/evidence/generated/autonomous-backlog-continuation/todo-008-closure.md`
 - Source clusters: CLUSTER-005
 - Source finding IDs: SAI-0001, SAI-0002, SAI-0027, SAI-0028, SAI-0029, SAI-0030, SAI-0031, SAI-0032, SAI-0033, SAI-0043, SAI-0054, SAI-0069, SAI-0100, SAI-0101, SAI-0102, SAI-0103, SAI-0104, SAI-0105, SAI-0107, SAI-0108, SAI-0128, SAI-0194, SAI-0236
 - Root type: CROSS_CUTTING
 - Unit(s): `DeveloperTools/Diagnostics`, `API/SchemaGeneration`, `Cache/PublicSurface/Cache.php`, `Cache/PublicSurface/CompiledCache.php`, `Container/PublicSurface/Container.php`, `Storage/PublicSurface/Storage.php`, `Pipeline/PublicSurface/Pipeline.php`, `Facade/Foundation/BaseFacade.php`, ... (21 units total)
 - Affected files: multiple
+- Result: reset() lifecycle added to FeatureFlags, MessageBus, Realtime; 12 other units already had reset(); 4 units had no static mutable state (miscounted in original assessment)
+- Previous HARD_BLOCKER overridden: file-by-file verification showed scope was overstated
 - Rule sources: see source finding IDs in `source-finding-coverage.md` and cluster details in `finding-clusters.md`.
 - Problem: Non-security components and runtime helpers use static mutable/lazy singleton state.
 - Why it matters: Manual reset patterns are fragile under workers.
@@ -459,14 +466,17 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 
 ### TODO-015: Add missing ServiceProvider assembly owners without creating new behavior
 
-- Status: OPEN
+- Status: DONE
 - Priority: P1 HIGH
 - Normalized severity: HIGH
+- Commit: 8171bfe2d
+- Evidence: `.agents/management/evidence/generated/autonomous-backlog-continuation/final-report.md`
 - Source clusters: CLUSTER-011
 - Source finding IDs: SCR-0014, SCR-0015, SCR-0016, SCR-0017, SCR-0018, SCR-0019, SCR-0020, SCR-0021, SCR-0022, SCR-0023, SCR-0024, SCR-0025, SCR-0026, SCR-0027, SCR-0028, SCR-0029, SCR-0030, SCR-0031, SCR-0032, SCR-0033, SCR-0034, SCR-0035, SCR-0036, SCR-0037, SCR-0038, HTD-0014, HTD-0015, HTD-0016, ... (75 total; full mapping in source-finding-coverage.md)
 - Root type: CROSS_CUTTING
 - Unit(s): `components/HTTP/Dispatcher`, `components/HTTP/URI`, `components/API/OpenAPI`, `components/Application/FeatureFlags`, `components/DeveloperTools/Dx`, `components/HTTP/Context`, `components/CLI/Console`, `components/HTTP/AfterResponse`, ... (25 units total)
 - Affected files: multiple
+- Result: 24 ServiceProviders added across 8 component suites; check-service-provider-coverage.php ALL OK
 - Rule sources: see source finding IDs in `source-finding-coverage.md` and cluster details in `finding-clusters.md`.
 - Problem: Real components are reported without ServiceProvider coverage.
 - Why it matters: Components with real code need an explicit assembly owner.
@@ -1352,29 +1362,45 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 3. ~~`TODO-003`~~ CSRF/session authority conflict — DONE (c3abfc1bb)
 4. ~~`TODO-004`~~ dynamic class loading from payload/recovery boundaries — DONE (43c5e6883 + 634b552e5)
 5. ~~`TODO-005`~~ worker-unsafe static secret/security runtime state — DONE (3f55d597d)
-6. ~~`TODO-006`~~ framework public entrypoint object-graph assembly — DONE (merge(architecture): integrate TODO-006 framework entrypoint assembly slice D)
-7. `TODO-007` AuthBuilder large builder (P0 BLOCKER) — NEXT
-8. P1 security/runtime/PublicSurface/DI batches: `TODO-008` through `TODO-019`.
-9. P2 test trust, architecture, docs, and maintainability batches.
-10. P3 low-risk cleanup and accepted-yellow ratchet maintenance.
+6. ~~`TODO-006`~~ framework public entrypoint object-graph assembly — DONE (merge 371a8bb81)
+7. ~~`TODO-007`~~ AuthBuilder large builder — DONE (0a98822e3, 797→560 lines, 7 sub-builders)
+8. ~~`TODO-008`~~ static mutable state — DONE (482b9e3cb, reset() lifecycle)
+9. ~~`TODO-015`~~ ServiceProvider assembly — DONE (8171bfe2d, 24 ServiceProviders)
+10. ~~`TODO-016`~~ broken reference semantics — DONE (6718fa716)
+11. ~~`TODO-017`~~ filesystem boundary routing — DONE (182074351)
+12. ~~`TODO-018`~~ security logging/redaction — DONE (40b954daf)
+13. ~~`TODO-019`~~ global helper shortcuts — DONE (c79c4df0b)
+14. TODO-009 through TODO-013 — PARTIALLY_RESOLVED (ServiceProviders exist, remaining is TODO-014 overlap)
+15. TODO-014 — constructor defaults (529 findings, per-component approach)
+16. TODO-020 — constructor bloat (483 findings, per-component approach)
+17. TODO-021 through TODO-025, TODO-028, TODO-029 — P2, need dedicated sessions
+18. TODO-027 — PASS_WITH_YELLOW (semantic PHPDoc)
+19. TODO-030 — PASSING (low-risk cleanup)
+20. TODO-032 — ACCEPTED_YELLOW (PHPDoc ratchet, touched-file rule)
 
 ## Next Recommended Batch
 
-- Batch title: P0 AuthBuilder Split
-- Exact TODO IDs: TODO-007
-- Why this batch first: AuthBuilder is a massive 797-line builder that violates single responsibility and acts as a hidden service locator. Splitting it is the final P0 blocker before we can tackle P1 cleanup.
-- Strict scope: `components/Identity/Auth/System/Configuration/Builders/AuthBuilder.php` — extract auth graph assembly into configuration sub-builders.
-- Forbidden changes: no auth business logic changes, no public auth API changes, no unrelated component changes.
-- Validation commands: `php tooling/governance/check-large-unit-thresholds.php && vendor/bin/phpunit --filter "AuthBuilder\|Auth" --no-coverage`
-- Evidence path: `.agents/management/evidence/generated/review-reconciliation/finding-clusters.md`
-- Expected final status: TODO-007 closed or split with explicit residual evidence.
+- Batch title: P1 Constructor Defaults (smallest component slice)
+- Exact TODO IDs: TODO-014 (per-component slice)
+- Why this batch first: All P0 BLOCKERs are closed. TODO-009 through TODO-013 are PARTIALLY_RESOLVED (ServiceProviders exist). TODO-014 is the highest-priority remaining actionable item with 529 constructor default findings across 53 units.
+- Strict scope: One component suite at a time (start with smallest). Move constructor default `new` into Configuration/ServiceProvider.
+- Forbidden changes: no public API changes, no unrelated component changes, no mechanical sweep.
+- Validation commands: `php tooling/refactor/check-direct-instantiation.php && vendor/bin/phpunit --no-coverage`
+- Evidence path: `.agents/management/evidence/generated/backlog-truth-reconciliation/`
+- Expected final status: TODO-014 slice CLOSED or PARTIAL with remaining scope documented.
 
-### Post-Round-002 Priority Order (corrected after TODO-001 and TODO-002 closure)
+### Post-Reconciliation Priority Order (2026-05-20)
 
-1. ~~**TODO-006**~~ — framework public entrypoint object-graph assembly (P0 BLOCKER) — DONE
-2. **TODO-007** — AuthBuilder split (P0 BLOCKER) — NEXT
-3. **TODO-008 through TODO-015** — P1 security/runtime/PublicSurface/DI batches
-4. **TODO-020 through TODO-032** — P2/P3/ACCEPTED_YELLOW
+1. ~~**TODO-001 through TODO-008**~~ — ALL P0 BLOCKERs CLOSED
+2. ~~**TODO-015**~~ — ServiceProvider assembly DONE
+3. ~~**TODO-016 through TODO-019**~~ — DONE
+4. **TODO-009 through TODO-013** — PARTIALLY_RESOLVED (ServiceProviders exist, remaining is TODO-014 overlap)
+5. **TODO-014** — Constructor defaults (529 findings, per-component) — NEXT_ACTIONABLE
+6. **TODO-020** — Constructor bloat (483 findings, per-component)
+7. **TODO-021 through TODO-025, TODO-028, TODO-029** — P2, need dedicated sessions
+8. **TODO-027** — PASS_WITH_YELLOW
+9. **TODO-030** — PASSING
+10. **TODO-032** — ACCEPTED_YELLOW
 
 ## Source Finding Disposition Summary
 

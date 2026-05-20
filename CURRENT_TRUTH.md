@@ -2,36 +2,61 @@
 
 Date of Truth: 2026-05-20
 Branch: main
-Commit: 0b67ef44e — docs(governance): close Round 002 — all 4 branches merged and validated
+Commit: ffce6194a — docs(governance): record autonomous backlog closure loop findings
+Reconciliation evidence: `.agents/management/evidence/generated/backlog-truth-reconciliation/`
 
-## ⚠️ STALE FILE — TRUTH RECONCILIATION REQUIRED
+## Current Status
 
-This file was last updated on 2026-05-15 and claims FULL GREEN status.
+**REMEDIATION_ACTIVE — All P0 BLOCKERs CLOSED (0/7 remaining)**
 
-**Current actual status per `fix-this.md` (2026-05-20): RED / BLOCKED_BY_HOW_TO / TARGETED_REDESIGN**
+| Metric | Count | Detail |
+|--------|-------|--------|
+| P0 BLOCKER | 0/7 | ALL CLOSED (001-007) |
+| P1 HIGH | 6 | 009-013 PARTIALLY_RESOLVED, 014 READY_ANALYSIS_FIRST |
+| P2 MEDIUM | 8 | 027 PASS_WITH_YELLOW, 7 NEEDS_DEDICATED_SESSION |
+| P3 LOW | 1 | 030 PASSING |
+| ACCEPTED_YELLOW | 2 | 027 (semantic PHPDoc), 032 (legacy PHPDoc ratchet) |
+| VERIFIED | 2 | 026 (SQL/CSV), 031 (supplemental claims) |
+| DONE | 13 | 001-008, 015-019, 026a, 026b |
+| PARTIALLY_RESOLVED | 5 | 009-013 (ServiceProviders exist, remaining is TODO-014 overlap) |
 
-This file is **not current truth**. The canonical project status is defined by `fix-this.md` and `TODO.md`.
+### Recent Closures (since last CURRENT_TRUTH update)
 
-### Key discrepancies
+| TODO | Title | Commit | Date |
+|------|-------|--------|------|
+| TODO-004 | Dynamic class-loading boundaries | 43c5e6883 + 634b552e5 | 2026-05-20 |
+| TODO-005 | Static secret state | 3f55d597d | 2026-05-20 |
+| TODO-007 | AuthBuilder split | 0a98822e3 | 2026-05-20 |
+| TODO-008 | Static mutable state | 482b9e3cb | 2026-05-20 |
+| TODO-015 | ServiceProvider assembly | 8171bfe2d | 2026-05-20 |
+| TODO-017 | Filesystem boundary routing | 182074351 | 2026-05-20 |
+| TODO-018 | Security logging/redaction | 40b954daf | 2026-05-20 |
+| TODO-019 | Global helper shortcuts | c79c4df0b | 2026-05-20 |
 
-| Claim in THIS file | Actual status | Source |
-|---|---|---|
-| Status: GREEN | RED / BLOCKED | `fix-this.md` line 10 |
-| Full suite GREEN | 4 P0 remaining, 14 P1 remaining | `TODO.md` Appendix A |
-| Next: V5.9 Boot DSL | Remediation active (Round 002 complete, Phase 1 P0 remaining) | `TODO.md` line 35 |
+### Next Actionable TODO
 
-### Reconciliation directive
+**TODO-014** — Constructor defaults (529 findings, per-component approach required)
+- Start with smallest component suite
+- Do not sweep unrelated files
+- Validate per-component after each slice
 
-- This file is preserved as **historical record** of V1-V5 development.
-- Do NOT use GREEN claims from this file as current evidence.
-- Canonical remediation backlog: `fix-this.md`
-- Operational execution board: `TODO.md`
-- Execution control: `EVIDENCE/EXECUTION.md`
-- Active mode: Remediation — Stage locked by fix-this.md cleanup execution order
+### Gate Status
 
-### What follows is historical record only
+| Gate | Result |
+|------|--------|
+| check-public-surface.php | PASS |
+| check-direct-instantiation.php | 751 findings (all constructor defaults — TODO-014 scope) |
+| check-runtime-composition-leaks.php | PASS |
+| check-service-provider-coverage.php | ALL OK |
+| check-namespace-drift.php | PASS |
+| check-governance-index-current.php | GREEN |
+| check-root-evidence-hygiene.php | GREEN |
+| check-semantic-phpdoc.php | PASS_WITH_YELLOW_RATCHET |
+| check-large-unit-thresholds.php | 0 BLOCKERs, 106 REVIEW |
 
-All sections below are preserved as evidence of prior stages. They describe what was true on 2026-05-15. They do not describe current project status. For current status, see `fix-this.md` and `TODO.md`.
+---
+
+## Historical Record (V1-V5 Development)
 
 ## Core Status
 

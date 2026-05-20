@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\HTTP\ContentNegotiation\System\PublicSurface;
 
+use Avax\Components\HTTP\ContentNegotiation\System\Capabilities\Formats\NeutralizeFormulaCell;
+
 final class CsvFormatter implements ContentFormatter
 {
     public function format(mixed $data) : string
@@ -18,11 +20,11 @@ final class CsvFormatter implements ContentFormatter
             fputcsv($output, array_keys($data[0]), escape: '\\');
 
             foreach ($data as $row) {
-                fputcsv($output, $row, escape: '\\');
+                fputcsv($output, $this->neutralizeRow($row), escape: '\\');
             }
         } else {
             fputcsv($output, array_keys($data), escape: '\\');
-            fputcsv($output, array_values($data), escape: '\\');
+            fputcsv($output, $this->neutralizeRow(array_values($data)), escape: '\\');
         }
 
         rewind($output);
@@ -35,5 +37,22 @@ final class CsvFormatter implements ContentFormatter
     public function mimeType() : string
     {
         return 'text/csv';
+    }
+
+    /**
+     * Neutralize formula injection characters in every cell of a row.
+     *
+     * @param  list<mixed>  $row
+     * @return list<string>
+     */
+    private function neutralizeRow(array $row) : array
+    {
+        $escaped = [];
+
+        foreach ($row as $cell) {
+            $escaped[] = NeutralizeFormulaCell::escape($cell);
+        }
+
+        return $escaped;
     }
 }

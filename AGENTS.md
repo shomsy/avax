@@ -1,25 +1,29 @@
-# AGENTS.md — Local Project Contract
 
-Version: 2.0.0
-Status: Normative / Local / Root Contract
-Scope: `./**`
 
-This file is the project-specific root contract for AvaX.
+````markdown
+# AGENTS.md - AvaX Local Project Contract
 
-It defines how agents must read rules, resolve conflicts, identify the active stage, execute work, validate output, and
-report results.
+Version: 3.0.0  
+Status: Normative / Local / Root Contract  
+Scope: `./**`  
+Project: AvaX
 
-This file is not optional.
-This file is not a suggestion.
-This file is not a generic agent hint.
+This file is the root execution contract for AI agents working in this repository.
 
-If an agent works in this repository, this file is the first local contract it must obey.
+It is not optional.  
+It is not advisory.  
+It is not a generic hint file.  
+It is the first local contract every agent must read and obey before planning, editing, reviewing, validating, committing, or reporting work in AvaX.
 
-The reusable `.agents` project is mounted in `.agents/.rules/`.
-The mounted copy provides reusable rules and protocols.
-The local project rules in this repository decide how those reusable rules apply to AvaX.
+AvaX uses `.agents` as a project-local AI engineering operating system.
 
-Local AvaX governance wins for AvaX-specific naming, filesystem shape, stage lock, and framework architecture.
+The AvaX Enterprise Remediation Skill is the mandatory bootloader.
+
+The full `.agents` ecosystem is the operating system.
+
+Current governance is the target.  
+Current validation is the judge.  
+Evidence is the proof.
 
 ---
 
@@ -27,166 +31,215 @@ Local AvaX governance wins for AvaX-specific naming, filesystem shape, stage loc
 
 AvaX is governed by evidence, not optimism.
 
-No agent may mark work as complete, green, production-ready, secure, performant, or architecture-compliant unless
-current validation evidence supports that claim.
+No agent may mark work as complete, green, production-ready, secure, performant, architecture-compliant, or review-ready unless current evidence proves it.
 
-The agent must always distinguish:
+Every important claim must be backed by:
+
+```text
+current git state
+current source files
+current validation output
+current evidence
+current TODO/fix-this state
+````
+
+If evidence is missing, the correct status is:
+
+```text
+NOT_PROVEN
+```
+
+not:
+
+```text
+probably fine
+looks good
+should work
+almost done
+```
+
+Agents must always distinguish between:
 
 ```text
 Rule Precedence:
-Which rules win when documents disagree.
+Which governance rules win when documents disagree.
 
 Project State Source of Truth:
-Which files describe the current project status, active stage, blockers, and next allowed action.
+Which files describe the current project status, active backlog, blockers, completed work, and next allowed action.
+
+Execution Routing:
+Which skills, workflows, and operating loops must be loaded for the current task.
 ```
 
-These are different things.
+These are separate concerns.
 
-A project status file may describe current work.
-It does not override governance rules.
+A project status file describes current work.
+It does not override governance.
 
-A governance rule may define how work must be done.
-It does not automatically prove current project status.
+A governance rule defines how work must be done.
+It does not prove current project status.
+
+A skill routes execution.
+It does not override AGENTS.md or local how-to rules.
 
 ---
 
-## 1. Operational Modes
+## 1. Non-Negotiable Laws
 
-## 1.1 Standard Mode
-
-Standard Mode is the default.
-
-Trigger:
+The following laws apply to every task.
 
 ```text
-Any normal request such as:
-- review this
-- implement this
-- refactor this
-- fix this
-- generate this
-- inspect this
-- continue the recovery
+1. No implementation on dirty main.
+2. No production-code implementation directly on main.
+3. One task or bounded slice = one branch/worktree/evidence package/review candidate.
+4. PublicSurface receives and delegates. It must not own runtime machinery.
+5. Configuration/Assembly/Provider boundaries assemble object graphs.
+6. Flows execute behavior.
+7. Capabilities power reusable behavior.
+8. Foundation stays small and primitive.
+9. Components must dogfood existing AvaX capabilities where appropriate.
+10. Runtime hot paths must avoid reflection, filesystem scans, config parsing, env reads, dynamic discovery, and object-graph assembly unless explicitly justified.
+11. Security-sensitive behavior must fail closed and have negative tests.
+12. Tests must prove behavior, not construction trivia.
+13. PARTIAL is not a stop condition in autonomous work.
+14. HARD_BLOCKER is the real stop condition.
+15. Evidence is mandatory.
 ```
 
-Scope:
+---
+
+## 2. Operating Modes
+
+### 2.1 Standard Mode
+
+Standard Mode is the default mode for normal requests.
+
+Triggered by requests such as:
+
+```text
+review this
+implement this
+refactor this
+fix this
+inspect this
+continue this task
+generate this
+```
+
+Standard Mode requires reading:
 
 ```text
 AGENTS.md
-.agents/GOVERNANCE_INDEX.md if present
-.agents/how-to/**
-CURRENT_TRUTH.md
-EVIDENCE/EXECUTION.md
-active task files
+relevant .agents/how-to/**
+relevant .agents/skills/**
+TODO.md
+fix-this.md
+latest relevant evidence
 relevant source files
+relevant tests
 ```
 
-Rules:
+Standard Mode still obeys all AvaX local governance.
+
+It may use focused context when the task is narrow.
+
+It must not ignore matching skills or local rules.
+
+### 2.2 Harness-Full Mode
+
+Harness-Full Mode is activated by any of these signals:
 
 ```text
-Follow local AvaX rules strictly.
-Do not expand into full reusable harness protocols unless required by the task.
-Do not ignore reusable mounted rules when they are directly relevant.
-Do not let reusable generic rules override local AvaX filesystem and naming rules.
-```
-
-## 1.2 Harness-Full Mode
-
-Harness-Full Mode is activated only by the explicit phrase:
-
-```text
+HARNESS-FULL
 uradi po pravilima .agents
+Use full .agents potential
+Use the AvaX Enterprise Remediation Skill
+maximum sweep
+autonomous backlog loop
+radi što više
+nastavi sam
+bez dodatnih promptova
+zatvori listu
+task po task
+dok ima tokena
+full governance
+11++
+enterprise-grade
 ```
 
-Scope:
-
-```text
-All local rules.
-All `.agents/how-to/**` rules.
-All mounted `.agents/.rules/**` rules.
-All relevant skills, management files, review files, workflow files, and governance protocols.
-```
-
-Hard rule:
-
-```text
 Harness-Full Mode expands the rule set.
-It does not weaken local AvaX rules.
+
+It requires full `.agents` discovery, classification, skill routing, evidence reading, source-of-truth resolution, and task-specific governance.
+
+Harness-Full Mode does not weaken local AvaX rules.
+
+### 2.3 Autonomous Backlog Mode
+
+Autonomous Backlog Mode is used when the user asks the agent to continue through the backlog without repeated prompts.
+
+It must use:
+
+```text
+avax-enterprise-remediation
+avax-autonomous-backlog-loop
+avax-source-of-truth-resolver
+all task-relevant skills
+all task-relevant how-to rules
+all task-relevant evidence
 ```
 
-Local AvaX `how-to` rules still win for:
+In this mode:
+
+```text
+PARTIAL means continue with the next smallest safe slice.
+PARTIAL_WITH_YELLOW means continue with the next smallest safe slice if ownership is clear.
+TODO_CLOSED means move to the next highest-priority TODO.
+HARD_BLOCKER means stop and write evidence.
+```
+
+The agent must not stop merely because one slice is complete.
+
+---
+
+## 3. Rule Precedence
+
+This section decides which governance rule wins when documents disagree.
+
+Rule precedence:
+
+```text
+1. AGENTS.md
+2. .agents/GOVERNANCE_INDEX.md if present
+3. .agents/how-to/**
+4. project-local skill contracts in .agents/skills/**
+5. mounted reusable rules in .agents/.rules/**
+6. task-local evidence instructions
+7. docs/**
+8. README.md
+9. old reviews, archives, backups, generated dumps
+```
+
+Local AvaX rules win for:
 
 ```text
 filesystem shape
 component structure
 naming
-stage lock
 PublicSurface rules
 Flow vs Capability rules
 forbidden folders
 runtime-agnostic framework direction
 long-lived worker safety
+component dogfooding
+AvaX-specific DI/runtime rules
+AvaX-specific stage/backlog rules
 ```
 
----
+Mounted reusable rules are valuable, but they do not override local AvaX architecture laws.
 
-## 2. Order of Precedence
+If a lower-priority rule disagrees with a higher-priority rule, the higher-priority rule wins.
 
-Agents MUST follow this rule precedence order.
-
-This order decides which rule wins when documents disagree.
-
-1. `AGENTS.md`
-2. `.agents/GOVERNANCE_INDEX.md`
-3. `.agents/how-to/**`
-4. `EVIDENCE/EXECUTION.md`, only for active stage and execution order
-5. `CURRENT_TRUTH.md`, only for current project status
-6. `.agents/.rules/AGENTS.md`
-7. `.agents/.rules/governance/core/quality/quality-gates.md`
-8. `.agents/.rules/governance/core/resolution/profile-resolution-algorithm.md`
-9. `.agents/.rules/governance/profiles/**`
-10. `.agents/.rules/governance/architecture/**`
-11. `.agents/.rules/governance/security/**`
-12. `.agents/.rules/governance/execution/policy/execution-policy.md`
-13. `.agents/.rules/governance/execution/routing/prompt-to-governance-flow.md`
-14. `.agents/.rules/governance/execution/hooks/hooks-policy.md`
-15. `.agents/.rules/governance/execution/approvals/approval-policy.md`
-16. `.agents/.rules/governance/core/flags/feature-flags.md`
-17. `.agents/.rules/governance/standards/review/how-to-code-review.md`
-18. `.agents/.rules/governance/standards/review/how-to-strict-review.md`
-19. `.agents/.rules/governance/standards/coding/how-to-coding-standards.md`
-20. `.agents/.rules/governance/standards/coding/naming-standard.md`
-21. `.agents/.rules/governance/standards/documentation/how-to-document-flow.md`
-22. `.agents/.rules/governance/standards/documentation/how-to-document.md`
-23. `.agents/.rules/governance/standards/governance/governance-authoring-standard.md`
-24. `.agents/.rules/governance/standards/governance/governance-evolution-policy.md`
-25. `.agents/.rules/governance/delivery/release/release-and-rollback-policy.md`
-26. `.agents/.rules/governance/intelligence/memory/memory-lifecycle.md`
-27. `.agents/.rules/governance/skills/contract/skill-contract.md`
-28. `.agents/.rules/governance/agents/roles/agent-roles.md`
-29. `.agents/.rules/governance/delivery/workflows/workflow-pipelines.md`
-30. `.agents/.rules/governance/intelligence/context/context-management.md`
-31. `.agents/.rules/governance/intelligence/learning/continuous-learning.md`
-32. `.agents/.rules/governance/intelligence/learning/instincts-policy.md`
-33. `.agents/.rules/governance/integrations/platforms/platform-compatibility.md`
-34. `.agents/.rules/governance/integrations/mcp/mcp-integration-policy.md`
-35. `.agents/.rules/governance/execution/sandbox/sandbox-boundary-policy.md`
-36. `.agents/.rules/governance/agents/orchestration/society-of-mind-pattern.md`
-37. `.agents/.rules/governance/delivery/operations/**`
-38. `.agents/skills/**`
-39. `.agents/management/ACTIVE.md`
-40. `.agents/management/TIMELINE.md`
-41. `.agents/management/TODO.md`
-42. `.agents/management/BUGS.md`
-43. `.agents/review/REVIEWS.md`
-44. `README.md`
-45. `docs/**`
-46. older review, archive, dump, and backup files
-
-If a lower-priority file disagrees with a higher-priority file, the higher-priority file wins.
-
-If an archive, backup, old review, `Framework.txt`, `Components.txt`, or `avax-backup.txt` disagrees with current
-governance, it is evidence only.
+If old code, old reviews, backups, dumps, or archived evidence disagree with current governance, they are evidence only.
 
 Old code is evidence.
 Current governance is the target.
@@ -194,118 +247,495 @@ Validation is the judge.
 
 ---
 
-## 3. Project State Source of Truth
+## 4. Project State Source of Truth
 
-Project state must be read in this order.
+This section decides current project status, not governance priority.
 
-This order describes current status, not rule priority.
+State source-of-truth order:
 
-1. `CURRENT_TRUTH.md`
-2. `EVIDENCE/EXECUTION.md`
-3. `.agents/management/ACTIVE.md`
-4. `.agents/management/TODO.md`
-5. `.agents/management/BUGS.md`
-6. `EVIDENCE/master-plan/*.md`
-7. `EVIDENCE/recovery-reports/*.md`
-8. latest validation reports
-9. older review/archive files
-10. backup dumps and historical snapshots
+```text
+1. current git state
+2. latest validation output
+3. latest task-specific evidence
+4. TODO.md
+5. fix-this.md
+6. CURRENT_TRUTH.md, only if not marked stale
+7. EVIDENCE/EXECUTION.md, only for active execution flow
+8. .agents/management/ACTIVE.md, if current
+9. .agents/management/TODO.md, if explicitly marked current
+10. .agents/management/BUGS.md, if current
+11. learning and memory
+12. older reports, reviews, plans, archives, dumps, backups
+```
 
 If project state files disagree:
 
 ```text
-current validation output beats old reports
-CURRENT_TRUTH.md beats old planning documents
-EXECUTION.md beats generic TODO order for active work
-new proof reports beat old assumptions
+current git state beats old reports
+latest validation beats old assumptions
+latest evidence beats old planning
+TODO.md beats stale CURRENT_TRUTH.md
+fix-this.md defines canonical backlog items when TODO.md references it
+CURRENT_TRUTH.md is advisory if it declares itself stale
+old V4/V5/V5.9 notes are advisory unless current evidence activates them
 ```
 
-If there is no current validation evidence, the agent must say the status is unproven.
+If there is no current validation evidence, the agent must say:
+
+```text
+status not proven
+```
+
+### 4.1 Backlog File Roles
+
+AvaX uses the following roles:
+
+```text
+fix-this.md
+  Canonical remediation backlog and source finding map.
+
+TODO.md
+  Operational execution board for AI iterations, current lanes, priorities, and active remediation planning.
+
+.agents/management/TODO.md
+  Advisory or legacy unless explicitly marked as the current execution board.
+
+CURRENT_TRUTH.md
+  Current project truth only if fresh and not contradicted by newer evidence.
+
+EVIDENCE/EXECUTION.md
+  Active execution instructions only when current evidence says that flow is active.
+```
+
+No agent may select a TODO if it is already DONE, VERIFIED, VERIFIED_WITH_MAPPINGS, or integrated on main.
+
+No agent may recommend a completed task as the next batch.
 
 ---
 
-## 4. Required Preflight
+## 5. Execution Routing Precedence
+
+Execution routing decides which workflow and skills must be loaded.
+
+Routing order:
+
+```text
+1. avax-enterprise-remediation as mandatory bootloader
+2. avax-source-of-truth-resolver for every task
+3. avax-autonomous-backlog-loop for autonomous or multi-task execution
+4. task-relevant specialized skills
+5. task-relevant how-to rules
+6. task-relevant evidence
+7. task-specific validation commands
+```
+
+The bootloader starts the process.
+It is not the whole operating system.
+
+Agents must not use only the bootloader when more specific skills apply.
+
+---
+
+## 6. Full `.agents` Operating System Rule
+
+The `.agents` folder is part of the execution contract.
+
+Agents must discover, classify, and apply the full `.agents` ecosystem.
+
+Required discovery in Harness-Full and Autonomous modes:
+
+```bash
+find .agents -maxdepth 5 -type f | sort
+find .agents/skills -type f | sort 2>/dev/null || true
+find .agents/how-to -type f | sort 2>/dev/null || true
+find .agents/management -maxdepth 5 -type f | sort 2>/dev/null || true
+```
+
+Classify discovered files as:
+
+```text
+MANDATORY_BOOT
+TASK_RELEVANT_SKILLS
+TASK_RELEVANT_HOW_TO
+PROJECT_MEMORY
+PROJECT_LEARNING
+CURRENT_TRUTH
+EVIDENCE
+ADVISORY_ONLY
+STALE_OR_SKIP_WITH_REASON
+```
+
+Every task must write or update context-loaded evidence containing:
+
+```text
+current branch
+current worktree
+base commit
+dirty status
+AGENTS.md read
+skills discovered
+skills used
+skills skipped with reason
+how-to files discovered
+how-to files applied
+learning files discovered
+learning files used
+memory files discovered
+memory files used
+evidence files read
+TODO.md section read
+fix-this.md section read
+source finding IDs
+source conflicts found
+final source-of-truth decision
+```
+
+---
+
+## 7. Mandatory Skill Routing
+
+### 7.1 Required Skills by Task Type
+
+Every task:
+
+```text
+avax-enterprise-remediation
+avax-source-of-truth-resolver
+```
+
+Autonomous backlog work:
+
+```text
+avax-autonomous-backlog-loop
+```
+
+Production-code implementation, refactor, architecture cleanup:
+
+```text
+avax-enterprise-codecraft
+```
+
+Component work or framework-internal reuse:
+
+```text
+avax-component-dogfooding
+```
+
+Runtime, hot path, cache, metadata, worker, performance-sensitive work:
+
+```text
+avax-runtime-performance-cache
+```
+
+Security-sensitive work:
+
+```text
+avax-security-threat-model
+```
+
+Public API, PublicSurface, facade, DSL, builder, configuration API work:
+
+```text
+avax-api-compatibility-contract
+```
+
+Tests or validation claims:
+
+```text
+avax-test-evidence-quality
+```
+
+Failure-prone work, runtime work, IO, security, persistence, queue, HTTP, cache:
+
+```text
+avax-observability-failure-semantics
+```
+
+Review work:
+
+```text
+review skill if present
+how-to-code-review.md
+all task-relevant how-to rules
+```
+
+Validation work:
+
+```text
+validation skill if present
+task-specific validation commands
+governance validation gates
+```
+
+Recovery work:
+
+```text
+recovery skill if present
+Recovery Rule in this file
+source-of-truth resolver
+```
+
+### 7.2 Skill Absence Rule
+
+If a referenced skill is missing, the agent must report:
+
+```text
+SKILL_MISSING
+```
+
+and classify impact:
+
+```text
+NO_IMPACT
+YELLOW
+BLOCKER
+```
+
+If the missing skill is required for safe execution, the task must stop.
+
+---
+
+## 8. Autonomous Backlog Loop Rule
+
+Autonomous work must not stop after one partial slice.
+
+Loop:
+
+```text
+1. Resolve current source of truth.
+2. Select highest-priority active TODO.
+3. Create or reuse the correct branch/worktree.
+4. Execute the smallest safe slice.
+5. Validate.
+6. Write evidence.
+7. Commit the slice.
+8. Self-review.
+9. Merge to main only if review says MERGE_READY or MERGE_READY_WITH_YELLOW.
+10. Run post-merge focused validation.
+11. Update TODO.md/fix-this.md only when truth changed.
+12. If TODO is still PARTIAL, continue the next slice.
+13. If TODO is CLOSED, move to the next TODO.
+14. Stop only on HARD_BLOCKER.
+```
+
+Soft continue conditions:
+
+```text
+focused validation GREEN
+focused validation GREEN_WITH_ACCEPTED_YELLOW
+remaining findings belong to the same TODO
+ownership remains clear
+next slice has bounded file scope
+main is clean
+evidence can be written
+```
+
+Hard stop conditions:
+
+```text
+dirty main cannot be classified
+ownership boundary unclear
+public API break required without evidence
+new validation failure in changed files cannot be fixed in scope
+security behavior cannot be proven fail-closed
+source-of-truth contradiction cannot be reconciled
+mandatory governance file missing
+evidence cannot be written
+branch/worktree contamination
+human architecture decision required
+context budget too low to safely continue
+```
+
+PARTIAL is not a stop condition.
+
+---
+
+## 9. Branch and Worktree Policy
+
+### 9.1 Current Remediation Policy
+
+For current remediation and backlog execution:
+
+```text
+main
+  integration branch
+
+task branches/worktrees
+  implementation, remediation, analysis, review, and evidence work
+
+origin/main
+  remote integration truth after push
+```
+
+Rules:
+
+```text
+No production-code implementation directly on main.
+Governance-only changes may be committed on main if main is clean and scope is documentation/agents/evidence only.
+One active task or bounded slice uses one dedicated branch/worktree.
+A multi-slice TODO may continue on the same task branch if the branch remains clean, scoped, and reviewed per slice.
+Merge into main is sequential.
+No self-push unless explicitly instructed.
+No force push.
+No squash unless explicitly justified.
+No stale worktree reuse without inspection.
+```
+
+Branch naming:
+
+```text
+architecture/todo-XXX-short-name
+security/todo-XXX-short-name
+cleanup/todo-XXX-short-name
+verify/todo-XXX-short-name
+docs/todo-XXX-short-name
+review/todo-XXX-short-name
+```
+
+Worktree naming:
+
+```text
+../avax-todo-XXX-short-name
+```
+
+Every task branch must include:
+
+```text
+context evidence
+implementation or analysis evidence
+validation evidence
+governance review
+final decision
+```
+
+### 9.2 Stage-Specific Branch Policy
+
+Older stage-specific branch policies, including V4 branch policies, apply only when current evidence explicitly activates that stage workflow.
+
+If current remediation evidence says task branches/worktrees from `main` are active, the current remediation policy wins for the active work.
+
+Stage-specific policies remain useful, but must not override the current execution mode unless explicitly activated.
+
+---
+
+## 10. Required Preflight
 
 Before editing code or documentation, every agent must identify:
 
 ```text
 active mode
-active stage
+active task
+active stage or remediation context
+source-of-truth decision
 forbidden scope
-relevant governance documents
+required skills
+required how-to documents
 relevant source files
 expected validation commands
-expected output artifact
+expected evidence files
 next allowed action
 ```
 
-The agent must not edit code if it cannot answer:
-
-```text
-What stage are we in?
-What is forbidden right now?
-Which how-to documents apply?
-What validation proves this work?
-```
-
-For implementation, refactor, recovery, or review work, the agent must read:
+For implementation, refactor, recovery, review, or merge work, the agent must read:
 
 ```text
 AGENTS.md
-.agents/GOVERNANCE_INDEX.md if present
-CURRENT_TRUTH.md
-EVIDENCE/EXECUTION.md if present
-relevant .agents/how-to/*.md documents
+relevant .agents/skills/**
+relevant .agents/how-to/**
+TODO.md
+fix-this.md
+latest relevant evidence
 relevant source files
 relevant tests
-latest relevant validation or recovery reports
+latest relevant validation reports
+```
+
+No agent may edit code if it cannot answer:
+
+```text
+What task is active?
+What is forbidden?
+Which rules apply?
+What evidence proves this work?
+What validation must run?
+What branch/worktree owns this work?
 ```
 
 ---
 
-## 5. Vision and Inspiration
+## 11. AvaX Vision
 
-AvaX is not a clone.
+AvaX is not another MVC framework.
 
-AvaX is a synthesis of modern software engineering excellence.
+AvaX is a runtime-agnostic modern PHP application platform and engineering system.
 
-When designing, draw inspiration from:
+It targets:
 
 ```text
-Laravel:
-Developer experience, expressive public API, pragmatic ergonomics.
+PHP-FPM
+FrankenPHP
+RoadRunner
+Swoole
+Workerman
+ReactPHP
+Amp
+Fibers
+CLI
+tests
+long-lived workers
+future async/concurrent runtimes
+```
 
-Symfony:
-Decoupled components, explicit contracts, disciplined boundaries.
+AvaX is:
 
-Spring Boot:
-Enterprise-grade assembly, operational readiness, configuration discipline.
+```text
+flow-oriented
+capability-oriented
+runtime-neutral
+governance-driven
+component-based
+evidence-first
+developer-experience aware
+production-readiness oriented
+```
 
-ASP.NET Core:
-High-performance middleware pipeline, runtime clarity, host model.
+AvaX is inspired by:
 
-Phoenix / Elixir:
-Runtime clarity, supervision mindset, worker safety, fault awareness.
+```text
+Laravel
+  expressive public API and developer experience
 
-Go:
-Simplicity, explicitness, small interfaces, low magic.
+Symfony
+  decoupled components and explicit boundaries
+
+Spring Boot
+  enterprise assembly and configuration discipline
+
+ASP.NET Core
+  middleware/runtime clarity and performance discipline
+
+Phoenix / Elixir
+  supervision mindset, runtime clarity, fault awareness
+
+Go
+  simplicity, explicitness, small interfaces, low magic
 ```
 
 Inspiration is not imitation.
 
-AvaX must keep its own architecture law:
+AvaX keeps its own law:
 
 ```text
-folder says flow or capability
-unit says responsibility
-function says exact action
+Folder says flow or capability.
+Unit says responsibility.
+Function says exact action.
 ```
 
 ---
 
-## 6. Fundamental Architecture Law
+## 12. Fundamental Architecture Law
 
-Strictly follow this hierarchy for everything created, moved, renamed, reviewed, or refactored:
+Strictly follow this hierarchy:
 
 ```text
 Folder = Flow or Capability
@@ -321,29 +751,29 @@ unit says responsibility
 function says exact action
 ```
 
-This rule applies to:
-
-```text
-framework
-components
-labs
-examples
-tooling
-tests
-documentation structure where practical
-agent-generated code
-recovered code
-```
-
 The system must read like a story of ownership and behavior.
 
 It must not read like a warehouse of technical categories.
 
+This applies to:
+
+```text
+framework
+components
+tooling
+tests
+docs where practical
+agents
+evidence
+generated code
+recovered code
+```
+
 ---
 
-## 7. Canonical Component Shape
+## 13. Canonical Component Shape
 
-Every production component must follow the canonical AvaX component shape:
+Every production component must follow the canonical AvaX shape:
 
 ```text
 components/
@@ -371,21 +801,57 @@ Foundation/ is optional and must stay small.
 No other top-level folders inside `System/` are allowed by default.
 
 `InternalSystem` is a concept, not a folder.
-
 `ExportedCapabilities` is a decision, not a folder.
-
-Diagnostics are capabilities, not a root folder.
+Diagnostics are capabilities, not root folders.
 
 Tests normally live in the central test tree unless a component intentionally exports a test kit.
 
-Documentation normally lives in `docs/`, with component-local README allowed only as a short ownership summary if local
-governance allows it.
+Documentation normally lives in `docs/`, with component-local README allowed only as a short ownership summary.
 
 ---
 
-## 8. Strict Prohibitions
+## 14. Framework Shape
 
-Do NOT use the following names as default directories, namespaces, or broad structural buckets:
+Framework code uses:
+
+```text
+framework/System/PublicSurface/
+  User-facing and framework-facing public entrypoints.
+
+framework/System/Flows/
+  Framework-level and multi-component orchestration flows.
+
+framework/System/Capabilities/
+  Internal framework capabilities and runtime machinery.
+
+framework/System/Configuration/
+  Assembly, registration, configuration, providers, bootstrapping.
+
+framework/System/Foundation/
+  Tiny neutral primitives.
+```
+
+Rules:
+
+```text
+PublicSurface receives and delegates.
+Flows execute.
+Capabilities power.
+Configuration assembles.
+Foundation supports.
+```
+
+PublicSurface must stay small, stable, and thin.
+
+Runtime/business flows must not assemble missing object graphs.
+
+Configuration/Assembly/Provider owns construction.
+
+---
+
+## 15. Strict Naming and Folder Prohibitions
+
+Do not use these as default directories, namespaces, or broad buckets:
 
 ```text
 Services
@@ -422,52 +888,7 @@ ExportedCapabilities
 
 This list is not exhaustive.
 
-The full forbidden-folder law is defined in:
-
-```text
-.agents/how-to/how-to-design-components.md
-.agents/how-to/how-to-architecture.md
-.agents/how-to/how-to-architecture-extension-with-ddd.md
-.agents/how-to/how-to-use-advanced-architecture-patterns.md
-.agents/how-to/how-to-system-security.md
-.agents/how-to/how-to-system-performance.md
-```
-
-If a word from the forbidden list is truly the domain language of a specific component, the exception must be explicitly
-justified through governance.
-
-No automatic scaffolding.
-
-No just-in-case folders.
-
-No technical dumping grounds.
-
----
-
-## 9. Concept Words Are Not Folder Names
-
-Some words describe responsibilities, not filesystem names.
-
-Examples:
-
-```text
-contract
-adapter
-diagnostic
-test
-documentation
-manifest
-command
-query
-policy
-specification
-security
-performance
-```
-
-These words may describe what a component must provide.
-
-They must not automatically become folders.
+Concept words may describe responsibilities, but they must not automatically become folders.
 
 Correct:
 
@@ -476,7 +897,6 @@ Capabilities/
   PublicApiCompatibility/
   S3ObjectStorage/
   CheckCacheHealth/
-  DiagnoseCacheConfiguration/
   RegisterUser/
   ReadUserProfile/
 ```
@@ -495,54 +915,32 @@ Security/
 Performance/
 ```
 
-The filesystem must still say flow or capability.
+If a forbidden term is truly domain language, the exception must be documented with:
+
+```text
+rule
+path
+reason
+risk
+owner
+expiry
+cleanup
+validation
+```
+
+No just-in-case folders.
+No dumping grounds.
+No scaffolding theater.
 
 ---
 
-## 10. Local Naming Overrides Reusable Rules
-
-Mounted reusable rules may use generic terms such as:
-
-```text
-contract
-adapter
-command
-query
-handler
-service
-```
-
-For AvaX, these terms are interpreted as responsibilities or concepts, not default folder names.
-
-Local AvaX naming rules override reusable mounted rules for:
-
-```text
-folder names
-namespace names
-component structure
-PublicSurface placement
-Flow vs Capability shape
-DDD placement
-advanced pattern placement
-security and performance code placement
-```
-
-If a reusable rule says `Command`, AvaX should usually translate it to an exact flow name.
-
-If a reusable rule says `Adapter`, AvaX should usually translate it to a concrete external boundary name.
-
-If a reusable rule says `Contract`, AvaX should usually translate it to `PublicApiCompatibility`, schema, event promise,
-interface, or another precise responsibility.
-
----
-
-## 11. Use Case Translation Rule
+## 16. Flow and Capability Rule
 
 AvaX does not use `UseCases/` as a default folder.
 
-In AvaX vocabulary, a use case is represented as a `Flow`.
+A use case is represented as a Flow.
 
-A flow owns one complete user, system, runtime, or platform action.
+A Flow owns one complete user, system, runtime, or platform action.
 
 Correct:
 
@@ -571,8 +969,6 @@ System/
     ChangePasswordUseCase.php
 ```
 
-The folder must say what happens, not which architectural pattern is being used.
-
 Use `Flow` when one action completes the story.
 
 Use `Capability` when behavior is reusable across multiple flows.
@@ -583,671 +979,286 @@ Extract to Capability only after reuse is honest.
 
 ---
 
-## 12. Project-Specific Architecture Boundaries
+## 17. PublicSurface Rule
 
-AvaX uses these local boundaries:
+PublicSurface is a boundary, not a place for machinery.
+
+Allowed:
 
 ```text
-components/
-  Reusable platform components with canonical System shape.
-
-framework/System/PublicSurface/
-  User-facing and framework-facing public entrypoints.
-
-framework/System/Flows/
-  Framework-level and multi-component orchestration flows.
-
-framework/System/Capabilities/
-  Internal framework capabilities and runtime machinery.
-
-framework/System/Configuration/
-  Framework assembly, registration, configuration, and bootstrapping.
-
-framework/System/Foundation/
-  Tiny neutral framework primitives.
+stable public API
+DSL entrypoint
+facade method
+input normalization for public ergonomics
+delegation to internal Flow/Capability/Configuration owner
 ```
 
-Additional local meaning:
+Forbidden:
 
 ```text
-labs/
-  Experimental work only. Must not be production path unless promoted.
-
-examples/
-  Demonstrations and reference applications. Must not define production framework behavior.
-
-tooling/
-  Developer, governance, audit, validation, migration, recovery, and refactor tools.
-
-tests/
-  Canonical test tree.
-
-docs/
-  Canonical long-form documentation.
-
-EVIDENCE/
-  Execution plans, recovery reports, validation evidence, audits, and temporary operational artifacts.
+runtime machinery
+object graph assembly
+fallback construction of required dependencies
+service locator logic
+business logic
+security-sensitive decisions
+cache ownership
+worker state
+filesystem scanning
+reflection/class discovery
+hidden mutable state
 ```
 
-`components/` does not mean only pure logic.
+PublicSurface must be tested through public contract tests.
 
-It means reusable platform components with clear public boundaries, internal behavior, configuration, failure models,
-tests, observability, diagnostics, and runtime safety where applicable.
-
----
-
-## 13. Documentation Location Resolution
-
-Documentation location is resolved as follows:
+Any PublicSurface change must use:
 
 ```text
-docs/
-  Canonical long-form documentation.
-
-components/<Area>/<Component>/README.md
-  Allowed only as a short component ownership summary when useful.
-
-EVIDENCE/
-  Temporary recovery reports, validation evidence, audits, execution plans, and operational artifacts.
-
-inline PHPDoc/comments
-  Local intent, constraints, failure behavior, public API explanation, and junior-readable context.
-```
-
-Rules:
-
-```text
-Architecture documentation lives in docs/.
-Component ownership summaries may live beside the component.
-Recovery and validation evidence may live in EVIDENCE/.
-Random documentation must not be scattered elsewhere.
-If component README and docs disagree, canonical docs win unless the README is explicitly newer and linked to a pending docs update.
-```
-
-Short version:
-
-```text
-README summarizes.
-docs explain.
-reports prove.
+avax-api-compatibility-contract
+avax-enterprise-codecraft
+avax-test-evidence-quality
+avax-source-of-truth-resolver
 ```
 
 ---
 
-## 14. Applied Governance Stack
+## 18. Dependency Injection and Assembly Rule
 
-Delivery Kind:
+Required dependencies must fail during configuration, provider registration, compile, verify, or boot.
 
-```text
-PHP Framework
-```
+They must not fail deep inside runtime business code.
 
-Languages:
+Assembly belongs in:
 
 ```text
-php
-markdown
-shell
-python for tooling only when useful
+Configuration/
+Assembly/
+Provider/
+Builder
+Boot/bootstrap boundary
 ```
 
-Frameworks or runtimes:
+Runtime flow code should execute, not assemble.
+
+Forbidden:
 
 ```text
-avax
-php-fpm
-frankenphp
-roadrunner
-swoole
-workerman
-reactphp
-amp
-fiber-based runtimes
+new MissingDependency() as fallback in runtime/business code
+hidden service locator usage
+global app() shortcuts inside component internals
+runtime object graph construction in PublicSurface
+runtime class discovery for dependency resolution
 ```
 
-Applied coding profiles:
-
-```text
-.agents/.rules/governance/profiles/languages/php.md
-```
-
-Applied architecture profiles:
-
-```text
-screaming-architecture
-vertical-slice
-feature-first
-fractal-flow-architecture
-recursive-ownership
-runtime-agnostic-framework
-long-lived-worker-safe
-component-platform-engine
-public-surface-boundary
-evidence-driven-governance
-```
-
-Security lanes required:
-
-```text
-.agents/.rules/governance/security/**
-.agents/how-to/how-to-system-security.md
-```
-
-Operations lanes required:
-
-```text
-.agents/.rules/governance/delivery/operations/**
-.agents/how-to/how-to-production-readiness.md
-.agents/how-to/how-to-system-performance.md
-```
-
-Design and recovery lanes required:
-
-```text
-.agents/how-to/how-to-design-components.md
-.agents/how-to/how-to-architecture-extension-with-ddd.md
-.agents/how-to/how-to-use-advanced-architecture-patterns.md
-```
+Allowed exceptions must be documented.
 
 ---
 
-## 15. Project Workspace
-
-Project-specific agent workspace:
-
-```text
-.agents/business-logic/
-.agents/language-specific/
-.agents/management/
-.agents/hooks/
-.agents/review/
-.agents/how-to/
-.agents/skills/
-```
-
-Reusable mounted rules:
-
-```text
-.agents/.rules/
-```
-
-Project execution and evidence workspace:
-
-```text
-EVIDENCE/
-EVIDENCE/recovery-reports/
-EVIDENCE/master-plan/
-EVIDENCE/templates/
-```
-
-## 16. Agent Workspace Routing
-
-The `.agents/` folder is the project-local agent workspace.
-
-Agents must use it as follows:
-
-| Area                             | Purpose                | When to Read                                         |
-|----------------------------------|------------------------|------------------------------------------------------|
-| `.agents/how-to/`                | local governance rules | before implementation, refactor, review, docs, tests |
-| `.agents/skills/**`              | task playbooks         | when task matches a skill                            |
-| `.agents/business-logic/`        | project meaning        | before domain, architecture, naming                  |
-| `.agents/management/`            | active stage, evidence | before any execution                                 |
-| `.agents/management/memories/**` | durable context        | before architecture, recovery                        |
-| `.agents/management/learning/**` | lessons                | before repeating similar work                        |
-| `.agents/review/`                | prior findings         | before review                                        |
-
-## Local Agent Workspace Rule
-
-The `.agents/` folder is part of the execution contract.
-
-Agents must not treat `.agents/skills`, `.agents/management/memories`, `.agents/management/learning`,
-`.agents/business-logic`, or `.agents/review` as optional notes when the task matches their scope.
-
-**If a matching skill exists, read it.**
-
-**Memory and learning guide execution. Validation proves execution.**
-
----
-
-## 16. Project-Specific Exceptions
-
-Default:
-
-```text
-None.
-```
-
-Follow Screaming Architecture rules strictly.
-
-Any exception must be documented in:
-
-```text
-.agents/GOVERNANCE_EXCEPTIONS.md
-```
-
-or another explicitly approved governance exception file.
-
-Every exception must include:
-
-```text
-rule
-path
-reason
-risk
-owner
-expiry
-required cleanup
-approval
-validation
-```
-
-Temporary exceptions without expiry are forbidden.
-
----
-
-## 17. Stage Lock
-
-Only one stage may be active at a time.
-
-No V2 implementation before V1 Kernel Green is proven.
-
-No V3 implementation before V1 Kernel Green and V2 platform baseline are proven.
-
-No V4 implementation before V1, V2, and V3 have sufficient proof according to current roadmap governance.
-
-V4-01 cannot start until V4-00 stage lock is GREEN.
-
-V4-02 cannot start until V4-01 is GREEN.
-
-V4-03 cannot start until V4-01 is GREEN.
-
-V4-17 (RoadRunner/Swoole/FrankenPHP) cannot start until V4-03 Warm Worker Safety is GREEN.
-
-Planning may continue.
-
-Architecture notes may continue.
-
-Design documents may continue.
-
-Implementation waits for the active stage to allow it.
-
-Agents must not bypass stage lock by calling production code:
-
-```text
-preparation
-scaffolding
-harmless foundation
-future-proofing
-skeleton
-placeholder
-temporary
-```
-
-If it creates production behavior for a locked stage, it is forbidden.
-
----
-
-## 18. V1 Kernel Green Definition
-
-V1 Kernel Green means current evidence proves:
-
-```text
-component taxonomy is canonical
-autoload is clean
-namespaces match ownership
-tests load and target canonical classes
-static analysis is green or honestly baselined
-runtime safety is proven
-public surface does not leak internals
-component completion rules are enforceable
-security baseline is documented and tested
-performance baseline is documented and measured where claimed
-observability baseline exists
-golden path app works through public APIs
-production-readiness report agrees with validation
-```
-
-No V1 Green claim may be made without current validation output.
-
----
-
-## 19. Required Validation
-
-The canonical validation set is:
-
-```bash
-composer validate --no-check-publish
-composer dump-autoload -o
-vendor/bin/phpunit --no-coverage
-vendor/bin/phpstan analyse framework components tests --memory-limit=1G --error-format=raw --no-progress
-php tooling/refactor/check-component-suite-structure.php
-php tooling/refactor/check-duplicate-owners.php
-php tooling/refactor/check-namespace-drift.php
-php tooling/refactor/check-public-surface.php
-php tooling/refactor/check-runtime-leaks.php
-php tooling/audit_broken_refs.php
-php avax runtime:doctor
-```
-
-When available, governance validation also includes:
-
-```bash
-php tooling/governance/check-governance-index-current.php
-php tooling/governance/check-stage-lock.php
-php tooling/refactor/check-component-canonical-shape.php
-php tooling/refactor/check-advanced-pattern-folder-violations.php
-php tooling/security/check-security-governance.php
-php tooling/performance/check-performance-governance.php
-```
-
-If a planned validation command does not exist yet, the agent must report it as:
-
-```text
-PLANNED / NOT IMPLEMENTED
-```
-
-not as pass.
-
----
-
-## 20. Validation Selection Rule
-
-Run the full canonical validation set when:
-
-```text
-work changes architecture
-work changes component shape
-work changes namespaces
-work changes autoload
-work changes public surface
-work changes runtime behavior
-work changes security-sensitive behavior
-work changes performance-sensitive behavior
-work claims stage progress
-work claims production readiness
-```
-
-Run focused validation when:
-
-```text
-work is local
-scope is narrow
-full validation would be wasteful
-focused proof is enough for local status
-```
-
-Focused validation must still be listed exactly.
-
-If full validation was not run, final status must say:
-
-```text
-focused validation only
-full validation not run
-remaining risk
-```
-
----
-
-## 21. Agent Output Contract
-
-Every agent execution must end with:
-
-```text
-Stage:
-Status:
-Files changed:
-Validation commands:
-Validation summary:
-Remaining risks:
-Next allowed action:
-```
-
-For larger tasks, also include:
-
-```text
-Governance documents read:
-Rules applied:
-Rules intentionally not applicable:
-Evidence written:
-Reports updated:
-```
-
-Status must be one of:
-
-```text
-GREEN
-YELLOW
-RED
-BLOCKED
-PARTIAL
-UNKNOWN
-```
-
-Do not use vague status such as:
-
-```text
-looks good
-probably fine
-should work
-almost done
-```
-
----
-
-## 22. Evidence Rule
-
-Every important claim must point to evidence.
-
-Examples:
-
-```text
-Tests pass because command X produced Y.
-PHPStan is clean because command X produced empty output.
-Runtime doctor is green because command X passed.
-DatabaseBuilder assembly is proven because tests X pass.
-Security redaction is proven because tests X pass.
-Performance claim is proven because benchmark X shows Y.
-```
-
-If evidence is missing, say:
-
-```text
-not proven
-```
-
-Do not infer green status from intent.
-
----
-
-## 23. Recovery Rule
-
-When recovering from old sources:
-
-```text
-avax-backup.txt
-Framework.txt
-Components.txt
-git history
-old reviews
-old archives
-```
-
-apply this rule:
-
-```text
-Old behavior is valuable.
-Old structure is not automatically valuable.
-```
-
-Recovery must classify each candidate:
-
-```text
-source
-old path
-old namespace
-behavior summary
-target V1/V2/V3/V4 stage
-target current component
-target flow or capability
-proof test needed
-risk
-decision
-```
-
-Do not restore old architecture mechanically.
-
-Do not create skeletons to silence tools.
-
-Do not promote old code without current tests.
-
----
-
-## 24. AI Safety Rule for Code Changes
-
-AI-generated code is untrusted until reviewed and validated.
-
-Reject AI output that:
-
-```text
-creates generic Services/Managers/Helpers
-creates forbidden folders
-creates skeleton classes without behavior
-adds public API without tests
-adds security-sensitive behavior without tests
-adds performance claims without evidence
-logs secrets
-bypasses authorization
-uses raw SQL with user input
-uses unsafe filesystem paths
-adds hidden I/O
-adds broad catch-and-ignore failures
-changes stage scope silently
-```
-
-AI must follow active stage lock.
-
-AI must produce evidence.
-
----
-
-## 24.1 AI Agent Skill Rule
-
-For every AvaX AI-assisted task, agents must use the AvaX Enterprise Remediation Skill when available.
-
-Required skill:
-
-- `.agents/skills/avax-enterprise-remediation/SKILL.md`
-
-Agents must also read and obey:
-
-- `.agents/how-to/how-to-use-ai-assisted-execution.md`
-- `fix-this.md`
-- relevant review-reconciliation evidence
-
-The skill is the runtime behavior bootloader.
-
-The how-to is the detailed law.
-
-AGENTS.md is the authority.
-
-If the agent does not provide an `Agent Context Loaded` section, the task is invalid and must not be committed.
-
----
-
-## 24.2 Full `.agents` Potential Rule
-
-AI agents must use the full `.agents` ecosystem, not only one skill.
-
-The AvaX Enterprise Remediation skill is the bootloader, not the whole operating system.
-
-Task-relevant skills, how-to rules, learning, memory, evidence, TODO.md, and fix-this.md must be discovered and applied.
-
-Autonomous backlog work must use the `avax-autonomous-backlog-loop` skill.
-
-PARTIAL is not a stop condition unless a hard blocker exists.
-
----
-
-## 24.3 Component Dogfooding Rule
-
-AvaX components should use existing AvaX components/capabilities where architecturally appropriate.
+## 19. Component Dogfooding Rule
 
 AvaX components must dogfood AvaX capabilities.
 
-Raw PHP primitives, global helpers, and duplicated local infrastructure are forbidden unless they live in Foundation/adapter boundaries or have an explicit accepted exception.
+Before adding local logic, raw PHP, or ad-hoc infrastructure, the agent must ask:
 
-Dependencies must go through stable PublicSurface, approved Capability APIs, Configuration/Assembly/Provider boundaries, or documented internal component boundaries.
+```text
+Does AvaX already have a component or capability for this concern?
+Am I bypassing an existing first-party boundary?
+Am I duplicating logic?
+Is this allowed Foundation/adapter code?
+Is dependency direction valid?
+Can this create a circular dependency?
+```
 
-Circular component dependencies are blocking findings.
+Components should reuse existing AvaX capabilities where architecturally appropriate:
 
-Every production-code task must document component reuse, bypasses, raw primitives, and dependency direction.
+```text
+Filesystem
+Clock / Time
+Logger / Observability
+Events
+Cache
+Configuration
+Container / DI
+Runtime lifecycle
+Security / Cryptography / Redaction
+HTTP abstractions
+Validation
+Serialization
+Failure boundaries
+Testing utilities
+Metadata / Compilation
+```
 
-The `avax-component-dogfooding` skill enforces this rule.
+Allowed dependency paths:
+
+```text
+stable PublicSurface APIs
+approved Capability APIs
+Configuration/Assembly/Provider boundaries
+documented internal component dependency
+adapter boundary
+Foundation primitive where appropriate
+test utility in tests only
+```
+
+Forbidden:
+
+```text
+reaching into another component private internals
+circular component dependency
+hidden service locator calls
+global app() shortcuts inside internals
+raw filesystem IO where Filesystem should own it
+raw env/config access where Configuration should own it
+raw logging/echo/print where Logger/Observability should own it
+raw cache arrays where Cache should own it
+raw security primitives without Security/Cryptography boundary
+duplicated serializers/parsers/validators
+local mini-frameworks inside components
+```
+
+Every production-code task must include component dogfooding review when relevant.
 
 ---
 
-## 24.4 Runtime Performance and Cache Discipline Rule
+## 20. Enterprise Codecraft Rule
 
-Runtime hot paths must avoid reflection, filesystem scanning, config parsing, env reads, dynamic discovery, and runtime object graph assembly unless explicitly justified.
+Production code must be enterprise-grade by design, not merely test-passing.
 
-Caching requires owner, scope, key, invalidation, lifecycle, memory bound, worker-safety, and proof.
+Every production-code change must use `avax-enterprise-codecraft`.
+
+Before code, the agent must write or update design evidence answering:
+
+```text
+What behavior is owned here?
+Which class owns it?
+Which invariant is protected?
+Which system boundary is involved?
+What lifecycle phase is affected?
+What public API must remain stable?
+What dependencies are injected?
+What dependencies are assembled?
+What failure modes exist?
+What must fail closed?
+What tests prove behavior?
+```
+
+Architecture-heavy changes require:
+
+```text
+high-level-design.md
+low-level-design.md
+ownership-boundary.md
+dependency-boundary.md
+```
+
+Every meaningful implementation must assess:
+
+```text
+SOLID
+high cohesion
+low coupling
+coupling direction
+dependency inversion
+runtime safety
+security impact
+performance impact
+testability
+observability
+operability
+backward compatibility
+```
+
+Forbidden classifications:
+
+```text
+TOO_MECHANICAL
+FAKE_OOP
+ARCHITECTURE_THEATER
+NEEDS_REDESIGN
+```
+
+These block commit unless explicitly accepted as YELLOW with owner, risk, mitigation, and expiry.
+
+---
+
+## 21. Runtime Performance and Cache Discipline Rule
+
+Runtime hot paths must avoid:
+
+```text
+reflection
+filesystem scans
+glob/recursive directory scans
+config parsing
+env reads
+dynamic class discovery
+class_exists as runtime discovery
+service locator lookup
+container compilation
+repeated metadata parsing
+repeated route compilation
+repeated attribute scanning
+unbounded array growth
+mutable static per-request cache without reset lifecycle
+hidden singleton state
+```
+
+Caching requires:
+
+```text
+owner
+purpose
+key shape
+namespace
+scope
+lifecycle
+invalidation
+stale-data risk
+memory bound
+concurrency behavior
+serialization format if any
+observability/debugging
+fallback/failure behavior
+worker safety
+```
+
+Cache without invalidation/lifecycle is forbidden unless it is immutable deployment-time compiled data.
 
 Long-lived worker state leaks are blocking findings.
 
-Performance-sensitive code must include performance/cache evidence and validation.
+Performance claims require proof:
 
-The `avax-runtime-performance-cache` skill enforces this rule.
-
----
-
-## 24.5 Full `.agents` Operating System Rule
-
-The AvaX Enterprise Remediation skill is the bootloader, not the whole operating system.
-
-Agents must discover and apply the full `.agents` ecosystem: task-relevant skills, how-to rules, management files, learning, memory, evidence, TODO.md, and fix-this.md.
-
-Source precedence is required: git state > AGENTS.md > skills > TODO.md > fix-this.md > evidence > CURRENT_TRUTH.md > how-to > learning/memory > archive.
-
-PARTIAL is not a stop condition; HARD_BLOCKER is the real stop.
-
-Production code requires `avax-enterprise-codecraft`.
-
-Component changes require `avax-component-dogfooding`.
-
-Runtime/cache/performance requires `avax-runtime-performance-cache`.
-
-Security requires `avax-security-threat-model`.
-
-Public API requires `avax-api-compatibility-contract`.
-
-Tests require `avax-test-evidence-quality`.
-
-Failure-prone code requires `avax-observability-failure-semantics`.
-
-Every task must load `avax-source-of-truth-resolver`.
-
-Every task must write evidence.
+```text
+benchmark
+before/after timing
+memory comparison
+proof work moved from request-time to boot/compile/warmup
+static gate proving no hot-path reflection/filesystem scan
+```
 
 ---
 
-## 25. Security Rule
+## 22. Security Rule
 
 Security is a property of every boundary.
 
-Agents must apply:
+Security-sensitive work must use:
 
 ```text
+avax-security-threat-model
 .agents/how-to/how-to-system-security.md
 ```
 
-when work touches:
+Security-sensitive areas include:
 
 ```text
 public surface
-HTTP endpoint
+HTTP
 authentication
 authorization
 session
+CSRF
 tokens
 secrets
 configuration
@@ -1257,17 +1268,30 @@ filesystem
 queue
 events
 messages
-external I/O
+external IO
 logs
 telemetry
 runtime state
+serialization
+request signing
+cookies
+headers
 admin/control plane
 AI-generated code
 ```
 
-Security-sensitive work must include negative tests where practical.
+Security work must answer:
 
-No secret may be logged, reported, dumped, or returned raw.
+```text
+what asset is protected?
+who is the attacker?
+which inputs are untrusted?
+what must fail closed?
+where can injection/tamper/replay/leak/stale state happen?
+what negative test proves the boundary?
+```
+
+No secret may be logged, dumped, returned raw, or exposed in evidence.
 
 Authentication is not authorization.
 
@@ -1275,93 +1299,105 @@ Authorization must protect the object, not only the route.
 
 ---
 
-## 26. Performance Rule
+## 23. API Compatibility Rule
 
-Performance claims require evidence.
-
-Agents must apply:
+Public API, PublicSurface, facade, DSL, builder, and configuration API work must use:
 
 ```text
-.agents/how-to/how-to-system-performance.md
+avax-api-compatibility-contract
 ```
 
-when work touches:
+Every public API task must document:
 
 ```text
-hot paths
-runtime boot
-HTTP kernel
-router
-container
-database
-cache
-filesystem
-queue
-workers
-events
-messages
-external I/O
-serialization
-view rendering
-batch processing
-long-lived runtimes
-benchmark claims
-memory behavior
+public API changed: YES/NO
+backward compatible: YES/NO
+migration needed: YES/NO
+contract tests updated: YES/NO
+old behavior preserved: YES/NO
+deprecation path if changed
+semantic version impact
+examples still work
 ```
 
-No hidden I/O.
-
-No unbounded public operation.
-
-No retry without limit.
-
-No external call without timeout.
-
-No performance optimization may weaken security or correctness.
+Public API break without explicit approval is a blocker.
 
 ---
 
-## 27. Review Rule
+## 24. Test Evidence Rule
 
-Any code review must apply:
+Tests must prove behavior.
+
+They must not merely instantiate classes or assert implementation trivia.
+
+Every test-related task must use:
 
 ```text
-.agents/how-to/how-to-code-review.md
+avax-test-evidence-quality
+.agents/how-to/how-to-unit-test.md
 ```
 
-and must inventory every applicable:
+Required proof where relevant:
 
 ```text
-.agents/how-to/how-to-*.md
+behavior test
+negative test
+regression test
+public contract test
+worker/runtime safety test
+security boundary test
+performance proof
 ```
 
-A review that does not check the governance set is incomplete.
-
-The review must include:
+Forbidden:
 
 ```text
-governance documents read
-rules applied
-compliance matrix
-violations
-severity
-required action
-final decision
+changing tests to fit broken behavior
+fake GREEN by running irrelevant tests
+tests that only prove construction
+no negative tests for security
+no regression test for fixed bug
+no contract test for public API change
 ```
 
 ---
 
-## 28. Documentation Rule
+## 25. Observability and Failure Semantics Rule
+
+Meaningful runtime, IO, security, persistence, queue, cache, HTTP, DI, and boot changes must use:
+
+```text
+avax-observability-failure-semantics
+```
+
+Every failure-prone task must document:
+
+```text
+what can fail
+where it should fail
+exception type
+message safety
+sensitive data redaction
+log event needed
+metric/tracing needed
+retryable or fatal
+fail-open or fail-closed
+worker state after failure
+user-facing vs developer-facing message
+debuggability
+```
+
+Failure mode unclear for a critical path is a blocker.
+
+---
+
+## 26. Documentation Rule
 
 Documentation must follow:
 
 ```text
 .agents/how-to/how-to-document.md
 ```
-
-and the documentation location resolution in this file.
-
-Documentation is a design artifact.
 
 Documentation must explain:
 
@@ -1375,101 +1411,391 @@ how it fails
 how it is tested
 ```
 
-Do not write documentation that merely restates code.
+Documentation must not merely restate code.
+
+Documentation location:
+
+```text
+docs/
+  canonical long-form documentation
+
+component README
+  short ownership summary only
+
+EVIDENCE/
+  execution reports, validation reports, audits, operational proof
+
+inline PHPDoc/comments
+  local intent, constraints, failure behavior, public API explanation
+```
+
+README summarizes.
+Docs explain.
+Reports prove.
 
 ---
 
-## 29. Coding Rule
+## 27. Required Validation
 
-PHP code must follow:
+Canonical validation set:
 
-```text
-.agents/how-to/how-to-coding-standards.md
-.agents/how-to/how-to-code-style.md
-.agents/how-to/how-to-clean-code.md
-.agents/how-to/how-to-modern-php-attributes-di.md
+```bash
+composer validate --no-check-publish
+composer dump-autoload -o
+vendor/bin/phpunit --no-coverage
+vendor/bin/phpstan analyse framework components tests --memory-limit=1G --error-format=raw --no-progress
+php tooling/refactor/check-component-suite-structure.php
+php tooling/refactor/check-duplicate-owners.php
+php tooling/refactor/check-namespace-drift.php
+php tooling/refactor/check-public-surface.php
+php tooling/refactor/check-runtime-composition-leaks.php
+php tooling/audit_broken_refs.php
+php avax runtime:doctor
 ```
 
-Project-specific PHP preferences include:
+Governance validation when available:
 
-```text
-PHP 8.5 style where useful and supported by the project
-strict types
-constructor promotion by default
-named arguments where allowed
-imports instead of fully qualified names
-@throws tags where applicable
-string|null instead of ?string
-static anonymous functions where possible
-typed class constants where applicable
-readonly where useful
-small public surface
-explicit failure behavior
+```bash
+php tooling/governance/check-governance-index-current.php
+php tooling/governance/check-stage-lock.php
+php tooling/governance/check-root-evidence-hygiene.php
+php tooling/refactor/check-component-canonical-shape.php
+php tooling/refactor/check-advanced-pattern-folder-violations.php
+php tooling/refactor/check-direct-instantiation.php
+php tooling/refactor/check-service-provider-coverage.php
+php tooling/refactor/check-constructor-bloat.php
+php tooling/security/check-security-governance.php
+php tooling/performance/check-performance-governance.php
 ```
 
-Do not use named arguments with APIs that explicitly forbid them, such as PHPUnit assertions marked with
-`@no-named-arguments`.
+If a command does not exist, report:
+
+```text
+PLANNED / NOT IMPLEMENTED
+```
+
+Do not report missing commands as pass.
+
+### 27.1 Full vs Focused Validation
+
+Run full validation when work changes:
+
+```text
+architecture
+component shape
+namespaces
+autoload
+public surface
+runtime behavior
+security-sensitive behavior
+performance-sensitive behavior
+stage progress
+production-readiness claims
+```
+
+Focused validation is allowed for narrow work.
+
+If full validation was not run, final status must say:
+
+```text
+focused validation only
+full validation not run
+remaining risk
+```
 
 ---
 
-## 30. Testing Rule
+## 28. Evidence Rule
 
-Tests must follow:
+Every important claim must point to evidence.
+
+Examples:
 
 ```text
-.agents/how-to/how-to-unit-test.md
+Tests pass because command X produced Y.
+PHPStan is clean because command X produced no errors.
+Runtime doctor is green because command X passed.
+Security redaction is proven because tests X passed.
+Performance claim is proven because benchmark X shows Y.
+Public API compatibility is proven because contract tests X passed.
 ```
 
-Tests must prove behavior, not implementation trivia.
+Evidence packages for production-code tasks should include:
 
-Security and performance-sensitive behavior require negative and boundary tests where practical.
+```text
+context-loaded.md
+source-of-truth-decision.md
+design-before-code.md
+high-level-design.md when architecture/system impact exists
+low-level-design.md when non-trivial implementation exists
+ownership-boundary.md
+dependency-boundary.md when dependencies changed
+component-dogfooding-review.md when relevant
+api-compatibility.md when public API is touched
+threat-analysis.md when security-sensitive
+performance-design.md when performance-sensitive
+cache-design.md when caching
+cache-not-used.md when caching is rejected
+runtime-safety-proof.md when runtime/worker state is touched
+failure-semantics.md when failure-prone
+test-proof.md
+negative-test-proof.md when relevant
+regression-proof.md when relevant
+validation-output.md
+governance-review.md
+final-decision.md
+```
 
-A refactor without regression protection is risky.
-
-A public API without tests is not green.
+Evidence must describe what was proven and what remains unproven.
 
 ---
 
-## 31. Component Completion Rule
+## 29. Review Rule
 
-A component is not finished because it has folders.
-
-A component is finished only when it has:
+Any code review must apply:
 
 ```text
-public API
-internal behavior
-configuration
-failure model
-reliability policy where needed
-observability
-tests
-runtime safety
-diagnostics
-examples
-documentation
-operator evidence
+.agents/how-to/how-to-code-review.md
+all task-relevant .agents/how-to/how-to-*.md
+all task-relevant skills
 ```
 
-Component completion must follow:
+A review must include:
 
 ```text
-.agents/how-to/how-to-design-components.md
+governance documents read
+skills applied
+rules applied
+compliance matrix
+violations
+severity
+security findings
+architecture findings
+runtime findings
+test evidence findings
+required action
+final decision
 ```
 
-Partial components must be marked honestly.
+Review decisions:
 
-Do not call a component platform-ready without proof.
+```text
+MERGE_READY
+MERGE_READY_WITH_YELLOW
+MERGE_BLOCKED
+NEEDS_REPAIR
+NEEDS_DEEPER_AUDIT
+```
+
+Security HIGH/BLOCKER findings must be loud and blocking unless explicitly accepted with evidence.
 
 ---
 
-## 32. Production Readiness Rule
+## 30. Commit and Push Rule
 
-Production readiness must follow:
+Before commit:
 
 ```text
-.agents/how-to/how-to-production-readiness.md
+git status --short
+git diff --stat
+git diff --check
 ```
+
+Do not stage:
+
+```text
+.codex
+.qoder
+.gigaide
+avax.part-*
+.agents/how-to/how-to.txt
+temporary files
+IDE files
+screenshots
+unrelated generated dumps
+unrelated evidence
+```
+
+Commit only scoped files.
+
+Commit message must describe the actual change.
+
+Implementation commits must not be mixed with unrelated governance commits unless explicitly justified.
+
+Push only when explicitly instructed by the user or current workflow says push is allowed.
+
+---
+
+## 31. Recovery Rule
+
+When recovering from old sources:
+
+```text
+avax-backup.txt
+Framework.txt
+Components.txt
+old branches
+git history
+old reviews
+old archives
+generated dumps
+```
+
+apply:
+
+```text
+Old behavior is valuable.
+Old structure is not automatically valuable.
+```
+
+Recovery must classify:
+
+```text
+source
+old path
+old namespace
+behavior summary
+target component
+target flow or capability
+tests needed
+risk
+decision
+```
+
+Do not restore old architecture mechanically.
+
+Do not create skeletons to silence tools.
+
+Do not promote old code without current tests.
+
+---
+
+## 32. Stage Lock Rule
+
+Only one implementation stage may be active at a time unless current evidence explicitly authorizes parallel remediation.
+
+Stage lock applies to product/runtime feature stages.
+
+Backlog remediation may proceed through task branches when current TODO.md/fix-this.md/evidence authorizes it.
+
+Agents must not bypass stage lock by calling work:
+
+```text
+preparation
+scaffolding
+harmless foundation
+future-proofing
+temporary
+placeholder
+```
+
+If it creates production behavior for a locked stage, it is forbidden.
+
+---
+
+## 33. Local Agent Workspace
+
+The `.agents/` folder is the local AI engineering workspace.
+
+Routing:
+
+```text
+.agents/skills/**
+  executable playbooks and task routing
+
+.agents/how-to/**
+  local governance rules and quality laws
+
+.agents/management/**
+  active state, learning, memory, evidence, coordination
+
+.agents/management/learning/**
+  lessons to avoid repeated mistakes
+
+.agents/management/memory/**
+  durable project memory if present
+
+.agents/review/**
+  prior reviews and review state
+
+.agents/business-logic/**
+  project meaning and business language if present
+
+.agents/.rules/**
+  mounted reusable governance
+```
+
+If a matching skill exists, read it.
+
+Memory and learning guide execution.
+Validation proves execution.
+
+---
+
+## 34. Agent Output Contract
+
+Every agent execution must end with:
+
+```text
+Stage:
+Status:
+Files changed:
+Validation commands:
+Validation summary:
+Evidence written:
+Remaining risks:
+Next allowed action:
+```
+
+For larger tasks, also include:
+
+```text
+Mode:
+Skills discovered:
+Skills used:
+Skills skipped with reason:
+How-to files read:
+Rules applied:
+Rules intentionally not applicable:
+Source-of-truth decision:
+Reports updated:
+Final git status:
+Push readiness:
+```
+
+Allowed status values:
+
+```text
+GREEN
+GREEN_WITH_ACCEPTED_YELLOW
+YELLOW
+RED
+BLOCKED
+PARTIAL
+UNKNOWN
+```
+
+Autonomous loop final decisions:
+
+```text
+AUTONOMOUS_BACKLOG_LOOP_COMPLETE
+AUTONOMOUS_BACKLOG_LOOP_PARTIAL
+AUTONOMOUS_BACKLOG_LOOP_BLOCKED
+```
+
+Task final decisions:
+
+```text
+TODO_CLOSED
+TODO_PARTIAL_WITH_YELLOW
+TODO_BLOCKED
+```
+
+Do not use vague final status.
+
+---
+
+## 35. Production Readiness Rule
 
 Production readiness requires agreement between:
 
@@ -1498,7 +1824,7 @@ Only evidence.
 
 ---
 
-## 33. Final Law
+## 36. Final Law
 
 AvaX must stay simple, explicit, and strong.
 
@@ -1524,9 +1850,13 @@ Configuration assembles.
 
 Foundation supports.
 
+Components dogfood AvaX.
+
 Security protects every boundary.
 
 Performance requires evidence.
+
+Caching requires lifecycle and invalidation.
 
 Tests prove behavior.
 
@@ -1540,82 +1870,8 @@ Current governance is the target.
 
 Validation is the judge.
 
----
+PARTIAL means continue.
 
-## 34. V4 Branch Policy
+HARD_BLOCKER means stop.
 
-V4 development follows a strict branch strategy to keep the stable baseline clean while V4 work proceeds.
-
-### 34.1 Branch Roles
-
-```text
-master = stable protected branch.
-         Holds the current clean baseline, including the official V4 plan.
-         Receives V4 only when V4 is production-ready.
-         No direct feature work.
-         No V4 implementation directly on master.
-
-main   = active V4 development / integration branch.
-         Must be updated by merging master.
-         V4 development happens on main through stage branches.
-```
-
-### 34.2 Branch Rules
-
-```text
-- master keeps the current clean baseline, including the official V4 plan.
-- main must be updated by merging master.
-- V4 development happens on main through stage branches.
-- No direct feature work on master.
-- No V4 implementation directly on master.
-- master receives V4 only when V4 is production-ready.
-- Every V4 stage branch starts from main.
-- Every merge into main must pass full validation.
-- Every merge into master must be a release-grade merge.
-```
-
-### 34.3 Feature Branch Naming
-
-```text
-v4/01-runtime-app-layer
-v4/02-reactphp-runtime
-v4/03-warm-worker-safety
-v4/04-developer-experience
-v4/05-data-platform-productization
-v4/06-storage-platform
-v4/07-database-muscle
-v4/08-queue-worker-runtime
-v4/09-reliability-engine
-v4/10-messaging-consistency
-v4/11-observability-telemetry
-v4/12-security-policy-runtime
-v4/13-system-design-runtime-kit
-v4/14-runtime-doctor-control-plane
-v4/15-reference-applications
-v4/16-benchmarks-production-proof
-v4/17-optional-runtime-adapters
-```
-
-### 34.4 Required Validation Before Merging Any V4 Branch into main
-
-```bash
-composer validate --no-check-publish
-composer dump-autoload -o
-composer test:full
-vendor/bin/phpstan analyse framework components tests labs/SystemDesignKit --memory-limit=1G
-php tooling/refactor/check-component-suite-structure.php
-php tooling/refactor/check-duplicate-owners.php
-php tooling/refactor/check-namespace-drift.php
-php tooling/refactor/check-public-surface.php
-php tooling/refactor/check-runtime-leaks.php
-php tooling/refactor/check-component-canonical-shape.php
-php tooling/refactor/check-advanced-pattern-folder-violations.php
-```
-
-### 34.5 Merge Rules
-
-```text
-V4 stage branch -> main: requires full validation GREEN.
-main -> master: release-grade merge only, after V4 production-ready proof.
-master -> main: merge master into main before starting any new V4 stage branch.
-```
+AvaX builds AvaX with AvaX.

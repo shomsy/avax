@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\Security\RequestSigning;
 
+use SensitiveParameter;
 use Avax\Framework\System\Capabilities\Security\RequestSigning\Foundation\NonceStore;
 use Avax\Framework\System\Capabilities\Security\RequestSigning\Foundation\SignaturePayload;
 use InvalidArgumentException;
@@ -11,7 +12,7 @@ use InvalidArgumentException;
 final readonly class VerifyInternalRequestSignature
 {
     public function __construct(
-        private string $secretKey,
+        #[SensitiveParameter] private string $secretKey,
         private NonceStore $nonceStore,
         private int $toleranceSeconds = 300,
         private int|null $currentTime = null,

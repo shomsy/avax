@@ -1,0 +1,22 @@
+# Agent Context Loaded
+
+- AGENTS.md read: YES
+- AvaX Enterprise Remediation Skill loaded: YES
+- how-to-ai-assisted-execution.md read: YES
+- how-to files discovered: 20+
+- how-to files read: 7 (how-to-system-security, how-to-design-components, how-to-coding-standards, how-to-clean-code, how-to-unit-test, how-to-architecture, how-to-use-ai-assisted-execution)
+- skills discovered: 1
+- skills used: avax-enterprise-remediation
+- memory/learning files discovered: 0
+- memory/learning files used: NONE
+- project truth files read: fix-this.md (TODO-018), .agents/management/TODO.md
+- review evidence read: post-round-002-worktree-inventory/summary.md
+- assigned fix-this TODO: TODO-018
+- source clusters read: CLUSTER-019 (secret logging/redaction), CLUSTER-016 (security tests)
+- source finding IDs read: SAI-0093, SAI-0097, SAI-0098, SAI-0122, SAI-0124, SAI-0126, SAI-0144, SAI-0145, SAI-0158
+- applicable governance warnings: CLUSTER-019/016 — sensitive inputs must be annotated/redacted, abuse cases must be tested
+- accepted YELLOW constraints: #[SensitiveParameter] only redacts in PHP backtraces; does not prevent explicit logging of key values
+- pre-existing dirty files: CLEAN (vendor/ is untracked)
+- branch: security/todo-018-security-logging-redaction
+- worktree: ../avax-todo-018
+- base commit: 0b67ef44e

@@ -1130,6 +1130,30 @@ AI must produce evidence.
 
 ---
 
+## 24.1 AI Agent Skill Rule
+
+For every AvaX AI-assisted task, agents must use the AvaX Enterprise Remediation Skill when available.
+
+Required skill:
+
+- `.agents/skills/avax-enterprise-remediation/SKILL.md`
+
+Agents must also read and obey:
+
+- `.agents/how-to/how-to-use-ai-assisted-execution.md`
+- `fix-this.md`
+- relevant review-reconciliation evidence
+
+The skill is the runtime behavior bootloader.
+
+The how-to is the detailed law.
+
+AGENTS.md is the authority.
+
+If the agent does not provide an `Agent Context Loaded` section, the task is invalid and must not be committed.
+
+---
+
 ## 25. Security Rule
 
 Security is a property of every boundary.

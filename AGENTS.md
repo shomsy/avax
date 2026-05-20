@@ -1200,6 +1200,36 @@ The `avax-runtime-performance-cache` skill enforces this rule.
 
 ---
 
+## 24.5 Full `.agents` Operating System Rule
+
+The AvaX Enterprise Remediation skill is the bootloader, not the whole operating system.
+
+Agents must discover and apply the full `.agents` ecosystem: task-relevant skills, how-to rules, management files, learning, memory, evidence, TODO.md, and fix-this.md.
+
+Source precedence is required: git state > AGENTS.md > skills > TODO.md > fix-this.md > evidence > CURRENT_TRUTH.md > how-to > learning/memory > archive.
+
+PARTIAL is not a stop condition; HARD_BLOCKER is the real stop.
+
+Production code requires `avax-enterprise-codecraft`.
+
+Component changes require `avax-component-dogfooding`.
+
+Runtime/cache/performance requires `avax-runtime-performance-cache`.
+
+Security requires `avax-security-threat-model`.
+
+Public API requires `avax-api-compatibility-contract`.
+
+Tests require `avax-test-evidence-quality`.
+
+Failure-prone code requires `avax-observability-failure-semantics`.
+
+Every task must load `avax-source-of-truth-resolver`.
+
+Every task must write evidence.
+
+---
+
 ## 25. Security Rule
 
 Security is a property of every boundary.

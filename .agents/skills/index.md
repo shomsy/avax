@@ -23,6 +23,16 @@ This file routes tasks to the correct skill.
 | performance, cache, hot path, runtime, long-lived worker,            | avax-runtime-performance-cache|
 | compilation, warmup, benchmark, latency, throughput, memory,         |                            |
 | Swoole, RoadRunner, FrankenPHP, AvaX JIT, compiled runtime plans     |                            |
+| every task execution, autonomous sweep, architecture decision,       | avax-source-of-truth-resolver |
+| project state unclear, evidence contradicts git                      |                            |
+| auth, session, CSRF, tokens, crypto, redaction, secrets,             | avax-security-threat-model    |
+| logging sensitive data, serialization, SQL, filesystem,              |                            |
+| redirects, headers, cookies, cache with user data, runtime state     |                            |
+| PublicSurface, Facade, DSL, App/Route/Auth/Responses APIs,           | avax-api-compatibility-contract|
+| Builders, configuration public APIs, package exports, deprecations   |                            |
+| changing tests, claiming validation, fixing bugs, proving contracts  | avax-test-evidence-quality    |
+| runtime, DI/container, boot, HTTP, security, filesystem,             | avax-observability-failure-semantics|
+| persistence, queue, worker, cache, external IO, failure boundaries   |                            |
 
 ## Skill Files
 
@@ -33,6 +43,11 @@ This file routes tasks to the correct skill.
 | AvaX Enterprise Codecraft   | `.agents/skills/avax-enterprise-codecraft/SKILL.md`          | HLD/LLD/OOP/SOLID/design quality  |
 | AvaX Component Dogfooding   | `.agents/skills/avax-component-dogfooding/SKILL.md`          | component reuse/platform coherence|
 | AvaX Runtime Performance Cache| `.agents/skills/avax-runtime-performance-cache/SKILL.md`   | hot-path/cache/worker/benchmark   |
+| AvaX Source-of-Truth Resolver | `.agents/skills/avax-source-of-truth-resolver/SKILL.md`      | source conflict resolution        |
+| AvaX Security Threat Model    | `.agents/skills/avax-security-threat-model/SKILL.md`         | threat modeling/fail-closed proof |
+| AvaX API Compatibility Contract| `.agents/skills/avax-api-compatibility-contract/SKILL.md`   | public API/backward compatibility |
+| AvaX Test Evidence Quality    | `.agents/skills/avax-test-evidence-quality/SKILL.md`         | test behavior/regression proof    |
+| AvaX Observability Failure Semantics| `.agents/skills/avax-observability-failure-semantics/SKILL.md`| failure behavior/observability |
 | Recovery                   | `.agents/skills/recovery/SKILL.md`                            | Restore old behavior              |
 | Validation                 | `.agents/skills/validation/SKILL.md`                          | Prove code is green               |
 | Review                     | `.agents/skills/review/SKILL.md`                              | Systematic review                 |

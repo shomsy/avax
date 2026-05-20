@@ -28,9 +28,10 @@ PARTIAL is not STOP. Continue until TODO_CLOSED or HARD_BLOCKER.
 
 1. **Load `avax-enterprise-remediation`** — this is the mandatory bootloader skill
 2. **Run full `.agents` context harvest** — discover, classify, and index all `.agents` resources
-3. **Route to task-relevant skills** — discover and apply all matching `.agents/skills/**`
-4. **Read TODO.md / fix-this.md / evidence** — load the active backlog and current evidence
-5. **Plan execution** — select highest-priority TODO and determine first safe slice
+3. **Load `avax-source-of-truth-resolver`** — resolve current project state and source precedence
+4. **Route to task-relevant skills** — discover and apply all matching `.agents/skills/**`
+5. **Read TODO.md / fix-this.md / evidence** — load the active backlog and current evidence
+6. **Plan execution** — select highest-priority TODO and determine first safe slice
 
 ## Full `.agents` Context Harvest
 
@@ -107,9 +108,9 @@ no staging local files
 ## Per-Slice Flow
 
 1. **Plan** — select TODO, read evidence, determine safe slice
-2. **Implement** — obey governance, how-to rules, and skill routing; load `avax-component-dogfooding` when component reuse may be involved; load `avax-runtime-performance-cache` when runtime/cache/performance is relevant
-3. **Test** — run focused validation
-4. **Evidence** — write proof of what was done; re-run component dogfooding review per slice; preserve performance/cache evidence per slice
+2. **Implement** — obey governance, how-to rules, and skill routing; load `avax-component-dogfooding` when component reuse may be involved; load `avax-runtime-performance-cache` when runtime/cache/performance is relevant; load `avax-security-threat-model` for security-sensitive slices; load `avax-api-compatibility-contract` for public API changes; load `avax-observability-failure-semantics` for failure-prone code
+3. **Test** — run focused validation; load `avax-test-evidence-quality` for test-related slices
+4. **Evidence** — write proof of what was done; re-run component dogfooding review per slice; preserve performance/cache evidence per slice; write source-of-truth-decision.md
 5. **Governance review** — check against applicable how-to rules
 6. **Commit** — only if validation GREEN and review clean
 7. **Self-review** — verify no unrelated files, no skipped rules

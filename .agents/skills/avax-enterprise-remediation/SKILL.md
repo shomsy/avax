@@ -12,21 +12,35 @@ A fast low-quality patch is failure.
 
 ## Bootloader Rule
 
-This is a bootloader skill.
+This is a bootloader skill, not the whole operating system.
 
-For autonomous backlog execution, this skill must route to `avax-autonomous-backlog-loop`.
+Agents must discover and apply task-relevant `.agents` skills.
 
-For component/refactor/architecture tasks, this skill must route to `avax-component-dogfooding`.
+For autonomous backlog work, route to `avax-autonomous-backlog-loop`.
 
-For runtime/cache/performance tasks, this skill must route to `avax-runtime-performance-cache`.
+For production code, route to `avax-enterprise-codecraft`.
 
-Bootloader alone is insufficient for performance-sensitive work.
+For component work, route to `avax-component-dogfooding`.
 
-Agents must not use only this skill when task-specific skills exist.
+For runtime/cache/performance, route to `avax-runtime-performance-cache`.
+
+For every task, route to `avax-source-of-truth-resolver`.
+
+For security tasks, route to `avax-security-threat-model`.
+
+For PublicSurface/API tasks, route to `avax-api-compatibility-contract`.
+
+For tests/validation, route to `avax-test-evidence-quality`.
+
+For failure-prone work, route to `avax-observability-failure-semantics`.
+
+Agents must not use only the bootloader if more specific skills apply.
 
 Agents must discover and apply all task-relevant `.agents` resources including skills, how-to rules, learning, memory, evidence, TODO.md, and fix-this.md.
 
 Agents must not bypass existing AvaX components with raw PHP unless exception is documented per `avax-component-dogfooding` Raw PHP Exception Rule.
+
+Bootloader alone is insufficient for performance-sensitive work.
 
 This skill composes with other skills when the task matches their scope.
 

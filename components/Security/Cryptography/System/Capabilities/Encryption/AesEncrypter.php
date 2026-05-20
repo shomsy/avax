@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Security\Cryptography\System\Capabilities\Encryption;
 
+use SensitiveParameter;
 use RuntimeException;
 
 final readonly class AesEncrypter implements EncrypterInterface
@@ -12,7 +13,7 @@ final readonly class AesEncrypter implements EncrypterInterface
      * @throws RuntimeException if encryption key is invalid
      */
     public function __construct(
-        private string $key,
+        #[SensitiveParameter] private string $key,
         private string $cipher = 'aes-256-gcm',
     )
     {

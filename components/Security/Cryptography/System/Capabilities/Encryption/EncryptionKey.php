@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Security\Cryptography\System\Capabilities\Encryption;
 
+use SensitiveParameter;
 use InvalidArgumentException;
 
 /**
@@ -14,7 +15,7 @@ final readonly class EncryptionKey
     private const int KEY_LENGTH = 32; // 256 bits for AES-256
 
     public function __construct(
-        private string $keyMaterial,
+        #[SensitiveParameter] private string $keyMaterial,
         private string $version = '1',
     )
     {
@@ -36,7 +37,7 @@ final readonly class EncryptionKey
     /**
      * Create an encryption key from a base64-encoded string.
      */
-    public static function fromBase64(string $base64, string $version = '1') : self
+    public static function fromBase64(#[SensitiveParameter] string $base64, string $version = '1') : self
     {
         $keyMaterial = base64_decode($base64, true);
 

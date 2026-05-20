@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Capabilities\Security\RequestSigning;
 
+use SensitiveParameter;
 use Avax\Framework\System\Capabilities\Security\RequestSigning\Foundation\SignatureKeyId;
 use Avax\Framework\System\Capabilities\Security\RequestSigning\Foundation\SignatureNonce;
 use Avax\Framework\System\Capabilities\Security\RequestSigning\Foundation\SignaturePayload;
@@ -12,7 +13,7 @@ use Avax\Framework\System\Capabilities\Security\RequestSigning\Foundation\Signat
 final readonly class SignInternalRequest
 {
     public function __construct(
-        private string $secretKey,
+        #[SensitiveParameter] private string $secretKey,
         private SignatureKeyId $keyId,
     ) {
     }

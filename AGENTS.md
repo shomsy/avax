@@ -1154,6 +1154,20 @@ If the agent does not provide an `Agent Context Loaded` section, the task is inv
 
 ---
 
+## 24.2 Full `.agents` Potential Rule
+
+AI agents must use the full `.agents` ecosystem, not only one skill.
+
+The AvaX Enterprise Remediation skill is the bootloader, not the whole operating system.
+
+Task-relevant skills, how-to rules, learning, memory, evidence, TODO.md, and fix-this.md must be discovered and applied.
+
+Autonomous backlog work must use the `avax-autonomous-backlog-loop` skill.
+
+PARTIAL is not a stop condition unless a hard blocker exists.
+
+---
+
 ## 25. Security Rule
 
 Security is a property of every boundary.

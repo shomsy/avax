@@ -10,6 +10,18 @@ Speed is useful only if quality is preserved.
 
 A fast low-quality patch is failure.
 
+## Bootloader Rule
+
+This is a bootloader skill.
+
+For autonomous backlog execution, this skill must route to `avax-autonomous-backlog-loop`.
+
+Agents must not use only this skill when task-specific skills exist.
+
+Agents must discover and apply all task-relevant `.agents` resources including skills, how-to rules, learning, memory, evidence, TODO.md, and fix-this.md.
+
+This skill composes with other skills when the task matches their scope.
+
 ## Trigger
 
 Use this skill when the user asks for:

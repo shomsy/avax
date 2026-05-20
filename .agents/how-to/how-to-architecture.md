@@ -688,6 +688,144 @@ Configuration slices may use a `Builders/` folder or namespace for explicit asse
 * ServiceProvider may delegate to Builders.
 * Builders must be exact, tested, and must not become dumping grounds.
 
+#### 13.3.1 Builder Validity Rule
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+A builder is valid only when it owns a real cohesive assembly responsibility.
+
+Builders must not exist merely to:
+
+* hide long constructors
+* bypass direct-instantiation gates
+* wrap service locator behavior
+* move complexity without improving ownership
+* create fake OOP layers
+
+The folder says assembly/building context.
+The class says the graph/responsibility.
+The method says the exact action/product.
+
+**Allowed:**
+
+* Builder lives in `Configuration/Builders` or another explicit assembly boundary.
+* Builder assembles one cohesive graph, capability, runtime plan, or public DSL composition unit.
+* Builder has explicit typed dependencies.
+* Builder does not receive Container unless it is the actual composition-root/provider boundary.
+* Builder does not leak into runtime flows or PublicSurface.
+* Builder improves ownership, cohesion, and dependency direction.
+* Builder makes failure/assembly timing clearer.
+* Builder preserves public API compatibility.
+* Builder uses existing AvaX components/capabilities through correct boundaries where appropriate.
+
+**Forbidden:**
+
+* Builder that receives Container and uses it as a service locator.
+* Builder that exists only to hide a long constructor.
+* Builder that just forwards many unrelated dependencies.
+* Builder that assembles unrelated capabilities.
+* Builder that becomes a god object.
+* Builder that hides direct instantiation from gates without improving design.
+* Builder with generic Service/Manager/Helper/Util naming.
+* Builder that makes runtime flows depend on configuration internals.
+* Builder that bypasses component dogfooding.
+* Builder that weakens testability.
+
+#### 13.3.2 Builder Decision Questions
+
+Before introducing a builder, the agent must answer:
+
+1. What cohesive graph is being assembled?
+2. Why is this not normal DI/autowiring/provider registration?
+3. Why is this not fake OOP?
+4. Which dependency boundary owns this builder?
+5. Which public API or runtime behavior depends on it?
+6. What invariants/failure modes does it protect?
+7. Which tests prove behavior?
+8. Does this reduce or merely hide constructor bloat?
+9. Does this improve dependency direction?
+10. Does this use existing AvaX components where appropriate?
+
+If these questions cannot be answered clearly, the builder should not exist.
+
+#### 13.3.3 Builder Naming Rule
+
+If a class lives inside an explicit building/assembly context such as `Configuration/Builders`, do not repeat `Build*` in the class name unless it materially improves clarity.
+
+The folder says assembly/building.
+The class says the graph/responsibility.
+The method says the exact action/product.
+
+**Preferred:**
+
+* `TokenAuthenticationGraph`
+* `PasswordAuthenticationGraph`
+* `ExternalIdentityGraph`
+* `AuthorizationPolicyGraph`
+* `RuntimeKernelGraph`
+* `RouteTableGraph`
+
+**Acceptable:**
+
+* `TokenAuthentication`
+* `PasswordAuthentication`
+
+**Avoid:**
+
+* `BuildTokenAuthentication`
+* `BuildPasswordAuthentication`
+
+**Forbidden:**
+
+* `AuthBuilderHelper`
+* `AuthManager`
+* `AuthServices`
+* `BuildEverything`
+
+#### 13.3.4 Builder Method Naming Rule
+
+Do not default to `build()` blindly.
+
+Use the most intention-revealing method name.
+
+**Preferred order:**
+
+1. Domain/product-specific methods:
+   * `authentication()`
+   * `runtimeKernel()`
+   * `routeTable()`
+   * `middlewarePipeline()`
+   * `policies()`
+   * `identity()`
+
+2. `create()` when the class name fully names the product.
+
+3. `build()` only when assembling a graph, plan, pipeline, blueprint, or compiled structure is semantically important.
+
+4. `__invoke()` only when:
+   * the class is intentionally a callable factory
+   * call-site clarity remains obvious
+   * no intent ambiguity exists
+
+**Forbidden:**
+
+* `build()` everywhere by habit
+* `create()` everywhere by habit
+* `__invoke()` when it hides intent
+* magical DSL ambiguity
+
+#### 13.3.5 Builder Cross-References
+
+For complete builder governance, see:
+
+* `how-to-dependency-injection.md` — Section 4.8 ServiceProvider Builder Delegation
+* `how-to-dependency-injection.md` — Section 6.8 Builder Placement Rule
+* `how-to-design-components.md` — Section 6.5.1 Configuration/Builders Rule
+* `avax-enterprise-codecraft` skill — SOLID/Cohesion/Coupling Gate for builder design
+* `avax-component-dogfooding` skill — Component reuse in builders
+* `avax-runtime-performance-cache` skill — Runtime safety for builder assembly
+
 ---
 
 ## 14. Foundation Slices

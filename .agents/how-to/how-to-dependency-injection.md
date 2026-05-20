@@ -912,6 +912,45 @@ Configuration builders assemble the system.
 Capability builders create runtime results.
 ```
 
+**Builder Validity Cross-Reference:**
+
+For complete builder governance including:
+
+* builder validity rule (allowed/forbidden builder patterns)
+* builder decision questions
+* builder naming rule
+* builder method naming rule
+* fluent DSL principles
+* assembly graph vs runtime DSL distinctions
+
+See:
+
+* `how-to-architecture.md` — Section 13.3 Builders Rule (canonical builder validity)
+* `how-to-design-components.md` — Section 6.5.1 Configuration/Builders Rule
+* `how-to-architecture.md` — Section 13.3.3 Builder Naming Rule
+* `how-to-architecture.md` — Section 13.3.4 Builder Method Naming Rule
+* `how-to-dependency-injection.md` — Section 8 Fluent DSL Design Principles
+
+**Performance/Runtime Consideration:**
+
+Builders must remain runtime-safe and performance-aware.
+
+Builders must not:
+
+* cause unnecessary object churn during assembly
+* use runtime reflection in hot paths
+* repeatedly reconstruct graphs during runtime execution
+* act as service-locator-style lazy pulling in hot execution paths
+
+Builders should prefer:
+
+* compiled metadata where applicable
+* stable graph assembly
+* explicit runtime ownership
+* reusable runtime-safe plans
+
+See `avax-runtime-performance-cache` for runtime safety requirements.
+
 ### 6.9 Runtime Composition Leak Rule
 
 Runtime code **MUST NOT** discover or assemble optional capabilities.
@@ -1097,7 +1136,39 @@ Complex operations MUST provide fluent, chainable, intent-first APIs.
 
 Call sites must read like human DSL, not internal plumbing.
 
-### 8.2 Fluent API Design
+### 8.2 Fluent DSL Design Principles
+
+Public DSLs should remain fluent and human-readable.
+
+Internal assembly classes should remain explicit and typed.
+
+Fluent APIs are encouraged only when they:
+
+* improve readability
+* preserve explicit intent
+* preserve type safety
+* preserve ordering clarity
+* avoid hidden side effects
+* reflect real domain concepts
+
+**Preferred:**
+
+```php
+$app->routes()->compiledTable()
+$auth->tokens()->authentication()
+```
+
+**Avoid:**
+
+```php
+$builder->withStuff()->andMore()->doIt()
+```
+
+Fluent chains must read like intent, not like internal plumbing.
+
+A call site should answer "What is happening?" not "How many internal objects are required to make it happen?"
+
+### 8.3 Fluent API Design
 
 ```php
 // GOOD — fluent builder
@@ -1125,7 +1196,7 @@ Transaction::begin()
     ->run(fn () => $this->processOrder($order));
 ```
 
-### 8.3 Fluent API Rules
+### 8.4 Fluent API Rules
 
 ```text
 Entry point is static factory or DI-resolved instance.
@@ -1135,7 +1206,7 @@ Fluent chain MUST NOT have side effects until the terminal method.
 Fluent API MUST accept natural inputs — boundary owns normalization.
 ```
 
-### 8.4 Forbidden Fluent Patterns
+### 8.5 Forbidden Fluent Patterns
 
 ```php
 // BAD — mutable fluent API
@@ -1153,7 +1224,74 @@ $builder->render();  // not fluent, just setter chain
 ErrorRenderer::fromResponse(
     ResponseFactory::fromPsrResponse($response)
 )->render($e);
+
+// BAD — generic fluent chain without intent
+$builder->withStuff()->andMore()->doIt();
 ```
+
+### 8.6 DSL Method Naming Rule
+
+Do not default to generic method names in fluent APIs.
+
+Use the most intention-revealing method name.
+
+**Preferred order:**
+
+1. Domain/product-specific methods:
+   * `authentication()`
+   * `runtimeKernel()`
+   * `routeTable()`
+   * `middlewarePipeline()`
+   * `policies()`
+   * `identity()`
+
+2. `create()` when the class name fully names the product.
+
+3. `build()` only when assembling a graph, plan, pipeline, blueprint, or compiled structure is semantically important.
+
+4. `__invoke()` only when:
+   * the class is intentionally a callable factory
+   * call-site clarity remains obvious
+   * no intent ambiguity exists
+
+**Forbidden:**
+
+* `build()` everywhere by habit
+* `create()` everywhere by habit
+* `__invoke()` when it hides intent
+* magical DSL ambiguity
+* generic `with*()` chains that hide intent
+
+### 8.7 Assembly Graph vs Runtime DSL
+
+Assembly-time fluent DSLs (used in `Configuration/Builders` or `ServiceProvider`) assemble object graphs:
+
+```php
+ApplicationBuilder::forProject($path, $env)
+    ->withDefaultRuntimeServices()
+    ->withHttpRoutes(__DIR__ . '/config/routes.php')
+    ->build();
+```
+
+Runtime DSLs (used in `Capabilities/` or `PublicSurface/`) execute behavior or create runtime results:
+
+```php
+Error::response($e)
+    ->withStatus(500)
+    ->render();
+```
+
+These are different concerns.
+
+Assembly DSLs build the system.
+Runtime DSLs use the system.
+
+Both must remain fluent, type-safe, and intent-first.
+
+For builder governance, see:
+
+* `how-to-architecture.md` — Section 13.3 Builders Rule
+* `how-to-design-components.md` — Section 6.5.1 Configuration/Builders Rule
 
 ---
 

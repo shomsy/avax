@@ -198,6 +198,31 @@ Use existing AvaX capabilities through correct boundaries.
 
 Do not create local ad-hoc cache arrays if Cache/Runtime/Configuration should own it.
 
+## Builder and Assembly Performance Rule
+
+Builder and assembly graph design must remain runtime-safe and performance-aware.
+
+Builders must not:
+
+- cause unnecessary object churn during assembly
+- use runtime reflection in hot paths
+- repeatedly reconstruct graphs during runtime execution
+- act as service-locator-style lazy pulling in hot execution paths
+
+Builders should prefer:
+
+- compiled metadata where applicable
+- stable graph assembly at boot/compile time
+- explicit runtime ownership
+- reusable runtime-safe plans
+
+Assembly-time builders operate at boot/compile time, not request time.
+
+If a builder runs per-request, it must be reviewed for hot-path safety.
+
+See `how-to-dependency-injection.md` — Section 6.8 Builder Placement Rule.
+See `how-to-architecture.md` — Section 13.3.1 Builder Validity Rule.
+
 ## Evidence Requirements
 
 Every performance/cache-sensitive production task must write:

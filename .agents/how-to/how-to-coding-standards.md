@@ -738,6 +738,17 @@ The following structural failures must be avoided:
 - extraction without proof
 - bucket folders without domain meaning
 - hallway folders with no semantic value
+- god builders that assemble unrelated capabilities
+- builders that exist only to hide long constructors
+- service-locator builders that receive Container as lazy dependency pull
+
+For complete builder governance, see:
+
+```text
+how-to-architecture.md — Section 13.3 Builders Rule
+how-to-dependency-injection.md — Section 8 Fluent DSL Design Principles
+how-to-dependency-injection.md — Section 6.8 Builder Placement Rule
+```
 
 ---
 

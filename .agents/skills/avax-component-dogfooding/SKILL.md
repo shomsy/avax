@@ -81,6 +81,25 @@ Before implementing or refactoring a component, the agent must ask:
 - Is the dependency stable enough to use?
 - Do I need PublicSurface, internal Capability, Configuration/Provider, or Foundation boundary?
 
+### Builder and Assembly Dogfooding
+
+Builders and assembly graphs must use existing AvaX components/capabilities through correct boundaries where architecturally appropriate.
+
+Builders must not:
+
+- bypass existing AvaX capabilities
+- recreate logic locally that an AvaX component already owns
+- create hidden framework duplication through builder assembly
+- use raw primitives where an AvaX component boundary should be used
+
+Every builder must document:
+
+- which AvaX components it uses
+- which components it bypasses (with reason)
+- whether raw primitives are used (with RAW_PRIMITIVE_ALLOWED exception)
+
+See `how-to-architecture.md` — Section 13.3.1 Builder Validity Rule.
+
 ## Allowed Dependency Paths
 
 Components may use other components through:

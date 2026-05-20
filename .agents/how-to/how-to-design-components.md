@@ -856,6 +856,24 @@ Capabilities/ creates runtime results.
 Runtime execution code must not assemble dependencies.
 ```
 
+**Builder Governance Cross-Reference:**
+
+For complete builder governance including:
+
+- Builder validity rule (allowed/forbidden patterns)
+- Builder decision questions
+- Builder naming rule (class names and method names)
+- Fluent DSL principles
+- Assembly graph vs runtime DSL distinctions
+
+See:
+
+```text
+.agents/how-to/how-to-architecture.md — Section 13.3 Builders Rule (canonical builder validity)
+.agents/how-to/how-to-dependency-injection.md — Section 8 Fluent DSL Design Principles
+.agents/how-to/how-to-dependency-injection.md — Section 6.8 Builder Placement Rule
+```
+
 ---
 
 ## 6.6 Foundation Rule

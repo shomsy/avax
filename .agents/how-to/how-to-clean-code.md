@@ -1229,6 +1229,9 @@ Reject code that does any of the following without strong written justification:
 - introduces tests that freeze private implementation details without need
 - weakens type safety or contracts for convenience
 - performs speculative optimization or speculative abstraction
+- introduces builders that exist only to hide long constructors or bypass DI gates
+- uses service-locator pattern inside builder classes
+- creates god builders that assemble unrelated capabilities
 
 ---
 

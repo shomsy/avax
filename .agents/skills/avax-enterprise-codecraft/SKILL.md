@@ -163,6 +163,28 @@ Every production-code change must pass this checklist:
 - Are low-level details injected or assembled at the correct boundary?
 - Is runtime code constructing dependencies that should come from configuration/provider/assembly?
 
+### Builder and Assembly Review
+
+- Does the builder own a real cohesive assembly responsibility?
+- Is the builder merely hiding a long constructor?
+- Does the builder receive Container as a service locator?
+- Does the builder assemble unrelated capabilities into a god object?
+- Does the builder have a clear dependency boundary?
+- Does the builder use existing AvaX components where appropriate?
+- Is the builder naming consistent with the assembly context?
+- Does the builder method name reveal intent (not defaulting to build() blindly)?
+- Is the builder placed in the correct location (Configuration/Builders vs Capabilities)?
+- Does the builder improve testability, not weaken it?
+- Does the builder leak into runtime flows or PublicSurface?
+
+If any builder question cannot be answered positively, the builder must not exist.
+
+For complete builder governance, see:
+
+- `how-to-architecture.md` — Section 13.3 Builders Rule
+- `how-to-dependency-injection.md` — Section 8 Fluent DSL Design Principles
+- `how-to-dependency-injection.md` — Section 6.8 Builder Placement Rule
+
 ### High Cohesion
 
 - Do methods and properties belong together?

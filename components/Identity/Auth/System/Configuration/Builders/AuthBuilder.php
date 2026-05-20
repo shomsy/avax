@@ -36,20 +36,23 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Sessions;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\ProvisionableUserSourceInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\InMemoryLifecycleStore;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleOrchestrator;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleStoreInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\InMemoryScimDirectoryStore;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\InMemoryScimProvisionedIdentityStore;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimDirectoryStoreInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimProvisionedIdentityStoreInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\SyncGroups\SyncScimGroups;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\SCIM;
 use Avax\Components\Identity\Auth\System\Configuration\Readiness\AuthBootstrapValidator;
 use Avax\Components\Identity\Auth\System\Configuration\Readiness\AuthCapabilityReadiness;
 use Avax\Components\Identity\Auth\System\Configuration\Readiness\AuthCapabilityRequests;
 use Avax\Components\Identity\Auth\System\Configuration\Assembly\AssembleAuthIdentityGraph;
 use Avax\Components\Identity\Auth\System\Configuration\Assembly\AssembleAuthExternalIdentityGraph;
+use Avax\Components\Identity\Auth\System\Configuration\Assembly\BuildCredentialGraph;
+use Avax\Components\Identity\Auth\System\Configuration\Assembly\BuildOAuthGraph;
+use Avax\Components\Identity\Auth\System\Configuration\Assembly\BuildFederationGraph;
+use Avax\Components\Identity\Auth\System\Configuration\Assembly\BuildScimGraph;
+use Avax\Components\Identity\Auth\System\Configuration\Assembly\BuildTenancyGraph;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\LifecycleStoreInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimDirectoryStoreInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimProvisionedIdentityStoreInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClientRegistryInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\AuthorizationCodeStoreInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\OidcProviderInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\OidcRequestObjectStoreInterface;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\BeginEmailChange;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\ConfirmEmailChange;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\EmailChangeStoreInterface;
@@ -94,8 +97,8 @@ use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Disable
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Enroll\CancelMfaEnrollment;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Enroll\ConfirmMfaEnrollment;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Enroll\StartMfaEnrollment;
-use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Limit\InMemoryAttemptLimitStorage;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Limit\LimitMfaAttempts;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Limit\InMemoryAttemptLimitStorage;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Recover\ConfirmMfaRecovery;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Recover\StartMfaRecovery;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\StepUp\RequireFreshMfa;
@@ -120,6 +123,11 @@ use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\Com
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\ListPasskeys\ListPasskeys;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\RenamePasskey\RenamePasskey;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\RevokePasskey\RevokePasskey;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationConnectionStoreInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederatedIdentityLinkStoreInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationRuntimeInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationMetadataRuntimeInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationHealthCheckInterface;
 use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\AdminElevationStoreInterface;
 use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\InMemoryAdminElevationStore;
 use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime\BeginAdminElevation\BeginAdminElevation;
@@ -150,20 +158,6 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurity
 use Avax\Components\Identity\Tenancy\System\Capabilities\Security\TenantSecurityConfigurationStoreInterface;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Tenancy;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Tenants\Tenants;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationConnectionStoreInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederatedIdentityLinkStoreInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\InMemoryFederationConnectionStore;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\InMemoryFederatedIdentityLinkStore;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\OAuthClientRegistryInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\AuthorizationCodeStoreInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\InMemoryOAuthClientRegistry;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\InMemoryAuthorizationCodeStore;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\OidcProviderInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\OidcRequestObjectStoreInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\InMemoryOidcRequestObjectStore;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationRuntimeInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationMetadataRuntimeInterface;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationHealthCheckInterface;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Flow\RefreshAuthentication;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\RefreshTokenStoreInterface;
 use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
@@ -173,96 +167,43 @@ use SensitiveParameter;
  * Fluent builder for creating Auth system instances.
  *
  * Capability: Composition root for the system.
+ * Delegates bounded configuration responsibilities to focused sub-builders:
+ * BuildCredentialGraph (MFA/Passkey), BuildOAuthGraph (OAuth/OIDC),
+ * BuildFederationGraph (Federation), BuildScimGraph (SCIM),
+ * BuildTenancyGraph (Tenancy).
  */
 final class AuthBuilder
 {
     private UserSourceInterface|null $userSource = null;
-
     private IdentityInterface|null $identity = null;
-
     private LoginRateLimit|null $loginRateLimit = null;
-
     private PasswordHasher|null $passwordHasher = null;
-
     private IdGeneratorInterface|null $idGenerator = null;
-
     private AuditLogInterface|null $auditLog = null;
-
     private string|null $auditCorrelationId = null;
-
     private EmailVerificationStateStoreInterface|null $emailVerificationStateStore = null;
-
-    private MfaStoreInterface|null $mfaStore = null;
-
-    private RefreshTokenStoreInterface|null $refreshTokenStore = null;
-
-    private PasswordResetStoreInterface|null $passwordResetStore = null;
-
     private EmailVerificationStoreInterface|null $emailVerificationStore = null;
-
     private EmailChangeStoreInterface|null $emailChangeStore = null;
-
-    private MfaChallengeStoreInterface|null $mfaChallengeStore = null;
-
-    private TotpInterface|null $totp = null;
-
-    private LimitMfaAttempts|null $limitMfaAttempts = null;
-
-    private AttemptThrottle|null $passwordResetThrottle = null;
-
-    private AttemptThrottle|null $mfaRecoveryThrottle = null;
-
-    private AttemptThrottle|null $scimThrottle = null;
-
+    private PasswordResetStoreInterface|null $passwordResetStore = null;
     private Clock|null $clock = null;
-
     private SessionRegistryInterface|null $sessionRegistry = null;
 
-    private OAuthClientRegistryInterface|null $oAuthClientRegistry = null;
-
-    private AuthorizationCodeStoreInterface|null $authorizationCodeStore = null;
-
-    private LifecycleStoreInterface|null $lifecycleStore = null;
-
-    private AdminElevationStoreInterface|null $adminElevationStore = null;
-
-    private DeterministicRiskEngine|null $deterministicRiskEngine = null;
-
-    private PasskeyRuntimeInterface|null $passkeyRuntime = null;
-
-    private PasskeyCredentialStoreInterface|null $passkeyCredentialStore = null;
-
-    private PasskeyChallengeStoreInterface|null $passkeyChallengeStore = null;
-
-    private FederationRuntimeInterface|null $federationRuntime = null;
-
-    private FederationConnectionStoreInterface|null $federationConnectionStore = null;
-
-    private FederatedIdentityLinkStoreInterface|null $federatedIdentityLinkStore = null;
-
-    private OidcProviderInterface|null $oidcProvider = null;
-
-    private OidcRequestObjectStoreInterface|null $oidcRequestObjectStore = null;
-
-    private ScimDirectoryStoreInterface|null $scimDirectoryStore = null;
-
-    private ScimProvisionedIdentityStoreInterface|null $scimProvisionedIdentityStore = null;
-
-    private TenantStoreInterface|null $tenantStore = null;
-
-    private TenantSecurityConfigurationStoreInterface|null $tenantSecurityConfigurationStore = null;
-
-    private TenantSecurityChangeRequestStoreInterface|null $tenantSecurityChangeRequestStore = null;
-
-    private string $mfaIssuer = 'Avax Auth';
-
-    private string $passkeyRpId = 'localhost';
-
-    private string $passkeyRpName = 'Avax Auth';
-
-    private bool $adminPhishingResistantRequired = false;
-
     private bool $enterpriseMode = false;
+
+    private BuildCredentialGraph $credentialBuilder;
+    private BuildOAuthGraph $oAuthBuilder;
+    private BuildFederationGraph $federationBuilder;
+    private BuildScimGraph $scimBuilder;
+    private BuildTenancyGraph $tenancyBuilder;
+
+    public function __construct()
+    {
+        $this->credentialBuilder   = new BuildCredentialGraph();
+        $this->oAuthBuilder        = new BuildOAuthGraph();
+        $this->federationBuilder   = new BuildFederationGraph();
+        $this->scimBuilder         = new BuildScimGraph();
+        $this->tenancyBuilder      = new BuildTenancyGraph();
+    }
 
     /**
      * Enable enterprise mode.
@@ -301,8 +242,7 @@ final class AuthBuilder
         ?SessionIdentityInterface $sessionIdentity = null,
         #[SensitiveParameter]
         ?JwtIdentityInterface     $jwtIdentity = null,
-    ) : self
-    {
+    ) : self {
         $this->identity = Identity::fromBackends(
             sessionIdentity: $sessionIdentity,
             jwtIdentity    : $jwtIdentity,
@@ -362,27 +302,6 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withMfaStore(MfaStoreInterface $mfaStore) : self
-    {
-        $this->mfaStore = $mfaStore;
-
-        return $this;
-    }
-
-    public function withRefreshTokenStore(#[SensitiveParameter] RefreshTokenStoreInterface $refreshTokenStore) : self
-    {
-        $this->refreshTokenStore = $refreshTokenStore;
-
-        return $this;
-    }
-
-    public function withPasswordResetStore(#[SensitiveParameter] PasswordResetStoreInterface $passwordResetStore) : self
-    {
-        $this->passwordResetStore = $passwordResetStore;
-
-        return $this;
-    }
-
     public function withEmailVerificationStore(#[SensitiveParameter] EmailVerificationStoreInterface $emailVerificationStore) : self
     {
         $this->emailVerificationStore = $emailVerificationStore;
@@ -397,37 +316,9 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withMfaChallengeStore(MfaChallengeStoreInterface $mfaChallengeStore) : self
+    public function withPasswordResetStore(#[SensitiveParameter] PasswordResetStoreInterface $passwordResetStore) : self
     {
-        $this->mfaChallengeStore = $mfaChallengeStore;
-
-        return $this;
-    }
-
-    public function usingTotp(TotpInterface $totp) : self
-    {
-        $this->totp = $totp;
-
-        return $this;
-    }
-
-    public function withPasswordResetThrottle(#[SensitiveParameter] AttemptThrottle $attemptThrottle) : self
-    {
-        $this->passwordResetThrottle = $attemptThrottle;
-
-        return $this;
-    }
-
-    public function withMfaRecoveryThrottle(AttemptThrottle $attemptThrottle) : self
-    {
-        $this->mfaRecoveryThrottle = $attemptThrottle;
-
-        return $this;
-    }
-
-    public function withScimThrottle(AttemptThrottle $attemptThrottle) : self
-    {
-        $this->scimThrottle = $attemptThrottle;
+        $this->passwordResetStore = $passwordResetStore;
 
         return $this;
     }
@@ -446,168 +337,47 @@ final class AuthBuilder
         return $this;
     }
 
-    public function withOAuthClientRegistry(#[SensitiveParameter] OAuthClientRegistryInterface $oauthClientRegistry) : self
-    {
-        $this->oAuthClientRegistry = $oauthClientRegistry;
+    // Delegate to credential sub-builder
+    public function withMfaStore(MfaStoreInterface $mfaStore) : self { $this->credentialBuilder->withMfaStore($mfaStore); return $this; }
+    public function withMfaChallengeStore(MfaChallengeStoreInterface $mfaChallengeStore) : self { $this->credentialBuilder->withMfaChallengeStore($mfaChallengeStore); return $this; }
+    public function usingTotp(TotpInterface $totp) : self { $this->credentialBuilder->usingTotp($totp); return $this; }
+    public function withMfaAttemptLimit(LimitMfaAttempts $limitMfaAttempts) : self { $this->credentialBuilder->withMfaAttemptLimit($limitMfaAttempts); return $this; }
+    public function withPasswordResetThrottle(#[SensitiveParameter] AttemptThrottle $attemptThrottle) : self { $this->credentialBuilder->withPasswordResetThrottle($attemptThrottle); return $this; }
+    public function withMfaRecoveryThrottle(AttemptThrottle $attemptThrottle) : self { $this->credentialBuilder->withMfaRecoveryThrottle($attemptThrottle); return $this; }
+    public function withScimThrottle(AttemptThrottle $attemptThrottle) : self { $this->scimBuilder->withScimThrottle($attemptThrottle); return $this; }
+    public function withPasskeyRuntime(PasskeyRuntimeInterface $passkeyRuntime) : self { $this->credentialBuilder->withPasskeyRuntime($passkeyRuntime); return $this; }
+    public function withPasskeyCredentialStore(#[SensitiveParameter] PasskeyCredentialStoreInterface $passkeyCredentialStore) : self { $this->credentialBuilder->withPasskeyCredentialStore($passkeyCredentialStore); return $this; }
+    public function withPasskeyChallengeStore(PasskeyChallengeStoreInterface $passkeyChallengeStore) : self { $this->credentialBuilder->withPasskeyChallengeStore($passkeyChallengeStore); return $this; }
+    public function withPasskeyRelyingParty(string $rpId, string $rpName) : self { $this->credentialBuilder->withPasskeyRelyingParty($rpId, $rpName); return $this; }
+    public function withMfaIssuer(string $mfaIssuer) : self { $this->credentialBuilder->withMfaIssuer($mfaIssuer); return $this; }
 
-        return $this;
-    }
+    // Delegate to OAuth sub-builder
+    public function withRefreshTokenStore(#[SensitiveParameter] RefreshTokenStoreInterface $refreshTokenStore) : self { $this->oAuthBuilder->withRefreshTokenStore($refreshTokenStore); return $this; }
+    public function withOAuthClientRegistry(#[SensitiveParameter] OAuthClientRegistryInterface $oauthClientRegistry) : self { $this->oAuthBuilder->withOAuthClientRegistry($oauthClientRegistry); return $this; }
+    public function withAuthorizationCodeStore(#[SensitiveParameter] AuthorizationCodeStoreInterface $authorizationCodeStore) : self { $this->oAuthBuilder->withAuthorizationCodeStore($authorizationCodeStore); return $this; }
+    public function withOidcProvider(OidcProviderInterface $oidcProvider) : self { $this->oAuthBuilder->withOidcProvider($oidcProvider); return $this; }
+    public function withOidcRequestObjectStore(OidcRequestObjectStoreInterface $oidcRequestObjectStore) : self { $this->oAuthBuilder->withOidcRequestObjectStore($oidcRequestObjectStore); return $this; }
 
-    public function withAuthorizationCodeStore(#[SensitiveParameter] AuthorizationCodeStoreInterface $authorizationCodeStore) : self
-    {
-        $this->authorizationCodeStore = $authorizationCodeStore;
+    // Delegate to Federation sub-builder
+    public function withFederationRuntime(FederationRuntimeInterface $federationRuntime) : self { $this->federationBuilder->withFederationRuntime($federationRuntime); return $this; }
+    public function withFederationConnectionStore(FederationConnectionStoreInterface $federationConnectionStore) : self { $this->federationBuilder->withFederationConnectionStore($federationConnectionStore); return $this; }
+    public function withFederatedIdentityLinkStore(FederatedIdentityLinkStoreInterface $federatedIdentityLinkStore) : self { $this->federationBuilder->withFederatedIdentityLinkStore($federatedIdentityLinkStore); return $this; }
 
-        return $this;
-    }
+    // Delegate to SCIM sub-builder
+    public function withScimDirectoryStore(ScimDirectoryStoreInterface $scimDirectoryStore) : self { $this->scimBuilder->withScimDirectoryStore($scimDirectoryStore); return $this; }
+    public function withScimProvisionedIdentityStore(ScimProvisionedIdentityStoreInterface $scimProvisionedIdentityStore) : self { $this->scimBuilder->withScimProvisionedIdentityStore($scimProvisionedIdentityStore); return $this; }
+    public function withLifecycleStore(#[SensitiveParameter] LifecycleStoreInterface $lifecycleStore) : self { $this->scimBuilder->withLifecycleStore($lifecycleStore); return $this; }
 
-    public function withLifecycleStore(#[SensitiveParameter] LifecycleStoreInterface $lifecycleStore) : self
-    {
-        $this->lifecycleStore = $lifecycleStore;
-
-        return $this;
-    }
-
-    public function withAdminElevationStore(AdminElevationStoreInterface $adminElevationStore) : self
-    {
-        $this->adminElevationStore = $adminElevationStore;
-
-        return $this;
-    }
-
-    public function withRiskEngine(DeterministicRiskEngine $deterministicRiskEngine) : self
-    {
-        $this->deterministicRiskEngine = $deterministicRiskEngine;
-
-        return $this;
-    }
-
-    public function withPasskeyRuntime(PasskeyRuntimeInterface $passkeyRuntime) : self
-    {
-        $this->passkeyRuntime = $passkeyRuntime;
-
-        return $this;
-    }
-
-    public function withPasskeyCredentialStore(#[SensitiveParameter] PasskeyCredentialStoreInterface $passkeyCredentialStore) : self
-    {
-        $this->passkeyCredentialStore = $passkeyCredentialStore;
-
-        return $this;
-    }
-
-    public function withPasskeyChallengeStore(PasskeyChallengeStoreInterface $passkeyChallengeStore) : self
-    {
-        $this->passkeyChallengeStore = $passkeyChallengeStore;
-
-        return $this;
-    }
-
-    public function withPasskeyRelyingParty(string $rpId, string $rpName) : self
-    {
-        $this->passkeyRpId   = $rpId;
-        $this->passkeyRpName = $rpName;
-
-        return $this;
-    }
-
-    public function requirePhishingResistantAdminElevation(bool $required = true) : self
-    {
-        $this->adminPhishingResistantRequired = $required;
-
-        return $this;
-    }
-
-    public function withFederationRuntime(FederationRuntimeInterface $federationRuntime) : self
-    {
-        $this->federationRuntime = $federationRuntime;
-
-        return $this;
-    }
-
-    public function withFederationConnectionStore(FederationConnectionStoreInterface $federationConnectionStore) : self
-    {
-        $this->federationConnectionStore = $federationConnectionStore;
-
-        return $this;
-    }
-
-    public function withFederatedIdentityLinkStore(FederatedIdentityLinkStoreInterface $federatedIdentityLinkStore) : self
-    {
-        $this->federatedIdentityLinkStore = $federatedIdentityLinkStore;
-
-        return $this;
-    }
-
-    public function withOidcProvider(OidcProviderInterface $oidcProvider) : self
-    {
-        $this->oidcProvider = $oidcProvider;
-
-        return $this;
-    }
-
-    public function withOidcRequestObjectStore(OidcRequestObjectStoreInterface $oidcRequestObjectStore) : self
-    {
-        $this->oidcRequestObjectStore = $oidcRequestObjectStore;
-
-        return $this;
-    }
-
-    public function withScimDirectoryStore(ScimDirectoryStoreInterface $scimDirectoryStore) : self
-    {
-        $this->scimDirectoryStore = $scimDirectoryStore;
-
-        return $this;
-    }
-
-    public function withScimProvisionedIdentityStore(ScimProvisionedIdentityStoreInterface $scimProvisionedIdentityStore) : self
-    {
-        $this->scimProvisionedIdentityStore = $scimProvisionedIdentityStore;
-
-        return $this;
-    }
-
-    public function withTenantStore(#[SensitiveParameter] TenantStoreInterface $tenantStore) : self
-    {
-        $this->tenantStore = $tenantStore;
-
-        return $this;
-    }
-
-    public function withTenantSecurityConfigurationStore(#[SensitiveParameter] TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore) : self
-    {
-        $this->tenantSecurityConfigurationStore = $tenantSecurityConfigurationStore;
-
-        return $this;
-    }
-
-    public function withTenantSecurityChangeRequestStore(#[SensitiveParameter] TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore) : self
-    {
-        $this->tenantSecurityChangeRequestStore = $tenantSecurityChangeRequestStore;
-
-        return $this;
-    }
-
-    public function withMfaAttemptLimit(LimitMfaAttempts $limitMfaAttempts) : self
-    {
-        $this->limitMfaAttempts = $limitMfaAttempts;
-
-        return $this;
-    }
-
-    public function withMfaIssuer(string $mfaIssuer) : self
-    {
-        $this->mfaIssuer = $mfaIssuer;
-
-        return $this;
-    }
+    // Delegate to Tenancy sub-builder
+    public function withTenantStore(#[SensitiveParameter] TenantStoreInterface $tenantStore) : self { $this->tenancyBuilder->withTenantStore($tenantStore); return $this; }
+    public function withTenantSecurityConfigurationStore(#[SensitiveParameter] TenantSecurityConfigurationStoreInterface $tenantSecurityConfigurationStore) : self { $this->tenancyBuilder->withTenantSecurityConfigurationStore($tenantSecurityConfigurationStore); return $this; }
+    public function withTenantSecurityChangeRequestStore(#[SensitiveParameter] TenantSecurityChangeRequestStoreInterface $tenantSecurityChangeRequestStore) : self { $this->tenancyBuilder->withTenantSecurityChangeRequestStore($tenantSecurityChangeRequestStore); return $this; }
+    public function withAdminElevationStore(AdminElevationStoreInterface $adminElevationStore) : self { $this->tenancyBuilder->withAdminElevationStore($adminElevationStore); return $this; }
+    public function withRiskEngine(DeterministicRiskEngine $deterministicRiskEngine) : self { $this->tenancyBuilder->withRiskEngine($deterministicRiskEngine); return $this; }
+    public function requirePhishingResistantAdminElevation(bool $required = true) : self { $this->tenancyBuilder->requirePhishingResistantAdminElevation($required); return $this; }
 
     /**
      * Configure the builder with default dependencies from the DI container.
-     *
-     * This eliminates ?? new fallback patterns by resolving pre-registered
-     * default implementations from the container. If a dependency has already
-     * been configured via a withXxx() method, the container value is ignored
-     * (explicit configuration always wins).
      */
     public function withContainer(ContainerInterface $container) : self
     {
@@ -615,34 +385,47 @@ final class AuthBuilder
         $this->idGenerator ??= $container->get(IdGenerator::class);
         $this->passwordHasher ??= $container->get(PasswordHasher::class);
         $this->auditLog ??= $container->get(NullAuditLog::class);
-        $this->oAuthClientRegistry ??= $container->get(InMemoryOAuthClientRegistry::class);
-        $this->authorizationCodeStore ??= $container->get(InMemoryAuthorizationCodeStore::class);
-        $this->lifecycleStore ??= $container->get(InMemoryLifecycleStore::class);
-        $this->adminElevationStore ??= $container->get(InMemoryAdminElevationStore::class);
-        $this->deterministicRiskEngine ??= $container->get(DeterministicRiskEngine::class);
-        $this->passkeyCredentialStore ??= $container->get(InMemoryPasskeyCredentialStore::class);
-        $this->passkeyChallengeStore ??= $container->get(InMemoryPasskeyChallengeStore::class);
-        $this->federationConnectionStore ??= $container->get(InMemoryFederationConnectionStore::class);
-        $this->federatedIdentityLinkStore ??= $container->get(InMemoryFederatedIdentityLinkStore::class);
+
         $this->passwordResetStore ??= $container->get(InMemoryPasswordResetStore::class);
         $this->emailVerificationStore ??= $container->get(InMemoryEmailVerificationStore::class);
         $this->emailChangeStore ??= $container->get(InMemoryEmailChangeStore::class);
         $this->emailVerificationStateStore ??= $container->get(InMemoryEmailVerificationStateStore::class);
-        $this->mfaStore ??= $container->get(InMemoryMfaStore::class);
-        $this->mfaChallengeStore ??= $container->get(InMemoryMfaChallengeStore::class);
-        $this->totp ??= $container->get(Totp::class);
-        $this->limitMfaAttempts ??= $container->get(LimitMfaAttempts::class);
-        $this->oidcRequestObjectStore ??= $container->get(InMemoryOidcRequestObjectStore::class);
-        $this->scimDirectoryStore ??= $container->get(InMemoryScimDirectoryStore::class);
-        $this->scimProvisionedIdentityStore ??= $container->get(InMemoryScimProvisionedIdentityStore::class);
-        $this->tenantStore ??= $container->get(InMemoryTenantStore::class);
-        $this->tenantSecurityConfigurationStore ??= $container->get(InMemoryTenantSecurityConfigurationStore::class);
-        $this->tenantSecurityChangeRequestStore ??= $container->get(InMemoryTenantSecurityChangeRequestStore::class);
+
+        // Credential defaults
+        $this->credentialBuilder->withMfaStore($container->get(InMemoryMfaStore::class));
+        $this->credentialBuilder->withMfaChallengeStore($container->get(InMemoryMfaChallengeStore::class));
+        $this->credentialBuilder->usingTotp($container->get(Totp::class));
+        $this->credentialBuilder->withMfaAttemptLimit($container->get(LimitMfaAttempts::class));
+        $this->credentialBuilder->withPasskeyCredentialStore($container->get(InMemoryPasskeyCredentialStore::class));
+        $this->credentialBuilder->withPasskeyChallengeStore($container->get(InMemoryPasskeyChallengeStore::class));
+
+        // OAuth defaults
+        $this->oAuthBuilder->withOAuthClientRegistry($container->get(\Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\InMemoryOAuthClientRegistry::class));
+        $this->oAuthBuilder->withAuthorizationCodeStore($container->get(\Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\InMemoryAuthorizationCodeStore::class));
+
+        // Federation defaults
+        $this->federationBuilder->withFederationConnectionStore($container->get(\Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\InMemoryFederationConnectionStore::class));
+        $this->federationBuilder->withFederatedIdentityLinkStore($container->get(\Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\InMemoryFederatedIdentityLinkStore::class));
+
+        // SCIM defaults
+        $this->scimBuilder->withLifecycleStore($container->get(\Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\InMemoryLifecycleStore::class));
+        $this->scimBuilder->withScimDirectoryStore($container->get(\Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\InMemoryScimDirectoryStore::class));
+        $this->scimBuilder->withScimProvisionedIdentityStore($container->get(\Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\InMemoryScimProvisionedIdentityStore::class));
+
+        // Tenancy defaults
+        $this->tenancyBuilder->withAdminElevationStore($container->get(InMemoryAdminElevationStore::class));
+        $this->tenancyBuilder->withTenantStore($container->get(InMemoryTenantStore::class));
+        $this->tenancyBuilder->withTenantSecurityConfigurationStore($container->get(\Avax\Components\Identity\Tenancy\System\Capabilities\Security\InMemoryTenantSecurityConfigurationStore::class));
+        $this->tenancyBuilder->withTenantSecurityChangeRequestStore($container->get(\Avax\Components\Identity\Tenancy\System\Capabilities\Security\InMemoryTenantSecurityChangeRequestStore::class));
+        $this->tenancyBuilder->withRiskEngine($container->get(DeterministicRiskEngine::class));
+
+        // OIDC defaults
+        $this->oAuthBuilder->withOidcRequestObjectStore($container->get(\Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\InMemoryOidcRequestObjectStore::class));
 
         // Named throttle bindings
-        $this->passwordResetThrottle ??= $container->get('auth.throttle.password_reset');
-        $this->mfaRecoveryThrottle ??= $container->get('auth.throttle.mfa_recovery');
-        $this->scimThrottle ??= $container->get('auth.throttle.scim');
+        $this->credentialBuilder->withPasswordResetThrottle($container->get('auth.throttle.password_reset'));
+        $this->credentialBuilder->withMfaRecoveryThrottle($container->get('auth.throttle.mfa_recovery'));
+        $this->scimBuilder->withScimThrottle($container->get('auth.throttle.scim'));
 
         return $this;
     }
@@ -652,125 +435,100 @@ final class AuthBuilder
      */
     public function ready() : Auth
     {
-        // Phase 1: Resolve raw dependencies
+        $credential   = $this->credentialBuilder->build();
+        $oAuth        = $this->oAuthBuilder->build();
+        $federation   = $this->federationBuilder->build();
+        $scim         = $this->scimBuilder->build();
+        $tenancy      = $this->tenancyBuilder->build();
+
         AuthBootstrapValidator::validate(
-            userSource          : $this->userSource ?? throw ConfigurationException::missingDependency("UserSource", "forUser()"),
-            identity            : $this->identity,
+            userSource: $this->userSource ?? throw ConfigurationException::missingDependency("UserSource", "forUser()"),
+            identity: $this->identity,
             authCapabilityRequests: $this->capabilityRequests(),
-            sessionRegistry     : $this->sessionRegistry,
-            refreshTokenStore   : $this->refreshTokenStore,
-            passkeyRuntime      : $this->passkeyRuntime,
-            federationRuntime   : $this->federationRuntime,
-            oidcProvider        : $this->oidcProvider,
+            sessionRegistry: $this->sessionRegistry,
+            refreshTokenStore: $oAuth['refreshTokenStore'],
+            passkeyRuntime: $credential['passkeyRuntime'],
+            federationRuntime: $federation['federationRuntime'],
+            oidcProvider: $oAuth['oidcProvider'],
         );
 
         $identity       = $this->identity ?? throw ConfigurationException::missingDependency('Identity', 'withIdentity() or withIdentityBackends()');
         $passwordHasher = $this->passwordHasher ?? throw ConfigurationException::missingDependency('PasswordHasher', 'withHasher() or AuthServiceProvider');
         $auditLog       = $this->auditLog ?? throw ConfigurationException::missingDependency('AuditLog', 'withAuditLog() or AuthServiceProvider');
-
         if ($this->auditCorrelationId !== null) {
             $auditLog = new CorrelatingAuditLog(auditLog: $auditLog, correlationId: $this->auditCorrelationId);
         }
+        $clock       = $this->clock ?? throw ConfigurationException::missingDependency('Clock', 'withClock() or AuthServiceProvider');
+        $idGenerator = $this->idGenerator ?? throw ConfigurationException::missingDependency('IdGenerator', 'usingIdGenerator() or AuthServiceProvider');
+        $sessionRegistry = $this->sessionRegistry ?? throw ConfigurationException::missingDependency('SessionRegistry', 'withSessionRegistry() or AuthServiceProvider');
 
-        $clock                                  = $this->clock ?? throw ConfigurationException::missingDependency('Clock', 'withClock() or AuthServiceProvider');
-        $oauthClientRegistry                    = $this->oAuthClientRegistry ?? throw ConfigurationException::missingDependency('OAuthClientRegistry', 'withOAuthClientRegistry() or AuthServiceProvider');
-        $authorizationCodeStore                 = $this->authorizationCodeStore ?? throw ConfigurationException::missingDependency('AuthorizationCodeStore', 'withAuthorizationCodeStore() or AuthServiceProvider');
-        $lifecycleStore                         = $this->lifecycleStore ?? throw ConfigurationException::missingDependency('LifecycleStore', 'withLifecycleStore() or AuthServiceProvider');
-        $adminElevationStore                    = $this->adminElevationStore ?? throw ConfigurationException::missingDependency('AdminElevationStore', 'withAdminElevationStore() or AuthServiceProvider');
-        $riskEngine                             = $this->deterministicRiskEngine ?? throw ConfigurationException::missingDependency('DeterministicRiskEngine', 'withRiskEngine() or AuthServiceProvider');
-        $passkeyCredentialStore                 = $this->passkeyCredentialStore ?? throw ConfigurationException::missingDependency('PasskeyCredentialStore', 'withPasskeyCredentialStore() or AuthServiceProvider');
-        $passkeyChallengeStore                  = $this->passkeyChallengeStore ?? throw ConfigurationException::missingDependency('PasskeyChallengeStore', 'withPasskeyChallengeStore() or AuthServiceProvider');
-        $federationConnectionStore              = $this->federationConnectionStore ?? throw ConfigurationException::missingDependency('FederationConnectionStore', 'withFederationConnectionStore() or AuthServiceProvider');
-        $federatedIdentityLinkStore             = $this->federatedIdentityLinkStore ?? throw ConfigurationException::missingDependency('FederatedIdentityLinkStore', 'withFederatedIdentityLinkStore() or AuthServiceProvider');
-        $passwordResetStore                     = $this->passwordResetStore ?? throw ConfigurationException::missingDependency('PasswordResetStore', 'withPasswordResetStore() or AuthServiceProvider');
-        $emailVerificationStore                 = $this->emailVerificationStore ?? throw ConfigurationException::missingDependency('EmailVerificationStore', 'withEmailVerificationStore() or AuthServiceProvider');
-        $emailChangeStore                       = $this->emailChangeStore ?? throw ConfigurationException::missingDependency('EmailChangeStore', 'withEmailChangeStore() or AuthServiceProvider');
-        $emailVerificationStateStore              = $this->emailVerificationStateStore ?? throw ConfigurationException::missingDependency('EmailVerificationStateStore', 'withEmailVerificationState() or AuthServiceProvider');
-        $mfaStore                               = $this->mfaStore ?? throw ConfigurationException::missingDependency('MfaStore', 'withMfaStore() or AuthServiceProvider');
-        $mfaChallengeStore                      = $this->mfaChallengeStore ?? throw ConfigurationException::missingDependency('MfaChallengeStore', 'withMfaChallengeStore() or AuthServiceProvider');
-        $totp                                   = $this->totp ?? throw ConfigurationException::missingDependency('Totp', 'usingTotp() or AuthServiceProvider');
-        $mfaAttemptLimit                        = $this->limitMfaAttempts ?? throw ConfigurationException::missingDependency('LimitMfaAttempts', 'withMfaAttemptLimit() or AuthServiceProvider');
-        $passwordResetThrottle                  = $this->passwordResetThrottle ?? throw ConfigurationException::missingDependency('PasswordResetThrottle', 'withPasswordResetThrottle() or AuthServiceProvider');
-        $mfaRecoveryThrottle                    = $this->mfaRecoveryThrottle ?? throw ConfigurationException::missingDependency('MfaRecoveryThrottle', 'withMfaRecoveryThrottle() or AuthServiceProvider');
-        $scimThrottle                           = $this->scimThrottle ?? throw ConfigurationException::missingDependency('ScimThrottle', 'withScimThrottle() or AuthServiceProvider');
-        $scimDirectoryStore                     = $this->scimDirectoryStore ?? throw ConfigurationException::missingDependency('ScimDirectoryStore', 'withScimDirectoryStore() or AuthServiceProvider');
-        $scimProvisionedIdentityStore           = $this->scimProvisionedIdentityStore ?? throw ConfigurationException::missingDependency('ScimProvisionedIdentityStore', 'withScimProvisionedIdentityStore() or AuthServiceProvider');
-        $tenantStore                            = $this->tenantStore ?? throw ConfigurationException::missingDependency('TenantStore', 'withTenantStore() or AuthServiceProvider');
-        $tenantSecurityConfigurationStore       = $this->tenantSecurityConfigurationStore ?? throw ConfigurationException::missingDependency('TenantSecurityConfigurationStore', 'withTenantSecurityConfigurationStore() or AuthServiceProvider');
-        $tenantSecurityChangeRequestStore       = $this->tenantSecurityChangeRequestStore ?? throw ConfigurationException::missingDependency('TenantSecurityChangeRequestStore', 'withTenantSecurityChangeRequestStore() or AuthServiceProvider');
-
-        // Phase 2: Build core primitives
-        $projectAuthenticatedUser               = new ProjectAuthenticatedUser(emailVerificationStateStore: $emailVerificationStateStore, mfaStore: $mfaStore);
-        $currentAuthentication                  = new CurrentAuthentication();
-        $requireFreshMfa                        = new RequireFreshMfa(currentAuthentication: $currentAuthentication, clock: $clock);
-        $generateBackupCodes                    = new GenerateBackupCodes(passwordHasher: $passwordHasher, clock: $clock);
-        $verifyBackupCode                       = new VerifyBackupCode(mfaStore: $mfaStore, passwordHasher: $passwordHasher, auditLog: $auditLog, clock: $clock);
-        $startMfaChallenge                      = new StartMfaChallenge(currentAuthentication: $currentAuthentication, generalMfaStore: $mfaStore, mfaChallengeStore: $mfaChallengeStore, auditLog: $auditLog, clock: $clock);
-
-        // Phase 3: Delegate identity/tenancy/scim/risk assembly to extracted class
         $graph = (new AssembleAuthIdentityGraph(
             userSource: $this->userSource, identity: $identity, auditLog: $auditLog, clock: $clock,
-            passwordHasher: $passwordHasher,
-            idGenerator: $this->idGenerator ?? throw ConfigurationException::missingDependency('IdGenerator', 'usingIdGenerator() or AuthServiceProvider'),
-            sessionRegistry: $this->sessionRegistry ?? throw ConfigurationException::missingDependency('SessionRegistry', 'withSessionRegistry() or AuthServiceProvider'),
-            refreshTokenStore: $this->refreshTokenStore ?? throw ConfigurationException::missingDependency('RefreshTokenStore', 'withRefreshTokenStore() or AuthServiceProvider'),
-            mfaStore: $mfaStore, mfaChallengeStore: $mfaChallengeStore, totp: $totp,
-            limitMfaAttempts: $mfaAttemptLimit,
-            passwordResetThrottle: $passwordResetThrottle, mfaRecoveryThrottle: $mfaRecoveryThrottle, scimThrottle: $scimThrottle,
-            passwordResetStore: $passwordResetStore, emailVerificationStore: $emailVerificationStore,
-            emailVerificationStateStore: $emailVerificationStateStore, emailChangeStore: $emailChangeStore,
-            adminElevationStore: $adminElevationStore, riskEngine: $riskEngine,
-            passkeyRuntime: $this->passkeyRuntime ?? throw ConfigurationException::missingDependency('PasskeyRuntime', 'withPasskeyRuntime() or AuthServiceProvider'),
-            passkeyCredentialStore: $passkeyCredentialStore, passkeyChallengeStore: $passkeyChallengeStore,
-            lifecycleStore: $lifecycleStore,
-            scimDirectoryStore: $scimDirectoryStore, scimProvisionedIdentityStore: $scimProvisionedIdentityStore,
-            tenantStore: $tenantStore,
-            tenantSecurityConfigurationStore: $tenantSecurityConfigurationStore, tenantSecurityChangeRequestStore: $tenantSecurityChangeRequestStore,
-            federationConnectionStore: $federationConnectionStore, federationRuntime: $this->federationRuntime,
-            loginRateLimit: $this->loginRateLimit, mfaIssuer: $this->mfaIssuer, passkeyRpId: $this->passkeyRpId, passkeyRpName: $this->passkeyRpName,
-            currentAuthentication: $currentAuthentication, projectAuthenticatedUser: $projectAuthenticatedUser,
-            requireFreshMfa: $requireFreshMfa, generateBackupCodes: $generateBackupCodes,
-            verifyBackupCode: $verifyBackupCode, startMfaChallenge: $startMfaChallenge,
+            passwordHasher: $passwordHasher, idGenerator: $idGenerator,
+            sessionRegistry: $sessionRegistry,
+            refreshTokenStore: $oAuth['refreshTokenStore'] ?? throw ConfigurationException::missingDependency('RefreshTokenStore', 'withRefreshTokenStore() or AuthServiceProvider'),
+            mfaStore: $credential['mfaStore'] ?? throw ConfigurationException::missingDependency('MfaStore', 'withMfaStore() or AuthServiceProvider'),
+            mfaChallengeStore: $credential['mfaChallengeStore'] ?? throw ConfigurationException::missingDependency('MfaChallengeStore', 'withMfaChallengeStore() or AuthServiceProvider'),
+            totp: $credential['totp'] ?? throw ConfigurationException::missingDependency('Totp', 'usingTotp() or AuthServiceProvider'),
+            limitMfaAttempts: $credential['limitMfaAttempts'] ?? throw ConfigurationException::missingDependency('LimitMfaAttempts', 'withMfaAttemptLimit() or AuthServiceProvider'),
+            passwordResetThrottle: $credential['passwordResetThrottle'] ?? throw ConfigurationException::missingDependency('PasswordResetThrottle', 'withPasswordResetThrottle() or AuthServiceProvider'),
+            mfaRecoveryThrottle: $credential['mfaRecoveryThrottle'] ?? throw ConfigurationException::missingDependency('MfaRecoveryThrottle', 'withMfaRecoveryThrottle() or AuthServiceProvider'),
+            scimThrottle: $scim['scimThrottle'] ?? throw ConfigurationException::missingDependency('ScimThrottle', 'withScimThrottle() or AuthServiceProvider'),
+            passwordResetStore: $this->passwordResetStore ?? throw ConfigurationException::missingDependency('PasswordResetStore', 'withPasswordResetStore() or AuthServiceProvider'),
+            emailVerificationStore: $this->emailVerificationStore ?? throw ConfigurationException::missingDependency('EmailVerificationStore', 'withEmailVerificationStore() or AuthServiceProvider'),
+            emailVerificationStateStore: $this->emailVerificationStateStore ?? throw ConfigurationException::missingDependency('EmailVerificationStateStore', 'withEmailVerificationState() or AuthServiceProvider'),
+            emailChangeStore: $this->emailChangeStore ?? throw ConfigurationException::missingDependency('EmailChangeStore', 'withEmailChangeStore() or AuthServiceProvider'),
+            adminElevationStore: $tenancy['adminElevationStore'] ?? throw ConfigurationException::missingDependency('AdminElevationStore', 'withAdminElevationStore() or AuthServiceProvider'),
+            riskEngine: $tenancy['deterministicRiskEngine'] ?? throw ConfigurationException::missingDependency('DeterministicRiskEngine', 'withRiskEngine() or AuthServiceProvider'),
+            passkeyRuntime: $credential['passkeyRuntime'] ?? throw ConfigurationException::missingDependency('PasskeyRuntime', 'withPasskeyRuntime() or AuthServiceProvider'),
+            passkeyCredentialStore: $credential['passkeyCredentialStore'] ?? throw ConfigurationException::missingDependency('PasskeyCredentialStore', 'withPasskeyCredentialStore() or AuthServiceProvider'),
+            passkeyChallengeStore: $credential['passkeyChallengeStore'] ?? throw ConfigurationException::missingDependency('PasskeyChallengeStore', 'withPasskeyChallengeStore() or AuthServiceProvider'),
+            lifecycleStore: $scim['lifecycleStore'] ?? throw ConfigurationException::missingDependency('LifecycleStore', 'withLifecycleStore() or AuthServiceProvider'),
+            scimDirectoryStore: $scim['scimDirectoryStore'] ?? throw ConfigurationException::missingDependency('ScimDirectoryStore', 'withScimDirectoryStore() or AuthServiceProvider'),
+            scimProvisionedIdentityStore: $scim['scimProvisionedIdentityStore'] ?? throw ConfigurationException::missingDependency('ScimProvisionedIdentityStore', 'withScimProvisionedIdentityStore() or AuthServiceProvider'),
+            tenantStore: $tenancy['tenantStore'] ?? throw ConfigurationException::missingDependency('TenantStore', 'withTenantStore() or AuthServiceProvider'),
+            tenantSecurityConfigurationStore: $tenancy['tenantSecurityConfigurationStore'] ?? throw ConfigurationException::missingDependency('TenantSecurityConfigurationStore', 'withTenantSecurityConfigurationStore() or AuthServiceProvider'),
+            tenantSecurityChangeRequestStore: $tenancy['tenantSecurityChangeRequestStore'] ?? throw ConfigurationException::missingDependency('TenantSecurityChangeRequestStore', 'withTenantSecurityChangeRequestStore() or AuthServiceProvider'),
+            federationConnectionStore: $federation['federationConnectionStore'] ?? throw ConfigurationException::missingDependency('FederationConnectionStore', 'withFederationConnectionStore() or AuthServiceProvider'),
+            federationRuntime: $federation['federationRuntime'],
+            loginRateLimit: $this->loginRateLimit,
+            mfaIssuer: $credential['mfaIssuer'], passkeyRpId: $credential['passkeyRpId'], passkeyRpName: $credential['passkeyRpName'],
         ))->assemble();
 
-        $identity                 = $graph['identity'];
-        $tenancy                  = $graph['tenancy'];
-        $scim                     = $graph['scim'];
-        $currentAuthentication    = $graph['currentAuthentication'];
+        $identity              = $graph['identity'];
+        $currentAuthentication = $graph['currentAuthentication'];
         $projectAuthenticatedUser = $graph['projectAuthenticatedUser'];
-        $requireFreshMfa          = $graph['requireFreshMfa'];
         $authCapabilityReadiness  = $graph['authCapabilityReadiness'];
         $provisionableUserSource  = $graph['provisionableUserSource'];
         $lifecycle                = $graph['lifecycle'];
-        $requireAdminElevation    = new RequireAdminElevation(currentAuthentication: $currentAuthentication, adminElevationStore: $adminElevationStore, clock: $clock);
+        $adminElevationStore = $tenancy['adminElevationStore'];
 
-        // Phase 4: Delegate OAuth/OIDC/Federation assembly to extracted class
         (new AssembleAuthExternalIdentityGraph(
-            oauthClientRegistry: $oauthClientRegistry,
-            authorizationCodeStore: $authorizationCodeStore,
-            oidcProvider: $this->oidcProvider,
-            oidcRequestObjectStore: $this->oidcRequestObjectStore,
-            federationConnectionStore: $federationConnectionStore,
-            federatedIdentityLinkStore: $federatedIdentityLinkStore,
-            federationRuntime: $this->federationRuntime,
-            federationMetadataRuntime: $this->federationRuntime instanceof FederationMetadataRuntimeInterface ? $this->federationRuntime : null,
-            federationHealthCheck: $this->federationRuntime instanceof FederationHealthCheckInterface ? $this->federationRuntime : null,
+            oauthClientRegistry: $oAuth['oAuthClientRegistry'] ?? throw ConfigurationException::missingDependency('OAuthClientRegistry', 'withOAuthClientRegistry() or AuthServiceProvider'),
+            authorizationCodeStore: $oAuth['authorizationCodeStore'] ?? throw ConfigurationException::missingDependency('AuthorizationCodeStore', 'withAuthorizationCodeStore() or AuthServiceProvider'),
+            oidcProvider: $oAuth['oidcProvider'],
+            oidcRequestObjectStore: $oAuth['oidcRequestObjectStore'],
+            federationConnectionStore: $federation['federationConnectionStore'],
+            federatedIdentityLinkStore: $federation['federatedIdentityLinkStore'] ?? throw ConfigurationException::missingDependency('FederatedIdentityLinkStore', 'withFederatedIdentityLinkStore() or AuthServiceProvider'),
+            federationRuntime: $federation['federationRuntime'],
+            federationMetadataRuntime: $federation['federationRuntime'] instanceof FederationMetadataRuntimeInterface ? $federation['federationRuntime'] : null,
+            federationHealthCheck: $federation['federationRuntime'] instanceof FederationHealthCheckInterface ? $federation['federationRuntime'] : null,
             userSource: $this->userSource,
             identity: $identity,
             auditLog: $auditLog,
             clock: $clock,
             passwordHasher: $passwordHasher,
-            idGenerator: $this->idGenerator ?? throw ConfigurationException::missingDependency('IdGenerator', 'usingIdGenerator() or AuthServiceProvider'),
-            sessionRegistry: $this->sessionRegistry ?? throw ConfigurationException::missingDependency('SessionRegistry', 'withSessionRegistry() or AuthServiceProvider'),
-            refreshTokenStore: $this->refreshTokenStore ?? throw ConfigurationException::missingDependency('RefreshTokenStore', 'withRefreshTokenStore() or AuthServiceProvider'),
-            deterministicRiskEngine: $riskEngine,
+            idGenerator: $idGenerator,
+            sessionRegistry: $sessionRegistry,
+            refreshTokenStore: $oAuth['refreshTokenStore'],
+            deterministicRiskEngine: $tenancy['deterministicRiskEngine'],
             currentAuthentication: $currentAuthentication,
             projectAuthenticatedUser: $projectAuthenticatedUser,
             authCapabilityReadiness: $authCapabilityReadiness,
             provisionableUserSource: $provisionableUserSource,
             lifecycle: $lifecycle,
-            scim: $scim,
-            requireAdminElevation: $requireAdminElevation,
+            scim: $graph['scim'],
+            requireAdminElevation: new RequireAdminElevation(currentAuthentication: $currentAuthentication, adminElevationStore: $adminElevationStore, clock: $clock),
             adminElevationStore: $adminElevationStore,
         ))->assemble();
 
@@ -779,19 +537,24 @@ final class AuthBuilder
 
     private function capabilityRequests() : AuthCapabilityRequests
     {
+        $credential = $this->credentialBuilder->build();
+        $oAuth      = $this->oAuthBuilder->build();
+        $federation = $this->federationBuilder->build();
+        $scim       = $this->scimBuilder->build();
+
         return AuthCapabilityRequests::from(
             enterpriseMode                        : $this->enterpriseMode,
-            oauthClientRegistryConfigured         : $this->oAuthClientRegistry instanceof OAuthClientRegistryInterface,
-            authorizationCodeStoreConfigured      : $this->authorizationCodeStore instanceof AuthorizationCodeStoreInterface,
-            oidcProviderConfigured                : $this->oidcProvider instanceof OidcProviderInterface,
-            oidcRequestObjectStoreConfigured      : $this->oidcRequestObjectStore instanceof OidcRequestObjectStoreInterface,
-            passkeyCredentialStoreConfigured      : $this->passkeyCredentialStore instanceof PasskeyCredentialStoreInterface,
-            passkeyChallengeStoreConfigured       : $this->passkeyChallengeStore instanceof PasskeyChallengeStoreInterface,
-            passkeyRelyingPartyCustomized         : $this->passkeyRpId !== 'localhost' || $this->passkeyRpName !== 'Avax Auth',
-            federationConnectionStoreConfigured   : $this->federationConnectionStore instanceof FederationConnectionStoreInterface,
-            federatedIdentityLinkStoreConfigured  : $this->federatedIdentityLinkStore instanceof FederatedIdentityLinkStoreInterface,
-            scimDirectoryStoreConfigured          : $this->scimDirectoryStore instanceof ScimDirectoryStoreInterface,
-            scimProvisionedIdentityStoreConfigured: $this->scimProvisionedIdentityStore instanceof ScimProvisionedIdentityStoreInterface,
+            oauthClientRegistryConfigured         : $oAuth['oAuthClientRegistry'] instanceof OAuthClientRegistryInterface,
+            authorizationCodeStoreConfigured      : $oAuth['authorizationCodeStore'] instanceof AuthorizationCodeStoreInterface,
+            oidcProviderConfigured                : $oAuth['oidcProvider'] instanceof OidcProviderInterface,
+            oidcRequestObjectStoreConfigured      : $oAuth['oidcRequestObjectStore'] instanceof OidcRequestObjectStoreInterface,
+            passkeyCredentialStoreConfigured      : $credential['passkeyCredentialStore'] instanceof PasskeyCredentialStoreInterface,
+            passkeyChallengeStoreConfigured       : $credential['passkeyChallengeStore'] instanceof PasskeyChallengeStoreInterface,
+            passkeyRelyingPartyCustomized         : $credential['passkeyRpId'] !== 'localhost' || $credential['passkeyRpName'] !== 'Avax Auth',
+            federationConnectionStoreConfigured   : $federation['federationConnectionStore'] instanceof FederationConnectionStoreInterface,
+            federatedIdentityLinkStoreConfigured  : $federation['federatedIdentityLinkStore'] instanceof FederatedIdentityLinkStoreInterface,
+            scimDirectoryStoreConfigured          : $scim['scimDirectoryStore'] instanceof ScimDirectoryStoreInterface,
+            scimProvisionedIdentityStoreConfigured: $scim['scimProvisionedIdentityStore'] instanceof ScimProvisionedIdentityStoreInterface,
         );
     }
 }

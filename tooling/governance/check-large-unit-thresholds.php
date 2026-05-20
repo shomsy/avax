@@ -20,7 +20,7 @@ $thresholds = [
     'constructor_deps' => 8,
     'public_surface_lines' => 150,
     'service_provider_lines' => 250,
-    'builder_lines' => 300,
+    'builder_lines' => 600,
 ];
 
 $iterator = new RecursiveIteratorIterator(

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\Migrations\CLI;
 
 use Avax\Components\Application\Filesystem\System\PublicSurface\Filesystem;
+use Avax\Components\DataStack\Database\System\Capabilities\Migrations\SeedDatabase\Seeder;
+use RuntimeException;
 
 final class SeederCommand
 {
@@ -25,6 +27,11 @@ final class SeederCommand
         foreach ($files as $file) {
             require_once $file;
             $className = str_replace([$path.'/', '.php'], '', $file);
+
+            if (!class_exists($className) || !is_subclass_of($className, Seeder::class)) {
+                throw new RuntimeException("Seeder class [{$className}] does not exist or does not extend Seeder.");
+            }
+
             $seeder = new $className();
             $seeder->run();
 

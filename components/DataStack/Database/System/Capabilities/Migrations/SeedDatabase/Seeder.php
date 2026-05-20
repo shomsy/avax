@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\DataStack\Database\System\Capabilities\Migrations\SeedDatabase;
 
 use Avax\Components\DataStack\Database\System\Capabilities\Query\Builder\QueryBuilder;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -21,9 +22,13 @@ abstract class Seeder
      */
     public function call(string $class): void
     {
+        if (!class_exists($class) || !is_subclass_of($class, self::class)) {
+            throw new InvalidArgumentException("Seeder class [{$class}] does not exist or does not extend Seeder.");
+        }
+
         basename(path: $class);
         echo sprintf('[36mSeeding:[0m %s%s', $class, PHP_EOL);
-        new $class()->withBuilder(builder: $this->builder())->run();
+        new $class()->withBuilder($this->builder())->run();
     }
 
     /**

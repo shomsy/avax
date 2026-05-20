@@ -14,7 +14,7 @@
 
 ## Merge Commits
 
-1. Phase0: f27e9f5a0 merge(governance): integrate Phase0 truth reconciliation
+1. Phase0: de40cedea merge(governance): integrate Phase0 truth reconciliation
 2. TODO-004: 43c5e6883 merge(security): integrate TODO-004 dynamic class-loading hardening
 3. TODO-004-b: 634b552e5 merge(security): integrate TODO-004-b container migration class-loading hardening
 

@@ -1,6 +1,6 @@
 # AvaX Remediation Execution Board
 
-Status: REMEDIATION_ACTIVE — Round 002 in progress
+Status: REMEDIATION_ACTIVE — Round 002 GREEN (all 4 branches merged to main)
 Execution control: `EVIDENCE/EXECUTION.md` is the canonical execution control document.
 Remediation backlog: `fix-this.md` is the canonical review reconciliation backlog (34 TODOs, 7 P0).
 Evidence root: `.agents/management/evidence/generated/review-reconciliation/`
@@ -20,8 +20,8 @@ fix-this.md (2026-05-20) — RED / BLOCKED_BY_HOW_TO / TARGETED_REDESIGN
 | Metric | Count |
 |--------|-------|
 | Total TODOs | 34 |
-| P0 BLOCKER | 7 (2 completed, 5 remaining) |
-| P1 HIGH | 14 |
+| P0 BLOCKER | 7 (3 completed, 4 remaining) |
+| P1 HIGH | 14 (3 completed, 11 remaining) |
 | P2 MEDIUM | 9 |
 | P3 LOW | 1 |
 | VERIFIED | 2 |
@@ -74,27 +74,26 @@ Lane table:
 
 | Lane | Purpose | Current Active Task | Next Possible Tasks | Parallel Safe? |
 |------|---------|---------------------|---------------------|----------------|
-| Agent A | CSV/Data export security | TODO-026a | TODO-018 slice later | YES |
-| Agent B | DataStack SQL safety | TODO-026b | DataStack query/test hardening later | YES |
-| Agent C | Validation cleanup/runtime refs | TODO-016 | TODO-017 later | YES |
-| Agent D | HTTP session security | TODO-003 | HTTP PublicSurface slice later | LIMITED |
-| Agent R | Review-only | Round 002 review | all execution branches | N/A |
-| Coordinator | Integration | branch setup + sequential merge | main validation | N/A |
+| Agent A | CSV/Data export security | TODO-026a (DONE) | TODO-018 slice later | YES |
+| Agent B | DataStack SQL safety | TODO-026b (DONE) | DataStack query/test hardening later | YES |
+| Agent C | Validation cleanup/runtime refs | TODO-016 (DONE) | TODO-017 later | YES |
+| Agent D | HTTP session security | TODO-003 (DONE) | HTTP PublicSurface slice later | LIMITED |
+| Agent R | Review-only | Round 002 review (DONE) | future review rounds | N/A |
+| Coordinator | Integration | Round 002 merge complete | next round | N/A |
 
 ## Current Round — Parallel Round 002
 
 Goal:
 Close small/high-value security and validation items while keeping integration controlled.
 
-Active branches/worktrees:
+Active branches/worktrees (all merged to main):
 
-| Agent | Task | Branch | Worktree | Type | Merge Order |
-|-------|------|--------|----------|------|-------------|
-| Agent A | TODO-026a | cleanup/todo-026a-csv-formula-injection | ../avax-todo-026a | remediation | 1 |
-| Agent B | TODO-026b | cleanup/todo-026b-compile-data-query-identifiers | ../avax-todo-026b | remediation | 2 |
-| Agent C | TODO-016 | cleanup/todo-016-broken-reference-semantics | ../avax-todo-016 | remediation | 3 |
-| Agent D | TODO-003 | security/todo-003-csrf-session-authority | ../avax-todo-003 | analysis-first remediation | 4 |
-| Agent R | Round review | review/parallel-round-002 | ../avax-round-002-review | review-only | N/A |
+| Agent | Task | Branch | Merge Commit | Type | Merge Order |
+|-------|------|--------|--------------|------|-------------|
+| Agent C | TODO-016 | cleanup/todo-016-broken-reference-semantics | `6718fa716` | remediation | 1 |
+| Agent A | TODO-026a | cleanup/todo-026a-csv-formula-injection | `64cc4189a` | remediation | 2 |
+| Agent B | TODO-026b | cleanup/todo-026b-compile-data-query-identifiers | `b1a66c781` | remediation | 3 |
+| Agent D | TODO-003 | security/todo-003-csrf-session-authority | `c3abfc1bb` | analysis-first remediation | 4 |
 
 ## Dependency and Conflict Notes
 
@@ -102,7 +101,7 @@ Active branches/worktrees:
 - TODO-016 is parallel-safe if it only touches known broken reference semantics and does not modify HTTP session/security ownership.
 - TODO-003 is analysis-first and may become sequential-only if it overlaps HTTP/PublicSurface or global helper cleanup.
 - TODO-004, TODO-005, TODO-006, TODO-007 are not part of Round 002.
-- TODO-004 should wait until TODO-026a/TODO-026b/TODO-016/TODO-003 are reviewed.
+- TODO-004 is the next logical item (dynamic class-loading boundaries).
 - TODO-005 should wait until TODO-004 is understood.
 - TODO-006 and TODO-007 require separate architecture-focused rounds.
 
@@ -161,6 +160,32 @@ A round is complete only when:
   - Commits: `3619e7e8a`, `c421bd1e4`
   - Status: VERIFIED_WITH_MAPPINGS / 141 IDs mapped to existing TODOs 004-024
 
+### Round 002 — Integrated (2026-05-20)
+
+- [x] **TODO-016** — Broken reference semantics
+  - Merge commit: `6718fa716`
+  - Status: DONE / integrated into main
+  - Scope: SagaReferenceSemanticsTest, SagaTest, WorkflowTest, WorkqueueFeatureTest, ResolveActiveRecovery, IdempotencyStore, CompensationExecutor, PersistWorkerProgress
+  - Validation: 0 active broken refs, all governance GREEN
+
+- [x] **TODO-026a** — CSV formula injection hardening
+  - Merge commit: `64cc4189a`
+  - Status: DONE / integrated into main
+  - Scope: CsvFormat, CsvFormatter, NeutralizeFormulaCell
+  - Validation: 46 CSV injection tests GREEN (negative + positive)
+
+- [x] **TODO-026b** — CompileDataQuery SQL identifier hardening
+  - Merge commit: `b1a66c781`
+  - Status: DONE / integrated into main
+  - Scope: CompileDataQuery identifier interpolation sanitization
+  - Validation: 88 SQL injection identifier safety tests GREEN
+
+- [x] **TODO-003** — CSRF/session authority unification
+  - Merge commit: `c3abfc1bb`
+  - Status: DONE / integrated into main
+  - Scope: CsrfToken, CsrfTokenGenerator, CsrfVerifier, SessionScope, Security shortcuts
+  - Validation: 53 CSRF/session tests GREEN, runtime composition leaks PASS
+
 ## Required Validation Per Iteration
 
 ```bash
@@ -207,25 +232,25 @@ Note: TODO-001 and TODO-002 are already completed (see Completed/Integrated sect
 - **TODO-026a**: Escape CSV formula injection cells (CsvFormat, CsvFormatter)
 - Foci: `components/HTTP/ContentNegotiation/System/Capabilities/Formats/CsvFormat.php`, `components/HTTP/ContentNegotiation/System/PublicSurface/CsvFormatter.php`
 - Negative tests required: CSV formula chars (=, +, -, @, tab)
-- Validation: `vendor/bin/phpunit --filter "CsvFormat|CsvFormatter|CsvInjection" --no-coverage`
-- Evidence: `.agents/management/evidence/generated/todo-026-sql-csv-verification/confirmed-findings.md`
-- Status: READY_FOR_ROUND_002 — Agent A lane
+- Merge commit: `64cc4189a`
+- Validation: 46 tests GREEN, governance GREEN
+- Status: DONE
 
 ### Iteration 1.2 — CompileDataQuery Identifier Interpolation Hardening
 - **TODO-026b**: Sanitize identifier interpolation in CompileDataQuery SQL compilation
 - Foci: `components/DataStack/Persistence/System/Flows/CompileDataQuery/CompileDataQuery.php`
 - Negative tests required: malicious identifiers rejected or escaped
-- Validation: `vendor/bin/phpunit --filter "CompileDataQuery|SqlInjection" --no-coverage`
-- Evidence: `.agents/management/evidence/generated/todo-026-sql-csv-verification/confirmed-findings.md`
-- Status: READY_FOR_ROUND_002 — Agent B lane
+- Merge commit: `b1a66c781`
+- Validation: 88 tests GREEN, governance GREEN
+- Status: DONE
 
 ### Iteration 1.3 — CSRF/Session Authority
 - **TODO-003**: Unify CSRF/session authority (SessionScope, NativeSessionStore, CsrfToken, CsrfTokens, CsrfTokenGenerator)
 - Foci: `components/HTTP/Session`, `components/HTTP/Security`
 - Tests: negative CSRF validation, token rotation, session lifecycle, duplicate helper load
-- Validation: `vendor/bin/phpunit --filter "Csrf|Session" --no-coverage && php tooling/refactor/check-runtime-composition-leaks.php`
-- Evidence: `.agents/management/evidence/generated/review-reconciliation/security-runtime-escalation.md`
-- Status: READY_FOR_ANALYSIS_FIRST — Agent D lane
+- Merge commit: `c3abfc1bb`
+- Validation: 53 tests GREEN, runtime composition leaks PASS, governance GREEN
+- Status: DONE
 
 ### Iteration 1.4 — Dynamic Class-Loading Boundaries
 - **TODO-004**: Close dynamic class-loading execution paths (QueueWorker, RunRecoveryAction, RunFallbackAction, migration/seeder, Container class_exists+new)
@@ -320,12 +345,17 @@ Status: PENDING
 
 Goal: Close cross-cutting P1 items that span multiple components.
 
-### Iteration 4.1 — Broken Refs + Filesystem Paths
+### Iteration 4.1 — Broken Refs
 - **TODO-016**: Fix broken reference semantics in public/runtime namespaces
+- Foci: `components/Operations/ApplicationWorkflow`, `components/HTTP`, `framework/System/Configuration/Builders`, `framework/System/Capabilities/FailureBoundary`
+- Merge commit: `6718fa716`
+- Validation: 0 active broken refs, governance GREEN
+- Status: DONE
+
+### Iteration 4.1b — Filesystem Paths
 - **TODO-017**: Route raw filesystem/path operations through approved first-party boundaries
 - Foci: `components/Operations/ApplicationWorkflow`, `components/HTTP`, `framework/System/Configuration/Builders`, `framework/System/Capabilities/FailureBoundary`
-- Validation: `php tooling/refactor/check-broken-reference-semantics.php && composer dump-autoload -o && php tooling/refactor/check-public-surface.php`
-- Status: READY_FOR_ROUND_002 — Agent C lane (TODO-016 only)
+- Status: PENDING
 
 ### Iteration 4.2 — Security Logging + Global Helpers
 - **TODO-018**: Harden security logging, redaction, and secret parameter handling
@@ -404,7 +434,7 @@ Status: PENDING
 |----|-------|----------|-------|--------|
 | TODO-001 | Serialized payload hardening | P0 | — | DONE |
 | TODO-002 | Compiled container namespace | P0 | — | DONE |
-| TODO-003 | CSRF/session authority | P0 | 1.3 | READY_FOR_ANALYSIS |
+| TODO-003 | CSRF/session authority | P0 | 1.3 | DONE |
 | TODO-004 | Dynamic class-loading boundaries | P0 | 1.4 | PENDING |
 | TODO-005 | Static secret state | P0 | 1.5 | PENDING |
 | TODO-006 | Framework entrypoint composition | P0 | 2.1 | PENDING |
@@ -417,8 +447,8 @@ Status: PENDING
 | TODO-013 | Security/Identity/DataStack PublicSurface | P1 | 3.4 | PENDING |
 | TODO-014 | Constructor defaults | P1 | 3.5 | PENDING |
 | TODO-015 | ServiceProvider assembly | P1 | 3.5 | PENDING |
-| TODO-016 | Broken reference semantics | P1 | 4.1 | READY_FOR_ROUND_002 |
-| TODO-017 | Filesystem/path boundaries | P1 | 4.1 | PENDING |
+| TODO-016 | Broken reference semantics | P1 | 4.1 | DONE |
+| TODO-017 | Filesystem/path boundaries | P1 | 4.1b | PENDING |
 | TODO-018 | Security logging/redaction | P1 | 4.2 | PENDING |
 | TODO-019 | Global helper service-locators | P1 | 4.2 | PENDING |
 | TODO-020 | Constructor bloat | P2 | 5.1 | PENDING |
@@ -427,8 +457,8 @@ Status: PENDING
 | TODO-023 | Duplicate ownership | P2 | 5.2 | PENDING |
 | TODO-024 | Hidden superglobal/IO access | P2 | 5.2 | PENDING |
 | TODO-025 | Error handling | P2 | 5.3 | PENDING |
-| TODO-026a | CSV formula injection | P1 | 1.1 | READY_FOR_ROUND_002 |
-| TODO-026b | CompileDataQuery identifiers | P1 | 1.2 | READY_FOR_ROUND_002 |
+| TODO-026a | CSV formula injection | P1 | 1.1 | DONE |
+| TODO-026b | CompileDataQuery identifiers | P1 | 1.2 | DONE |
 | TODO-027 | Interface contract docs | P2 | 5.4 | PENDING |
 | TODO-028 | Empty stubs/no-ops | P2 | 5.4 | PENDING |
 | TODO-029 | DI container performance | P2 | 5.5 | PENDING |

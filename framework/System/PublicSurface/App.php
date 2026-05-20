@@ -8,10 +8,8 @@ use Avax\Components\HTTP\Request\System\Flows\CreateRequestFromGlobals\CreateReq
 use Avax\Components\HTTP\Router\System\Capabilities\RouteCollection\RouteMethod;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
 use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
-use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;
 use Avax\Framework\System\Capabilities\PreCommit\Configuration\PreCommitConfig;
 use Avax\Framework\System\Capabilities\PreCommit\PreCommit;
-use Avax\Framework\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeInterface;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeResponse;
@@ -75,15 +73,12 @@ final class App
 
     private Closure|null $exceptionHandler = null;
 
-    private RunApplication|null $dispatcher = null;
-
     public function __construct(
         private readonly RuntimeInterface $runtime,
         private readonly ResetApplicationState $resetApplicationState,
         private readonly CreateHttpResponse $createHttpResponse,
-        private readonly NormalizeControllerResult $normalizer,
         private readonly CreateRequestFromGlobals $createRequestFromGlobals,
-        private readonly MetricsCollector|null $metricsCollector = null,
+        private readonly RunApplication $dispatcher,
     ) {
     }
 
@@ -201,9 +196,6 @@ final class App
      */
     public function handle(RuntimeRequest $request): ResponseInterface
     {
-        $this->ensureInitialized();
-        assert($this->dispatcher !== null);
-
         $openScope = new OpenHttpRequestScope(
             requestScopes: $this->runtime->requestScopes(),
             runtimeContext: $this->runtime->context(),
@@ -296,17 +288,6 @@ final class App
         $this->routeDefinitions[] = $definition;
     }
 
-    private function ensureInitialized(): void
-    {
-        if ($this->dispatcher === null) {
-            $this->dispatcher = RunApplication::withDefaultResolutionPipeline(
-                createHttpResponse: $this->createHttpResponse,
-                normalizer        : $this->normalizer,
-                metricsCollector  : $this->metricsCollector,
-            );
-        }
-    }
-
     private function buildRegisteredRoutes(): RegisteredHttpRoutes
     {
         $routesByMethod = [];
@@ -325,8 +306,6 @@ final class App
 
     private function handleRequest(): ResponseInterface
     {
-        $this->ensureInitialized();
-
         // V5-13: Delegate superglobal access to canonical Request component.
         // App.php must not access $_SERVER/$_GET/$_POST/$_FILES/php://input directly.
         $avaxRequest = $this->createRequestFromGlobals->execute();

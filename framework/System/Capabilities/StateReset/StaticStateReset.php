@@ -6,6 +6,7 @@ namespace Avax\Framework\System\Capabilities\StateReset;
 
 use Avax\Components\Application\Container\System\PublicSurface\Container;
 use Avax\Components\Application\Facade\System\Foundation\Facade;
+use Avax\Components\Security\Secrets\System\PublicSurface\Secrets;
 use Avax\Framework\System\Capabilities\ExternalState\System\PublicSurface\ExternalState;
 use Avax\Framework\System\Capabilities\ResourceGovernance\System\PublicSurface\ResourceGovernor;
 use Avax\Framework\System\Capabilities\Runtime\GracefulShutdown\System\Capabilities\ShutdownSequence;
@@ -36,7 +37,10 @@ final class StaticStateReset implements ResettableState
         // 4. Reset ExternalState adapters
         ExternalState::reset();
 
-        // 5. Reset ShutdownSequence (draining flags, callbacks)
+        // 5. Reset Secrets store (worker safety: prevent secret leakage between requests)
+        Secrets::reset();
+
+        // 6. Reset ShutdownSequence (draining flags, callbacks)
         ShutdownSequence::reset();
     }
 }

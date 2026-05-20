@@ -55,4 +55,9 @@ final class Secrets
     {
         self::store()->set($key, $value);
     }
+
+    public static function reset(): void
+    {
+        self::$secretStore = new InMemorySecretStore();
+    }
 }

@@ -12,8 +12,10 @@ use PHPUnit\Framework\TestCase;
 final class V4AppDoesNotDuplicateComponentsTest extends TestCase
 {
     private string $appCode;
+    private string $bootDslCode;
     private string $runCode;
     private string $buildRunApplicationCode;
+    private string $buildBootDslEngineCode;
     private string $secureRequestCode;
 
     protected function setUp(): void
@@ -21,8 +23,10 @@ final class V4AppDoesNotDuplicateComponentsTest extends TestCase
         parent::setUp();
         $basePath = dirname(__DIR__, 3);
         $this->appCode = (string) file_get_contents($basePath . '/framework/System/PublicSurface/App.php');
+        $this->bootDslCode = (string) file_get_contents($basePath . '/framework/System/PublicSurface/BootDsl.php');
         $this->runCode = (string) file_get_contents($basePath . '/framework/System/Flows/RunApplication/RunApplication.php');
         $this->buildRunApplicationCode = (string) file_get_contents($basePath . '/framework/System/Configuration/Builders/BuildRunApplication.php');
+        $this->buildBootDslEngineCode = (string) file_get_contents($basePath . '/framework/System/Configuration/BootDsl/BuildBootDslEngine.php');
         $this->secureRequestCode = (string) file_get_contents($basePath . '/components/HTTP/SecureRequest/System/PublicSurface/SecureRequest.php');
     }
 
@@ -45,6 +49,14 @@ final class V4AppDoesNotDuplicateComponentsTest extends TestCase
         // Default dispatch assembly belongs in Configuration, not the runtime flow.
         self::assertStringNotContainsString('new RouteFacadeContainer', $this->runCode);
         self::assertStringContainsString('RouteFacadeContainer', $this->buildRunApplicationCode);
+    }
+
+    public function testBootDslDelegatesBootEngineAssemblyToConfiguration(): void
+    {
+        self::assertStringNotContainsString('new BootDslEngine', $this->bootDslCode);
+        self::assertStringContainsString('BuildBootDslEngine::fromBootOptions', $this->bootDslCode);
+        self::assertStringContainsString('new BootDslEngine', $this->buildBootDslEngineCode);
+        self::assertStringContainsString('new ProviderRegistry', $this->buildBootDslEngineCode);
     }
 
     public function testAppDoesNotDuplicateDataTransfer(): void

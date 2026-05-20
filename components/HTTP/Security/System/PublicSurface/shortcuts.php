@@ -4,23 +4,27 @@ declare(strict_types=1);
 
 /**
  * HTTP Security shortcuts for global access.
+ *
+ * All CSRF token operations delegate through the Security PublicSurface
+ * which owns CsrfTokens — the single CSRF token authority.
+ *
+ * These functions are convenience wrappers only.
+ * No session I/O happens here.
  */
 if (! function_exists('csrf_token')) {
     /**
      * Get or generate a CSRF token.
+     *
+     * Delegates to Security PublicSurface → CsrfTokens.
+     * CsrfTokens is the single authority for token generation,
+     * expiration, and consumption.
      */
     function csrf_token() : string
     {
-        $session = session();
+        $security = app(\Avax\Components\HTTP\Security\System\PublicSurface\Security::class);
+        assert($security instanceof \Avax\Components\HTTP\Security\System\PublicSurface\Security);
 
-        if ($session->has('_csrf_token')) {
-            return (string) $session->get('_csrf_token');
-        }
-
-        $token = bin2hex(random_bytes(32));
-        $session->put('_csrf_token', $token);
-
-        return $token;
+        return $security->csrfToken();
     }
 }
 
@@ -47,6 +51,8 @@ if (! function_exists('csrf_method')) {
 if (! function_exists('secure_headers')) {
     /**
      * Set security headers on the response.
+     *
+     * @param array<string, string> $headers
      */
     function secure_headers(array $headers = []) : void
     {

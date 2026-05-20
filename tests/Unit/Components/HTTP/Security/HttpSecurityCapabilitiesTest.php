@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\HTTP\Security;
 
-use Avax\Components\HTTP\Security\System\Capabilities\Csrf\CsrfToken;
 use Avax\Components\HTTP\Security\System\Capabilities\Csrf\CsrfVerifier;
 use PHPUnit\Framework\TestCase;
 
@@ -14,7 +13,7 @@ final class HttpSecurityCapabilitiesTest extends TestCase
     {
         $token = 'valid-token';
 
-        $this->assertTrue(CsrfVerifier::verify($token, 'valid-token'));
+        $this->assertTrue(CsrfVerifier::verify($token, $token));
         $this->assertFalse(CsrfVerifier::verify($token, 'invalid-token'));
     }
 }

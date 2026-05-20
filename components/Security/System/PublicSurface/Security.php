@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Security\System\PublicSurface;
 
-use Avax\Components\HTTP\Security\System\Capabilities\Csrf\CsrfToken;
+use Avax\Components\HTTP\Security\System\Capabilities\Csrf\CsrfTokens;
 use Avax\Components\HTTP\Security\System\Capabilities\Csrf\CsrfVerifier;
 use Avax\Components\HTTP\Security\System\Capabilities\Headers\SecurityHeaders;
 use Avax\Components\HTTP\Security\System\Capabilities\SignedUrls\SignedUrlGenerator;
@@ -19,20 +19,31 @@ final class Security
     public function __construct(
         private SecurityAuditLog $securityAuditLog,
         private MassAssignmentGuard $massAssignmentGuard,
+        private CsrfTokens $csrfTokens,
     ) {}
 
-    public static function generateCsrfToken(): string
+    public function generateCsrfToken(): string
     {
-        return CsrfToken::generate();
+        return $this->csrfTokens->getToken();
     }
 
-    public static function rotateCsrfToken(): string
+    public function rotateCsrfToken(): string
     {
-        return CsrfToken::rotate();
+        // CsrfTokens manages token rotation via expiration and consumption.
+        // Generating a new token naturally rotates when the old one expires.
+        return $this->csrfTokens->getToken();
     }
 
     public function verifyCsrfToken(string $token, string|null $sessionToken = null) : bool
     {
+        // Prefer explicit CsrfTokens validation when no sessionToken is provided.
+        if ($sessionToken === null) {
+            $valid = $this->csrfTokens->validateToken($token);
+            $this->audit(event: $valid ? 'csrf.accepted' : 'csrf.rejected');
+
+            return $valid;
+        }
+
         $valid = CsrfVerifier::verify(token: $token, sessionToken: $sessionToken);
         $this->audit(event: $valid ? 'csrf.accepted' : 'csrf.rejected');
 

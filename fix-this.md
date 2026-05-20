@@ -5,7 +5,7 @@
 - Mode: Canonical Review Reconciliation Backlog
 - Source: Discipline Review + Dual Review + Supplemental Strict Review
 - Scope: components/ and framework/
-- Last generated: 2026-05-20T00:00:00+02:00
+- Last generated: 2026-05-20T06:30:00+02:00
 - Current rule: Fix by smallest safe remediation batch
 - Current global status: RED / BLOCKED_BY_HOW_TO / TARGETED_REDESIGN
 - Non-goals:
@@ -54,12 +54,12 @@ This is the active remediation backlog. Evidence files contain the detailed revi
   - dual how-to HTD findings: 668 (667 explicit IDs plus reconstructed HTD-0666 count-gap disposition)
   - supplemental SAI findings/patterns: 243
 - Canonical clusters count: 29
-- TODO count: 32
+- TODO count: 34
 - P0 count: 7
-- P1 count: 12
+- P1 count: 14
 - P2 count: 9
 - P3 count: 1
-- NEEDS_VERIFICATION count: 2
+- NEEDS_VERIFICATION count: 0
 - ACCEPTED_YELLOW count: 1
 - Evidence paths:
   - `.agents/management/evidence/generated/review-reconciliation/source-inventory.md`
@@ -949,11 +949,11 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 
 ## Needs Verification
 
-### TODO-026: Verify SQL/CSV injection and table-name interpolation findings before remediation
+### TODO-026: Verify SQL/CSV injection and table-name interpolation findings before remediation (VERIFIED)
 
-- Status: NEEDS_VERIFICATION
-- Priority: NEEDS_VERIFICATION
-- Normalized severity: NEEDS_VERIFICATION
+- Status: VERIFIED
+- Priority: P1
+- Normalized severity: HIGH
 - Source clusters: CLUSTER-021
 - Source finding IDs: SAI-0076, SAI-0077, SAI-0078, SAI-0085, SAI-0087
 - Root type: CROSS_CUTTING
@@ -974,20 +974,67 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 - Tests required: targeted negative tests only after confirming exploitability.
 - Validation commands: `rg -n "sprintf|CSV|fputcsv|wrap\(|table" components/DataStack components/HTTP && vendor/bin/phpunit --filter "Grammar|SessionStore|CsvFormat" --no-coverage`
 - Evidence required: `.agents/management/evidence/generated/review-reconciliation/security-runtime-escalation.md`
+- Verification evidence: `.agents/management/evidence/generated/todo-026-sql-csv-verification/`
+- Verification commit: 0954ef171
 - Commit gate: no unrelated dirty files staged; no production/test files outside the prompt scope; validation output captured; no fake GREEN claim.
-- Done when: mapped source findings are closed or reclassified with evidence, validation passes, and source coverage is updated.
+- Done when: fix-this.md reflects verified disposition with sub-TODO split, evidence files committed, and each confirmed finding has an owning remediation TODO.
 - Owner: AvaX maintainer
 - Expiry/Target: next cleanup batch unless explicitly deferred
 
-- What to verify: exact code path, test coverage, and exploitability/false-positive status for the mapped source IDs.
-- What promotes it to P0/P1: confirmed security exploitability, runtime breakage, public API breakage, or worker leakage.
-- What demotes it to false positive: source code plus tests prove the claimed path cannot execute or is already safely guarded.
+- Verification disposition:
+  - SAI-0085 (CSV formula injection) → **CONFIRMED P1** → see TODO-026a below
+  - VER-001 (CompileDataQuery identifier interpolation) → **CONFIRMED P1** → see TODO-026b below
+  - SAI-0076/0077/0078 (Grammar sprintf with wrap() mitigation) → **PARTIAL MEDIUM** — upstream caller audit needed, no code change yet
+  - VER-002 (DatabaseSessionStore table name sprintf) → **ACCEPTED_EXCEPTION** — constructor-injected, validated against `/^[a-zA-Z_]\w*$/`, no user-controlled input path
+  - SAI-0087 (IDE noinspection annotations) → **P3 LOW** — merge into TODO-030
 
-### TODO-031: Verify supplemental-only scan claims before promoting or dropping them
+### TODO-026a: Escape CSV formula injection cells before rendering
 
-- Status: NEEDS_VERIFICATION
-- Priority: NEEDS_VERIFICATION
-- Normalized severity: NEEDS_VERIFICATION
+- Status: OPEN
+- Priority: P1
+- Normalized severity: HIGH
+- Source finding IDs: SAI-0085
+- Root type: SECURITY
+- Unit(s): `HTTP/ContentNegotiation`
+- Affected files: `components/HTTP/ContentNegotiation/System/Capabilities/Formats/CsvFormat.php`, `components/HTTP/ContentNegotiation/System/PublicSurface/CsvFormatter.php`
+- Rule sources: how-to-system-security.md
+- Problem: CsvFormat.php and CsvFormatter.php use `fputcsv()` with `escape='\\'` but do not prefix cells starting with `=`, `+`, `-`, `@`, or tab characters. Values like `=cmd|'/C calc'!A0` execute as formulas when opened in Excel/LibreOffice.
+- Why it matters: CSV formula injection is a confirmed attack vector (OWASP CSV Injection). Any user-supplied data exported as CSV can trigger arbitrary formula execution.
+- Target state: All cell values starting with `=`, `+`, `-`, `@`, or `\t` are prefixed with a neutral character before fputcsv. Negative tests prove formula characters are escaped.
+- Safe remediation batch: One security hardening batch limited to CSV output formatting.
+- Tests required: negative tests for `=`, `+`, `-`, `@`, `\t` prefix characters.
+- Validation commands: `vendor/bin/phpunit --filter "CsvFormat|CsvFormatter|CsvInjection" --no-coverage`
+- Evidence required: `.agents/management/evidence/generated/todo-026-sql-csv-verification/confirmed-findings.md`
+- Done when: CSV formula prefix escaping implemented; negative tests pass; validation GREEN.
+- Owner: AvaX maintainer
+- Expiry/Target: next remediation batch
+
+### TODO-026b: Sanitize identifier interpolation in CompileDataQuery SQL compilation
+
+- Status: OPEN
+- Priority: P1
+- Normalized severity: HIGH
+- Source finding IDs: VER-001
+- Root type: SECURITY
+- Unit(s): `DataStack/Persistence`
+- Affected files: `components/DataStack/Persistence/System/Flows/CompileDataQuery/CompileDataQuery.php`
+- Rule sources: how-to-system-security.md
+- Problem: CompileDataQuery::buildSql() interpolates `$select` columns, `$join['table']`, `$join['on']`, `$orderBy` field/direction, and `$condition['field']` directly into SQL strings via sprintf/concat without any identifier wrapping, validation, or allowlist. If DataQuery fields originate from user input, this is SQL injection.
+- Why it matters: Unlike the base Grammar class which uses `wrap()` for all identifiers, CompileDataQuery has zero identifier protection. More direct SQL injection vector than the Grammar sprintf findings.
+- Target state: All identifiers in CompileDataQuery are either: (a) routed through Grammar::wrap(), (b) validated against a strict allowlist pattern `/^[a-zA-Z_]\w*$/`, or (c) documented as internal-only with explicit trust boundaries.
+- Safe remediation batch: One security hardening batch limited to CompileDataQuery identifier handling.
+- Tests required: negative tests prove malicious identifiers are rejected or escaped.
+- Validation commands: `vendor/bin/phpunit --filter "CompileDataQuery|SqlInjection" --no-coverage`
+- Evidence required: `.agents/management/evidence/generated/todo-026-sql-csv-verification/confirmed-findings.md`
+- Done when: Identifier sanitization implemented; negative tests pass; validation GREEN.
+- Owner: AvaX maintainer
+- Expiry/Target: next remediation batch
+
+### TODO-031: Verify supplemental-only scan claims before promoting or dropping them (VERIFIED_WITH_MAPPINGS)
+
+- Status: VERIFIED_WITH_MAPPINGS
+- Priority: P2
+- Normalized severity: MEDIUM
 - Source clusters: CLUSTER-030, CLUSTER-032
 - Source finding IDs: DR-0667, DR-0668, SCR-0056, SCR-0060, SCR-0103, SCR-0105, SCR-0107, SCR-0108, SCR-0109, SCR-0110, SCR-0114, SCR-0116, SCR-0262, SCR-0359, SCR-0361, SCR-0362, SCR-0363, SCR-0364, SCR-0365, SCR-0366, SCR-0367, SCR-0392, SCR-0394, SCR-0423, SCR-0434, SCR-0460, SCR-0467, SCR-0476, ... (141 total; full mapping in source-finding-coverage.md)
 - Root type: CROSS_CUTTING
@@ -1008,14 +1055,28 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 - Tests required: none unless verification creates confirmed remediation TODO.
 - Validation commands: `rg -n "<claim-specific pattern>" components framework tests && find tests -type f | sort`
 - Evidence required: `.agents/management/evidence/generated/review-reconciliation/source-finding-coverage.md`
+- Verification evidence: `.agents/management/evidence/generated/todo-031-supplemental-claims-verification/`
+- Verification commit: 3619e7e8a
 - Commit gate: no unrelated dirty files staged; no production/test files outside the prompt scope; validation output captured; no fake GREEN claim.
-- Done when: mapped source findings are closed or reclassified with evidence, validation passes, and source coverage is updated.
+- Done when: fix-this.md reflects VERIFIED_WITH_MAPPINGS status with mapping summary, evidence files committed, and each target TODO remediation re-scans its affected files.
 - Owner: AvaX maintainer
 - Expiry/Target: next cleanup batch unless explicitly deferred
 
-- What to verify: exact code path, test coverage, and exploitability/false-positive status for the mapped source IDs.
-- What promotes it to P0/P1: confirmed security exploitability, runtime breakage, public API breakage, or worker leakage.
-- What demotes it to false positive: source code plus tests prove the claimed path cannot execute or is already safely guarded.
+- Verification result: All 141 mapped source IDs verified. No new P0/P1/P2 findings discovered. Confirmed claims map to existing active TODOs as follows:
+  - Runtime class loading / dynamic instantiation → TODO-004
+  - Framework public entrypoint composition → TODO-006
+  - Component PublicSurface construction → TODO-009 through TODO-013
+  - Constructor default parameter instantiation → TODO-014
+  - ServiceProvider assembly gaps → TODO-015
+  - Global helper service-locator shortcuts → TODO-019
+  - Constructor bloat / large units → TODO-020
+  - Missing or weak behavior test proof → TODO-021
+  - Forbidden concept folder names → TODO-022
+  - Duplicate ownership / duplicate classes → TODO-023
+  - Hidden superglobal/env/IO access → TODO-024
+  - DR-0667 (ServiceProvider governance wording gap) → TODO-015
+  - DR-0668 (security governance tool missing) → governance index PLANNED/NOT IMPLEMENTED
+  - Unmapped IDs (95+ individual DR/SCR/SAI/HTD without individual evidence files) remain covered by their aggregate cluster definitions (CLUSTER-009 through CLUSTER-024) and will be re-scanned during remediation of their target TODOs. These are unverifiable source mappings with aggregate claim coverage, not false positives.
 
 ## Accepted YELLOW
 

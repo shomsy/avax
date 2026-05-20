@@ -17,6 +17,8 @@ final class V4AppDoesNotDuplicateComponentsTest extends TestCase
     private string $buildRunApplicationCode;
     private string $buildBootDslEngineCode;
     private string $secureRequestCode;
+    private string $avaxCode;
+    private string $buildAvaxEngineCode;
 
     protected function setUp(): void
     {
@@ -28,6 +30,8 @@ final class V4AppDoesNotDuplicateComponentsTest extends TestCase
         $this->buildRunApplicationCode = (string) file_get_contents($basePath . '/framework/System/Configuration/Builders/BuildRunApplication.php');
         $this->buildBootDslEngineCode = (string) file_get_contents($basePath . '/framework/System/Configuration/BootDsl/BuildBootDslEngine.php');
         $this->secureRequestCode = (string) file_get_contents($basePath . '/components/HTTP/SecureRequest/System/PublicSurface/SecureRequest.php');
+        $this->avaxCode = (string) file_get_contents($basePath . '/framework/System/PublicSurface/Avax.php');
+        $this->buildAvaxEngineCode = (string) file_get_contents($basePath . '/framework/System/Configuration/BuildApplication/Builders/BuildAvaxEngine.php');
     }
 
     public function testAppDoesNotImplementRouter(): void
@@ -107,5 +111,31 @@ final class V4AppDoesNotDuplicateComponentsTest extends TestCase
         self::assertStringNotContainsString('React', $this->appCode);
         self::assertStringNotContainsString('reactphp', $this->appCode);
         self::assertStringNotContainsString('EventLoop', $this->appCode);
+    }
+
+    public function testAvaxDelegatesAssemblyToConfiguration(): void
+    {
+        // Avax.php must delegate to BuildAvaxEngine
+        self::assertStringNotContainsString('new BootApplication', $this->avaxCode);
+        self::assertStringNotContainsString('new BuildApplicationState', $this->avaxCode);
+        self::assertStringNotContainsString('new CreateApplication', $this->avaxCode);
+        self::assertStringNotContainsString('new CreateRequestFromGlobals', $this->avaxCode);
+        self::assertStringNotContainsString('new HttpKernel', $this->avaxCode);
+        self::assertStringNotContainsString('new ConsoleKernel', $this->avaxCode);
+        self::assertStringNotContainsString('new RuntimeKernel', $this->avaxCode);
+        self::assertStringNotContainsString('new ResetApplicationState', $this->avaxCode);
+
+        self::assertStringContainsString('BuildAvaxEngine::createApp', $this->avaxCode);
+        self::assertStringContainsString('BuildAvaxEngine::boot', $this->avaxCode);
+
+        // BuildAvaxEngine.php must contain the actual instantiations
+        self::assertStringContainsString('new BootApplication', $this->buildAvaxEngineCode);
+        self::assertStringContainsString('new BuildApplicationState', $this->buildAvaxEngineCode);
+        self::assertStringContainsString('new CreateApplication', $this->buildAvaxEngineCode);
+        self::assertStringContainsString('new CreateRequestFromGlobals', $this->buildAvaxEngineCode);
+        self::assertStringContainsString('new HttpKernel', $this->buildAvaxEngineCode);
+        self::assertStringContainsString('new ConsoleKernel', $this->buildAvaxEngineCode);
+        self::assertStringContainsString('new RuntimeKernel', $this->buildAvaxEngineCode);
+        self::assertStringContainsString('new ResetApplicationState', $this->buildAvaxEngineCode);
     }
 }

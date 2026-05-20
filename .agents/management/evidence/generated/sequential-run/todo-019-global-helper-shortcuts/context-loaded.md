@@ -1,0 +1,22 @@
+# Agent Context Loaded
+
+- AGENTS.md read: YES
+- AvaX Enterprise Remediation Skill loaded: YES
+- how-to-ai-assisted-execution.md read: YES
+- how-to files discovered: 20+
+- how-to files read: 6 (how-to-system-security, how-to-design-components, how-to-coding-standards, how-to-clean-code, how-to-unit-test, how-to-use-ai-assisted-execution)
+- skills discovered: 1
+- skills used: avax-enterprise-remediation
+- memory/learning files discovered: 0
+- memory/learning files used: NONE
+- project truth files read: fix-this.md (TODO-019), .agents/management/TODO.md
+- review evidence read: post-round-002-worktree-inventory/summary.md
+- assigned fix-this TODO: TODO-019
+- source clusters read: CLUSTER-027 (global helper service-locator shortcuts)
+- source finding IDs read: SCR-0435, HTD-0435, SAI-0065, SAI-0080
+- applicable governance warnings: CLUSTER-027 — global `app()` calls hide dependencies; duplicate helper names cause load-order issues
+- accepted YELLOW constraints: `shortcuts.php` calls `app()` — thin compatibility shims over explicit public boundaries, documented as temporary pattern; PublicSurface file length 201 lines for 17 thin one-liner functions
+- pre-existing dirty files: CLEAN (vendor/ is untracked)
+- branch: security/todo-019-global-helper-shortcuts
+- worktree: ../avax-todo-019
+- base commit: 0b67ef44e

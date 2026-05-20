@@ -24,6 +24,7 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeState;
 use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
 use Avax\Framework\System\Capabilities\StateReset\StateResetReport;
 use Avax\Framework\System\Configuration\BuildApplication\Builders\ApplicationBuilder;
+use Avax\Framework\System\Configuration\BuildApplication\Builders\BuildAvaxEngine;
 use Avax\Framework\System\Flows\BootApplication\BootApplication;
 use Avax\Framework\System\Flows\BootApplication\BuildApplicationState;
 use Avax\Framework\System\Flows\CreateApplication\CreateApplication;
@@ -69,30 +70,7 @@ final readonly class Avax implements AvaxInterface
      */
     public static function create(string $environment = 'production'): App
     {
-        $createHttpResponse = new CreateHttpResponse();
-
-        $createRequestFromGlobals = new CreateRequestFromGlobals(
-            readServerParameters  : new ReadServerParameters(),
-            readQueryParameters   : new ReadQueryParameters(),
-            readUploadedFiles     : new ReadUploadedFiles(),
-            readRequestBody       : new ReadRequestBody(),
-            normalizeHeaders      : new NormalizeHeaders(),
-            normalizeUploadedFiles: new NormalizeUploadedFiles(),
-            parseJsonBody         : new ParseJsonBody(),
-            parseFormBody         : new ParseFormBody(),
-        );
-
-        return (new CreateApplication(
-            clock: new SystemClock(),
-            projectPath: new ProjectPath(value: getcwd() ?: __DIR__ . '/../../..'),
-            componentRegistry: new ComponentRegistry(),
-            requestScopeStore: new RequestScopeStore(),
-            runtimeContext: new RuntimeContext(),
-            stateResetRegistry: new StateResetRegistry(),
-            createHttpResponse: $createHttpResponse,
-            handleIncomingHttp: new HandleIncomingHttp(createHttpResponse: $createHttpResponse),
-            createRequestFromGlobals: $createRequestFromGlobals,
-        ))->make(environment: $environment);
+        return BuildAvaxEngine::createApp(environment: $environment);
     }
 
     /**
@@ -122,38 +100,7 @@ final readonly class Avax implements AvaxInterface
      */
     private static function bootInternal(ApplicationBuilder $builder): self
     {
-        $createHttpResponse = new CreateHttpResponse();
-        $handleIncomingHttp = new HandleIncomingHttp(createHttpResponse: $createHttpResponse);
-        $bootFlow = new BootApplication(
-            buildApplicationState: new BuildApplicationState(
-                componentRegistry : new ComponentRegistry(),
-                requestScopeStore : new RequestScopeStore(),
-                runtimeContext    : new RuntimeContext(),
-                stateResetRegistry: new StateResetRegistry(),
-            ),
-        );
-        $runtime = $bootFlow->boot(builder: $builder);
-
-        return new self(
-            runtime              : $runtime,
-            httpKernel           : new HttpKernel(
-                runtime: $runtime,
-                handleIncomingHttp: $handleIncomingHttp,
-            ),
-            consoleKernel        : new ConsoleKernel(
-                runConsoleCommand: new RunConsoleCommand(
-                    runtime: $runtime,
-                    preCommitConfig: new PreCommitConfig(),
-                    preCommit: new PreCommit(
-                        preCommitConfig: new PreCommitConfig(),
-                    ),
-                ),
-            ),
-            runtimeKernel        : new RuntimeKernel(runtime: $runtime),
-            resetApplicationState: new ResetApplicationState(
-                stateResetRegistry: $runtime->stateResetRegistry(),
-            ),
-        );
+        return BuildAvaxEngine::boot(builder: $builder);
     }
 
     public function state(): RuntimeState

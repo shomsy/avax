@@ -25,3 +25,6 @@ var/
 .env
 
 .qoder/worktrees/
+
+# Local aggregate dumps
+avax.part-*.txt

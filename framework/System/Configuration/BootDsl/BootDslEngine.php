@@ -14,6 +14,7 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeState;
 use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
 use Avax\Framework\System\Capabilities\StateReset\StaticStateReset;
+use Avax\Framework\System\Configuration\Builders\BuildRunApplication;
 use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Foundation\Environment\EnvironmentName;
 use Avax\Framework\System\Foundation\Paths\ProjectPath;
@@ -191,6 +192,10 @@ final class BootDslEngine
         $normalizer = new \Avax\Framework\System\Capabilities\ResponseNormalization\NormalizeControllerResult(
             createHttpResponse: $createHttpResponse,
         );
+        $dispatcher = BuildRunApplication::fromDefaultResolutionPipeline(
+            createHttpResponse: $createHttpResponse,
+            normalizer        : $normalizer,
+        );
         $createRequestFromGlobals = $this->createRequestFromGlobals();
         $resetApp = new \Avax\Framework\System\Flows\ResetApplicationState\ResetApplicationState(
             stateResetRegistry: $stateResetRegistry,
@@ -200,8 +205,8 @@ final class BootDslEngine
             runtime                : $runtime,
             resetApplicationState  : $resetApp,
             createHttpResponse     : $createHttpResponse,
-            normalizer             : $normalizer,
             createRequestFromGlobals: $createRequestFromGlobals,
+            dispatcher             : $dispatcher,
         );
     }
 

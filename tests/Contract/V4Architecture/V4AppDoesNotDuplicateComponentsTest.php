@@ -13,6 +13,7 @@ final class V4AppDoesNotDuplicateComponentsTest extends TestCase
 {
     private string $appCode;
     private string $runCode;
+    private string $buildRunApplicationCode;
     private string $secureRequestCode;
 
     protected function setUp(): void
@@ -21,6 +22,7 @@ final class V4AppDoesNotDuplicateComponentsTest extends TestCase
         $basePath = dirname(__DIR__, 3);
         $this->appCode = (string) file_get_contents($basePath . '/framework/System/PublicSurface/App.php');
         $this->runCode = (string) file_get_contents($basePath . '/framework/System/Flows/RunApplication/RunApplication.php');
+        $this->buildRunApplicationCode = (string) file_get_contents($basePath . '/framework/System/Configuration/Builders/BuildRunApplication.php');
         $this->secureRequestCode = (string) file_get_contents($basePath . '/components/HTTP/SecureRequest/System/PublicSurface/SecureRequest.php');
     }
 
@@ -40,8 +42,9 @@ final class V4AppDoesNotDuplicateComponentsTest extends TestCase
         // Must not contain container implementation
         self::assertStringNotContainsString('class Container', $this->appCode);
 
-        // Uses existing RouteFacadeContainer
-        self::assertStringContainsString('RouteFacadeContainer', $this->runCode);
+        // Default dispatch assembly belongs in Configuration, not the runtime flow.
+        self::assertStringNotContainsString('new RouteFacadeContainer', $this->runCode);
+        self::assertStringContainsString('RouteFacadeContainer', $this->buildRunApplicationCode);
     }
 
     public function testAppDoesNotDuplicateDataTransfer(): void

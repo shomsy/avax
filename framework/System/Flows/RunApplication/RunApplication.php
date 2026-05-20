@@ -4,24 +4,19 @@ declare(strict_types=1);
 
 namespace Avax\Framework\System\Flows\RunApplication;
 
-use Avax\Components\Application\Container\System\Capabilities\ResolveCallable\ResolveCallable;
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ActionResolution\ControllerResolver;
 use Avax\Components\HTTP\Dispatcher\System\Capabilities\ArgumentResolution\ArgumentResolver;
 use Avax\Components\HTTP\Request\System\Capabilities\IncomingRequest\ServerRequest;
 use Avax\Components\HTTP\Router\System\Capabilities\RouteDefinition\RouteDefinition;
-use Avax\Components\HTTP\Router\System\Flows\MatchRoute\MatchRoute;
 use Avax\Components\HTTP\Router\System\Foundation\Exceptions\MethodNotAllowedException;
 use Avax\Components\HTTP\Router\System\Foundation\Exceptions\RouteNotFoundException;
-use Avax\Components\HTTP\SecureRequest\System\Capabilities\ResolveSecureRequest\SecureRequestInputBuilder;
 use Avax\Components\HTTP\Response\System\Capabilities\CreateHttpResponse\CreateHttpResponse;
 use Avax\Components\Operations\Observability\System\Capabilities\MetricsCollector\MetricsCollector;
 use Avax\Framework\System\Capabilities\ResponseNormalization\NormalizeControllerResult;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeRequest;
-use Avax\Framework\System\Flows\HandleIncomingHttp\MatchedHttpRoute;
 use Avax\Framework\System\Flows\HandleIncomingHttp\MatchHttpRoute;
 use Avax\Framework\System\Flows\HandleIncomingHttp\ReadIncomingHttpRequest;
 use Avax\Framework\System\Flows\HandleIncomingHttp\RegisteredHttpRoutes;
-use Avax\Framework\System\Flows\HandleIncomingHttp\RouteFacadeContainer;
 use Closure;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionMethod;
@@ -51,28 +46,6 @@ final readonly class RunApplication
         private ArgumentResolver        $argumentResolver,
         private MetricsCollector|null $metricsCollector = null,
     ) {}
-
-    public static function withDefaultResolutionPipeline(
-        CreateHttpResponse           $createHttpResponse,
-        NormalizeControllerResult $normalizer,
-        MetricsCollector|null     $metricsCollector = null,
-    ) : self
-    {
-        $container          = new RouteFacadeContainer();
-        $resolveCallable    = new ResolveCallable(container: clone $container);
-        $controllerResolver = new ControllerResolver(resolver: $resolveCallable);
-        $argumentResolver = new ArgumentResolver(container: $container, inputBuilder: new SecureRequestInputBuilder());
-
-        return new self(
-            createHttpResponse: $createHttpResponse,
-            normalizer        : $normalizer,
-            readRequest       : new ReadIncomingHttpRequest(),
-            matchRoute        : new MatchHttpRoute(new MatchRoute()),
-            controllerResolver: $controllerResolver,
-            argumentResolver  : $argumentResolver,
-            metricsCollector  : $metricsCollector,
-        );
-    }
 
     public function handle(
         RuntimeRequest $runtimeRequest,

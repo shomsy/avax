@@ -14,6 +14,7 @@ use Avax\Framework\System\Capabilities\Runtime\RuntimeContext;
 use Avax\Framework\System\Capabilities\Runtime\RuntimeState;
 use Avax\Framework\System\Capabilities\StateReset\StateResetRegistry;
 use Avax\Framework\System\Capabilities\StateReset\StaticStateReset;
+use Avax\Framework\System\Configuration\Builders\BuildRunApplication;
 use Avax\Framework\System\Configuration\BuildApplication\Builders\ApplicationBuilder;
 use Avax\Framework\System\Flows\HandleIncomingHttp\HandleIncomingHttp;
 use Avax\Framework\System\Flows\ResetApplicationState\ResetApplicationState;
@@ -73,6 +74,11 @@ final readonly class CreateApplication
         $runtimeState->markBooted(bootedAt: $clock->now());
 
         $createHttpResponse = $this->createHttpResponse;
+        $normalizer = new NormalizeControllerResult(createHttpResponse: $createHttpResponse);
+        $dispatcher = BuildRunApplication::fromDefaultResolutionPipeline(
+            createHttpResponse: $createHttpResponse,
+            normalizer        : $normalizer,
+        );
 
         // Build runtime (no httpHandler — App manages routes directly)
         $runtime = new Runtime(
@@ -96,8 +102,8 @@ final readonly class CreateApplication
             runtime              : $runtime,
             resetApplicationState: new ResetApplicationState(stateResetRegistry: $stateResetRegistry),
             createHttpResponse   : $createHttpResponse,
-            normalizer           : new NormalizeControllerResult(createHttpResponse: $createHttpResponse),
             createRequestFromGlobals: $this->createRequestFromGlobals,
+            dispatcher           : $dispatcher,
         );
     }
 
@@ -122,6 +128,11 @@ final readonly class CreateApplication
         $runtimeState->markBooted(bootedAt: $clock->now());
 
         $createHttpResponse = new CreateHttpResponse();
+        $normalizer = new NormalizeControllerResult(createHttpResponse: $createHttpResponse);
+        $dispatcher = BuildRunApplication::fromDefaultResolutionPipeline(
+            createHttpResponse: $createHttpResponse,
+            normalizer        : $normalizer,
+        );
 
         $runtime = new Runtime(
             runtimeState: $runtimeState,
@@ -144,8 +155,8 @@ final readonly class CreateApplication
             runtime: $runtime,
             resetApplicationState: new ResetApplicationState(stateResetRegistry: $stateResetRegistry),
             createHttpResponse: $createHttpResponse,
-            normalizer: new NormalizeControllerResult(createHttpResponse: $createHttpResponse),
             createRequestFromGlobals: $createRequestFromGlobals,
+            dispatcher: $dispatcher,
         );
     }
 }

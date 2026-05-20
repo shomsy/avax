@@ -23,6 +23,10 @@ final class ProviderRegistry
 
     public function register(string $providerClass): void
     {
+        if (!class_exists($providerClass) || !is_subclass_of($providerClass, BaseRegisterDependency::class)) {
+            throw new \RuntimeException("Service provider class [{$providerClass}] does not exist or does not extend BaseRegisterDependency.");
+        }
+
         $provider = new $providerClass($this->container);
         $provider->register();
         $this->providers[] = $provider;

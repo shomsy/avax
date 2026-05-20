@@ -170,10 +170,14 @@ final readonly class Migrations
      */
     public function seed(Seeder|string $seeder, string|null $connectionName = null) : void
     {
-        $instance = is_string(value: $seeder) ? new $seeder() : $seeder;
+        if (is_string(value: $seeder)) {
+            if (!class_exists($seeder) || !is_subclass_of($seeder, Seeder::class)) {
+                throw new InvalidArgumentException(message: "Seed target class [{$seeder}] does not exist or does not extend Seeder.");
+            }
 
-        if (! $instance instanceof Seeder) {
-            throw new InvalidArgumentException(message: 'Seed target must extend the base Seeder class.');
+            $instance = new $seeder();
+        } else {
+            $instance = $seeder;
         }
 
         $instance->withBuilder(builder: $this->builder(connectionName: $connectionName))->run();

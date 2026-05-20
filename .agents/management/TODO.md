@@ -25,6 +25,16 @@ Canonical active implementation queue.
 
 ## Current Items
 
+- `id`: POST-ROUND-002-EVIDENCE-REPAIRED-MERGES
+- `created_at`: 2026-05-20
+- `updated_at`: 2026-05-20
+- `status`: done
+- `estimate`: small
+- `actual`: 4 branches merged into main sequentially with focused validation after each merge
+- `outcome`: Four evidence-repaired branches merged into main — TODO-017 filesystem boundary routing, TODO-019 global helper shortcut hardening, TODO-018 security logging and redaction, TODO-005 static secret state reset. All with tests, evidence, and governance review. Accepted YELLOW from review preserved.
+- `acceptance`: 4 branches merged in approved order with validation after each. Full test suite: 8853 tests (12 pre-existing ProcessPoolParallelismProofTest failures, 1 risky — all pre-existing). PHPStan: 66 findings (all pre-existing, none from merged files). Governance gates: GREEN. Runtime composition leaks: 4 HIGH pre-existing (unrelated Migrations/Container files). Direct instantiation: pre-existing constructor default parameter findings. Broken references: PASS. Namespace drift: PASS. Accepted YELLOW: (1) BuildDispatchConfiguredRoute fallback new Filesystem() — LOW, (2) stream wrapper / PSR-7 upload / path parsing exceptions — ACCEPTED_EXCEPTION, (3) 15 other shortcuts.php files still use app() — MEDIUM, (4) CSRF behavior tests need container bootstrap — LOW.
+- `links`: `.agents/management/evidence/generated/post-round-002-evidence-repaired-merge/main-merge-validation.md`, `dd3c53936 docs(governance): review evidence-repaired post-round-002 branches`
+
 - `id`: POST-ROUND-002-MERGES
 - `created_at`: 2026-05-20
 - `updated_at`: 2026-05-20

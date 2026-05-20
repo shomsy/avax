@@ -133,9 +133,11 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 
 ### TODO-003: Unify CSRF/session authority and remove direct session mutation conflicts
 
-- Status: OPEN
+- Status: DONE
 - Priority: P0 BLOCKER
 - Normalized severity: BLOCKER
+- Merge commit: c3abfc1bb
+- Evidence: `.agents/management/evidence/generated/post-round-002-ready-merge/main-merge-validation.md`
 - Source clusters: CLUSTER-003
 - Source finding IDs: SAI-0057, SAI-0058, SAI-0059, SAI-0060, SAI-0061, SAI-0062, SAI-0063, SAI-0064, SAI-0084
 - Root type: COMPONENT
@@ -163,9 +165,11 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 
 ### TODO-004: Close dynamic class-loading execution paths at payload and recovery boundaries
 
-- Status: OPEN
+- Status: DONE
 - Priority: P0 BLOCKER
 - Normalized severity: BLOCKER
+- Merge commit: 43c5e6883 (TODO-004) + 634b552e5 (TODO-004-b)
+- Evidence: `.agents/management/evidence/generated/post-round-002-ready-merge/main-merge-validation.md`
 - Source clusters: CLUSTER-006
 - Source finding IDs: SAI-0013, SAI-0014, SAI-0038, SAI-0039, SAI-0040, SAI-0041, SAI-0042, SAI-0053, SAI-0066, SAI-0067, SAI-0068, SAI-0070, SAI-0071, SAI-0072, SAI-0073, SAI-0074, SAI-0079, SAI-0121, SAI-0125, SAI-0130, SAI-0131, SAI-0148, SAI-0153, SAI-0165, SAI-0238
 - Root type: CROSS_CUTTING
@@ -193,9 +197,11 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 
 ### TODO-005: Remove worker-unsafe static secret and security runtime state
 
-- Status: OPEN
+- Status: DONE
 - Priority: P0 BLOCKER
 - Normalized severity: BLOCKER
+- Merge commit: 3f55d597d
+- Evidence: `.agents/management/evidence/generated/post-round-002-evidence-repaired-merge/main-merge-validation.md`
 - Source clusters: CLUSTER-004
 - Source finding IDs: SCR-0146, SCR-0303, SCR-0304, SCR-0411, SCR-0412, SCR-0415, SCR-0664, HTD-0146, HTD-0303, HTD-0304, HTD-0411, HTD-0412, HTD-0415, HTD-0664, SAI-0090, SAI-0106, SAI-0135, SAI-0136, SAI-0137, SAI-0138, SAI-0140, SAI-0157, SAI-0170, SAI-0211, OLD-FIX-046, OLD-FIX-093, OLD-FIX-101, OLD-FIX-106, ... (31 total; full mapping in source-finding-coverage.md)
 - Root type: CROSS_CUTTING
@@ -525,9 +531,11 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 
 ### TODO-016: Fix broken reference semantics in public/runtime namespaces
 
-- Status: OPEN
+- Status: DONE
 - Priority: P1 HIGH
 - Normalized severity: HIGH
+- Merge commit: 6718fa716
+- Evidence: `.agents/management/evidence/generated/post-round-002-ready-merge/main-merge-validation.md`
 - Source clusters: CLUSTER-012
 - Source finding IDs: SCR-0039, SCR-0040, SCR-0041, SCR-0042, SCR-0665, HTD-0039, HTD-0040, HTD-0041, HTD-0042, HTD-0668, OLD-FIX-023, OLD-FIX-025
 - Root type: CROSS_CUTTING
@@ -555,9 +563,11 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 
 ### TODO-017: Route raw filesystem and path operations through approved first-party boundaries
 
-- Status: OPEN
+- Status: DONE
 - Priority: P1 HIGH
 - Normalized severity: HIGH
+- Merge commit: 182074351
+- Evidence: `.agents/management/evidence/generated/post-round-002-evidence-repaired-merge/main-merge-validation.md`
 - Source clusters: CLUSTER-013
 - Source finding IDs: SCR-0043, SCR-0044, SCR-0045, HTD-0043, HTD-0044, HTD-0045, SAI-0141, SAI-0142, SAI-0160, OLD-FIX-002, OLD-FIX-118, OLD-FIX-121
 - Root type: CROSS_CUTTING
@@ -585,9 +595,11 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 
 ### TODO-018: Harden security logging, redaction, and secret parameter handling
 
-- Status: OPEN
+- Status: DONE
 - Priority: P1 HIGH
 - Normalized severity: HIGH
+- Merge commit: 40b954daf
+- Evidence: `.agents/management/evidence/generated/post-round-002-evidence-repaired-merge/main-merge-validation.md`
 - Source clusters: CLUSTER-019, CLUSTER-016
 - Source finding IDs: SAI-0093, SAI-0097, SAI-0098, SAI-0122, SAI-0124, SAI-0126, SAI-0144, SAI-0145, SAI-0158
 - Root type: CROSS_CUTTING
@@ -615,9 +627,11 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 
 ### TODO-019: Replace global helper service-locator shortcuts with testable boundaries
 
-- Status: OPEN
+- Status: DONE
 - Priority: P1 HIGH
 - Normalized severity: HIGH
+- Merge commit: c79c4df0b
+- Evidence: `.agents/management/evidence/generated/post-round-002-evidence-repaired-merge/main-merge-validation.md`
 - Source clusters: CLUSTER-027
 - Source finding IDs: SCR-0435, HTD-0435, SAI-0065, SAI-0080
 - Root type: CROSS_CUTTING
@@ -1390,12 +1404,21 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 
 - Batch title: P0 Serialization Trust Boundary Hardening
 - Exact TODO IDs: TODO-001
-- Why this batch first: confirmed unsafe deserialization is the highest security-risk class and can be remediated without mixing unrelated architecture cleanup.
+- Why this batch first: confirmed unsafe deserialization is the highest remaining security-risk class and can be remediated without mixing unrelated architecture cleanup. TODO-003, TODO-004, TODO-005 are now DONE, making TODO-001 the next highest P0.
 - Strict scope: `PhpCacheSerializer.php`, `SerializeClosureThroughLibrary.php`, `RedisCacheStore.php`, and DecryptValue fallback verification/tests only.
 - Forbidden changes: no cache API redesign, no container refactor, no public API change unless explicitly approved, no unrelated formatting.
 - Validation commands: `vendor/bin/phpunit --filter "CacheSerializer|CallableSerialization|DecryptValue|RedisCacheStore" --no-coverage && composer validate --no-check-publish && php tooling/refactor/check-broken-reference-semantics.php`
 - Evidence path: `.agents/management/evidence/generated/review-reconciliation/security-runtime-escalation.md` plus a new cleanup evidence file for the batch.
 - Expected final status: TODO-001 closed or split with explicit residual evidence; no broader GREEN claim.
+
+### Post-TODO-001 Priority Order (updated after Round 002 extended merge)
+
+1. **TODO-001** — unsafe deserialization (P0 BLOCKER) — NEXT
+2. **TODO-002** — compiled container namespace emission (P0 BLOCKER)
+3. **TODO-006** — framework public entrypoint object-graph assembly (P0 BLOCKER)
+4. **TODO-007** — AuthBuilder split (P0 BLOCKER)
+5. **TODO-008 through TODO-015** — P1 security/runtime/PublicSurface/DI batches
+6. **TODO-020 through TODO-032** — P2/P3/ACCEPTED_YELLOW
 
 ## Source Finding Disposition Summary
 

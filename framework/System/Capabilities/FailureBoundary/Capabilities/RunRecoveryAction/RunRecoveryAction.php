@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Framework\System\Capabilities\FailureBoundary\Capabilities\RunRecoveryAction;
 
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureContext;
+use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailureHandler;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailurePipelineResult;
 use Avax\Framework\System\Capabilities\FailureBoundary\Foundation\FailurePolicy;
 use RuntimeException;
@@ -38,11 +39,11 @@ final readonly class RunRecoveryAction
             throw new RuntimeException("Recovery class not found: {$recoverClass}");
         }
 
-        $handler = new $recoverClass();
-
-        if (! method_exists($handler, '__invoke')) {
-            throw new RuntimeException("Recovery class must implement __invoke: {$recoverClass}");
+        if (! is_subclass_of($recoverClass, FailureHandler::class)) {
+            throw new RuntimeException("Recovery class must implement " . FailureHandler::class . ": {$recoverClass}");
         }
+
+        $handler = new $recoverClass();
 
         $result = $handler($failure, $context);
 

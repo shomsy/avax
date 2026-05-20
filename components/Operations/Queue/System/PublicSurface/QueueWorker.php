@@ -6,6 +6,8 @@ namespace Avax\Components\Operations\Queue\System\PublicSurface;
 
 use Avax\Components\Operations\Queue\System\Capabilities\Job;
 use Avax\Components\Operations\Queue\System\Capabilities\QueueDriverInterface;
+use Avax\Components\Operations\Queue\System\Foundation\JobInterface;
+use RuntimeException;
 use Throwable;
 
 final class QueueWorker
@@ -39,11 +41,15 @@ final class QueueWorker
             $class = $payload['job'] ?? null;
             $data = $payload['data'] ?? [];
 
-            if ($class && class_exists($class)) {
-                $instance = new $class(...$data);
-                $instance->handle();
+            if ($class === null || ! class_exists($class) || ! is_subclass_of($class, JobInterface::class)) {
                 $job->delete();
+
+                return;
             }
+
+            $instance = new $class(...$data);
+            $instance->handle();
+            $job->delete();
         } catch (Throwable) {
             if ($job->attempts() >= $this->maxTries) {
                 $job->delete();

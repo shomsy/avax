@@ -21,6 +21,17 @@ final class MessageBus
         self::$instance = $this;
     }
 
+    /**
+     * Reset the MessageBus instance to null.
+     *
+     * Required for long-lived worker safety: prevents command/query/event bus
+     * state and handler registrations from leaking across requests.
+     */
+    public static function reset(): void
+    {
+        self::$instance = null;
+    }
+
     public static function query(object $query): mixed
     {
         return self::instance()->queryBus->dispatch($query);

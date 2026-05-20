@@ -17,6 +17,18 @@ final class Realtime
 
     private static ?RealtimeChannels $realtimeChannels = null;
 
+    /**
+     * Reset the Realtime connection pool and channels to null.
+     *
+     * Required for long-lived worker safety: prevents connection and channel
+     * state from leaking across requests in FrankenPHP, RoadRunner, Swoole, etc.
+     */
+    public static function reset(): void
+    {
+        self::$connectionPool = null;
+        self::$realtimeChannels = null;
+    }
+
     public static function connect(Closure $sender): Connection
     {
         $connection = new Connection(sender: $sender);

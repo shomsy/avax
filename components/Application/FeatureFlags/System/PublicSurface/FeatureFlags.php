@@ -15,6 +15,17 @@ final class FeatureFlags
         self::$flagStore = $flagStore;
     }
 
+    /**
+     * Reset the feature flags store to null.
+     *
+     * Required for long-lived worker safety: prevents flag state from leaking
+     * across requests in FrankenPHP, RoadRunner, Swoole, and similar runtimes.
+     */
+    public static function reset(): void
+    {
+        self::$flagStore = null;
+    }
+
     public static function enable(string $flag): void
     {
         self::store()->set($flag, true);

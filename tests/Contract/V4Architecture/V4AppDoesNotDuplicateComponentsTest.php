@@ -59,6 +59,16 @@ final class V4AppDoesNotDuplicateComponentsTest extends TestCase
         self::assertStringContainsString('new ProviderRegistry', $this->buildBootDslEngineCode);
     }
 
+    public function testAppDelegatesRuntimeObjectConstruction(): void
+    {
+        self::assertStringNotContainsString('new OpenHttpRequestScope', $this->appCode);
+        self::assertStringNotContainsString('new CloseHttpRequestScope', $this->appCode);
+        self::assertStringNotContainsString('new RouteDefinition', $this->appCode);
+        self::assertStringNotContainsString('new RuntimeRequest', $this->appCode);
+        self::assertStringContainsString('FrameworkRouteRegistrar', $this->appCode);
+        self::assertStringContainsString('CreateRuntimeRequestFromHttpRequest', $this->appCode);
+    }
+
     public function testAppDoesNotDuplicateDataTransfer(): void
     {
         // Extract non-comment lines

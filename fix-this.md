@@ -185,9 +185,11 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 
 ### TODO-006: Move framework public entrypoint object-graph assembly out of runtime/PublicSurface
 
-- Status: OPEN
+- Status: DONE
 - Priority: P0 BLOCKER
 - Normalized severity: BLOCKER
+- Merge commit: merge(architecture): integrate TODO-006 framework entrypoint assembly slice D
+- Evidence: .agents/management/evidence/generated/maximum-remaining-backlog-sweep/final-todo-006-closure.md
 - Source clusters: CLUSTER-007
 - Source finding IDs: SCR-0388, SCR-0391, SCR-0393, SCR-0410, SCR-0420, HTD-0388, HTD-0391, HTD-0392, HTD-0393, HTD-0394, HTD-0410, HTD-0420, SAI-0167, SAI-0168, SAI-0169, SAI-0171, SAI-0172, SAI-0173, SAI-0174, SAI-0176, SAI-0177, SAI-0213, SAI-0214, SAI-0225, SAI-0226, SAI-0230, OLD-FIX-047, OLD-FIX-048, ... (34 total; full mapping in source-finding-coverage.md)
 - Root type: FRAMEWORK
@@ -1350,27 +1352,27 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 3. ~~`TODO-003`~~ CSRF/session authority conflict — DONE (c3abfc1bb)
 4. ~~`TODO-004`~~ dynamic class loading from payload/recovery boundaries — DONE (43c5e6883 + 634b552e5)
 5. ~~`TODO-005`~~ worker-unsafe static secret/security runtime state — DONE (3f55d597d)
-6. `TODO-006` framework public entrypoint object-graph assembly (P0 BLOCKER) — NEXT
-7. `TODO-007` AuthBuilder large builder (P0 BLOCKER)
+6. ~~`TODO-006`~~ framework public entrypoint object-graph assembly — DONE (merge(architecture): integrate TODO-006 framework entrypoint assembly slice D)
+7. `TODO-007` AuthBuilder large builder (P0 BLOCKER) — NEXT
 8. P1 security/runtime/PublicSurface/DI batches: `TODO-008` through `TODO-019`.
 9. P2 test trust, architecture, docs, and maintainability batches.
 10. P3 low-risk cleanup and accepted-yellow ratchet maintenance.
 
 ## Next Recommended Batch
 
-- Batch title: P0 Framework Entrypoint Composition Extraction
-- Exact TODO IDs: TODO-006
-- Why this batch first: framework public entrypoints (`Avax.php`, `BootDsl.php`, `App.php`, `RunApplication.php`, `CreateApplication.php`) create runtime object graphs with `new`, weakening testability, worker safety, and DI discipline. TODO-001 through TODO-005 are DONE, making TODO-006 the next highest P0.
-- Strict scope: `Avax.php`, `BootDsl.php`, `App.php`, `RunApplication.php`, `CreateApplication.php`, `BootDslEngine.php` — extract object-graph assembly into configuration owners.
-- Forbidden changes: no framework API redesign, no behavior change, no public API change unless explicitly approved, no unrelated formatting.
-- Validation commands: `php tooling/refactor/check-direct-instantiation.php && php tooling/refactor/check-runtime-composition-leaks.php && php tooling/refactor/check-public-surface.php`
-- Evidence path: `.agents/management/evidence/generated/review-reconciliation/security-runtime-escalation.md` plus a new cleanup evidence file for the batch.
-- Expected final status: TODO-006 closed or split with explicit residual evidence; no broader GREEN claim.
+- Batch title: P0 AuthBuilder Split
+- Exact TODO IDs: TODO-007
+- Why this batch first: AuthBuilder is a massive 797-line builder that violates single responsibility and acts as a hidden service locator. Splitting it is the final P0 blocker before we can tackle P1 cleanup.
+- Strict scope: `components/Identity/Auth/System/Configuration/Builders/AuthBuilder.php` — extract auth graph assembly into configuration sub-builders.
+- Forbidden changes: no auth business logic changes, no public auth API changes, no unrelated component changes.
+- Validation commands: `php tooling/governance/check-large-unit-thresholds.php && vendor/bin/phpunit --filter "AuthBuilder\|Auth" --no-coverage`
+- Evidence path: `.agents/management/evidence/generated/review-reconciliation/finding-clusters.md`
+- Expected final status: TODO-007 closed or split with explicit residual evidence.
 
 ### Post-Round-002 Priority Order (corrected after TODO-001 and TODO-002 closure)
 
-1. **TODO-006** — framework public entrypoint object-graph assembly (P0 BLOCKER) — NEXT
-2. **TODO-007** — AuthBuilder split (P0 BLOCKER)
+1. ~~**TODO-006**~~ — framework public entrypoint object-graph assembly (P0 BLOCKER) — DONE
+2. **TODO-007** — AuthBuilder split (P0 BLOCKER) — NEXT
 3. **TODO-008 through TODO-015** — P1 security/runtime/PublicSurface/DI batches
 4. **TODO-020 through TODO-032** — P2/P3/ACCEPTED_YELLOW
 

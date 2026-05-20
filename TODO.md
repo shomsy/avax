@@ -279,11 +279,11 @@ Goal: Close architecture-level P0 items blocking further remediation.
 ### Iteration 2.1 — Framework Entrypoint Composition
 - **TODO-006**: Move framework public entrypoint object-graph assembly out of runtime
 - Foci: `framework/System/PublicSurface`, `framework/System/Flows/RunApplication`, `framework/System/Flows/CreateApplication`
-- Tests: Avax::create, BootDsl::create, App::handle, RunApplication pipeline regression
+- Tests: Avax::create, BootDsl::create, App::handle, RunApplication pipeline regression tests
 - Validation: `php tooling/refactor/check-direct-instantiation.php && php tooling/refactor/check-runtime-composition-leaks.php && php tooling/refactor/check-public-surface.php`
-- Evidence: `.agents/management/evidence/generated/review-reconciliation/security-runtime-escalation.md`
+- Evidence: `.agents/management/evidence/generated/maximum-remaining-backlog-sweep/final-todo-006-closure.md`
 
-Status: PENDING — requires separate architecture-focused round
+Status: DONE
 
 ### Iteration 2.2 — AuthBuilder Split
 - **TODO-007**: Split AuthBuilder into bounded configuration responsibilities
@@ -437,7 +437,7 @@ Status: PENDING
 | TODO-003 | CSRF/session authority | P0 | 1.3 | DONE |
 | TODO-004 | Dynamic class-loading boundaries | P0 | 1.4 | PENDING |
 | TODO-005 | Static secret state | P0 | 1.5 | PENDING |
-| TODO-006 | Framework entrypoint composition | P0 | 2.1 | PENDING |
+| TODO-006 | Framework entrypoint composition | P0 | 2.1 | DONE |
 | TODO-007 | AuthBuilder split | P0 | 2.2 | PENDING |
 | TODO-008 | Remaining static mutable state | P1 | 3.1 | PENDING |
 | TODO-009 | API/DevTools PublicSurface | P1 | 3.2 | PENDING |

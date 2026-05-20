@@ -73,63 +73,19 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 
 ### TODO-001: Harden serialized payload boundaries before any cache/callable cleanup
 
-- Status: OPEN
+- Status: DONE
 - Priority: P0 BLOCKER
 - Normalized severity: BLOCKER
-- Source clusters: CLUSTER-001
-- Source finding IDs: SCR-0079, SCR-0084, SCR-0426, HTD-0079, HTD-0084, HTD-0426, SAI-0024, SAI-0088, SAI-0091, SAI-0095, SAI-0239, OLD-FIX-174
-- Root type: CROSS_CUTTING
-- Unit(s): `components/Application/Cache`, `Cache`, `Foundation/CallableSerialization`, `Application/Cache`, `Security/Cryptography`, `CROSS_CUTTING`
-- Affected files: PhpCacheSerializer.php; SerializeClosureThroughLibrary.php; RedisCacheStore.php; DecryptValue.php verification
-- Rule sources: see source finding IDs in `source-finding-coverage.md` and cluster details in `finding-clusters.md`.
-- Problem: Confirmed unsafe or partially unsafe deserialization paths exist in cache/callable serialization; DecryptValue fallback requires exploitability verification.
-- Why it matters: Untrusted serialized payloads can become object injection/RCE surfaces or unsafe backward-compatibility paths.
-- Target state: Only explicitly allowed classes or non-PHP serialization cross trust boundaries; fallbacks are fail-closed and tested.
-- Non-goals:
-  - no feature work
-  - no roadmap work
-  - no public API changes unless explicitly approved
-  - no mechanical renames
-  - no unrelated cleanup
-  - no fake GREEN
-- Safe remediation batch: One security hardening batch limited to serialization/deserialization boundaries.
-- Tests required: negative tests for malicious serialized objects, invalid payloads, checksum failure, Redis/cache payload tampering, and DecryptValue fallback behavior.
-- Validation commands: `vendor/bin/phpunit --filter "CacheSerializer|CallableSerialization|DecryptValue|RedisCacheStore" --no-coverage && php tooling/refactor/check-broken-reference-semantics.php`
-- Evidence required: `.agents/management/evidence/generated/review-reconciliation/security-runtime-escalation.md`
-- Commit gate: no unrelated dirty files staged; no production/test files outside the prompt scope; validation output captured; no fake GREEN claim.
-- Done when: mapped source findings are closed or reclassified with evidence, validation passes, and source coverage is updated.
-- Owner: AvaX maintainer
-- Expiry/Target: next cleanup batch unless explicitly deferred
+- Merge commit: 36a8e3547
+- Evidence: commit 36a8e3547 fix(security): harden serialized payload boundaries against object injection
 
 ### TODO-002: Fix compiled container namespace emission before container remediation
 
-- Status: OPEN
+- Status: DONE
 - Priority: P0 BLOCKER
 - Normalized severity: BLOCKER
-- Source clusters: CLUSTER-002
-- Source finding IDs: SCR-0451, SCR-0452, HTD-0451, HTD-0452, SAI-0022, SAI-0023, SAI-0048, SAI-0051, SAI-0052, OLD-FIX-058, OLD-FIX-178
-- Root type: COMPONENT
-- Unit(s): components/Application/Container
-- Affected files: MethodEmitter.php; CompileContainer.php
-- Rule sources: see source finding IDs in `source-finding-coverage.md` and cluster details in `finding-clusters.md`.
-- Problem: Compiled container source emits old `Avax\Container\...` namespace references while current code lives under `Avax\Components\Application\Container\System\...`.
-- Why it matters: Generated container artifacts can fail at runtime even if static source validation passes.
-- Target state: Generated compiled-container code uses current namespaces or a documented compatibility layer with tests.
-- Non-goals:
-  - no feature work
-  - no roadmap work
-  - no public API changes unless explicitly approved
-  - no mechanical renames
-  - no unrelated cleanup
-  - no fake GREEN
-- Safe remediation batch: Container compilation namespace-only batch; no container behavior redesign.
-- Tests required: compiled-container generation regression test and runtime include/resolve smoke with generated artifact.
-- Validation commands: `vendor/bin/phpunit --filter "CompileContainer|MethodEmitter|CompiledContainer" --no-coverage && php tooling/refactor/check-namespace-drift.php && php tooling/refactor/check-broken-reference-semantics.php`
-- Evidence required: `.agents/management/evidence/generated/review-reconciliation/security-runtime-escalation.md`
-- Commit gate: no unrelated dirty files staged; no production/test files outside the prompt scope; validation output captured; no fake GREEN claim.
-- Done when: mapped source findings are closed or reclassified with evidence, validation passes, and source coverage is updated.
-- Owner: AvaX maintainer
-- Expiry/Target: next cleanup batch unless explicitly deferred
+- Merge commit: ae0c5689b
+- Evidence: commit ae0c5689b fix(container): correct compiled namespace emission
 
 ### TODO-003: Unify CSRF/session authority and remove direct session mutation conflicts
 
@@ -1389,36 +1345,34 @@ This is the active remediation backlog. Evidence files contain the detailed revi
 
 ## Cleanup Execution Order
 
-1. `TODO-001` unsafe deserialization.
-2. `TODO-002` compiled container namespace generation.
-3. `TODO-003` CSRF/session authority conflict.
-4. `TODO-004` dynamic class loading from payload/recovery boundaries.
-5. `TODO-005` worker-unsafe static secret/security runtime state.
-6. `TODO-006` framework public entrypoint object-graph assembly.
-7. `TODO-007` AuthBuilder large builder.
+1. ~~`TODO-001`~~ unsafe deserialization — DONE (36a8e3547)
+2. ~~`TODO-002`~~ compiled container namespace generation — DONE (ae0c5689b)
+3. ~~`TODO-003`~~ CSRF/session authority conflict — DONE (c3abfc1bb)
+4. ~~`TODO-004`~~ dynamic class loading from payload/recovery boundaries — DONE (43c5e6883 + 634b552e5)
+5. ~~`TODO-005`~~ worker-unsafe static secret/security runtime state — DONE (3f55d597d)
+6. `TODO-006` framework public entrypoint object-graph assembly (P0 BLOCKER) — NEXT
+7. `TODO-007` AuthBuilder large builder (P0 BLOCKER)
 8. P1 security/runtime/PublicSurface/DI batches: `TODO-008` through `TODO-019`.
 9. P2 test trust, architecture, docs, and maintainability batches.
 10. P3 low-risk cleanup and accepted-yellow ratchet maintenance.
 
 ## Next Recommended Batch
 
-- Batch title: P0 Serialization Trust Boundary Hardening
-- Exact TODO IDs: TODO-001
-- Why this batch first: confirmed unsafe deserialization is the highest remaining security-risk class and can be remediated without mixing unrelated architecture cleanup. TODO-003, TODO-004, TODO-005 are now DONE, making TODO-001 the next highest P0.
-- Strict scope: `PhpCacheSerializer.php`, `SerializeClosureThroughLibrary.php`, `RedisCacheStore.php`, and DecryptValue fallback verification/tests only.
-- Forbidden changes: no cache API redesign, no container refactor, no public API change unless explicitly approved, no unrelated formatting.
-- Validation commands: `vendor/bin/phpunit --filter "CacheSerializer|CallableSerialization|DecryptValue|RedisCacheStore" --no-coverage && composer validate --no-check-publish && php tooling/refactor/check-broken-reference-semantics.php`
+- Batch title: P0 Framework Entrypoint Composition Extraction
+- Exact TODO IDs: TODO-006
+- Why this batch first: framework public entrypoints (`Avax.php`, `BootDsl.php`, `App.php`, `RunApplication.php`, `CreateApplication.php`) create runtime object graphs with `new`, weakening testability, worker safety, and DI discipline. TODO-001 through TODO-005 are DONE, making TODO-006 the next highest P0.
+- Strict scope: `Avax.php`, `BootDsl.php`, `App.php`, `RunApplication.php`, `CreateApplication.php`, `BootDslEngine.php` — extract object-graph assembly into configuration owners.
+- Forbidden changes: no framework API redesign, no behavior change, no public API change unless explicitly approved, no unrelated formatting.
+- Validation commands: `php tooling/refactor/check-direct-instantiation.php && php tooling/refactor/check-runtime-composition-leaks.php && php tooling/refactor/check-public-surface.php`
 - Evidence path: `.agents/management/evidence/generated/review-reconciliation/security-runtime-escalation.md` plus a new cleanup evidence file for the batch.
-- Expected final status: TODO-001 closed or split with explicit residual evidence; no broader GREEN claim.
+- Expected final status: TODO-006 closed or split with explicit residual evidence; no broader GREEN claim.
 
-### Post-TODO-001 Priority Order (updated after Round 002 extended merge)
+### Post-Round-002 Priority Order (corrected after TODO-001 and TODO-002 closure)
 
-1. **TODO-001** — unsafe deserialization (P0 BLOCKER) — NEXT
-2. **TODO-002** — compiled container namespace emission (P0 BLOCKER)
-3. **TODO-006** — framework public entrypoint object-graph assembly (P0 BLOCKER)
-4. **TODO-007** — AuthBuilder split (P0 BLOCKER)
-5. **TODO-008 through TODO-015** — P1 security/runtime/PublicSurface/DI batches
-6. **TODO-020 through TODO-032** — P2/P3/ACCEPTED_YELLOW
+1. **TODO-006** — framework public entrypoint object-graph assembly (P0 BLOCKER) — NEXT
+2. **TODO-007** — AuthBuilder split (P0 BLOCKER)
+3. **TODO-008 through TODO-015** — P1 security/runtime/PublicSurface/DI batches
+4. **TODO-020 through TODO-032** — P2/P3/ACCEPTED_YELLOW
 
 ## Source Finding Disposition Summary
 

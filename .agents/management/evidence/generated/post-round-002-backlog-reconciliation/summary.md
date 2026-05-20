@@ -75,6 +75,8 @@
 
 ## fix-this.md Changes
 
+- TODO-001: OPEN → DONE (commit: 36a8e3547 — integrated before round 002)
+- TODO-002: OPEN → DONE (commit: ae0c5689b — integrated before round 002)
 - TODO-003: OPEN → DONE (merge: c3abfc1bb)
 - TODO-004: OPEN → DONE (merge: 43c5e6883 + 634b552e5)
 - TODO-005: OPEN → DONE (merge: 3f55d597d)
@@ -82,22 +84,22 @@
 - TODO-017: OPEN → DONE (merge: 182074351)
 - TODO-018: OPEN → DONE (merge: 40b954daf)
 - TODO-019: OPEN → DONE (merge: c79c4df0b)
-- Next Recommended Batch: updated to reflect TODO-001 as next priority
-- Added Post-TODO-001 Priority Order section
+- Next Recommended Batch: updated to TODO-006 (framework entrypoint composition)
+- Post-Round-002 Priority Order: corrected — TODO-001 and TODO-002 removed from remaining
 
 ## Remaining TODO Counts by Priority
 
 | Priority | Count | TODOs |
 |----------|-------|-------|
-| P0 BLOCKER | 4 | TODO-001, TODO-002, TODO-006, TODO-007 |
+| P0 BLOCKER | 2 | TODO-006, TODO-007 |
 | P1 HIGH | 8 | TODO-008, TODO-009, TODO-010, TODO-011, TODO-012, TODO-013, TODO-014, TODO-015 |
 | P2 MEDIUM | 8 | TODO-020, TODO-021, TODO-022, TODO-023, TODO-024, TODO-025, TODO-027, TODO-028, TODO-029 |
 | P3 LOW | 1 | TODO-030 |
 | VERIFIED | 2 | TODO-026, TODO-031 |
 | ACCEPTED_YELLOW | 1 | TODO-032 |
 
-**Total active TODOs:** 22 (excluding VERIFIED, ACCEPTED_YELLOW, DONE)
-**DONE:** 15 (including sub-TODOs)
+**Total active TODOs:** 20 (excluding VERIFIED, ACCEPTED_YELLOW, DONE)
+**DONE:** 17 (including sub-TODOs)
 
 ## Accepted YELLOW Items
 
@@ -131,20 +133,18 @@ sudo rm -rf /home/shomsy/projects/avax-round-002-review
 
 ## Next Recommended Batch
 
-**TODO-001: Harden serialized payload boundaries** (P0 BLOCKER)
+**TODO-006: Move framework public entrypoint object-graph assembly out of runtime/PublicSurface** (P0 BLOCKER)
 
-This is the highest remaining security risk. It can be remediated without mixing unrelated architecture cleanup.
+This is the highest remaining security/architecture risk. Framework entrypoints (`Avax.php`, `BootDsl.php`, `App.php`, `RunApplication.php`, `CreateApplication.php`) create runtime object graphs with `new`, weakening testability, worker safety, and DI discipline.
 
-- Scope: `PhpCacheSerializer.php`, `SerializeClosureThroughLibrary.php`, `RedisCacheStore.php`, DecryptValue fallback
-- Validation: `vendor/bin/phpunit --filter "CacheSerializer|CallableSerialization|DecryptValue|RedisCacheStore" --no-coverage`
+- Scope: `Avax.php`, `BootDsl.php`, `App.php`, `RunApplication.php`, `CreateApplication.php`, `BootDslEngine.php`
+- Validation: `php tooling/refactor/check-direct-instantiation.php && php tooling/refactor/check-runtime-composition-leaks.php && php tooling/refactor/check-public-surface.php`
 - Evidence: `.agents/management/evidence/generated/review-reconciliation/security-runtime-escalation.md`
 
-After TODO-001:
+After TODO-006:
 
-1. **TODO-002** — compiled container namespace emission (P0 BLOCKER)
-2. **TODO-006** — framework public entrypoint object-graph assembly (P0 BLOCKER)
-3. **TODO-007** — AuthBuilder split (P0 BLOCKER)
-4. **TODO-008 through TODO-015** — P1 batches
+1. **TODO-007** — AuthBuilder split (P0 BLOCKER)
+2. **TODO-008 through TODO-015** — P1 batches
 
 ## Validation Summary
 
@@ -158,4 +158,4 @@ After TODO-001:
 
 **BACKLOG_RECONCILED**
 
-Main is synced with origin at `740d1af11`. 15 TODOs confirmed DONE. fix-this.md and TODO.md updated to reflect current state. Worktrees unregistered (8 directories need manual cleanup). Next recommended batch: TODO-001 serialization trust boundary.
+Main is synced with origin at `740d1af11`. 17 TODOs confirmed DONE. fix-this.md and TODO.md updated to reflect current state. Worktrees unregistered (8 directories need manual cleanup). Next recommended batch: TODO-006 framework entrypoint composition.

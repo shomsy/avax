@@ -15,7 +15,11 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-$baseDir = dirname(__DIR__);
+// Override baseDir for git worktree: PHP __DIR__ resolves to the main repo
+// and realpath follows worktree links back to the main repo.
+// Use getcwd() instead, which correctly returns the worktree root when
+// the tool is invoked from the worktree directory.
+$baseDir = getcwd();
 $failures = [];
 $classifiedSkipped = [];
 
@@ -25,6 +29,9 @@ if (!file_exists($auditFile)) {
     echo "FAIL: audit_broken_refs.php not found\n";
     exit(1);
 }
+
+// Force audit to use our worktree baseDir instead of __DIR__
+$_OVERRIDE_BASEDIR = $baseDir;
 
 // Capture audit output
 ob_start();
@@ -112,6 +119,7 @@ function classifyRef(string $ref, array $refs, string $baseDir): string
         'Aws\\',
         'Cron\\',
         'PhpCsFixer\\',
+        'Symfony\\Component\\VarDumper\\',
     ];
     foreach ($optionalVendors as $vendor) {
         if (str_starts_with($ref, $vendor)) {

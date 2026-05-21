@@ -10,6 +10,11 @@ use Avax\Components\Identity\Access\System\Capabilities\Policy\Foundation\Policy
 use Avax\Components\Identity\Access\System\Capabilities\Policy\Policy;
 use Avax\Components\Identity\Access\System\Capabilities\Policy\Rules\AttributeCondition;
 use Avax\Components\Identity\Access\System\Capabilities\Policy\Rules\PolicyRule;
+use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\EndpointPosture\EndpointPostureDecision;
+use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\EndpointPosture\EndpointPostureEngine;
+use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\EndpointPosture\EndpointPosturePolicy;
+use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\EndpointPosture\EndpointPostureSignal;
+use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\EndpointPosture\EndpointPostureSignalData;
 use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -344,5 +349,25 @@ final class PolicyCharacterizationTest extends TestCase
         self::assertTrue(class_exists(PolicyEvaluator::class));
         self::assertTrue(class_exists(PolicyRule::class));
         self::assertTrue(class_exists(AttributeCondition::class));
+    }
+
+    #[Test]
+    public function endpointPostureDefinitionsRemainOneConceptPerFile(): void
+    {
+        $engine = new EndpointPostureEngine();
+
+        $decision = $engine->evaluate(
+            signals: [
+                new EndpointPostureSignalData(
+                    type     : EndpointPostureSignal::IMPOSSIBLE_TRAVEL,
+                    score    : 1.0,
+                    anomalous: true,
+                    detail   : 'impossible-travel',
+                ),
+            ],
+            endpointPosturePolicy: new EndpointPosturePolicy(),
+        );
+
+        self::assertSame(EndpointPostureDecision::DENY, $decision);
     }
 }

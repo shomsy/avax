@@ -5,8 +5,15 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Access\System\Capabilities;
 
 /**
- * AccessPolicy - Contract for access policies.
- * 1:1 alignment with refactor.md.
+ * Legacy callable access-policy contract.
+ *
+ * This contract represents imperative policy implementations. The canonical
+ * declarative policy value object lives in
+ * Avax\Components\Identity\Access\System\Capabilities\Policy\AccessPolicy.
+ *
+ * @deprecated Prefer the canonical Policy\AccessPolicy value object for new
+ *             access requirements. Keep this interface only for older custom
+ *             policy implementations until a migration path is approved.
  */
 interface AccessPolicy
 {

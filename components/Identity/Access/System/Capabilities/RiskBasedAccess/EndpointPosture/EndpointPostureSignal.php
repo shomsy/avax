@@ -18,11 +18,3 @@ enum EndpointPostureSignal: string
     case VPN_DETECTION       = 'vpn_detection';
     case PROXY_DETECTION     = 'proxy_detection';
 }
-
-/**
- * Endpoint posture signal data.
- */
-final readonly class EndpointPostureSignalData
-{
-    public function __construct(public EndpointPostureSignal $type, public float $score, public bool $anomalous, public string $detail) {}
-}

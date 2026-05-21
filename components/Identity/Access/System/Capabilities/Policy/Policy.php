@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Access\System\Capabilities\Policy;
 
 use Avax\Components\Identity\Access\System\Capabilities\Policy\Engine\PolicyEvaluator;
+use Avax\Components\Identity\Access\System\Capabilities\Policy\Foundation\DecisionExplanation;
+use Avax\Components\Identity\Access\System\Capabilities\Policy\Foundation\PolicyDecision;
 use Avax\Components\Identity\Access\System\Capabilities\Policy\Rules\PolicyRule;
 
 final class Policy
@@ -55,39 +57,5 @@ final class Policy
     public static function explain(string $action, object $resource, array $context = []) : DecisionExplanation
     {
         return self::evaluator()->explain($action, $resource, $context);
-    }
-}
-
-final readonly class PolicyDecision
-{
-    public function __construct(
-        public bool    $allowed,
-        public string|null $reason = null,
-    ) {}
-
-    public static function allow(string|null $reason = null) : self
-    {
-        return new self(true, $reason);
-    }
-
-    public static function deny(string|null $reason = null) : self
-    {
-        return new self(false, $reason);
-    }
-}
-
-final readonly class DecisionExplanation
-{
-    public function __construct(
-        public bool  $allowed,
-        /** @var list<string> */
-        public array $reasons = []
-    ) {}
-
-    public function toString() : string
-    {
-        return $this->allowed
-            ? 'ALLOWED: ' . implode(' AND ', $this->reasons)
-            : 'DENIED: ' . implode(' AND ', $this->reasons);
     }
 }

@@ -18,7 +18,6 @@ final class ExternalIdentityCharacterizationTest extends TestCase
     {
         // Reset to fresh store to ensure test isolation
         $ref = new \ReflectionProperty(ExternalIdentity::class, 'linkStore');
-        $ref->setAccessible(true);
         $ref->setValue(null, null);
     }
 

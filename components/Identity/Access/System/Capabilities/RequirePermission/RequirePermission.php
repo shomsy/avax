@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Access\System\Capabilities\RequirePermission;
 
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
+use Avax\Components\Identity\Access\System\Foundation\Exception\PermissionDenied;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
 use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;

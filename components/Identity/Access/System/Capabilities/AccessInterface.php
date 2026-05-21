@@ -6,7 +6,7 @@ namespace Avax\Components\Identity\Access\System\Capabilities;
 
 use Avax\Components\Identity\Access\System\Capabilities\Policy\AccessPolicy;
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
-use Avax\Components\Identity\Access\System\Capabilities\RequirePermission\PermissionDenied;
+use Avax\Components\Identity\Access\System\Foundation\Exception\PermissionDenied;
 use Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\ResourceOwnerDenied;
 use Avax\Components\Identity\Access\System\Capabilities\RequireRole\RoleDenied;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission;

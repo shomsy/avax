@@ -9,7 +9,7 @@ use Avax\Components\Identity\Access\System\Capabilities\Policy\AccessPolicy;
 use Avax\Components\Identity\Access\System\Capabilities\RequireAccessPolicy\RequireAccessPolicy as RequireAccessPolicyBoundary;
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\RequireAuthentication as RequireAuthenticationBoundary;
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
-use Avax\Components\Identity\Access\System\Capabilities\RequirePermission\PermissionDenied;
+use Avax\Components\Identity\Access\System\Foundation\Exception\PermissionDenied;
 use Avax\Components\Identity\Access\System\Capabilities\RequirePermission\RequirePermission as RequirePermissionBoundary;
 use Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\ResourceOwnerDenied;
 use Avax\Components\Identity\Access\System\Capabilities\RequireRole\RequireRole as RequireRoleBoundary;

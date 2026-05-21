@@ -28,7 +28,7 @@ final readonly class AccessRuntime
     public function authorize(string $permission, mixed $resource = null) : void
     {
         if ($this->denies(permission: $permission, resource: $resource)) {
-            throw new PermissionDenied('Permission denied: ' . $permission);
+            throw new PermissionDenied(message: 'Permission denied: ' . $permission);
         }
     }
 

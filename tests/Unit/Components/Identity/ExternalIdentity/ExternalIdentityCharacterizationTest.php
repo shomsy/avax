@@ -16,10 +16,10 @@ final class ExternalIdentityCharacterizationTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        // Static state is cleared via Reflection to ensure isolation
-        $ref = new \ReflectionProperty(ExternalIdentity::class, 'links');
+        // Reset to fresh store to ensure test isolation
+        $ref = new \ReflectionProperty(ExternalIdentity::class, 'linkStore');
         $ref->setAccessible(true);
-        $ref->setValue(null, []);
+        $ref->setValue(null, null);
     }
 
     #[Test]
@@ -61,14 +61,12 @@ final class ExternalIdentityCharacterizationTest extends TestCase
     }
 
     #[Test]
-    public function allMethodsAreStatic(): void
+    public function backwardCompatWithReplaceableStore(): void
     {
-        $reflection = new \ReflectionClass(ExternalIdentity::class);
-        foreach ($reflection->getMethods() as $method) {
-            self::assertTrue(
-                $method->isStatic(),
-                "ExternalIdentity::{$method->getName()}() should be static",
-            );
-        }
+        $customStore = new \Avax\Components\Identity\ExternalIdentity\System\Capabilities\ExternalIdentityLink\InMemoryExternalIdentityLinkStore();
+        ExternalIdentity::setLinkStore($customStore);
+
+        ExternalIdentity::link(self::USER_ID, 'custom', ['via' => 'store']);
+        self::assertSame(['via' => 'store'], ExternalIdentity::resolve(self::USER_ID, 'custom'));
     }
 }

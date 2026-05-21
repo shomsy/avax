@@ -64,15 +64,17 @@ final class CredentialsCharacterizationTest extends TestCase
     }
 
     #[Test]
-    public function allMethodsAreStatic(): void
+    public function backwardCompatWithReplaceableStore(): void
     {
-        $reflection = new \ReflectionClass(Credentials::class);
-        foreach ($reflection->getMethods() as $method) {
-            self::assertTrue(
-                $method->isStatic(),
-                "Credentials::{$method->getName()}() should be static",
-            );
-        }
+        $customStore = new \Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\InMemoryCredentialStore();
+        Credentials::setStore($customStore);
+
+        Credentials::store(self::USER_ID, ['via' => 'custom']);
+        self::assertSame(['via' => 'custom'], Credentials::read(self::USER_ID));
+        Credentials::forget(self::USER_ID);
+
+        // Reset to default
+        Credentials::setStore(new \Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\InMemoryCredentialStore());
     }
 
     #[Test]

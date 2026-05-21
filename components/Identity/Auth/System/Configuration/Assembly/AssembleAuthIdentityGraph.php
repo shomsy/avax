@@ -713,16 +713,16 @@ final class AssembleAuthIdentityGraph
         Mfa $mfa,
         Passkey $passkey,
     ) : Identity {
-        return new Identity(
+        return Identity::create(
             authentication: $authentication,
-            sessions: $sessions,
-            account: $account,
-            recovery: $recovery,
-            verification: $verification,
-            mfa: $mfa,
-            passkey: $passkey,
+            sessions      : $sessions,
+            account       : $account,
+            recovery      : $recovery,
+            verification  : $verification,
+            mfa           : $mfa,
+            passkey       : $passkey,
             sessionIdentity: $this->identity->sessionIdentity(),
-            jwtIdentity: $this->identity->jwtIdentity(),
+            jwtIdentity   : $this->identity->jwtIdentity(),
         );
     }
 

@@ -25,6 +25,7 @@ use Avax\Components\Identity\ExternalIdentity\System\Configuration\Assembly\Exte
 use Avax\Components\Identity\Risk\System\PublicSurface\Risk;
 use Avax\Components\Identity\System\Capabilities\GuestSession\GuestSessionIdentity;
 use Avax\Components\Identity\System\Capabilities\IdentityRuntime\IdentityRuntime as RootIdentityRuntime;
+use Avax\Components\Identity\System\Configuration\IdentityConfiguration;
 use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\InMemoryAdminElevationStore;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Context\DefaultTenantContext;
 use Avax\Components\Identity\Tenancy\System\Configuration\Assembly\TenancyGraph;
@@ -32,12 +33,20 @@ use Avax\Components\Identity\Tokens\System\Configuration\Assembly\TokensGraph;
 
 /**
  * Assembles the default root Identity runtime used by the fluent public DSL.
+ *
+ * Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
  */
 final readonly class IdentityRuntime
 {
-    public static function defaults() : self
+    public function __construct(
+        private IdentityConfiguration $configuration,
+    ) {}
+
+    public static function defaults(IdentityConfiguration|null $configuration = null) : self
     {
-        return new self();
+        return new self(
+            configuration: $configuration ?? IdentityConfiguration::fromEnvironment(),
+        );
     }
 
     public function runtime() : RootIdentityRuntime
@@ -109,7 +118,7 @@ final readonly class IdentityRuntime
             credentials     : CredentialsGraph::fromStore(
                 store: new InMemoryCredentialStore(),
             ),
-            tokens          : TokensGraph::hmac(secret: 'test'),
+            tokens          : TokensGraph::hmac(secret: $this->configuration->requireTokenSecret()),
             tenancy         : TenancyGraph::fromContext(
                 context: new DefaultTenantContext(),
             ),

@@ -17,11 +17,33 @@ use Avax\Components\Identity\System\Configuration\IdentityServiceProvider;
 use Avax\Components\Identity\System\PublicSurface\Identity;
 use Avax\Components\Identity\Tenancy\System\PublicSurface\Tenancy;
 use Avax\Components\Identity\Tokens\System\PublicSurface\Tokens;
+use RuntimeException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 final class IdentitySystemCapabilitiesTest extends TestCase
 {
+    private string|null $previousTokenSecret = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->previousTokenSecret = $_ENV['TOKEN_SECRET'] ?? null;
+        $_ENV['TOKEN_SECRET'] = 'identity-test-secret';
+    }
+
+    protected function tearDown(): void
+    {
+        if ($this->previousTokenSecret === null) {
+            unset($_ENV['TOKEN_SECRET']);
+        } else {
+            $_ENV['TOKEN_SECRET'] = $this->previousTokenSecret;
+        }
+
+        parent::tearDown();
+    }
+
     #[Test]
     public function tenancyReturnsTenancySurface(): void
     {
@@ -55,6 +77,15 @@ final class IdentitySystemCapabilitiesTest extends TestCase
         self::assertInstanceOf(Tenancy::class, $runtime->tenancy());
         self::assertInstanceOf(Risk::class, $runtime->risk());
         self::assertInstanceOf(ExternalIdentity::class, $runtime->externalIdentity());
+    }
+
+    #[Test]
+    public function defaultRuntimeFailsClosedWithoutTokenSecret(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('TOKEN_SECRET');
+
+        BuildIdentityRuntime::defaults(new IdentityConfiguration())->runtime();
     }
 
     #[Test]

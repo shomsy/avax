@@ -10,7 +10,7 @@ use Avax\Components\Identity\Credentials\System\PublicSurface\Credentials;
 use Avax\Components\Identity\ExternalIdentity\System\PublicSurface\ExternalIdentity;
 use Avax\Components\Identity\Risk\System\PublicSurface\Risk;
 use Avax\Components\Identity\System\Capabilities\IdentityRuntime\IdentityRuntime;
-use Avax\Components\Identity\System\Configuration\Builders\IdentityRuntime as BuildIdentityRuntime;
+use Avax\Components\Identity\System\Configuration\Builders\IdentityRuntime as IdentityRuntimeDefaults;
 use Avax\Components\Identity\Tenancy\System\PublicSurface\Tenancy;
 use Avax\Components\Identity\Tokens\System\PublicSurface\Tokens;
 
@@ -23,7 +23,7 @@ use Avax\Components\Identity\Tokens\System\PublicSurface\Tokens;
  *   Identity::externalIdentity()->link($userId, 'google', $data);
  *   Identity::auth()->check();
  *   Identity::access()->allows('read.post');
- *   Identity::tokens()->issue('sub-123');
+ *   Identity::tokens()->issue(new TokenSubject(userId: 'sub-123'));
  *   Identity::risk()->assessCurrent();
  */
 final class Identity
@@ -86,6 +86,6 @@ final class Identity
 
     private static function runtime() : IdentityRuntime
     {
-        return BuildIdentityRuntime::defaults()->runtime();
+        return IdentityRuntimeDefaults::defaults()->runtime();
     }
 }

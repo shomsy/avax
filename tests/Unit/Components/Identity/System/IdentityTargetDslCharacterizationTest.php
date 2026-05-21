@@ -21,6 +21,27 @@ use PHPUnit\Framework\TestCase;
  */
 final class IdentityTargetDslCharacterizationTest extends TestCase
 {
+    private string|null $previousTokenSecret = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->previousTokenSecret = $_ENV['TOKEN_SECRET'] ?? null;
+        $_ENV['TOKEN_SECRET'] = 'identity-test-secret';
+    }
+
+    protected function tearDown(): void
+    {
+        if ($this->previousTokenSecret === null) {
+            unset($_ENV['TOKEN_SECRET']);
+        } else {
+            $_ENV['TOKEN_SECRET'] = $this->previousTokenSecret;
+        }
+
+        parent::tearDown();
+    }
+
     // ── Identity root DSL ──────────────────────────────────────────
 
     #[Test]

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit\Components\Identity\Tenancy;
 
 use Avax\Components\Identity\Tenancy\System\Capabilities\Context\DefaultTenantContext;
-use Avax\Components\Identity\Tenancy\System\Configuration\Assembly\TenancyGraph;
+use Avax\Components\Identity\Tenancy\System\Configuration\Assembly\Tenancy as TenancyAssembly;
 use Avax\Components\Identity\Tenancy\System\Foundation\Failure\TenantNotFoundException;
 use Avax\Components\Identity\Tenancy\System\PublicSurface\Tenancy;
 use PHPUnit\Framework\Attributes\Test;
@@ -103,6 +103,6 @@ final class TenancyCharacterizationTest extends TestCase
 
     private function tenancy() : Tenancy
     {
-        return TenancyGraph::fromContext(context: new DefaultTenantContext());
+        return TenancyAssembly::fromContext(context: new DefaultTenantContext());
     }
 }

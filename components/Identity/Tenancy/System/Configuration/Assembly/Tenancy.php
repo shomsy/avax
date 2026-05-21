@@ -8,17 +8,17 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\InMemoryAdmi
 use Avax\Components\Identity\Tenancy\System\Capabilities\Context\TenantContextInterface;
 use Avax\Components\Identity\Tenancy\System\Capabilities\TenancyRuntime\TenancyRuntime;
 use Avax\Components\Identity\Tenancy\System\PublicSurface\Admin;
-use Avax\Components\Identity\Tenancy\System\PublicSurface\Tenancy;
+use Avax\Components\Identity\Tenancy\System\PublicSurface\Tenancy as TenancySurface;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 
 /**
  * Assembles the Tenancy public surface from explicit runtime dependencies.
  */
-final class TenancyGraph
+final class Tenancy
 {
-    public static function fromContext(TenantContextInterface $context) : Tenancy
+    public static function fromContext(TenantContextInterface $context) : TenancySurface
     {
-        return new Tenancy(
+        return new TenancySurface(
             runtime: new TenancyRuntime(
                 tenantContext: $context,
                 admin        : new Admin(

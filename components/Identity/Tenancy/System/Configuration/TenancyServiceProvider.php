@@ -10,7 +10,7 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Context\DefaultTenantCo
 use Avax\Components\Identity\Tenancy\System\Capabilities\Context\TenantContextInterface;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\InMemoryTenantStore;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantStoreInterface;
-use Avax\Components\Identity\Tenancy\System\Configuration\Assembly\TenancyGraph;
+use Avax\Components\Identity\Tenancy\System\Configuration\Assembly\Tenancy as TenancyAssembly;
 use Avax\Components\Identity\Tenancy\System\Configuration\TenancyConfiguration;
 use Avax\Components\Identity\Tenancy\System\PublicSurface\Tenancy;
 
@@ -29,7 +29,7 @@ final class TenancyServiceProvider implements ServiceProvider
 
         $container->scoped(TenantContextInterface::class, static fn () : TenantContextInterface => new DefaultTenantContext());
 
-        $container->scoped(Tenancy::class, static fn (ContainerInterface $c) : Tenancy => TenancyGraph::fromContext(
+        $container->scoped(Tenancy::class, static fn (ContainerInterface $c) : Tenancy => TenancyAssembly::fromContext(
             context: $c->get(TenantContextInterface::class),
         ));
     }

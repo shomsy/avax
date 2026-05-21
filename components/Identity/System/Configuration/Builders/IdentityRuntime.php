@@ -33,7 +33,7 @@ use Avax\Components\Identity\System\Configuration\IdentityConfiguration;
 use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\InMemoryAdminElevationStore;
 use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime\RequireAdminElevation\RequireAdminElevation;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Context\DefaultTenantContext;
-use Avax\Components\Identity\Tenancy\System\Configuration\Assembly\TenancyGraph;
+use Avax\Components\Identity\Tenancy\System\Configuration\Assembly\Tenancy as TenancyAssembly;
 use Avax\Components\Identity\Tokens\System\Configuration\Assembly\TokensGraph;
 
 /**
@@ -124,7 +124,7 @@ final readonly class IdentityRuntime
                 store: new InMemoryCredentialStore(),
             ),
             tokens          : TokensGraph::hmac(secret: $this->configuration->requireTokenSecret()),
-            tenancy         : TenancyGraph::fromContext(
+            tenancy         : TenancyAssembly::fromContext(
                 context: new DefaultTenantContext(),
             ),
             risk            : new Risk(),

@@ -6,7 +6,7 @@ Branch: architecture/identity-world-class-redesign
 
 ## Purpose
 
-Create `Identity::tenancy()`, `Identity::credentials()`, `Identity::externalIdentity()` 
+Create `Identity::tenancy()`, `Identity::credentials()`, `Identity::externalIdentity()`
 as a unified fluent entrypoint for all Identity sub-surfaces.
 
 ## Changes

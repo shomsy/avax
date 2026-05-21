@@ -28,9 +28,14 @@ use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Director
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\ScimProvisionedIdentityStoreInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\Bulk\RunScimBulk;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\DeleteUser\DeleteScimUser;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\MarkOutage\MarkScimDirectoryOutage;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ProvisionUser\ProvisionScimUser;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ReadDirectories\ReadScimDirectories;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ReadGroups\ReadScimGroups;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ReadUsers\ReadScimUsers;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RecoverOutage\RecoverScimDirectoryOutage;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RegisterDirectory\RegisterScimDirectory;
+use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RotateToken\RotateScimToken;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\SyncGroups\SyncScimGroups;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\SCIM;
 use Avax\Components\Identity\Auth\System\Configuration\Readiness\AuthCapabilityReadiness;
@@ -737,7 +742,7 @@ final class AssembleAuthIdentityGraph
     ) : SCIM {
         return new SCIM(
             registerScimDirectory: $authCapabilityReadiness->scim()
-                ? new \Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RegisterDirectory\RegisterScimDirectory(
+                ? new RegisterScimDirectory(
                     passwordHasher: $this->passwordHasher,
                     groupRoleMappingValidator: new GroupRoleMappingValidator(),
                     auditLog: $this->auditLog,
@@ -746,10 +751,10 @@ final class AssembleAuthIdentityGraph
                 )
                 : null,
             readScimDirectories: $authCapabilityReadiness->scim()
-                ? new \Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\ReadDirectories\ReadScimDirectories(scimDirectoryStore: $this->scimDirectoryStore)
+                ? new ReadScimDirectories(scimDirectoryStore: $this->scimDirectoryStore)
                 : null,
             rotateScimToken: $authCapabilityReadiness->scim()
-                ? new \Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RotateToken\RotateScimToken(
+                ? new RotateScimToken(
                     passwordHasher: $this->passwordHasher,
                     auditLog: $this->auditLog,
                     clock: $this->clock,
@@ -758,14 +763,14 @@ final class AssembleAuthIdentityGraph
                 )
                 : null,
             markScimDirectoryOutage: $authCapabilityReadiness->scim()
-                ? new \Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\MarkOutage\MarkScimDirectoryOutage(
+                ? new MarkScimDirectoryOutage(
                     auditLog: $this->auditLog,
                     clock: $this->clock,
                     scimDirectoryStore: $this->scimDirectoryStore,
                 )
                 : null,
             recoverScimDirectoryOutage: $authCapabilityReadiness->scim()
-                ? new \Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RecoverOutage\RecoverScimDirectoryOutage(
+                ? new RecoverScimDirectoryOutage(
                     auditLog: $this->auditLog,
                     clock: $this->clock,
                     scimDirectoryStore: $this->scimDirectoryStore,

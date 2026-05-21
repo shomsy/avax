@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Access\System\Capabilities\Policy\Engine;
+namespace Avax\Components\Identity\Access\System\Capabilities\Policy\Foundation;
 
 final readonly class DecisionExplanation
 {
-    /** @param list<string> */
+    /** @param list<string> $reasons */
     public function __construct(
         public bool  $allowed,
         public array $reasons = [],

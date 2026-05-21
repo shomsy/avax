@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Tokens\System\PublicSurface;
 
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Code\AuthorizationCodeStoreInterface;
-use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Code\InMemoryAuthorizationCodeStore;
-use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Codec\HmacTokenCodec;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Codec\TokenCodecInterface;
-use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\InMemoryTokenRevocationStore;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\TokenRevocationStoreInterface;
+use Avax\Components\Identity\Tokens\System\Configuration\Assembly\TokensGraph;
 use Avax\Components\Identity\Tokens\System\Flows\AuthorizeToken\AuthorizeTokenRequest;
 use Avax\Components\Identity\Tokens\System\Flows\ExchangeToken\ExchangeAuthorizationCode;
 use Avax\Components\Identity\Tokens\System\Flows\IntrospectToken\IntrospectToken;
@@ -28,39 +26,33 @@ final readonly class Tokens implements TokensInterface
         private RevokeToken               $revokeToken,
     ) {}
 
+    /**
+     * Build Tokens with HMAC-based codec and InMemory stores.
+     *
+     * @deprecated Use TokensGraph::hmac() instead.
+     *             Assembly belongs in Configuration/Assembly, not PublicSurface.
+     */
     public static function hmac(string $secret) : self
     {
-        $inMemoryAuthorizationCodeStore = new InMemoryAuthorizationCodeStore();
-        $hmacTokenCodec                 = new HmacTokenCodec(secret: $secret);
-        $inMemoryTokenRevocationStore   = new InMemoryTokenRevocationStore();
-
-        return self::fromRuntime(
-            authorizationCodeStore: $inMemoryAuthorizationCodeStore,
-            tokenCodec            : $hmacTokenCodec,
-            tokenRevocationStore  : $inMemoryTokenRevocationStore,
-        );
+        return TokensGraph::hmac(secret: $secret);
     }
 
+    /**
+     * Build Tokens from explicit runtime dependencies.
+     *
+     * @deprecated Use TokensGraph::fromRuntime() instead.
+     *             Assembly belongs in Configuration/Assembly, not PublicSurface.
+     */
     public static function fromRuntime(
         AuthorizationCodeStoreInterface $authorizationCodeStore,
         TokenCodecInterface             $tokenCodec,
         TokenRevocationStoreInterface   $tokenRevocationStore,
     ) : self
     {
-        return new self(
-            authorizeTokenRequest    : new AuthorizeTokenRequest(authorizationCodeStore: $authorizationCodeStore),
-            exchangeAuthorizationCode: new ExchangeAuthorizationCode(
-                                           authorizationCodeStore: $authorizationCodeStore,
-                                           tokenCodec            : $tokenCodec,
-                                       ),
-            introspectToken          : new IntrospectToken(
-                                           tokenCodec          : $tokenCodec,
-                                           tokenRevocationStore: $tokenRevocationStore,
-                                       ),
-            revokeToken              : new RevokeToken(
-                                           tokenCodec          : $tokenCodec,
-                                           tokenRevocationStore: $tokenRevocationStore,
-                                       ),
+        return TokensGraph::fromRuntime(
+            authorizationCodeStore: $authorizationCodeStore,
+            tokenCodec            : $tokenCodec,
+            tokenRevocationStore  : $tokenRevocationStore,
         );
     }
 

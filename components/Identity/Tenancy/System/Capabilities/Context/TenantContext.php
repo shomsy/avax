@@ -6,35 +6,51 @@ namespace Avax\Components\Identity\Tenancy\System\Capabilities\Context;
 
 use Closure;
 
+/**
+ * Request-scoped tenant context.
+ *
+ * @deprecated Inject TenantContextInterface directly instead of using this static facade.
+ *             This class remains for backward compatibility but the static state
+ *             is now owned by a configurable TenantContextInterface instance.
+ */
 final class TenantContext
 {
-    private static ?string $current = null;
+    private static ?TenantContextInterface $context = null;
+
+    /**
+     * Replace the backing context implementation (for DI integration).
+     */
+    public static function setContext(TenantContextInterface $context) : void
+    {
+        self::$context = $context;
+    }
 
     public static function current() : string|null
     {
-        return self::$current;
+        return self::resolveContext()->current();
     }
 
     public static function set(string $tenantId) : void
     {
-        self::$current = $tenantId;
+        self::resolveContext()->set($tenantId);
     }
 
     public static function clear() : void
     {
-        self::$current = null;
+        self::resolveContext()->clear();
     }
 
     public static function with(string $tenantId, Closure $operation) : mixed
     {
-        $previous = self::$current;
+        return self::resolveContext()->with($tenantId, $operation);
+    }
 
-        try {
-            self::$current = $tenantId;
-
-            return $operation();
-        } finally {
-            self::$current = $previous;
+    private static function resolveContext() : TenantContextInterface
+    {
+        if (self::$context === null) {
+            self::$context = new DefaultTenantContext();
         }
+
+        return self::$context;
     }
 }

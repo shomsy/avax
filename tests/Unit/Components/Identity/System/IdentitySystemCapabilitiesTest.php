@@ -4,14 +4,33 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Identity\System;
 
+use Avax\Components\Identity\Credentials\System\PublicSurface\Credentials;
+use Avax\Components\Identity\ExternalIdentity\System\PublicSurface\ExternalIdentity;
 use Avax\Components\Identity\System\PublicSurface\Identity;
+use Avax\Components\Identity\Tenancy\System\PublicSurface\Tenancy;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 final class IdentitySystemCapabilitiesTest extends TestCase
 {
-    public function test_identity_surface_provides_access_to_subsystems() : void
+    #[Test]
+    public function tenancyReturnsTenancySurface(): void
     {
-        $identity = new Identity();
-        $this->assertInstanceOf(Identity::class, $identity);
+        $tenancy = Identity::tenancy();
+        self::assertInstanceOf(Tenancy::class, $tenancy);
+    }
+
+    #[Test]
+    public function credentialsReturnsCredentialsSurface(): void
+    {
+        $credentials = Identity::credentials();
+        self::assertInstanceOf(Credentials::class, $credentials);
+    }
+
+    #[Test]
+    public function externalIdentityReturnsExternalIdentitySurface(): void
+    {
+        $externalIdentity = Identity::externalIdentity();
+        self::assertInstanceOf(ExternalIdentity::class, $externalIdentity);
     }
 }

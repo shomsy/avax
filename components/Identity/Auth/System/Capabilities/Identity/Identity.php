@@ -27,12 +27,9 @@ use SensitiveParameter;
 /**
  * Identity capability coordinator.
  *
- * Owns the cross-cutting identity lifecycle (issue, clear, resolve mode)
- * and exposes sub-capability owners for domain-specific operations:
- *
- *   $identity->mfa()->startMfaEnrollment();
- *   $identity->passkey()->beginPasskeyRegistration();
- *   $identity->sessions()->readActiveSessions();
+ * @deprecated Use Identity::create() instead of the constructor for runtime assembly.
+ *             The constructor accepts nullable sub-capabilities for bootstrap flows.
+ *             The create() method requires all 9 parameters.
  */
 final readonly class Identity implements IdentityInterface
 {
@@ -58,6 +55,47 @@ final readonly class Identity implements IdentityInterface
         }
     }
 
+    /**
+     * Create a fully populated Identity with all sub-capabilities.
+     *
+     * Unlike the constructor, this method requires all 9 parameters to be non-null.
+     * This is the preferred way to create Identity for production runtime assembly.
+     */
+    /**
+     * Create a fully populated Identity with all sub-capabilities.
+     *
+     * Unlike the constructor, this method requires all 7 sub-capability parameters
+     * to be non-null. Backends (sessionIdentity/jwtIdentity) are nullable because
+     * the constructor validates at least one is present.
+     */
+    public static function create(
+        Authentication                   $authentication,
+        Sessions                         $sessions,
+        Account                          $account,
+        Recovery                         $recovery,
+        Verification                     $verification,
+        Mfa                              $mfa,
+        Passkey                          $passkey,
+        SessionIdentityInterface|null    $sessionIdentity = null,
+        JwtIdentityInterface|null        $jwtIdentity = null,
+    ) : self {
+        return new self(
+            authentication : $authentication,
+            sessions       : $sessions,
+            account        : $account,
+            recovery       : $recovery,
+            verification   : $verification,
+            mfa            : $mfa,
+            passkey        : $passkey,
+            sessionIdentity: $sessionIdentity,
+            jwtIdentity    : $jwtIdentity,
+        );
+    }
+
+    /**
+     * @deprecated Use Identity::create() with all 9 parameters or the constructor with explicit params.
+     *             This method exists only for backward compatibility with AuthBuilder bootstrap flow.
+     */
     public static function fromBackends(
         #[SensitiveParameter]
         ?SessionIdentityInterface $sessionIdentity = null,
@@ -70,8 +108,6 @@ final readonly class Identity implements IdentityInterface
             jwtIdentity    : $jwtIdentity,
         );
     }
-
-    // ── Owned behavior (cross-cutting identity lifecycle) ──
 
     public function issue(
         User $user, DateTimeImmutable|null $mfaVerifiedAt = null,
@@ -144,23 +180,15 @@ final readonly class Identity implements IdentityInterface
         return $this->sessionIdentity;
     }
 
-    // ── Fast-path convenience (high-frequency auth operations) ──
-
     public function jwtIdentity() : JwtIdentityInterface|null
     {
         return $this->jwtIdentity;
     }
 
-    /**
-     * @throws AuthenticationFailed
-     * @throws RateLimitException
-     */
     public function login(#[SensitiveParameter] Credentials $credentials) : AuthenticationResult
     {
         return $this->authentication()->login(credentials: $credentials);
     }
-
-    // ── Sub-capability accessors ──
 
     public function authentication() : Authentication
     {

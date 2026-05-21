@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Access\System\Capabilities\Policy\Engine;
 
+use Avax\Components\Identity\Access\System\Capabilities\Policy\Foundation\DecisionExplanation;
+use Avax\Components\Identity\Access\System\Capabilities\Policy\Foundation\PolicyDecision;
 use Avax\Components\Identity\Access\System\Capabilities\Policy\Rules\PolicyRule;
 
 final class PolicyEvaluator
@@ -65,12 +67,4 @@ final class PolicyEvaluator
             $reasons !== [] ? 'Matched ' . count($reasons) . ' rules' : null,
         );
     }
-}
-
-final readonly class PolicyDecision
-{
-    public function __construct(
-        public bool    $allowed,
-        public string|null $reason,
-    ) {}
 }

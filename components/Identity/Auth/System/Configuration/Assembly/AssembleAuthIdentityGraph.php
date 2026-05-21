@@ -119,18 +119,6 @@ use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Flow\Refr
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\RefreshTokenStoreInterface;
 use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 
-/**
- * Assembles the complete identity, tenancy, SCIM, and diagnostics object graphs.
- *
- * Capability: Produces Identity, Tenancy, SCIM, risk-assessment, and diagnostics
- * objects that form the internal auth system. The Auth facade exposes only the Identity root.
- *
- * This is the first extraction slice from AuthBuilder::ready(). It receives pre-built
- * core primitives (authentication state, MFA helpers, etc.) from the builder and assembles
- * the deep identity graph that was previously inlined.
- *
- * Subsequent slices will extract the external identity (OAuth/OIDC/Federation) graph.
- */
 final class AssembleAuthIdentityGraph
 {
     public function __construct(
@@ -170,7 +158,6 @@ final class AssembleAuthIdentityGraph
         private string $mfaIssuer = 'Avax Auth',
         private string $passkeyRpId = 'localhost',
         private string $passkeyRpName = 'Avax Auth',
-        // Phase 2 primitives built by AuthBuilder before delegation
         private CurrentAuthentication|null $currentAuthentication = null,
         private ProjectAuthenticatedUser|null $projectAuthenticatedUser = null,
         private RequireFreshMfa|null $requireFreshMfa = null,
@@ -200,35 +187,159 @@ final class AssembleAuthIdentityGraph
      */
     public function assemble() : array
     {
-        $currentAuthentication    = $this->currentAuthentication ?? new CurrentAuthentication();
-        $projectAuthenticatedUser = $this->projectAuthenticatedUser ?? new ProjectAuthenticatedUser(
+        $currentAuthentication    = $this->resolveOrBuildCurrentAuthentication();
+        $projectAuthenticatedUser = $this->resolveOrBuildProjectAuthenticatedUser();
+        $requireFreshMfa          = $this->resolveOrBuildRequireFreshMfa($currentAuthentication);
+        $generateBackupCodes      = $this->resolveOrBuildGenerateBackupCodes();
+        $verifyBackupCode         = $this->resolveOrBuildVerifyBackupCode();
+        $startMfaChallenge        = $this->resolveOrBuildStartMfaChallenge($currentAuthentication);
+
+        $provisionableUserSource  = $this->resolveProvisionableUserSource();
+        $lifecycle                = $this->buildLifecycleOrchestrator($provisionableUserSource);
+
+        $authCapabilityReadiness  = $this->buildCapabilityReadiness($provisionableUserSource);
+
+        $scimServices = $this->buildScimServices(
+            authCapabilityReadiness: $authCapabilityReadiness,
+            provisionableUserSource: $provisionableUserSource,
+            lifecycle: $lifecycle,
+        );
+
+        $assessCurrentRisk = $this->buildAssessCurrentRisk($currentAuthentication);
+        $readRiskSignals   = $this->buildReadRiskSignals($currentAuthentication);
+
+        $sessions = $this->buildSessions($currentAuthentication);
+
+        $authentication = $this->buildAuthentication($sessions, $currentAuthentication, $projectAuthenticatedUser);
+
+        $account = $this->buildAccount($sessions, $currentAuthentication, $requireFreshMfa, $provisionableUserSource);
+
+        $recovery     = $this->buildRecovery();
+        $verification = $this->buildVerification();
+
+        $mfa = $this->buildMfa(
+            currentAuthentication: $currentAuthentication,
+            projectAuthenticatedUser: $projectAuthenticatedUser,
+            startMfaChallenge: $startMfaChallenge,
+            generateBackupCodes: $generateBackupCodes,
+            verifyBackupCode: $verifyBackupCode,
+            requireFreshMfa: $requireFreshMfa,
+        );
+
+        $passkey = $this->buildPasskey(
+            currentAuthentication: $currentAuthentication,
+            projectAuthenticatedUser: $projectAuthenticatedUser,
+            requireFreshMfa: $requireFreshMfa,
+            authCapabilityReadiness: $authCapabilityReadiness,
+        );
+
+        $identity = $this->buildIdentity(
+            authentication: $authentication,
+            sessions: $sessions,
+            account: $account,
+            recovery: $recovery,
+            verification: $verification,
+            mfa: $mfa,
+            passkey: $passkey,
+        );
+
+        $scim = $this->buildScimCapability(
+            authCapabilityReadiness: $authCapabilityReadiness,
+            provisionableUserSource: $provisionableUserSource,
+            lifecycle: $lifecycle,
+            scimServices: $scimServices,
+        );
+
+        $tenancy = $this->buildTenancy();
+
+        return [
+            'identity'                 => $identity,
+            'tenancy'                  => $tenancy,
+            'scim'                     => $scim,
+            'assessCurrentRisk'        => $assessCurrentRisk,
+            'readRiskSignals'          => $readRiskSignals,
+            'currentAuthentication'    => $currentAuthentication,
+            'projectAuthenticatedUser' => $projectAuthenticatedUser,
+            'requireFreshMfa'          => $requireFreshMfa,
+            'generateBackupCodes'      => $generateBackupCodes,
+            'verifyBackupCode'         => $verifyBackupCode,
+            'startMfaChallenge'        => $startMfaChallenge,
+            'authCapabilityReadiness'  => $authCapabilityReadiness,
+            'provisionableUserSource'  => $provisionableUserSource,
+            'lifecycle'                => $lifecycle,
+        ];
+    }
+
+    private function resolveOrBuildCurrentAuthentication() : CurrentAuthentication
+    {
+        return $this->currentAuthentication ?? new CurrentAuthentication();
+    }
+
+    private function resolveOrBuildProjectAuthenticatedUser() : ProjectAuthenticatedUser
+    {
+        return $this->projectAuthenticatedUser ?? new ProjectAuthenticatedUser(
             emailVerificationStateStore: $this->emailVerificationStateStore,
             mfaStore: $this->mfaStore,
         );
-        $requireFreshMfa          = $this->requireFreshMfa ?? new RequireFreshMfa(currentAuthentication: $currentAuthentication, clock: $this->clock);
-        $generateBackupCodes      = $this->generateBackupCodes ?? new GenerateBackupCodes(passwordHasher: $this->passwordHasher, clock: $this->clock);
-        $verifyBackupCode         = $this->verifyBackupCode ?? new VerifyBackupCode(mfaStore: $this->mfaStore, passwordHasher: $this->passwordHasher, auditLog: $this->auditLog, clock: $this->clock);
-        $startMfaChallenge        = $this->startMfaChallenge ?? new StartMfaChallenge(
+    }
+
+    private function resolveOrBuildRequireFreshMfa(CurrentAuthentication $currentAuthentication) : RequireFreshMfa
+    {
+        return $this->requireFreshMfa ?? new RequireFreshMfa(currentAuthentication: $currentAuthentication, clock: $this->clock);
+    }
+
+    private function resolveOrBuildGenerateBackupCodes() : GenerateBackupCodes
+    {
+        return $this->generateBackupCodes ?? new GenerateBackupCodes(passwordHasher: $this->passwordHasher, clock: $this->clock);
+    }
+
+    private function resolveOrBuildVerifyBackupCode() : VerifyBackupCode
+    {
+        return $this->verifyBackupCode ?? new VerifyBackupCode(mfaStore: $this->mfaStore, passwordHasher: $this->passwordHasher, auditLog: $this->auditLog, clock: $this->clock);
+    }
+
+    private function resolveOrBuildStartMfaChallenge(CurrentAuthentication $currentAuthentication) : StartMfaChallenge
+    {
+        return $this->startMfaChallenge ?? new StartMfaChallenge(
             currentAuthentication: $currentAuthentication,
             generalMfaStore: $this->mfaStore,
             mfaChallengeStore: $this->mfaChallengeStore,
             auditLog: $this->auditLog,
             clock: $this->clock,
         );
+    }
 
-        $provisionableUserSource = $this->userSource instanceof ProvisionableUserSourceInterface ? $this->userSource : null;
-        $lifecycle               = $provisionableUserSource instanceof ProvisionableUserSourceInterface
+    private function resolveProvisionableUserSource() : ProvisionableUserSourceInterface|null
+    {
+        return $this->userSource instanceof ProvisionableUserSourceInterface ? $this->userSource : null;
+    }
+
+    private function buildLifecycleOrchestrator(ProvisionableUserSourceInterface|null $provisionableUserSource) : LifecycleOrchestrator|null
+    {
+        return $provisionableUserSource instanceof ProvisionableUserSourceInterface
             ? new LifecycleOrchestrator(provisionableUserSource: $provisionableUserSource, lifecycleStore: $this->lifecycleStore, auditLog: $this->auditLog, clock: $this->clock)
             : null;
+    }
 
-        $authCapabilityReadiness = AuthCapabilityReadiness::from(
+    private function buildCapabilityReadiness(ProvisionableUserSourceInterface|null $provisionableUserSource) : AuthCapabilityReadiness
+    {
+        return AuthCapabilityReadiness::from(
             jwtIdentity            : $this->identity->jwtIdentity(),
             refreshTokenStore      : $this->refreshTokenStore,
             passkeyRuntime         : $this->passkeyRuntime,
             federationRuntime      : $this->federationRuntime,
             provisionableUserSource: $provisionableUserSource,
         );
+    }
 
+    /**
+     * @return array{provisionScimUser: ProvisionScimUser|null, readScimUsers: ReadScimUsers|null, readScimGroups: ReadScimGroups|null, runScimBulk: RunScimBulk|null}
+     */
+    private function buildScimServices(
+        AuthCapabilityReadiness $authCapabilityReadiness,
+        ProvisionableUserSourceInterface|null $provisionableUserSource,
+        LifecycleOrchestrator|null $lifecycle,
+    ) : array {
         $provisionScimUser = $authCapabilityReadiness->scim()
             ? new ProvisionScimUser(
                 passwordHasher: $this->passwordHasher,
@@ -263,17 +374,34 @@ final class AssembleAuthIdentityGraph
             )
             : null;
 
-        $assessCurrentRisk = new AssessCurrentRisk(
+        return [
+            'provisionScimUser' => $provisionScimUser,
+            'readScimUsers'     => $readScimUsers,
+            'readScimGroups'    => $readScimGroups,
+            'runScimBulk'       => $runScimBulk,
+        ];
+    }
+
+    private function buildAssessCurrentRisk(CurrentAuthentication $currentAuthentication) : AssessCurrentRisk
+    {
+        return new AssessCurrentRisk(
             currentAuthentication: $currentAuthentication,
             userSource: $this->userSource,
             deterministicRiskEngine: $this->riskEngine,
         );
-        $readRiskSignals = new ReadRiskSignals(
+    }
+
+    private function buildReadRiskSignals(CurrentAuthentication $currentAuthentication) : ReadRiskSignals
+    {
+        return new ReadRiskSignals(
             currentAuthentication: $currentAuthentication,
             deterministicRiskEngine: $this->riskEngine,
         );
+    }
 
-        $sessions = new Sessions(
+    private function buildSessions(CurrentAuthentication $currentAuthentication) : Sessions
+    {
+        return new Sessions(
             logoutAllSessions: new LogoutAllSessions(
                 identity: $this->identity,
                 currentAuthentication: $currentAuthentication,
@@ -295,8 +423,14 @@ final class AssembleAuthIdentityGraph
                 sessionRegistry: $this->sessionRegistry,
             ),
         );
+    }
 
-        $authentication = new Authentication(
+    private function buildAuthentication(
+        Sessions $sessions,
+        CurrentAuthentication $currentAuthentication,
+        ProjectAuthenticatedUser $projectAuthenticatedUser,
+    ) : Authentication {
+        return new Authentication(
             login: new Login(
                 findUserByCredentials: new FindUserByCredentials(userSource: $this->userSource),
                 verifyPassword: new VerifyPassword(passwordHasher: $this->passwordHasher),
@@ -318,8 +452,15 @@ final class AssembleAuthIdentityGraph
                 deterministicRiskEngine: $this->riskEngine,
             ),
         );
+    }
 
-        $account = new Account(
+    private function buildAccount(
+        Sessions $sessions,
+        CurrentAuthentication $currentAuthentication,
+        RequireFreshMfa $requireFreshMfa,
+        ProvisionableUserSourceInterface|null $provisionableUserSource,
+    ) : Account {
+        return new Account(
             changePassword: new ChangePassword(
                 userSource: $this->userSource,
                 passwordHasher: $this->passwordHasher,
@@ -363,8 +504,11 @@ final class AssembleAuthIdentityGraph
                 identity: $this->identity,
             ),
         );
+    }
 
-        $recovery = new Recovery(
+    private function buildRecovery() : Recovery
+    {
+        return new Recovery(
             beginPasswordReset: new BeginPasswordReset(
                 userSource: $this->userSource,
                 passwordResetStore: $this->passwordResetStore,
@@ -383,8 +527,11 @@ final class AssembleAuthIdentityGraph
                 refreshTokenStore: $this->refreshTokenStore,
             ),
         );
+    }
 
-        $verification = new Verification(
+    private function buildVerification() : Verification
+    {
+        return new Verification(
             beginEmailVerification: new BeginEmailVerification(
                 userSource: $this->userSource,
                 emailVerificationStore: $this->emailVerificationStore,
@@ -398,8 +545,17 @@ final class AssembleAuthIdentityGraph
                 clock: $this->clock,
             ),
         );
+    }
 
-        $mfa = new Mfa(
+    private function buildMfa(
+        CurrentAuthentication $currentAuthentication,
+        ProjectAuthenticatedUser $projectAuthenticatedUser,
+        StartMfaChallenge $startMfaChallenge,
+        GenerateBackupCodes $generateBackupCodes,
+        VerifyBackupCode $verifyBackupCode,
+        RequireFreshMfa $requireFreshMfa,
+    ) : Mfa {
+        return new Mfa(
             startMfaEnrollment: new StartMfaEnrollment(
                 currentAuthentication: $currentAuthentication,
                 mfaStore: $this->mfaStore,
@@ -472,8 +628,15 @@ final class AssembleAuthIdentityGraph
                 identity: $this->identity,
             ),
         );
+    }
 
-        $passkey = new Passkey(
+    private function buildPasskey(
+        CurrentAuthentication $currentAuthentication,
+        ProjectAuthenticatedUser $projectAuthenticatedUser,
+        RequireFreshMfa $requireFreshMfa,
+        AuthCapabilityReadiness $authCapabilityReadiness,
+    ) : Passkey {
+        return new Passkey(
             beginPasskeyRegistration: $authCapabilityReadiness->passkey()
                 ? new BeginPasskeyRegistration(
                     currentAuthentication: $currentAuthentication,
@@ -539,20 +702,40 @@ final class AssembleAuthIdentityGraph
                 ? new ListPasskeys(currentAuthentication: $currentAuthentication, passkeyCredentialStore: $this->passkeyCredentialStore)
                 : null,
         );
+    }
 
-        $identity = new Identity(
+    private function buildIdentity(
+        Authentication $authentication,
+        Sessions $sessions,
+        Account $account,
+        Recovery $recovery,
+        Verification $verification,
+        Mfa $mfa,
+        Passkey $passkey,
+    ) : Identity {
+        return Identity::create(
             authentication: $authentication,
-            sessions: $sessions,
-            account: $account,
-            recovery: $recovery,
-            verification: $verification,
-            mfa: $mfa,
-            passkey: $passkey,
+            sessions      : $sessions,
+            account       : $account,
+            recovery      : $recovery,
+            verification  : $verification,
+            mfa           : $mfa,
+            passkey       : $passkey,
             sessionIdentity: $this->identity->sessionIdentity(),
-            jwtIdentity: $this->identity->jwtIdentity(),
+            jwtIdentity   : $this->identity->jwtIdentity(),
         );
+    }
 
-        $scim = new SCIM(
+    /**
+     * @param array{provisionScimUser: ProvisionScimUser|null, readScimUsers: ReadScimUsers|null, readScimGroups: ReadScimGroups|null, runScimBulk: RunScimBulk|null} $scimServices
+     */
+    private function buildScimCapability(
+        AuthCapabilityReadiness $authCapabilityReadiness,
+        ProvisionableUserSourceInterface|null $provisionableUserSource,
+        LifecycleOrchestrator|null $lifecycle,
+        array $scimServices,
+    ) : SCIM {
+        return new SCIM(
             registerScimDirectory: $authCapabilityReadiness->scim()
                 ? new \Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RegisterDirectory\RegisterScimDirectory(
                     passwordHasher: $this->passwordHasher,
@@ -588,7 +771,7 @@ final class AssembleAuthIdentityGraph
                     scimDirectoryStore: $this->scimDirectoryStore,
                 )
                 : null,
-            provisionScimUser: $provisionScimUser,
+            provisionScimUser: $scimServices['provisionScimUser'],
             deleteScimUser: $authCapabilityReadiness->scim()
                 ? new DeleteScimUser(
                     auditLog: $this->auditLog,
@@ -600,19 +783,22 @@ final class AssembleAuthIdentityGraph
                     lifecycleOrchestrator: $lifecycle,
                 )
                 : null,
-            readScimUsers: $readScimUsers,
-            readScimGroups: $readScimGroups,
-            syncScimGroups: $authCapabilityReadiness->scim() && $provisionScimUser instanceof ProvisionScimUser
+            readScimUsers: $scimServices['readScimUsers'],
+            readScimGroups: $scimServices['readScimGroups'],
+            syncScimGroups: $authCapabilityReadiness->scim() && $scimServices['provisionScimUser'] instanceof ProvisionScimUser
                 ? new SyncScimGroups(
                     userSource: $this->userSource,
-                    provisionScimUser: $provisionScimUser,
+                    provisionScimUser: $scimServices['provisionScimUser'],
                     scimDirectoryStore: $this->scimDirectoryStore,
                     scimProvisionedIdentityStore: $this->scimProvisionedIdentityStore,
                 )
                 : null,
-            runScimBulk: $runScimBulk,
+            runScimBulk: $scimServices['runScimBulk'],
         );
+    }
 
+    private function buildTenancy() : Tenancy
+    {
         $tenants = new Tenants(
             createTenant: new CreateTenant(tenantStore: $this->tenantStore, userSource: $this->userSource, auditLog: $this->auditLog, clock: $this->clock),
             readTenants: new ReadTenants(tenantStore: $this->tenantStore),
@@ -656,23 +842,6 @@ final class AssembleAuthIdentityGraph
             ),
         );
 
-        $tenancy = new Tenancy(tenants: $tenants, security: $security);
-
-        return [
-            'identity' => $identity,
-            'tenancy' => $tenancy,
-            'scim' => $scim,
-            'assessCurrentRisk' => $assessCurrentRisk,
-            'readRiskSignals' => $readRiskSignals,
-            'currentAuthentication' => $currentAuthentication,
-            'projectAuthenticatedUser' => $projectAuthenticatedUser,
-            'requireFreshMfa' => $requireFreshMfa,
-            'generateBackupCodes' => $generateBackupCodes,
-            'verifyBackupCode' => $verifyBackupCode,
-            'startMfaChallenge' => $startMfaChallenge,
-            'authCapabilityReadiness' => $authCapabilityReadiness,
-            'provisionableUserSource' => $provisionableUserSource,
-            'lifecycle' => $lifecycle,
-        ];
+        return new Tenancy(tenants: $tenants, security: $security);
     }
 }

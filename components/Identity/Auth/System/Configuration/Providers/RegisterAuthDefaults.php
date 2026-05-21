@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Auth\System\Configuration\Builders;
+namespace Avax\Components\Identity\Auth\System\Configuration\Providers;
 
 use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\Identity\Access\System\Capabilities\Authentication\Throttle\AttemptThrottle;

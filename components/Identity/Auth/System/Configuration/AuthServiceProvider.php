@@ -6,7 +6,7 @@ namespace Avax\Components\Identity\Auth\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
 use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
-
+use Avax\Components\Identity\Auth\System\Configuration\Providers\RegisterAuthDefaults;
 
 /**
  * AuthServiceProvider — registers Identity/Auth component dependencies.
@@ -19,7 +19,7 @@ final class AuthServiceProvider implements ServiceProvider
 {
     public function register(ContainerInterface $container) : void
     {
-        (new Builders\RegisterAuthDefaults())->register($container);
+        (new RegisterAuthDefaults())->register($container);
     }
 
     public function boot(ContainerInterface $container) : void

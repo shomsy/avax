@@ -320,6 +320,30 @@ Every task using this skill must report:
 12. accepted YELLOW, if any
 13. remaining design risk
 
+## Practical Test Pyramid Gate
+
+Production code must be testable within the practical test pyramid.
+
+See:
+
+- `how-to-unit-test.md` — Section 91: Practical Test Pyramid Rule
+
+Agents must:
+
+- design code that can be tested at the right pyramid layer
+- prefer behavior tests over implementation tests
+- ensure public surfaces have contract tests
+- avoid designs that require mocking everything to test
+- keep test code as production-grade as production code
+- require characterization tests before large refactors
+
+Evaluation:
+
+- **Behavior Testable:** Can the unit be tested through its observable behavior?
+- **Right Layer:** Is the test at the correct pyramid layer (detail at base, contract at boundary, journey at top)?
+- **No Over-Mocking:** Are real collaborators used where appropriate?
+- **Contract Coverage:** Do public surfaces have executable contract tests?
+
 ## Final Rule
 
 No design, no code.

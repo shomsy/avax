@@ -1687,3 +1687,32 @@ examples showing non-canonical style
 
 If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness,
 it must scream in review.
+
+---
+
+## 26. Practical Test Pyramid Review Rule
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+Code review must evaluate test portfolio quality, not just test count.
+
+See:
+
+- `how-to-unit-test.md` — Section 91: Practical Test Pyramid Rule
+
+Review must check:
+
+- **Test Portfolio:** Are tests distributed across pyramid layers? Many fast focused, fewer broad, minimal E2E?
+- **Fast Feedback:** Does validation run fast tests before slow tests?
+- **Behavior vs Implementation:** Do tests verify observable behavior, or do they mirror internal structure and break on refactor?
+- **Private Method Smell:** Are private methods tested via reflection? If so, the class is too large — extract, don't hack.
+- **Sociable vs Solitary:** Are real collaborators used where appropriate? Is everything mocked mechanically?
+- **Test Double Precision:** Are fakes, stubs, mocks, and spies used intentionally? Are external service fakes protected by contract tests?
+- **Contract Tests:** Do PublicSurface APIs, component boundaries, events, and external integrations have contract tests?
+- **E2E Minimalism:** Is the E2E suite larger than the unit suite? Are edge cases duplicated in E2E?
+- **Clean Test Code:** Is test code production-grade? One behavior per test? Arrange/Act/Assert? Clear failure messages?
+- **Test Duplication:** Is the same behavior tested at every pyramid layer?
+- **Refactor Safety:** Do large refactors have characterization tests before production changes?
+
+A review cannot be GREEN if tests are RED by any of these criteria.

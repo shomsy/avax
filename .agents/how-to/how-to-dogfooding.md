@@ -940,6 +940,28 @@ A component may be LABS if:
 
 ---
 
+## 28.2 Practical Test Pyramid Cross-Reference
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+Component dogfooding requires contract tests at the pyramid boundary.
+
+See:
+
+- `how-to-unit-test.md` — Section 91: Practical Test Pyramid Rule
+
+Dogfooding test requirements:
+
+- **Contract Tests:** Every component boundary exposed to other components needs contract tests. Consumer expectations must be executable.
+- **Integration Tests:** Component-to-component integration should be tested separately from unit behavior.
+- **No Duplication:** Do not test the same component behavior at every pyramid layer. Test details in unit tests, contracts at boundaries, journeys in E2E.
+- **Sociable Tests:** Use real AvaX components where they remain fast. Use fakes only for slow/external dependencies.
+
+A component that is dogfooded without contract tests is a ticking integration bomb.
+
+---
+
 ## 29. Final Law
 
 AvaX must use AvaX.

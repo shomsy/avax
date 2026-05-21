@@ -2550,6 +2550,247 @@ A gate that cannot fail is not a gate.
 
 ---
 
+## 91. Practical Test Pyramid Rule
+
+**Status:** MANDATORY
+**Scope:** All AvaX tests, validation pipelines, CI stages, agent output, and evidence claims.
+**Severity:** BLOCKER
+
+Source: Practical Test Pyramid (Martin Fowler), translated into AvaX governance.
+
+### 91.1 Test Portfolio Rule
+
+AvaX requires tests at different granularities. The pyramid is not about layer names — it is a principle: many fast focused tests at the base, fewer broad tests in the middle, very few full end-to-end tests at the top.
+
+Test portfolio:
+
+- **Unit/Behavior tests:** Fast, focused, one behavior per test. Verify observable behavior, not internal implementation.
+- **Component tests:** Test a component with real internal collaborators. Verify the component works as a unit.
+- **Integration tests:** Test database, filesystem, network, runtime, and external integration. Fewer, clear, deterministic.
+- **Contract tests:** Verify PublicSurface APIs, component boundaries, events, generated metadata, and external integrations. Consumer expectations must be executable.
+- **Architecture/Governance tests:** Verify canonical shape, naming, dependency direction, runtime composition leaks.
+- **Acceptance tests:** Prove feature/business behavior from user/system perspective.
+- **E2E/Canonical journeys:** Critical user/system journeys only. Expensive and flaky — keep minimal.
+
+### 91.2 Fast Feedback Pipeline Rule
+
+Validation stages must be ordered by speed and scope, not by test label.
+
+Pipeline order:
+
+1. Syntax/static/diff checks (composer validate, phpstan, git diff --check)
+2. Focused tests for changed unit/capability
+3. Component tests
+4. Contract/API compatibility tests
+5. Integration tests
+6. Broad/canonical suite
+7. E2E only for critical journeys
+
+Fast tests run early. Slow and wide tests run later.
+
+Agents must follow this order: first focused test output, then component, then broad/canonical.
+
+### 91.3 Behavior Over Implementation Rule
+
+Tests must verify observable behavior, not internal call order or private implementation.
+
+Do not mirror internal structure in tests.
+
+Refactors should not break tests if public behavior is unchanged.
+
+If a test breaks on every good redesign, the test is testing implementation, not behavior.
+
+### 91.4 Private Method Smell Rule
+
+If private behavior feels hard to test, the class is probably too large or has a hidden responsibility.
+
+Extract a cohesive unit instead of testing private methods.
+
+Do not use reflection hacks to test private methods.
+
+This applies the Recursive Subsystem Rule: when a unit is large, identify hidden subsystems and extract them.
+
+### 91.5 Sociable vs Solitary Test Rule
+
+Use real collaborators when they improve confidence and remain fast.
+
+Use test doubles for:
+
+- slow dependencies
+- external services
+- nondeterministic behavior
+- filesystem access
+- network calls
+- database access
+- vendor APIs
+
+Do not mock everything mechanically. Mock what is slow, external, or nondeterministic. Use real collaborators for everything else.
+
+### 91.6 Test Double Precision Rule
+
+Distinguish test doubles intentionally:
+
+- **Fake:** Working implementation suitable for tests but not production (e.g., in-memory database).
+- **Stub:** Pre-programmed responses with no assertion on calls.
+- **Mock:** Pre-programmed with expectations; verifies call behavior.
+- **Spy:** Records calls for later verification.
+- **Contract fake:** A fake protected by contract tests against the real implementation.
+
+External service fakes must be protected by contract tests. A fake without a contract test will drift.
+
+### 91.7 Contract Test Rule
+
+Contract tests are required for:
+
+- PublicSurface APIs
+- Component boundaries
+- Domain events
+- Generated metadata
+- Runtime adapters
+- External integrations
+
+Consumer expectations must be executable.
+
+Breaking contracts must fail fast in CI.
+
+Contract tests prevent integration breaks between components and subsystems.
+
+### 91.8 Integration Test Rule
+
+Integration tests are separate from unit behavior tests.
+
+- Test database, filesystem, network, runtime, and external integration
+- Keep them fewer than unit tests
+- Make them clear and deterministic
+- Use real infrastructure or protected fakes
+- Do not duplicate edge cases already tested at the unit level
+
+### 91.9 E2E Minimalism Rule
+
+E2E tests are expensive and flaky.
+
+- Keep only critical user/system journeys
+- Do not duplicate lower-level edge cases in E2E
+- Edge cases belong at the pyramid base
+- E2E verifies the journey, not every permutation
+
+A large E2E suite is a smell.
+
+### 91.10 Acceptance Test Rule
+
+Acceptance tests prove feature and business behavior.
+
+- Describe what works from the user/system perspective
+- Do not describe internal implementation
+- Use ubiquitous language from the domain
+- May use Given/When/Then format
+
+Acceptance tests are closer to the top of the pyramid than the base.
+
+### 91.11 Exploratory Testing Rule
+
+Automation does not replace exploratory testing.
+
+For high-risk features:
+
+- record exploratory risk areas
+- note manual investigation findings
+- convert critical exploratory findings into automated tests
+
+Exploratory testing discovers what automation cannot anticipate.
+
+### 91.12 Clean Test Code Rule
+
+Test code is production-grade.
+
+Every test must follow:
+
+- one clear behavior per test
+- Arrange/Act/Assert or Given/When/Then structure
+- readable fixtures and builders
+- no mystery setup — setup must be obvious
+- no brittle sleeps or time assumptions
+- deterministic clocks for time-dependent behavior
+- clear failure messages — a failing test must say what went wrong
+
+Test code that is harder to read than production code is a BLOCKER.
+
+### 91.13 Avoid Test Duplication Rule
+
+Do not repeat the same behavior at every pyramid layer.
+
+- Test details at the base (unit/behavior)
+- Test contracts at boundaries (component/contract)
+- Test journeys at the top (E2E/acceptance)
+
+Edge cases and details belong low in the pyramid. They must not be repeated in E2E or broad tests.
+
+### 91.14 Refactor Safety Net Rule
+
+Large refactors and rewrites require:
+
+- characterization tests before production changes
+- API compatibility locks
+- contract tests for public surfaces
+- focused behavior tests for changed units
+
+Characterization tests capture current behavior before changing it.
+They are a safety net, not a design guide.
+
+### 91.15 Test Naming Consistency Rule
+
+AvaX may define its own names for test layers, but names must be consistent across:
+
+- documentation
+- test folders
+- evidence files
+- agent output
+- pipeline configuration
+
+Current AvaX test layer names:
+
+- Unit/Behavior tests
+- Component tests
+- Integration tests
+- Contract tests
+- Architecture/Governance tests
+- Acceptance tests
+- E2E/Canonical journeys
+
+### 91.16 GREEN / YELLOW / RED Criteria
+
+GREEN:
+
+- many fast focused unit/behavior tests
+- fewer component tests with real collaborators
+- contract tests for all public surfaces and boundaries
+- integration tests are few, clear, deterministic
+- E2E covers only critical journeys
+- no duplication across pyramid layers
+- test code is clean, readable, production-grade
+- pipeline ordered by speed and scope
+
+YELLOW:
+
+- some test duplication between layers with cleanup plan
+- some tests verify implementation but are being migrated
+- E2E suite larger than ideal with reduction plan
+
+RED:
+
+- all tests at one pyramid layer only
+- E2E suite larger than unit test suite
+- tests mirror internal implementation and break on every refactor
+- private methods tested via reflection
+- mocks for everything, real collaborators for nothing
+- contract tests missing for public surfaces
+- test code is harder to read than production code
+- pipeline runs slow tests before fast tests
+- same edge cases duplicated across all layers
+
+
+---
+
 The final standard is simple:
 
 ```text

@@ -162,3 +162,22 @@ No context, no loop.
 No evidence, no merge.
 
 No governance, no GREEN.
+
+## Practical Test Pyramid in Autonomous Loops
+
+Autonomous backlog execution must follow the test pyramid for validation.
+
+See:
+
+- `how-to-unit-test.md` — Section 91: Practical Test Pyramid Rule
+
+During autonomous sweeps, agents must:
+
+- run focused tests for changed units first (fast feedback)
+- then component tests, then contract tests, then integration
+- then broad/canonical suite, then E2E only for critical journeys
+- never run E2E before focused tests
+- verify test portfolio health (many fast, fewer broad, minimal E2E)
+- reject test evidence that only runs one pyramid layer
+
+Autonomous loops that run tests out of pyramid order waste context and produce false confidence.

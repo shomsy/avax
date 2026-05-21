@@ -118,3 +118,21 @@ No API inventory, no public change.
 No contract test proof, no GREEN.
 
 No migration path for breaking changes, no commit.
+
+## Practical Test Pyramid Rule
+
+Public API changes require contract tests at the pyramid boundary.
+
+See:
+
+- `how-to-unit-test.md` — Section 91: Practical Test Pyramid Rule
+
+Agents must:
+
+- write contract tests for every PublicSurface API change
+- make consumer expectations executable
+- ensure breaking contracts fail fast in CI
+- test API behavior at the contract layer, not just in E2E
+- avoid duplicating API edge cases in E2E tests
+
+Public API without contract tests is not stable.

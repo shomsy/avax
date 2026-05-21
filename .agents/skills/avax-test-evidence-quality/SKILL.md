@@ -144,3 +144,29 @@ No negative test for security, no commit.
 No regression test for fixed bug, not done.
 
 No contract test for public API, not stable.
+
+## Practical Test Pyramid Rule
+
+Tests must serve the practical test pyramid, not just prove individual behaviors.
+
+See:
+
+- `how-to-unit-test.md` — Section 91: Practical Test Pyramid Rule
+
+Agents must:
+
+- distribute tests across pyramid layers: many fast focused, fewer broad, minimal E2E
+- verify observable behavior, not internal implementation
+- use real collaborators where fast, test doubles where slow/external
+- write contract tests for all public surfaces and component boundaries
+- keep test code production-grade: one behavior per test, Arrange/Act/Assert, clear failure messages
+- avoid duplicating the same behavior across pyramid layers
+- run fast tests before slow tests in validation
+- require characterization tests before large refactors
+
+Test evidence claiming GREEN must include:
+
+- which pyramid layers were tested
+- focused test output for changed units
+- contract test results for public surfaces
+- confirmation that pipeline ran in speed/scope order

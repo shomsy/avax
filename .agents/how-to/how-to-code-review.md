@@ -1690,29 +1690,30 @@ it must scream in review.
 
 ---
 
-## 26. Universal Enterprise Codecraft Review Rule
+## 26. Object-Oriented Enterprise Architecting Review Rule
 
-**Status:** MANDATORY  
+**Status:** MANDATORY
 **Severity:** BLOCKER
 
-Code review must evaluate not only correctness but also enterprise codecraft quality.
+Code review must evaluate enterprise architecture quality, not just code correctness.
 
 See:
 
-- `how-to-design-components.md` — Section 30: Universal Enterprise Codecraft Rule
-- `how-to-architecture.md` — Section 55: Universal Enterprise Codecraft Rule
-- `how-to-clean-code.md` — Section 25: Universal Enterprise Codecraft Rule
+- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
+- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
 
 Review must check:
 
-- **No Technical Theater:** Are builders, factories, graphs, or managers introduced without proven need?
-- **Cognitive Load:** Does understanding this code require opening multiple other files? Is the design suspicious?
-- **Structural Honesty:** Does the structure reveal real boundaries, or does it hide god objects behind facades?
-- **Fluent API:** Are call-sites fluent and intention-revealing, or do they expose internal mechanics?
-- **Horizontal Blindness:** Do sibling components depend on each other directly?
-- **Boundary Value Objects:** Do raw primitives cross subsystem boundaries carrying business/security meaning?
-- **Command/Query Clarity:** Does any method both mutate state and return data without explicit result object?
-- **Single Preferred Entry:** Does the subsystem expose multiple uncontrolled entry points?
-- **HLD/LLD Mirror:** Does the code structure match the documented architecture?
+- **Object-Oriented Thinking:** Do classes represent real concepts (roles, tasks, information, events) or pattern names?
+- **Ubiquitous Language:** Would a domain stakeholder understand the class names?
+- **Pattern Theater:** Are patterns used to clarify ownership and reduce coupling, or as class-name decoration?
+- **Fake OOP:** Are there god objects, wrapper classes, inheritance-for-reuse, or anemic models?
+- **Handover Risk:** Are handovers between subsystems documented, contracted, and tested? Hidden handovers are review blockers.
+- **Knowledge Backbone:** Is core knowledge explicitly named and owned, or accidentally trapped in services/builders?
+- **Model-to-Code:** Does code structure reflect documented models? Divergence without explanation is a RED finding.
+- **IRTV Applied:** For complex subsystems, is IRTV (Information, Roles, Tasks, Views) considered in the design?
+- **Tactical Evidence:** Do strategic architecture claims have tactical code-level proof?
+- **EventStorming Evidence:** For complex flows, is there event/command/aggregate ownership documentation?
+- **Slicing Quality:** Are subsystem boundaries sliced by cohesion and ownership, or by technical categories?
 
 A review cannot be GREEN if any of these are RED without documented YELLOW acceptance.

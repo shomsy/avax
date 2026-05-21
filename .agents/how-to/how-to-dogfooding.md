@@ -940,6 +940,30 @@ A component may be LABS if:
 
 ---
 
+## 28.1 Object-Oriented Enterprise Architecting Cross-Reference
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+Component dogfooding must serve the object-oriented enterprise architecture philosophy.
+
+See:
+
+- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
+- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
+
+Dogfooding principles from OO architecting:
+
+- **Data Product Thinking:** When one component exposes data to another, treat it as a product — owned, documented, stable, consumer-oriented.
+- **Handover Risk:** Component-to-component boundaries are handovers. What information crosses? Who owns it? What tests prove the contract?
+- **Views as Loose Coupling:** Components should expose consumer-specific views, not leak internal models.
+- **Knowledge Backbone:** Core knowledge should be explicitly named and owned by a component, not accidentally distributed across many.
+- **Bounded Context Awareness:** Each component is a bounded context. It owns some concepts, consumes others, and publishes through stable APIs/events.
+
+Dogfooding that creates tighter coupling between components is a design failure.
+
+---
+
 ## 29. Final Law
 
 AvaX must use AvaX.

@@ -162,3 +162,24 @@ No context, no loop.
 No evidence, no merge.
 
 No governance, no GREEN.
+
+## Object-Oriented Enterprise Architecting in Autonomous Loops
+
+Autonomous backlog execution must apply OO enterprise architecting principles.
+
+See:
+
+- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
+- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
+
+During autonomous sweeps, agents must:
+
+- evaluate slicing quality when selecting TODOs (cohesion, ownership, handovers)
+- check for hidden handovers between changed components
+- verify ubiquitous language in new class names
+- ensure knowledge backbone is maintained (no new knowledge trapped in unnamed services)
+- require EventStorming evidence for complex flow changes
+- apply IRTV thinking for complex subsystem redesigns
+- record claims-based evidence for any major architectural alternatives encountered
+
+Autonomous loops that produce fake OOP or hidden handovers create architecture debt faster than manual work.

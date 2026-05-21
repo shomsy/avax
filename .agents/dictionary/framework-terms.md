@@ -5,12 +5,6 @@
 
 When a technical term appears in a class name, PHPDoc, or governance document, its meaning is defined here.
 
-Example PHPDoc note:
-
-```text
-Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
-```
-
 ---
 
 ## Runtime
@@ -19,11 +13,9 @@ Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
 
 **AvaX meaning:** The set of lifecycle phases, request scope, worker state, and execution context that an application moves through (boot, request, worker, reset, shutdown).
 
-**Allowed usage:** `AccessRuntime`, `BuildAuthRuntime`, `$access` (semantic name for an AccessRuntime dependency), `runtime()` method returning runtime state.
+**Allowed usage:** `AccessRuntime`, `BuildAuthRuntime`, `runtime()` method returning runtime state.
 
-**Forbidden misuse:** Using "Runtime" as a dumping ground for unrelated behavior. A Runtime class should own lifecycle state, not domain logic.
-
-**Example names:** `AccessRuntime`, `CacheRuntime`, `VerifyRuntimeSafety`, `$runtime`.
+**Forbidden misuse:** Using "Runtime" as a dumping ground for unrelated behavior.
 
 **Learning:** `how-to-runtime-composition.md`
 
@@ -33,15 +25,13 @@ Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
 
 **Simple explanation:** The stable public API entrypoints that receive and delegate.
 
-**AvaX meaning:** The thin boundary layer of a component or framework that accepts natural inputs, normalizes them, and delegates to internal Flows or Capabilities. Must not own machinery.
+**AvaX meaning:** The thin boundary layer that accepts natural inputs, normalizes them, and delegates to internal Flows or Capabilities. Must not own machinery.
 
-**Allowed usage:** `PublicSurface/` folder, `Cache` class in PublicSurface, facade classes.
+**Allowed usage:** `PublicSurface/` folder, facade classes.
 
-**Forbidden misuse:** Putting business logic, object graph assembly, or runtime machinery in PublicSurface.
+**Forbidden misuse:** Putting business logic or object graph assembly in PublicSurface.
 
-**Example names:** `Cache`, `Auth`, `Router`, `Database`.
-
-**Learning:** `how-to-architecture.md — Public Surface Units`, `how-to-design-components.md — PublicSurface Rule`
+**Learning:** `how-to-architecture.md`, `how-to-design-components.md`
 
 ---
 
@@ -49,15 +39,13 @@ Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
 
 **Simple explanation:** A reusable ability or mechanism that supports multiple flows.
 
-**AvaX meaning:** A shared system boundary or reusable behavior that multiple flows depend on. Examples: authentication, caching, logging.
+**AvaX meaning:** A shared system boundary or reusable behavior that multiple flows depend on.
 
-**Allowed usage:** `Capabilities/` folder, `PolicyEvaluation` capability, `CacheReading` capability.
+**Allowed usage:** `Capabilities/` folder, named capability classes.
 
-**Forbidden misuse:** Using "Capability" as a folder name for technical categories. Each capability must be a named product responsibility.
+**Forbidden misuse:** Using "Capability" as a folder name for technical categories.
 
-**Example names:** `PolicyEvaluation`, `CacheReading`, `QueryCompilation`, `RuntimeSafety`.
-
-**Learning:** `how-to-architecture.md — Capability Slices`
+**Learning:** `how-to-architecture.md`
 
 ---
 
@@ -65,15 +53,13 @@ Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
 
 **Simple explanation:** A complete end-to-end action or use case.
 
-**AvaX meaning:** A single narrative of behavior from start to finish. One flow = one complete user, system, or platform action. Replaces "UseCase" terminology.
+**AvaX meaning:** A single narrative of behavior from start to finish. Replaces "UseCase" terminology.
 
-**Allowed usage:** `Flows/` folder, `RegisterUser` flow, `HandleIncomingHttp` flow.
+**Allowed usage:** `Flows/` folder, action-named flow classes.
 
-**Forbidden misuse:** Using "Flow" as a suffix (`UserFlow`, `RequestFlow`). Flow names should be actions, not state containers.
+**Forbidden misuse:** Using "Flow" as a suffix (`UserFlow`). Flow names should be actions.
 
-**Example names:** `RegisterUser`, `HandleIncomingHttp`, `RunMigration`, `ChangePassword`.
-
-**Learning:** `how-to-architecture.md — Flow Slices`
+**Learning:** `how-to-architecture.md`
 
 ---
 
@@ -81,13 +67,11 @@ Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
 
 **Simple explanation:** A registration and assembly unit for dependencies.
 
-**AvaX meaning:** A ServiceProvider or similar class that registers bindings, configures defaults, and declares component dependencies in the container.
+**AvaX meaning:** A class that registers bindings, configures defaults, and declares component dependencies in the container.
 
-**Allowed usage:** `AuthServiceProvider`, `CacheServiceProvider`, `register()` method.
+**Allowed usage:** `AuthServiceProvider`, `register()` method.
 
-**Forbidden misuse:** Provider classes that execute runtime behavior. Providers register; they do not execute.
-
-**Example names:** `AuthServiceProvider`, `DatabaseServiceProvider`, `ObservabilityServiceProvider`.
+**Forbidden misuse:** Provider classes that execute runtime behavior.
 
 **Learning:** `how-to-dependency-injection.md`
 
@@ -95,17 +79,15 @@ Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
 
 ## Builder
 
-**Simple explanation:** A class that assembles an object graph or configures a component at configuration time.
+**Simple explanation:** A class that assembles an object graph at configuration time.
 
-**AvaX meaning:** A configuration-time assembly class that constructs dependency graphs, sets defaults, and converts user options into component runtime configuration. Must live in `Configuration/` or `Configuration/Builders/`.
+**AvaX meaning:** Configuration-time assembly that constructs dependency graphs. Must live in `Configuration/` or `Configuration/Builders/`.
 
-**Allowed usage:** `BuildAuthRuntime`, `RegisterAuthDefaults`, `ConfigureAuth` (user-facing DSL).
+**Allowed usage:** `BuildAuthRuntime`, `ConfigureAuth`.
 
-**Forbidden misuse:** Builder classes in runtime folders, builders that execute behavior, builders that act as service locators, god builders over 300 lines.
+**Forbidden misuse:** Builder classes in runtime folders or acting as service locators.
 
-**Example names:** `BuildAuthRuntime`, `AssembleHttpKernel`, `ConfigureCache`.
-
-**Learning:** `how-to-design-components.md — Configuration/Builders Rule`, `how-to-dependency-injection.md — Builder Placement Rule`
+**Learning:** `how-to-design-components.md`, `how-to-dependency-injection.md`
 
 ---
 
@@ -113,15 +95,13 @@ Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
 
 **Simple explanation:** A class that creates domain objects or runtime results.
 
-**AvaX meaning:** A result-creation boundary. Distinct from Builder: Factory creates runtime results (responses, queries, messages); Builder assembles dependency graphs.
+**AvaX meaning:** Result-creation boundary. Distinct from Builder: Factory creates runtime results; Builder assembles dependency graphs.
 
-**Allowed usage:** `BuildCacheKey` (result factory), `TokenFactory` (creates token value objects).
+**Allowed usage:** `TokenFactory`, `ResponseFactory`.
 
-**Forbidden misuse:** Factory classes that assemble dependency graphs. DDD Factories create domain objects, not runtime graphs.
+**Forbidden misuse:** Factory classes that assemble dependency graphs.
 
-**Example names:** `TokenFactory`, `ResponseFactory`, `BuildCacheKey`.
-
-**Learning:** `how-to-dependency-injection.md — Factory Class Precision`
+**Learning:** `how-to-dependency-injection.md`
 
 ---
 
@@ -131,29 +111,25 @@ Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
 
 **AvaX meaning:** Configuration-time dependency graph construction. Belongs in `Configuration/`, not runtime.
 
-**Allowed usage:** `Assembly/` subfolder within `Configuration/`, "assembly" as a concept describing DI graph construction.
+**Allowed usage:** `Assembly/` subfolder within `Configuration/`.
 
-**Forbidden misuse:** `*Assembly` class names in runtime folders. Assembly is a configuration responsibility.
+**Forbidden misuse:** `*Assembly` class names in runtime folders.
 
-**Example names:** `TokensGraph` (in Configuration/Assembly/), `RegisterDependencies`.
-
-**Learning:** `how-to-dependency-injection.md`, `how-to-runtime-composition.md`
+**Learning:** `how-to-dependency-injection.md`
 
 ---
 
 ## Graph
 
-**Simple explanation:** A dependency graph or object graph assembled at configuration time.
+**Simple explanation:** A dependency graph assembled at configuration time.
 
-**AvaX meaning:** The complete set of interconnected dependencies that form a component's runtime. Graph classes assemble and return the assembled object graph.
+**AvaX meaning:** The complete set of interconnected dependencies forming a component's runtime.
 
-**Allowed usage:** `TokensGraph` (in Configuration/Assembly/), "graph" as a concept describing the dependency tree.
+**Allowed usage:** `TokensGraph` (in Configuration/Assembly/ only).
 
-**Forbidden misuse:** `*Graph` class names outside Configuration/Assembly/. Large Graph classes that should be decomposed by subsystem boundaries.
+**Forbidden misuse:** `*Graph` class names outside Configuration/Assembly/.
 
-**Example names:** `TokensGraph`, `AuthGraph` (in Configuration/Assembly/ only).
-
-**Learning:** `how-to-dependency-injection.md`, `how-to-design-components.md — Section 30`
+**Learning:** `how-to-dependency-injection.md`
 
 ---
 
@@ -161,15 +137,13 @@ Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
 
 **Simple explanation:** A domain-specific language — fluent API surface for human readability.
 
-**AvaX meaning:** User-facing fluent configuration or query APIs. DSL readability comes from method chaining and fluent method names, not from `*Dsl` class name suffixes.
+**AvaX meaning:** User-facing fluent configuration or query APIs. Not a class name suffix.
 
-**Allowed usage:** DSL as a concept, fluent method chains, `ConfigureAuth::auth()->permissions()...`.
+**Allowed usage:** DSL as a concept, fluent method chains.
 
-**Forbidden misuse:** `*Dsl` class name suffixes (`AuthDsl`, `IdentityDsl`). Class names must say what they own, not that they are a DSL.
+**Forbidden misuse:** `*Dsl` class name suffixes.
 
-**Example names:** `ConfigureAuth`, `ConfigureCache` (user-facing DSL entrypoints).
-
-**Learning:** `how-to-architecture.md — Section 54.1`, `how-to-dependency-injection.md — Fluent DSL Design Principles`
+**Learning:** `how-to-architecture.md`, `how-to-dependency-injection.md`
 
 ---
 
@@ -177,15 +151,13 @@ Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
 
 **Simple explanation:** A thin public entrypoint that delegates to internal owners.
 
-**AvaX meaning:** A stable public API class that receives natural inputs and delegates to internal Flows or Capabilities. Must stay thin and stable.
+**AvaX meaning:** A stable public API class that receives natural inputs and delegates internally.
 
-**Allowed usage:** `Cache` facade, `Auth` facade, facade pattern for public API stability.
+**Allowed usage:** `Cache` facade, `Auth` facade.
 
-**Forbidden misuse:** Facades that accumulate ad-hoc behavior, facades that own runtime machinery.
+**Forbidden misuse:** Facades that accumulate ad-hoc behavior.
 
-**Example names:** `Cache`, `Auth`, `Router`, `DB`.
-
-**Learning:** `how-to-design-components.md — PublicSurface Rule`
+**Learning:** `how-to-design-components.md`
 
 ---
 
@@ -193,29 +165,25 @@ Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
 
 **Simple explanation:** A rule or decision about what is allowed.
 
-**AvaX meaning:** An authorization, access-control, or behavioral rule unit. Policies answer "is this allowed?" or "what applies here?".
+**AvaX meaning:** An authorization, access-control, or behavioral rule unit.
 
-**Allowed usage:** `RequirePermission`, `AccessPolicy`, `PolicyEvaluator`, `RateLimitPolicy`.
+**Allowed usage:** `RequirePermission`, `RateLimitPolicy`.
 
-**Forbidden misuse:** Policy classes that own orchestration or IO. A policy decides; it does not execute flows.
+**Forbidden misuse:** Policy classes that own orchestration or IO.
 
-**Example names:** `RequirePermission`, `RateLimitPolicy`, `TenantIsolationPolicy`.
-
-**Learning:** `how-to-architecture.md`, Identity subsystem governance
+**Learning:** `how-to-architecture.md`
 
 ---
 
 ## Token
 
-**Simple explanation:** A cryptographic or session-based credential used for authentication/authorization.
+**Simple explanation:** A cryptographic or session-based credential for authentication/authorization.
 
-**AvaX meaning:** JWT, access tokens, refresh tokens, CSRF tokens, or similar authentication artifacts owned by the Identity/Tokens subsystem.
+**AvaX meaning:** JWT, access tokens, refresh tokens, CSRF tokens owned by the Identity/Tokens subsystem.
 
-**Allowed usage:** `TokenSigner`, `TokenValidator`, `TokenAuthority`, `TokenExpiry`.
+**Allowed usage:** `TokenSigner`, `TokenValidator`.
 
-**Forbidden misuse:** Token classes that own authentication flows. Tokens are values or operations on values, not flows.
-
-**Example names:** `TokenSigner`, `TokenValidator`, `RefreshToken`, `CsrfToken`.
+**Forbidden misuse:** Token classes that own authentication flows.
 
 **Learning:** Identity subsystem governance
 
@@ -223,15 +191,13 @@ Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
 
 ## Session
 
-**Simple explanation:** A stateful interaction context between a user/system and the application.
+**Simple explanation:** A stateful interaction context between user/system and application.
 
 **AvaX meaning:** HTTP session state, worker session context, or authentication session tracking.
 
-**Allowed usage:** `SessionRegistry`, `SessionManager` (only if justified — prefer `SessionRegistry`), `SessionExpiry`.
+**Allowed usage:** `SessionRegistry`, `SessionExpiry`.
 
-**Forbidden misuse:** Session classes that own authentication decisions. Sessions track state; they do not authorize.
-
-**Example names:** `SessionRegistry`, `SessionStore`, `SessionExpiry`.
+**Forbidden misuse:** Session classes that own authentication decisions.
 
 **Learning:** Identity subsystem governance
 
@@ -243,11 +209,9 @@ Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
 
 **AvaX meaning:** Authentication proof material owned by the Identity/Credentials subsystem.
 
-**Allowed usage:** `CredentialAuthority`, `CredentialValidator`, `CredentialStore`, `PasskeyCredential`.
+**Allowed usage:** `CredentialAuthority`, `CredentialValidator`.
 
-**Forbidden misuse:** Credential classes that own session management or authorization decisions. Credentials verify identity; they do not manage sessions.
-
-**Example names:** `CredentialAuthority`, `PasswordCredential`, `PasskeyCredential`.
+**Forbidden misuse:** Credential classes that own session management.
 
 **Learning:** Identity subsystem governance
 
@@ -255,15 +219,13 @@ Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
 
 ## Tenant
 
-**Simple explanation:** A multi-tenant isolation boundary — an organization, account, or workspace.
+**Simple explanation:** A multi-tenant isolation boundary — organization, account, workspace.
 
 **AvaX meaning:** The unit of data and access isolation in multi-tenant systems.
 
-**Allowed usage:** `TenantAccess`, `TenantIsolation`, `TenantContext`, `RequireTenant`.
+**Allowed usage:** `TenantAccess`, `TenantIsolation`, `TenantContext`.
 
-**Forbidden misuse:** Tenant classes that own user authentication. Tenants isolate scope; they do not authenticate users.
-
-**Example names:** `TenantAccess`, `TenantIsolationPolicy`, `TenantContext`.
+**Forbidden misuse:** Tenant classes that own user authentication.
 
 **Learning:** Identity subsystem governance
 
@@ -271,15 +233,13 @@ Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
 
 ## Elevation
 
-**Simple explanation:** Temporary privilege increase — admin elevation, role escalation, time-limited access.
+**Simple explanation:** Temporary privilege increase — admin elevation, role escalation.
 
-**AvaX meaning:** A controlled, auditable, time-limited increase in user permissions for administrative or emergency access.
+**AvaX meaning:** A controlled, auditable, time-limited increase in user permissions.
 
-**Allowed usage:** `ElevationRequest`, `RequireElevation`, `ElevationExpiry`, `AdminElevation`.
+**Allowed usage:** `ElevationRequest`, `RequireElevation`.
 
-**Forbidden misuse:** Elevation classes that own base authentication. Elevation augments existing auth; it does not replace it.
-
-**Example names:** `ElevationRequest`, `AdminElevation`, `ElevationAudit`.
+**Forbidden misuse:** Elevation classes that own base authentication.
 
 **Learning:** Identity subsystem governance
 
@@ -289,124 +249,304 @@ Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
 
 **Simple explanation:** A measurable threat or uncertainty factor in security decisions.
 
-**AvaX meaning:** A quantified security risk score, threat level, or confidence factor used in adaptive authentication and authorization.
+**AvaX meaning:** A quantified security risk score used in adaptive authentication and authorization.
 
-**Allowed usage:** `RiskAssessment`, `RiskScore`, `RiskPolicy`, `EvaluateRisk`.
+**Allowed usage:** `RiskAssessment`, `RiskScore`, `RiskPolicy`.
 
-**Forbidden misuse:** Risk classes that own authentication. Risk informs decisions; it does not authenticate.
-
-**Example names:** `RiskAssessment`, `RiskScore`, `AdaptiveRiskPolicy`.
+**Forbidden misuse:** Risk classes that own authentication.
 
 **Learning:** Identity subsystem governance
 
 ---
 
-## Technical Theater
+## Object-Oriented Thinking
 
-**Simple explanation:** Introducing patterns, abstractions, or ceremony that look sophisticated but solve no real problem.
+**Simple explanation:** Modeling real-world and system complexity as interacting objects with clear responsibilities.
 
-**AvaX meaning:** Code that uses builders, factories, graphs, managers, coordinators, orchestrators, or wiring layers without a proven structural need. It moves complexity behind prettier names rather than reducing it.
+**AvaX meaning:** Classes must represent meaningful concepts: roles, tasks, information, views, commands, events, aggregates, policies, capabilities, or transformations. Not pattern names.
 
-**Allowed usage:** Patterns that demonstrably reduce cognitive load or solve a specific coupling problem.
+**Allowed usage:** `CredentialAuthority`, `SessionRegistry`, `RiskAssessment` — classes that represent real domain concepts.
 
-**Forbidden misuse:** Creating a Builder to hide a long constructor without explaining why. Creating a Coordinator to wrap three method calls. Creating a Manager because "that's what enterprise code does."
+**Forbidden misuse:** `UserManagerHelper`, `AbstractBaseComponentHandler` — classes that exist only because a pattern name is available.
 
-**Example:** `AuthCoordinator` that only calls `$auth->login()` then `$session->start()` — this is technical theater. Call both directly in the Flow.
-
-**Learning:** `how-to-design-components.md — Section 30.3`, `how-to-clean-code.md — Section 25.3`
+**Learning:** `how-to-design-components.md` — Section 30.1
 
 ---
 
-## Cognitive Load
+## Ubiquitous Language
 
-**Simple explanation:** The mental effort required to understand, modify, or navigate code.
+**Simple explanation:** Names that make sense to both developers and domain stakeholders, supporting conversation.
 
-**AvaX meaning:** A measurable quality attribute of code. Low cognitive load means a developer can understand a unit by reading it, not by opening five other files. High cognitive load means the design is suspicious.
+**AvaX meaning:** Class, folder, and API names must be understood by stakeholders, not just compile correctly. Names support conversation.
 
-**Allowed usage:** Designing for low surprise, fast navigation, boring cohesion. Using cognitive load as a review criterion.
+**Allowed usage:** `CredentialAuthority` (stakeholders understand credentials and authority), `SessionRegistry` (sessions and registration).
 
-**Forbidden misuse:** Accepting high cognitive load as "just how enterprise code is." Blaming the reader instead of the design.
+**Forbidden misuse:** `AbstractBaseComponentHandler`, `GenericServiceProcessor` — names that only make sense as framework mechanics.
 
-**Example:** A `RegisterUser` Flow that requires reading `UserFactory`, `UserBuilder`, `UserGraph`, `UserAssembly`, and `UserServiceProvider` to understand what it does — cognitive load is too high.
-
-**Learning:** `how-to-design-components.md — Section 30.5`, `how-to-clean-code.md — Section 25.5`
+**Learning:** `how-to-design-components.md` — Section 30.4
 
 ---
 
-## Structural Honesty
+## Bounded Context
 
-**Simple explanation:** The code structure reveals the real architecture, not a美化ed version of it.
+**Simple explanation:** A clear boundary within which a particular domain model is valid and consistent.
 
-**AvaX meaning:** Subsystem boundaries, dependency directions, and responsibility assignments are visible in the folder/class structure. God objects, dependency chaos, and circular coupling are not hidden behind facades, builders, or configuration wrappers.
+**AvaX meaning:** A major subsystem with owned concepts, consumed concepts, published APIs/events, and explicit handover contracts. Maps to `System/` folder boundaries.
 
-**Allowed usage:** Structure that matches architecture docs. Folders that say flow or capability. Dependencies that flow through DI.
+**Allowed usage:** Identity bounded context, Cache bounded context — each with clear ownership and published contracts.
 
-**Forbidden misuse:** A `SimpleAuth` facade hiding 12 interconnected classes with circular dependencies. A `Configuration` class that registers 40 unrelated services.
+**Forbidden misuse:** Creating bounded contexts for every class. A bounded context must own meaningful information and behavior.
 
-**Example:** `AuthenticationGateway` clearly coordinates `CredentialAuthority` and `SessionRegistry` — this is structurally honest. `AuthManager` does everything — this is structurally dishonest.
-
-**Learning:** `how-to-design-components.md — Section 30.6`, `how-to-architecture.md — Section 55.6`
+**Learning:** `how-to-design-components.md` — Section 30.7, `how-to-architecture-extension-with-ddd.md`
 
 ---
 
-## Fluent API
+## Context Map
 
-**Simple explanation:** An API designed to read like natural language through method chaining and intention-revealing names.
+**Simple explanation:** A document showing relationships, coupling, and information flow between bounded contexts.
 
-**AvaX meaning:** Call-sites that express intent, not internal mechanics. The boundary method accepts natural inputs and normalizes internally. Public surfaces feel like small fluent API units.
+**AvaX meaning:** Evidence showing upstream/downstream relationships, handover contracts, accepted coupling, and information ownership between subsystems.
 
-**Allowed usage:** `App::identity()->auth()`, `$cache->remember('key', $ttl, $fn)`, `$router->get('/users', $handler)`.
+**Allowed usage:** Context map evidence file for Identity redesign showing upstream (ExternalLogin) and downstream (SessionRegistry) relationships.
 
-**Forbidden misuse:** `Auth::from(Token::from(Session::from($request)))` — nested construction violates fluent API. Class names ending in `Dsl` — the class should say what it owns, not that it is a DSL.
+**Forbidden misuse:** Stale context maps that do not match current code. A stale map is worse than no map.
 
-**Example:** `$context->finishRequest($response)` — fluent. `$context->finishRequest(RuntimeResult::fromResponse(RuntimeResponse::fromPsrResponse($response)))` — not fluent.
-
-**Learning:** `how-to-design-components.md — Section 30.4`, `how-to-clean-code.md — Section 5.4.1`
+**Learning:** `how-to-design-components.md` — Section 30.7
 
 ---
 
-## Gateway
+## EventStorming
 
-**Simple explanation:** The single preferred entry point to a subsystem.
+**Simple explanation:** A collaborative discovery technique that models system behavior through events, commands, and aggregates.
 
-**AvaX meaning:** A class or PublicSurface that coordinates internal capabilities and exposes one controlled API to consumers. Implements the Single Preferred Entry rule.
+**AvaX meaning:** For complex flows: discover events first, derive commands, identify aggregate owners, map handovers, then write code. Required for Identity/Auth/Tokens/Tenancy/Risk redesigns.
 
-**Allowed usage:** `AuthenticationGateway`, `CacheGateway`, `DatabaseGateway`. A gateway coordinates siblings; it does not leak internal machinery.
+**Allowed usage:** Event list, command list, aggregate ownership map, and handover inventory captured in evidence before coding complex flows.
 
-**Forbidden misuse:** Multiple gateways for the same subsystem. A gateway that exposes every internal method. A gateway that is just a thin wrapper with no coordination value.
+**Forbidden misuse:** Using EventStorming output as decoration. EventStorming informs design; it does not replace code.
 
-**Example:** `AuthenticationGateway` coordinates `CredentialAuthority`, `SessionRegistry`, and `MfaProtection` — one entry point for authentication consumers.
-
-**Learning:** `how-to-design-components.md — Section 30.9.5`, `how-to-architecture.md — Section 55.9.5`
+**Learning:** `how-to-design-components.md` — Section 30.5
 
 ---
 
-## Subsystem
+## Command
 
-**Simple explanation:** A coherent unit of the system larger than a capability, smaller than the full system.
+**Simple explanation:** An intent to perform an action that may change state.
 
-**AvaX meaning:** A bounded area with clear ownership, internal capabilities, and one gateway. Examples: Identity, Cache, Database, HTTP. Subsystems decompose recursively into capabilities and flows.
+**AvaX meaning:** A unit that expresses "do this" — derived from events in EventStorming, executed by Flows. Commands mutate state.
 
-**Allowed usage:** `Identity` subsystem, `Cache` subsystem, `Identity/System/PublicSurface/`, `Identity/System/Capabilities/`.
+**Allowed usage:** `RegisterUser` command (executed by Flow), `ChangePassword` command.
 
-**Forbidden misuse:** Using "Subsystem" as a folder name. Subsystem is a concept, not a directory. Creating subsystems for every class.
+**Forbidden misuse:** Command classes that both mutate and return data without explicit result object.
 
-**Example:** `components/Identity/System/` — the Identity subsystem with its PublicSurface, Flows, Capabilities, Configuration, and Foundation.
-
-**Learning:** `how-to-design-components.md — Section 30.7`, `how-to-architecture.md — Section 55.7`
+**Learning:** `how-to-design-components.md` — Section 30.12
 
 ---
 
-## Recursive Decomposition
+## Domain Event
 
-**Simple explanation:** The process of breaking large units into smaller units by identifying real ownership boundaries.
+**Simple explanation:** A fact that something happened in the domain, expressed in the past tense.
 
-**AvaX meaning:** When a unit becomes large, first identify hidden subsystems, then capabilities, then flows, then policies/rules/value objects. Do not split mechanically — split by behavior and ownership. Stop when units become boring, cohesive, readable, and predictable.
+**AvaX meaning:** A named fact representing completed domain behavior. Used for EventStorming discovery, event sourcing, and cross-context communication.
 
-**Allowed usage:** Decomposing a 500-line class into `CredentialAuthority`, `SessionRegistry`, and `MfaProtection` because each owns distinct behavior.
+**Allowed usage:** `UserRegistered`, `PasswordChanged`, `SessionExpired` — past-tense facts representing domain behavior.
 
-**Forbidden misuse:** Splitting `UserService` into `UserServicePart1`, `UserServicePart2`. Extracting `UserManagerHelper` from a method. Mechanical extraction without ownership analysis.
+**Forbidden misuse:** `EventFactoryBuilderProxy` — events named after patterns, not domain facts.
 
-**Example:** A large `AuthRuntime` decomposed into `AuthenticationGateway` (entry), `CredentialAuthority` (verification), `SessionRegistry` (state), `MfaProtection` (policy) — each owns clear behavior.
+**Learning:** `how-to-design-components.md` — Section 30.3, `how-to-architecture-extension-with-ddd.md`
 
-**Learning:** `how-to-design-components.md — Section 30.7`, `how-to-architecture.md — Section 55.7`
+---
+
+## Aggregate
+
+**Simple explanation:** A cluster of domain objects treated as a single unit for data changes, with one root entity protecting invariants.
+
+**AvaX meaning:** An information owner and invariant protector. In AvaX, maps to a Capability with clear ownership of data and rules.
+
+**Allowed usage:** `UserAggregate` owns user data, validates invariants, and coordinates related entities.
+
+**Forbidden misuse:** Aggregates that span multiple bounded contexts or own unrelated concepts.
+
+**Learning:** `how-to-architecture-extension-with-ddd.md`
+
+---
+
+## CQRS
+
+**Simple explanation:** Command Query Responsibility Segregation — separating state-changing operations from read operations.
+
+**AvaX meaning:** Separate commands that mutate state from queries that read state. Not applied as ceremony — used to clarify state change versus knowledge access.
+
+**Allowed usage:** `RegisterUser` (command) vs `GetUserProfile` (query), separate flows for write and read paths.
+
+**Forbidden misuse:** Creating separate command/query infrastructure for simple CRUD where no benefit exists.
+
+**Learning:** `how-to-design-components.md` — Section 30.12
+
+---
+
+## Data Mesh
+
+**Simple explanation:** An architectural approach treating data as a product owned by domain teams, consumed by others through stable interfaces.
+
+**AvaX meaning:** When AvaX exposes data across components/contexts, treat it as a product: owned, documented, stable, consumer-oriented, transformed for consumer needs.
+
+**Allowed usage:** Identity risk signals exposed as documented events, telemetry data as versioned products.
+
+**Forbidden misuse:** Dumping raw internal state across boundaries and calling it "data mesh."
+
+**Learning:** `how-to-design-components.md` — Section 30.13
+
+---
+
+## Data Product
+
+**Simple explanation:** A unit of data that is owned, documented, stable, and designed for consumer needs.
+
+**AvaX meaning:** Data exposed across component/context boundaries with clear producer ownership, consumer orientation, stable API, and versioning where needed.
+
+**Allowed usage:** Domain events as data products, identity risk signals as data products, metadata as data products.
+
+**Forbidden misuse:** Raw database rows or internal arrays exposed to consumers as "data products."
+
+**Learning:** `how-to-design-components.md` — Section 30.13
+
+---
+
+## Event Sourcing
+
+**Simple explanation:** A persistence strategy storing changes as a sequence of events rather than current state.
+
+**AvaX meaning:** An architectural option for auditability, state reconstruction, time-travel debugging, or change history. Distinct from EventStorming (discovery technique).
+
+**Allowed usage:** Storing identity audit events as event history, reconstructing session state from event log.
+
+**Forbidden misuse:** Using Event Sourcing as ceremony where simple state persistence is sufficient. Conflating with EventStorming.
+
+**Learning:** `how-to-design-components.md` — Section 30.14
+
+---
+
+## View
+
+**Simple explanation:** A consumer-specific interface exposing knowledge without leaking internal models.
+
+**AvaX meaning:** A first-class architecture artifact: public API, workspace, query surface, command surface, transformation boundary, event processing boundary, or communication bridge.
+
+**Allowed usage:** PublicSurface as a view, query API as a view, workspace endpoint as a view.
+
+**Forbidden misuse:** Views that expose internal domain models. Views should be consumer-oriented, not producer-convenient.
+
+**Learning:** `how-to-design-components.md` — Section 30.11
+
+---
+
+## Knowledge Backbone
+
+**Simple explanation:** The explicit organization of key information objects, their ownership, and transformations in a system.
+
+**AvaX meaning:** Important systems must have explicitly named and owned knowledge: key information objects, ownership, transformations, update flows, consumers, and views.
+
+**Allowed usage:** Identity subsystem documenting: User (owned by CredentialAuthority), Session (owned by SessionRegistry), Token (owned by TokenAuthority).
+
+**Forbidden misuse:** Core knowledge accidentally trapped inside `UserManager`, `AuthService`, or configuration wrappers without explicit ownership.
+
+**Learning:** `how-to-design-components.md` — Section 30.9
+
+---
+
+## Handover
+
+**Simple explanation:** The transfer of information across subsystem or context boundaries — a primary architectural risk point.
+
+**AvaX meaning:** Every boundary crossing where information, state, or responsibility changes ownership. Must be documented, contracted, and tested.
+
+**Allowed usage:** Handover evidence documenting: what crosses, who owns it, what can be lost, what transforms, what contract protects, what tests prove.
+
+**Forbidden misuse:** Hidden handovers where information crosses boundaries without contract or test. "It just works" is not a handover strategy.
+
+**Learning:** `how-to-design-components.md` — Section 30.10
+
+---
+
+## Architectural Quanta
+
+**Simple explanation:** The smallest deployable or independently evolvable unit of architecture.
+
+**AvaX meaning:** Bounded contexts, views, or capabilities that could become independently deployable units. Design boundaries should keep this option possible.
+
+**Allowed usage:** Designing Identity subsystem as a potential independent deployment unit, with stable APIs and event contracts.
+
+**Forbidden misuse:** Creating hard runtime dependencies that prevent independent evolution, without acknowledging the tradeoff.
+
+**Learning:** `how-to-design-components.md` — Section 30.21
+
+---
+
+## Claims-Based SWOT
+
+**Simple explanation:** A structured way to evaluate architectural alternatives by recording claims about strengths, weaknesses, opportunities, and threats.
+
+**AvaX meaning:** For major architecture choices, record: distributed vs centralized options, SWOT analysis, assumptions, evidence, tactical feasibility. Decisions must not be opinion-only.
+
+**Allowed usage:** Architecture decision document for Identity redesign recording: centralized auth service (strengths/weaknesses) vs distributed auth capabilities (strengths/weaknesses).
+
+**Forbidden misuse:** "We chose distributed because it's modern" without recording claims, evidence, or tradeoffs.
+
+**Learning:** `how-to-design-components.md` — Section 30.16, Section 30.20
+
+---
+
+## Tactical Design
+
+**Simple explanation:** Code-level, implementation-detail design that proves strategic architecture decisions are feasible.
+
+**AvaX meaning:** LLD and code-level evidence showing that a strategic architecture choice actually works in practice. The devil is in the details.
+
+**Allowed usage:** Prototype code proving that distributed auth capabilities can maintain session consistency. LLD proving that Event Sourcing prototype handles replay correctly.
+
+**Forbidden misuse:** Strategic architecture diagrams without any code-level proof. "It should work" is not tactical evidence.
+
+**Learning:** `how-to-design-components.md` — Section 30.17
+
+---
+
+## Strategic Design
+
+**Simple explanation:** High-level architecture decisions about system boundaries, slicing, context maps, and major technology choices.
+
+**AvaX meaning:** Architecture decisions about problem-space slicing, bounded contexts, context maps, distributed vs centralized choices, and major technology bets.
+
+**Allowed usage:** Identity redesign strategic design: bounded context boundaries, upstream/downstream relationships, session ownership decisions.
+
+**Forbidden misuse:** Strategic design without tactical evidence. High-level diagrams alone are not GREEN architecture.
+
+**Learning:** `how-to-design-components.md` — Section 30.17
+
+---
+
+## IRTV
+
+**Simple explanation:** Information, Roles, Tasks, Views — a modeling framework for complex subsystems.
+
+**AvaX meaning:** A modeling checklist: Information (what knowledge matters?), Roles (who/what uses it?), Tasks (what work is performed?), Views (what interfaces expose it?). Guides subsystem naming, PublicSurface design, flow boundaries.
+
+**Allowed usage:** IRTV analysis for Identity redesign: Information (User, Session, Token), Roles (CredentialAuthority, SessionRegistry, TokenAuthority), Tasks (Verify, Issue, Revoke), Views (Auth API, Session API, Token API).
+
+**Forbidden misuse:** Filling out IRTV as a checkbox exercise without using it to guide actual design decisions.
+
+**Learning:** `how-to-design-components.md` — Section 30.8
+
+---
+
+## Transformation Recipe
+
+**Simple explanation:** A mental model understanding components as repeatable transformation machines: input → recipe → output → preserved knowledge.
+
+**AvaX meaning:** A way to think about flows, policies, compilers, metadata graphs, and runtime plans. Not a naming convention — a thinking tool.
+
+**Allowed usage:** Understanding the Auth flow as: input (credentials) → recipe (verify, check MFA, assess risk) → output (session, token) → preserved knowledge (session state, audit log).
+
+**Forbidden misuse:** Creating `Constructor` or `Recipe` classes because of this mental model. It is a way of thinking, not a naming reason.
+
+**Learning:** `how-to-design-components.md` — Section 30.18

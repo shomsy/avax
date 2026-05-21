@@ -145,22 +145,23 @@ No regression test for fixed bug, not done.
 
 No contract test for public API, not stable.
 
-## Universal Enterprise Codecraft Philosophy
+## Object-Oriented Enterprise Architecting Philosophy
 
-Tests must prove the universal enterprise codecraft philosophy, not just behavior.
+Tests must prove the object-oriented enterprise architecture philosophy, not just behavior.
 
 See:
 
-- `how-to-design-components.md` — Section 30: Universal Enterprise Codecraft Rule
-- `how-to-architecture.md` — Section 55: Universal Enterprise Codecraft Rule
+- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
+- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
 
 Tests must:
 
-- prove fluent API call-sites work with natural inputs
-- prove public surfaces stay thin (line-count assertions)
-- prove no horizontal coupling between sibling components
-- prove boundary value objects are enforced at subsystem edges
-- prove command/query separation (no method both mutates and returns)
-- prove single entry point per subsystem
+- prove handover contracts work (information crosses boundaries correctly)
+- prove ubiquitous language in public APIs
+- prove knowledge backbone (core objects are named and owned)
+- prove command/query separation where claimed
+- prove views expose consumer-specific data without leaking internals
+- prove model-to-code alignment (structure matches documented models)
+- prove EventStorming output (events, commands, aggregate ownership) for complex flows
 
-Tests that only prove construction trivia without proving codecraft quality are TESTS_TOO_SHALLOW_BLOCKER.
+Tests that only prove construction without proving architecture quality are TESTS_TOO_SHALLOW_BLOCKER.

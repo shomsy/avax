@@ -343,40 +343,35 @@ Every task using this skill must report:
 12. accepted YELLOW, if any
 13. remaining design risk
 
-## Universal Enterprise Codecraft Philosophy Gate
+## Object-Oriented Enterprise Architecting Gate
 
-Every production-code change must satisfy the universal enterprise codecraft philosophy.
+Production code must serve the object-oriented enterprise architecture philosophy.
 
 See:
 
-- `how-to-design-components.md` — Section 30: Universal Enterprise Codecraft Rule
-- `how-to-architecture.md` — Section 55: Universal Enterprise Codecraft Rule
-- `how-to-clean-code.md` — Section 25: Universal Enterprise Codecraft Rule
+- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
+- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
 
 Agents must:
 
-- prefer subsystem decomposition over builders/factories/graphs
-- optimize readability and developer experience
-- minimize cognitive load
-- reject technical theater (patterns without proven need)
-- enforce structural honesty (no god objects behind facades)
-- prefer fluent APIs over mechanical construction
-- avoid fake abstractions
+- model real-world complexity as interacting objects with clear responsibilities
+- treat patterns as thinking tools, not class-name decorations
+- use ubiquitous language understood by stakeholders
+- document handovers between subsystems
+- maintain knowledge backbones (explicit, not accidental)
+- ensure models match code structure
+- record claims-based evidence for major alternatives
 
 Every implementation must evaluate:
 
-- **No Technical Theater:** Are builders, factories, managers, or coordinators introduced without proven need?
-- **Cognitive Load:** Can a developer understand this unit without opening five other files?
-- **Structural Honesty:** Does the structure reveal real boundaries?
-- **Fluent API:** Are call-sites intention-revealing?
-- **Recursive Decomposition:** Was splitting done by ownership, not mechanically?
-- **Readability vs Safety:** Does the change improve both, or trade one for the other?
-
-Classification:
-
-- GREEN: unit reads naturally, no unnecessary patterns, structure matches architecture
-- YELLOW: technical theater exists with documented migration plan or justified evidence
-- RED: god objects hidden behind facades, high cognitive load, structure diverges from architecture
+- **OO Thinking:** Do classes represent real concepts or pattern names?
+- **Ubiquitous Language:** Would stakeholders understand the names?
+- **Pattern Theater:** Are patterns clarifying or decorating?
+- **Handover Risk:** Are boundary crossings documented and tested?
+- **Knowledge Backbone:** Is core knowledge explicitly owned?
+- **Model-to-Code:** Does code reflect documented models?
+- **Tactical Evidence:** Do strategic claims have code-level proof?
+- **EventStorming:** For complex flows, are events/commands/aggregates documented?
 
 ## Final Rule
 

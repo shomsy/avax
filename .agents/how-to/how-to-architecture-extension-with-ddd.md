@@ -2510,6 +2510,99 @@ Factories own meaningful creation.
 
 Domain events record completed facts.
 
+---
+
+## 55. Object-Oriented Enterprise Architecting Cross-Reference
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+DDD and OO Enterprise Architecting are complementary disciplines.
+
+See:
+
+- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
+- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
+
+### How DDD and OO Architecting Align
+
+| DDD Concept | OO Architecting Equivalent | AvaX Translation |
+|---|---|---|
+| Bounded Context | Subsystem boundary | System/ folder |
+| Aggregate | Information owner + invariant protector | Capability with clear ownership |
+| Entity | Identity + lifecycle | Value object with identity |
+| Value Object | Meaning protector | Typed boundary value |
+| Domain Event | System event | Event in evidence + capability |
+| Domain Service | Exact domain action | Flow or Capability |
+| Repository | Aggregate persistence | Persistence capability |
+| Ubiquitous Language | Conversational naming | Subsystem/capability names |
+| Context Map | Handover documentation | Evidence + dependency graph |
+
+### EventStorming + DDD
+
+EventStorming is the discovery technique that feeds DDD modeling:
+
+1. Events reveal domain behavior
+2. Commands reveal intent
+3. Aggregates reveal ownership
+4. Handovers reveal boundaries
+5. Bounded contexts emerge from clustering
+
+### IRTV + DDD
+
+IRTV extends DDD with role/task/view thinking:
+
+- Information maps to Aggregates and Value Objects
+- Roles map to Bounded Context ownership
+- Tasks map to Domain Services and Flows
+- Views map to PublicSurface and Query APIs
+
+### Enterprise Reality + DDD
+
+DDD assumes you can find a clean domain model.
+OO Enterprise Architecting reminds you that the real world is messy.
+
+When DDD meets enterprise reality:
+
+- multiple vendors mean multiple models
+- legacy systems mean anti-corruption layers
+- political constraints mean imperfect boundaries
+- handovers mean explicit contracts
+
+DDD provides the ideal model.
+OO Enterprise Architecting provides the reality check.
+AvaX provides the implementation.
+
+---
+
+## 56. Final Law
+
+Public surface receives.
+
+Flows execute.
+
+Capabilities power.
+
+Configuration assembles.
+
+Foundation supports.
+
+Bounded contexts define where language is valid.
+
+Aggregates protect invariants.
+
+Entities own identity and lifecycle.
+
+Value objects protect meaning.
+
+Repositories protect aggregate persistence.
+
+Domain services own exact domain actions.
+
+Factories own meaningful creation.
+
+Domain events record completed facts.
+
 Old code is evidence.
 
 Current architecture is the target.
@@ -2517,28 +2610,3 @@ Current architecture is the target.
 Tests are the judge.
 
 Everything must remain readable.
-
-Everything must remain simple.
-
-The system must speak in the language of what it does, what it protects, and what must never become unclear.
-
----
-
-## 57. Hard Enterprise OOP Boundary Cross-Reference
-
-For Hard Enterprise OOP Boundary Rules including:
-
-- Horizontal Blindness / Outward-Only Dependency Law
-- Boundary Value Object Rule
-- Command/Query Clarity Rule
-- HLD/LLD Mirror Rule
-- Single Preferred Entry Rule
-
-See:
-
-```text
-.agents/how-to/how-to-design-components.md — Section 31: Hard Enterprise OOP Boundary Rules
-.agents/how-to/how-to-architecture.md — Section 54: Hard Enterprise OOP Boundary Rules
-```
-
-These rules complement DDD bounded context and aggregate boundaries. Horizontal blindness enforces bounded context isolation. Boundary value objects enforce ubiquitous language at code boundaries.

@@ -178,3 +178,23 @@ No threat model, no security change.
 No negative test, no GREEN.
 
 No fail-closed proof, no commit.
+
+## Object-Oriented Enterprise Architecting Philosophy
+
+Security boundaries must serve the object-oriented enterprise architecture philosophy.
+
+See:
+
+- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
+- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
+
+Agents must:
+
+- treat security boundaries as handovers — document what credentials/tokens/sessions cross
+- apply knowledge backbone thinking — security knowledge (credentials, sessions, tokens, policies) must be explicitly owned
+- use ubiquitous language for security concepts — stakeholders must understand auth, risk, elevation
+- model security with IRTV — Information (credentials), Roles (authorities), Tasks (verify/issue/revoke), Views (auth APIs)
+- consider enterprise reality — security must handle multiple vendors, legacy systems, external IdPs, conflicting interests
+- apply EventStorming for complex security flows — discover security events, derive commands, identify aggregate owners
+
+Security architecture that hides credentials or session state inside unnamed services is structurally dishonest.

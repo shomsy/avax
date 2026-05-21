@@ -165,3 +165,23 @@ No API inventory, no public change.
 No contract test proof, no GREEN.
 
 No migration path for breaking changes, no commit.
+
+## Object-Oriented Enterprise Architecting Philosophy
+
+Public API changes must serve the object-oriented enterprise architecture philosophy.
+
+See:
+
+- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
+- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
+
+Agents must:
+
+- use ubiquitous language in public APIs — names stakeholders understand
+- treat API boundaries as handovers with explicit contracts
+- expose views, not internal models — consumer-oriented APIs
+- apply data product thinking — APIs are products owned by producers for consumers
+- consider architectural quanta — design APIs that could support independent deployment
+- document context maps — show upstream/downstream relationships for public APIs
+
+Public API that leaks internal models or uses framework-mechanics names is a design failure.

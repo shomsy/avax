@@ -8,6 +8,7 @@ use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Tokens\AccessTok
 use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Tokens\TokenPair;
 use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Signing\JwtSigner;
 use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Verification\TokenVerifier;
+use Avax\Components\Identity\Tokens\System\Foundation\Time\Clock;
 use RuntimeException;
 use Throwable;
 
@@ -17,6 +18,7 @@ final readonly class JwtAuth
         private JwtSigner      $jwtSigner,
         private TokenVerifier  $tokenVerifier,
         private TokenBlacklist $tokenBlacklist,
+        private Clock          $clock,
     ) {}
 
     public function verify(string $token) : AccessToken
@@ -36,7 +38,7 @@ final readonly class JwtAuth
             throw new RuntimeException('Invalid token type for refresh');
         }
 
-        if (($payload['exp'] ?? 0) < time()) {
+        if (($payload['exp'] ?? 0) < $this->clock->now()) {
             throw new RuntimeException('Refresh token has expired');
         }
 
@@ -54,7 +56,7 @@ final readonly class JwtAuth
 
     public function issue(array $user, array $scopes = []) : TokenPair
     {
-        $now            = time();
+        $now            = $this->clock->now();
         $accessExpires  = $now + 900;
         $refreshExpires = $now + 604800;
 

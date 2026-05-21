@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit\Components\Identity\Tokens;
 
 use Avax\Components\Identity\Tokens\System\Configuration\Assembly\JwtAuthGraph;
+use Avax\Components\Identity\Tokens\System\Foundation\Time\Clock;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -49,5 +50,50 @@ final class JwtAuthRuntimeSafetyTest extends TestCase
 
         self::assertFalse($first->introspect(token: $tokenPair->accessToken)['active']);
         self::assertTrue($second->introspect(token: $tokenPair->accessToken)['active']);
+    }
+
+    #[Test]
+    public function issuedTokenTimestampsUseInjectedClock(): void
+    {
+        $clock = new class(1_700_000_000) implements Clock {
+            public function __construct(public int $now) {}
+
+            public function now() : int
+            {
+                return $this->now;
+            }
+        };
+
+        $jwtAuth = JwtAuthGraph::hmac(secret: 'test-secret', clock: $clock);
+        $tokenPair = $jwtAuth->issue(user: ['id' => 'user-1'], scopes: ['read']);
+
+        $introspection = $jwtAuth->introspect(token: $tokenPair->accessToken);
+
+        self::assertTrue($introspection['active']);
+        self::assertSame(1_700_000_000, $introspection['iat']);
+        self::assertSame(1_700_000_900, $introspection['exp']);
+    }
+
+    #[Test]
+    public function injectedClockExpiryFailsClosed(): void
+    {
+        $clock = new class(1_700_000_000) implements Clock {
+            public function __construct(public int $now) {}
+
+            public function now() : int
+            {
+                return $this->now;
+            }
+        };
+
+        $jwtAuth = JwtAuthGraph::hmac(secret: 'test-secret', clock: $clock);
+        $tokenPair = $jwtAuth->issue(user: ['id' => 'user-1'], scopes: ['read']);
+
+        $clock->now = 1_700_000_901;
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Invalid token: Expired token');
+
+        $jwtAuth->verify(token: $tokenPair->accessToken);
     }
 }

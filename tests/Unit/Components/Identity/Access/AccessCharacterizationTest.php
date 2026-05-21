@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit\Components\Identity\Access;
 
 use Avax\Components\Application\Container\System\Foundation\SimpleContainer;
+use Avax\Components\Identity\Access\System\Capabilities\AccessRuntime\AccessRuntime;
 use Avax\Components\Identity\Access\System\Capabilities\Authorization\AuthorizationEngine;
 use Avax\Components\Identity\Access\System\Capabilities\AdminElevation\AdminElevationStore;
 use Avax\Components\Identity\Access\System\Configuration\AccessServiceProvider;
@@ -220,10 +221,12 @@ final class AccessCharacterizationTest extends TestCase
         );
         $begin = $beginAdminElevation ?? new BeginAdminElevation(store: new AdminElevationStore());
         return new Access(
-            authorizationEngine: $engine,
-            beginAdminElevation: $begin,
-            endAdminElevation: new EndAdminElevation(
+            runtime: new AccessRuntime(
+                authorizationEngine: $engine,
                 beginAdminElevation: $begin,
+                endAdminElevation: new EndAdminElevation(
+                    beginAdminElevation: $begin,
+                ),
             ),
         );
     }

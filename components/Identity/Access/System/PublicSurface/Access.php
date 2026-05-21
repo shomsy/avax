@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Access\System\PublicSurface;
 
-use Avax\Components\Identity\Access\System\Capabilities\Authorization\AuthorizationEngine;
-use Avax\Components\Identity\Access\System\Flows\AdminElevation\BeginAdminElevation;
-use Avax\Components\Identity\Access\System\Flows\AdminElevation\EndAdminElevation;
+use Avax\Components\Identity\Access\System\Capabilities\AccessRuntime\AccessRuntime;
 use Avax\Components\Identity\Access\System\Foundation\Exception\PermissionDenied;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole;
@@ -17,59 +15,54 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole;
 final readonly class Access implements AccessInterface
 {
     public function __construct(
-        private AuthorizationEngine $authorizationEngine,
-        private BeginAdminElevation $beginAdminElevation,
-        private EndAdminElevation   $endAdminElevation,
+        private AccessRuntime $runtime,
     ) {}
 
     /**
- * @throws PermissionDenied
- */
-public function authorize(string $permission, mixed $resource = null) : void
+     * @throws PermissionDenied
+     */
+    public function authorize(string $permission, mixed $resource = null) : void
     {
-        if ($this->denies(permission: $permission, resource: $resource)) {
-            throw new PermissionDenied('Permission denied: ' . $permission);
-        }
+        $this->runtime->authorize(permission: $permission, resource: $resource);
     }
 
     public function denies(string $permission, mixed $resource = null) : bool
     {
-        return ! $this->allows(permission: $permission, resource: $resource);
+        return $this->runtime->denies(permission: $permission, resource: $resource);
     }
 
     public function allows(string $permission, mixed $resource = null) : bool
     {
-        if ($this->isElevated()) {
-            return true;
-        }
-
-        return $this->authorizationEngine->check(permission: $permission, resource: $resource);
+        return $this->runtime->allows(permission: $permission, resource: $resource);
     }
 
     public function isElevated() : bool
     {
-        return $this->beginAdminElevation->isActive();
+        return $this->runtime->isElevated();
     }
 
     public function beginElevation() : void
     {
-        $this->beginAdminElevation->execute();
+        $this->runtime->beginElevation();
     }
 
     public function endElevation() : void
     {
-        $this->endAdminElevation->execute();
+        $this->runtime->endElevation();
     }
 
     public function requireAuthentication() : void
     {
+        $this->runtime->requireAuthentication();
     }
 
     public function requireRole(UserRole $userRole) : void
     {
+        $this->runtime->requireRole(userRole: $userRole);
     }
 
     public function requirePermission(UserPermission $userPermission) : void
     {
+        $this->runtime->requirePermission(userPermission: $userPermission);
     }
 }

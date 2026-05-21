@@ -6,6 +6,7 @@ namespace Avax\Components\Identity\System\Configuration\Builders;
 
 use Avax\Components\Identity\Access\System\Capabilities\Authorization\AuthorizationEngine;
 use Avax\Components\Identity\Access\System\Capabilities\AdminElevation\AdminElevationStore;
+use Avax\Components\Identity\Access\System\Capabilities\AccessRuntime\AccessRuntime;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\BeginAdminElevation;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\EndAdminElevation;
 use Avax\Components\Identity\Access\System\PublicSurface\Access;
@@ -41,10 +42,12 @@ final readonly class IdentityRuntime
                                   ),
                               ),
             access          : new Access(
-                                  authorizationEngine: new AuthorizationEngine(),
-                                  beginAdminElevation: $beginAdminElevation,
-                                  endAdminElevation  : new EndAdminElevation(
+                                  runtime: new AccessRuntime(
+                                      authorizationEngine: new AuthorizationEngine(),
                                       beginAdminElevation: $beginAdminElevation,
+                                      endAdminElevation  : new EndAdminElevation(
+                                          beginAdminElevation: $beginAdminElevation,
+                                      ),
                                   ),
                               ),
             credentials     : new Credentials(),

@@ -4,36 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Capabilities\Authentication;
 
-use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\Identity\Access\System\Capabilities\Access;
-use Avax\Components\Identity\Access\System\Capabilities\Authentication\Throttle\AttemptThrottle;
-use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\DeterministicRiskEngine;
-use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\NullAuditLog;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\InMemoryLifecycleStore;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\InMemoryScimDirectoryStore;
-use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\InMemoryScimProvisionedIdentityStore;
-use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\InMemoryEmailChangeStore;
-use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\InMemoryPasswordResetStore;
-use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\InMemoryEmailVerificationStateStore;
-use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\InMemoryEmailVerificationStore;
-use Avax\Components\Identity\Auth\System\Foundation\Clock;
-use Avax\Components\Identity\Auth\System\Foundation\IdGenerator;
-use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Limit\LimitMfaAttempts;
-use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Stores\InMemoryMfaStore;
-use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Totp\Totp;
-use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\InMemoryMfaChallengeStore;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\InMemoryPasskeyChallengeStore;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\InMemoryPasskeyCredentialStore;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\InMemoryAuthorizationCodeStore;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\InMemoryOAuthClientRegistry;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\InMemoryOidcRequestObjectStore;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\InMemoryFederatedIdentityLinkStore;
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\InMemoryFederationConnectionStore;
-use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\InMemoryAdminElevationStore;
-use Avax\Components\Identity\Tenancy\System\Capabilities\Model\InMemoryTenantStore;
-use Avax\Components\Identity\Tenancy\System\Capabilities\Security\InMemoryTenantSecurityChangeRequestStore;
-use Avax\Components\Identity\Tenancy\System\Capabilities\Security\InMemoryTenantSecurityConfigurationStore;
-use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 use Avax\Components\Identity\Access\System\Capabilities\AccessInterface;
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\RiskDecision;
@@ -57,7 +28,6 @@ use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RegisterDirectory\RegisterScimDirectoryData;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\RotateToken\RotatedScimToken;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Runtime\SyncGroups\SyncScimGroupsData;
-use Avax\Components\Identity\Auth\System\Configuration\Builders\AuthBuilder;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\BeginEmailChangeData;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\ConfirmEmailChangeData;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\EmailChangeChallenge;
@@ -171,59 +141,6 @@ final readonly class DefaultAuth implements AuthInterface
         private IdentitySync $identitySync,
         private Tenancy $tenancy,
     ) {
-    }
-
-    public static function configuration(ContainerInterface $container): AuthBuilder
-    {
-        $builder = new AuthBuilder();
-
-        $builder->withClock($container->get(Clock::class));
-        $builder->usingIdGenerator($container->get(IdGenerator::class));
-        $builder->usingHasher($container->get(PasswordHasher::class));
-        $builder->withAuditLog($container->get(NullAuditLog::class));
-
-        $builder->withPasswordResetStore($container->get(InMemoryPasswordResetStore::class));
-        $builder->withEmailVerificationStore($container->get(InMemoryEmailVerificationStore::class));
-        $builder->withEmailChangeStore($container->get(InMemoryEmailChangeStore::class));
-        $builder->withEmailVerificationState($container->get(InMemoryEmailVerificationStateStore::class));
-
-        // Credential defaults
-        $builder->withMfaStore($container->get(InMemoryMfaStore::class));
-        $builder->withMfaChallengeStore($container->get(InMemoryMfaChallengeStore::class));
-        $builder->usingTotp($container->get(Totp::class));
-        $builder->withMfaAttemptLimit($container->get(LimitMfaAttempts::class));
-        $builder->withPasskeyCredentialStore($container->get(InMemoryPasskeyCredentialStore::class));
-        $builder->withPasskeyChallengeStore($container->get(InMemoryPasskeyChallengeStore::class));
-
-        // OAuth defaults
-        $builder->withOAuthClientRegistry($container->get(InMemoryOAuthClientRegistry::class));
-        $builder->withAuthorizationCodeStore($container->get(InMemoryAuthorizationCodeStore::class));
-
-        // Federation defaults
-        $builder->withFederationConnectionStore($container->get(InMemoryFederationConnectionStore::class));
-        $builder->withFederatedIdentityLinkStore($container->get(InMemoryFederatedIdentityLinkStore::class));
-
-        // SCIM defaults
-        $builder->withLifecycleStore($container->get(InMemoryLifecycleStore::class));
-        $builder->withScimDirectoryStore($container->get(InMemoryScimDirectoryStore::class));
-        $builder->withScimProvisionedIdentityStore($container->get(InMemoryScimProvisionedIdentityStore::class));
-
-        // Tenancy defaults
-        $builder->withAdminElevationStore($container->get(InMemoryAdminElevationStore::class));
-        $builder->withTenantStore($container->get(InMemoryTenantStore::class));
-        $builder->withTenantSecurityConfigurationStore($container->get(InMemoryTenantSecurityConfigurationStore::class));
-        $builder->withTenantSecurityChangeRequestStore($container->get(InMemoryTenantSecurityChangeRequestStore::class));
-        $builder->withRiskEngine($container->get(DeterministicRiskEngine::class));
-
-        // OIDC defaults
-        $builder->withOidcRequestObjectStore($container->get(InMemoryOidcRequestObjectStore::class));
-
-        // Named throttle bindings
-        $builder->withPasswordResetThrottle($container->get('auth.throttle.password_reset'));
-        $builder->withMfaRecoveryThrottle($container->get('auth.throttle.mfa_recovery'));
-        $builder->withScimThrottle($container->get('auth.throttle.scim'));
-
-        return $builder;
     }
 
     // ── Fast-path convenience methods (high-frequency, cross-cutting) ──

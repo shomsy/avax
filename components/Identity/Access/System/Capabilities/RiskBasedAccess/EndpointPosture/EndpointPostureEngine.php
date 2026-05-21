@@ -11,7 +11,6 @@ final readonly class EndpointPostureEngine
 {
     /**
      * @param list<EndpointPostureSignalData> $signals
-     *                                                    Evaluates posture signals and determines action.
      */
     public function evaluate(
         array                 $signals,
@@ -30,7 +29,6 @@ final readonly class EndpointPostureEngine
 
     /**
      * @param list<EndpointPostureSignalData> $signals
-     *                                                    Calculates aggregate risk score from signals.
      */
     private function calculateRiskScore(array $signals) : float
     {
@@ -57,35 +55,4 @@ final readonly class EndpointPostureEngine
 
         return $weightSum > 0 ? $totalScore / $weightSum : 0.0;
     }
-}
-
-/**
- * Policy thresholds for endpoint posture decisions.
- */
-final readonly class EndpointPosturePolicy
-{
-    public float $stepUpThreshold;
-
-    public float $denyThreshold;
-
-    public function __construct(float|null $denyThreshold = null, float|null $stepUpThreshold = null,
-        public float $quarantineThreshold = 0.3,
-    )
-    {
-        $denyThreshold         ??= 0.8;
-        $stepUpThreshold       ??= 0.5;
-        $this->denyThreshold   = $denyThreshold;
-        $this->stepUpThreshold = $stepUpThreshold;
-    }
-}
-
-/**
- * Endpoint posture decision outcomes.
- */
-enum EndpointPostureDecision: string
-{
-    case ALLOW      = 'allow';
-    case STEP_UP    = 'step_up';
-    case DENY       = 'deny';
-    case QUARANTINE = 'quarantine';
 }

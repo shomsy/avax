@@ -62,6 +62,32 @@ The agent must answer:
 - What secrets are redacted?
 - What worker-state risk exists?
 
+## Hard Enterprise OOP Boundary Security Cross-Reference
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+Security boundaries must respect enterprise OOP rules.
+
+See:
+
+- `how-to-design-components.md` — Section 31: Hard Enterprise OOP Boundary Rules
+- `how-to-architecture.md` — Section 54: Hard Enterprise OOP Boundary Rules
+
+Security-relevant rules:
+
+- **Boundary Value Objects:** Raw primitives (strings, ints) crossing security boundaries are a HIGH risk. Credentials, tokens, identifiers, permissions, and roles must be wrapped in typed value objects to prevent injection, tampering, and type confusion.
+- **Horizontal Blindness:** Security components must not depend on each other directly. Authentication, authorization, and session management must be coordinated through a parent security gateway to prevent bypass chains.
+- **Command/Query Clarity:** Security-critical methods must not mix mutation and return. A method that both validates a token and returns user data is a tampering risk. Split into separate validate (command) and retrieve (query).
+- **Single Preferred Entry:** Security subsystems must expose one controlled gateway. Multiple entry points create attack surface for bypass, downgrade, and inconsistent policy enforcement.
+- **HLD/LLD Mirror:** The security architecture must match the code. If the threat model says A validates and B enforces, code must not collapse them into one component.
+
+Security violations of these rules are classified as:
+
+- BLOCKER: raw secrets/credentials across boundaries, multiple uncontrolled security entry points, mixed command/query in auth path
+- HIGH: horizontal coupling between security components without coordinator
+- MEDIUM: value object boundary violations in non-critical paths
+
 ## Required Evidence
 
 Every security-sensitive task must include:

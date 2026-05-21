@@ -102,6 +102,32 @@ Facades must:
 - remain thin and stable
 - log deprecation when forwarding to changed internals
 
+## Hard Enterprise OOP Boundary API Cross-Reference
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+Public API changes must respect enterprise OOP boundaries.
+
+See:
+
+- `how-to-design-components.md` — Section 31: Hard Enterprise OOP Boundary Rules
+- `how-to-architecture.md` — Section 54: Hard Enterprise OOP Boundary Rules
+
+API-relevant rules:
+
+- **Single Preferred Entry:** PublicSurface must expose one controlled gateway per subsystem. Multiple public entry points create API surface that is hard to version, deprecate, and test.
+- **Boundary Value Objects:** Public API must accept and return value objects at subsystem boundaries, not raw primitives. This protects backward compatibility by making the contract explicit.
+- **Command/Query Clarity:** Public API methods must not mix mutation and return. A public method that both creates a resource and returns its representation creates confusion for consumers and breaks idempotency expectations.
+- **Horizontal Blindness:** Public API must not expose internal sibling-component dependencies. If component A needs component B, the public API should expose a coordinated facade, not force consumers to wire them together.
+- **HLD/LLD Mirror:** The public API surface must match the documented architecture. If the API docs say A is the entry point, code must not allow B to be called directly.
+
+API violations of these rules are classified as:
+
+- MAJOR_BREAK: exposing multiple uncontrolled entry points, leaking internal primitives, mixing command/query in public API
+- MINOR_BREAK: boundary violations with deprecation path
+- PATCH_SAFE: internal boundary cleanup with no public impact
+
 ## Integration with Other Skills
 
 This skill must be loaded together with:

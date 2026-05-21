@@ -1711,6 +1711,34 @@ Configuration assembles the system.
 
 ---
 
+## 16.1 Hard Enterprise OOP Boundary Cross-Reference
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+Dependency injection must respect enterprise OOP boundaries.
+
+See:
+
+- `how-to-design-components.md` — Section 31: Hard Enterprise OOP Boundary Rules
+- `how-to-architecture.md` — Section 54: Hard Enterprise OOP Boundary Rules
+
+Relevant rules for DI:
+
+- **Horizontal Blindness:** ServiceProviders must not wire sibling components to depend on each other directly. Coordination flows through a parent orchestrator or gateway.
+- **Boundary Value Objects:** Dependencies crossing subsystem boundaries must be wrapped in value objects, not passed as raw primitives (strings, ints, arrays).
+- **Single Preferred Entry:** Each subsystem exposes one gateway. DI must route through that gateway, not bypass it by injecting internal components directly.
+- **HLD/LLD Mirror:** The DI object graph must match the architecture map. If the architecture says A coordinates B and C, DI must not wire B directly to C.
+
+DI violations of these rules produce:
+
+- hidden horizontal coupling between siblings
+- leaked primitives across boundaries
+- bypassed gateways
+- object graphs that diverge from architecture intent
+
+---
+
 ## 17. Final Law
 
 ```text

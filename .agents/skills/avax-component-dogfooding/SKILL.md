@@ -129,6 +129,32 @@ Forbid:
 - direct runtime object graph construction where DI/Assembly should own it
 - local "mini-frameworks" inside components
 
+## Hard Enterprise OOP Boundary Cross-Reference
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+Component dependencies must respect enterprise OOP boundaries.
+
+See:
+
+- `how-to-design-components.md` — Section 31: Hard Enterprise OOP Boundary Rules
+- `how-to-architecture.md` — Section 54: Hard Enterprise OOP Boundary Rules
+
+Relevant rules for component dogfooding:
+
+- **Horizontal Blindness:** Components must not depend on sibling components directly. Reuse must flow through a parent coordinator or approved gateway.
+- **Boundary Value Objects:** When one component passes data to another across a subsystem boundary, the data must be wrapped in value objects, not raw primitives.
+- **Single Preferred Entry:** Dogfooding must use the approved gateway, not bypass it by reaching into internal component internals.
+- **HLD/LLD Mirror:** The dependency graph assembled by providers must match the architecture map.
+
+Dogfooding violations of these rules produce:
+
+- hidden horizontal coupling between components
+- leaked primitives across component boundaries
+- bypassed gateways creating unstable dependency paths
+- component graphs diverging from architecture intent
+
 ## Raw PHP Exception Rule
 
 Raw PHP primitives are allowed only when:

@@ -2236,3 +2236,75 @@ earliest opportunity.
 **Severity:** BLOCKER
 
 ---
+
+## 54. Hard Enterprise OOP Boundary Rules
+
+### 54.1 Horizontal Blindness / Outward-Only Dependency Law
+
+Sibling subsystems on the same tier must not directly depend on each other.
+
+Communication between sibling subsystems is coordinated by the parent gateway/orchestrator.
+
+**Allowed:**
+
+```text
+AuthenticationGateway coordinates CredentialAuthority and SessionRegistry.
+```
+
+**Forbidden:**
+
+```text
+CredentialAuthority directly depends on SessionRegistry.
+```
+
+Dependencies flow:
+- Parent gateway/orchestrator -> child capabilities
+- Child capabilities -> their own internal units and foundation primitives
+- Child capabilities -> parent gateway (callbacks, events, results) — never to siblings
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+### 54.2 Boundary Value Object Rule
+
+Do not pass raw primitives across subsystem/capability boundaries when the value carries business grammar.
+
+**Values requiring value objects or domain IDs:** `EmailAddress`, `PlainPassword`, `TenantId`, `UserId`, `TokenId`, `PermissionName`, `RoleName`, `ClientId`, `SessionId`, `AuthContextId`.
+
+**Allowed primitives:** local counters, booleans, harmless formatting options, pagination limits when not domain-sensitive.
+
+When a value crosses a subsystem boundary and its meaning matters to the domain, wrap it.
+
+**Status:** MANDATORY  
+**Severity:** HIGH (BLOCKER for security-sensitive boundaries)
+
+### 54.3 Command/Query Clarity Rule
+
+Public methods must be clearly commands or queries, never both.
+
+Queries: read-only, side-effect-free, return data.
+
+Commands: may mutate, return void or meaningful command result (created ID, issued token, auth context, domain event, command result object). Must not smuggle unrelated queries.
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+### 54.4 HLD/LLD Mirror Rule
+
+Named HLD subsystem/capability blocks must map to same-named physical code directories or clearly documented public surfaces.
+
+No HLD block may disappear into generic folders like `Services/`, `Managers/`, `Helpers/`, `Support/`, `Utils/`.
+
+The code tree must be readable as the architecture map.
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+### 54.5 Single Preferred Entry Rule
+
+Each subsystem should expose one preferred public surface/gateway for normal usage. Internal workers remain internal. Multiple public surfaces allowed only for distinct documented user-facing capabilities.
+
+**Status:** MANDATORY  
+**Severity:** MEDIUM
+
+---

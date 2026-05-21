@@ -2521,3 +2521,24 @@ Everything must remain readable.
 Everything must remain simple.
 
 The system must speak in the language of what it does, what it protects, and what must never become unclear.
+
+---
+
+## 57. Hard Enterprise OOP Boundary Cross-Reference
+
+For Hard Enterprise OOP Boundary Rules including:
+
+- Horizontal Blindness / Outward-Only Dependency Law
+- Boundary Value Object Rule
+- Command/Query Clarity Rule
+- HLD/LLD Mirror Rule
+- Single Preferred Entry Rule
+
+See:
+
+```text
+.agents/how-to/how-to-design-components.md — Section 31: Hard Enterprise OOP Boundary Rules
+.agents/how-to/how-to-architecture.md — Section 54: Hard Enterprise OOP Boundary Rules
+```
+
+These rules complement DDD bounded context and aggregate boundaries. Horizontal blindness enforces bounded context isolation. Boundary value objects enforce ubiquitous language at code boundaries.

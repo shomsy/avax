@@ -237,6 +237,34 @@ Can this be replaced by a fluent boundary method?
 
 Usually the answer should be yes.
 
+### 5.4.2 Hard Enterprise OOP Boundary Cross-Reference
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+Clean code must respect enterprise OOP boundaries.
+
+See:
+
+- `how-to-design-components.md` — Section 31: Hard Enterprise OOP Boundary Rules
+- `how-to-architecture.md` — Section 54: Hard Enterprise OOP Boundary Rules
+
+These rules enforce:
+
+- Horizontal Blindness / Outward-Only Dependency Law (siblings don't depend on siblings)
+- Boundary Value Object Rule (no raw primitives across subsystem boundaries)
+- Command/Query Clarity Rule (no mixed read/write in one method)
+- HLD/LLD Mirror Rule (architecture map matches code tree)
+- Single Preferred Entry Rule (one gateway per subsystem)
+
+Violations produce code that is:
+
+- coupled horizontally between sibling components
+- leaking raw primitives across boundaries instead of wrapping in value objects
+- mixing commands and queries in a single method
+- diverging from architecture intent
+- exposing multiple uncontrolled entry points
+
 ### 5.5 Function design
 
 - Each function SHOULD do one coherent thing.

@@ -219,6 +219,29 @@ Forbidden direction:
 - Low-level infrastructure dictating high-level policy
 - Service locator hidden behind convenience APIs
 
+## Hard Enterprise OOP Boundary Gate
+
+Production code must respect enterprise OOP boundaries.
+
+See:
+
+- `how-to-design-components.md` — Section 31: Hard Enterprise OOP Boundary Rules
+- `how-to-architecture.md` — Section 54: Hard Enterprise OOP Boundary Rules
+
+Every production-code change must evaluate:
+
+- **Horizontal Blindness:** Does this change create direct dependency between sibling components? If so, it must flow through a parent orchestrator.
+- **Boundary Value Objects:** Are raw primitives (string, int, array) crossing subsystem boundaries? They must be wrapped in value objects.
+- **Command/Query Clarity:** Does this method both mutate state and return data? It must be split into separate command and query.
+- **HLD/LLD Mirror:** Does the code structure match the architecture map? If architecture says A coordinates B and C, code must not wire B directly to C.
+- **Single Preferred Entry:** Does this subsystem expose multiple uncontrolled entry points? There must be one gateway.
+
+Violations are classified as:
+
+- BLOCKER: unmitigated horizontal coupling, raw primitives across security boundaries, mixed command/query in security-critical path
+- HIGH: boundary violations with partial mitigation
+- ACCEPTED_YELLOW: documented trade-off with owner, risk, mitigation, expiry
+
 ## System Design Principles Gate
 
 For every meaningful change, evaluate:

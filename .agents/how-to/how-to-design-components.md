@@ -2386,6 +2386,162 @@ Threshold trigger requires documented decision. No large unit may be called GREE
 
 ---
 
+## 31. Hard Enterprise OOP Boundary Rules
+
+### 31.1 Horizontal Blindness / Outward-Only Dependency Law
+
+Sibling subsystems on the same tier must not directly depend on each other.
+
+Communication between sibling subsystems is coordinated by the parent gateway/orchestrator.
+
+**Allowed:**
+
+```text
+AuthenticationGateway coordinates CredentialAuthority and SessionRegistry.
+App::identity()->auth() delegates to internal auth capabilities.
+```
+
+**Forbidden:**
+
+```text
+CredentialAuthority directly depends on SessionRegistry.
+SessionRegistry calls into CredentialAuthority.
+Two sibling capabilities import each other's internal classes.
+```
+
+Dependencies flow:
+- Parent gateway/orchestrator -> child capabilities
+- Child capabilities -> their own internal units and foundation primitives
+- Child capabilities -> parent gateway (callbacks, events, results) — never to siblings
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+### 31.2 Boundary Value Object Rule
+
+Do not pass raw primitives across subsystem/capability boundaries when the value carries business grammar.
+
+**Values requiring value objects or domain IDs:**
+
+```text
+EmailAddress, PlainPassword, TenantId, UserId, TokenId,
+PermissionName, RoleName, ClientId, SessionId, AuthContextId
+```
+
+**Allowed primitives (no value object required):**
+
+```text
+local counters, booleans, harmless formatting options,
+pagination limits when not domain-sensitive
+```
+
+When a value crosses a subsystem boundary and its meaning matters to the domain, wrap it. The receiving subsystem must not interpret a raw string that represents a domain concept.
+
+**Status:** MANDATORY  
+**Severity:** HIGH (BLOCKER for security-sensitive boundaries: passwords, tokens, permissions)
+
+### 31.3 Command/Query Clarity Rule
+
+Public methods must be clearly commands or queries, never both.
+
+**Queries:**
+- Must be read-only and side-effect-free
+- Must return data (result object, collection, value, null)
+- Must not mutate state, write to disk, send events, or call external IO
+
+**Commands:**
+- May mutate state and perform side effects
+- Should return `void` or a meaningful command result only:
+  - created ID
+  - issued token
+  - authentication context
+  - domain event
+  - command result object
+- Must not perform unrelated queries (no query-result smuggling)
+
+**Allowed:**
+
+```text
+allows(): bool                    // query
+authentication(): AuthContext     // query
+requireAuthenticatedUser(): void  // command
+issueToken(): Token               // command result
+```
+
+**Forbidden:**
+
+```text
+authenticateAndReturnUser(): User  // command smuggling a query
+saveAndReload(): Entity            // command smuggling a query
+getStatus(): void                  // query returning nothing
+```
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+### 31.4 HLD/LLD Mirror Rule
+
+Named HLD subsystem/capability blocks must map to same-named physical code directories or clearly documented public surfaces.
+
+No HLD block may disappear into generic folders like `Services/`, `Managers/`, `Helpers/`, `Support/`, `Utils/`.
+
+The code tree must be readable as the architecture map.
+
+**Allowed:**
+
+```text
+HLD: AuthenticationGateway, CredentialAuthority, SessionRegistry
+Code: AuthenticationGateway/, CredentialAuthority/, SessionRegistry/
+```
+
+**Forbidden:**
+
+```text
+HLD: AuthenticationGateway, CredentialAuthority, SessionRegistry
+Code: Services/AuthService.php, Services/CredentialService.php, Services/SessionService.php
+```
+
+If the HLD says "Gateway" but the code says "Service", the mirror is broken.
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+### 31.5 Single Preferred Entry Rule
+
+Each subsystem should expose one preferred public surface/gateway for normal usage.
+
+Internal workers remain internal.
+
+Multiple public surfaces are allowed only when they represent distinct user-facing capabilities and are documented.
+
+**Allowed:**
+
+```text
+AuthenticationGateway         // single preferred entry
+  - authenticate()
+  - requires()
+  - tokens()
+  - sessions()
+```
+
+**Allowed (distinct documented capabilities):**
+
+```text
+AuthenticationGateway         // auth flows
+TokenAuthority                // token lifecycle, documented separately
+```
+
+**Forbidden:**
+
+```text
+AuthHelper, AuthManager, AuthService, AuthProcessor  // fragmented, undocumented entries
+```
+
+**Status:** MANDATORY  
+**Severity:** MEDIUM
+
+---
+
 ### Stage Completion Language
 
 A stage **MUST NOT** be marked GREEN unless:

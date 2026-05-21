@@ -7,6 +7,7 @@ namespace Avax\Tests\Unit\Components\Identity\Tokens;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Code\InMemoryAuthorizationCodeStore;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Codec\HmacTokenCodec;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\InMemoryTokenRevocationStore;
+use Avax\Components\Identity\Tokens\System\Configuration\Assembly\TokensGraph;
 use Avax\Components\Identity\Tokens\System\PublicSurface\Tokens;
 use Avax\Components\Identity\Tokens\System\PublicSurface\TokensInterface;
 use PHPUnit\Framework\Attributes\Test;
@@ -61,16 +62,16 @@ final class TokensCharacterizationTest extends TestCase
     }
 
     #[Test]
-    public function hmacFactoryReturnsTokensInstance(): void
+    public function graphHmacFactoryReturnsTokensInstance(): void
     {
-        $tokens = Tokens::hmac('test-secret');
+        $tokens = TokensGraph::hmac('test-secret');
         self::assertInstanceOf(Tokens::class, $tokens);
     }
 
     #[Test]
-    public function hmacFactoryCreatesInMemoryStores(): void
+    public function graphHmacFactoryCreatesInMemoryStores(): void
     {
-        $tokens = Tokens::hmac('test-secret');
+        $tokens = TokensGraph::hmac('test-secret');
 
         $reflection = new ReflectionClass($tokens);
 
@@ -91,7 +92,7 @@ final class TokensCharacterizationTest extends TestCase
         $codec = new HmacTokenCodec('custom-secret');
         $revocationStore = new InMemoryTokenRevocationStore();
 
-        $tokens = Tokens::fromRuntime(
+        $tokens = TokensGraph::fromRuntime(
             authorizationCodeStore: $codeStore,
             tokenCodec: $codec,
             tokenRevocationStore: $revocationStore,
@@ -101,9 +102,9 @@ final class TokensCharacterizationTest extends TestCase
     }
 
     #[Test]
-    public function staticFactoryAssemblyLeakIsCharacterized(): void
+    public function graphFactoryAssemblyOwnsRevocationStore(): void
     {
-        $tokens = Tokens::hmac('test-secret');
+        $tokens = TokensGraph::hmac('test-secret');
 
         $reflection = new ReflectionClass($tokens);
 
@@ -120,7 +121,7 @@ final class TokensCharacterizationTest extends TestCase
     #[Test]
     public function introspectReturnsStdClass(): void
     {
-        $tokens = Tokens::hmac('test-secret');
+        $tokens = TokensGraph::hmac('test-secret');
 
         $result = $tokens->introspect('invalid-token');
 
@@ -131,14 +132,14 @@ final class TokensCharacterizationTest extends TestCase
     public function authorizeThrowsWithoutSubject(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $tokens = Tokens::hmac('test-secret');
+        $tokens = TokensGraph::hmac('test-secret');
         $tokens->authorize(['response_type' => 'code', 'client_id' => 'test']);
     }
 
     #[Test]
     public function revokeIsVoid(): void
     {
-        $tokens = Tokens::hmac('test-secret');
+        $tokens = TokensGraph::hmac('test-secret');
 
         $result = $tokens->revoke('some-token');
         self::assertNull($result);
@@ -148,7 +149,7 @@ final class TokensCharacterizationTest extends TestCase
     public function exchangeCodeThrowsForInvalidCode(): void
     {
         $this->expectException(\RuntimeException::class);
-        $tokens = Tokens::hmac('test-secret');
+        $tokens = TokensGraph::hmac('test-secret');
         $tokens->exchangeCode('invalid-code');
     }
 }

@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Tokens\System\PublicSurface;
 
-use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Code\AuthorizationCodeStoreInterface;
-use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Codec\TokenCodecInterface;
-use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\TokenRevocationStoreInterface;
-use Avax\Components\Identity\Tokens\System\Configuration\Assembly\TokensGraph;
 use Avax\Components\Identity\Tokens\System\Flows\AuthorizeToken\AuthorizeTokenRequest;
 use Avax\Components\Identity\Tokens\System\Flows\ExchangeToken\ExchangeAuthorizationCode;
 use Avax\Components\Identity\Tokens\System\Flows\IntrospectToken\IntrospectToken;
@@ -25,36 +21,6 @@ final readonly class Tokens implements TokensInterface
         private IntrospectToken           $introspectToken,
         private RevokeToken               $revokeToken,
     ) {}
-
-    /**
-     * Build Tokens with HMAC-based codec and InMemory stores.
-     *
-     * @deprecated Use TokensGraph::hmac() instead.
-     *             Assembly belongs in Configuration/Assembly, not PublicSurface.
-     */
-    public static function hmac(string $secret) : self
-    {
-        return TokensGraph::hmac(secret: $secret);
-    }
-
-    /**
-     * Build Tokens from explicit runtime dependencies.
-     *
-     * @deprecated Use TokensGraph::fromRuntime() instead.
-     *             Assembly belongs in Configuration/Assembly, not PublicSurface.
-     */
-    public static function fromRuntime(
-        AuthorizationCodeStoreInterface $authorizationCodeStore,
-        TokenCodecInterface             $tokenCodec,
-        TokenRevocationStoreInterface   $tokenRevocationStore,
-    ) : self
-    {
-        return TokensGraph::fromRuntime(
-            authorizationCodeStore: $authorizationCodeStore,
-            tokenCodec            : $tokenCodec,
-            tokenRevocationStore  : $tokenRevocationStore,
-        );
-    }
 
     public function authorize(array $request) : stdClass
     {

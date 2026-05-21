@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol;
 
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User;
+use Avax\Components\Identity\ExternalIdentity\System\Foundation\Time\Clock;
+use Avax\Components\Identity\ExternalIdentity\System\Foundation\Time\SystemClock;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use InvalidArgumentException;
@@ -23,6 +25,8 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
 
     private SubjectIdentifierStrategy $subjectIdentifierStrategy;
 
+    private Clock $clock;
+
     public function __construct(
         private string             $issuer,
         #[SensitiveParameter]
@@ -36,12 +40,15 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         #[SensitiveParameter]
         private string|null $pairwiseSalt = null, int|null $idTokenLifetime = null,
         private string             $algorithm = 'RS256',
+        Clock|null                 $clock = null,
     )
     {
         $subjectIdentifierStrategy       ??= SubjectIdentifierStrategy::PUBLIC;
         $idTokenLifetime                 ??= 600;
+        $clock                           ??= new SystemClock();
         $this->subjectIdentifierStrategy = $subjectIdentifierStrategy;
         $this->idTokenLifetime           = $idTokenLifetime;
+        $this->clock                     = $clock;
         if (trim(string: $this->issuer) === '') {
             throw new InvalidArgumentException(message: 'OIDC issuer cannot be empty.');
         }
@@ -88,7 +95,7 @@ final readonly class OpenSslOidcProvider implements OidcProviderInterface
         bool               $phishingResistant = false,
     ) : OidcIdToken
     {
-        $issuedAt  = new DateTimeImmutable();
+        $issuedAt  = $this->clock->now();
         $expiresAt = $issuedAt->modify(modifier: '+' . $this->idTokenLifetime . ' seconds');
         $claims    = [
             'iss'                => $this->issuer,
@@ -288,7 +295,7 @@ public function readJsonWebKeySet() : OidcJsonWebKeySet
         $issuer    = $claims['iss'] ?? null;
         $expiresAt = $claims['exp'] ?? null;
 
-        if (! is_string(value: $issuer) || $issuer !== $this->issuer || ! is_int(value: $expiresAt) || $expiresAt <= time()) {
+        if (! is_string(value: $issuer) || $issuer !== $this->issuer || ! is_int(value: $expiresAt) || $expiresAt <= $this->clock->now()->getTimestamp()) {
             return null;
         }
 

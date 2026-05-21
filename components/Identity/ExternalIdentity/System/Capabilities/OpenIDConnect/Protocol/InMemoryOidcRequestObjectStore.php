@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol;
 
+use Avax\Components\Identity\ExternalIdentity\System\Foundation\Time\Clock;
 use DateTimeImmutable;
 
 final class InMemoryOidcRequestObjectStore implements OidcRequestObjectStoreInterface
 {
     /** @var array<string, OidcRequestObject> */
     private array $objects = [];
+
+    public function __construct(private Clock $clock) {}
 
     public function store(
         string            $requestUri,
@@ -21,7 +24,7 @@ final class InMemoryOidcRequestObjectStore implements OidcRequestObjectStoreInte
         $oidcRequestObject = new OidcRequestObject(
             requestUri       : $requestUri,
             claims           : $claims,
-            createdAt        : new DateTimeImmutable(),
+            createdAt        : $this->clock->now(),
             expiresAt        : $expiresAt,
             signatureVerified: $signatureVerified,
             signingAlgorithm : $signingAlgorithm,
@@ -54,7 +57,7 @@ final class InMemoryOidcRequestObjectStore implements OidcRequestObjectStoreInte
             return null;
         }
 
-        if ($object->expiresAt->getTimestamp() <= time()) {
+        if ($object->expiresAt->getTimestamp() <= $this->clock->now()->getTimestamp()) {
             unset($this->objects[$requestUri]);
 
             return null;

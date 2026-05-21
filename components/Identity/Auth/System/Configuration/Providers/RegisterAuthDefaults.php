@@ -36,6 +36,7 @@ use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\InMemoryOidcRequestObjectStore;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\InMemoryFederatedIdentityLinkStore;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\InMemoryFederationConnectionStore;
+use Avax\Components\Identity\ExternalIdentity\System\Foundation\Time\SystemClock as ExternalIdentitySystemClock;
 use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\InMemoryAdminElevationStore;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\InMemoryTenantStore;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Security\InMemoryTenantSecurityChangeRequestStore;
@@ -197,7 +198,9 @@ final readonly class RegisterAuthDefaults
 
         $container->singleton(
             InMemoryOidcRequestObjectStore::class,
-            static fn () : InMemoryOidcRequestObjectStore => new InMemoryOidcRequestObjectStore(),
+            static fn () : InMemoryOidcRequestObjectStore => new InMemoryOidcRequestObjectStore(
+                clock: new ExternalIdentitySystemClock(),
+            ),
         );
 
         // === SCIM Infrastructure ===

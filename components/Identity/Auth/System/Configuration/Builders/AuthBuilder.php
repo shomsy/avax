@@ -20,6 +20,7 @@ use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\Corr
 use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\NullAuditLog;
 use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Diagnostics;
 use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Explainability\AuthIssueExplainer;
+use Avax\Components\Identity\Auth\System\Capabilities\AuthenticationRuntime\AuthenticationRuntime;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners\Account;
@@ -478,7 +479,9 @@ final class AuthBuilder
             adminElevationStore: $adminElevationStore,
         ))->assemble();
 
-        return new Auth(identity: $identity);
+        return new Auth(
+            runtime: new AuthenticationRuntime(identity: $identity),
+        );
     }
 
     private function capabilityRequests() : AuthCapabilityRequests

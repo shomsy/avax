@@ -11,6 +11,7 @@ use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\InMemoryKnownAuthenticationEnvironmentStore;
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\InMemoryRiskSignalStore;
 use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\NullAuditLog;
+use Avax\Components\Identity\Auth\System\Capabilities\AuthenticationRuntime\AuthenticationRuntime;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\InMemoryLifecycleStore;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\InMemoryScimDirectoryStore;
@@ -234,7 +235,9 @@ final readonly class RegisterAuthDefaults
 
         // Auth facade — requires Identity
         $container->singleton(AuthInterface::class, static fn (ContainerInterface $c) : Auth => new Auth(
-            identity: $c->get(Identity::class),
+            runtime: new AuthenticationRuntime(
+                identity: $c->get(Identity::class),
+            ),
         ));
     }
 }

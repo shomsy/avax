@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\PublicSurface;
 
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User as UserEntity;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserEmail;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
+use Avax\Components\Identity\Auth\System\Capabilities\AuthenticationRuntime\AuthenticationRuntime;
 use Avax\Components\Identity\Auth\System\Flows\ChangePassword\ChangePasswordData;
 use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationResult;
 use Avax\Components\Identity\Auth\System\Flows\Login\Credentials;
@@ -21,59 +18,46 @@ use Avax\Components\Identity\Auth\System\Flows\Register\RegistrationResult;
 final readonly class Auth implements AuthInterface
 {
     public function __construct(
-        private Identity $identity,
+        private AuthenticationRuntime $runtime,
     ) {}
 
     public function login(Credentials $credentials) : AuthenticationResult
     {
-        return $this->identity->login($credentials);
+        return $this->runtime->login(credentials: $credentials);
     }
 
     public function logout() : void
     {
-        $this->identity->sessionIdentity()?->clear();
+        $this->runtime->logout();
     }
 
     public function user() : User|null
     {
-        $userId = $this->identity->sessionIdentity()?->resolveUserId();
-
-        if ($userId === null) {
-            return null;
-        }
-
-        return User::fromEntity(
-            new UserEntity(
-                id          : new UserId(value: $userId),
-                email       : new UserEmail(value: ''),
-                username    : '',
-                passwordHash: '',
-            ),
-        );
+        return $this->runtime->user();
     }
 
     public function guest() : bool
     {
-        return ! $this->check();
+        return $this->runtime->guest();
     }
 
     public function check() : bool
     {
-        return $this->identity->sessionIdentity()?->resolveUserId() !== null;
+        return $this->runtime->check();
     }
 
     public function register(RegistrationData $registrationData) : RegistrationResult
     {
-        return $this->identity->account()->register($registrationData);
+        return $this->runtime->register(registrationData: $registrationData);
     }
 
     public function changePassword(ChangePasswordData $changePasswordData) : void
     {
-        $this->identity->account()->changePassword($changePasswordData);
+        $this->runtime->changePassword(changePasswordData: $changePasswordData);
     }
 
     public function logoutAllSessions() : void
     {
-        $this->identity->sessions()->logoutAllSessions();
+        $this->runtime->logoutAllSessions();
     }
 }

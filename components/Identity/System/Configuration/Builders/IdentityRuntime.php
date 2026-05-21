@@ -10,6 +10,7 @@ use Avax\Components\Identity\Access\System\Capabilities\AccessRuntime\AccessRunt
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\BeginAdminElevation;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\EndAdminElevation;
 use Avax\Components\Identity\Access\System\PublicSurface\Access;
+use Avax\Components\Identity\Auth\System\Capabilities\AuthenticationRuntime\AuthenticationRuntime;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity as AuthIdentity;
 use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
 use Avax\Components\Identity\Credentials\System\PublicSurface\Credentials;
@@ -37,8 +38,10 @@ final readonly class IdentityRuntime
 
         return new RootIdentityRuntime(
             auth            : new Auth(
-                                  identity: AuthIdentity::fromBackends(
-                                      sessionIdentity: new GuestSessionIdentity(),
+                                  runtime: new AuthenticationRuntime(
+                                      identity: AuthIdentity::fromBackends(
+                                          sessionIdentity: new GuestSessionIdentity(),
+                                      ),
                                   ),
                               ),
             access          : new Access(

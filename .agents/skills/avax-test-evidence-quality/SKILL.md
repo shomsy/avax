@@ -145,23 +145,28 @@ No regression test for fixed bug, not done.
 
 No contract test for public API, not stable.
 
-## Object-Oriented Enterprise Architecting Philosophy
+## Practical Test Pyramid Rule
 
-Tests must prove the object-oriented enterprise architecture philosophy, not just behavior.
+Tests must serve the practical test pyramid, not just prove individual behaviors.
 
 See:
 
-- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
-- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
+- `how-to-unit-test.md` — Section 91: Practical Test Pyramid Rule
 
-Tests must:
+Agents must:
 
-- prove handover contracts work (information crosses boundaries correctly)
-- prove ubiquitous language in public APIs
-- prove knowledge backbone (core objects are named and owned)
-- prove command/query separation where claimed
-- prove views expose consumer-specific data without leaking internals
-- prove model-to-code alignment (structure matches documented models)
-- prove EventStorming output (events, commands, aggregate ownership) for complex flows
+- distribute tests across pyramid layers: many fast focused, fewer broad, minimal E2E
+- verify observable behavior, not internal implementation
+- use real collaborators where fast, test doubles where slow/external
+- write contract tests for all public surfaces and component boundaries
+- keep test code production-grade: one behavior per test, Arrange/Act/Assert, clear failure messages
+- avoid duplicating the same behavior across pyramid layers
+- run fast tests before slow tests in validation
+- require characterization tests before large refactors
 
-Tests that only prove construction without proving architecture quality are TESTS_TOO_SHALLOW_BLOCKER.
+Test evidence claiming GREEN must include:
+
+- which pyramid layers were tested
+- focused test output for changed units
+- contract test results for public surfaces
+- confirmation that pipeline ran in speed/scope order

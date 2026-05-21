@@ -1716,6 +1716,30 @@ A ROADMAP/SCAFFOLD/LABS_ONLY component MUST NOT leak into production runtime aut
 
 ---
 
+## 27.1 Practical Test Pyramid Cross-Reference
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+Production readiness requires a healthy test portfolio, not just a passing test count.
+
+See:
+
+- `how-to-unit-test.md` — Section 91: Practical Test Pyramid Rule
+
+Production readiness must verify:
+
+- **Test Portfolio:** Tests exist at multiple granularities — unit, component, integration, contract, acceptance, E2E.
+- **Fast Feedback:** CI pipeline runs fast tests before slow tests.
+- **E2E Minimalism:** E2E covers only critical journeys. A large E2E suite is a production risk (flaky, slow feedback).
+- **Contract Tests:** Public surfaces and component boundaries have executable contract tests.
+- **Clean Test Code:** Test code is production-grade. Brittle tests are a production risk.
+- **Refactor Safety:** Characterization tests exist before large refactors.
+
+A system with 8000 passing tests but all at one pyramid layer is not production-ready.
+
+---
+
 ## 28. Final Verdict
 
 > NOTE: This section is HISTORICAL. The current project state is GREEN across all V1-V5 stages as proven by

@@ -343,35 +343,29 @@ Every task using this skill must report:
 12. accepted YELLOW, if any
 13. remaining design risk
 
-## Object-Oriented Enterprise Architecting Gate
+## Practical Test Pyramid Gate
 
-Production code must serve the object-oriented enterprise architecture philosophy.
+Production code must be testable within the practical test pyramid.
 
 See:
 
-- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
-- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
+- `how-to-unit-test.md` — Section 91: Practical Test Pyramid Rule
 
 Agents must:
 
-- model real-world complexity as interacting objects with clear responsibilities
-- treat patterns as thinking tools, not class-name decorations
-- use ubiquitous language understood by stakeholders
-- document handovers between subsystems
-- maintain knowledge backbones (explicit, not accidental)
-- ensure models match code structure
-- record claims-based evidence for major alternatives
+- design code that can be tested at the right pyramid layer
+- prefer behavior tests over implementation tests
+- ensure public surfaces have contract tests
+- avoid designs that require mocking everything to test
+- keep test code as production-grade as production code
+- require characterization tests before large refactors
 
-Every implementation must evaluate:
+Evaluation:
 
-- **OO Thinking:** Do classes represent real concepts or pattern names?
-- **Ubiquitous Language:** Would stakeholders understand the names?
-- **Pattern Theater:** Are patterns clarifying or decorating?
-- **Handover Risk:** Are boundary crossings documented and tested?
-- **Knowledge Backbone:** Is core knowledge explicitly owned?
-- **Model-to-Code:** Does code reflect documented models?
-- **Tactical Evidence:** Do strategic claims have code-level proof?
-- **EventStorming:** For complex flows, are events/commands/aggregates documented?
+- **Behavior Testable:** Can the unit be tested through its observable behavior?
+- **Right Layer:** Is the test at the correct pyramid layer (detail at base, contract at boundary, journey at top)?
+- **No Over-Mocking:** Are real collaborators used where appropriate?
+- **Contract Coverage:** Do public surfaces have executable contract tests?
 
 ## Final Rule
 

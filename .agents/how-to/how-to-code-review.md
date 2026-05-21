@@ -1690,30 +1690,29 @@ it must scream in review.
 
 ---
 
-## 26. Object-Oriented Enterprise Architecting Review Rule
+## 26. Practical Test Pyramid Review Rule
 
 **Status:** MANDATORY
 **Severity:** BLOCKER
 
-Code review must evaluate enterprise architecture quality, not just code correctness.
+Code review must evaluate test portfolio quality, not just test count.
 
 See:
 
-- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
-- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
+- `how-to-unit-test.md` — Section 91: Practical Test Pyramid Rule
 
 Review must check:
 
-- **Object-Oriented Thinking:** Do classes represent real concepts (roles, tasks, information, events) or pattern names?
-- **Ubiquitous Language:** Would a domain stakeholder understand the class names?
-- **Pattern Theater:** Are patterns used to clarify ownership and reduce coupling, or as class-name decoration?
-- **Fake OOP:** Are there god objects, wrapper classes, inheritance-for-reuse, or anemic models?
-- **Handover Risk:** Are handovers between subsystems documented, contracted, and tested? Hidden handovers are review blockers.
-- **Knowledge Backbone:** Is core knowledge explicitly named and owned, or accidentally trapped in services/builders?
-- **Model-to-Code:** Does code structure reflect documented models? Divergence without explanation is a RED finding.
-- **IRTV Applied:** For complex subsystems, is IRTV (Information, Roles, Tasks, Views) considered in the design?
-- **Tactical Evidence:** Do strategic architecture claims have tactical code-level proof?
-- **EventStorming Evidence:** For complex flows, is there event/command/aggregate ownership documentation?
-- **Slicing Quality:** Are subsystem boundaries sliced by cohesion and ownership, or by technical categories?
+- **Test Portfolio:** Are tests distributed across pyramid layers? Many fast focused, fewer broad, minimal E2E?
+- **Fast Feedback:** Does validation run fast tests before slow tests?
+- **Behavior vs Implementation:** Do tests verify observable behavior, or do they mirror internal structure and break on refactor?
+- **Private Method Smell:** Are private methods tested via reflection? If so, the class is too large — extract, don't hack.
+- **Sociable vs Solitary:** Are real collaborators used where appropriate? Is everything mocked mechanically?
+- **Test Double Precision:** Are fakes, stubs, mocks, and spies used intentionally? Are external service fakes protected by contract tests?
+- **Contract Tests:** Do PublicSurface APIs, component boundaries, events, and external integrations have contract tests?
+- **E2E Minimalism:** Is the E2E suite larger than the unit suite? Are edge cases duplicated in E2E?
+- **Clean Test Code:** Is test code production-grade? One behavior per test? Arrange/Act/Assert? Clear failure messages?
+- **Test Duplication:** Is the same behavior tested at every pyramid layer?
+- **Refactor Safety:** Do large refactors have characterization tests before production changes?
 
-A review cannot be GREEN if any of these are RED without documented YELLOW acceptance.
+A review cannot be GREEN if tests are RED by any of these criteria.

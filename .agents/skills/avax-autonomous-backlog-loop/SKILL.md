@@ -163,23 +163,21 @@ No evidence, no merge.
 
 No governance, no GREEN.
 
-## Object-Oriented Enterprise Architecting in Autonomous Loops
+## Practical Test Pyramid in Autonomous Loops
 
-Autonomous backlog execution must apply OO enterprise architecting principles.
+Autonomous backlog execution must follow the test pyramid for validation.
 
 See:
 
-- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
-- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
+- `how-to-unit-test.md` — Section 91: Practical Test Pyramid Rule
 
 During autonomous sweeps, agents must:
 
-- evaluate slicing quality when selecting TODOs (cohesion, ownership, handovers)
-- check for hidden handovers between changed components
-- verify ubiquitous language in new class names
-- ensure knowledge backbone is maintained (no new knowledge trapped in unnamed services)
-- require EventStorming evidence for complex flow changes
-- apply IRTV thinking for complex subsystem redesigns
-- record claims-based evidence for any major architectural alternatives encountered
+- run focused tests for changed units first (fast feedback)
+- then component tests, then contract tests, then integration
+- then broad/canonical suite, then E2E only for critical journeys
+- never run E2E before focused tests
+- verify test portfolio health (many fast, fewer broad, minimal E2E)
+- reject test evidence that only runs one pyramid layer
 
-Autonomous loops that produce fake OOP or hidden handovers create architecture debt faster than manual work.
+Autonomous loops that run tests out of pyramid order waste context and produce false confidence.

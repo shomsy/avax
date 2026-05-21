@@ -940,27 +940,25 @@ A component may be LABS if:
 
 ---
 
-## 28.1 Object-Oriented Enterprise Architecting Cross-Reference
+## 28.2 Practical Test Pyramid Cross-Reference
 
 **Status:** MANDATORY
 **Severity:** BLOCKER
 
-Component dogfooding must serve the object-oriented enterprise architecture philosophy.
+Component dogfooding requires contract tests at the pyramid boundary.
 
 See:
 
-- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
-- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
+- `how-to-unit-test.md` — Section 91: Practical Test Pyramid Rule
 
-Dogfooding principles from OO architecting:
+Dogfooding test requirements:
 
-- **Data Product Thinking:** When one component exposes data to another, treat it as a product — owned, documented, stable, consumer-oriented.
-- **Handover Risk:** Component-to-component boundaries are handovers. What information crosses? Who owns it? What tests prove the contract?
-- **Views as Loose Coupling:** Components should expose consumer-specific views, not leak internal models.
-- **Knowledge Backbone:** Core knowledge should be explicitly named and owned by a component, not accidentally distributed across many.
-- **Bounded Context Awareness:** Each component is a bounded context. It owns some concepts, consumes others, and publishes through stable APIs/events.
+- **Contract Tests:** Every component boundary exposed to other components needs contract tests. Consumer expectations must be executable.
+- **Integration Tests:** Component-to-component integration should be tested separately from unit behavior.
+- **No Duplication:** Do not test the same component behavior at every pyramid layer. Test details in unit tests, contracts at boundaries, journeys in E2E.
+- **Sociable Tests:** Use real AvaX components where they remain fast. Use fakes only for slow/external dependencies.
 
-Dogfooding that creates tighter coupling between components is a design failure.
+A component that is dogfooded without contract tests is a ticking integration bomb.
 
 ---
 

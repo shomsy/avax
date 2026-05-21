@@ -166,22 +166,20 @@ No contract test proof, no GREEN.
 
 No migration path for breaking changes, no commit.
 
-## Object-Oriented Enterprise Architecting Philosophy
+## Practical Test Pyramid Rule
 
-Public API changes must serve the object-oriented enterprise architecture philosophy.
+Public API changes require contract tests at the pyramid boundary.
 
 See:
 
-- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
-- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
+- `how-to-unit-test.md` — Section 91: Practical Test Pyramid Rule
 
 Agents must:
 
-- use ubiquitous language in public APIs — names stakeholders understand
-- treat API boundaries as handovers with explicit contracts
-- expose views, not internal models — consumer-oriented APIs
-- apply data product thinking — APIs are products owned by producers for consumers
-- consider architectural quanta — design APIs that could support independent deployment
-- document context maps — show upstream/downstream relationships for public APIs
+- write contract tests for every PublicSurface API change
+- make consumer expectations executable
+- ensure breaking contracts fail fast in CI
+- test API behavior at the contract layer, not just in E2E
+- avoid duplicating API edge cases in E2E tests
 
-Public API that leaks internal models or uses framework-mechanics names is a design failure.
+Public API without contract tests is not stable.

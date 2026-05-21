@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Auth\System\PublicSurface;
 
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User as UserEntity;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserEmail;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId;
 use Avax\Components\Identity\Auth\System\Flows\ChangePassword\ChangePasswordData;
 use Avax\Components\Identity\Auth\System\Flows\Login\AuthenticationResult;
 use Avax\Components\Identity\Auth\System\Flows\Login\Credentials;
@@ -40,9 +43,9 @@ final readonly class Auth implements AuthInterface
         }
 
         return User::fromEntity(
-            new \Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User(
-                id          : new \Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId(value: $userId),
-                email       : new \Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserEmail(value: ''),
+            new UserEntity(
+                id          : new UserId(value: $userId),
+                email       : new UserEmail(value: ''),
                 username    : '',
                 passwordHash: '',
             ),

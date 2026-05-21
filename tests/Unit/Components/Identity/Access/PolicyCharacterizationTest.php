@@ -10,6 +10,7 @@ use Avax\Components\Identity\Access\System\Capabilities\Policy\Foundation\Policy
 use Avax\Components\Identity\Access\System\Capabilities\Policy\Policy;
 use Avax\Components\Identity\Access\System\Capabilities\Policy\Rules\AttributeCondition;
 use Avax\Components\Identity\Access\System\Capabilities\Policy\Rules\PolicyRule;
+use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -260,6 +261,15 @@ final class PolicyCharacterizationTest extends TestCase
 
         self::assertTrue(AttributeCondition::ipWhitelist(['10.0.0.1', '10.0.0.2'], $resource, ['ip' => '10.0.0.1']));
         self::assertFalse(AttributeCondition::ipWhitelist(['10.0.0.1'], $resource, ['ip' => '10.0.0.99']));
+    }
+
+    #[Test]
+    public function attributeConditionWithinHoursUsesProvidedTimeContext(): void
+    {
+        $currentTime = new DateTimeImmutable('2026-05-21 14:30:00');
+
+        self::assertTrue(AttributeCondition::withinHours(9, 17, $currentTime));
+        self::assertFalse(AttributeCondition::withinHours(15, 17, $currentTime));
     }
 
     #[Test]

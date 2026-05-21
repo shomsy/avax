@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Access\System\Capabilities\Policy\Rules;
 
+use DateTimeImmutable;
+
 /**
  * Attribute-based conditions for policy evaluation.
- *
- * @todo Replace date('H') in withinHours() with Clock injection
- *       once the Clock dependency is available through proper DI.
  */
 final readonly class AttributeCondition
 {
@@ -27,9 +26,13 @@ final readonly class AttributeCondition
         return $userRole === $requiredRole;
     }
 
-    public static function withinHours(int $startHour, int $endHour) : bool
+    public static function withinHours(
+        int $startHour,
+        int $endHour,
+        DateTimeImmutable|null $currentTime = null,
+    ) : bool
     {
-        $hour = (int) date('H');
+        $hour = (int) ($currentTime ?? new DateTimeImmutable())->format('H');
 
         return $hour >= $startHour && $hour < $endHour;
     }

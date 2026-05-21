@@ -8,9 +8,12 @@ use Avax\Components\Identity\Access\System\Capabilities\Authorization\Authorizat
 use Avax\Components\Identity\Access\System\Capabilities\Policy\AccessPolicy;
 use Avax\Components\Identity\Access\System\Capabilities\RequireAccessPolicy\RequireAccessPolicy;
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\RequireAuthentication;
+use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
 use Avax\Components\Identity\Access\System\Capabilities\RequirePermission\RequirePermission;
 use Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\RequireResourceOwner;
+use Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\ResourceOwnerDenied;
 use Avax\Components\Identity\Access\System\Capabilities\RequireRole\RequireRole;
+use Avax\Components\Identity\Access\System\Capabilities\RequireRole\RoleDenied;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\BeginAdminElevation;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\EndAdminElevation;
 use Avax\Components\Identity\Access\System\Foundation\Exception\PermissionDenied;
@@ -84,7 +87,7 @@ final readonly class AccessRuntime
     }
 
     /**
-     * @throws \Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated
+     * @throws Unauthenticated
      */
     public function requireAuthentication() : void
     {
@@ -92,8 +95,8 @@ final readonly class AccessRuntime
     }
 
     /**
-     * @throws \Avax\Components\Identity\Access\System\Capabilities\RequireRole\RoleDenied
-     * @throws \Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated
+     * @throws RoleDenied
+     * @throws Unauthenticated
      */
     public function requireRole(UserRole $userRole) : void
     {
@@ -102,7 +105,7 @@ final readonly class AccessRuntime
 
     /**
      * @throws PermissionDenied
-     * @throws \Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated
+     * @throws Unauthenticated
      */
     public function requirePermission(UserPermission $userPermission) : void
     {
@@ -111,9 +114,9 @@ final readonly class AccessRuntime
 
     /**
      * @throws PermissionDenied
-     * @throws \Avax\Components\Identity\Access\System\Capabilities\RequireRole\RoleDenied
-     * @throws \Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\ResourceOwnerDenied
-     * @throws \Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated
+     * @throws RoleDenied
+     * @throws ResourceOwnerDenied
+     * @throws Unauthenticated
      */
     public function requirePolicy(AccessPolicy $accessPolicy) : void
     {
@@ -121,8 +124,8 @@ final readonly class AccessRuntime
     }
 
     /**
-     * @throws \Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\ResourceOwnerDenied
-     * @throws \Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated
+     * @throws ResourceOwnerDenied
+     * @throws Unauthenticated
      */
     public function requireResourceOwner(int $ownerUserId) : void
     {

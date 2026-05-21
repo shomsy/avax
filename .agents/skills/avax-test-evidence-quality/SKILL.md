@@ -125,6 +125,22 @@ Contract tests must:
 - assert expected exceptions
 - not depend on internal implementation
 
+## Separation of Concern in Testing
+
+Tests must reflect honest separation of concerns.
+
+Agents must verify:
+
+- tests are organized by concern, not by implementation detail
+- a test for one concern does not require unrelated collaborators
+- test doubles do not hide coupling between concerns
+- contract tests exercise one concern boundary at a time
+- characterization tests cover the seam between separated concerns before refactoring
+
+Tests that mirror bad SoC will break on every refactor. Tests that reflect honest SoC survive refactoring.
+
+See `how-to-architecture.md` — Section 57.
+
 ## Integration with Other Skills
 
 This skill must be loaded together with:

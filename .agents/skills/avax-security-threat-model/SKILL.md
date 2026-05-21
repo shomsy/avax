@@ -152,24 +152,21 @@ This skill must be loaded together with:
 - `testing` skill for negative tests
 - `validation` skill
 
-## Universal Enterprise Codecraft Philosophy
+## Separation of Concern in Security
 
-Security boundaries must serve the universal enterprise codecraft philosophy.
+Security is a cross-cutting concern that must be explicit, not scattered.
 
-See:
+Threat model analysis must verify:
 
-- `how-to-design-components.md` — Section 30: Universal Enterprise Codecraft Rule
-- `how-to-architecture.md` — Section 55: Universal Enterprise Codecraft Rule
+- security decisions are owned by security capabilities, not inline in business logic
+- authentication is separated from authorization
+- validation is separated from sanitization
+- secrets handling is separated from general configuration
+- security-sensitive logging is separated from operational logging
 
-Agents must:
+Security logic scattered as inline code across multiple units is a SoC violation and a security risk.
 
-- enforce structural honesty at security boundaries — never hide auth complexity behind opaque facades
-- minimize cognitive load for security-critical code — security decisions must be readable and auditable
-- reject technical theater in security — do not add security layers that look sophisticated but don't reduce risk
-- prefer fluent security APIs — `App::identity()->auth()->requirePermission('admin')` not `AuthExecutor::execute(AuthRequest::from(...))`
-- prefer subsystem decomposition — separate credential verification, session management, and policy enforcement into clear units
-
-Security code that is hard to read is hard to audit. Security code that is hard to audit is insecure.
+See `how-to-architecture.md` — Section 57.6 (Cross-Cutting Concern Rule).
 
 ## Final Rule
 

@@ -325,6 +325,21 @@ Runtime/worker/DI/PublicSurface tasks must also include:
 - `runtime-safety-proof.md`
 - `dependency-boundary.md`
 
+## Separation of Concern Gate
+
+Production code must pass Separation of Concern review.
+
+Agents must evaluate:
+
+- **Single Concern**: does this unit have one reason to change?
+- **Room Rule**: does this unit behave like a room with one purpose?
+- **Coupling Reduction**: does separation reduce coupling, or only increase files?
+- **Cross-Cutting Explicit**: are cross-cutting concerns explicit capabilities, not scattered helpers?
+- **Composition Boundary**: does composition respect the separation?
+- **Change-Axis Test**: what causes this to change, and are those reasons related?
+
+See `how-to-architecture.md` — Section 57 (Separation of Concern Rule).
+
 ## Final Output
 
 Every task using this skill must report:

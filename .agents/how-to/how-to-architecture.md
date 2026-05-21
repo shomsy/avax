@@ -2237,152 +2237,222 @@ earliest opportunity.
 
 ---
 
-## 54. Object-Oriented Enterprise Architecting Rule
+## 57. Separation of Concern Rule
 
-**Status:** MANDATORY
-**Scope:** All AvaX architecture decisions, system design, subsystem boundaries, context maps, handovers, and strategic/tactical design.
+### 57.1 Universal Concern Definition
+
+A concern is any reason to understand, change, test, deploy, secure, observe, configure, or evolve a unit.
+
+SoC is not a pattern. It is the universal principle behind modularization, encapsulation, functions, objects, layering, MVC, flows, capabilities, and subsystems.
+
+**Status:** MANDATORY  
 **Severity:** BLOCKER
 
-Source: Object-Oriented Enterprise Architecting principles, translated into AvaX governance.
+### 57.2 Separation at Every Level
 
-### 54.1 Object-Oriented Thinking at Scale
+Separation of Concern applies at every architectural level:
 
-Architecture is modeling real-world complexity as interacting systems with clear boundaries.
+- function
+- class
+- flow
+- capability
+- subsystem
+- component
+- runtime
+- public surface
+- configuration
+- test
 
-Each subsystem must represent a meaningful domain concept, not a technical category.
+AvaX rules must be valid across all levels, not only at layer boundaries.
 
-Architecture decisions must be justified by real ownership, information boundaries, and handover patterns — not by pattern names.
+**Status:** MANDATORY  
+**Severity:** BLOCKER
 
-### 54.2 Slicing Is Architecture
+### 57.3 Room Rule
 
-The most important architecture decision is slicing the problem space.
+Every folder and class must behave like a room with one purpose.
 
-Slice by: cohesion, information ownership, task/role alignment, handover boundaries, deployability potential, runtime independence, coupling pressure.
+In a kitchen you cook. In a bedroom you sleep.
 
-Bad slicing creates fragile handovers, information loss, rework, and accidental coupling.
+If `AccessRuntime` handles risk, admin elevation, authentication, and permissions, the room has become a storage room.
 
-### 54.3 Bounded Context + Context Map
+When unrelated work accumulates inside one unit, it is not architecture. It is a warehouse.
 
-Every major subsystem must define a bounded context with:
+Remediation: rename, split, or redesign by real ownership, not by file shuffling.
 
-- owned and consumed concepts
-- published APIs/events/views
-- upstream/downstream relationships
-- handover contracts
-- information ownership
+**Status:** MANDATORY  
+**Severity:** BLOCKER
 
-Context maps are required evidence for major redesigns.
+### 57.4 Valid Separation Test
 
-### 54.4 IRTV at Architecture Scale
+Separation is valid only when it reduces:
 
-For complex subsystems, architecture must model:
+- cognitive load
+- coupling
+- risk
+- change cost
 
-- Information: what knowledge matters?
-- Roles: who/what owns and uses it?
-- Tasks: what transformations occur?
-- Views: what surfaces expose it?
+Splitting files without reducing coupling is file shuffling, not separation.
 
-IRTV guides boundary placement, PublicSurface design, and flow decomposition.
+You can have 20 files and still have bad SoC if they all know about each other.
 
-### 54.5 Knowledge Backbone
+**Status:** MANDATORY  
+**Severity:** HIGH
 
-Important subsystems need an explicit knowledge backbone:
+### 57.5 Concern Ownership Rule
 
-- key information objects and their owners
-- transformations and update flows
-- consumers and views
+Every concern must have one clear owner.
 
-Core knowledge must not live accidentally inside services, builders, or configuration.
+No shared ghost ownership.
 
-### 54.6 Handover Risk at Scale
+No hidden ownership inside helpers, managers, or services.
 
-Every handover between subsystems is an architectural risk.
+No concern may float as implicit knowledge across multiple units.
 
-Handover evidence must identify: what crosses, who owns it, what can be lost, what must be transformed, what contract protects it, what tests prove it.
+**Status:** MANDATORY  
+**Severity:** BLOCKER
 
-Hidden handovers are architecture bugs.
+### 57.6 Cross-Cutting Concern Rule
 
-### 54.7 Enterprise Reality
+Security, logging, validation, caching, transactions, observability, reset safety, configuration, and error handling are real concerns.
 
-AvaX architecture assumes real systems contain multiple vendors, multiple technical generations, external systems, conflicting interests, political constraints, and legacy integration.
+They must be explicit capabilities, policies, or boundaries.
 
-Boundaries, APIs, events, ports, compatibility layers, and handover contracts must be explicit.
+They must not leak as:
 
-Design as if the real world is not clean.
+- helpers scattered across the codebase
+- global static calls
+- random inline logic
+- hidden service dependencies
+- convenience functions copied into multiple flows
 
-### 54.8 Distributed vs Centralized Tradeoff
+Cross-cutting concerns must have a clear public/internal boundary.
 
-Do not assume centralized or distributed is best. Record tradeoffs: strengths, weaknesses, opportunities, threats, assumptions, evidence, tactical feasibility.
+**Status:** MANDATORY  
+**Severity:** BLOCKER
 
-Use claims-based SWOT for major alternatives.
+### 57.7 Composition After Separation Rule
 
-### 54.9 Tactical Detail Before Strategic Bet
+After separating concerns, composition must happen through clear parent, gateway, or configuration boundaries.
 
-High-level diagrams are not enough. Major architecture decisions require tactical LLD/code-level feasibility proof.
+Do not rebuild the mess through god builders or god graphs.
 
-No GREEN strategic decision without tactical evidence.
+Composition is the other half of separation.
 
-### 54.10 Views as Loose Coupling
+A system that separates concerns but composes them chaotically has created distributed complexity, not clean architecture.
 
-Views are first-class architecture artifacts: public API, workspace, query surface, command surface, transformation boundary, event processing boundary, communication bridge.
+**Status:** MANDATORY  
+**Severity:** BLOCKER
 
-Views expose consumer-specific knowledge without leaking internal models.
+### 57.8 Change-Axis Test
 
-### 54.11 CQRS Thinking
+For any class, folder, or subsystem, ask:
 
-Separate commands that change state from queries that read state. Do not apply CQRS as ceremony — use it to clarify state change versus knowledge access.
+- What causes this to change?
+- Are those reasons related?
+- Can this be tested independently?
+- Can this be understood without unrelated context?
+- Does this depend on sibling concerns?
 
-### 54.12 Data Product Thinking
+If the answers show multiple unrelated change drivers, the unit violates SoC.
 
-When AvaX exposes data across contexts, treat it as a product: owned, documented, stable, consumer-oriented, transformed for consumer needs, versioned where needed.
+**Status:** MANDATORY  
+**Severity:** HIGH
 
-### 54.13 Event Sourcing as Option
+### 57.9 SoC and Coupling
 
-Use Event Sourcing when auditability, reconstruction, time travel, or change history matters. Do not conflate with EventStorming. Do not use as ceremony.
+Separation of Concern must reduce coupling, not only increase file count.
 
-### 54.14 Model-to-Code Rule
+Metrics of bad SoC:
 
-If a model exists, code must reflect it. If code diverges, update the model or fix the code. No stale architecture theater.
+- many bidirectional dependencies between "separated" units
+- tests that require many unrelated collaborators
+- changes in one concern forcing edits across multiple files
+- circular knowledge requirements to understand the system
 
-### 54.15 Claims-Based Evidence
+**Status:** MANDATORY  
+**Severity:** HIGH
 
-For major architectural alternatives, record: expected benefit, risk, weakness, opportunity, threat, assumption, evidence, validation path.
+### 57.10 SoC and Cognitive Load
 
-Architecture decisions must not be opinion-only.
+SoC exists to make the system understandable.
 
-### 54.16 Architectural Quanta
+A developer must be able to read one unit without needing to understand unrelated concerns.
 
-Bounded contexts, views, and capabilities may become independently deployable units. Design boundaries should keep that option possible.
+If understanding `TokenVerification` requires knowing about `RiskScoring`, `TenantResolution`, and `PermissionPolicy`, the separation has failed.
 
-### 54.17 AvaX Translation
+**Status:** MANDATORY  
+**Severity:** HIGH
 
-All architectural ideas must be translated into AvaX terms: PublicSurface receives, Flows execute, Capabilities power, Configuration assembles, Foundation supports.
+### 57.11 GREEN Criteria
 
-Do not import terminology blindly if it conflicts with AvaX language.
+SoC governance is GREEN when:
 
-### 54.18 GREEN / YELLOW / RED
+- every class has one clear reason to change
+- cross-cutting concerns are explicit capabilities with clear boundaries
+- composition happens through clean configuration or gateway boundaries
+- no god objects or storage-room units exist
+- change-axis test passes for all production units
+- splitting a unit demonstrably reduces coupling or cognitive load
 
-GREEN:
+### 57.12 YELLOW Criteria
 
-- subsystems represent real domain concepts
-- context maps exist for major subsystems
-- handovers documented and tested
-- IRTV applied to complex subsystems
-- knowledge backbone explicit
-- models match code
-- tactical evidence supports strategic decisions
+SoC governance is YELLOW when:
 
-YELLOW:
+- a unit has two related reasons to change with documented justification
+- a cross-cutting concern is partially extracted but still has leakage
+- composition boundary exists but is not yet fluent
 
-- partial context maps
-- handover contracts partially documented
-- knowledge partially hidden
+YELLOW requires owner, risk, mitigation, and expiry.
 
-RED:
+### 57.13 RED Criteria
 
-- fake OOP at architecture scale
-- hidden handovers
-- no context map for major subsystem
-- models diverge from code
-- strategic decisions without tactical evidence
+SoC governance is RED when:
 
+- units have multiple unrelated reasons to change
+- cross-cutting logic is scattered as helpers and inline code
+- file splitting increased count but not clarity
+- composition rebuilds the mess through god builders
+- change-axis test fails with unrelated change drivers
+- understanding one unit requires knowing about unrelated subsystems
+
+### 57.14 SoC as Review Lens
+
+Every code review must apply the SoC lens:
+
+- does this unit do one thing?
+- are cross-cutting concerns explicit?
+- does composition respect the separation?
+- would a new developer understand this unit in isolation?
+
+A review cannot be GREEN if SoC is RED.
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+### 57.15 SoC in Refactoring
+
+When refactoring:
+
+- separate concerns first
+- then compose through clean boundaries
+- do not extract wrappers that still know about everything
+- do not create fake separation through inheritance hierarchies
+- do not split one long conditional into many long conditionals
+
+Real separation changes the dependency graph, not only the line count.
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+### 57.16 AvaX SoC Summary
+
+```text
+Concern = reason to change.
+Room = one purpose per unit.
+Separation = reduced coupling, not more files.
+Cross-cutting = explicit capability, not scattered helper.
+Composition = clean boundary, not god builder.
+Change-axis test = what causes this to change?
+SoC = universal principle, not one pattern.
+```

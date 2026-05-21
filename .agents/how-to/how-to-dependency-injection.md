@@ -1711,53 +1711,24 @@ Configuration assembles the system.
 
 ---
 
-<<<<<<< HEAD
-## 16.1 Hard Enterprise OOP Boundary Cross-Reference
-=======
-## 16.1 Universal Enterprise Codecraft Cross-Reference
->>>>>>> 86677e5b8e9e4a41502c82272c1ead440c422dbb
+## 16.5 Separation of Concern in DI
 
-**Status:** MANDATORY  
-**Severity:** BLOCKER
+Dependency Injection is the primary mechanism for separating concerns at the configuration/runtime boundary.
 
-<<<<<<< HEAD
-Dependency injection must respect enterprise OOP boundaries.
+DI ensures that:
 
-See:
+- configuration concerns stay in Configuration/Assembly/Provider
+- runtime execution concerns stay in Flows/Capabilities
+- cross-cutting concerns are assembled as explicit dependencies, not scattered as helpers
 
-- `how-to-design-components.md` — Section 31: Hard Enterprise OOP Boundary Rules
-- `how-to-architecture.md` — Section 54: Hard Enterprise OOP Boundary Rules
+For Separation of Concern governance, see:
 
-Relevant rules for DI:
+```text
+.agents/how-to/how-to-architecture.md — Section 57 (Separation of Concern Rule)
+.agents/how-to/how-to-design-components.md — Section 32 (Separation of Concern Rule)
+```
 
-- **Horizontal Blindness:** ServiceProviders must not wire sibling components to depend on each other directly. Coordination flows through a parent orchestrator or gateway.
-- **Boundary Value Objects:** Dependencies crossing subsystem boundaries must be wrapped in value objects, not passed as raw primitives (strings, ints, arrays).
-- **Single Preferred Entry:** Each subsystem exposes one gateway. DI must route through that gateway, not bypass it by injecting internal components directly.
-- **HLD/LLD Mirror:** The DI object graph must match the architecture map. If the architecture says A coordinates B and C, DI must not wire B directly to C.
-
-DI violations of these rules produce:
-
-- hidden horizontal coupling between siblings
-- leaked primitives across boundaries
-- bypassed gateways
-- object graphs that diverge from architecture intent
-=======
-Dependency injection must serve the universal enterprise codecraft philosophy.
-
-See:
-
-- `how-to-design-components.md` — Section 30: Universal Enterprise Codecraft Rule
-- `how-to-architecture.md` — Section 55: Universal Enterprise Codecraft Rule
-
-Relevant principles for DI:
-
-- **No Technical Theater:** DI must not introduce unnecessary builders, graphs, factories, or wiring layers. Assembly should be simple and readable.
-- **Fluent API:** DI configuration should produce fluent, intention-revealing call-sites. The object graph should be obvious from provider code.
-- **Cognitive Load:** If understanding a component's dependencies requires opening five providers, the DI structure is suspicious. Dependencies should be discoverable and local.
-- **Structural Honesty:** Provider registration must reveal real dependency boundaries. Never hide god objects or dependency chaos behind provider wrappers.
-- **Horizontal Blindness:** Providers must not wire sibling components to depend on each other directly. Coordination flows through a parent orchestrator.
-- **Single Preferred Entry:** DI should route through the subsystem's approved gateway, not bypass it by injecting internal components.
->>>>>>> 86677e5b8e9e4a41502c82272c1ead440c422dbb
+DI without SoC creates well-wired god objects. SoC without DI creates separated but uncomposable fragments. Both are required.
 
 ---
 

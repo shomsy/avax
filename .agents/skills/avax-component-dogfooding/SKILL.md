@@ -264,6 +264,20 @@ For every production-code task using this skill, evidence must include:
 - `validation-output.md`
 - `governance-review.md`
 
+## Separation of Concern in Dogfooding
+
+Components must respect Separation of Concern boundaries.
+
+Dogfooding must not create hidden cross-cutting leakage.
+
+When a component reuses another, the dependency must respect concern ownership:
+
+- the reused component must own its concern explicitly
+- the consumer must not reach into unrelated concerns
+- cross-cutting capabilities (logging, cache, security) must flow through explicit boundaries, not hidden helpers
+
+See `how-to-architecture.md` — Section 57 (Separation of Concern Rule).
+
 ## Final Rule
 
 No reuse, no platform.

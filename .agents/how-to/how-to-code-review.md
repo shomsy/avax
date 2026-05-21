@@ -1690,29 +1690,53 @@ it must scream in review.
 
 ---
 
-## 26. Practical Test Pyramid Review Rule
+## 26. Separation of Concern Review Rule
 
-**Status:** MANDATORY
-**Severity:** BLOCKER
+Every review must evaluate Separation of Concern at all levels.
 
-Code review must evaluate test portfolio quality, not just test count.
+### 26.1 Change-Axis Check
 
-See:
+For each significant unit reviewed:
 
-- `how-to-unit-test.md` — Section 91: Practical Test Pyramid Rule
+- What causes this to change?
+- Are those reasons related?
+- Can this be understood without unrelated context?
 
-Review must check:
+### 26.2 Room Rule Check
 
-- **Test Portfolio:** Are tests distributed across pyramid layers? Many fast focused, fewer broad, minimal E2E?
-- **Fast Feedback:** Does validation run fast tests before slow tests?
-- **Behavior vs Implementation:** Do tests verify observable behavior, or do they mirror internal structure and break on refactor?
-- **Private Method Smell:** Are private methods tested via reflection? If so, the class is too large — extract, don't hack.
-- **Sociable vs Solitary:** Are real collaborators used where appropriate? Is everything mocked mechanically?
-- **Test Double Precision:** Are fakes, stubs, mocks, and spies used intentionally? Are external service fakes protected by contract tests?
-- **Contract Tests:** Do PublicSurface APIs, component boundaries, events, and external integrations have contract tests?
-- **E2E Minimalism:** Is the E2E suite larger than the unit suite? Are edge cases duplicated in E2E?
-- **Clean Test Code:** Is test code production-grade? One behavior per test? Arrange/Act/Assert? Clear failure messages?
-- **Test Duplication:** Is the same behavior tested at every pyramid layer?
-- **Refactor Safety:** Do large refactors have characterization tests before production changes?
+Does this unit behave like a room with one purpose? Or has it become a storage room?
 
-A review cannot be GREEN if tests are RED by any of these criteria.
+### 26.3 File Shuffling Check
+
+Does the proposed separation actually reduce coupling? Or does it only increase file count?
+
+### 26.4 Cross-Cutting Check
+
+Are security, logging, validation, caching, observability, and error handling explicit? Or scattered as helpers and inline logic?
+
+### 26.5 Composition Check
+
+After separation, does composition happen through clean boundaries? Or through god builders and distributed complexity?
+
+### 26.6 Cognitive Load Check
+
+Can a new developer understand this unit without knowing about unrelated subsystems?
+
+### 26.7 SoC Review Classification
+
+- **GREEN**: one clear concern per unit, cross-cutting explicit, clean composition
+- **YELLOW**: two related concerns with documented justification
+- **RED**: multiple unrelated concerns, scattered cross-cutting logic, god objects
+
+A review cannot be GREEN if SoC is RED.
+
+For full SoC governance, see:
+
+```text
+.agents/how-to/how-to-architecture.md — Section 57
+.agents/how-to/how-to-design-components.md — Section 32
+```
+
+---
+
+## 27. Critical Quality Signal Rule

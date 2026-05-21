@@ -8,7 +8,11 @@ use Avax\Components\Identity\Access\System\Capabilities\Authorization\Authorizat
 use Avax\Components\Identity\Access\System\Capabilities\AdminElevation\AdminElevationStore;
 use Avax\Components\Identity\Access\System\Capabilities\AccessRuntime\AccessRuntime;
 use Avax\Components\Identity\Access\System\Capabilities\RequireAccessPolicy\RequireAccessPolicy;
+use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\RequireAuthentication;
+use Avax\Components\Identity\Access\System\Capabilities\RequirePermission\RequirePermission;
+use Avax\Components\Identity\Access\System\Capabilities\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
 use Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\RequireResourceOwner;
+use Avax\Components\Identity\Access\System\Capabilities\RequireRole\RequireRole;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\BeginAdminElevation;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\EndAdminElevation;
 use Avax\Components\Identity\Access\System\PublicSurface\Access;
@@ -27,6 +31,7 @@ use Avax\Components\Identity\System\Capabilities\GuestSession\GuestSessionIdenti
 use Avax\Components\Identity\System\Capabilities\IdentityRuntime\IdentityRuntime as RootIdentityRuntime;
 use Avax\Components\Identity\System\Configuration\IdentityConfiguration;
 use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\InMemoryAdminElevationStore;
+use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime\RequireAdminElevation\RequireAdminElevation;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Context\DefaultTenantContext;
 use Avax\Components\Identity\Tenancy\System\Configuration\Assembly\TenancyGraph;
 use Avax\Components\Identity\Tokens\System\Configuration\Assembly\TokensGraph;
@@ -56,19 +61,19 @@ final readonly class IdentityRuntime
 
         $currentAuthentication = new CurrentAuthentication();
 
-        $requireAuthentication = new \Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\RequireAuthentication(
+        $requireAuthentication = new RequireAuthentication(
             currentAuthentication: $currentAuthentication,
         );
-        $requireRole = new \Avax\Components\Identity\Access\System\Capabilities\RequireRole\RequireRole(
+        $requireRole = new RequireRole(
             currentAuthentication: $currentAuthentication,
         );
-        $requirePermission = new \Avax\Components\Identity\Access\System\Capabilities\RequirePermission\RequirePermission(
+        $requirePermission = new RequirePermission(
             currentAuthentication: $currentAuthentication,
         );
         $requireResourceOwner = new RequireResourceOwner(
             currentAuthentication: $currentAuthentication,
         );
-        $requirePhishingResistant = new \Avax\Components\Identity\Access\System\Capabilities\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication(
+        $requirePhishingResistant = new RequirePhishingResistantAuthentication(
             currentAuthentication: $currentAuthentication,
         );
         $clock = new Clock();
@@ -77,7 +82,7 @@ final readonly class IdentityRuntime
             currentAuthentication: $currentAuthentication,
             clock                : $clock,
         );
-        $requireAdminElevation = new \Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime\RequireAdminElevation\RequireAdminElevation(
+        $requireAdminElevation = new RequireAdminElevation(
             currentAuthentication: $currentAuthentication,
             adminElevationStore  : new InMemoryAdminElevationStore(),
             clock                : $clock,

@@ -24,6 +24,6 @@ class Clock
      */
     public function timestamp() : int
     {
-        return time();
+        return $this->now()->getTimestamp();
     }
 }

@@ -201,7 +201,7 @@ private function readNativeSessionId() : string
 
             if ($sessionName !== false) {
                 setcookie($sessionName, '', [
-                    'expires'  => time() - 42000,
+                    'expires'  => 1,
                     'path'     => $params['path'],
                     'domain'   => $params['domain'],
                     'secure'   => $params['secure'],

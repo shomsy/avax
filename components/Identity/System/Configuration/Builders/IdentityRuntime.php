@@ -22,7 +22,7 @@ use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateR
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
 use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
 use Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\InMemoryCredentialStore;
-use Avax\Components\Identity\Credentials\System\Configuration\Assembly\CredentialsGraph;
+use Avax\Components\Identity\Credentials\System\Configuration\Assembly\Credentials as CredentialsAssembly;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\StepUp\RequireFreshMfa;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\ExternalIdentityLink\InMemoryExternalIdentityLinkStore;
 use Avax\Components\Identity\ExternalIdentity\System\Configuration\Assembly\ExternalIdentityGraph;
@@ -120,7 +120,7 @@ final readonly class IdentityRuntime
                                       ),
                                   ),
                               ),
-            credentials     : CredentialsGraph::fromStore(
+            credentials     : CredentialsAssembly::fromStore(
                 store: new InMemoryCredentialStore(),
             ),
             tokens          : TokensGraph::hmac(secret: $this->configuration->requireTokenSecret()),

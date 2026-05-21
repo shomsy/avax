@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Avax\Tests\Unit\Components\Identity\Credentials;
 
 use Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\InMemoryCredentialStore;
-use Avax\Components\Identity\Credentials\System\Configuration\Assembly\CredentialsGraph;
+use Avax\Components\Identity\Credentials\System\Configuration\Assembly\Credentials as CredentialsAssembly;
 use Avax\Components\Identity\Credentials\System\PublicSurface\Credentials;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -99,6 +99,6 @@ final class CredentialsCharacterizationTest extends TestCase
 
     private function credentials() : Credentials
     {
-        return CredentialsGraph::fromStore(store: new InMemoryCredentialStore());
+        return CredentialsAssembly::fromStore(store: new InMemoryCredentialStore());
     }
 }

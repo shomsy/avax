@@ -61,6 +61,8 @@ The agent must answer:
 - What logs/observability are safe?
 - What secrets are redacted?
 - What worker-state risk exists?
+- Are security class names unambiguous and aligned with `.agents/dictionary/framework-terms.md`?
+- Do authorization/permission classes use clear domain names (`requirePermission()`, `allows()`) rather than vague defaults (`execute()`, `handle()`)?
 
 ## Required Evidence
 

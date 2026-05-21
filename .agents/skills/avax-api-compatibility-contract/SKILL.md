@@ -44,6 +44,11 @@ The agent must answer:
 - user-facing examples still work: YES/NO
 - documentation updated: YES/NO
 - changelog entry needed: YES/NO
+- fluent API naming changed: YES/NO
+  - constructor property names changed (affects DI autowiring by name)
+  - method names changed (affects call-site ergonomics)
+  - builder/assembly method names changed (affects DSL users)
+- technical terms used correctly per `.agents/dictionary/framework-terms.md`: YES/NO
 
 ## Compatibility Gates
 

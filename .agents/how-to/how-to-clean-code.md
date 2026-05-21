@@ -237,6 +237,139 @@ Can this be replaced by a fluent boundary method?
 
 Usually the answer should be yes.
 
+### 5.4.2 Fluent Class API Rule
+
+**Status:** MANDATORY
+**Scope:** All AvaX production code
+**Severity:** HIGH
+**Cross-Reference:** `.agents/dictionary/framework-terms.md` for technical term definitions
+
+#### Every Class Is a Fluent API Unit
+
+Every class in AvaX is a fluent, readable API unit.
+
+Constructor property names, method names, and call-sites must be optimized for readability and intent.
+
+A class should read like a coherent sentence of its own responsibility.
+
+#### Constructor Property Names Must Be Semantic Role Names
+
+Constructor-injected dependencies MUST use short, semantic role names that describe what the collaborator does for this class, not what the collaborator is in isolation.
+
+**Prefer:**
+
+```php
+private AuthorizationEngine $authorization
+private AccessRuntime $access
+private TokenSigner $signer
+private PolicyEvaluator $policies
+private RequirePermission $permissions
+```
+
+**Avoid:**
+
+```php
+private AuthorizationEngine $authorizationEngine
+private AccessRuntime $accessRuntime
+private TokenSigner $signerToken
+private PolicyEvaluator $policyEvaluatorInstance
+```
+
+When the shorter role name is clearer, use it.
+
+The property name should answer: "What role does this dependency play for this class?"
+
+Not: "What is the full type name repeated as a property name?"
+
+#### Method Names Must Serve the Class API
+
+Method names MUST serve the class's public API, not mechanically mirror collaborator names.
+
+Do not default to `execute()`, `build()`, `create()` when a domain action name is clearer.
+
+**Prefer:**
+
+```php
+requireAuthenticatedUser()
+requireRole()
+requirePermission()
+requireOwner()
+allows()
+denies()
+tokens()
+sessions()
+authentication()
+runtime()
+```
+
+**Avoid:**
+
+```php
+execute()            // when the domain action has a specific meaning
+build()              // when the product is named
+create()             // when the action is domain-specific
+run()                // when the exact action is unclear
+process()            // when the transformation is specific
+handle()             // when the responsibility is specific
+```
+
+Method names should make the call-site read like intent:
+
+```php
+// GOOD — call-site reads like a sentence
+$this->authorization->requirePermission('admin.elevate');
+$this->access->allows($user, $resource);
+$this->signer->tokens()->revoke($tokenId);
+```
+
+#### Builder/Assembly Naming
+
+Folder says technical context.
+Class says cohesive responsibility/product.
+Method says exact action/product.
+
+Avoid mechanical:
+- `Build*`
+- `*Builder`
+- `*Graph`
+- `*Assembly`
+- `Assemble*`
+
+Use only when materially clearer.
+
+For complete builder governance, see:
+- `how-to-architecture.md` — Section 13.3 (Builders Rule)
+- `how-to-dependency-injection.md` — Section 8 (Fluent DSL Design Principles)
+
+#### Technical Dictionary Rule
+
+If a technical term is necessary in a class name, PHPDoc must point to the technical dictionary:
+
+```php
+/**
+ * Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
+ */
+```
+
+See `.agents/dictionary/framework-terms.md` for canonical term definitions.
+
+#### GREEN Criteria
+
+- Constructor property names are short semantic roles, not type-name repetitions
+- Method names serve the class API and make call-sites read like intent
+- Builder/Assembly names avoid mechanical prefixes when the product name is clearer
+- Technical terms in class names reference the framework dictionary in PHPDoc
+
+#### RED Criteria
+
+- Constructor properties repeat full type names: `$authorizationEngine`, `$accessRuntime`
+- Methods default to `execute()`, `build()`, `create()` when domain names are clearer
+- Call-sites read like implementation details rather than intent
+- Technical terms used in class names without dictionary reference
+- Builder classes use `*Builder` suffix when the product name is clearer
+
+---
+
 ### 5.5 Function design
 
 - Each function SHOULD do one coherent thing.

@@ -185,6 +185,40 @@ For complete builder governance, see:
 - `how-to-dependency-injection.md` — Section 8 Fluent DSL Design Principles
 - `how-to-dependency-injection.md` — Section 6.8 Builder Placement Rule
 
+### Fluent Class API Gate
+
+**Status:** MANDATORY
+
+Every production class must pass fluent API review:
+
+- Constructor property names are short semantic roles, not type-name repetitions
+  - `$authorization` not `$authorizationEngine`
+  - `$access` not `$accessRuntime`
+  - `$signer` not `$signerToken`
+- Method names serve the class API with domain action names
+  - `requirePermission()`, `allows()`, `denies()` not default `execute()`, `build()`, `create()`
+- Call-sites read like intent, not implementation details
+- Technical terms in class names reference `.agents/dictionary/framework-terms.md` in PHPDoc
+- Builder/Assembly names avoid mechanical `Build*`, `*Builder` unless materially clearer
+
+For complete fluent class API governance, see:
+
+- `how-to-clean-code.md` — Section 5.4.2 (Fluent Class API Rule)
+- `how-to-code-style.md` — Semantic Constructor Property Naming
+- `how-to-architecture.md` — Section 56 (Fluent Class API Architecture Rule)
+- `.agents/dictionary/framework-terms.md` — Technical term definitions
+
+### Subsystem Size Gate
+
+Large classes are not accepted as permanent design. Split by cohesive subsystem, not mechanically.
+
+Forbidden: dependency bags, fake builders, god runtime objects, god service providers, service locator wrappers, facades hiding dependency chaos.
+
+For subsystem size governance, see:
+
+- `how-to-architecture.md` — Section 54 (Subsystem Size Governance Rule)
+- `how-to-design-components.md` — Section 30 (Subsystem Size Governance Rule)
+
 ### High Cohesion
 
 - Do methods and properties belong together?

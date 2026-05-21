@@ -757,6 +757,47 @@ If any item fails, status is YELLOW or RED.
 
 ---
 
+## 19.1 DI Naming Discipline
+
+**Status:** MANDATORY
+**Severity:** HIGH
+
+Constructor-promoted dependencies MUST use short semantic role names.
+
+```php
+// GOOD — semantic role names
+public function __construct(
+    private AuthorizationEngine $authorization,
+    private AccessRuntime $access,
+    private TokenSigner $signer,
+) {}
+
+// BAD — type name repeated as property name
+public function __construct(
+    private AuthorizationEngine $authorizationEngine,
+    private AccessRuntime $accessRuntime,
+    private TokenSigner $signerToken,
+) {}
+```
+
+If a technical term is necessary in a class name, PHPDoc must reference:
+
+```text
+.agents/dictionary/framework-terms.md
+```
+
+### Cross-Reference
+
+For the complete DI naming governance, see:
+
+```text
+.agents/how-to/how-to-clean-code.md — Section 5.4.2 (Fluent Class API Rule)
+.agents/how-to/how-to-code-style.md — Semantic Constructor Property Naming
+.agents/dictionary/framework-terms.md — Technical term definitions
+```
+
+---
+
 ## 20. Final Law
 
 ```text

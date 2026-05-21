@@ -58,6 +58,7 @@ Must require:
 - worker/runtime test for runtime state: proves no state leak between requests
 - focused command: the exact test command that proves the claim
 - explanation of what the test proves
+- fluent API test: proves constructor property names and method names serve readable call-sites, not just class instantiation
 
 ## Required Evidence
 

@@ -1541,6 +1541,106 @@ A call site should answer "What is happening?" not "How many internal objects ar
 
 ---
 
+# ⭐ 12. FLUENT CLASS API AND SEMANTIC PROPERTY NAMING (MANDATORY)
+
+## Every Class Is a Fluent API Unit
+
+Every class in AvaX is a fluent, readable API unit.
+
+Constructor property names, method names, and call-sites must be optimized for readability and intent.
+
+A class should read like a coherent sentence of its own responsibility.
+
+## Semantic Property Naming
+
+Constructor-injected dependencies MUST use short, semantic role names.
+
+**Prefer:**
+
+```php
+private AuthorizationEngine $authorization
+private AccessRuntime $access
+private TokenSigner $signer
+private PolicyEvaluator $policies
+```
+
+**Avoid:**
+
+```php
+private AuthorizationEngine $authorizationEngine
+private AccessRuntime $accessRuntime
+private PolicyEvaluator $policyEvaluator
+```
+
+When the shorter role name is clearer, use it.
+
+## Method Names Serve the Class API
+
+Do not default to `execute()`, `build()`, `create()` when a domain action name is clearer.
+
+**Prefer:**
+
+```php
+requireAuthenticatedUser()
+requireRole()
+requirePermission()
+allows()
+denies()
+tokens()
+sessions()
+authentication()
+runtime()
+```
+
+Call-sites should read like intent:
+
+```php
+$this->authorization->requirePermission('admin.elevate');
+$this->access->allows($user, $resource);
+$this->signer->tokens()->revoke($tokenId);
+```
+
+## Technical Dictionary
+
+If a technical term is necessary in a class name, PHPDoc must point to:
+
+```text
+.agents/dictionary/framework-terms.md
+```
+
+Example:
+
+```php
+/**
+ * Note: "Runtime" is defined in .agents/dictionary/framework-terms.md.
+ */
+```
+
+See the dictionary for canonical definitions of: Runtime, PublicSurface, Capability, Flow, Provider, Builder, Assembly, Graph, DSL, Facade, Policy, Token, Session, Credential, Tenant, Elevation, Risk.
+
+## Builder/Assembly Naming
+
+Folder says technical context.
+Class says cohesive responsibility/product.
+Method says exact action/product.
+
+Avoid mechanical `Build*`, `*Builder`, `*Graph`, `*Assembly`, `Assemble*` unless materially clearer.
+
+For complete builder governance, see:
+- `how-to-architecture.md` — Section 13.3 (Builders Rule)
+- `how-to-dependency-injection.md` — Section 8 (Fluent DSL Design Principles)
+
+## Cross-Reference
+
+For the complete fluent class API governance including GREEN/RED criteria, constructor naming, method naming, and call-site rules, see:
+
+```text
+.agents/how-to/how-to-clean-code.md — Section 5.4.2 (Fluent Class API Rule)
+.agents/dictionary/framework-terms.md — Technical term definitions
+```
+
+---
+
 # 🚀 FINAL INSTRUCTION
 
 When generating or reviewing code:

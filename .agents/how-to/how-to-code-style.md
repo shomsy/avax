@@ -67,6 +67,80 @@ public function __construct(private readonly QueryBuilder $queryBuilder) {}
 
 ---
 
+## Rule: Semantic Constructor Property Naming
+
+**Status:** MANDATORY
+**Scope:** All PHP 8+ code with constructor injection
+**Severity:** HIGH
+**Enforcement:** Manual review
+**Cross-Reference:** `.agents/dictionary/framework-terms.md`
+
+### Requirement
+
+Constructor-promoted dependency properties MUST use short, semantic role names that describe what the collaborator does for this class.
+
+```php
+// GOOD — semantic role names
+public function __construct(
+    private AuthorizationEngine $authorization,
+    private AccessRuntime $access,
+    private TokenSigner $signer,
+    private PolicyEvaluator $policies,
+) {}
+
+// BAD — type name repeated as property name
+public function __construct(
+    private AuthorizationEngine $authorizationEngine,
+    private AccessRuntime $accessRuntime,
+    private TokenSigner $signerToken,
+    private PolicyEvaluator $policyEvaluator,
+) {}
+```
+
+The property name should answer: "What role does this dependency play for this class?"
+
+When the shorter role name is clearer, use it.
+
+### Method Naming in Classes
+
+Methods MUST serve the class API, not mechanically mirror collaborator names.
+
+Do not default to `execute()`, `build()`, `create()` when a domain action name is clearer.
+
+```php
+// GOOD — domain action names
+public function requirePermission(string $permission): void
+public function allows(User $user, Resource $resource): bool
+public function tokens(): TokenCollection
+
+// BAD — mechanical defaults
+public function execute(): void
+public function build(): object
+public function create(): mixed
+```
+
+### Technical Dictionary Reference
+
+If a technical term is necessary in a class name, PHPDoc must reference:
+
+```text
+.agents/dictionary/framework-terms.md
+```
+
+### GREEN Criteria
+
+- All constructor properties use short semantic role names
+- Method names serve the class API with domain-specific action names
+- Call-sites read like intent, not implementation details
+
+### RED Criteria
+
+- Constructor properties repeat full type names: `$authorizationEngine`, `$accessRuntime`
+- Methods default to `execute()`, `build()`, `create()` when clearer names exist
+- Call-sites read like internal mechanics rather than intent
+
+---
+
 ## Rule: Nullable Type Format
 
 **Status:** MANDATORY  

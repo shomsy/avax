@@ -2236,3 +2236,154 @@ earliest opportunity.
 **Severity:** BLOCKER
 
 ---
+
+## 54. Subsystem Size Governance Rule
+
+Large units are not automatically wrong, but they are automatically suspicious.
+
+### Forbidden at Architecture Level
+
+- **Dependency bags:** classes that collect unrelated dependencies without a clear conceptual center
+- **Fake builders:** builders that exist only to hide long constructors or bypass DI gates
+- **God runtime objects:** classes that own execution, state, configuration, and orchestration simultaneously
+- **God service providers:** providers over 250 lines without mandatory split review
+- **Service locator wrappers:** classes that wrap container access as a convenience API
+- **Facades hiding dependency chaos:** facades that delegate to ten+ unrelated internals
+
+### Mandatory Review Triggers
+
+```text
+Class over 300 lines:            mandatory responsibility review
+Method over 50 lines:            mandatory extraction or explanation review
+Constructor with 8+ dependencies: mandatory design review
+PublicSurface over 150 lines:    mandatory behavior leak review
+Builder over 300 lines:          BLOCKER until classified
+ServiceProvider over 250 lines:  mandatory split review
+Test class over 500 lines:       mandatory test organization review
+```
+
+Threshold trigger does not automatically mean refactor. It does require documented decision.
+
+No large unit may be called GREEN without review decision.
+
+### Splitting Discipline
+
+Split by cohesive subsystem, not mechanically.
+
+Each split unit must answer:
+
+- What does this unit own?
+- Why is it separate?
+- What call-site does it improve?
+- What dependency direction does it preserve?
+
+### Technical Dictionary
+
+If a technical term is necessary in a class name, PHPDoc must reference:
+
+```text
+.agents/dictionary/framework-terms.md
+```
+
+### Cross-Reference
+
+For complete subsystem size governance, see:
+
+```text
+.agents/how-to/how-to-design-components.md — Section 30 (Subsystem Size Governance Rule)
+.agents/how-to/how-to-clean-code.md — Section 5.4.2 (Fluent Class API Rule)
+.agents/how-to/how-to-code-style.md — Semantic Constructor Property Naming
+```
+
+---
+
+## 55. Rewrite Permission Rule
+
+Rewrite-level refactoring is allowed for core subsystems when DX, readability, fluent DSL, security correctness, maintainability, and clean architecture require it.
+
+### When Rewrite Is Justified
+
+- DX improvement that cannot be achieved through incremental refactor
+- Fluent DSL that requires coherent API redesign
+- Security correctness that the current structure cannot guarantee
+- Maintainability blocked by fundamental design debt
+- Clean architecture violation that incremental fixes cannot repair
+
+### Rewrite Must Be Sliced
+
+Rewrite must not be big-bang. Each slice must be:
+
+- **Bounded:** clear file scope, clear behavior scope
+- **Proven:** HLD, LLD, API compatibility lock, tests, evidence, governance review
+- **Mergeable:** each slice integrates to main independently
+- **Reversible:** each slice can be reverted without breaking main
+
+### Required Evidence
+
+Every rewrite slice must include:
+
+- `design-before-code.md`
+- `high-level-design.md` for architecture impact
+- `low-level-design.md` for implementation detail
+- `api-compatibility.md` for public API lock
+- `test-proof.md` for behavior proof
+- `validation-output.md` for gate proof
+- `governance-review.md` for design review
+- `final-decision.md` for merge decision
+
+### Cross-Reference
+
+For rewrite governance, see:
+
+```text
+.agents/how-to/how-to-design-components.md — Section 31 (Rewrite Permission Rule)
+.agents/skills/avax-enterprise-codecraft — HLD/LLD gates
+.agents/skills/avax-api-compatibility-contract — API compatibility lock
+```
+
+---
+
+## 56. Fluent Class API Architecture Rule
+
+Every class in AvaX is a fluent, readable API unit.
+
+Constructor property names, method names, and call-sites must be optimized for readability and intent.
+
+### Constructor Property Names
+
+Use short semantic role names, not type-name repetitions:
+
+```php
+private AuthorizationEngine $authorization    // GOOD
+private AuthorizationEngine $authorizationEngine  // AVOID
+```
+
+### Method Names
+
+Serve the class API with domain action names:
+
+```php
+requireAuthenticatedUser()    // GOOD
+requirePermission()           // GOOD
+allows()                      // GOOD
+execute()                     // AVOID when domain name is clearer
+```
+
+### Builder/Assembly Naming
+
+Folder says technical context.
+Class says cohesive responsibility/product.
+Method says exact action/product.
+
+Avoid mechanical `Build*`, `*Builder`, `*Graph`, `*Assembly`, `Assemble*` unless materially clearer.
+
+### Cross-Reference
+
+For complete fluent class API governance, see:
+
+```text
+.agents/how-to/how-to-clean-code.md — Section 5.4.2 (Fluent Class API Rule)
+.agents/how-to/how-to-coding-standards.md — Section 12 (Fluent Class API and Semantic Property Naming)
+.agents/how-to/how-to-code-style.md — Semantic Constructor Property Naming
+.agents/dictionary/framework-terms.md — Technical term definitions
+```

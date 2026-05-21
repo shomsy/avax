@@ -161,6 +161,15 @@ Before commit, every production-code change must include a component dependency 
 - public/internal boundary used
 - dogfooding decision
 - accepted exceptions
+- fluent API naming: constructor properties use semantic role names, method names serve the class API
+
+### Fluent API Naming in Component Dependencies
+
+Components that depend on other AvaX components must use fluent API naming:
+
+- Constructor properties use short semantic role names (`$authorization` not `$authorizationEngine`)
+- Method names serve the class API with domain action names
+- Technical terms reference `.agents/dictionary/framework-terms.md`
 
 Write this into:
 

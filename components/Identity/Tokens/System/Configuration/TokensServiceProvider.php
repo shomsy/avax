@@ -26,9 +26,15 @@ final class TokensServiceProvider implements ServiceProvider
     public function register(ContainerInterface $container) : void
     {
         // Token codec — HMAC-based token encoding
-        $container->singleton(TokenCodecInterface::class, static fn (ContainerInterface $c) : TokenCodecInterface => new HmacTokenCodec(
-            secret: $_ENV['TOKEN_SECRET'] ?? 'default-secret-change-me',
-        ));
+        // REQUIRES TOKEN_SECRET environment variable at deployment time.
+        $container->singleton(TokenCodecInterface::class, static function () : TokenCodecInterface {
+            $secret = $_ENV['TOKEN_SECRET'] ?? throw new \RuntimeException(
+                'TOKEN_SECRET environment variable is required but not set. '
+                . 'Generate a secure random string and set it in your .env or deployment configuration.',
+            );
+
+            return new HmacTokenCodec(secret: $secret);
+        });
 
         // Authorization code store — in-memory
         $container->singleton(AuthorizationCodeStoreInterface::class, static fn () : AuthorizationCodeStoreInterface => new InMemoryAuthorizationCodeStore());

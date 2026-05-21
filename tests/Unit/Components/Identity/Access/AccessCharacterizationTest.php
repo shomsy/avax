@@ -220,6 +220,19 @@ final class AccessCharacterizationTest extends TestCase
             defaultAllow: $allowsResult,
         );
         $begin = $beginAdminElevation ?? new BeginAdminElevation(store: new AdminElevationStore());
+        $currentAuth = new \Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication();
+        $requireResourceOwner = new \Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\RequireResourceOwner(
+            currentAuthentication: $currentAuth,
+        );
+        $requireAccessPolicy = new \Avax\Components\Identity\Access\System\Capabilities\RequireAccessPolicy\RequireAccessPolicy(
+            requireAuthentication: new \Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\RequireAuthentication(currentAuthentication: $currentAuth),
+            requireRole: new \Avax\Components\Identity\Access\System\Capabilities\RequireRole\RequireRole(currentAuthentication: $currentAuth),
+            requirePermission: new \Avax\Components\Identity\Access\System\Capabilities\RequirePermission\RequirePermission(currentAuthentication: $currentAuth),
+            requireResourceOwner: $requireResourceOwner,
+            requirePhishingResistantAuthentication: new \Avax\Components\Identity\Access\System\Capabilities\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication(currentAuthentication: $currentAuth),
+            requireFreshMfa: new \Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\StepUp\RequireFreshMfa(currentAuthentication: $currentAuth, clock: new \Avax\Components\Identity\Auth\System\Foundation\Clock()),
+            requireAdminElevation: new \Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime\RequireAdminElevation\RequireAdminElevation(currentAuthentication: $currentAuth, adminElevationStore: new \Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\InMemoryAdminElevationStore(), clock: new \Avax\Components\Identity\Auth\System\Foundation\Clock()),
+        );
         return new Access(
             runtime: new AccessRuntime(
                 authorizationEngine: $engine,
@@ -227,6 +240,8 @@ final class AccessCharacterizationTest extends TestCase
                 endAdminElevation: new EndAdminElevation(
                     beginAdminElevation: $begin,
                 ),
+                requireAccessPolicy: $requireAccessPolicy,
+                requireResourceOwner: $requireResourceOwner,
             ),
         );
     }

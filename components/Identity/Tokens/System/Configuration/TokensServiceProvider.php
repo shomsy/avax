@@ -14,6 +14,7 @@ use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\InM
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\TokenRevocationStoreInterface;
 use Avax\Components\Identity\Tokens\System\Flows\AuthorizeToken\AuthorizeTokenRequest;
 use Avax\Components\Identity\Tokens\System\Flows\ExchangeToken\ExchangeAuthorizationCode;
+use Avax\Components\Identity\Tokens\System\Flows\IssueToken\IssueToken;
 use Avax\Components\Identity\Tokens\System\Flows\IntrospectToken\IntrospectToken;
 use Avax\Components\Identity\Tokens\System\Flows\RevokeToken\RevokeToken;
 use Avax\Components\Identity\Tokens\System\PublicSurface\Tokens;
@@ -62,11 +63,16 @@ final class TokensServiceProvider implements ServiceProvider
             tokenRevocationStore: $c->get(TokenRevocationStoreInterface::class),
         ));
 
+        $container->singleton(IssueToken::class, static fn (ContainerInterface $c) : IssueToken => new IssueToken(
+            tokenCodec: $c->get(TokenCodecInterface::class),
+        ));
+
         // Tokens public surface
         $container->singleton(Tokens::class, static fn (ContainerInterface $c) : Tokens => new Tokens(
             authorizeTokenRequest    : $c->get(AuthorizeTokenRequest::class),
             exchangeAuthorizationCode: $c->get(ExchangeAuthorizationCode::class),
             introspectToken          : $c->get(IntrospectToken::class),
+            issueToken               : $c->get(IssueToken::class),
             revokeToken              : $c->get(RevokeToken::class),
         ));
     }

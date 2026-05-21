@@ -45,4 +45,10 @@ interface AccessInterface
      * @throws Unauthenticated
      */
     public function requirePolicy(AccessPolicy $accessPolicy) : void;
+
+    /**
+     * @throws ResourceOwnerDenied
+     * @throws Unauthenticated
+     */
+    public function requireResourceOwner(int $ownerUserId) : void;
 }

@@ -86,7 +86,10 @@ final class ExternalIdentityCharacterizationTest extends TestCase
     {
         return new ExternalIdentity(
             runtime: new ExternalIdentityRuntime(
-                linkStore: new InMemoryExternalIdentityLinkStore(),
+                linkStore : new InMemoryExternalIdentityLinkStore(),
+                oauth     : new \Avax\Components\Identity\ExternalIdentity\System\PublicSurface\OAuth(),
+                oidc      : new \Avax\Components\Identity\ExternalIdentity\System\PublicSurface\Oidc(),
+                federation: new \Avax\Components\Identity\ExternalIdentity\System\PublicSurface\Federation(),
             ),
         );
     }

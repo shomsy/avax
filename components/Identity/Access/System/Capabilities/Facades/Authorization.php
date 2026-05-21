@@ -12,6 +12,7 @@ use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Un
 use Avax\Components\Identity\Access\System\Foundation\Exception\PermissionDenied;
 use Avax\Components\Identity\Access\System\Capabilities\RequirePermission\RequirePermission as RequirePermissionBoundary;
 use Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\ResourceOwnerDenied;
+use Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\RequireResourceOwner as RequireResourceOwnerBoundary;
 use Avax\Components\Identity\Access\System\Capabilities\RequireRole\RequireRole as RequireRoleBoundary;
 use Avax\Components\Identity\Access\System\Capabilities\RequireRole\RoleDenied;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission;
@@ -32,6 +33,7 @@ final readonly class Authorization implements AccessInterface
         private RequirePermissionBoundary     $requirePermissionBoundary,
         #[SensitiveParameter]
         private RequireAccessPolicyBoundary   $requireAccessPolicyBoundary,
+        private RequireResourceOwnerBoundary $requireResourceOwnerBoundary,
     ) {}
 
     /**
@@ -71,5 +73,14 @@ final readonly class Authorization implements AccessInterface
     public function requirePolicy(AccessPolicy $accessPolicy) : void
     {
         $this->requireAccessPolicyBoundary->execute(policy: $accessPolicy);
+    }
+
+    /**
+     * @throws ResourceOwnerDenied
+     * @throws Unauthenticated
+     */
+    public function requireResourceOwner(int $ownerUserId) : void
+    {
+        $this->requireResourceOwnerBoundary->execute(ownerUserId: $ownerUserId);
     }
 }

@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Access\System\Capabilities\AccessRuntime;
 
 use Avax\Components\Identity\Access\System\Capabilities\Authorization\AuthorizationEngine;
+use Avax\Components\Identity\Access\System\Capabilities\Policy\AccessPolicy;
+use Avax\Components\Identity\Access\System\Capabilities\RequireAccessPolicy\RequireAccessPolicy;
+use Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\RequireResourceOwner;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\BeginAdminElevation;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\EndAdminElevation;
 use Avax\Components\Identity\Access\System\Foundation\Exception\PermissionDenied;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole;
+use SensitiveParameter;
 
 /**
  * AccessRuntime owns executable Access public-surface behavior.
@@ -17,9 +21,12 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole;
 final readonly class AccessRuntime
 {
     public function __construct(
-        private AuthorizationEngine $authorizationEngine,
-        private BeginAdminElevation $beginAdminElevation,
-        private EndAdminElevation   $endAdminElevation,
+        private AuthorizationEngine  $authorizationEngine,
+        private BeginAdminElevation  $beginAdminElevation,
+        private EndAdminElevation    $endAdminElevation,
+        #[SensitiveParameter]
+        private RequireAccessPolicy  $requireAccessPolicy,
+        private RequireResourceOwner $requireResourceOwner,
     ) {}
 
     /**
@@ -71,5 +78,25 @@ final readonly class AccessRuntime
 
     public function requirePermission(UserPermission $userPermission) : void
     {
+    }
+
+    /**
+     * @throws PermissionDenied
+     * @throws \Avax\Components\Identity\Access\System\Capabilities\RequireRole\RoleDenied
+     * @throws \Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\ResourceOwnerDenied
+     * @throws \Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated
+     */
+    public function requirePolicy(AccessPolicy $accessPolicy) : void
+    {
+        $this->requireAccessPolicy->execute(accessPolicy: $accessPolicy);
+    }
+
+    /**
+     * @throws \Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\ResourceOwnerDenied
+     * @throws \Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated
+     */
+    public function requireResourceOwner(int $ownerUserId) : void
+    {
+        $this->requireResourceOwner->execute(ownerUserId: $ownerUserId);
     }
 }

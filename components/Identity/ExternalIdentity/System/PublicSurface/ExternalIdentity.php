@@ -37,4 +37,19 @@ final readonly class ExternalIdentity
             provider: $provider,
         );
     }
+
+    public function oauth() : OAuth
+    {
+        return $this->runtime->oauth();
+    }
+
+    public function oidc() : Oidc
+    {
+        return $this->runtime->oidc();
+    }
+
+    public function federation() : Federation
+    {
+        return $this->runtime->federation();
+    }
 }

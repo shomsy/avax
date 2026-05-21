@@ -8,7 +8,8 @@ use Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\Cre
 use Avax\Components\Identity\Credentials\System\Capabilities\CredentialsRuntime\CredentialsRuntime;
 use Avax\Components\Identity\Credentials\System\PublicSurface\Credentials;
 use Avax\Components\Identity\Credentials\System\PublicSurface\Mfa;
-use Avax\Components\Identity\Credentials\System\PublicSurface\Passkey;
+use Avax\Components\Identity\Credentials\System\PublicSurface\Passkeys;
+use Avax\Components\Identity\Credentials\System\PublicSurface\Passwords;
 
 /**
  * Assembles the Credentials public surface from explicit runtime dependencies.
@@ -21,7 +22,8 @@ final class CredentialsGraph
             runtime: new CredentialsRuntime(
                 credentialStore: $store,
                 mfa            : new Mfa(),
-                passkey        : new Passkey(),
+                passkeys       : new Passkeys(),
+                passwords      : new Passwords(),
             ),
         );
     }

@@ -7,7 +7,6 @@ namespace Avax\Components\Identity\Access\System\Capabilities\RequireAccessPolic
 use Avax\Components\Identity\Access\System\Capabilities\Policy\AccessPolicy;
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\RequireAuthentication;
 use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated;
-use Avax\Components\Identity\Access\System\Capabilities\RequirePermission\PermissionDenied;
 use Avax\Components\Identity\Access\System\Capabilities\RequirePermission\RequirePermission;
 use Avax\Components\Identity\Access\System\Capabilities\RequirePhishingResistantAuthentication\PhishingResistantAuthenticationRequired;
 use Avax\Components\Identity\Access\System\Capabilities\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
@@ -15,6 +14,7 @@ use Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\Req
 use Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\ResourceOwnerDenied;
 use Avax\Components\Identity\Access\System\Capabilities\RequireRole\RequireRole;
 use Avax\Components\Identity\Access\System\Capabilities\RequireRole\RoleDenied;
+use Avax\Components\Identity\Access\System\Foundation\Exception\PermissionDenied;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Models\FreshMfaRequired;

@@ -146,8 +146,15 @@ final class IdentityTargetDslCharacterizationTest extends TestCase
     #[Test]
     public function tokensIssueReturnsIssuedToken(): void
     {
-        Identity::tokens()->issue('sub-123');
-        self::expectNotToPerformAssertions();
+        $result = Identity::tokens()->issue(
+            new \Avax\Components\Identity\Tokens\System\Flows\IssueToken\TokenSubject(
+                userId: 'user-123',
+            ),
+        );
+        self::assertInstanceOf(
+            \Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record\IssuedToken::class,
+            $result,
+        );
     }
 
     // ── Tenancy sub-surfaces ───────────────────────────────────────
@@ -160,10 +167,16 @@ final class IdentityTargetDslCharacterizationTest extends TestCase
     }
 
     #[Test]
-    public function tenancyAdminBeginElevationReturnsVoid(): void
+    public function tenancyAdminBeginElevationReturnsRecord(): void
     {
-        Identity::tenancy()->admin()->beginElevation();
-        self::expectNotToPerformAssertions();
+        $record = Identity::tenancy()->admin()->beginElevation(
+            bindingId: 'session-123',
+            userId   : 1,
+        );
+        self::assertInstanceOf(
+            \Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\AdminElevationRecord::class,
+            $record,
+        );
     }
 
     // ── Risk surface DSL ───────────────────────────────────────────
@@ -171,8 +184,16 @@ final class IdentityTargetDslCharacterizationTest extends TestCase
     #[Test]
     public function riskAssessCurrentReturnsNullable(): void
     {
+        // No params returns null
         $decision = Identity::risk()->assessCurrent();
         self::assertNull($decision);
+
+        // With params returns RiskDecision
+        $decision = Identity::risk()->assessCurrent(ipAddress: '127.0.0.1');
+        self::assertInstanceOf(
+            \Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\RiskDecision::class,
+            $decision,
+        );
     }
 
     // ── ExternalIdentity surface DSL ───────────────────────────────

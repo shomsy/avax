@@ -6,7 +6,8 @@ namespace Avax\Components\Identity\Credentials\System\Capabilities\CredentialsRu
 
 use Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\CredentialStoreInterface;
 use Avax\Components\Identity\Credentials\System\PublicSurface\Mfa;
-use Avax\Components\Identity\Credentials\System\PublicSurface\Passkey;
+use Avax\Components\Identity\Credentials\System\PublicSurface\Passkeys;
+use Avax\Components\Identity\Credentials\System\PublicSurface\Passwords;
 
 /**
  * CredentialsRuntime owns credential storage behavior for one assembled runtime.
@@ -16,7 +17,8 @@ final readonly class CredentialsRuntime
     public function __construct(
         private CredentialStoreInterface $credentialStore,
         private Mfa                      $mfa,
-        private Passkey                  $passkey,
+        private Passkeys                 $passkeys,
+        private Passwords                $passwords,
     ) {}
 
     /**
@@ -48,8 +50,13 @@ final readonly class CredentialsRuntime
         return $this->mfa;
     }
 
-    public function passkeys() : Passkey
+    public function passkeys() : Passkeys
     {
-        return $this->passkey;
+        return $this->passkeys;
+    }
+
+    public function passwords() : Passwords
+    {
+        return $this->passwords;
     }
 }

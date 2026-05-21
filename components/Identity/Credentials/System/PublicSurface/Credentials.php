@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Credentials\System\PublicSurface;
 
 use Avax\Components\Identity\Credentials\System\Capabilities\CredentialsRuntime\CredentialsRuntime;
+use Avax\Components\Identity\Credentials\System\PublicSurface\Passwords;
 
 /**
  * Credentials — manages user credential data.
@@ -44,8 +45,13 @@ final readonly class Credentials
         return $this->runtime->mfa();
     }
 
-    public function passkeys() : Passkey
+    public function passkeys() : Passkeys
     {
         return $this->runtime->passkeys();
+    }
+
+    public function passwords() : Passwords
+    {
+        return $this->runtime->passwords();
     }
 }

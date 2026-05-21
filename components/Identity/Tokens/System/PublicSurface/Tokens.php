@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Tokens\System\PublicSurface;
 
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Record\IssuedToken;
 use Avax\Components\Identity\Tokens\System\Flows\AuthorizeToken\AuthorizeTokenRequest;
 use Avax\Components\Identity\Tokens\System\Flows\ExchangeToken\ExchangeAuthorizationCode;
+use Avax\Components\Identity\Tokens\System\Flows\IssueToken\IssueToken;
 use Avax\Components\Identity\Tokens\System\Flows\IntrospectToken\IntrospectToken;
+use Avax\Components\Identity\Tokens\System\Flows\IssueToken\TokenSubject;
 use Avax\Components\Identity\Tokens\System\Flows\RevokeToken\RevokeToken;
 use stdClass;
 
@@ -19,6 +22,7 @@ final readonly class Tokens implements TokensInterface
         private AuthorizeTokenRequest     $authorizeTokenRequest,
         private ExchangeAuthorizationCode $exchangeAuthorizationCode,
         private IntrospectToken           $introspectToken,
+        private IssueToken                $issueToken,
         private RevokeToken               $revokeToken,
     ) {}
 
@@ -42,7 +46,8 @@ final readonly class Tokens implements TokensInterface
         $this->revokeToken->execute(token: $token);
     }
 
-    public function issue(string $sub) : void
+    public function issue(TokenSubject $subject) : IssuedToken
     {
+        return $this->issueToken->execute(subject: $subject);
     }
 }

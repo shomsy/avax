@@ -12,6 +12,7 @@ use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\InM
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\TokenRevocationStoreInterface;
 use Avax\Components\Identity\Tokens\System\Flows\AuthorizeToken\AuthorizeTokenRequest;
 use Avax\Components\Identity\Tokens\System\Flows\ExchangeToken\ExchangeAuthorizationCode;
+use Avax\Components\Identity\Tokens\System\Flows\IssueToken\IssueToken;
 use Avax\Components\Identity\Tokens\System\Flows\IntrospectToken\IntrospectToken;
 use Avax\Components\Identity\Tokens\System\Flows\RevokeToken\RevokeToken;
 use Avax\Components\Identity\Tokens\System\PublicSurface\Tokens;
@@ -54,6 +55,7 @@ final class TokensGraph
                                            tokenCodec          : $tokenCodec,
                                            tokenRevocationStore: $tokenRevocationStore,
                                        ),
+            issueToken               : new IssueToken(tokenCodec: $tokenCodec),
             revokeToken              : new RevokeToken(
                                            tokenCodec          : $tokenCodec,
                                            tokenRevocationStore: $tokenRevocationStore,

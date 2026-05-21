@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Access\System\PublicSurface;
 
 use Avax\Components\Identity\Access\System\Capabilities\AccessRuntime\AccessRuntime;
+use Avax\Components\Identity\Access\System\Capabilities\Policy\AccessPolicy;
 use Avax\Components\Identity\Access\System\Foundation\Exception\PermissionDenied;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole;
@@ -64,5 +65,15 @@ final readonly class Access implements AccessInterface
     public function requirePermission(UserPermission $userPermission) : void
     {
         $this->runtime->requirePermission(userPermission: $userPermission);
+    }
+
+    public function requirePolicy(AccessPolicy $accessPolicy) : void
+    {
+        $this->runtime->requirePolicy(accessPolicy: $accessPolicy);
+    }
+
+    public function requireResourceOwner(int $ownerUserId) : void
+    {
+        $this->runtime->requireResourceOwner(ownerUserId: $ownerUserId);
     }
 }

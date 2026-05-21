@@ -25,7 +25,7 @@ use Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\InM
 use Avax\Components\Identity\Credentials\System\Configuration\Assembly\Credentials as CredentialsAssembly;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\StepUp\RequireFreshMfa;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\ExternalIdentityLink\InMemoryExternalIdentityLinkStore;
-use Avax\Components\Identity\ExternalIdentity\System\Configuration\Assembly\ExternalIdentityGraph;
+use Avax\Components\Identity\ExternalIdentity\System\Configuration\Assembly\ExternalIdentity as ExternalIdentityAssembly;
 use Avax\Components\Identity\Risk\System\PublicSurface\Risk;
 use Avax\Components\Identity\System\Capabilities\GuestSession\GuestSessionIdentity;
 use Avax\Components\Identity\System\Capabilities\IdentityRuntime\IdentityRuntime as RootIdentityRuntime;
@@ -128,7 +128,7 @@ final readonly class IdentityRuntime
                 context: new DefaultTenantContext(),
             ),
             risk            : new Risk(),
-            externalIdentity: ExternalIdentityGraph::fromStore(
+            externalIdentity: ExternalIdentityAssembly::fromStore(
                 store: new InMemoryExternalIdentityLinkStore(),
             ),
         );

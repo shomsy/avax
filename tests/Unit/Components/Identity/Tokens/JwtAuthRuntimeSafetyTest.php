@@ -96,4 +96,12 @@ final class JwtAuthRuntimeSafetyTest extends TestCase
 
         $jwtAuth->verify(token: $tokenPair->accessToken);
     }
+
+    #[Test]
+    public function duplicateVerificationJwtSignerIsNotPresent(): void
+    {
+        self::assertFalse(class_exists(
+            'Avax\\Components\\Identity\\Tokens\\System\\Capabilities\\JwtAuth\\Verification\\JwtSigner',
+        ));
+    }
 }

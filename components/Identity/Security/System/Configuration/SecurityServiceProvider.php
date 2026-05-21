@@ -6,12 +6,13 @@ namespace Avax\Components\Identity\Security\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
 use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
+use Avax\Components\Identity\Security\System\Configuration\Providers\RegisterSecurityDefaults;
 
 final class SecurityServiceProvider implements ServiceProvider
 {
     public function register(ContainerInterface $container) : void
     {
-        (new Builders\RegisterSecurityDefaults())->register($container);
+        (new RegisterSecurityDefaults())->register($container);
     }
 
     public function boot(ContainerInterface $container) : void

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\Security\System\Configuration\Builders;
+namespace Avax\Components\Identity\Security\System\Configuration\Providers;
 
 use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\Identity\Security\System\Capabilities\Configuration\SecurityConfigurationStore;

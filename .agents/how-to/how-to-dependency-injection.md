@@ -1711,11 +1711,16 @@ Configuration assembles the system.
 
 ---
 
+<<<<<<< HEAD
 ## 16.1 Hard Enterprise OOP Boundary Cross-Reference
+=======
+## 16.1 Universal Enterprise Codecraft Cross-Reference
+>>>>>>> 86677e5b8e9e4a41502c82272c1ead440c422dbb
 
 **Status:** MANDATORY  
 **Severity:** BLOCKER
 
+<<<<<<< HEAD
 Dependency injection must respect enterprise OOP boundaries.
 
 See:
@@ -1736,6 +1741,23 @@ DI violations of these rules produce:
 - leaked primitives across boundaries
 - bypassed gateways
 - object graphs that diverge from architecture intent
+=======
+Dependency injection must serve the universal enterprise codecraft philosophy.
+
+See:
+
+- `how-to-design-components.md` — Section 30: Universal Enterprise Codecraft Rule
+- `how-to-architecture.md` — Section 55: Universal Enterprise Codecraft Rule
+
+Relevant principles for DI:
+
+- **No Technical Theater:** DI must not introduce unnecessary builders, graphs, factories, or wiring layers. Assembly should be simple and readable.
+- **Fluent API:** DI configuration should produce fluent, intention-revealing call-sites. The object graph should be obvious from provider code.
+- **Cognitive Load:** If understanding a component's dependencies requires opening five providers, the DI structure is suspicious. Dependencies should be discoverable and local.
+- **Structural Honesty:** Provider registration must reveal real dependency boundaries. Never hide god objects or dependency chaos behind provider wrappers.
+- **Horizontal Blindness:** Providers must not wire sibling components to depend on each other directly. Coordination flows through a parent orchestrator.
+- **Single Preferred Entry:** DI should route through the subsystem's approved gateway, not bypass it by injecting internal components.
+>>>>>>> 86677e5b8e9e4a41502c82272c1ead440c422dbb
 
 ---
 

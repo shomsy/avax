@@ -343,6 +343,41 @@ Every task using this skill must report:
 12. accepted YELLOW, if any
 13. remaining design risk
 
+## Universal Enterprise Codecraft Philosophy Gate
+
+Every production-code change must satisfy the universal enterprise codecraft philosophy.
+
+See:
+
+- `how-to-design-components.md` — Section 30: Universal Enterprise Codecraft Rule
+- `how-to-architecture.md` — Section 55: Universal Enterprise Codecraft Rule
+- `how-to-clean-code.md` — Section 25: Universal Enterprise Codecraft Rule
+
+Agents must:
+
+- prefer subsystem decomposition over builders/factories/graphs
+- optimize readability and developer experience
+- minimize cognitive load
+- reject technical theater (patterns without proven need)
+- enforce structural honesty (no god objects behind facades)
+- prefer fluent APIs over mechanical construction
+- avoid fake abstractions
+
+Every implementation must evaluate:
+
+- **No Technical Theater:** Are builders, factories, managers, or coordinators introduced without proven need?
+- **Cognitive Load:** Can a developer understand this unit without opening five other files?
+- **Structural Honesty:** Does the structure reveal real boundaries?
+- **Fluent API:** Are call-sites intention-revealing?
+- **Recursive Decomposition:** Was splitting done by ownership, not mechanically?
+- **Readability vs Safety:** Does the change improve both, or trade one for the other?
+
+Classification:
+
+- GREEN: unit reads naturally, no unnecessary patterns, structure matches architecture
+- YELLOW: technical theater exists with documented migration plan or justified evidence
+- RED: god objects hidden behind facades, high cognitive load, structure diverges from architecture
+
 ## Final Rule
 
 No design, no code.

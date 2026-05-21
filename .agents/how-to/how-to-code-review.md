@@ -1687,3 +1687,32 @@ examples showing non-canonical style
 
 If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness,
 it must scream in review.
+
+---
+
+## 26. Universal Enterprise Codecraft Review Rule
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+Code review must evaluate not only correctness but also enterprise codecraft quality.
+
+See:
+
+- `how-to-design-components.md` — Section 30: Universal Enterprise Codecraft Rule
+- `how-to-architecture.md` — Section 55: Universal Enterprise Codecraft Rule
+- `how-to-clean-code.md` — Section 25: Universal Enterprise Codecraft Rule
+
+Review must check:
+
+- **No Technical Theater:** Are builders, factories, graphs, or managers introduced without proven need?
+- **Cognitive Load:** Does understanding this code require opening multiple other files? Is the design suspicious?
+- **Structural Honesty:** Does the structure reveal real boundaries, or does it hide god objects behind facades?
+- **Fluent API:** Are call-sites fluent and intention-revealing, or do they expose internal mechanics?
+- **Horizontal Blindness:** Do sibling components depend on each other directly?
+- **Boundary Value Objects:** Do raw primitives cross subsystem boundaries carrying business/security meaning?
+- **Command/Query Clarity:** Does any method both mutate state and return data without explicit result object?
+- **Single Preferred Entry:** Does the subsystem expose multiple uncontrolled entry points?
+- **HLD/LLD Mirror:** Does the code structure match the documented architecture?
+
+A review cannot be GREEN if any of these are RED without documented YELLOW acceptance.

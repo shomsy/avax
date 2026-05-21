@@ -194,6 +194,26 @@ Write this into:
 
 inside the task evidence folder.
 
+## Universal Enterprise Codecraft Philosophy
+
+Component dogfooding must serve the universal enterprise codecraft philosophy.
+
+See:
+
+- `how-to-design-components.md` — Section 30: Universal Enterprise Codecraft Rule
+- `how-to-architecture.md` — Section 55: Universal Enterprise Codecraft Rule
+
+Agents must:
+
+- prefer subsystem decomposition over creating local builders/factories
+- optimize readability — component reuse should make code easier to understand, not harder
+- minimize cognitive load — using an AvaX component should reduce the number of concepts a developer must hold
+- reject technical theater — do not wrap an AvaX component in a local adapter unless there is a proven boundary need
+- enforce structural honesty — component dependencies must reveal real coupling, not hide it behind convenience wrappers
+- prefer fluent APIs — component usage should feel natural at the call-site
+
+Component dogfooding that creates more cognitive load than raw PHP is a design failure.
+
 ## Dogfooding Classification
 
 Classify each implementation:

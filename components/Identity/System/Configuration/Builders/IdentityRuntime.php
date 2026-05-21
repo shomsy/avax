@@ -20,7 +20,8 @@ use Avax\Components\Identity\ExternalIdentity\System\Configuration\Assembly\Exte
 use Avax\Components\Identity\Risk\System\PublicSurface\Risk;
 use Avax\Components\Identity\System\Capabilities\GuestSession\GuestSessionIdentity;
 use Avax\Components\Identity\System\Capabilities\IdentityRuntime\IdentityRuntime as RootIdentityRuntime;
-use Avax\Components\Identity\Tenancy\System\PublicSurface\Tenancy;
+use Avax\Components\Identity\Tenancy\System\Capabilities\Context\DefaultTenantContext;
+use Avax\Components\Identity\Tenancy\System\Configuration\Assembly\TenancyGraph;
 use Avax\Components\Identity\Tokens\System\Configuration\Assembly\TokensGraph;
 
 /**
@@ -59,7 +60,9 @@ final readonly class IdentityRuntime
                 store: new InMemoryCredentialStore(),
             ),
             tokens          : TokensGraph::hmac(secret: 'test'),
-            tenancy         : new Tenancy(),
+            tenancy         : TenancyGraph::fromContext(
+                context: new DefaultTenantContext(),
+            ),
             risk            : new Risk(),
             externalIdentity: ExternalIdentityGraph::fromStore(
                 store: new InMemoryExternalIdentityLinkStore(),

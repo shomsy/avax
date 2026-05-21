@@ -4,45 +4,61 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Tenancy\System\PublicSurface;
 
-use Avax\Components\Identity\Tenancy\System\Capabilities\Context\TenantContext;
-use Avax\Components\Identity\Tenancy\System\Capabilities\Resolution\TenantResolver;
+use Avax\Components\Identity\Tenancy\System\Capabilities\TenancyRuntime\TenancyRuntime;
 use Closure;
 use Psr\Http\Message\RequestInterface;
 
-final class Tenancy
+final readonly class Tenancy
 {
-    public static function resolve(RequestInterface $request) : string
+    public function __construct(
+        private TenancyRuntime $runtime,
+    ) {}
+
+    public function resolve(RequestInterface $request) : string
     {
-        return TenantResolver::resolve($request);
+        return $this->runtime->resolve(request: $request);
     }
 
-    public static function getTenantId() : string|null
+    public function currentTenant() : string|null
     {
-        return TenantContext::current();
+        return $this->runtime->currentTenant();
     }
 
-    public static function setTenantId(string $tenantId) : void
+    public function requireTenant() : string
     {
-        TenantContext::set($tenantId);
+        return $this->runtime->requireTenant();
     }
 
-    public static function clearTenant() : void
+    public function getTenantId() : string|null
     {
-        TenantContext::clear();
+        return $this->currentTenant();
     }
 
-    public static function run(string $tenantId, Closure $operation) : mixed
+    public function setTenantId(string $tenantId) : void
     {
-        return TenantContext::with($tenantId, $operation);
+        $this->runtime->setTenantId(tenantId: $tenantId);
     }
 
-    public static function switch(string $tenantId) : void
+    public function clearTenant() : void
     {
-        TenantContext::set($tenantId);
+        $this->runtime->clearTenant();
     }
 
-    public static function admin() : Admin
+    public function run(string $tenantId, Closure $operation) : mixed
     {
-        return new Admin();
+        return $this->runtime->run(
+            tenantId : $tenantId,
+            operation: $operation,
+        );
+    }
+
+    public function switch(string $tenantId) : void
+    {
+        $this->runtime->setTenantId(tenantId: $tenantId);
+    }
+
+    public function admin() : Admin
+    {
+        return $this->runtime->admin();
     }
 }

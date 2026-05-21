@@ -4,94 +4,105 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Identity\Tenancy;
 
-use Avax\Components\Identity\Tenancy\System\Capabilities\Context\TenantContext;
+use Avax\Components\Identity\Tenancy\System\Capabilities\Context\DefaultTenantContext;
+use Avax\Components\Identity\Tenancy\System\Configuration\Assembly\TenancyGraph;
+use Avax\Components\Identity\Tenancy\System\Foundation\Failure\TenantNotFoundException;
 use Avax\Components\Identity\Tenancy\System\PublicSurface\Tenancy;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 final class TenancyCharacterizationTest extends TestCase
 {
+    private Tenancy $tenancy;
+
     #[Override]
     protected function setUp(): void
     {
-        TenantContext::clear();
+        $this->tenancy = $this->tenancy();
     }
 
     #[Test]
     public function getTenantIdReturnsNullByDefault(): void
     {
-        self::assertNull(Tenancy::getTenantId());
+        self::assertNull($this->tenancy->getTenantId());
+        self::assertNull($this->tenancy->currentTenant());
+    }
+
+    #[Test]
+    public function requireTenantFailsClosedWhenNoTenantIsSet(): void
+    {
+        $this->expectException(TenantNotFoundException::class);
+        $this->expectExceptionMessage('Tenant context is required.');
+
+        $this->tenancy->requireTenant();
     }
 
     #[Test]
     public function setTenantIdAndGetTenantIdRoundTrip(): void
     {
-        Tenancy::setTenantId('tenant-1');
-        self::assertSame('tenant-1', Tenancy::getTenantId());
+        $this->tenancy->setTenantId('tenant-1');
+        self::assertSame('tenant-1', $this->tenancy->getTenantId());
+        self::assertSame('tenant-1', $this->tenancy->requireTenant());
     }
 
     #[Test]
     public function clearTenantResetsToNull(): void
     {
-        Tenancy::setTenantId('tenant-1');
-        Tenancy::clearTenant();
-        self::assertNull(Tenancy::getTenantId());
+        $this->tenancy->setTenantId('tenant-1');
+        $this->tenancy->clearTenant();
+        self::assertNull($this->tenancy->getTenantId());
     }
 
     #[Test]
     public function switchUpdatesCurrentTenant(): void
     {
-        Tenancy::switch('tenant-2');
-        self::assertSame('tenant-2', Tenancy::getTenantId());
+        $this->tenancy->switch('tenant-2');
+        self::assertSame('tenant-2', $this->tenancy->getTenantId());
     }
 
     #[Test]
     public function runExecutesOperationInScopeAndRestoresPrevious(): void
     {
-        Tenancy::setTenantId('original');
+        $this->tenancy->setTenantId('original');
 
-        $result = Tenancy::run('scoped', function (): string {
-            self::assertSame('scoped', Tenancy::getTenantId());
+        $result = $this->tenancy->run('scoped', function (): string {
+            self::assertSame('scoped', $this->tenancy->getTenantId());
             return 'done';
         });
 
         self::assertSame('done', $result);
-        self::assertSame('original', Tenancy::getTenantId());
+        self::assertSame('original', $this->tenancy->getTenantId());
     }
 
     #[Test]
     public function runRestoresPreviousEvenOnException(): void
     {
-        Tenancy::setTenantId('original');
+        $this->tenancy->setTenantId('original');
 
         try {
-            Tenancy::run('scoped', function (): never {
+            $this->tenancy->run('scoped', function (): never {
                 throw new \RuntimeException('boom');
             });
         } catch (\RuntimeException) {
         }
 
-        self::assertSame('original', Tenancy::getTenantId());
+        self::assertSame('original', $this->tenancy->getTenantId());
     }
 
     #[Test]
-    public function allMethodsAreStatic(): void
+    public function separateRuntimesDoNotShareTenantContext(): void
     {
-        $reflection = new \ReflectionClass(Tenancy::class);
-        foreach ($reflection->getMethods() as $method) {
-            self::assertTrue(
-                $method->isStatic(),
-                "Tenancy::{$method->getName()}() should be static",
-            );
-        }
+        $first = $this->tenancy();
+        $second = $this->tenancy();
+
+        $first->setTenantId('isolated');
+
+        self::assertSame('isolated', $first->getTenantId());
+        self::assertNull($second->getTenantId());
     }
 
-    #[Test]
-    public function staticStateIsIsolatedPerProcess(): void
+    private function tenancy() : Tenancy
     {
-        TenantContext::clear();
-        self::assertNull(Tenancy::getTenantId());
-        Tenancy::setTenantId('isolated');
-        self::assertSame('isolated', Tenancy::getTenantId());
+        return TenancyGraph::fromContext(context: new DefaultTenantContext());
     }
 }

@@ -7,7 +7,8 @@ namespace Avax\Tests\Integration\GoldenPath;
 use Avax\Components\Application\FeatureFlags\System\PublicSurface\FeatureFlags;
 use Avax\Components\Application\Pipeline\System\Capabilities\PipelineHooks\HookRegistry;
 use Avax\Components\Application\Pipeline\System\PublicSurface\Pipeline;
-use Avax\Components\Identity\Tenancy\System\PublicSurface\Tenancy;
+use Avax\Components\Identity\Tenancy\System\Capabilities\Context\DefaultTenantContext;
+use Avax\Components\Identity\Tenancy\System\Configuration\Assembly\TenancyGraph;
 use Avax\Components\Operations\Concurrency\System\Capabilities\RunWithFibers\FiberTaskRuntime;
 use Avax\Components\Operations\Concurrency\System\PublicSurface\Concurrency;
 use Avax\Components\Operations\Resilience\System\Capabilities\Fallback\Fallback;
@@ -56,13 +57,15 @@ class GoldenPathTest extends TestCase
      */
     public function tenancy_isolation(): void
     {
-        Tenancy::setTenantId('tenant_123');
-        $this->assertEquals('tenant_123', Tenancy::getTenantId());
+        $tenancy = TenancyGraph::fromContext(context: new DefaultTenantContext());
 
-        Tenancy::clearTenant();
-        $this->assertNull(Tenancy::getTenantId());
+        $tenancy->setTenantId('tenant_123');
+        $this->assertEquals('tenant_123', $tenancy->getTenantId());
 
-        $result = Tenancy::run('tenant_456', static fn () => 'executed');
+        $tenancy->clearTenant();
+        $this->assertNull($tenancy->getTenantId());
+
+        $result = $tenancy->run('tenant_456', static fn () => 'executed');
         $this->assertEquals('executed', $result);
     }
 

@@ -9,7 +9,7 @@ use Closure;
 /**
  * Default instance-based tenant context.
  *
- * Use this for DI integration instead of the TenantContext static facade.
+ * Use this for DI integration and request/runtime-scoped tenant state.
  */
 final class DefaultTenantContext implements TenantContextInterface
 {

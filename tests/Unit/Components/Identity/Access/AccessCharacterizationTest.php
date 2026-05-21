@@ -18,10 +18,17 @@ final class AccessCharacterizationTest extends TestCase
 {
     private AuthorizationEngine $engine;
 
+    private BeginAdminElevation $beginAdminElevation;
+
+    private EndAdminElevation $endAdminElevation;
+
     #[Override]
     protected function setUp(): void
     {
-        BeginAdminElevation::reset();
+        $this->beginAdminElevation = new BeginAdminElevation();
+        $this->endAdminElevation = new EndAdminElevation(
+            beginAdminElevation: $this->beginAdminElevation,
+        );
     }
 
     #[Test]
@@ -58,8 +65,11 @@ final class AccessCharacterizationTest extends TestCase
     #[Test]
     public function allowsReturnsTrueWhenElevated(): void
     {
-        $access = $this->makeAccess(allowsResult: false);
-        (new BeginAdminElevation())->execute();
+        $access = $this->makeAccess(
+            allowsResult: false,
+            beginAdminElevation: $this->beginAdminElevation,
+        );
+        $this->beginAdminElevation->execute();
 
         self::assertTrue($access->allows('some.permission'));
     }
@@ -104,16 +114,56 @@ final class AccessCharacterizationTest extends TestCase
     #[Test]
     public function elevationFlowChangesIsElevated(): void
     {
-        $begin = new BeginAdminElevation();
-        $end = new EndAdminElevation();
+        self::assertFalse($this->beginAdminElevation->isActive());
 
-        self::assertFalse(BeginAdminElevation::active());
+        $this->beginAdminElevation->execute();
+        self::assertTrue($this->beginAdminElevation->isActive());
+
+        $this->endAdminElevation->execute();
+        self::assertFalse($this->beginAdminElevation->isActive());
+    }
+
+    #[Test]
+    public function elevationDoesNotLeakAcrossInstances(): void
+    {
+        $beginA = new BeginAdminElevation();
+        $accessA = $this->makeAccess(allowsResult: false, beginAdminElevation: $beginA);
+        $beginB = new BeginAdminElevation();
+        $accessB = $this->makeAccess(allowsResult: false, beginAdminElevation: $beginB);
+
+        $beginA->execute();
+
+        self::assertTrue($accessA->allows('admin.only'));
+        self::assertFalse($accessB->allows('admin.only'));
+    }
+
+    #[Test]
+    public function elevationLifecycleComplete(): void
+    {
+        $begin = new BeginAdminElevation();
+        $end = new EndAdminElevation(beginAdminElevation: $begin);
+        $access = $this->makeAccess(allowsResult: false, beginAdminElevation: $begin);
+
+        self::assertFalse($access->isElevated());
+        self::assertFalse($access->allows('admin.only'));
 
         $begin->execute();
-        self::assertTrue(BeginAdminElevation::active());
+        self::assertTrue($access->isElevated());
+        self::assertTrue($access->allows('admin.only'));
 
         $end->execute();
-        self::assertFalse(BeginAdminElevation::active());
+        self::assertFalse($access->isElevated());
+        self::assertFalse($access->allows('admin.only'));
+    }
+
+    #[Test]
+    public function requiresPublicSurfaceMethodsExist(): void
+    {
+        $access = $this->makeAccess(allowsResult: false);
+        $access->requireAuthentication();
+        $access->requireRole(\Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole::ADMIN);
+        $access->requirePermission(new \Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission(value: 'test'));
+        self::expectNotToPerformAssertions();
     }
 
     #[Test]
@@ -144,16 +194,19 @@ final class AccessCharacterizationTest extends TestCase
         }
     }
 
-    private function makeAccess(bool $allowsResult): Access
+    private function makeAccess(bool $allowsResult, ?BeginAdminElevation $beginAdminElevation = null): Access
     {
         $engine = new AuthorizationEngine(
             permissions: $allowsResult ? ['*'] : [],
             defaultAllow: $allowsResult,
         );
+        $begin = $beginAdminElevation ?? new BeginAdminElevation();
         return new Access(
             authorizationEngine: $engine,
-            beginAdminElevation: new BeginAdminElevation(),
-            endAdminElevation: new EndAdminElevation(),
+            beginAdminElevation: $begin,
+            endAdminElevation: new EndAdminElevation(
+                beginAdminElevation: $begin,
+            ),
         );
     }
 }

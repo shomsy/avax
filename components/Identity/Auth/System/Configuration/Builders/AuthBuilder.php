@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Configuration\Builders;
 
-use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
 use Avax\Components\Identity\Access\System\Capabilities\Access;
 use Avax\Components\Identity\Access\System\Capabilities\Authentication\Throttle\AttemptThrottle;
 use Avax\Components\Identity\Access\System\Capabilities\Authentication\Throttle\InMemoryAttemptThrottleStore;
@@ -123,6 +122,7 @@ use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\Com
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\ListPasskeys\ListPasskeys;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\RenamePasskey\RenamePasskey;
 use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\RevokePasskey\RevokePasskey;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\ExternalIdentity;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationConnectionStoreInterface;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederatedIdentityLinkStoreInterface;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\FederationRuntimeInterface;
@@ -375,60 +375,6 @@ final class AuthBuilder
     public function withAdminElevationStore(AdminElevationStoreInterface $adminElevationStore) : self { $this->tenancyGraph->withAdminElevationStore($adminElevationStore); return $this; }
     public function withRiskEngine(DeterministicRiskEngine $deterministicRiskEngine) : self { $this->tenancyGraph->withRiskEngine($deterministicRiskEngine); return $this; }
     public function requirePhishingResistantAdminElevation(bool $required = true) : self { $this->tenancyGraph->requirePhishingResistantAdminElevation($required); return $this; }
-
-    /**
-     * Configure the builder with default dependencies from the DI container.
-     */
-    public function withContainer(ContainerInterface $container) : self
-    {
-        $this->clock ??= $container->get(Clock::class);
-        $this->idGenerator ??= $container->get(IdGenerator::class);
-        $this->passwordHasher ??= $container->get(PasswordHasher::class);
-        $this->auditLog ??= $container->get(NullAuditLog::class);
-
-        $this->passwordResetStore ??= $container->get(InMemoryPasswordResetStore::class);
-        $this->emailVerificationStore ??= $container->get(InMemoryEmailVerificationStore::class);
-        $this->emailChangeStore ??= $container->get(InMemoryEmailChangeStore::class);
-        $this->emailVerificationStateStore ??= $container->get(InMemoryEmailVerificationStateStore::class);
-
-        // Credential defaults
-        $this->credentialGraph->withMfaStore($container->get(InMemoryMfaStore::class));
-        $this->credentialGraph->withMfaChallengeStore($container->get(InMemoryMfaChallengeStore::class));
-        $this->credentialGraph->usingTotp($container->get(Totp::class));
-        $this->credentialGraph->withMfaAttemptLimit($container->get(LimitMfaAttempts::class));
-        $this->credentialGraph->withPasskeyCredentialStore($container->get(InMemoryPasskeyCredentialStore::class));
-        $this->credentialGraph->withPasskeyChallengeStore($container->get(InMemoryPasskeyChallengeStore::class));
-
-        // OAuth defaults
-        $this->oauthGraph->withOAuthClientRegistry($container->get(\Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\InMemoryOAuthClientRegistry::class));
-        $this->oauthGraph->withAuthorizationCodeStore($container->get(\Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\InMemoryAuthorizationCodeStore::class));
-
-        // Federation defaults
-        $this->federationGraph->withFederationConnectionStore($container->get(\Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\InMemoryFederationConnectionStore::class));
-        $this->federationGraph->withFederatedIdentityLinkStore($container->get(\Avax\Components\Identity\ExternalIdentity\System\Capabilities\SingleSignOn\Federation\InMemoryFederatedIdentityLinkStore::class));
-
-        // SCIM defaults
-        $this->scimGraph->withLifecycleStore($container->get(\Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\InMemoryLifecycleStore::class));
-        $this->scimGraph->withScimDirectoryStore($container->get(\Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\InMemoryScimDirectoryStore::class));
-        $this->scimGraph->withScimProvisionedIdentityStore($container->get(\Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\InMemoryScimProvisionedIdentityStore::class));
-
-        // Tenancy defaults
-        $this->tenancyGraph->withAdminElevationStore($container->get(InMemoryAdminElevationStore::class));
-        $this->tenancyGraph->withTenantStore($container->get(InMemoryTenantStore::class));
-        $this->tenancyGraph->withTenantSecurityConfigurationStore($container->get(\Avax\Components\Identity\Tenancy\System\Capabilities\Security\InMemoryTenantSecurityConfigurationStore::class));
-        $this->tenancyGraph->withTenantSecurityChangeRequestStore($container->get(\Avax\Components\Identity\Tenancy\System\Capabilities\Security\InMemoryTenantSecurityChangeRequestStore::class));
-        $this->tenancyGraph->withRiskEngine($container->get(DeterministicRiskEngine::class));
-
-        // OIDC defaults
-        $this->oauthGraph->withOidcRequestObjectStore($container->get(\Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\InMemoryOidcRequestObjectStore::class));
-
-        // Named throttle bindings
-        $this->credentialGraph->withPasswordResetThrottle($container->get('auth.throttle.password_reset'));
-        $this->credentialGraph->withMfaRecoveryThrottle($container->get('auth.throttle.mfa_recovery'));
-        $this->scimGraph->withScimThrottle($container->get('auth.throttle.scim'));
-
-        return $this;
-    }
 
     /**
      * Assemble the final Auth instance.

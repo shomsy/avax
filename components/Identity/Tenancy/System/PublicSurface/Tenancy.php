@@ -40,4 +40,9 @@ final class Tenancy
     {
         TenantContext::set($tenantId);
     }
+
+    public static function admin() : Admin
+    {
+        return new Admin();
+    }
 }

@@ -16,4 +16,6 @@ interface TokensInterface
     public function introspect(string $token) : object;
 
     public function revoke(string $token) : void;
+
+    public function issue(string $sub) : void;
 }

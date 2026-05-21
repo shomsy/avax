@@ -4,25 +4,29 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Access\System\Flows\AdminElevation;
 
+use Avax\Components\Identity\Access\System\Capabilities\AdminElevation\AdminElevationStore;
+
 /**
- * BeginAdminElevation - Flow to initiate temporary admin privilege elevation.
+ * BeginAdminElevation — Flow to initiate temporary admin privilege elevation.
  */
 final class BeginAdminElevation
 {
-    private static bool $elevated = false;
-
-    public static function active() : bool
-    {
-        return self::$elevated;
-    }
-
-    public static function reset() : void
-    {
-        self::$elevated = false;
-    }
+    public function __construct(
+        private AdminElevationStore $store = new AdminElevationStore(),
+    ) {}
 
     public function execute() : void
     {
-        self::$elevated = true;
+        $this->store->elevate();
+    }
+
+    public function isActive() : bool
+    {
+        return $this->store->isActive();
+    }
+
+    public function reset() : void
+    {
+        $this->store->reset();
     }
 }

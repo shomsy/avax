@@ -6,6 +6,8 @@ namespace Avax\Components\Identity\Credentials\System\PublicSurface;
 
 use Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\CredentialStoreInterface;
 use Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\InMemoryCredentialStore;
+use Avax\Components\Identity\Credentials\System\PublicSurface\Mfa;
+use Avax\Components\Identity\Credentials\System\PublicSurface\Passkey;
 
 /**
  * Credentials — manages user credential data.
@@ -45,6 +47,16 @@ final class Credentials
     public static function forget(string $userId) : void
     {
         self::resolveStore()->forget($userId);
+    }
+
+    public static function mfa() : Mfa
+    {
+        return new Mfa();
+    }
+
+    public static function passkeys() : Passkey
+    {
+        return new Passkey();
     }
 
     private static function resolveStore() : CredentialStoreInterface

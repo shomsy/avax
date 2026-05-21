@@ -20,4 +20,10 @@ interface AccessInterface
     public function endElevation() : void;
 
     public function isElevated() : bool;
+
+    public function requireAuthentication() : void;
+
+    public function requireRole(\Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole $userRole) : void;
+
+    public function requirePermission(\Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission $userPermission) : void;
 }

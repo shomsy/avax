@@ -121,7 +121,7 @@ final class IdentityTargetDslCharacterizationTest extends TestCase
     #[Test]
     public function accessRequirePermissionReturnsVoid(): void
     {
-        Identity::access()->requirePermission(UserPermission::MANAGE_USERS);
+        Identity::access()->requirePermission(new UserPermission(value: 'manage_users'));
         self::expectNotToPerformAssertions();
     }
 
@@ -187,7 +187,6 @@ final class IdentityTargetDslCharacterizationTest extends TestCase
     #[Test]
     public function externalIdentityResolveReturnsNullable(): void
     {
-        $result = Identity::externalIdentity()->resolve('user-1', 'google');
-        self::assertNull($result);
+        self::assertNull(Identity::externalIdentity()->resolve('nonexistent', 'google'));
     }
 }

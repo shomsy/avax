@@ -75,4 +75,8 @@ final readonly class Tokens implements TokensInterface
     {
         $this->revokeToken->execute(token: $token);
     }
+
+    public function issue(string $sub) : void
+    {
+    }
 }

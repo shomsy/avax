@@ -28,14 +28,25 @@ final readonly class Auth implements AuthInterface
 
     public function logout() : void
     {
-        $this->identity->logout();
+        $this->identity->sessionIdentity()?->clear();
     }
 
     public function user() : User|null
     {
-        $entity = $this->identity->authentication()->user();
+        $userId = $this->identity->sessionIdentity()?->resolveUserId();
 
-        return $entity ? User::fromEntity($entity) : null;
+        if ($userId === null) {
+            return null;
+        }
+
+        return User::fromEntity(
+            new \Avax\Components\Identity\Auth\System\Capabilities\Identity\User\User(
+                id          : new \Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserId(value: $userId),
+                email       : new \Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserEmail(value: ''),
+                username    : '',
+                passwordHash: '',
+            ),
+        );
     }
 
     public function guest() : bool
@@ -45,7 +56,7 @@ final readonly class Auth implements AuthInterface
 
     public function check() : bool
     {
-        return $this->identity->authentication()->check();
+        return $this->identity->sessionIdentity()?->resolveUserId() !== null;
     }
 
     public function register(RegistrationData $registrationData) : RegistrationResult

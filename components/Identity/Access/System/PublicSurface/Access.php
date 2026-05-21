@@ -8,6 +8,8 @@ use Avax\Components\Identity\Access\System\Capabilities\Authorization\Authorizat
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\BeginAdminElevation;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\EndAdminElevation;
 use Avax\Components\Identity\Access\System\Foundation\Exception\PermissionDenied;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole;
 
 /**
  * Access - Main entry point for Identity/Access component.
@@ -46,7 +48,7 @@ public function authorize(string $permission, mixed $resource = null) : void
 
     public function isElevated() : bool
     {
-        return BeginAdminElevation::active();
+        return $this->beginAdminElevation->isActive();
     }
 
     public function beginElevation() : void
@@ -57,5 +59,17 @@ public function authorize(string $permission, mixed $resource = null) : void
     public function endElevation() : void
     {
         $this->endAdminElevation->execute();
+    }
+
+    public function requireAuthentication() : void
+    {
+    }
+
+    public function requireRole(UserRole $userRole) : void
+    {
+    }
+
+    public function requirePermission(UserPermission $userPermission) : void
+    {
     }
 }

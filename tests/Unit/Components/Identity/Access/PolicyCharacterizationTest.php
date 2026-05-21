@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Identity\Access;
 
+use Avax\Components\Application\Container\System\Foundation\SimpleContainer;
 use Avax\Components\Identity\Access\System\Capabilities\Policy\Engine\PolicyEvaluator;
 use Avax\Components\Identity\Access\System\Capabilities\Policy\Foundation\DecisionExplanation;
 use Avax\Components\Identity\Access\System\Capabilities\Policy\Foundation\PolicyDecision;
@@ -15,6 +16,7 @@ use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Endpoint
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\EndpointPosture\EndpointPosturePolicy;
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\EndpointPosture\EndpointPostureSignal;
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\EndpointPosture\EndpointPostureSignalData;
+use Avax\Components\Identity\Access\System\Configuration\AccessServiceProvider;
 use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -182,6 +184,24 @@ final class PolicyCharacterizationTest extends TestCase
     }
 
     #[Test]
+    public function policyEvaluatorExplainReportsDeniedDecision(): void
+    {
+        $evaluator = new PolicyEvaluator();
+        $resource  = new \stdClass();
+
+        $evaluator->register(new PolicyRule(
+            'read',
+            fn(): bool => false,
+            'Denied rule',
+        ));
+
+        $explanation = $evaluator->explain('read', $resource, []);
+
+        self::assertFalse($explanation->allowed);
+        self::assertSame(['Denied rule'], $explanation->reasons);
+    }
+
+    #[Test]
     public function policyRuleAppliesChecksAction(): void
     {
         $rule = new PolicyRule(
@@ -278,46 +298,102 @@ final class PolicyCharacterizationTest extends TestCase
     }
 
     #[Test]
-    public function staticPolicyDefineAndAuthorize(): void
+    public function policyDefineAndAuthorize(): void
     {
-        Policy::define('admin-only', ['role' => 'admin']);
+        $policy = new Policy(policyEvaluator: new PolicyEvaluator());
 
-        self::assertTrue(Policy::authorize('admin-only', ['role' => 'admin']));
-        self::assertFalse(Policy::authorize('admin-only', ['role' => 'user']));
+        $policy->define('admin-only', ['role' => 'admin']);
+
+        self::assertTrue($policy->authorize('admin-only', ['role' => 'admin']));
+        self::assertFalse($policy->authorize('admin-only', ['role' => 'user']));
     }
 
     #[Test]
-    public function staticPolicyAllowsAndRegister(): void
+    public function unknownPolicyNameFailsClosed(): void
     {
+        $policy = new Policy(policyEvaluator: new PolicyEvaluator());
+
+        self::assertFalse($policy->authorize('admin-only', ['role' => 'admin']));
+    }
+
+    #[Test]
+    public function policyAllowsAndRegister(): void
+    {
+        $policy = new Policy(policyEvaluator: new PolicyEvaluator());
         $resource = new \stdClass();
         $resource->owner_id = 1;
 
-        Policy::register(new PolicyRule(
+        $policy->register(new PolicyRule(
             action: 'edit',
             condition: fn(object $r, array $c): bool => ($c['user_id'] ?? null) === ($r->owner_id ?? null),
             reason: 'Owner check',
         ));
 
-        $decision = Policy::allows('edit', $resource, ['user_id' => 1]);
+        $decision = $policy->allows('edit', $resource, ['user_id' => 1]);
         self::assertTrue($decision->allowed);
 
-        $decision = Policy::allows('edit', $resource, ['user_id' => 2]);
+        $decision = $policy->allows('edit', $resource, ['user_id' => 2]);
         self::assertFalse($decision->allowed);
     }
 
     #[Test]
-    public function staticPolicyExplain(): void
+    public function policyExplain(): void
     {
+        $policy = new Policy(policyEvaluator: new PolicyEvaluator());
         $resource = new \stdClass();
 
-        Policy::register(new PolicyRule(
+        $policy->register(new PolicyRule(
             action: 'view',
             condition: fn(): bool => true,
             reason: 'Always viewable',
         ));
 
-        $explanation = Policy::explain('view', $resource, []);
+        $explanation = $policy->explain('view', $resource, []);
         self::assertTrue($explanation->allowed);
+    }
+
+    #[Test]
+    public function policyDefinitionsDoNotLeakAcrossInstances(): void
+    {
+        $first = new Policy(policyEvaluator: new PolicyEvaluator());
+        $second = new Policy(policyEvaluator: new PolicyEvaluator());
+
+        $first->define('admin-only', ['role' => 'admin']);
+
+        self::assertTrue($first->authorize('admin-only', ['role' => 'admin']));
+        self::assertFalse($second->authorize('admin-only', ['role' => 'admin']));
+    }
+
+    #[Test]
+    public function policyRulesDoNotLeakAcrossInstances(): void
+    {
+        $first = new Policy(policyEvaluator: new PolicyEvaluator());
+        $second = new Policy(policyEvaluator: new PolicyEvaluator());
+        $resource = new \stdClass();
+
+        $first->register(new PolicyRule(
+            action: 'view',
+            condition: fn(): bool => false,
+            reason: 'First runtime denies',
+        ));
+
+        self::assertFalse($first->allows('view', $resource)->allowed);
+        self::assertTrue($second->allows('view', $resource)->allowed);
+    }
+
+    #[Test]
+    public function providerResolvedPoliciesDoNotShareRuntimeState(): void
+    {
+        $container = new SimpleContainer();
+        (new AccessServiceProvider())->register($container);
+
+        $first = $container->get(Policy::class);
+        $first->define('admin-only', ['role' => 'admin']);
+
+        $second = $container->get(Policy::class);
+
+        self::assertTrue($first->authorize('admin-only', ['role' => 'admin']));
+        self::assertFalse($second->authorize('admin-only', ['role' => 'admin']));
     }
 
     #[Test]

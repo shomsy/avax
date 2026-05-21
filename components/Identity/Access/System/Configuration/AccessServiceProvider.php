@@ -9,6 +9,8 @@ use Avax\Components\Application\Container\System\PublicSurface\ContainerInterfac
 use Avax\Components\Identity\Access\System\Capabilities\AdminElevation\AdminElevationStore;
 use Avax\Components\Identity\Access\System\Capabilities\AccessRuntime\AccessRuntime;
 use Avax\Components\Identity\Access\System\Capabilities\Authorization\AuthorizationEngine;
+use Avax\Components\Identity\Access\System\Capabilities\Policy\Engine\PolicyEvaluator;
+use Avax\Components\Identity\Access\System\Capabilities\Policy\Policy;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\BeginAdminElevation;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\EndAdminElevation;
 use Avax\Components\Identity\Access\System\PublicSurface\Access;
@@ -22,6 +24,12 @@ final class AccessServiceProvider implements ServiceProvider
     {
         // Authorization engine — permission checking engine
         $container->singleton(AuthorizationEngine::class, static fn () : AuthorizationEngine => new AuthorizationEngine());
+
+        // Policy rules and named policy definitions are runtime scoped.
+        $container->scoped(PolicyEvaluator::class, static fn () : PolicyEvaluator => new PolicyEvaluator());
+        $container->scoped(Policy::class, static fn (ContainerInterface $c) : Policy => new Policy(
+            policyEvaluator: $c->get(PolicyEvaluator::class),
+        ));
 
         // Admin elevation state is request/runtime scoped. It must not survive worker requests.
         $container->scoped(AdminElevationStore::class, static fn () : AdminElevationStore => new AdminElevationStore());

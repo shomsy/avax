@@ -11,18 +11,27 @@ use Avax\Components\Identity\Access\System\Capabilities\Policy\Rules\PolicyRule;
 
 final class Policy
 {
-    private static PolicyEvaluator $policyEvaluator;
+    /**
+     * @var array<string, array<string, mixed>>
+     */
+    private array $definitions = [];
 
-    private static array $definitions = [];
+    public function __construct(
+        private PolicyEvaluator $policyEvaluator,
+    ) {}
 
-    public static function define(string $name, array $rules) : void
+    public function define(string $name, array $rules) : void
     {
-        self::$definitions[$name] = $rules;
+        $this->definitions[$name] = $rules;
     }
 
-    public static function authorize(string $name, array $context) : bool
+    public function authorize(string $name, array $context) : bool
     {
-        $rules = self::$definitions[$name] ?? [];
+        if (! isset($this->definitions[$name])) {
+            return false;
+        }
+
+        $rules = $this->definitions[$name];
 
         foreach ($rules as $key => $expected) {
             $actual = $context[$key] ?? null;
@@ -35,27 +44,18 @@ final class Policy
         return true;
     }
 
-    public static function allows(string $action, object $resource, array $context = []) : PolicyDecision
+    public function allows(string $action, object $resource, array $context = []) : PolicyDecision
     {
-        return self::evaluator()->evaluate($action, $resource, $context);
+        return $this->policyEvaluator->evaluate($action, $resource, $context);
     }
 
-    private static function evaluator() : PolicyEvaluator
+    public function register(PolicyRule $policyRule) : void
     {
-        if (! isset(self::$policyEvaluator)) {
-            self::$policyEvaluator = new PolicyEvaluator();
-        }
-
-        return self::$policyEvaluator;
+        $this->policyEvaluator->register($policyRule);
     }
 
-    public static function register(PolicyRule $policyRule) : void
+    public function explain(string $action, object $resource, array $context = []) : DecisionExplanation
     {
-        self::evaluator()->register($policyRule);
-    }
-
-    public static function explain(string $action, object $resource, array $context = []) : DecisionExplanation
-    {
-        return self::evaluator()->explain($action, $resource, $context);
+        return $this->policyEvaluator->explain($action, $resource, $context);
     }
 }

@@ -21,6 +21,7 @@ final class PolicyEvaluator
     public function explain(string $action, object $resource, array $context) : DecisionExplanation
     {
         $reasons = [];
+        $allowed = true;
 
         foreach ($this->rules as $rule) {
             if (! $rule->applies($action, $resource)) {
@@ -33,10 +34,12 @@ final class PolicyEvaluator
                 continue;
             }
 
+            if (! $result->allowed) {
+                $allowed = false;
+            }
+
             $reasons[] = $result->reason;
         }
-
-        $allowed = ! in_array(false, array_column($reasons, 'allowed'));
 
         return new DecisionExplanation($allowed, $reasons);
     }

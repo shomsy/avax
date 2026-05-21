@@ -126,6 +126,22 @@ This skill must be loaded together with:
 - `testing` skill for negative tests
 - `validation` skill
 
+## Separation of Concern in Security
+
+Security is a cross-cutting concern that must be explicit, not scattered.
+
+Threat model analysis must verify:
+
+- security decisions are owned by security capabilities, not inline in business logic
+- authentication is separated from authorization
+- validation is separated from sanitization
+- secrets handling is separated from general configuration
+- security-sensitive logging is separated from operational logging
+
+Security logic scattered as inline code across multiple units is a SoC violation and a security risk.
+
+See `how-to-architecture.md` — Section 57.6 (Cross-Cutting Concern Rule).
+
 ## Final Rule
 
 No threat model, no security change.

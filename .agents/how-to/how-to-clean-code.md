@@ -1619,6 +1619,17 @@ severity, GREEN status block criteria, and review criteria, see:
 .agents/how-to/how-to-code-review.md — §24 PHPDoc Review Rule
 ```
 
+## 24.5 Separation of Concern Cross-Reference
+
+For Separation of Concern governance including Room Rule, Change-Axis Test, Cross-Cutting Concern Rule, and Composition After Separation, see:
+
+```text
+.agents/how-to/how-to-architecture.md — Section 57 (Separation of Concern Rule)
+.agents/how-to/how-to-design-components.md — Section 32 (Separation of Concern Rule)
+```
+
+Clean code requires honest separation. Splitting files without reducing coupling is not clean code. It is file shuffling.
+
 ## 25. Final position
 
 If you remember only one sentence from this entire document, remember this:

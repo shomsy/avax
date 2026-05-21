@@ -1687,3 +1687,56 @@ examples showing non-canonical style
 
 If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness,
 it must scream in review.
+
+---
+
+## 26. Separation of Concern Review Rule
+
+Every review must evaluate Separation of Concern at all levels.
+
+### 26.1 Change-Axis Check
+
+For each significant unit reviewed:
+
+- What causes this to change?
+- Are those reasons related?
+- Can this be understood without unrelated context?
+
+### 26.2 Room Rule Check
+
+Does this unit behave like a room with one purpose? Or has it become a storage room?
+
+### 26.3 File Shuffling Check
+
+Does the proposed separation actually reduce coupling? Or does it only increase file count?
+
+### 26.4 Cross-Cutting Check
+
+Are security, logging, validation, caching, observability, and error handling explicit? Or scattered as helpers and inline logic?
+
+### 26.5 Composition Check
+
+After separation, does composition happen through clean boundaries? Or through god builders and distributed complexity?
+
+### 26.6 Cognitive Load Check
+
+Can a new developer understand this unit without knowing about unrelated subsystems?
+
+### 26.7 SoC Review Classification
+
+- **GREEN**: one clear concern per unit, cross-cutting explicit, clean composition
+- **YELLOW**: two related concerns with documented justification
+- **RED**: multiple unrelated concerns, scattered cross-cutting logic, god objects
+
+A review cannot be GREEN if SoC is RED.
+
+For full SoC governance, see:
+
+```text
+.agents/how-to/how-to-architecture.md — Section 57
+.agents/how-to/how-to-design-components.md — Section 32
+```
+
+---
+
+## 27. Critical Quality Signal Rule

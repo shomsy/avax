@@ -1042,7 +1042,32 @@ Runtime receives ready pipeline.
 
 AvaX MUST use one canonical root Application Container as the runtime object graph owner.
 
-For the full governance of container ownership and registration, see:
+---
+
+## 13.5 Separation of Concern in Runtime Composition
+
+Runtime composition must respect separation of concerns.
+
+Runtime code must not know about:
+
+- other concerns it does not own
+- cross-cutting logic that should be explicit dependencies
+- sibling concerns that create hidden coupling
+
+Composition concerns belong in Configuration/Assembly.
+Execution concerns belong in Flows/Capabilities.
+Mixing them in runtime code is a SoC violation.
+
+For Separation of Concern governance, see:
+
+```text
+.agents/how-to/how-to-architecture.md — Section 57
+.agents/how-to/how-to-design-components.md — Section 32
+```
+
+---
+
+## 14. Root Application Container Rule
 
 ```text
 .agents/how-to/how-to-dependency-injection.md

@@ -1711,6 +1711,27 @@ Configuration assembles the system.
 
 ---
 
+## 16.5 Separation of Concern in DI
+
+Dependency Injection is the primary mechanism for separating concerns at the configuration/runtime boundary.
+
+DI ensures that:
+
+- configuration concerns stay in Configuration/Assembly/Provider
+- runtime execution concerns stay in Flows/Capabilities
+- cross-cutting concerns are assembled as explicit dependencies, not scattered as helpers
+
+For Separation of Concern governance, see:
+
+```text
+.agents/how-to/how-to-architecture.md — Section 57 (Separation of Concern Rule)
+.agents/how-to/how-to-design-components.md — Section 32 (Separation of Concern Rule)
+```
+
+DI without SoC creates well-wired god objects. SoC without DI creates separated but uncomposable fragments. Both are required.
+
+---
+
 ## 17. Final Law
 
 ```text

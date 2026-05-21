@@ -2236,3 +2236,223 @@ earliest opportunity.
 **Severity:** BLOCKER
 
 ---
+
+## 57. Separation of Concern Rule
+
+### 57.1 Universal Concern Definition
+
+A concern is any reason to understand, change, test, deploy, secure, observe, configure, or evolve a unit.
+
+SoC is not a pattern. It is the universal principle behind modularization, encapsulation, functions, objects, layering, MVC, flows, capabilities, and subsystems.
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+### 57.2 Separation at Every Level
+
+Separation of Concern applies at every architectural level:
+
+- function
+- class
+- flow
+- capability
+- subsystem
+- component
+- runtime
+- public surface
+- configuration
+- test
+
+AvaX rules must be valid across all levels, not only at layer boundaries.
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+### 57.3 Room Rule
+
+Every folder and class must behave like a room with one purpose.
+
+In a kitchen you cook. In a bedroom you sleep.
+
+If `AccessRuntime` handles risk, admin elevation, authentication, and permissions, the room has become a storage room.
+
+When unrelated work accumulates inside one unit, it is not architecture. It is a warehouse.
+
+Remediation: rename, split, or redesign by real ownership, not by file shuffling.
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+### 57.4 Valid Separation Test
+
+Separation is valid only when it reduces:
+
+- cognitive load
+- coupling
+- risk
+- change cost
+
+Splitting files without reducing coupling is file shuffling, not separation.
+
+You can have 20 files and still have bad SoC if they all know about each other.
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+### 57.5 Concern Ownership Rule
+
+Every concern must have one clear owner.
+
+No shared ghost ownership.
+
+No hidden ownership inside helpers, managers, or services.
+
+No concern may float as implicit knowledge across multiple units.
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+### 57.6 Cross-Cutting Concern Rule
+
+Security, logging, validation, caching, transactions, observability, reset safety, configuration, and error handling are real concerns.
+
+They must be explicit capabilities, policies, or boundaries.
+
+They must not leak as:
+
+- helpers scattered across the codebase
+- global static calls
+- random inline logic
+- hidden service dependencies
+- convenience functions copied into multiple flows
+
+Cross-cutting concerns must have a clear public/internal boundary.
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+### 57.7 Composition After Separation Rule
+
+After separating concerns, composition must happen through clear parent, gateway, or configuration boundaries.
+
+Do not rebuild the mess through god builders or god graphs.
+
+Composition is the other half of separation.
+
+A system that separates concerns but composes them chaotically has created distributed complexity, not clean architecture.
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+### 57.8 Change-Axis Test
+
+For any class, folder, or subsystem, ask:
+
+- What causes this to change?
+- Are those reasons related?
+- Can this be tested independently?
+- Can this be understood without unrelated context?
+- Does this depend on sibling concerns?
+
+If the answers show multiple unrelated change drivers, the unit violates SoC.
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+### 57.9 SoC and Coupling
+
+Separation of Concern must reduce coupling, not only increase file count.
+
+Metrics of bad SoC:
+
+- many bidirectional dependencies between "separated" units
+- tests that require many unrelated collaborators
+- changes in one concern forcing edits across multiple files
+- circular knowledge requirements to understand the system
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+### 57.10 SoC and Cognitive Load
+
+SoC exists to make the system understandable.
+
+A developer must be able to read one unit without needing to understand unrelated concerns.
+
+If understanding `TokenVerification` requires knowing about `RiskScoring`, `TenantResolution`, and `PermissionPolicy`, the separation has failed.
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+### 57.11 GREEN Criteria
+
+SoC governance is GREEN when:
+
+- every class has one clear reason to change
+- cross-cutting concerns are explicit capabilities with clear boundaries
+- composition happens through clean configuration or gateway boundaries
+- no god objects or storage-room units exist
+- change-axis test passes for all production units
+- splitting a unit demonstrably reduces coupling or cognitive load
+
+### 57.12 YELLOW Criteria
+
+SoC governance is YELLOW when:
+
+- a unit has two related reasons to change with documented justification
+- a cross-cutting concern is partially extracted but still has leakage
+- composition boundary exists but is not yet fluent
+
+YELLOW requires owner, risk, mitigation, and expiry.
+
+### 57.13 RED Criteria
+
+SoC governance is RED when:
+
+- units have multiple unrelated reasons to change
+- cross-cutting logic is scattered as helpers and inline code
+- file splitting increased count but not clarity
+- composition rebuilds the mess through god builders
+- change-axis test fails with unrelated change drivers
+- understanding one unit requires knowing about unrelated subsystems
+
+### 57.14 SoC as Review Lens
+
+Every code review must apply the SoC lens:
+
+- does this unit do one thing?
+- are cross-cutting concerns explicit?
+- does composition respect the separation?
+- would a new developer understand this unit in isolation?
+
+A review cannot be GREEN if SoC is RED.
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+### 57.15 SoC in Refactoring
+
+When refactoring:
+
+- separate concerns first
+- then compose through clean boundaries
+- do not extract wrappers that still know about everything
+- do not create fake separation through inheritance hierarchies
+- do not split one long conditional into many long conditionals
+
+Real separation changes the dependency graph, not only the line count.
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+### 57.16 AvaX SoC Summary
+
+```text
+Concern = reason to change.
+Room = one purpose per unit.
+Separation = reduced coupling, not more files.
+Cross-cutting = explicit capability, not scattered helper.
+Composition = clean boundary, not god builder.
+Change-axis test = what causes this to change?
+SoC = universal principle, not one pattern.
+```

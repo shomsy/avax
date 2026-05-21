@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Tenancy\System\Capabilities\Resolution;
 
-use Avax\Components\HTTP\Request\System\PublicSurface\RequestInterface;
+use Psr\Http\Message\RequestInterface;
 
 final readonly class DomainResolver
 {

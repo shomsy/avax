@@ -1056,3 +1056,25 @@ Component owns registrations.
 Application container owns the graph.
 Runtime scope owns lifecycle state.
 ```
+
+---
+
+## 15. Universal Enterprise Codecraft Cross-Reference
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+Runtime composition must serve the universal enterprise codecraft philosophy.
+
+See:
+
+- `how-to-design-components.md` — Section 30: Universal Enterprise Codecraft Rule
+- `how-to-architecture.md` — Section 55: Universal Enterprise Codecraft Rule
+
+Relevant principles for runtime composition:
+
+- **No Technical Theater:** Runtime must not introduce unnecessary builders, factories, or wiring layers. Composition belongs in Configuration.
+- **Structural Honesty:** Runtime composition must reveal real dependency boundaries. Never hide machinery behind `app()` shortcuts or global state.
+- **Cognitive Load:** Runtime code should execute, not assemble. If a runtime flow assembles its own dependencies, the design is suspicious.
+- **Fluent API:** Runtime entrypoints should feel fluent. `$runtime->handle($request)` not `$runtime->execute(Factory::create(Builder::build(...)))`.
+

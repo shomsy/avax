@@ -126,6 +126,25 @@ This skill must be loaded together with:
 - `testing` skill for negative tests
 - `validation` skill
 
+## Universal Enterprise Codecraft Philosophy
+
+Security boundaries must serve the universal enterprise codecraft philosophy.
+
+See:
+
+- `how-to-design-components.md` — Section 30: Universal Enterprise Codecraft Rule
+- `how-to-architecture.md` — Section 55: Universal Enterprise Codecraft Rule
+
+Agents must:
+
+- enforce structural honesty at security boundaries — never hide auth complexity behind opaque facades
+- minimize cognitive load for security-critical code — security decisions must be readable and auditable
+- reject technical theater in security — do not add security layers that look sophisticated but don't reduce risk
+- prefer fluent security APIs — `App::identity()->auth()->requirePermission('admin')` not `AuthExecutor::execute(AuthRequest::from(...))`
+- prefer subsystem decomposition — separate credential verification, session management, and policy enforcement into clear units
+
+Security code that is hard to read is hard to audit. Security code that is hard to audit is insecure.
+
 ## Final Rule
 
 No threat model, no security change.

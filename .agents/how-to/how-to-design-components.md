@@ -2386,6 +2386,283 @@ Threshold trigger requires documented decision. No large unit may be called GREE
 
 ---
 
+## 30. Universal Enterprise Codecraft Rule
+
+**Status:** MANDATORY  
+**Scope:** All AvaX production code, configuration, tests, and infrastructure.  
+**Severity:** BLOCKER
+
+### 30.1 Enterprise-Grade and Human-Readable
+
+Every AvaX unit must be:
+
+- enterprise-grade
+- readable
+- intuitive
+- structurally honest
+
+This applies to:
+
+- systems and subsystems
+- capabilities and flows
+- runtimes and public surfaces
+- policies and rules
+- value objects and configuration
+- tests and infrastructure adapters
+
+Enterprise-grade does NOT mean:
+
+- complicated
+- abstract
+- ceremonial
+- pattern-heavy
+- over-engineered
+- architecturally theatrical
+
+Enterprise-grade means:
+
+- explicit responsibility
+- low cognitive load
+- strong boundaries
+- predictable behavior
+- safe defaults
+- testable behavior
+- clear ownership
+- readable call-sites
+- discoverable structure
+- fluent APIs
+- maintainable evolution
+- no hidden complexity
+
+### 30.2 Human-Readable Enterprise Design
+
+AvaX code must read naturally.
+
+Folders tell the system story.
+Class names explain intent.
+Method names explain action.
+Call-sites must feel fluent and predictable.
+
+The codebase should explain itself without architectural archaeology.
+
+### 30.3 No Technical Theater Rule
+
+Do not introduce:
+
+- Builders
+- Factories
+- Graphs
+- Assemblies
+- Managers
+- Services
+- Helpers
+- Utils
+- Coordinators
+- Orchestrators
+- Setup/Wiring layers
+- pattern-heavy abstractions
+
+unless they solve a proven structural problem.
+
+Pattern usage must reduce cognitive load, not move complexity behind prettier names.
+
+### 30.4 Fluent Class API Rule
+
+Every class should feel like a small fluent API unit.
+
+Prefer:
+
+- readable property names
+- readable method names
+- intention-revealing calls
+- cohesive APIs
+- natural language call-sites
+
+Avoid:
+
+- `execute()` everywhere
+- `build()` everywhere
+- `create()` everywhere
+- technical naming by default
+- mechanical type mirroring
+
+Public fluent direction:
+
+```text
+App::flow(...)
+App::identity()->auth()
+App::identity()->access()
+```
+
+### 30.5 Cognitive Load Minimization Rule
+
+The system must optimize for:
+
+- fast understanding
+- safe modification
+- low surprise
+- easy navigation
+- discoverability
+- boring cohesion
+
+If understanding a class requires opening five more classes immediately, the design is suspicious.
+
+### 30.6 Structural Honesty Rule
+
+The structure must reveal the real subsystem boundaries.
+
+Never hide:
+
+- god objects
+- dependency chaos
+- orchestration complexity
+- circular coupling
+- unrelated responsibilities
+
+behind:
+
+- builders
+- graphs
+- factories
+- facades
+- configuration wrappers
+
+### 30.7 Recursive Decomposition Rule
+
+When a unit becomes large:
+
+- first identify hidden subsystems
+- then capabilities
+- then flows
+- then policies/rules/value objects
+
+Do not split mechanically.
+Split by real ownership and behavior.
+
+Stop decomposing when the unit becomes:
+
+- boring
+- cohesive
+- readable
+- predictable
+
+### 30.8 Readability vs Safety Balance
+
+A rule succeeds only if code becomes:
+
+- safer
+AND
+- easier to understand.
+
+If a rule improves safety but destroys readability:
+redesign the structure.
+
+If a shortcut improves readability but hides risk:
+reject the shortcut.
+
+### 30.9 Hard Boundary Rules
+
+#### 30.9.1 Horizontal Blindness
+
+Sibling subsystems do not directly depend on each other.
+Parent gateway/orchestrator coordinates them.
+
+Example: `AuthenticationGateway` coordinates `CredentialAuthority` and `SessionRegistry`.
+Forbidden: `CredentialAuthority` directly depends on `SessionRegistry`.
+
+#### 30.9.2 Boundary Value Objects
+
+Raw primitives must not cross subsystem boundaries when carrying business or security meaning.
+
+Examples: `EmailAddress`, `PlainPassword`, `TenantId`, `UserId`, `TokenId`, `PermissionName`, `RoleName`, `ClientId`, `SessionId`, `AuthContextId`.
+
+#### 30.9.3 Command/Query Clarity
+
+Commands mutate.
+Queries read.
+Mixed behavior requires explicit result object and evidence.
+
+#### 30.9.4 HLD/LLD Mirror
+
+Architecture language must match physical code structure.
+
+If the architecture says A coordinates B and C, code must not wire B directly to C.
+
+#### 30.9.5 Single Preferred Entry
+
+Each subsystem exposes one obvious public surface/gateway.
+
+Multiple entry points create unstable API and attack surface.
+
+### 30.10 Naming Direction
+
+Avoid default usage of:
+
+- Builder
+- Factory
+- Graph
+- Assembly
+- DSL
+- Wiring
+- Setup
+- Manager
+- Service
+- Helper
+- Util
+- Support
+
+Avoid AvaX/Avax branding in class names by default.
+
+Prefer:
+
+- subsystem names
+- capability names
+- product names
+- domain names
+- fluent call-sites
+
+Examples:
+
+```text
+AuthenticationGateway
+CredentialAuthority
+SessionRegistry
+MfaProtection
+PasskeyAccess
+ExternalLogin
+TenantAccess
+PolicyEnforcement
+RiskAssessment
+TokenAuthority
+```
+
+### 30.11 GREEN / YELLOW / RED Criteria
+
+GREEN:
+
+- units read naturally without opening multiple other files
+- call-sites are fluent and intention-revealing
+- structure matches documented architecture
+- no pattern-heavy abstractions without proven need
+- boundaries use value objects, not raw primitives
+- one entry point per subsystem
+
+YELLOW:
+
+- technical theater exists in legacy code with documented migration plan
+- builder/factory used but justified with evidence
+- mixed command/query in non-critical path with explicit result object
+
+RED:
+
+- god objects hidden behind facades or builders
+- sibling components depend on each other directly
+- raw primitives cross security boundaries
+- architecture docs say one thing, code does another
+- multiple uncontrolled public entry points per subsystem
+
+---
+
 ### Stage Completion Language
 
 A stage **MUST NOT** be marked GREEN unless:

@@ -102,6 +102,25 @@ Facades must:
 - remain thin and stable
 - log deprecation when forwarding to changed internals
 
+## Universal Enterprise Codecraft Philosophy
+
+Public API changes must serve the universal enterprise codecraft philosophy.
+
+See:
+
+- `how-to-design-components.md` — Section 30: Universal Enterprise Codecraft Rule
+- `how-to-architecture.md` — Section 55: Universal Enterprise Codecraft Rule
+
+Agents must:
+
+- prefer fluent APIs — public API should read like natural language, not mechanical construction
+- minimize cognitive load — public API consumers should understand usage from the method names alone
+- reject technical theater — do not expose internal builders/factories through the public API
+- enforce structural honesty — public API must reveal real subsystem boundaries, not hide them behind convenience methods
+- prefer subsystem names over technical names — `App::identity()->auth()` not `App::getAuthDsl()->executeAuth()`
+
+Public API that requires the consumer to understand internal machinery is a design failure.
+
 ## Integration with Other Skills
 
 This skill must be loaded together with:

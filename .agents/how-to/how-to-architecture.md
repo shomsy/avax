@@ -2236,3 +2236,152 @@ earliest opportunity.
 **Severity:** BLOCKER
 
 ---
+
+## 55. Universal Enterprise Codecraft Rule
+
+**Status:** MANDATORY  
+**Scope:** All AvaX architecture — systems, subsystems, components, flows, capabilities, runtimes, public surfaces.  
+**Severity:** BLOCKER
+
+### 55.1 Enterprise-Grade and Human-Readable
+
+Every architectural unit must be enterprise-grade AND human-readable.
+
+Enterprise-grade does NOT mean: complicated, abstract, ceremonial, pattern-heavy, over-engineered, architecturally theatrical.
+
+Enterprise-grade means: explicit responsibility, low cognitive load, strong boundaries, predictable behavior, safe defaults, testable behavior, clear ownership, readable call-sites, discoverable structure, fluent APIs, maintainable evolution, no hidden complexity.
+
+### 55.2 Human-Readable Architecture
+
+Architecture must read like a story, not a warehouse.
+
+Folders tell the system story.
+Class names explain intent.
+Method names explain action.
+Call-sites must feel fluent and predictable.
+
+The architecture should explain itself without archaeological investigation.
+
+### 55.3 No Technical Theater
+
+Architecture must not introduce ceremony for its own sake.
+
+Builders, Factories, Graphs, Assemblies, Managers, Services, Helpers, Utils, Coordinators, Orchestrators, Setup/Wiring layers, and pattern-heavy abstractions are forbidden unless they solve a proven structural problem.
+
+Pattern usage must reduce cognitive load, not move complexity behind prettier names.
+
+### 55.4 Fluent Architecture
+
+Public surfaces should feel like small fluent APIs.
+
+Prefer: subsystem names, capability names, product names, domain names, fluent call-sites.
+
+Public fluent direction:
+
+```text
+App::flow(...)
+App::identity()->auth()
+App::identity()->access()
+```
+
+### 55.5 Cognitive Load at Scale
+
+The architecture must optimize for: fast understanding, safe modification, low surprise, easy navigation, discoverability, boring cohesion.
+
+If understanding a subsystem requires opening five other subsystems immediately, the architecture is suspicious.
+
+### 55.6 Structural Honesty
+
+Architecture must reveal real subsystem boundaries.
+
+Never hide god objects, dependency chaos, orchestration complexity, circular coupling, or unrelated responsibilities behind builders, graphs, factories, facades, or configuration wrappers.
+
+### 55.7 Recursive Decomposition at Scale
+
+When an architectural unit becomes large:
+
+- first identify hidden subsystems
+- then capabilities
+- then flows
+- then policies/rules/value objects
+
+Do not split mechanically. Split by real ownership and behavior.
+
+Stop decomposing when the unit becomes: boring, cohesive, readable, predictable.
+
+### 55.8 Readability vs Safety at Scale
+
+An architectural rule succeeds only if the system becomes safer AND easier to understand.
+
+If a rule improves safety but destroys readability: redesign the structure.
+If a shortcut improves readability but hides risk: reject the shortcut.
+
+### 55.9 Hard Architectural Boundaries
+
+#### 55.9.1 Horizontal Blindness
+
+Sibling subsystems do not directly depend on each other. Parent gateway/orchestrator coordinates them.
+
+#### 55.9.2 Boundary Value Objects
+
+Raw primitives must not cross subsystem boundaries when carrying business or security meaning.
+
+#### 55.9.3 Command/Query Clarity
+
+Commands mutate. Queries read. Mixed behavior requires explicit result object and evidence.
+
+#### 55.9.4 HLD/LLD Mirror
+
+Architecture language must match physical code structure.
+
+#### 55.9.5 Single Preferred Entry
+
+Each subsystem exposes one obvious public surface/gateway. Multiple entry points create unstable API and attack surface.
+
+### 55.10 Naming at Scale
+
+Avoid default usage of: Builder, Factory, Graph, Assembly, DSL, Wiring, Setup, Manager, Service, Helper, Util, Support.
+
+Avoid AvaX/Avax branding in class names by default.
+
+Prefer: subsystem names, capability names, product names, domain names, fluent call-sites.
+
+Examples:
+
+```text
+AuthenticationGateway
+CredentialAuthority
+SessionRegistry
+MfaProtection
+PasskeyAccess
+ExternalLogin
+TenantAccess
+PolicyEnforcement
+RiskAssessment
+TokenAuthority
+```
+
+### 55.11 GREEN / YELLOW / RED Criteria
+
+GREEN:
+
+- architecture reads naturally without cross-referencing multiple documents
+- public surfaces are fluent and intention-revealing
+- code structure matches architecture documentation
+- no pattern-heavy abstractions without proven need
+- boundaries use value objects, not raw primitives
+- one entry point per subsystem
+
+YELLOW:
+
+- technical theater exists in legacy architecture with documented migration plan
+- builder/factory used but justified with evidence
+- mixed command/query in non-critical subsystem with explicit result object
+
+RED:
+
+- god objects hidden behind architectural facades
+- sibling subsystems depend on each other directly
+- raw primitives cross security boundaries
+- architecture docs say one thing, code does another
+- multiple uncontrolled public entry points per subsystem

@@ -1619,7 +1619,87 @@ severity, GREEN status block criteria, and review criteria, see:
 .agents/how-to/how-to-code-review.md — §24 PHPDoc Review Rule
 ```
 
-## 25. Final position
+## 25. Universal Enterprise Codecraft Rule
+
+**Status:** MANDATORY  
+**Scope:** All AvaX code — production, configuration, tests, infrastructure.  
+**Severity:** BLOCKER
+
+### 25.1 Enterprise-Grade and Human-Readable
+
+Enterprise-grade quality must also remain readable, intuitive, and human-friendly.
+
+Enterprise-grade does NOT mean: complicated, abstract,ceremonial, pattern-heavy,over-engineered, architecturally theatrical.
+
+Enterprise-grade means: explicit responsibility, low cognitive load,strong boundaries, predictable behavior,safe defaults, testable behavior,clear ownership, readable call-sites,discoverable structure, fluent APIs,maintainable evolution, no hidden complexity.
+
+### 25.2 Human-Readable Design
+
+Code must read naturally.
+
+Folders tell the system story.
+Class names explain intent.
+Method names explain action.
+Call-sites must feel fluent and predictable.
+
+The codebase should explain itself without architectural archaeology.
+
+### 25.3 No Technical Theater
+
+Do not introduce Builders,Factories, Graphs,Assemblies, Managers,Services, Helpers,Utils, Coordinators,Orchestrators, Setup/Wiring layers,or pattern-heavy abstractions unless they solve a proven structural problem.
+
+Pattern usage must reduce cognitive load, not move complexity behind prettier names.
+
+### 25.4 Fluent Class API
+
+Every class should feel like a small fluent API unit.
+
+Prefer readable property names,readable method names,intention-revealing calls,cohesive APIs, natural language call-sites.
+
+Avoid `execute()`, `build()`, `create()` everywhere,technical naming by default,mechanical type mirroring.
+
+### 25.5 Cognitive Load Minimization
+
+The system must optimize for:fast understanding, safe modification,low surprise, easy navigation,discoverability, boring cohesion.
+
+If understanding a class requires opening five more classes immediately, the design is suspicious.
+
+### 25.6 Structural Honesty
+
+The structure must reveal the real subsystem boundaries.
+
+Never hide god objects,dependency chaos, orchestration complexity,circular coupling, or unrelated responsibilities behind builders,graphs, factories, facades,or configuration wrappers.
+
+### 25.7 Recursive Decomposition
+
+When a unit becomes large:
+first identify hidden subsystems,then capabilities, then flows,then policies/rules/value objects.
+
+Do not split mechanically.
+Split by real ownership and behavior.
+
+Stop decomposing when the unit becomes:boring, cohesive, readable, predictable.
+
+### 25.8 Readability vs Safety
+
+A rule succeeds only if code becomes safer AND easier to understand.
+
+If a rule improves safety but destroys readability: redesign the structure.
+If a shortcut improves readability but hides risk: reject the shortcut.
+
+### 25.9 Hard Boundary Summary
+
+- **Horizontal Blindness:** siblings don't depend on siblings
+- **Boundary Value Objects:** no raw primitives across boundaries
+- **Command/Query Clarity:** commands mutate, queries read
+- **HLD/LLD Mirror:** architecture language matches code structure
+- **Single Preferred Entry:** one gateway per subsystem
+
+See `how-to-design-components.md` — Section 30: Universal Enterprise Codecraft Rule (canonical).
+
+See `how-to-architecture.md` — Section 55: Universal Enterprise Codecraft Rule (architecture-level).
+
+## 26. Final position
 
 If you remember only one sentence from this entire document, remember this:
 

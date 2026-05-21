@@ -73,13 +73,16 @@ final class AccessServiceProvider implements ServiceProvider
 
             return new Access(
                 runtime: new AccessRuntime(
-                    authorizationEngine: $c->get(AuthorizationEngine::class),
-                    beginAdminElevation: $beginAdminElevation,
-                    endAdminElevation  : new EndAdminElevation(
+                    authentication: new RequireAuthentication(currentAuthentication: $currentAuth),
+                    roles           : new RequireRole(currentAuthentication: $currentAuth),
+                    permissions     : new RequirePermission(currentAuthentication: $currentAuth),
+                    authorization   : $c->get(AuthorizationEngine::class),
+                    ownership       : $requireResourceOwner,
+                    policies        : $requireAccessPolicy,
+                    elevation       : $beginAdminElevation,
+                    endElevation    : new EndAdminElevation(
                         beginAdminElevation: $beginAdminElevation,
                     ),
-                    requireAccessPolicy  : $requireAccessPolicy,
-                    requireResourceOwner : $requireResourceOwner,
                 ),
             );
         });

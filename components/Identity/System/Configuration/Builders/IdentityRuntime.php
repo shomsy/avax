@@ -94,13 +94,16 @@ final readonly class IdentityRuntime
                               ),
             access          : new Access(
                                   runtime: new AccessRuntime(
-                                      authorizationEngine: new AuthorizationEngine(),
-                                      beginAdminElevation: $beginAdminElevation,
-                                      endAdminElevation  : new EndAdminElevation(
+                                      authentication: $requireAuthentication,
+                                      roles           : $requireRole,
+                                      permissions     : $requirePermission,
+                                      authorization   : new AuthorizationEngine(),
+                                      ownership       : $requireResourceOwner,
+                                      policies        : $requireAccessPolicy,
+                                      elevation       : $beginAdminElevation,
+                                      endElevation    : new EndAdminElevation(
                                           beginAdminElevation: $beginAdminElevation,
                                       ),
-                                      requireAccessPolicy  : $requireAccessPolicy,
-                                      requireResourceOwner : $requireResourceOwner,
                                   ),
                               ),
             credentials     : CredentialsGraph::fromStore(

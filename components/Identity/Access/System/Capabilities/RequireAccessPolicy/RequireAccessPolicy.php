@@ -55,11 +55,11 @@ final readonly class RequireAccessPolicy
         $identityPolicy = $accessPolicy->identityPolicy;
 
         if ($accessPolicy->requiredRole instanceof UserRole) {
-            $this->requireRole->execute(requiredRole: $accessPolicy->requiredRole);
+            $this->requireRole->execute(userRole: $accessPolicy->requiredRole);
         }
 
         if ($accessPolicy->requiredPermission instanceof UserPermission) {
-            $this->requirePermission->execute(permission: $accessPolicy->requiredPermission);
+            $this->requirePermission->execute(userPermission: $accessPolicy->requiredPermission);
         }
 
         if ($accessPolicy->resourceOwnerUserId !== null) {

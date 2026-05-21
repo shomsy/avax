@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Identity\System;
 
-use Avax\Components\Identity\Access\System\Capabilities\Policy\Foundation\AccessPolicy;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole;
 use Avax\Components\Identity\Credentials\System\PublicSurface\Credentials;
@@ -105,24 +104,24 @@ final class IdentityTargetDslCharacterizationTest extends TestCase
     // ── Access surface DSL ─────────────────────────────────────────
 
     #[Test]
-    public function accessRequireAuthenticationReturnsVoid(): void
+    public function accessRequireAuthenticationDeniesGuest(): void
     {
+        self::expectException(\Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated::class);
         Identity::access()->requireAuthentication();
-        self::expectNotToPerformAssertions();
     }
 
     #[Test]
-    public function accessRequireRoleReturnsVoid(): void
+    public function accessRequireRoleDeniesGuest(): void
     {
+        self::expectException(\Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated::class);
         Identity::access()->requireRole(UserRole::ADMIN);
-        self::expectNotToPerformAssertions();
     }
 
     #[Test]
-    public function accessRequirePermissionReturnsVoid(): void
+    public function accessRequirePermissionDeniesGuest(): void
     {
+        self::expectException(\Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated::class);
         Identity::access()->requirePermission(new UserPermission(value: 'manage_users'));
-        self::expectNotToPerformAssertions();
     }
 
     // ── Credentials sub-surfaces ───────────────────────────────────

@@ -11,17 +11,23 @@ use Avax\Components\Identity\Access\System\Capabilities\AdminElevation\AdminElev
 use Avax\Components\Identity\Access\System\Configuration\AccessServiceProvider;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\BeginAdminElevation;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\EndAdminElevation;
+use Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\ResourceOwnerDenied;
+use Avax\Components\Identity\Access\System\Capabilities\RequireRole\RoleDenied;
 use Avax\Components\Identity\Access\System\Foundation\Exception\PermissionDenied;
 use Avax\Components\Identity\Access\System\PublicSurface\Access;
 use Avax\Components\Identity\Access\System\PublicSurface\AccessInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticatedUser;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationContext;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\AuthenticationMode;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 final class AccessCharacterizationTest extends TestCase
 {
-    private AuthorizationEngine $engine;
-
     private BeginAdminElevation $beginAdminElevation;
 
     private EndAdminElevation $endAdminElevation;
@@ -179,10 +185,154 @@ final class AccessCharacterizationTest extends TestCase
     public function requiresPublicSurfaceMethodsExist(): void
     {
         $access = $this->makeAccess(allowsResult: false);
+        // Enforcement is now real — guest users are denied
+        self::expectException(\Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated::class);
         $access->requireAuthentication();
-        $access->requireRole(\Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole::ADMIN);
-        $access->requirePermission(new \Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserPermission(value: 'test'));
+    }
+
+    #[Test]
+    public function requireRoleDeniesWrongRole(): void
+    {
+        $currentAuth = new CurrentAuthentication();
+        $currentAuth->store(AuthenticationContext::authenticated(
+            authenticatedUser: new AuthenticatedUser(
+                id: 1,
+                email: 'user@example.com',
+                username: 'regularuser',
+                roles: ['user'],
+            ),
+            authenticationMode: AuthenticationMode::SESSION,
+        ));
+
+        $access = $this->makeAccessWithCurrentAuth(currentAuthentication: $currentAuth);
+
+        $this->expectException(RoleDenied::class);
+        $access->requireRole(UserRole::ADMIN);
+    }
+
+    #[Test]
+    public function requireRolePassesForCorrectRole(): void
+    {
+        $currentAuth = new CurrentAuthentication();
+        $currentAuth->store(AuthenticationContext::authenticated(
+            authenticatedUser: new AuthenticatedUser(
+                id: 1,
+                email: 'admin@example.com',
+                username: 'adminuser',
+                roles: ['admin'],
+            ),
+            authenticationMode: AuthenticationMode::SESSION,
+        ));
+
+        $access = $this->makeAccessWithCurrentAuth(currentAuthentication: $currentAuth);
+
+        $access->requireRole(UserRole::ADMIN);
         self::expectNotToPerformAssertions();
+    }
+
+    #[Test]
+    public function requirePermissionDeniesMissingPermission(): void
+    {
+        $currentAuth = new CurrentAuthentication();
+        $currentAuth->store(AuthenticationContext::authenticated(
+            authenticatedUser: new AuthenticatedUser(
+                id: 1,
+                email: 'user@example.com',
+                username: 'regularuser',
+                permissions: ['read.post'],
+            ),
+            authenticationMode: AuthenticationMode::SESSION,
+        ));
+
+        $access = $this->makeAccessWithCurrentAuth(currentAuthentication: $currentAuth);
+
+        $this->expectException(PermissionDenied::class);
+        $access->requirePermission(new UserPermission(value: 'delete.post'));
+    }
+
+    #[Test]
+    public function requirePermissionPassesForExistingPermission(): void
+    {
+        $currentAuth = new CurrentAuthentication();
+        $currentAuth->store(AuthenticationContext::authenticated(
+            authenticatedUser: new AuthenticatedUser(
+                id: 1,
+                email: 'user@example.com',
+                username: 'regularuser',
+                permissions: ['read.post'],
+            ),
+            authenticationMode: AuthenticationMode::SESSION,
+        ));
+
+        $access = $this->makeAccessWithCurrentAuth(currentAuthentication: $currentAuth);
+
+        $access->requirePermission(new UserPermission(value: 'read.post'));
+        self::expectNotToPerformAssertions();
+    }
+
+    #[Test]
+    public function requirePolicyPassesForAuthenticatedUser(): void
+    {
+        $currentAuth = new CurrentAuthentication();
+        $currentAuth->store(AuthenticationContext::authenticated(
+            authenticatedUser: new AuthenticatedUser(
+                id: 1,
+                email: 'user@example.com',
+                username: 'regularuser',
+                roles: ['user'],
+                permissions: ['read.post'],
+            ),
+            authenticationMode: AuthenticationMode::SESSION,
+        ));
+
+        $access = $this->makeAccessWithCurrentAuth(currentAuthentication: $currentAuth);
+
+        // requirePolicy with a simple role-only policy should pass for authenticated user with matching role
+        $policy = new \Avax\Components\Identity\Access\System\Capabilities\Policy\AccessPolicy(
+            requiredRole: UserRole::USER,
+        );
+        $access->requirePolicy($policy);
+        self::expectNotToPerformAssertions();
+    }
+
+    #[Test]
+    public function requireResourceOwnerPassesForOwner(): void
+    {
+        $ownerId = 42;
+        $currentAuth = new CurrentAuthentication();
+        $currentAuth->store(AuthenticationContext::authenticated(
+            authenticatedUser: new AuthenticatedUser(
+                id: $ownerId,
+                email: 'owner@example.com',
+                username: 'resourceowner',
+            ),
+            authenticationMode: AuthenticationMode::SESSION,
+        ));
+
+        $access = $this->makeAccessWithCurrentAuth(currentAuthentication: $currentAuth);
+
+        $access->requireResourceOwner(ownerUserId: $ownerId);
+        self::expectNotToPerformAssertions();
+    }
+
+    #[Test]
+    public function requireResourceOwnerDeniesNonOwner(): void
+    {
+        $ownerId = 42;
+        $currentAuth = new CurrentAuthentication();
+        $currentAuth->store(AuthenticationContext::authenticated(
+            authenticatedUser: new AuthenticatedUser(
+                id: 99,
+                email: 'other@example.com',
+                username: 'nottheowner',
+            ),
+            authenticationMode: AuthenticationMode::SESSION,
+        ));
+
+        $access = $this->makeAccessWithCurrentAuth(currentAuthentication: $currentAuth);
+
+        $this->expectException(ResourceOwnerDenied::class);
+        $access->requireResourceOwner(ownerUserId: $ownerId);
     }
 
     #[Test]
@@ -213,36 +363,47 @@ final class AccessCharacterizationTest extends TestCase
         }
     }
 
-    private function makeAccess(bool $allowsResult, ?BeginAdminElevation $beginAdminElevation = null): Access
+    private function makeAccessWithCurrentAuth(CurrentAuthentication $currentAuthentication, bool $allowsResult = false, ?BeginAdminElevation $beginAdminElevation = null): Access
     {
         $engine = new AuthorizationEngine(
             permissions: $allowsResult ? ['*'] : [],
             defaultAllow: $allowsResult,
         );
         $begin = $beginAdminElevation ?? new BeginAdminElevation(store: new AdminElevationStore());
-        $currentAuth = new \Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication();
         $requireResourceOwner = new \Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\RequireResourceOwner(
-            currentAuthentication: $currentAuth,
+            currentAuthentication: $currentAuthentication,
         );
         $requireAccessPolicy = new \Avax\Components\Identity\Access\System\Capabilities\RequireAccessPolicy\RequireAccessPolicy(
-            requireAuthentication: new \Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\RequireAuthentication(currentAuthentication: $currentAuth),
-            requireRole: new \Avax\Components\Identity\Access\System\Capabilities\RequireRole\RequireRole(currentAuthentication: $currentAuth),
-            requirePermission: new \Avax\Components\Identity\Access\System\Capabilities\RequirePermission\RequirePermission(currentAuthentication: $currentAuth),
+            requireAuthentication: new \Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\RequireAuthentication(currentAuthentication: $currentAuthentication),
+            requireRole: new \Avax\Components\Identity\Access\System\Capabilities\RequireRole\RequireRole(currentAuthentication: $currentAuthentication),
+            requirePermission: new \Avax\Components\Identity\Access\System\Capabilities\RequirePermission\RequirePermission(currentAuthentication: $currentAuthentication),
             requireResourceOwner: $requireResourceOwner,
-            requirePhishingResistantAuthentication: new \Avax\Components\Identity\Access\System\Capabilities\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication(currentAuthentication: $currentAuth),
-            requireFreshMfa: new \Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\StepUp\RequireFreshMfa(currentAuthentication: $currentAuth, clock: new \Avax\Components\Identity\Auth\System\Foundation\Clock()),
-            requireAdminElevation: new \Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime\RequireAdminElevation\RequireAdminElevation(currentAuthentication: $currentAuth, adminElevationStore: new \Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\InMemoryAdminElevationStore(), clock: new \Avax\Components\Identity\Auth\System\Foundation\Clock()),
+            requirePhishingResistantAuthentication: new \Avax\Components\Identity\Access\System\Capabilities\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication(currentAuthentication: $currentAuthentication),
+            requireFreshMfa: new \Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\StepUp\RequireFreshMfa(currentAuthentication: $currentAuthentication, clock: new \Avax\Components\Identity\Auth\System\Foundation\Clock()),
+            requireAdminElevation: new \Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime\RequireAdminElevation\RequireAdminElevation(currentAuthentication: $currentAuthentication, adminElevationStore: new \Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\InMemoryAdminElevationStore(), clock: new \Avax\Components\Identity\Auth\System\Foundation\Clock()),
         );
         return new Access(
             runtime: new AccessRuntime(
-                authorizationEngine: $engine,
-                beginAdminElevation: $begin,
-                endAdminElevation: new EndAdminElevation(
+                authentication: new \Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\RequireAuthentication(currentAuthentication: $currentAuthentication),
+                roles: new \Avax\Components\Identity\Access\System\Capabilities\RequireRole\RequireRole(currentAuthentication: $currentAuthentication),
+                permissions: new \Avax\Components\Identity\Access\System\Capabilities\RequirePermission\RequirePermission(currentAuthentication: $currentAuthentication),
+                authorization: $engine,
+                ownership: $requireResourceOwner,
+                policies: $requireAccessPolicy,
+                elevation: $begin,
+                endElevation: new EndAdminElevation(
                     beginAdminElevation: $begin,
                 ),
-                requireAccessPolicy: $requireAccessPolicy,
-                requireResourceOwner: $requireResourceOwner,
             ),
+        );
+    }
+
+    private function makeAccess(bool $allowsResult, ?BeginAdminElevation $beginAdminElevation = null): Access
+    {
+        return $this->makeAccessWithCurrentAuth(
+            currentAuthentication: new CurrentAuthentication(),
+            allowsResult: $allowsResult,
+            beginAdminElevation: $beginAdminElevation,
         );
     }
 }

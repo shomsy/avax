@@ -7,7 +7,10 @@ namespace Avax\Components\Identity\Access\System\Capabilities\AccessRuntime;
 use Avax\Components\Identity\Access\System\Capabilities\Authorization\AuthorizationEngine;
 use Avax\Components\Identity\Access\System\Capabilities\Policy\AccessPolicy;
 use Avax\Components\Identity\Access\System\Capabilities\RequireAccessPolicy\RequireAccessPolicy;
+use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\RequireAuthentication;
+use Avax\Components\Identity\Access\System\Capabilities\RequirePermission\RequirePermission;
 use Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\RequireResourceOwner;
+use Avax\Components\Identity\Access\System\Capabilities\RequireRole\RequireRole;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\BeginAdminElevation;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\EndAdminElevation;
 use Avax\Components\Identity\Access\System\Foundation\Exception\PermissionDenied;
@@ -16,17 +19,29 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\User\UserRole;
 use SensitiveParameter;
 
 /**
- * AccessRuntime owns executable Access public-surface behavior.
+ * AccessRuntime — fluent enforcement of access control boundaries.
+ *
+ * Reads like a fluent API unit:
+ *   $this->authentication->requireUser()
+ *   $this->roles->require($role)
+ *   $this->permissions->require($permission)
+ *   $this->authorization->allows($permission, $resource)
+ *   $this->policies->require($policy)
+ *   $this->ownership->requireOwner($userId)
+ *   $this->elevation->begin()
  */
 final readonly class AccessRuntime
 {
     public function __construct(
-        private AuthorizationEngine  $authorizationEngine,
-        private BeginAdminElevation  $beginAdminElevation,
-        private EndAdminElevation    $endAdminElevation,
         #[SensitiveParameter]
-        private RequireAccessPolicy  $requireAccessPolicy,
-        private RequireResourceOwner $requireResourceOwner,
+        private RequireAuthentication  $authentication,
+        private RequireRole            $roles,
+        private RequirePermission      $permissions,
+        private AuthorizationEngine    $authorization,
+        private RequireResourceOwner   $ownership,
+        private RequireAccessPolicy    $policies,
+        private BeginAdminElevation    $elevation,
+        private EndAdminElevation      $endElevation,
     ) {}
 
     /**
@@ -50,34 +65,48 @@ final readonly class AccessRuntime
             return true;
         }
 
-        return $this->authorizationEngine->check(permission: $permission, resource: $resource);
+        return $this->authorization->check(permission: $permission, resource: $resource);
     }
 
     public function isElevated() : bool
     {
-        return $this->beginAdminElevation->isActive();
+        return $this->elevation->isActive();
     }
 
     public function beginElevation() : void
     {
-        $this->beginAdminElevation->execute();
+        $this->elevation->execute();
     }
 
     public function endElevation() : void
     {
-        $this->endAdminElevation->execute();
+        $this->endElevation->execute();
     }
 
+    /**
+     * @throws \Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated
+     */
     public function requireAuthentication() : void
     {
+        $this->authentication->execute();
     }
 
+    /**
+     * @throws \Avax\Components\Identity\Access\System\Capabilities\RequireRole\RoleDenied
+     * @throws \Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated
+     */
     public function requireRole(UserRole $userRole) : void
     {
+        $this->roles->execute(userRole: $userRole);
     }
 
+    /**
+     * @throws PermissionDenied
+     * @throws \Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\Unauthenticated
+     */
     public function requirePermission(UserPermission $userPermission) : void
     {
+        $this->permissions->execute(userPermission: $userPermission);
     }
 
     /**
@@ -88,7 +117,7 @@ final readonly class AccessRuntime
      */
     public function requirePolicy(AccessPolicy $accessPolicy) : void
     {
-        $this->requireAccessPolicy->execute(accessPolicy: $accessPolicy);
+        $this->policies->execute(accessPolicy: $accessPolicy);
     }
 
     /**
@@ -97,6 +126,6 @@ final readonly class AccessRuntime
      */
     public function requireResourceOwner(int $ownerUserId) : void
     {
-        $this->requireResourceOwner->execute(ownerUserId: $ownerUserId);
+        $this->ownership->execute(ownerUserId: $ownerUserId);
     }
 }

@@ -20,10 +20,10 @@ final class InMemoryLoginRateLimitStorage implements LoginRateLimitStorageInterf
         return $this->attempts[$identifier] ?? 0;
     }
 
-    public function increment(string $identifier) : void
+    public function increment(string $identifier, int $recordedAt) : void
     {
         $this->attempts[$identifier]         = ($this->attempts[$identifier] ?? 0) + 1;
-        $this->lastAttemptTimes[$identifier] = time();
+        $this->lastAttemptTimes[$identifier] = $recordedAt;
     }
 
     public function reset(string $identifier) : void

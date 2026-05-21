@@ -13,7 +13,7 @@ interface LoginRateLimitStorageInterface
 {
     public function get(string $identifier) : int;
 
-    public function increment(string $identifier) : void;
+    public function increment(string $identifier, int $recordedAt) : void;
 
     public function reset(string $identifier) : void;
 

@@ -72,6 +72,9 @@ final readonly class LoginRateLimit
     public function recordFailed(string $identifier) : void
     {
         $identifier = $this->normalizeIdentifier(identifier: $identifier);
-        $this->loginRateLimitStorage->increment(identifier: $identifier);
+        $this->loginRateLimitStorage->increment(
+            identifier: $identifier,
+            recordedAt: $this->clock->now()->getTimestamp(),
+        );
     }
 }

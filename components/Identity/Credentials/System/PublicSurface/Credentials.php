@@ -4,67 +4,48 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Credentials\System\PublicSurface;
 
-use Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\CredentialStoreInterface;
-use Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\InMemoryCredentialStore;
-use Avax\Components\Identity\Credentials\System\PublicSurface\Mfa;
-use Avax\Components\Identity\Credentials\System\PublicSurface\Passkey;
+use Avax\Components\Identity\Credentials\System\Capabilities\CredentialsRuntime\CredentialsRuntime;
 
 /**
  * Credentials — manages user credential data.
- *
- * @deprecated Inject CredentialStoreInterface directly instead of using this static facade.
- *             Use CredentialsGraph for assembly. This class remains for backward compatibility
- *             but the static store state is no longer owned directly by this class.
  */
-final class Credentials
+final readonly class Credentials
 {
-    private static ?CredentialStoreInterface $store = null;
-
-    /**
-     * Replace the backing store (for DI integration).
-     */
-    public static function setStore(CredentialStoreInterface $store) : void
-    {
-        self::$store = $store;
-    }
+    public function __construct(
+        private CredentialsRuntime $runtime,
+    ) {}
 
     /**
      * @param array<string, mixed> $credentials
      */
-    public static function store(string $userId, array $credentials) : void
+    public function store(string $userId, array $credentials) : void
     {
-        self::resolveStore()->store($userId, $credentials);
+        $this->runtime->store(
+            userId     : $userId,
+            credentials: $credentials,
+        );
     }
 
     /**
      * @return array<string, mixed>|null
      */
-    public static function read(string $userId) : array|null
+    public function read(string $userId) : array|null
     {
-        return self::resolveStore()->read($userId);
+        return $this->runtime->read(userId: $userId);
     }
 
-    public static function forget(string $userId) : void
+    public function forget(string $userId) : void
     {
-        self::resolveStore()->forget($userId);
+        $this->runtime->forget(userId: $userId);
     }
 
-    public static function mfa() : Mfa
+    public function mfa() : Mfa
     {
-        return new Mfa();
+        return $this->runtime->mfa();
     }
 
-    public static function passkeys() : Passkey
+    public function passkeys() : Passkey
     {
-        return new Passkey();
-    }
-
-    private static function resolveStore() : CredentialStoreInterface
-    {
-        if (self::$store === null) {
-            self::$store = new InMemoryCredentialStore();
-        }
-
-        return self::$store;
+        return $this->runtime->passkeys();
     }
 }

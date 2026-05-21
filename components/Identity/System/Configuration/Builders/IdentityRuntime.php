@@ -13,7 +13,8 @@ use Avax\Components\Identity\Access\System\PublicSurface\Access;
 use Avax\Components\Identity\Auth\System\Capabilities\AuthenticationRuntime\AuthenticationRuntime;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity as AuthIdentity;
 use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
-use Avax\Components\Identity\Credentials\System\PublicSurface\Credentials;
+use Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\InMemoryCredentialStore;
+use Avax\Components\Identity\Credentials\System\Configuration\Assembly\CredentialsGraph;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\ExternalIdentityLink\InMemoryExternalIdentityLinkStore;
 use Avax\Components\Identity\ExternalIdentity\System\Configuration\Assembly\ExternalIdentityGraph;
 use Avax\Components\Identity\Risk\System\PublicSurface\Risk;
@@ -54,7 +55,9 @@ final readonly class IdentityRuntime
                                       ),
                                   ),
                               ),
-            credentials     : new Credentials(),
+            credentials     : CredentialsGraph::fromStore(
+                store: new InMemoryCredentialStore(),
+            ),
             tokens          : TokensGraph::hmac(secret: 'test'),
             tenancy         : new Tenancy(),
             risk            : new Risk(),

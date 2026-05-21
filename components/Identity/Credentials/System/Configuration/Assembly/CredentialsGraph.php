@@ -5,18 +5,24 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Credentials\System\Configuration\Assembly;
 
 use Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\CredentialStoreInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\CredentialsRuntime\CredentialsRuntime;
 use Avax\Components\Identity\Credentials\System\PublicSurface\Credentials;
+use Avax\Components\Identity\Credentials\System\PublicSurface\Mfa;
+use Avax\Components\Identity\Credentials\System\PublicSurface\Passkey;
 
 /**
- * Configures the Credentials static facade with a backing store.
- *
- * @deprecated Inject CredentialStoreInterface directly instead.
- *             This class remains for backward-compatible assembly.
+ * Assembles the Credentials public surface from explicit runtime dependencies.
  */
 final class CredentialsGraph
 {
-    public static function fromStore(CredentialStoreInterface $store) : void
+    public static function fromStore(CredentialStoreInterface $store) : Credentials
     {
-        Credentials::setStore($store);
+        return new Credentials(
+            runtime: new CredentialsRuntime(
+                credentialStore: $store,
+                mfa            : new Mfa(),
+                passkey        : new Passkey(),
+            ),
+        );
     }
 }

@@ -21,6 +21,6 @@ final class CredentialsServiceProvider implements ServiceProvider
 
     public function boot(ContainerInterface $container) : void
     {
-        // No boot wiring needed — Credentials uses static store
+        // No boot wiring needed for the current configuration defaults.
     }
 }

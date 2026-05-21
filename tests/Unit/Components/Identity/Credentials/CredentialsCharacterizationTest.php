@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Identity\Credentials;
 
+use Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\InMemoryCredentialStore;
+use Avax\Components\Identity\Credentials\System\Configuration\Assembly\CredentialsGraph;
 use Avax\Components\Identity\Credentials\System\PublicSurface\Credentials;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -12,78 +14,91 @@ final class CredentialsCharacterizationTest extends TestCase
 {
     private const USER_ID = 'user-1';
 
+    private Credentials $credentials;
+
     #[Override]
-    protected function tearDown(): void
+    protected function setUp(): void
     {
-        Credentials::forget(self::USER_ID);
-        Credentials::forget('other-user');
+        $this->credentials = $this->credentials();
     }
 
     #[Test]
     public function storeAndReadRoundTrip(): void
     {
         $data = ['password_hash' => 'abc123', 'method' => 'bcrypt'];
-        Credentials::store(self::USER_ID, $data);
+        $this->credentials->store(self::USER_ID, $data);
 
-        $result = Credentials::read(self::USER_ID);
+        $result = $this->credentials->read(self::USER_ID);
         self::assertSame($data, $result);
     }
 
     #[Test]
     public function readReturnsNullForUnknownUser(): void
     {
-        self::assertNull(Credentials::read('no-such-user'));
+        self::assertNull($this->credentials->read('no-such-user'));
     }
 
     #[Test]
     public function forgetRemovesStoredCredentials(): void
     {
-        Credentials::store(self::USER_ID, ['key' => 'value']);
-        Credentials::forget(self::USER_ID);
+        $this->credentials->store(self::USER_ID, ['key' => 'value']);
+        $this->credentials->forget(self::USER_ID);
 
-        self::assertNull(Credentials::read(self::USER_ID));
+        self::assertNull($this->credentials->read(self::USER_ID));
     }
 
     #[Test]
     public function storeOverwritesExistingEntry(): void
     {
-        Credentials::store(self::USER_ID, ['old' => 'data']);
-        Credentials::store(self::USER_ID, ['new' => 'data']);
+        $this->credentials->store(self::USER_ID, ['old' => 'data']);
+        $this->credentials->store(self::USER_ID, ['new' => 'data']);
 
-        self::assertSame(['new' => 'data'], Credentials::read(self::USER_ID));
+        self::assertSame(['new' => 'data'], $this->credentials->read(self::USER_ID));
     }
 
     #[Test]
     public function multipleUsersDoNotInterfere(): void
     {
-        Credentials::store(self::USER_ID, ['a' => 1]);
-        Credentials::store('other-user', ['b' => 2]);
+        $this->credentials->store(self::USER_ID, ['a' => 1]);
+        $this->credentials->store('other-user', ['b' => 2]);
 
-        self::assertSame(['a' => 1], Credentials::read(self::USER_ID));
-        self::assertSame(['b' => 2], Credentials::read('other-user'));
+        self::assertSame(['a' => 1], $this->credentials->read(self::USER_ID));
+        self::assertSame(['b' => 2], $this->credentials->read('other-user'));
     }
 
     #[Test]
-    public function backwardCompatWithReplaceableStore(): void
+    public function runtimeStoreIsReplaceableAtAssemblyBoundary(): void
     {
-        $customStore = new \Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\InMemoryCredentialStore();
-        Credentials::setStore($customStore);
+        $credentials = $this->credentials();
 
-        Credentials::store(self::USER_ID, ['via' => 'custom']);
-        self::assertSame(['via' => 'custom'], Credentials::read(self::USER_ID));
-        Credentials::forget(self::USER_ID);
-
-        // Reset to default
-        Credentials::setStore(new \Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\InMemoryCredentialStore());
+        $credentials->store(self::USER_ID, ['via' => 'custom']);
+        self::assertSame(['via' => 'custom'], $credentials->read(self::USER_ID));
     }
 
     #[Test]
     public function storeAcceptsArbitraryCredentialArrays(): void
     {
-        Credentials::store(self::USER_ID, ['type' => 'password', 'hash' => 'xyz', 'salt' => 'nacl']);
-        $result = Credentials::read(self::USER_ID);
+        $this->credentials->store(self::USER_ID, ['type' => 'password', 'hash' => 'xyz', 'salt' => 'nacl']);
+        $result = $this->credentials->read(self::USER_ID);
         self::assertNotNull($result);
         self::assertSame('password', $result['type']);
         self::assertSame('xyz', $result['hash']);
+    }
+
+    #[Test]
+    public function separateRuntimesDoNotShareCredentials(): void
+    {
+        $first = $this->credentials();
+        $second = $this->credentials();
+
+        $first->store(self::USER_ID, ['id' => 'first']);
+
+        self::assertSame(['id' => 'first'], $first->read(self::USER_ID));
+        self::assertNull($second->read(self::USER_ID));
+    }
+
+    private function credentials() : Credentials
+    {
+        return CredentialsGraph::fromStore(store: new InMemoryCredentialStore());
     }
 }

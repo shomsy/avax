@@ -2410,3 +2410,431 @@ A stage **MUST** be RED if:
 - PHPStan fails with errors
 - Component violates mandatory design rules
 - Component status is missing for an ACTIVE production component
+
+---
+
+## 30. Object-Oriented Enterprise Architecting Rule
+
+**Status:** MANDATORY
+**Scope:** All AvaX systems, subsystems, components, flows, capabilities, configuration, tests.
+**Severity:** BLOCKER
+
+Source: Object-Oriented Enterprise Architecting principles, translated into AvaX governance.
+
+### 30.1 Object-Oriented Thinking Rule
+
+Object-orientation is modeling real-world and system complexity as interacting objects with clear responsibilities.
+
+Classes must represent meaningful concepts: roles, tasks, information, views, commands, events, aggregates, policies, capabilities, or transformations.
+
+Classes must not exist only because a pattern name is available.
+
+A class named `UserManagerHelper` is suspicious. A class named `CredentialAuthority` is not.
+
+### 30.2 Poor OO Practice Warning
+
+Object-orientation does not protect against poor design.
+
+Poor OO creates:
+
+- tight coupling between units that should be independent
+- fragile handovers between subsystems that lose information
+- expensive change because every change ripples through hidden dependencies
+- systems that become impossible to adapt without rewriting
+
+AvaX review must treat fake OOP as an architectural risk, not a style nit.
+
+Fake OOP indicators:
+
+- god objects with `Manager`/`Service`/`Handler` naming
+- classes that exist only to wrap one method call
+- inheritance used for code reuse, not behavioral contracts
+- objects that know too much about sibling internals
+- anemic domain models with all logic in flows
+
+### 30.3 Pattern as Thinking Tool Rule
+
+Design patterns are tools for thinking and structure, not decorations.
+
+GoF, DDD, CQRS, Event Sourcing, Data Mesh, EventStorming ideas may be used only when they:
+
+- clarify ownership
+- reduce coupling
+- expose real system behavior
+- make handovers explicit
+- protect invariants
+
+Pattern names must not become class-name theater.
+
+`OrderCreatedEvent` is valuable when it represents a real domain event.
+`EventFactoryBuilderProxy` is theater.
+
+### 30.4 Ubiquitous Language Rule
+
+AvaX class, folder, and API names must make sense to both developers and system/domain stakeholders.
+
+Names must support conversation, not just compilation.
+
+If a name only makes sense as framework mechanics, it is suspicious.
+
+Examples of ubiquitous language:
+
+- `CredentialAuthority` — stakeholders understand "credentials" and "authority"
+- `SessionRegistry` — stakeholders understand "sessions" and "registration"
+- `RiskAssessment` — stakeholders understand "risk" and "assessment"
+
+Examples of framework-mechanics-only names:
+
+- `AbstractBaseComponentHandler`
+- `GenericServiceProcessor`
+- `DefaultImplementationManager`
+
+### 30.5 EventStorming Discovery Rule
+
+For complex flows, use EventStorming thinking before writing code:
+
+1. Discover domain/system events first (what happened?)
+2. Derive commands from events (what caused it?)
+3. Identify aggregates/information owners (who owns the data?)
+4. Map handovers (what crosses boundaries?)
+5. Then write code
+
+This is especially required for:
+
+- Identity/Auth redesign
+- Tokens/Sessions redesign
+- Tenancy redesign
+- Risk assessment redesign
+- External Identity integration
+
+EventStorming output must be captured in evidence:
+
+- event list
+- command list
+- aggregate ownership map
+- handover inventory
+
+### 30.6 Slicing Is Architecture Rule
+
+The most important architecture decision is slicing the problem space.
+
+Slice by:
+
+- cohesion (what belongs together?)
+- information ownership (who owns this data?)
+- task/role alignment (who does what?)
+- handover boundaries (what crosses?)
+- deployability potential (can this evolve independently?)
+- runtime independence (can this run without that?)
+- coupling pressure (how hard do these push on each other?)
+
+Bad slicing creates:
+
+- fragile handovers
+- information loss
+- rework
+- accidental coupling
+
+### 30.7 Bounded Context + Context Map Rule
+
+Major subsystems must define:
+
+- bounded context name
+- owned concepts
+- consumed concepts
+- published APIs/events/views
+- collaborators
+- upstream/downstream relationships
+- accepted coupling
+- handovers
+- ownership of information
+
+Context maps are required evidence for major redesigns.
+
+For DDD extension, see `how-to-architecture-extension-with-ddd.md`.
+
+### 30.8 IRTV Modelling Rule
+
+For complex subsystems, model:
+
+- **Information:** what knowledge/data matters?
+- **Roles:** who/what uses it?
+- **Tasks:** what work is performed?
+- **Views:** what interfaces/workspaces/APIs expose it?
+
+IRTV should guide:
+
+- subsystem naming
+- PublicSurface design
+- flow boundaries
+- test boundaries
+- capability extraction
+
+### 30.9 Knowledge Backbone Rule
+
+Important systems need an explicit knowledge backbone:
+
+- key information objects
+- ownership of each
+- transformations applied
+- update flows
+- consumers
+- views that expose it
+
+Do not let core knowledge live accidentally inside services, builders, managers, or configuration wrappers.
+
+Knowledge must be named, owned, and testable.
+
+### 30.10 Handover Risk Rule
+
+Every handover between subsystems or contexts is an architectural risk.
+
+Handover evidence must identify:
+
+- what information crosses the boundary
+- who owns it on each side
+- what can be lost in translation
+- what must be transformed
+- what contract protects it
+- what tests prove it works
+
+Hidden handovers are architecture bugs.
+
+Handover bugs manifest as:
+
+- lost data
+- stale state
+- inconsistent models
+- silent failures
+- integration rework
+
+### 30.11 Views as Loose Coupling Rule
+
+Views are first-class architecture artifacts.
+
+A view may be:
+
+- public API surface
+- workspace for a role
+- query surface
+- command surface
+- transformation boundary
+- event processing boundary
+- communication bridge between contexts
+
+Views must expose consumer-specific knowledge without leaking internal models.
+
+### 30.12 Command/Query Clarity (CQRS Thinking)
+
+Views benefit from command/query separation.
+
+Separate:
+
+- commands that change state
+- queries that read state
+- transformations
+- event processing
+- communication
+
+Do not apply CQRS as ceremony.
+Use it to clarify state change versus knowledge access.
+
+Commands mutate. Queries read.
+Mixed behavior requires explicit result object and evidence.
+
+### 30.13 Data Mesh / Data Product Thinking
+
+When AvaX exposes data across components or contexts, treat it as a product:
+
+- owned by a clear producer
+- documented for consumers
+- stable API
+- consumer-oriented (not producer-convenient)
+- transformed for consumer needs
+- versioned where breaking changes are possible
+
+This is especially relevant for:
+
+- domain events
+- telemetry data
+- identity risk signals
+- policy decisions
+- token/session state
+- generated metadata
+
+### 30.14 Event Sourcing as Option
+
+Event Sourcing is an architectural option for storing changes as event history.
+
+Use when:
+
+- auditability matters
+- state reconstruction is needed
+- time-travel debugging is valuable
+- change history is a business requirement
+
+Do not conflate Event Sourcing with EventStorming.
+EventStorming is a discovery technique.
+Event Sourcing is a persistence strategy.
+
+Do not use Event Sourcing as ceremony.
+
+### 30.15 Enterprise Reality Rule
+
+AvaX architecture must assume real systems contain:
+
+- multiple vendors
+- multiple technical generations
+- external systems outside our control
+- conflicting organizational interests
+- political and business constraints
+- legacy integration requirements
+
+Therefore:
+
+- boundaries must be explicit
+- APIs must be versioned or compatibility-managed
+- events must be documented
+- ports must be defined
+- compatibility layers must exist
+- handover contracts must be testable
+
+Design as if the real world is not clean. Because it is not.
+
+### 30.16 Distributed vs Centralized Tradeoff
+
+Do not assume centralized or distributed architecture is best.
+
+Both have strengths and weaknesses.
+
+Major choices must record:
+
+- distributed option and its tradeoffs
+- centralized option and its tradeoffs
+- hybrid option if relevant
+- strengths, weaknesses, opportunities, threats
+- assumptions
+- evidence
+- tactical feasibility
+
+Use claims-based SWOT where appropriate.
+
+### 30.17 Tactical Detail Before Strategic Bet
+
+High-level diagrams are not enough.
+
+Major architecture decisions require tactical LLD/code-level feasibility proof.
+
+The devil is in the details.
+
+No GREEN strategic decision without tactical evidence.
+
+### 30.18 Transformation / Constructor Mental Model
+
+AvaX components can be understood as repeatable transformation machines:
+
+- input received
+- recipe/rules applied
+- output produced
+- knowledge preserved or updated
+- repeatability guaranteed
+
+This is a mental model only.
+It is not a reason to add `Constructor`/`Factory` naming.
+
+Use it to clarify:
+
+- flows
+- policies
+- compilers
+- metadata graphs
+- runtime plans
+
+### 30.19 Model-to-Code Conversation Rule
+
+Models are not decoration.
+
+If a diagram or model exists, code structure must reflect it.
+
+If code diverges from the model:
+
+- either update the model
+- or fix the code
+
+No stale architecture theater.
+
+### 30.20 Claims-Based Architecture Evidence
+
+For major architectural alternatives, record claims:
+
+- expected benefit
+- risk accepted
+- weakness acknowledged
+- opportunity identified
+- threat monitored
+- assumption documented
+- evidence gathered
+- validation path defined
+
+Architecture decisions must not be opinion-only.
+
+### 30.21 Architectural Quanta
+
+Bounded contexts, views, and capabilities may become independently deployable or independently evolvable units.
+
+Design boundaries should keep that option possible when relevant.
+
+This affects:
+
+- dependency direction
+- deployment packaging
+- API versioning
+- event contract stability
+- test independence
+
+### 30.22 AvaX Translation Rule
+
+All extracted ideas must be translated into AvaX terms:
+
+- PublicSurface receives
+- Flows execute
+- Capabilities power
+- Configuration assembles
+- Foundation supports
+- Context Maps document boundaries
+- Evidence proves claims
+- Governance Review validates
+- Component Dogfooding ensures reuse
+
+Do not import terminology blindly if it conflicts with AvaX language.
+
+### 30.23 GREEN / YELLOW / RED Criteria
+
+GREEN:
+
+- classes represent real concepts, not pattern names
+- ubiquitous language understood by stakeholders
+- handovers documented and tested
+- context maps exist for major subsystems
+- IRTV model applied to complex subsystems
+- knowledge backbone is explicit, not accidental
+- models match code structure
+- tactical evidence supports strategic decisions
+
+YELLOW:
+
+- some framework-mechanics names exist with migration plan
+- handover contracts partially documented
+- context maps exist but are stale
+- knowledge partially hidden in services
+
+RED:
+
+- fake OOP: god objects, wrapper classes, inheritance for reuse
+- pattern theater: classes named after patterns, not concepts
+- hidden handovers: information crosses boundaries without contract
+- no context map for major subsystem
+- models exist but code diverges without explanation
+- strategic decisions without tactical evidence
+- core knowledge accidentally trapped in builders/managers
+

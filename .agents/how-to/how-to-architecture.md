@@ -2236,3 +2236,153 @@ earliest opportunity.
 **Severity:** BLOCKER
 
 ---
+
+## 54. Object-Oriented Enterprise Architecting Rule
+
+**Status:** MANDATORY
+**Scope:** All AvaX architecture decisions, system design, subsystem boundaries, context maps, handovers, and strategic/tactical design.
+**Severity:** BLOCKER
+
+Source: Object-Oriented Enterprise Architecting principles, translated into AvaX governance.
+
+### 54.1 Object-Oriented Thinking at Scale
+
+Architecture is modeling real-world complexity as interacting systems with clear boundaries.
+
+Each subsystem must represent a meaningful domain concept, not a technical category.
+
+Architecture decisions must be justified by real ownership, information boundaries, and handover patterns — not by pattern names.
+
+### 54.2 Slicing Is Architecture
+
+The most important architecture decision is slicing the problem space.
+
+Slice by: cohesion, information ownership, task/role alignment, handover boundaries, deployability potential, runtime independence, coupling pressure.
+
+Bad slicing creates fragile handovers, information loss, rework, and accidental coupling.
+
+### 54.3 Bounded Context + Context Map
+
+Every major subsystem must define a bounded context with:
+
+- owned and consumed concepts
+- published APIs/events/views
+- upstream/downstream relationships
+- handover contracts
+- information ownership
+
+Context maps are required evidence for major redesigns.
+
+### 54.4 IRTV at Architecture Scale
+
+For complex subsystems, architecture must model:
+
+- Information: what knowledge matters?
+- Roles: who/what owns and uses it?
+- Tasks: what transformations occur?
+- Views: what surfaces expose it?
+
+IRTV guides boundary placement, PublicSurface design, and flow decomposition.
+
+### 54.5 Knowledge Backbone
+
+Important subsystems need an explicit knowledge backbone:
+
+- key information objects and their owners
+- transformations and update flows
+- consumers and views
+
+Core knowledge must not live accidentally inside services, builders, or configuration.
+
+### 54.6 Handover Risk at Scale
+
+Every handover between subsystems is an architectural risk.
+
+Handover evidence must identify: what crosses, who owns it, what can be lost, what must be transformed, what contract protects it, what tests prove it.
+
+Hidden handovers are architecture bugs.
+
+### 54.7 Enterprise Reality
+
+AvaX architecture assumes real systems contain multiple vendors, multiple technical generations, external systems, conflicting interests, political constraints, and legacy integration.
+
+Boundaries, APIs, events, ports, compatibility layers, and handover contracts must be explicit.
+
+Design as if the real world is not clean.
+
+### 54.8 Distributed vs Centralized Tradeoff
+
+Do not assume centralized or distributed is best. Record tradeoffs: strengths, weaknesses, opportunities, threats, assumptions, evidence, tactical feasibility.
+
+Use claims-based SWOT for major alternatives.
+
+### 54.9 Tactical Detail Before Strategic Bet
+
+High-level diagrams are not enough. Major architecture decisions require tactical LLD/code-level feasibility proof.
+
+No GREEN strategic decision without tactical evidence.
+
+### 54.10 Views as Loose Coupling
+
+Views are first-class architecture artifacts: public API, workspace, query surface, command surface, transformation boundary, event processing boundary, communication bridge.
+
+Views expose consumer-specific knowledge without leaking internal models.
+
+### 54.11 CQRS Thinking
+
+Separate commands that change state from queries that read state. Do not apply CQRS as ceremony — use it to clarify state change versus knowledge access.
+
+### 54.12 Data Product Thinking
+
+When AvaX exposes data across contexts, treat it as a product: owned, documented, stable, consumer-oriented, transformed for consumer needs, versioned where needed.
+
+### 54.13 Event Sourcing as Option
+
+Use Event Sourcing when auditability, reconstruction, time travel, or change history matters. Do not conflate with EventStorming. Do not use as ceremony.
+
+### 54.14 Model-to-Code Rule
+
+If a model exists, code must reflect it. If code diverges, update the model or fix the code. No stale architecture theater.
+
+### 54.15 Claims-Based Evidence
+
+For major architectural alternatives, record: expected benefit, risk, weakness, opportunity, threat, assumption, evidence, validation path.
+
+Architecture decisions must not be opinion-only.
+
+### 54.16 Architectural Quanta
+
+Bounded contexts, views, and capabilities may become independently deployable units. Design boundaries should keep that option possible.
+
+### 54.17 AvaX Translation
+
+All architectural ideas must be translated into AvaX terms: PublicSurface receives, Flows execute, Capabilities power, Configuration assembles, Foundation supports.
+
+Do not import terminology blindly if it conflicts with AvaX language.
+
+### 54.18 GREEN / YELLOW / RED
+
+GREEN:
+
+- subsystems represent real domain concepts
+- context maps exist for major subsystems
+- handovers documented and tested
+- IRTV applied to complex subsystems
+- knowledge backbone explicit
+- models match code
+- tactical evidence supports strategic decisions
+
+YELLOW:
+
+- partial context maps
+- handover contracts partially documented
+- knowledge partially hidden
+
+RED:
+
+- fake OOP at architecture scale
+- hidden handovers
+- no context map for major subsystem
+- models diverge from code
+- strategic decisions without tactical evidence
+

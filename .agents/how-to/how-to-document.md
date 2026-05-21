@@ -758,3 +758,27 @@ It overrides:
 Follow it **exactly**.
 
 ---
+
+## Object-Oriented Enterprise Architecting Documentation Rule
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+Documentation must serve the object-oriented enterprise architecture philosophy.
+
+See:
+
+- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
+- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
+
+Documentation must:
+
+- **Explain the model, not just the code:** Architecture documentation must describe the domain model, not just the class structure.
+- **Document handovers explicitly:** Every subsystem boundary crossing must be documented as a handover contract.
+- **Maintain context maps:** Major subsystems require context maps showing upstream/downstream relationships.
+- **Use ubiquitous language:** Documentation names must match what stakeholders say, not framework mechanics.
+- **Record claims and evidence:** Architecture decisions must document expected benefits, risks, assumptions, and evidence.
+- **Keep models current:** If code diverges from documented models, documentation must be updated or code must be fixed.
+- **Document IRTV for complex subsystems:** Information, Roles, Tasks, Views must be documented for complex areas.
+
+Documentation that merely restates code without explaining the model is insufficient for enterprise-grade systems.

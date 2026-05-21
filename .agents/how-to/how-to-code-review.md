@@ -1687,3 +1687,33 @@ examples showing non-canonical style
 
 If it can create a security hole, corrupt data, hide a runtime failure, break long-lived workers, or fake correctness,
 it must scream in review.
+
+---
+
+## 26. Object-Oriented Enterprise Architecting Review Rule
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+Code review must evaluate enterprise architecture quality, not just code correctness.
+
+See:
+
+- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
+- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
+
+Review must check:
+
+- **Object-Oriented Thinking:** Do classes represent real concepts (roles, tasks, information, events) or pattern names?
+- **Ubiquitous Language:** Would a domain stakeholder understand the class names?
+- **Pattern Theater:** Are patterns used to clarify ownership and reduce coupling, or as class-name decoration?
+- **Fake OOP:** Are there god objects, wrapper classes, inheritance-for-reuse, or anemic models?
+- **Handover Risk:** Are handovers between subsystems documented, contracted, and tested? Hidden handovers are review blockers.
+- **Knowledge Backbone:** Is core knowledge explicitly named and owned, or accidentally trapped in services/builders?
+- **Model-to-Code:** Does code structure reflect documented models? Divergence without explanation is a RED finding.
+- **IRTV Applied:** For complex subsystems, is IRTV (Information, Roles, Tasks, Views) considered in the design?
+- **Tactical Evidence:** Do strategic architecture claims have tactical code-level proof?
+- **EventStorming Evidence:** For complex flows, is there event/command/aggregate ownership documentation?
+- **Slicing Quality:** Are subsystem boundaries sliced by cohesion and ownership, or by technical categories?
+
+A review cannot be GREEN if any of these are RED without documented YELLOW acceptance.

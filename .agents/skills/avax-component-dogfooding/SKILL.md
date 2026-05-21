@@ -227,3 +227,22 @@ No boundary, no dependency.
 No dogfooding review, no GREEN.
 
 No evidence, no commit.
+
+## Object-Oriented Enterprise Architecting Philosophy
+
+Component dogfooding must serve the object-oriented enterprise architecture philosophy.
+
+See:
+
+- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
+- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
+
+Agents must:
+
+- treat component boundaries as handovers — document what crosses, who owns it, what tests prove the contract
+- apply data product thinking — expose consumer-oriented data, not internal models
+- maintain knowledge backbones — core knowledge must be explicitly named and owned by a component
+- respect bounded contexts — each component owns some concepts, consumes others, publishes through stable APIs
+- use views for loose coupling — expose consumer-specific interfaces, not internal machinery
+
+Dogfooding that creates tighter coupling or leaks internal models across boundaries is a design failure.

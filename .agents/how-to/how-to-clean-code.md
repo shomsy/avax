@@ -1619,7 +1619,27 @@ severity, GREEN status block criteria, and review criteria, see:
 .agents/how-to/how-to-code-review.md — §24 PHPDoc Review Rule
 ```
 
-## 25. Final position
+## 25. Object-Oriented Enterprise Architecting Cross-Reference
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+Clean code must serve the object-oriented enterprise architecture philosophy.
+
+See:
+
+- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
+- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
+
+Clean code principles from OO architecting:
+
+- **Object-Oriented Thinking:** Classes must represent real concepts, not pattern names. `CredentialAuthority` is clean code. `UserManagerHelper` is not.
+- **Ubiquitous Language:** Names must support conversation with stakeholders, not just compilation.
+- **Pattern as Thinking Tool:** Patterns clarify ownership and reduce coupling. They do not decorate class names.
+- **No Fake OOP:** God objects, wrapper classes, and inheritance-for-reuse are clean code violations at enterprise scale.
+- **Model-to-Code:** If a model exists, code must reflect it. Stale models behind clean-looking code are dishonest.
+
+## 26. Final position
 
 If you remember only one sentence from this entire document, remember this:
 

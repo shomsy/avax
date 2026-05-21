@@ -144,3 +144,24 @@ No negative test for security, no commit.
 No regression test for fixed bug, not done.
 
 No contract test for public API, not stable.
+
+## Object-Oriented Enterprise Architecting Philosophy
+
+Tests must prove the object-oriented enterprise architecture philosophy, not just behavior.
+
+See:
+
+- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
+- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
+
+Tests must:
+
+- prove handover contracts work (information crosses boundaries correctly)
+- prove ubiquitous language in public APIs
+- prove knowledge backbone (core objects are named and owned)
+- prove command/query separation where claimed
+- prove views expose consumer-specific data without leaking internals
+- prove model-to-code alignment (structure matches documented models)
+- prove EventStorming output (events, commands, aggregate ownership) for complex flows
+
+Tests that only prove construction without proving architecture quality are TESTS_TOO_SHALLOW_BLOCKER.

@@ -9,10 +9,10 @@ use Avax\Components\Identity\Access\System\Capabilities\AdminElevation\AdminElev
 /**
  * BeginAdminElevation — Flow to initiate temporary admin privilege elevation.
  */
-final class BeginAdminElevation
+final readonly class BeginAdminElevation
 {
     public function __construct(
-        private AdminElevationStore $store = new AdminElevationStore(),
+        private AdminElevationStore $store,
     ) {}
 
     public function execute() : void

@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Avax\Tests\Unit\Components\Identity\Access;
 
+use Avax\Components\Application\Container\System\Foundation\SimpleContainer;
 use Avax\Components\Identity\Access\System\Capabilities\Authorization\AuthorizationEngine;
+use Avax\Components\Identity\Access\System\Capabilities\AdminElevation\AdminElevationStore;
+use Avax\Components\Identity\Access\System\Configuration\AccessServiceProvider;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\BeginAdminElevation;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\EndAdminElevation;
 use Avax\Components\Identity\Access\System\Foundation\Exception\PermissionDenied;
@@ -25,7 +28,7 @@ final class AccessCharacterizationTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        $this->beginAdminElevation = new BeginAdminElevation();
+        $this->beginAdminElevation = new BeginAdminElevation(store: new AdminElevationStore());
         $this->endAdminElevation = new EndAdminElevation(
             beginAdminElevation: $this->beginAdminElevation,
         );
@@ -126,9 +129,9 @@ final class AccessCharacterizationTest extends TestCase
     #[Test]
     public function elevationDoesNotLeakAcrossInstances(): void
     {
-        $beginA = new BeginAdminElevation();
+        $beginA = new BeginAdminElevation(store: new AdminElevationStore());
         $accessA = $this->makeAccess(allowsResult: false, beginAdminElevation: $beginA);
-        $beginB = new BeginAdminElevation();
+        $beginB = new BeginAdminElevation(store: new AdminElevationStore());
         $accessB = $this->makeAccess(allowsResult: false, beginAdminElevation: $beginB);
 
         $beginA->execute();
@@ -140,7 +143,7 @@ final class AccessCharacterizationTest extends TestCase
     #[Test]
     public function elevationLifecycleComplete(): void
     {
-        $begin = new BeginAdminElevation();
+        $begin = new BeginAdminElevation(store: new AdminElevationStore());
         $end = new EndAdminElevation(beginAdminElevation: $begin);
         $access = $this->makeAccess(allowsResult: false, beginAdminElevation: $begin);
 
@@ -154,6 +157,21 @@ final class AccessCharacterizationTest extends TestCase
         $end->execute();
         self::assertFalse($access->isElevated());
         self::assertFalse($access->allows('admin.only'));
+    }
+
+    #[Test]
+    public function providerResolvedAccessSurfacesDoNotShareElevationState(): void
+    {
+        $container = new SimpleContainer();
+        (new AccessServiceProvider())->register($container);
+
+        $firstAccess = $container->get(Access::class);
+        $firstAccess->beginElevation();
+
+        $secondAccess = $container->get(Access::class);
+
+        self::assertTrue($firstAccess->isElevated());
+        self::assertFalse($secondAccess->isElevated());
     }
 
     #[Test]
@@ -200,7 +218,7 @@ final class AccessCharacterizationTest extends TestCase
             permissions: $allowsResult ? ['*'] : [],
             defaultAllow: $allowsResult,
         );
-        $begin = $beginAdminElevation ?? new BeginAdminElevation();
+        $begin = $beginAdminElevation ?? new BeginAdminElevation(store: new AdminElevationStore());
         return new Access(
             authorizationEngine: $engine,
             beginAdminElevation: $begin,

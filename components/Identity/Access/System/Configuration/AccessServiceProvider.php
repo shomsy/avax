@@ -22,28 +22,35 @@ final class AccessServiceProvider implements ServiceProvider
         // Authorization engine — permission checking engine
         $container->singleton(AuthorizationEngine::class, static fn () : AuthorizationEngine => new AuthorizationEngine());
 
-        // Admin elevation store — shared state for elevation flow
-        $container->singleton(AdminElevationStore::class, static fn () : AdminElevationStore => new AdminElevationStore());
+        // Admin elevation state is request/runtime scoped. It must not survive worker requests.
+        $container->scoped(AdminElevationStore::class, static fn () : AdminElevationStore => new AdminElevationStore());
 
         // Admin elevation flows
-        $container->singleton(BeginAdminElevation::class, static fn (ContainerInterface $c) : BeginAdminElevation => new BeginAdminElevation(
+        $container->scoped(BeginAdminElevation::class, static fn (ContainerInterface $c) : BeginAdminElevation => new BeginAdminElevation(
             store: $c->get(AdminElevationStore::class),
         ));
-        $container->singleton(EndAdminElevation::class, static fn (ContainerInterface $c) : EndAdminElevation => new EndAdminElevation(
+        $container->scoped(EndAdminElevation::class, static fn (ContainerInterface $c) : EndAdminElevation => new EndAdminElevation(
             beginAdminElevation: $c->get(BeginAdminElevation::class),
         ));
 
         // Access public surface — combines authorization engine + admin elevation
-        $container->singleton(Access::class, static fn (ContainerInterface $c) : Access => new Access(
-            authorizationEngine: $c->get(AuthorizationEngine::class),
-            beginAdminElevation: $c->get(BeginAdminElevation::class),
-            endAdminElevation  : $c->get(EndAdminElevation::class),
-        ));
+        $container->scoped(Access::class, static function (ContainerInterface $c) : Access {
+            $beginAdminElevation = new BeginAdminElevation(
+                store: $c->get(AdminElevationStore::class),
+            );
+
+            return new Access(
+                authorizationEngine: $c->get(AuthorizationEngine::class),
+                beginAdminElevation: $beginAdminElevation,
+                endAdminElevation  : new EndAdminElevation(
+                    beginAdminElevation: $beginAdminElevation,
+                ),
+            );
+        });
     }
 
     public function boot(ContainerInterface $container) : void
     {
-        // Reset elevation state for worker safety
-        $container->get(BeginAdminElevation::class)->reset();
+        // Admin elevation state is scoped during registration; no boot-time reset is required.
     }
 }

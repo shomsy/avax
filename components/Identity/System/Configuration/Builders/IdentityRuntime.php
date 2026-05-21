@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\System\Configuration\Builders;
 
 use Avax\Components\Identity\Access\System\Capabilities\Authorization\AuthorizationEngine;
+use Avax\Components\Identity\Access\System\Capabilities\AdminElevation\AdminElevationStore;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\BeginAdminElevation;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\EndAdminElevation;
 use Avax\Components\Identity\Access\System\PublicSurface\Access;
@@ -30,7 +31,8 @@ final readonly class IdentityRuntime
 
     public function runtime() : RootIdentityRuntime
     {
-        $beginAdminElevation = new BeginAdminElevation();
+        $adminElevationStore = new AdminElevationStore();
+        $beginAdminElevation = new BeginAdminElevation(store: $adminElevationStore);
 
         return new RootIdentityRuntime(
             auth            : new Auth(

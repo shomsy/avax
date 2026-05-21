@@ -7,6 +7,7 @@ declare(strict_types=1);
  */
 
 use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
+use Avax\Components\Identity\System\PublicSurface\Identity;
 
 if (! function_exists('auth')) {
     /**
@@ -14,6 +15,6 @@ if (! function_exists('auth')) {
      */
     function auth() : Auth
     {
-        return app(Auth::class);
+        return Identity::auth();
     }
 }

@@ -33,6 +33,6 @@ final class ExternalIdentityServiceProvider implements ServiceProvider
 
     public function boot(ContainerInterface $container) : void
     {
-        // No boot wiring needed — ExternalIdentity uses static state
+        // No boot wiring needed for the current capability defaults.
     }
 }

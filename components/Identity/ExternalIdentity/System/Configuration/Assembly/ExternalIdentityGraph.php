@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\ExternalIdentity\System\Configuration\Assembly;
 
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\ExternalIdentityLink\ExternalIdentityLinkStoreInterface;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\ExternalIdentityRuntime\ExternalIdentityRuntime;
 use Avax\Components\Identity\ExternalIdentity\System\PublicSurface\ExternalIdentity;
 
 /**
- * Configures the ExternalIdentity static facade with a backing store.
- *
- * @deprecated Inject ExternalIdentityLinkStoreInterface directly instead.
- *             This class remains for backward-compatible assembly.
+ * Assembles the ExternalIdentity public surface from explicit runtime dependencies.
  */
 final class ExternalIdentityGraph
 {
-    public static function fromStore(ExternalIdentityLinkStoreInterface $store) : void
+    public static function fromStore(ExternalIdentityLinkStoreInterface $store) : ExternalIdentity
     {
-        ExternalIdentity::setLinkStore($store);
+        return new ExternalIdentity(
+            runtime: new ExternalIdentityRuntime(linkStore: $store),
+        );
     }
 }

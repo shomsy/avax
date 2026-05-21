@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Avax\Components\Identity\ExternalIdentity\System\PublicSurface;
+namespace Avax\Components\Identity\ExternalIdentity\System\Capabilities\ExternalIdentityRuntime;
 
-use Avax\Components\Identity\ExternalIdentity\System\Capabilities\ExternalIdentityRuntime\ExternalIdentityRuntime;
+use Avax\Components\Identity\ExternalIdentity\System\Capabilities\ExternalIdentityLink\ExternalIdentityLinkStoreInterface;
 
 /**
- * ExternalIdentity — manages external identity links (OAuth, SSO, etc.).
+ * ExternalIdentityRuntime owns external identity link behavior for one assembled runtime.
  */
-final readonly class ExternalIdentity
+final readonly class ExternalIdentityRuntime
 {
     public function __construct(
-        private ExternalIdentityRuntime $runtime,
+        private ExternalIdentityLinkStoreInterface $linkStore,
     ) {}
 
     /**
@@ -20,7 +20,7 @@ final readonly class ExternalIdentity
      */
     public function link(string $userId, string $provider, array $externalData) : void
     {
-        $this->runtime->link(
+        $this->linkStore->link(
             userId      : $userId,
             provider    : $provider,
             externalData: $externalData,
@@ -32,7 +32,7 @@ final readonly class ExternalIdentity
      */
     public function resolve(string $userId, string $provider) : array|null
     {
-        return $this->runtime->resolve(
+        return $this->linkStore->resolve(
             userId  : $userId,
             provider: $provider,
         );

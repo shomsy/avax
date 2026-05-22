@@ -918,7 +918,7 @@ For how long?
 Cache invalidation **MUST** follow the correctness guidelines defined in:
 
 ```text
-.agents/how-to/how-to-data-systems.md — Section 2.4 Idempotency, Retries, and Cache Invalidation
+.agents/how-to/verification/how-to-data-systems.md — Section 2.4 Idempotency, Retries, and Cache Invalidation
 ```
 
 ### 13.4 Cache Proof
@@ -2118,7 +2118,7 @@ blocking decision. If not triggered, review must say why.
 For security triggers, see:
 
 ```text
-.agents/how-to/how-to-system-security.md §44
+.agents/how-to/verification/how-to-system-security.md §44
 ```
 
 ---

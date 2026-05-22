@@ -68,8 +68,8 @@ Before touching code, read in this order:
 
 1. `AGENTS.md`
 2. `.agents/GOVERNANCE_INDEX.md` if present
-3. `.agents/how-to/how-to-use-ai-assisted-execution.md`
-4. all applicable `.agents/how-to/*.md`
+3. `.agents/how-to/architecture/how-to-use-ai-assisted-execution.md`
+4. all applicable `.agents/how-to/**/*.md`
 5. `fix-this.md`
 6. assigned TODO section from `fix-this.md`
 7. `.agents/management/evidence/generated/review-reconciliation/source-inventory.md`

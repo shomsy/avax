@@ -21,9 +21,9 @@ Use this skill when the user asks for:
 
 - `AGENTS.md`
 - `.agents/GOVERNANCE_INDEX.md`
-- `.agents/how-to/how-to-architecture.md`
-- `.agents/how-to/how-to-design-components.md`
-- `.agents/how-to/how-to-code-review.md`
+- `.agents/how-to/architecture/how-to-architecture.md`
+- `.agents/how-to/components/how-to-design-components.md`
+- `.agents/how-to/verification/how-to-code-review.md`
 - `.agents/GOVERNANCE_ENFORCEMENT_MAP.md`
 - `CURRENT_TRUTH.md`
 

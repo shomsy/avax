@@ -1474,8 +1474,8 @@ PHPDoc is part of clean code. For the full semantic PHPDoc rule including class,
 severity, GREEN status block criteria, and review criteria, see:
 
 ```text
-.agents/how-to/how-to-document.md — Semantic PHPDoc Rule
-.agents/how-to/how-to-code-review.md — §24 PHPDoc Review Rule
+.agents/how-to/documentation/how-to-document.md — Semantic PHPDoc Rule
+.agents/how-to/verification/how-to-code-review.md — §24 PHPDoc Review Rule
 ```
 
 ## 25. Final position

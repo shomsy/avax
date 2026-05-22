@@ -22,9 +22,9 @@ Use this skill when the user asks for:
 
 - `AGENTS.md`
 - `.agents/GOVERNANCE_INDEX.md`
-- `.agents/how-to/how-to-design-components.md`
-- `.agents/how-to/how-to-architecture-extension-with-ddd.md`
-- `.agents/how-to/how-to-use-advanced-architecture-patterns.md`
+- `.agents/how-to/components/how-to-design-components.md`
+- `.agents/how-to/architecture/how-to-architecture-extension-with-ddd.md`
+- `.agents/how-to/architecture/how-to-use-advanced-architecture-patterns.md`
 - `CURRENT_TRUTH.md`
 - `EVIDENCE/EXECUTION.md`
 - relevant recovery reports in `EVIDENCE/recovery-reports/`

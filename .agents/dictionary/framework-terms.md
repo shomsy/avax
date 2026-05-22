@@ -810,7 +810,7 @@ Dictionary of terms related to Separation of Concern governance.
 
 **Forbidden:** "just add a helper function", inline security logic, scattered logging patterns
 
-**Learning:** [how-to-architecture.md — Section 57.6](../.agents/how-to/how-to-architecture.md)
+**Learning:** [how-to-architecture.md — Section 57.6](../.agents/how-to/architecture/how-to-architecture.md)
 
 ---
 
@@ -836,7 +836,7 @@ Dictionary of terms related to Separation of Concern governance.
 
 **Forbidden:** Measuring SoC success only by file count or line count
 
-**Learning:** [how-to-architecture.md — Section 57.9](../.agents/how-to/how-to-architecture.md)
+**Learning:** [how-to-architecture.md — Section 57.9](../.agents/how-to/architecture/how-to-architecture.md)
 
 ---
 
@@ -862,4 +862,4 @@ Dictionary of terms related to Separation of Concern governance.
 
 **Forbidden:** "just wire everything together", god builders, service locator composition
 
-**Learning:** [how-to-architecture.md — Section 57.7](../.agents/how-to/how-to-architecture.md)
+**Learning:** [how-to-architecture.md — Section 57.7](../.agents/how-to/architecture/how-to-architecture.md)

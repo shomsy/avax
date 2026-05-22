@@ -22,7 +22,7 @@ Use this skill when the user asks for:
 
 - `AGENTS.md`
 - `.agents/GOVERNANCE_INDEX.md`
-- `.agents/how-to/how-to-system-security.md`
+- `.agents/how-to/verification/how-to-system-security.md`
 - `CURRENT_TRUTH.md`
 
 ## Rules

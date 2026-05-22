@@ -844,8 +844,8 @@ For the complete Container Ownership Rule, including:
 See:
 
 ```text
-.agents/how-to/how-to-dependency-injection.md — Section 6: Container Ownership Rule
-.agents/how-to/how-to-runtime-composition.md — Full runtime composition law
+.agents/how-to/implementation/how-to-dependency-injection.md — Section 6: Container Ownership Rule
+.agents/how-to/architecture/how-to-runtime-composition.md — Full runtime composition law
 ```
 
 Key principle for component design:
@@ -869,9 +869,9 @@ For complete builder governance including:
 See:
 
 ```text
-.agents/how-to/how-to-architecture.md — Section 13.3 Builders Rule (canonical builder validity)
-.agents/how-to/how-to-dependency-injection.md — Section 8 Fluent DSL Design Principles
-.agents/how-to/how-to-dependency-injection.md — Section 6.8 Builder Placement Rule
+.agents/how-to/architecture/how-to-architecture.md — Section 13.3 Builders Rule (canonical builder validity)
+.agents/how-to/implementation/how-to-dependency-injection.md — Section 8 Fluent DSL Design Principles
+.agents/how-to/implementation/how-to-dependency-injection.md — Section 6.8 Builder Placement Rule
 ```
 
 ---

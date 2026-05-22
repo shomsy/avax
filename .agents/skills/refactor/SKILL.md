@@ -20,9 +20,9 @@ Use this skill when the user asks for:
 
 - `AGENTS.md`
 - `.agents/GOVERNANCE_INDEX.md`
-- `.agents/how-to/how-to-design-components.md`
-- `.agents/how-to/how-to-architecture.md`
-- `.agents/how-to/how-to-clean-code.md`
+- `.agents/how-to/components/how-to-design-components.md`
+- `.agents/how-to/architecture/how-to-architecture.md`
+- `.agents/how-to/implementation/how-to-clean-code.md`
 - `CURRENT_TRUTH.md`
 
 ## Rules

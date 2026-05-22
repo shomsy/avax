@@ -389,8 +389,8 @@ For the full semantic PHPDoc governance including class PHPDoc, method PHPDoc, t
 review criteria, gate rules, and phased adoption, see:
 
 ```text
-.agents/how-to/how-to-document.md — Semantic PHPDoc Rule
-.agents/how-to/how-to-code-review.md — §24 PHPDoc Review Rule
+.agents/how-to/documentation/how-to-document.md — Semantic PHPDoc Rule
+.agents/how-to/verification/how-to-code-review.md — §24 PHPDoc Review Rule
 ```
 
 ### Summary

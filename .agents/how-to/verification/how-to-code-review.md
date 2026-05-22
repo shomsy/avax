@@ -1489,13 +1489,13 @@ accepted risk without proof
 Security review MUST be triggered by changes to areas listed in:
 
 ```text
-.agents/how-to/how-to-system-security.md §44
+.agents/how-to/verification/how-to-system-security.md §44
 ```
 
 Performance review MUST be triggered by changes to areas listed in:
 
 ```text
-.agents/how-to/how-to-system-performance.md §44
+.agents/how-to/verification/how-to-system-performance.md §44
 ```
 
 If triggered, the review evidence MUST include the compliance matrix sections for security and performance. If not
@@ -1549,7 +1549,7 @@ An exception without owner and expiry is not an exception. It is unresolved gove
 For the full exception format, see:
 
 ```text
-.agents/how-to/how-to-production-readiness.md §8
+.agents/how-to/verification/how-to-production-readiness.md §8
 ```
 
 ## 24. PHPDoc Review Rule
@@ -1592,7 +1592,7 @@ For full PHPDoc rules including class, method, tag, flow/action documentation, g
 GREEN status rule, see:
 
 ```text
-.agents/how-to/how-to-document.md — Semantic PHPDoc Rule
+.agents/how-to/documentation/how-to-document.md — Semantic PHPDoc Rule
 ```
 
 ---
@@ -1733,8 +1733,8 @@ A review cannot be GREEN if SoC is RED.
 For full SoC governance, see:
 
 ```text
-.agents/how-to/how-to-architecture.md — Section 57
-.agents/how-to/how-to-design-components.md — Section 30 (SoC)
+.agents/how-to/architecture/how-to-architecture.md — Section 57
+.agents/how-to/components/how-to-design-components.md — Section 30 (SoC)
 ```
 
 ---
@@ -1771,7 +1771,7 @@ Every review of a non-trivial architecture or design change **MUST** verify that
 
 ### 28.1 Review Checks
 
-1. **ADR Presence:** If the change involves a new technology choice, a new component boundary, a new integration, a new persistence strategy, or a significant structural refactor, an ADR (Architecture Decision Record) **MUST** exist per `.agents/how-to/how-to-architecture-decisions.md`.
+1. **ADR Presence:** If the change involves a new technology choice, a new component boundary, a new integration, a new persistence strategy, or a significant structural refactor, an ADR (Architecture Decision Record) **MUST** exist per `.agents/how-to/architecture/how-to-architecture-decisions.md`.
 2. **Trade-Off Matrix:** The reviewer **MUST** verify that the ADR or design evidence contains a trade-off analysis with at least two alternatives evaluated against named quality attributes (e.g., performance, maintainability, security, coupling, operational cost).
 3. **Fitness Function Gate:** If the ADR defines fitness functions, the reviewer **MUST** verify that corresponding automated tests or static analysis gates exist and are GREEN.
 
@@ -1788,7 +1788,7 @@ Every review of a non-trivial architecture or design change **MUST** verify that
 **Status:** MANDATORY  
 **Severity:** BLOCKER  
 
-Every review of a change touching data persistence, caching, transactions, or external data stores **MUST** verify correctness controls defined in `.agents/how-to/how-to-data-systems.md`.
+Every review of a change touching data persistence, caching, transactions, or external data stores **MUST** verify correctness controls defined in `.agents/how-to/verification/how-to-data-systems.md`.
 
 ### 29.1 Review Checks
 

@@ -2542,8 +2542,8 @@ Every mandatory validation gate or architecture test MUST have at least one nega
 rule is violated. See:
 
 ```text
-.agents/how-to/how-to-code-review.md §14.2
-.agents/how-to/how-to-production-readiness.md §16
+.agents/how-to/verification/how-to-code-review.md §14.2
+.agents/how-to/verification/how-to-production-readiness.md §16
 ```
 
 A gate that cannot fail is not a gate.
@@ -2806,7 +2806,7 @@ Every Flow Slice **MUST** have at least one sociable behavior test verifying the
 
 ### 92.2 Data Correctness Proof Rule
 
-Every repository or data system capability **MUST** have tests verifying correctness under failure scenarios defined in `.agents/how-to/how-to-data-systems.md`:
+Every repository or data system capability **MUST** have tests verifying correctness under failure scenarios defined in `.agents/how-to/verification/how-to-data-systems.md`:
 1. **Transaction Rollback:** A test **MUST** simulate a failure halfway through a multi-query write transaction and assert that no partial data is written to the database.
 2. **Idempotency Protection:** A test **MUST** execute the same write request twice with the same idempotency key and assert that the second request returns the cached result without executing a second database insert/update.
 3. **Cache Invalidation:** A test **MUST** verify that cache values are deleted or refreshed following a transaction commit on the System of Record.

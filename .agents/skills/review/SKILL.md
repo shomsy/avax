@@ -18,8 +18,8 @@ Use this skill when the user asks for:
 
 - `AGENTS.md`
 - `.agents/GOVERNANCE_INDEX.md`
-- `.agents/how-to/how-to-code-review.md`
-- All `.agents/how-to/how-to-*.md` documents
+- `.agents/how-to/verification/how-to-code-review.md`
+- All `.agents/how-to/**/how-to-*.md` documents
 - `CURRENT_TRUTH.md`
 
 ## Required Inventory

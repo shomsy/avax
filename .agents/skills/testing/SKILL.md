@@ -19,7 +19,7 @@ Use this skill when the user asks for:
 
 - `AGENTS.md`
 - `.agents/GOVERNANCE_INDEX.md`
-- `.agents/how-to/how-to-unit-test.md`
+- `.agents/how-to/verification/how-to-unit-test.md`
 - `CURRENT_TRUTH.md`
 
 ## Test Structure

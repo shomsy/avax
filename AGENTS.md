@@ -1247,7 +1247,7 @@ Security-sensitive work must use:
 
 ```text
 avax-security-threat-model
-.agents/how-to/how-to-system-security.md
+.agents/how-to/verification/how-to-system-security.md
 ```
 
 Security-sensitive areas include:
@@ -1334,7 +1334,7 @@ Every test-related task must use:
 
 ```text
 avax-test-evidence-quality
-.agents/how-to/how-to-unit-test.md
+.agents/how-to/verification/how-to-unit-test.md
 ```
 
 Required proof where relevant:
@@ -1396,7 +1396,7 @@ Failure mode unclear for a critical path is a blocker.
 Documentation must follow:
 
 ```text
-.agents/how-to/how-to-document.md
+.agents/how-to/documentation/how-to-document.md
 ```
 
 Documentation must explain:
@@ -1555,8 +1555,8 @@ Evidence must describe what was proven and what remains unproven.
 Any code review must apply:
 
 ```text
-.agents/how-to/how-to-code-review.md
-all task-relevant .agents/how-to/how-to-*.md
+.agents/how-to/verification/how-to-code-review.md
+all task-relevant .agents/how-to/**/how-to-*.md
 all task-relevant skills
 ```
 

@@ -232,7 +232,7 @@ Production readiness requires all of these to be green.
 For the detailed recursive review protocol and required checks, see:
 
 ```text
-.agents/how-to/how-to-code-review.md
+.agents/how-to/verification/how-to-code-review.md
 ```
 
 **Short version:**
@@ -1385,13 +1385,13 @@ Quality ratchet evidence must include:
 Security review MUST be triggered by changes to areas listed in:
 
 ```text
-.agents/how-to/how-to-system-security.md §44
+.agents/how-to/verification/how-to-system-security.md §44
 ```
 
 Performance review MUST be triggered by changes to areas listed in:
 
 ```text
-.agents/how-to/how-to-system-performance.md §44
+.agents/how-to/verification/how-to-system-performance.md §44
 ```
 
 If triggered, review evidence must include the compliance table. If not triggered, review must say why.
@@ -1506,7 +1506,7 @@ Mandatory PHPDoc does not allow decorative PHPDoc. A required docblock that mere
 ### Cross-Reference
 
 ```text
-.agents/how-to/how-to-document.md — Semantic PHPDoc Rule
+.agents/how-to/documentation/how-to-document.md — Semantic PHPDoc Rule
 ```
 
 ---
@@ -1745,7 +1745,7 @@ A system with 8000 passing tests but all at one pyramid layer is not production-
 **Status:** MANDATORY  
 **Severity:** BLOCKER  
 
-Before shipping any component or flow to production, the data system correctness controls defined in `.agents/how-to/how-to-data-systems.md` **MUST** be verified.
+Before shipping any component or flow to production, the data system correctness controls defined in `.agents/how-to/verification/how-to-data-systems.md` **MUST** be verified.
 
 ### 27.2.1 Verification Checklist
 

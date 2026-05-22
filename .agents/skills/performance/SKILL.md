@@ -19,7 +19,7 @@ Use this skill when the user asks for:
 
 - `AGENTS.md`
 - `.agents/GOVERNANCE_INDEX.md`
-- `.agents/how-to/how-to-system-performance.md`
+- `.agents/how-to/verification/how-to-system-performance.md`
 - `CURRENT_TRUTH.md`
 
 ## Rules

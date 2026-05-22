@@ -751,13 +751,31 @@ If these questions cannot be answered clearly, the builder should not exist.
 
 #### 13.3.3 Builder Naming Rule
 
-If a class lives inside an explicit building/assembly context such as `Configuration/Builders`, do not repeat `Build*` in the class name unless it materially improves clarity.
+If a class lives inside an explicit building/assembly context such as `Configuration/Builders`, prefer real subsystem, capability, or product names.
 
-The folder says assembly/building.
-The class says the graph/responsibility.
-The method says the exact action/product.
+Do not default to construction-pattern suffixes (`Graph`, `Builder`, `Factory`, `Assembly`, `Wiring`, `Setup`) unless the suffix materially clarifies a proven structural role.
 
-**Preferred:**
+See §55.10 (Universal Enterprise Codecraft — Naming at Scale) for the authoritative naming law.
+
+The folder says assembly/building context.
+The class says the subsystem or capability being assembled.
+The method says the exact action or product.
+
+**Preferred — real subsystem/capability/product names:**
+
+* `TokenAuthentication`
+* `PasswordAuthentication`
+* `ExternalIdentity`
+* `AuthorizationPolicy`
+* `RuntimeKernel`
+* `RouteTable`
+
+**Acceptable — only with construction evidence (see §13.3.2):**
+
+* `BuildTokenAuthentication` — only when build-intent is the semantically meaningful story
+* `BuildPasswordAuthentication` — only when build-intent is the semantically meaningful story
+
+**Avoid by default — construction-pattern suffixes without evidence:**
 
 * `TokenAuthenticationGraph`
 * `PasswordAuthenticationGraph`
@@ -765,16 +783,6 @@ The method says the exact action/product.
 * `AuthorizationPolicyGraph`
 * `RuntimeKernelGraph`
 * `RouteTableGraph`
-
-**Acceptable:**
-
-* `TokenAuthentication`
-* `PasswordAuthentication`
-
-**Avoid:**
-
-* `BuildTokenAuthentication`
-* `BuildPasswordAuthentication`
 
 **Forbidden:**
 
@@ -822,6 +830,10 @@ For complete builder governance, see:
 * `how-to-dependency-injection.md` — Section 4.8 ServiceProvider Builder Delegation
 * `how-to-dependency-injection.md` — Section 6.8 Builder Placement Rule
 * `how-to-design-components.md` — Section 6.5.1 Configuration/Builders Rule
+* `how-to-architecture.md` — Section 54: Hard Enterprise OOP Boundary Rules
+* `how-to-architecture.md` — Section 55: Universal Enterprise Codecraft Rule (§55.10 Naming at Scale)
+* `how-to-architecture.md` — Section 56: Object-Oriented Enterprise Architecting Rule
+* `how-to-architecture.md` — Section 57: Separation of Concern Rule
 * `avax-enterprise-codecraft` skill — SOLID/Cohesion/Coupling Gate for builder design
 * `avax-component-dogfooding` skill — Component reuse in builders
 * `avax-runtime-performance-cache` skill — Runtime safety for builder assembly

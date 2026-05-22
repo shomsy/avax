@@ -2510,9 +2510,17 @@ Factories own meaningful creation.
 
 Domain events record completed facts.
 
+Old code is evidence.
+
+Current architecture is the target.
+
+Tests are the judge.
+
+Everything must remain readable.
+
 ---
 
-## 55. Object-Oriented Enterprise Architecting Cross-Reference
+## 57. Object-Oriented Enterprise Architecting Cross-Reference
 
 **Status:** MANDATORY
 **Severity:** BLOCKER
@@ -2522,7 +2530,7 @@ DDD and OO Enterprise Architecting are complementary disciplines.
 See:
 
 - `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
-- `how-to-architecture.md` — Section 54: Object-Oriented Enterprise Architecting Rule
+- `how-to-architecture.md` — Section 56: Object-Oriented Enterprise Architecting Rule
 
 ### How DDD and OO Architecting Align
 
@@ -2575,38 +2583,80 @@ AvaX provides the implementation.
 
 ---
 
-## 56. Final Law
+## 58. Governance Cross-Reference Index
 
-Public surface receives.
+**Status:** MANDATORY
+**Severity:** BLOCKER
 
-Flows execute.
+This section is the canonical cross-reference map for all governance rules that apply to DDD, PublicSurface, and architecture extension work.
 
-Capabilities power.
+Agents must read the referenced sections before planning or implementing any task covered by this document.
 
-Configuration assembles.
+### Recursive Subsystem Rule
 
-Foundation supports.
+When a subsystem or capability grows large, decompose it by hidden sub-ownership, not by technical category.
 
-Bounded contexts define where language is valid.
+See:
 
-Aggregates protect invariants.
+- `how-to-architecture.md` — Section 55.7: Recursive Decomposition at Scale
+- `how-to-architecture.md` — Section 6: Fractal Flow Architecture and Recursive Ownership
+- `how-to-architecture.md` — Section 20: Recursive Folder Rule
+- `how-to-unit-test.md` — Section 91.7 (Recursive Subsystem Rule applied to tests)
 
-Entities own identity and lifecycle.
+### Universal Enterprise Codecraft
 
-Value objects protect meaning.
+Naming, structural honesty, no technical theater, no construction-suffix defaults, fluent APIs, subsystem/product names preferred.
 
-Repositories protect aggregate persistence.
+See:
 
-Domain services own exact domain actions.
+- `how-to-architecture.md` — Section 55: Universal Enterprise Codecraft Rule
+- `how-to-architecture.md` — Section 55.10: Naming at Scale
+- `how-to-design-components.md` — Section 30: Universal Enterprise Codecraft Rule
 
-Factories own meaningful creation.
+### Hard Enterprise OOP Boundaries
 
-Domain events record completed facts.
+Horizontal blindness, boundary value objects, command/query clarity, HLD/LLD mirror, single preferred entry.
 
-Old code is evidence.
+See:
 
-Current architecture is the target.
+- `how-to-architecture.md` — Section 54: Hard Enterprise OOP Boundary Rules
+- `how-to-design-components.md` — Section 31: Hard Enterprise OOP Boundary Rules
 
-Tests are the judge.
+### OO Enterprise Architecting
 
-Everything must remain readable.
+EventStorming, IRTV, Wardley Mapping, enterprise reality, domain handover documentation.
+
+See:
+
+- `how-to-architecture.md` — Section 56: Object-Oriented Enterprise Architecting Rule
+- `how-to-design-components.md` — Section 30: Object-Oriented Enterprise Architecting Rule
+
+### Practical Test Pyramid
+
+Unit, integration, contract, and end-to-end test allocation rules; no hollow tests; behavior proof required.
+
+See:
+
+- `how-to-unit-test.md` — Section 91: Practical Test Pyramid Rule
+- `how-to-production-readiness.md` — Section 27.1: Practical Test Pyramid Cross-Reference
+- `how-to-dogfooding.md` — Section 28.2: Practical Test Pyramid Cross-Reference
+
+### Separation of Concern
+
+Every unit has one reason to change. Cross-cutting concerns are explicit capabilities. Composition through clean boundaries.
+
+See:
+
+- `how-to-architecture.md` — Section 57: Separation of Concern Rule
+
+### Technical Dictionary / Ubiquitous Language
+
+Domain vocabulary, term ownership, no technical term when a clearer domain term exists.
+
+See:
+
+- `how-to-architecture-extension-with-ddd.md` — Section 22: What Ubiquitous Language Means Here
+- `how-to-architecture-extension-with-ddd.md` — Section 30: Ubiquitous Language Dictionary
+- `how-to-architecture-extension-with-ddd.md` — Section 31: Required DDD Language Outputs
+
+---

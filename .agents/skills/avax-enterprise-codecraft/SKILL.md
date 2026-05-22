@@ -219,6 +219,84 @@ Forbidden direction:
 - Low-level infrastructure dictating high-level policy
 - Service locator hidden behind convenience APIs
 
+### Balanced Coupling and Complexity Assessment
+
+**Status:** MANDATORY for architecture, refactor, and component-boundary changes.
+
+Every production-code change must also be assessed for balanced coupling:
+
+#### Local vs Global Complexity
+
+```text
+Does this refactoring make the local unit simpler but the whole system harder to understand?
+Does it introduce indirection that obscures the actual call path?
+Would a reader need MORE or LESS system knowledge after this change?
+```
+
+If local simplicity is bought with global confusion, the refactoring failed.
+
+#### Change-Together Smell
+
+```text
+Does this change require simultaneous edits in modules outside the same flow or capability?
+Does git history show these files changing together across PRs?
+Is co-change frequent or rare?
+```
+
+Frequent co-change across boundaries = decomposition problem, not coordination problem.
+
+#### Intrusive Coupling
+
+```text
+Does this unit depend on another unit's implementation details?
+  - Storage layout (table names, column names, index structure)
+  - Private state shape (internal fields, internal value objects)
+  - Private workflow order (internal steps, internal method calls)
+  - Lifecycle internals (boot order, initialization, reset behavior)
+  - Unpublished invariants (internal validation rules, internal constraints)
+```
+
+If renaming an internal class in Module B breaks Module A, the coupling is intrusive → BLOCKER.
+
+#### Integration Knowledge
+
+```text
+What knowledge crosses this boundary — data, types, events, contracts?
+Who owns the knowledge?
+Who depends on it?
+Is the coupling intentional — documented, tested, reviewed?
+```
+
+Undocumented integration knowledge = accidental coupling → HIGH.
+
+#### Decomposition Principle
+
+```text
+Why does this new boundary exist?
+What change axis does it protect?
+What knowledge does it isolate?
+Is the reason behavioral (good) or technical-category-based (bad)?
+```
+
+New boundary without decomposition principle = accidental boundary → HIGH.
+
+#### Physical Distance Check
+
+```text
+Are these modules in different folders/packages/processes but still coupled through implementation details?
+If I moved them into the same file, would the coupling become obviously wrong?
+```
+
+Physical distance masking coupling ≠ decoupling → BLOCKER.
+
+**Classification:**
+
+```text
+BLOCKER: intrusive coupling, circular dependency, physical distance masking knowledge leaks
+HIGH: change-together smell, global complexity increase, undocumented integration knowledge, missing decomposition principle
+YELLOW: tight coupling justified by shared change axis and explicitly documented
+```
+
 ## Hard Enterprise OOP Boundary Gate
 
 Production code must respect enterprise OOP boundaries.

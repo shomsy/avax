@@ -141,6 +141,57 @@ Tests that mirror bad SoC will break on every refactor. Tests that reflect hones
 
 See `how-to-architecture.md` — Section 57.
 
+## Coupling Test Evidence Rule
+
+**Status:** MANDATORY for component-boundary and architecture changes.
+
+Tests must prove coupling claims, not just behavior.
+
+When a change claims to improve coupling, reduce complexity, or establish boundaries, tests must prove it:
+
+### Intrusive Coupling Detection Tests
+
+```text
+Architecture tests MUST prevent forbidden dependency directions.
+Tests MUST verify that components do not depend on each other's internals.
+Tests MUST fail when a component imports another component's internal namespace.
+```
+
+### Change-Together Proof
+
+```text
+If a change spans multiple modules, tests MUST prove each module's independent behavior.
+Tests MUST NOT require unrelated collaborators across module boundaries.
+If a test needs 5+ unrelated mocks, the coupling is suspect.
+```
+
+### Integration Knowledge Contract Tests
+
+```text
+Tests MUST verify that integration knowledge across boundaries is explicit.
+Contract tests MUST exercise the published boundary, not internal implementation.
+Tests MUST prove that changing internal details does not break consumers.
+Tests MUST prove that changing the published contract breaks consumers intentionally.
+```
+
+### Local vs Global Complexity Tests
+
+```text
+Tests MUST NOT become harder to understand after a "simplifying" refactoring.
+If a test now requires knowledge of 3+ new types to arrange, global complexity increased.
+Tests MUST remain readable from the perspective of the unit under test.
+```
+
+### Classification for Coupling Test Evidence
+
+```text
+BEHAVIOR_PROVEN: test proves correct coupling behavior
+INTRUSIVE_COUPLING_DETECTED: test reveals dependency on implementation details → BLOCKER
+CHANGE_TOGETHER_SMELL: test requires unrelated collaborators → HIGH
+CONTRACT_PROVEN: contract test proves boundary stability
+TEST_COMPLEXITY_INCREASED: refactoring made tests harder to understand → HIGH
+```
+
 ## Integration with Other Skills
 
 This skill must be loaded together with:

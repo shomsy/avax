@@ -188,6 +188,39 @@ Before commit, every production-code change must include a component dependency 
 - dogfooding decision
 - accepted exceptions
 
+### Balanced Coupling Check for Component Dependencies
+
+When one component depends on another, the review MUST also assess:
+
+```text
+Intrusive Coupling:
+  Does this component depend on another component's implementation details?
+  Storage layout, private state, internal workflow, lifecycle internals?
+  If the internal class name changed, would this component break?
+
+Integration Knowledge:
+  What knowledge crosses the component boundary?
+  Who owns it? Who consumes it?
+  Is the coupling intentional and documented?
+
+Change-Together Smell:
+  Does adding a feature to this component force changes in other components?
+  Is co-change frequent or rare?
+  If frequent, the boundary may be wrong.
+
+Physical Distance Check:
+  Are these components in different areas but coupled through internals?
+  Is folder separation masking knowledge leaks?
+```
+
+**Classification:**
+
+```text
+BLOCKER: intrusive coupling between components, circular dependency
+HIGH: undocumented integration knowledge, frequent co-change across components
+YELLOW: tight coupling justified by shared change axis and documented
+```
+
 Write this into:
 
 `component-dogfooding-review.md`

@@ -2876,3 +2876,348 @@ Every unit and subsystem in AvaX **MUST** control its coupling across three prim
 - **RED:** Direct dependency on raw database tables of another component, bypassing its PublicSurface facade.
 - **YELLOW:** Temporal coupling that is documented and managed via event handlers with clear retry and dead-letter policies.
 
+---
+
+### 58.3 Local vs Global Complexity Rule
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+Modularity must not reduce local complexity by increasing global complexity.
+
+A design that makes one module simpler by making the whole system harder to understand has not improved the design.
+
+**BAD:**
+```text
+Extracting a god-orchestrator that every module must understand.
+Creating 12 micro-abstractions to save 3 lines in each caller.
+Hiding critical coupling behind an indirect event bus that obscures call paths.
+Introducing a framework-layer indirection that makes tracing behavior harder.
+```
+
+**GOOD:**
+```text
+Extracting a capability that is reused by 3+ flows without adding system-wide knowledge.
+Replacing duplicated logic with a single owned boundary.
+Making implicit coupling explicit through clear contracts.
+```
+
+**Rule:**
+```text
+If a refactoring makes the local unit simpler but requires the reader to understand
+more system-wide concepts, more indirection layers, or more hidden coordination,
+the refactoring has increased global complexity and MUST be rejected.
+```
+
+**Review Question:**
+```text
+After this change, does a reader need to understand MORE or LESS
+about the rest of the system to reason about this unit?
+```
+
+---
+
+### 58.4 Modularity as Predictable Change Rule
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+The purpose of modularity is not separation.
+The purpose of modularity is predictable change.
+
+A module boundary is correct only when:
+
+```text
+1. Change location is obvious — the reader knows exactly where to go.
+2. Change impact is predictable — touching this module does not surprise distant modules.
+3. Integration knowledge is explicit — what crosses the boundary is documented, not discovered by accident.
+4. Cognitive load is reduced — understanding the module requires less system-wide context, not more.
+```
+
+**BAD:**
+```text
+A change in CacheReading forces a change in three sibling capabilities.
+A new field in a boundary value object breaks five unrelated flows.
+A reader cannot tell which module owns a behavior without tracing the entire call graph.
+```
+
+**GOOD:**
+```text
+A change to how passwords are hashed stays inside the hashing capability.
+A new HTTP header is handled by the request pipeline without touching business flows.
+Adding a new payment gateway requires implementing one interface and registering one ServiceProvider.
+```
+
+**Rule:**
+```text
+If a change in one module forces changes in modules that have no business reason
+to change together, the decomposition is wrong.
+```
+
+---
+
+### 58.5 Balanced Coupling Rule (Enhanced)
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+Coupling is not automatically evil.
+Coupling must be explicit, intentional, and balanced.
+
+Coupling is assessed through:
+
+```text
+1. Knowledge exchanged — what information crosses the boundary?
+2. Integration strength — how tightly are the modules bound? (direct call, interface, event, contract)
+3. Physical/logical distance — are they in the same component, same area, different subsystem?
+4. Change frequency — do they change together often, rarely, or never?
+5. Co-change pressure — does a change in one force a change in the other?
+```
+
+**Tight coupling is justified when:**
+```text
+The modules share a change axis and always change together by design.
+The knowledge exchanged is stable and owned by one side.
+The integration strength matches the logical closeness.
+```
+
+**Tight coupling is forbidden when:**
+```text
+Modules change independently but are forced to change together.
+Knowledge leaks across boundaries without ownership.
+Integration strength exceeds logical closeness.
+Implementation details cross boundaries (see Intrusive Coupling Blocker).
+```
+
+**Loose coupling is wrong when:**
+```text
+Modules always change together but are artificially separated.
+The separation adds indirection without reducing cognitive load.
+The loose coupling hides real co-change pressure (see Change-Together Smell).
+```
+
+---
+
+### 58.6 Change-Together Smell
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+When multiple modules require simultaneous edits for the same change, the decomposition is suspect.
+
+Co-change pressure is the strongest signal that ownership is split incorrectly.
+
+**Detection:**
+```text
+A single feature requires touching 3+ modules that are not in the same flow or capability.
+A rename in one module forces renames in sibling modules.
+A new field, status, or workflow requires changes across module boundaries.
+Git history shows the same files changing together across PRs.
+```
+
+**BAD:**
+```text
+Adding "refunded" status requires changes in Order, Payment, Notification, and Inventory modules.
+Renaming "user" to "member" requires touching 8 files across 5 components.
+```
+
+**GOOD:**
+```text
+Adding "refunded" status is owned by a single Refund capability that coordinates through explicit contracts.
+A domain rename is localized because ownership is clear.
+```
+
+**Rule:**
+```text
+Frequent co-change across module boundaries is not a coordination problem.
+It is a decomposition problem.
+```
+
+**Action:**
+```text
+If co-change is frequent, merge or reassign ownership so the change axis owns the behavior.
+If co-change is rare, the separation is probably correct.
+```
+
+---
+
+### 58.7 Physical Distance Is Not Decoupling
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+Putting modules in different folders, packages, namespaces, processes, or repositories
+does not remove coupling if knowledge leaks between them.
+
+Physical separation is organizational, not architectural.
+
+**BAD:**
+```text
+Component A reads Component B's database tables directly because they are "in different services."
+Component A depends on Component B's internal value objects because "it's just a type."
+Two microservices share a database schema and break when one changes it.
+Folders are separate but the call graph is a complete mesh.
+```
+
+**GOOD:**
+```text
+Separate components communicate through explicit PublicSurface contracts.
+Separate services communicate through documented events or APIs with versioning.
+Physical distance matches logical distance — separation exists because knowledge does NOT leak.
+```
+
+**Rule:**
+```text
+If two modules communicate through implementation details, private state, or unpublished contracts,
+they are coupled regardless of whether they share a folder or a planet.
+```
+
+**Review Check:**
+```text
+If I move these two modules into the same file, does the coupling become obviously wrong?
+If yes, the coupling was wrong regardless of distance.
+```
+
+---
+
+### 58.8 Integration Knowledge Rule
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+Every module boundary that exchanges knowledge MUST document:
+
+```text
+1. What knowledge crosses the boundary — data, types, events, contracts
+2. Who owns the knowledge — which module is the source of truth
+3. Who depends on it — which modules consume this knowledge
+4. Change-together risk — if the knowledge changes, who must change
+5. Whether the coupling is intentional — documented, tested, and reviewed
+```
+
+**Integration knowledge includes:**
+```text
+PublicSurface contracts and boundary value objects
+Event schemas and message formats
+Configuration objects passed between components
+Database query interfaces (not table layouts)
+Error contracts and failure semantics
+Lifecycle expectations (boot order, reset behavior)
+```
+
+**Rule:**
+```text
+Undocumented integration knowledge is accidental coupling.
+Accidental coupling is the primary cause of change-together pain.
+```
+
+**Required Artifacts:**
+```text
+Public API boundaries: documented in component docs and contract tests
+Event schemas: versioned and compatibility-tested
+Component dependencies: declared in ServiceProvider and architecture tests
+Cross-component contracts: tested through boundary integration tests
+```
+
+---
+
+### 58.9 Intrusive Coupling Blocker
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+A unit MUST NOT depend on another unit's implementation details.
+
+Intrusive coupling is the most dangerous form of coupling because it is invisible in contracts but fragile in practice.
+
+**Forbidden dependency targets:**
+```text
+Storage layout — database table names, column names, index structure, migration order
+Private state shape — internal fields, object composition, internal value objects
+Private workflow order — internal step sequence, internal method calls, internal state machines
+Lifecycle internals — boot order, initialization sequence, disposal timing, reset behavior
+Unpublished invariants — internal validation rules, internal business constraints, internal edge-case handling
+Private naming — internal class names, internal method names, internal constants used for implementation only
+```
+
+**Allowed dependency targets:**
+```text
+Published PublicSurface contracts
+Documented boundary value objects
+Explicit interface agreements
+Event schemas published through the component's event contract
+ServiceProvider-registered APIs
+Documented configuration objects
+```
+
+**Detection:**
+```text
+Module A breaks when Module B renames an internal class.
+Module A depends on the order Module B executes its internal steps.
+Module A queries Module B's database tables instead of its public query interface.
+Module A assumes Module B's internal state shape for optimization.
+```
+
+**Rule:**
+```text
+If a change to a private implementation detail in one module breaks another module,
+the coupling between them is intrusive and MUST be eliminated.
+```
+
+**Action:**
+```text
+Publish a stable contract if the dependency is legitimate.
+Redirect the dependency through the PublicSurface or explicit interface.
+Add an architecture test that prevents the intrusive dependency.
+```
+
+---
+
+### 58.10 Decomposition Principle Review
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+Before splitting a module, the decomposition principle MUST be recorded.
+
+A decomposition principle answers:
+```text
+Why does this boundary exist?
+What change axis does it protect?
+What knowledge does it isolate?
+What cognitive load does it reduce?
+```
+
+**Good decomposition reasons:**
+```text
+Change locality — this changes for a different reason than its neighbors.
+Information ownership — this data/behavior has a single honest owner.
+Cohesive behavior — these functions always change together and never change apart.
+Predictable impact — changes here do not surprise distant modules.
+Security boundary — this owns a security-sensitive surface.
+Runtime boundary — this has different lifecycle, performance, or deployment needs.
+```
+
+**Bad decomposition reasons:**
+```text
+Split because the file is long — length is not a decomposition principle.
+Split by technical category — "controllers", "models", "services" are not boundaries.
+Split by constructor size — too many dependencies signals responsibility problems, not decomposition answers.
+Split by framework layer — MVC, layers, or packages are not domain boundaries.
+Split to reduce line count — fewer lines per file does not mean better design.
+Split for team topology alone — org structure does not define system boundaries.
+```
+
+**Rule:**
+```text
+A module split without a documented decomposition principle is an accidental boundary.
+Accidental boundaries become maintenance cost, not design value.
+```
+
+**Review Check:**
+```text
+Can the author state the decomposition principle in one sentence?
+Does the principle reference behavior, knowledge, or change axis — NOT technical category?
+Would a reader who knows the principle immediately know where to put a new feature?
+```
+

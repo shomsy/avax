@@ -1749,15 +1749,124 @@ This section defines review rules to balance and verify coupling in all code rev
 ### 27.1 Review Checks
 
 Every code review **MUST** assess coupling across the following gates:
-1. **Afferent/Efferent Check:** Verify that lower-level layers (Capabilities, Foundation) have zero dependency on higher-level layers (Flows, PublicSurface). Check that siblings do not couple horizontally.
-2. **Temporal Coupling Check:** Verify that actions that must happen together are orchestrated explicitly. Look for side-effects or shared state variables causing implicit temporal dependencies.
-3. **Semantic Coupling Check:** Verify that subsystems do not expose internal databases or schema entities directly. Look for raw arrays or shared ORM entities crossed over boundaries.
+
+#### 27.1.1 Afferent/Efferent Check
+
+Verify that lower-level layers (Capabilities, Foundation) have zero dependency on higher-level layers (Flows, PublicSurface). Check that siblings do not couple horizontally.
+
+#### 27.1.2 Temporal Coupling Check
+
+Verify that actions that must happen together are orchestrated explicitly. Look for side-effects or shared state variables causing implicit temporal dependencies.
+
+#### 27.1.3 Semantic Coupling Check
+
+Verify that subsystems do not expose internal databases or schema entities directly. Look for raw arrays or shared ORM entities crossed over boundaries.
+
+#### 27.1.4 Local vs Global Complexity Check
+
+**Rule:** The reviewer MUST assess whether the change reduces local complexity at the cost of global complexity.
+
+**Questions:**
+```text
+Does this refactoring make the whole system harder to understand?
+Does it introduce new indirection that obscures the call path?
+Does it extract a concept that now every caller must know about?
+Would a reader need MORE or LESS system knowledge after this change?
+```
+
+**Finding trigger:** If a change makes one file cleaner but requires understanding more files to reason about it, mark as HIGH.
+
+#### 27.1.5 Modularity as Predictable Change Check
+
+**Rule:** The reviewer MUST assess whether module boundaries enable predictable change.
+
+**Questions:**
+```text
+Is the change location obvious from the feature description?
+Does this change force edits in modules that have no business reason to change?
+Is the integration knowledge across boundaries explicit and documented?
+Does the boundary reduce or increase cognitive load?
+```
+
+**Finding trigger:** If a single change requires edits in 3+ unrelated modules, mark as HIGH — decomposition is suspect.
+
+#### 27.1.6 Change-Together Smell Check
+
+**Rule:** The reviewer MUST check for co-change pressure across module boundaries.
+
+**Signals:**
+```text
+This PR touches 3+ modules outside the same flow or capability.
+Git history shows these files changing together across multiple PRs.
+A rename or new field forces changes across module boundaries.
+The PR description says "also had to update X, Y, Z" — that is the smell.
+```
+
+**Finding trigger:** Frequent co-change across boundaries is a decomposition problem, not a coordination problem. Mark as HIGH.
+
+#### 27.1.7 Physical Distance Is Not Decoupling Check
+
+**Rule:** The reviewer MUST NOT accept folder/package/process separation as evidence of decoupling.
+
+**Questions:**
+```text
+Do these separate modules communicate through implementation details?
+Does one module read another's internal state, table layout, or private types?
+If I moved these modules into the same file, would the coupling become obviously wrong?
+```
+
+**Finding trigger:** If knowledge leaks across physical boundaries, mark as BLOCKER — distance hides the coupling but does not remove it.
+
+#### 27.1.8 Integration Knowledge Check
+
+**Rule:** The reviewer MUST verify that integration knowledge across boundaries is explicit and documented.
+
+**Checklist:**
+```text
+What knowledge crosses the boundary — data, types, events, contracts?
+Who owns the knowledge — which module is the source of truth?
+Who depends on it — which modules consume this knowledge?
+Is the coupling intentional — documented, tested, reviewed?
+```
+
+**Finding trigger:** Undocumented integration knowledge is accidental coupling. Mark as HIGH.
+
+#### 27.1.9 Intrusive Coupling Check
+
+**Rule:** The reviewer MUST detect dependencies on implementation details.
+
+**Forbidden dependencies:**
+```text
+Storage layout — table names, column names, index structure
+Private state shape — internal fields, internal value objects
+Private workflow order — internal step sequence, internal method calls
+Lifecycle internals — boot order, initialization, reset behavior
+Unpublished invariants — internal validation rules, internal constraints
+Private naming — internal class names used as dependency targets
+```
+
+**Finding trigger:** If Module A breaks when Module B renames an internal class, the coupling is intrusive. Mark as BLOCKER.
+
+#### 27.1.10 Decomposition Principle Check
+
+**Rule:** The reviewer MUST ask for the decomposition principle when new boundaries are introduced.
+
+**Questions:**
+```text
+Why does this new module/boundary exist?
+What change axis does it protect?
+What knowledge does it isolate?
+Is the reason behavioral (good) or technical-category-based (bad)?
+```
+
+**Finding trigger:** New module without a stated decomposition principle is an accidental boundary. Mark as HIGH.
 
 ### 27.2 Review Classifications
 
-- **BLOCKER:** Circular dependencies, sibling components depending directly on each other's private internals, or out-of-order component collaboration.
-- **RED:** Direct dependency on raw database tables of another component, bypassing its PublicSurface facade.
-- **YELLOW:** Temporal coupling that is documented and managed via event handlers with clear retry and dead-letter policies.
+- **BLOCKER:** Circular dependencies, sibling components depending directly on each other's private internals, intrusive coupling on implementation details, physical distance masking knowledge leaks, out-of-order component collaboration.
+- **RED:** Direct dependency on raw database tables of another component, bypassing its PublicSurface facade; undocumented integration knowledge that causes co-change pain.
+- **HIGH:** Change-together smell across unrelated modules; refactoring that increases global complexity; new boundary without decomposition principle.
+- **YELLOW:** Temporal coupling that is documented and managed via event handlers with clear retry and dead-letter policies; tight coupling that is justified by shared change axis and explicitly documented.
 
 
 ---

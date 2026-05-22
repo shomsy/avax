@@ -1126,6 +1126,99 @@ Application container owns the graph.
 Runtime scope owns lifecycle state.
 ```
 
+### 7.7 Intrusive Coupling Blocker for DI
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+Dependency injection must not create or hide intrusive coupling.
+
+Intrusive coupling occurs when a class depends on another class's implementation details instead of its published contract.
+
+DI makes intrusive coupling worse when it:
+
+```text
+Injects internal implementation objects instead of published contracts.
+Injects another component's internal builder, factory, or helper.
+Injects storage layout objects (raw DB connections, query builders) instead of query interfaces.
+Injects lifecycle internals (boot order managers, initialization coordinators).
+Injects private state shape (internal registries, internal caches, internal state machines).
+```
+
+**Forbidden DI patterns:**
+
+```php
+// BAD — depends on another component's internal implementation
+public function __construct(
+    private InternalUserMapper $mapper,  // internal, not published
+) {}
+
+// BAD — depends on storage layout
+public function __construct(
+    private PDO $database,  // raw connection, not a query interface
+) {}
+
+// BAD — depends on private workflow
+public function __construct(
+    private UserRegistrationStepCoordinator $coordinator,  // internal step sequence
+) {}
+
+// BAD — depends on lifecycle internals
+public function __construct(
+    private BootOrderManager $bootManager,  // lifecycle internal
+) {}
+```
+
+**Allowed DI patterns:**
+
+```php
+// GOOD — depends on published contract
+public function __construct(
+    private UserQueryInterface $users,
+) {}
+
+// GOOD — depends on PublicSurface API
+public function __construct(
+    private Cache $cache,
+) {}
+
+// GOOD — depends on explicit interface
+public function __construct(
+    private PasswordHasherInterface $hasher,
+) {}
+```
+
+**DI Intrusive Coupling Detection:**
+
+```text
+If renaming an internal class in Component B breaks a constructor in Component A,
+the DI between them is intrusive.
+
+If changing the internal step sequence in Component B breaks Component A,
+the DI between them is intrusive.
+
+If Component A's constructor requires Component B's internal types,
+the DI between them is intrusive.
+```
+
+**Rule:**
+```text
+Constructor injection MUST depend on published contracts, not implementation details.
+
+If a dependency is legitimate, publish a contract for it.
+If a dependency is not legitimate, do not inject it.
+
+ServiceProvider MUST NOT register internal implementation objects
+as dependencies for other components.
+```
+
+**ServiceProvider Responsibility:**
+```text
+ServiceProvider MUST bind published contracts, not internal types.
+ServiceProvider MUST NOT expose another component's internals as injectable services.
+ServiceProvider MUST NOT create alias chains that hide intrusive coupling.
+```
+
 ---
 
 ## 8. Fluent API Law

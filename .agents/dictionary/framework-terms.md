@@ -830,13 +830,15 @@ Dictionary of terms related to Separation of Concern governance.
 
 **Simple:** How much one unit depends on another.
 
-**AvaX meaning:** SoC must reduce coupling, not only increase file count. Bad SoC has many bidirectional dependencies between "separated" units.
+**AvaX meaning:** Coupling is not automatically evil. Coupling must be explicit, intentional, and balanced. Assessed through knowledge exchanged, integration strength, physical/logical distance, change frequency, and co-change pressure. Bad coupling is hidden, intrusive, or accidental. Good coupling matches logical closeness and has documented integration knowledge.
 
-**Allowed:** "coupling direction", "low coupling", "coupling reduction"
+**Balanced coupling dimensions:** Afferent/Efferent (inward/outward), Temporal (time-based coordination), Semantic (shared knowledge/contracts), Intrusive (implementation detail leakage).
 
-**Forbidden:** Measuring SoC success only by file count or line count
+**Allowed:** "coupling direction", "low coupling", "coupling reduction", "balanced coupling", "explicit coupling", "intentional coupling", "intrusive coupling", "change-together"
 
-**Learning:** [how-to-architecture.md — Section 57.9](../.agents/how-to/architecture/how-to-architecture.md)
+**Forbidden:** Assuming all coupling is bad, hiding coupling behind physical distance, creating intrusive coupling on implementation details
+
+**Learning:** [how-to-architecture.md — Section 58](../.agents/how-to/architecture/how-to-architecture.md), [how-to-code-review.md — Section 27](../.agents/how-to/verification/how-to-code-review.md)
 
 ---
 
@@ -844,11 +846,125 @@ Dictionary of terms related to Separation of Concern governance.
 
 **Simple:** How well the parts of a unit belong together.
 
-**AvaX meaning:** High cohesion means methods, properties, and decisions in a unit share a conceptual center. SoC improves cohesion by removing unrelated work.
+**AvaX meaning:** High cohesion means methods, properties, and decisions in a unit share a conceptual center. SoC improves cohesion by removing unrelated work. Cohesion and coupling trade off against each other — improving one may worsen the other. The goal is balanced cohesion: high enough for clarity, not so high that it creates isolation and duplicated knowledge.
 
-**Allowed:** "high cohesion", "conceptual center", "cohesive responsibility"
+**Allowed:** "high cohesion", "conceptual center", "cohesive responsibility", "balanced cohesion"
 
-**Forbidden:** Claiming cohesion while storing unrelated logic in one unit
+**Forbidden:** Claiming cohesion while storing unrelated logic in one unit, maximizing cohesion at the cost of global complexity
+
+**Learning:** [how-to-architecture.md — Section 58](../.agents/how-to/architecture/how-to-architecture.md)
+
+---
+
+## Local Complexity
+
+**Simple:** How hard it is to understand one specific unit (function, class, module).
+
+**AvaX meaning:** Local complexity is the cognitive load of reasoning about one unit in isolation. Reducing local complexity is good only when it does not increase global complexity. A unit that appears simpler because the system became harder to understand has not been improved.
+
+**Allowed:** "reduced local complexity", "local simplicity"
+
+**Forbidden:** Reducing local complexity by increasing global complexity
+
+**Learning:** [how-to-architecture.md — Section 58.3](../.agents/how-to/architecture/how-to-architecture.md), [how-to-clean-code.md — Section 5.16.1](../.agents/how-to/implementation/how-to-clean-code.md)
+
+---
+
+## Global Complexity
+
+**Simple:** How hard it is to understand the whole system.
+
+**AvaX meaning:** Global complexity is the total cognitive load of reasoning about how all units work together. Modularity must reduce global complexity, not increase it. Extracting indirection, creating micro-abstractions, or hiding coordination behind events may reduce local complexity but increase global complexity — this is a failed refactoring.
+
+**Allowed:** "reduced global complexity", "system-wide understanding"
+
+**Forbidden:** Increasing global complexity to reduce local complexity
+
+**Learning:** [how-to-architecture.md — Section 58.3](../.agents/how-to/architecture/how-to-architecture.md), [how-to-clean-code.md — Section 5.16.1](../.agents/how-to/implementation/how-to-clean-code.md)
+
+---
+
+## Intrusive Coupling
+
+**Simple:** Depending on another unit's implementation details, not its published contract.
+
+**AvaX meaning:** Intrusive coupling occurs when a unit depends on storage layout, private state shape, private workflow order, lifecycle internals, or unpublished invariants of another unit. It is invisible in contracts but fragile in practice — renaming an internal class breaks a dependent. This is the most dangerous form of coupling because it is hidden.
+
+**Allowed:** Dependencies on published contracts, explicit interfaces, documented boundary value objects
+
+**Forbidden:** Dependencies on internal class names, internal state shape, internal workflow order, lifecycle internals, storage layout
+
+**Learning:** [how-to-architecture.md — Section 58.9](../.agents/how-to/architecture/how-to-architecture.md), [how-to-dependency-injection.md — Section 7.7](../.agents/how-to/implementation/how-to-dependency-injection.md)
+
+---
+
+## Integration Strength
+
+**Simple:** How tightly two units are bound together through their connection mechanism.
+
+**AvaX meaning:** Integration strength measures the binding mechanism between units: direct call (strongest), interface, event, published contract (weakest). Strong integration is justified when units are logically close and share a change axis. Strong integration between independent units is wrong. The integration strength must match the logical closeness.
+
+**Allowed:** "strong integration for shared change axis", "weak integration for independent units"
+
+**Forbidden:** Strong integration between units that change independently, weak integration for units that always change together
+
+**Learning:** [how-to-architecture.md — Section 58.5](../.agents/how-to/architecture/how-to-architecture.md)
+
+---
+
+## Change-Together Smell
+
+**Simple:** Multiple modules requiring simultaneous edits for the same change.
+
+**AvaX meaning:** Co-change pressure is the strongest signal that ownership is split incorrectly. When a single feature requires touching 3+ modules outside the same flow or capability, the decomposition is suspect. Frequent co-change across module boundaries is a decomposition problem, not a coordination problem.
+
+**Allowed:** Co-change within the same flow or capability, documented co-change for shared change axis
+
+**Forbidden:** Frequent co-change across unrelated modules without ownership reassessment
+
+**Learning:** [how-to-architecture.md — Section 58.6](../.agents/how-to/architecture/how-to-architecture.md)
+
+---
+
+## Physical Distance
+
+**Simple:** Putting modules in different folders, packages, namespaces, processes, or repositories.
+
+**AvaX meaning:** Physical distance is organizational, not architectural. Different folders, packages, or processes do not remove coupling if knowledge leaks between them. If two modules communicate through implementation details, they are coupled regardless of distance. Physical distance that masks coupling is worse than honest colocation.
+
+**Allowed:** Physical distance that matches logical distance — separation because knowledge does NOT leak
+
+**Forbidden:** Using physical distance as evidence of decoupling when knowledge still flows
+
+**Learning:** [how-to-architecture.md — Section 58.7](../.agents/how-to/architecture/how-to-architecture.md)
+
+---
+
+## Decomposition Principle
+
+**Simple:** The documented reason why a module boundary exists.
+
+**AvaX meaning:** A decomposition principle answers: why does this boundary exist, what change axis does it protect, what knowledge does it isolate, what cognitive load does it reduce? Good reasons: change locality, information ownership, cohesive behavior, predictable impact. Bad reasons: file is long, technical category, constructor size, framework layer.
+
+**Allowed:** "change locality", "information ownership", "cohesive behavior", "security boundary", "runtime boundary"
+
+**Forbidden:** Creating boundaries because "the file is long", "by technical category", "by framework layer"
+
+**Learning:** [how-to-architecture.md — Section 58.10](../.agents/how-to/architecture/how-to-architecture.md), [how-to-clean-code.md — Section 5.16.3](../.agents/how-to/implementation/how-to-clean-code.md)
+
+---
+
+## Modularity
+
+**Simple:** How a system is divided into modules with clear boundaries.
+
+**AvaX meaning:** The purpose of modularity is not separation — it is predictable change. A module boundary is correct only when change location is obvious, change impact is predictable, integration knowledge is explicit, and cognitive load is reduced. Modules that are separate but require simultaneous changes have failed the modularity test.
+
+**Allowed:** "predictable change", "obvious change location", "explicit integration knowledge", "reduced cognitive load"
+
+**Forbidden:** Creating modules that are separate but change together, modularity that increases global complexity
+
+**Learning:** [how-to-architecture.md — Section 58.4](../.agents/how-to/architecture/how-to-architecture.md), [how-to-clean-code.md — Section 5.16.2](../.agents/how-to/implementation/how-to-clean-code.md)
 
 ---
 

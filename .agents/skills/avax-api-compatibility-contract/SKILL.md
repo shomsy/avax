@@ -102,7 +102,6 @@ Facades must:
 - remain thin and stable
 - log deprecation when forwarding to changed internals
 
-<<<<<<< HEAD
 ## Hard Enterprise OOP Boundary API Cross-Reference
 
 **Status:** MANDATORY  
@@ -128,7 +127,40 @@ API violations of these rules are classified as:
 - MAJOR_BREAK: exposing multiple uncontrolled entry points, leaking internal primitives, mixing command/query in public API
 - MINOR_BREAK: boundary violations with deprecation path
 - PATCH_SAFE: internal boundary cleanup with no public impact
-=======
+
+## Integration Knowledge Documentation for API Boundaries
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+Every public API boundary exchanges integration knowledge with consumers.
+
+The review MUST document:
+
+```text
+What knowledge crosses the API boundary — data types, events, error contracts
+Who owns the knowledge — AvaX is the source of truth for framework APIs
+Who depends on it — downstream users, other components, external consumers
+Change-together risk — if this API changes, who must update their code
+Whether the coupling is intentional — documented, versioned, compatibility-tested
+```
+
+**Integration knowledge at API boundaries includes:**
+```text
+Request/response schemas and DTOs
+Error types and failure semantics
+Version identifiers and deprecation timelines
+Lifecycle expectations (boot order, init sequences for DSL)
+Event schemas published through the framework
+Configuration object shapes passed through public APIs
+```
+
+**Rule:**
+```text
+Undocumented API boundary knowledge is accidental coupling.
+Accidental coupling is the primary cause of breaking changes discovered after release.
+```
+
 ## Universal Enterprise Codecraft Philosophy
 
 Public API changes must serve the universal enterprise codecraft philosophy.
@@ -147,7 +179,6 @@ Agents must:
 - prefer subsystem names over technical names — `App::identity()->auth()` not `App::getAuthDsl()->executeAuth()`
 
 Public API that requires the consumer to understand internal machinery is a design failure.
->>>>>>> 86677e5b8e9e4a41502c82272c1ead440c422dbb
 
 ## Integration with Other Skills
 

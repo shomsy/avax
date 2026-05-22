@@ -3312,4 +3312,94 @@ Every unit and subsystem in AvaX **MUST** control its coupling across three prim
 - **RED:** Direct dependency on raw database tables of another component, bypassing its PublicSurface facade.
 - **YELLOW:** Temporal coupling that is documented and managed via event handlers with clear retry and dead-letter policies.
 
+### 32.3 Component Decomposition Principle Rule
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER
+
+Before creating a new component or splitting an existing component, the decomposition principle MUST be documented.
+
+A component is not justified by folders, interfaces, or ServiceProvider shells.
+
+A component is justified only when it owns a distinct change axis, knowledge domain, or platform capability.
+
+**Good component decomposition reasons:**
+```text
+Distinct change axis — this component changes for different reasons than its neighbors.
+Clear information ownership — this data or behavior has a single honest owner.
+Cohesive platform capability — this is reusable platform muscle (cache, database, queue, events, auth).
+Predictable impact boundary — changes inside this component do not surprise distant components.
+Different runtime or lifecycle — this has different deployment, performance, or lifetime needs.
+Replaceable implementation — this component's implementation should be swappable without touching consumers.
+Security or trust boundary — this component owns a security-sensitive surface.
+```
+
+**Bad component decomposition reasons:**
+```text
+Split because the file is long — length is not a decomposition principle.
+Split by technical category — "Services", "Repositories", "Handlers" are not component boundaries.
+Split to have more components — component count is not a quality metric.
+Split by framework layer — MVC layers are not component boundaries.
+Split for team topology alone — org structure does not define component boundaries.
+Split to reduce constructor size — too many dependencies signals responsibility problems, not component answers.
+```
+
+**Rule:**
+```text
+A component without a documented decomposition principle is an accidental boundary.
+Accidental component boundaries become integration cost, not platform value.
+```
+
+**Component Creation Checklist:**
+```text
+1. What problem does this component solve that existing components cannot?
+2. What is the decomposition principle? (one sentence)
+3. What change axis does this component protect?
+4. What knowledge does this component isolate?
+5. What public API will this component expose?
+6. Which existing components will this component depend on?
+7. Which existing components will depend on this component?
+8. What failure modes does this component own?
+9. How is this component observed in production?
+10. What does this component NOT own?
+```
+
+### 32.4 Component Coupling Assessment Rule
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+Every active component MUST be assessable for coupling health.
+
+Component coupling is assessed through:
+
+```text
+1. Knowledge exchanged — what data, types, events, or contracts cross component boundaries?
+2. Integration strength — direct call, interface, event, or published contract?
+3. Physical/logical distance — same area, different area, different subsystem?
+4. Change frequency — do components change together often, rarely, or never?
+5. Co-change pressure — does a change in one component force changes in another?
+```
+
+**Component-level tight coupling is forbidden when:**
+```text
+Components change independently but are forced to change together.
+Knowledge leaks across component boundaries without ownership.
+One component depends on another component's internal implementation details (Intrusive Coupling Blocker).
+Component boundaries are physical only — folders separate but knowledge flows freely.
+```
+
+**Component co-change smell:**
+```text
+If a single feature requires changes in 3+ components that are not in the same platform plane,
+the component boundaries are suspect.
+```
+
+**Rule:**
+```text
+If moving two coupled components into the same component makes the coupling obviously acceptable,
+the coupling was intrusive regardless of component distance.
+```
+
+
 

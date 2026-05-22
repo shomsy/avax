@@ -338,6 +338,120 @@ Violations produce code that is:
 
 ---
 
+## 5.16 Balanced Coupling and Complexity Rules
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+This section translates balanced coupling theory into clean-code judgment.
+
+### 5.16.1 Local vs Global Complexity Rule
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+Clean code must not reduce local complexity by increasing global complexity.
+
+A function, class, or module that appears simpler because the system became harder to understand has not been cleaned — it has been displaced.
+
+**BAD patterns that increase global complexity:**
+```text
+Extracting a god-facade that every caller must understand.
+Introducing indirection layers that obscure the actual call path.
+Hiding coordination behind events or callbacks that make flow invisible.
+Creating micro-abstractions that save lines but multiply concepts.
+Replacing obvious behavior with framework magic.
+```
+
+**GOOD patterns that reduce total complexity:**
+```text
+Extracting a named capability that reduces duplication without adding system-wide knowledge.
+Replacing magic with explicit contracts.
+Making implicit dependencies visible through constructor injection.
+Naming a boundary that was already conceptually present.
+```
+
+**Rule:**
+```text
+Before extracting, refactoring, or simplifying, ask:
+Does this make the whole system easier to understand,
+or does it only make this one piece easier to write?
+```
+
+**Review Judgment:**
+```text
+If a reader must understand MORE of the system to reason about this unit,
+the refactoring failed even if the unit itself looks cleaner.
+```
+
+### 5.16.2 Modularity as Predictable Change Rule
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+The purpose of clean modular code is not separation — it is predictable change.
+
+A module is clean only when:
+
+```text
+1. Change location is obvious — the reader knows where to go.
+2. Change impact is predictable — touching this module does not surprise distant code.
+3. Integration knowledge is explicit — what crosses the boundary is documented.
+4. Cognitive load is reduced — understanding the module requires less system-wide context.
+```
+
+**BAD:**
+```text
+Renaming a concept requires touching files across unrelated modules.
+Adding a field to a data object breaks consumers that should not know about it.
+A reader cannot tell which module owns a behavior without tracing the entire graph.
+```
+
+**GOOD:**
+```text
+Changing how passwords are hashed stays inside the hashing module.
+Adding a new output format requires implementing one interface, not touching consumers.
+A reader can navigate from a feature description to the responsible module without guessing.
+```
+
+**Rule:**
+```text
+If a change in one module forces changes in modules that have no business reason
+to change together, the modular decomposition is wrong.
+```
+
+### 5.16.3 Decomposition Principle Review
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+Before splitting code, the reason for the split MUST be explicit.
+
+**Good reasons to split:**
+```text
+Change locality — this changes for a different reason.
+Information ownership — this data or behavior has one honest owner.
+Cohesive behavior — these functions always change together.
+Predictable impact — changes here do not surprise distant code.
+Security boundary — this owns a security-sensitive surface.
+```
+
+**Bad reasons to split:**
+```text
+File is long — length is not a decomposition principle.
+Technical category — "services", "helpers", "utils" are not boundaries.
+Constructor has many dependencies — responsibility problem, not split answer.
+Framework layer — MVC or layer categories are not domain boundaries.
+```
+
+**Rule:**
+```text
+Code split without a documented decomposition principle is an accidental boundary.
+Accidental boundaries accumulate maintenance cost without providing design value.
+```
+
+---
+
 ## 6. Author canon
 
 ## 6.1 Robert C. Martin canon

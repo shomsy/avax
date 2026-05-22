@@ -124,13 +124,7 @@ Tactical DDD elements **MUST NOT** be created without prior domain discovery (Ev
 
 ## 3. Local Naming Rules
 
-Describe project-specific naming doctrine: forbidden names, concept word
-translations, flow vs capability decisions, etc.
-
-- Concept words that are not folder names
-- Forbidden system folders
-- Namespace ownership rules
-- Test naming conventions
+This section defines project-specific naming rules, constraints on system folders, and namespace guidelines.
 
 ### 3.1 Facade DSL Naming
 
@@ -185,12 +179,15 @@ Runtime hot paths **MUST** avoid reflection, filesystem scans, config parsing, e
 
 ## 5. Local Evidence Rules
 
-Describe what constitutes proof in this project: validation commands,
-evidence locations, required artifacts.
+### 5.1 Verification Proof and Evidence
 
-- Canonical validation commands
-- Evidence storage location
-- Required artifacts per claim
+Every architectural claim or implementation slice **MUST** write or update context-loaded evidence per the specifications in `AGENTS.md`.
+
+- **Evidence Location:** Evidence files live under `.agents/management/evidence/`.
+- **Validation Commands:** Code structure validation runs through tooling:
+  - Component shape and folder constraints: `php tooling/refactor/check-component-suite-structure.php`
+  - Domain-level owner checks: `php tooling/refactor/check-duplicate-owners.php`
+  - Namespace compliance: `php tooling/refactor/check-namespace-drift.php`
 
 ---
 
@@ -225,6 +222,8 @@ Architecture fitness functions defined in ADRs **MUST** be implemented as automa
 
 ## 7. Local Anti-Patterns
 
+This section details AvaX local anti-patterns spanning structure, data persistence, coupling, and DDD design.
+
 ### 7.1 Forbidden Structural Patterns
 
 - Folders named after PEAA structural patterns: `TransactionScripts/`, `DomainModels/`, `TableModules/`, `Services/`.
@@ -256,9 +255,7 @@ Architecture fitness functions defined in ADRs **MUST** be implemented as automa
 
 ## 8. Local Exceptions
 
-Document explicit exceptions to baseline rules. Each exception must include:
-rule, path, reason, risk, owner, expiry, required cleanup, approval, validation.
-Temporary exceptions without expiry are forbidden.
+No temporary exceptions are currently registered. Any future exceptions **MUST** document the rule, path, reason, risk, owner, expiry, required cleanup, approval, and validation gates.
 
 Default: None.
 

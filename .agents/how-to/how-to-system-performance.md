@@ -915,6 +915,12 @@ Can stale data be served?
 For how long?
 ```
 
+Cache invalidation **MUST** follow the correctness guidelines defined in:
+
+```text
+.agents/how-to/how-to-data-systems.md — Section 2.4 Idempotency, Retries, and Cache Invalidation
+```
+
 ### 13.4 Cache Proof
 
 Required evidence:
@@ -927,6 +933,7 @@ sensitive scope is preserved
 stampede risk is controlled where relevant
 hit/miss metrics exist
 ```
+
 
 ---
 

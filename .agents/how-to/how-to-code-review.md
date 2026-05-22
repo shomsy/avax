@@ -1734,8 +1734,75 @@ For full SoC governance, see:
 
 ```text
 .agents/how-to/how-to-architecture.md — Section 57
-.agents/how-to/how-to-design-components.md — Section 32
+.agents/how-to/how-to-design-components.md — Section 30 (SoC)
 ```
+
+---
+
+## 27. Balanced Coupling Review Rule
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER  
+
+This section defines review rules to balance and verify coupling in all code reviews, based on *Balancing Coupling in Software Design* (Khononov).
+
+### 27.1 Review Checks
+
+Every code review **MUST** assess coupling across the following gates:
+1. **Afferent/Efferent Check:** Verify that lower-level layers (Capabilities, Foundation) have zero dependency on higher-level layers (Flows, PublicSurface). Check that siblings do not couple horizontally.
+2. **Temporal Coupling Check:** Verify that actions that must happen together are orchestrated explicitly. Look for side-effects or shared state variables causing implicit temporal dependencies.
+3. **Semantic Coupling Check:** Verify that subsystems do not expose internal databases or schema entities directly. Look for raw arrays or shared ORM entities crossed over boundaries.
+
+### 27.2 Review Classifications
+
+- **BLOCKER:** Circular dependencies, sibling components depending directly on each other's private internals, or out-of-order component collaboration.
+- **RED:** Direct dependency on raw database tables of another component, bypassing its PublicSurface facade.
+- **YELLOW:** Temporal coupling that is documented and managed via event handlers with clear retry and dead-letter policies.
+
+
+---
+
+## 28. Trade-Off Analysis Review Rule
+
+**Status:** MANDATORY  
+**Severity:** HIGH  
+
+Every review of a non-trivial architecture or design change **MUST** verify that explicit trade-off reasoning exists.
+
+### 28.1 Review Checks
+
+1. **ADR Presence:** If the change involves a new technology choice, a new component boundary, a new integration, a new persistence strategy, or a significant structural refactor, an ADR (Architecture Decision Record) **MUST** exist per `.agents/how-to/how-to-architecture-decisions.md`.
+2. **Trade-Off Matrix:** The reviewer **MUST** verify that the ADR or design evidence contains a trade-off analysis with at least two alternatives evaluated against named quality attributes (e.g., performance, maintainability, security, coupling, operational cost).
+3. **Fitness Function Gate:** If the ADR defines fitness functions, the reviewer **MUST** verify that corresponding automated tests or static analysis gates exist and are GREEN.
+
+### 28.2 Review Classifications
+
+- **BLOCKER:** A significant architecture change shipped without any ADR or documented trade-off reasoning.
+- **RED:** An ADR exists but evaluates only one alternative, or the trade-off matrix omits critical quality attributes (security, performance, coupling direction).
+- **YELLOW:** An ADR exists with a valid trade-off matrix, but no automated fitness function gate has been implemented yet (documented with owner and target date).
+
+---
+
+## 29. Data System Correctness Review Rule
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER  
+
+Every review of a change touching data persistence, caching, transactions, or external data stores **MUST** verify correctness controls defined in `.agents/how-to/how-to-data-systems.md`.
+
+### 29.1 Review Checks
+
+1. **System of Record Clarity:** Verify that the change clearly identifies which data store is the System of Record and which are derived/cached. If this is missing, flag as RED.
+2. **Transaction Boundary Ownership:** Verify that database transactions are managed at the Flow layer or via an explicit Unit of Work — not inside individual Capabilities or repositories.
+3. **Idempotency:** If the change introduces or modifies a write path triggered by external actors (HTTP, queue consumers, webhooks), verify that an idempotency key mechanism exists.
+4. **Cache Invalidation:** If the change mutates System of Record data and cached/derived views of that data exist, verify that proactive cache invalidation or refresh occurs at or immediately after commit. Hard-coded TTL-only strategies without invalidation triggers are RED.
+5. **No Raw Mutations:** Verify that no raw SQL or direct Active Record mutations bypass the designated Repository or Aggregate boundary.
+
+### 29.2 Review Classifications
+
+- **BLOCKER:** Write path with no idempotency protection on a queue consumer or webhook handler. Raw database mutations bypassing aggregate/repository boundaries.
+- **RED:** Missing transaction boundaries on multi-statement write flows. Cache serving stale user data with no invalidation trigger after SoR mutation.
+- **YELLOW:** System of Record vs. derived state documentation is implicit rather than explicit, but the code structure makes the boundary obvious.
 
 ---
 

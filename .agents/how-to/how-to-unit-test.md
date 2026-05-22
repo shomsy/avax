@@ -2791,8 +2791,42 @@ RED:
 
 ---
 
+## 92. Enterprise Proof Rules
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER  
+
+This section establishes rules for proving structural and behavioral correctness of enterprise systems in tests, referencing *Software Architecture: The Hard Parts*, *Writing Effective Use Cases*, and *Designing Data-Intensive Applications*.
+
+### 92.1 Flow Proof Rule
+
+Every Flow Slice **MUST** have at least one sociable behavior test verifying the end-to-end execution of the flow from its PublicSurface entrypoint to the database/repository adapter mock.
+- The test **MUST** verify that all nested subfunction steps are executed in the correct order.
+- The test **MUST** assert both the success response and the failure behavior of the flow under validation failures or capability exceptions.
+
+### 92.2 Data Correctness Proof Rule
+
+Every repository or data system capability **MUST** have tests verifying correctness under failure scenarios defined in `.agents/how-to/how-to-data-systems.md`:
+1. **Transaction Rollback:** A test **MUST** simulate a failure halfway through a multi-query write transaction and assert that no partial data is written to the database.
+2. **Idempotency Protection:** A test **MUST** execute the same write request twice with the same idempotency key and assert that the second request returns the cached result without executing a second database insert/update.
+3. **Cache Invalidation:** A test **MUST** verify that cache values are deleted or refreshed following a transaction commit on the System of Record.
+
+### 92.3 DDD Invariant Proof Rule
+
+Every Aggregate root and Entity **MUST** have solitary unit tests proving business invariants fail closed.
+- State changes **MUST** be tested strictly using the public methods of the Aggregate, verifying exceptions are thrown when illegal states or parameter combinations are passed.
+- No aggregate tests may rely on active database connections; invariants must be proved in-memory for fast execution.
+
+### 92.4 Classifications
+
+- **BLOCKER:** Missing idempotency proof tests on key transaction write paths, or missing transaction rollback verification tests.
+- **RED:** Aggregate unit tests requiring active database connections to prove simple in-memory invariants.
+
+---
+
 The final standard is simple:
 
 ```text
 A unit test should make the behavior so obvious that the production code has nowhere to hide.
 ```
+

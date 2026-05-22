@@ -1064,7 +1064,26 @@ Use Flow when one action completes the story.
 
 Use Capability when behavior is reusable across multiple flows.
 
+### 6.8.1 Use Case Goal Level Mapping
+
+We map Alistair Cockburn's use case levels (*Writing Effective Use Cases*) directly to AvaX architecture layers:
+1. **Summary Level (Cloud/Kite):** High-level business process (e.g. `ManageCustomerAccounts`). Mapped to AvaX subsystems or components (e.g. `components/AccountManagement/`), never to a single Flow.
+2. **User-Goal Level (Sea Level):** A primary goal of a primary actor (e.g. `RegisterUser`, `CheckoutBasket`). Mapped directly to an AvaX **Flow Slice** (e.g. `Flows/RegisterUser/RegisterUser.php`).
+3. **Subfunction Level (Fish/Underwater):** A low-level step or helper action (e.g. `VerifyEmailToken`, `HashPassword`). Mapped to an AvaX **Capability** (e.g. `Capabilities/VerifyEmailToken/`) or a private helper method inside the Flow, NEVER to its own Flow slice.
+
+### 6.8.2 Constraints on Flow Size and Complexity
+
+- **Size Limit:** A Flow orchestrator file **MUST NOT** exceed 150 lines of code. If it exceeds 150 lines, it must delegate subfunction steps to reusable Capabilities.
+- **Nesting Limit:** The nested execution depth of steps inside a Flow **MUST NOT** exceed 3 levels.
+
+### 6.8.3 Classifications
+
+- **BLOCKER:** Subfunction-level goal mislabeled or implemented as a primary user-goal Flow slice (e.g., creating `Flows/VerifyEmailToken` instead of delegating to a Capability).
+- **RED:** A Flow file exceeding 150 lines of procedural orchestration code or having nested step depth greater than 3.
+- **YELLOW:** Flows containing inline business logic that should be refactored to a Capability but is temporarily documented.
+
 ---
+
 
 ## 6.9 Flow vs Capability Rule
 
@@ -3270,4 +3289,27 @@ RED:
 - models exist but code diverges without explanation
 - strategic decisions without tactical evidence
 - core knowledge accidentally trapped in builders/managers
+
+---
+
+## 32. Balanced Coupling Rule
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER  
+
+This section establishes rules for balancing coupling within software design, translating lessons from *Balancing Coupling in Software Design* (Khononov) to the AvaX Screaming Architecture.
+
+### 32.1 Coupling Dimensions
+
+Every unit and subsystem in AvaX **MUST** control its coupling across three primary dimensions:
+1. **Afferent (Inward) & Efferent (Outward) Coupling:** High-level orchestrators (Flows) may depend on low-level capabilities, but low-level capabilities or foundation components **MUST NOT** depend on high-level orchestrators. Sibling components **MUST NOT** cross-couple.
+2. **Temporal Coupling:** Actions that must occur in sequence or simultaneously **MUST** be coordinated explicitly by a Flow or event-handling structure. They **MUST NOT** be coupled implicitly via shared mutable state, filesystems, or global side-effects.
+3. **Semantic Coupling:** Subsystems **MUST NOT** share internal schema details, database structures, or mutable states. Sibling communication **MUST** be mediated strictly via explicit, immutable PublicSurface contracts (boundary value objects).
+
+### 32.2 Classifications
+
+- **BLOCKER:** Circular dependencies, sibling components depending directly on each other's private internals, or out-of-order component collaboration.
+- **RED:** Direct dependency on raw database tables of another component, bypassing its PublicSurface facade.
+- **YELLOW:** Temporal coupling that is documented and managed via event handlers with clear retry and dead-letter policies.
+
 

@@ -2042,3 +2042,26 @@ exact action
 If the pattern makes that clearer, use it.
 
 If the pattern makes that harder, remove it.
+
+---
+
+## 37. Fowler's PEAA Pattern Translation Rule
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER  
+
+This section defines how Fowler's *Patterns of Enterprise Application Architecture* (PEAA) map directly to AvaX architectural boundaries.
+
+### 37.1 Pattern Mapping
+
+Every enterprise pattern used in AvaX **MUST** translate to screaming, flow-oriented units:
+1. **Transaction Script:** Mapped directly to a single **Flow** orchestrator class (e.g., `Flows/RegisterUser/RegisterUser.php`).
+2. **Domain Model (Rich):** Mapped to domain capabilities (Aggregates, Entities, and Value Objects) residing inside component capability namespaces (e.g., `Capabilities/ReleaseReadiness/`).
+3. **Table Module / Table Data Gateway:** Mapped to persistence capabilities (Repositories or Query Builders) residing under component persistence boundaries (e.g., `Capabilities/Persistence/`).
+4. **Service Layer:** Mapped strictly to the **PublicSurface** facade or coordinate **Flow** orchestrator, never to a folder named `Services/` or classes named `<Name>Service.php`.
+
+### 37.2 Classifications
+
+- **BLOCKER:** Creating folders or namespaces named after structural patterns (e.g., `TransactionScripts/`, `DomainModels/`, `TableModules/`, `Services/`).
+- **RED:** Mixing transaction scripts or data mutation logic directly inside Active Record classes, or bypassing capability layers by mapping Table Data Gateways directly to controller actions.
+

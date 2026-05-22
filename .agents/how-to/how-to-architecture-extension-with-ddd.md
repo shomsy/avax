@@ -783,9 +783,39 @@ The reader should first understand the system behavior or capability.
 Only then should the reader discover whether a unit is a value object, entity, aggregate, repository, domain service,
 factory, or event.
 
+### 21.1 Domain Discovery Before Domain Modeling Rule
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER  
+
+Before designing tactical DDD elements (Aggregates, Entities, Value Objects, Repositories), agents and developers **MUST** perform domain discovery using Domain Storytelling or EventStorming timeline methodologies.
+
+1. **No Speculative modeling:** Tactical models **MUST NOT** be created without a mapped and documented domain scenario showing how actors interact with capabilities.
+2. **Mandatory Artifact:** A domain discovery artifact (typically a markdown file in `docs/domain/stories/` or inside the component's README) **MUST** document:
+   - **Actor goals:** Who initiates the flow and what is the target business outcome?
+   - **Language maps:** Mapping of conversational domain terms to the Ubiquitous Language terms implemented in code.
+   - **Consistency boundaries:** Definition of immediate transaction boundaries (what must be updated together in one aggregate) and eventual consistency boundaries (what happens asynchronously via Domain Events).
+
+### 21.2 Scenario Input Rule
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER  
+
+Every non-trivial Bounded Context or Flow **MUST** have concrete scenario input definitions documented in markdown or explicit PHPDoc blocks.
+
+1. **Input Traceability:** The scenario **MUST** trace actor inputs directly to the public API input schemas (e.g. `SecureRequest` DTOs or `DataTransfer` schemas).
+2. **Success & Failure Paths:** The scenario **MUST** document at least one success path and one critical failure path (e.g., business invariant violations).
+
+### 21.3 Classifications
+
+- **BLOCKER:** Implementing tactical DDD elements (Aggregates, Entities, Repositories) without a documented domain story or EventStorming timeline.
+- **RED:** Creating an Aggregate that crosses transactional boundaries, or mixing immediate database state updates across multiple Aggregates without eventual consistency domain events.
+- **YELLOW:** A domain story or scenario exists but is missing explicit language maps or success/failure path descriptions.
+
 ---
 
 ## 22. What Ubiquitous Language Means Here
+
 
 Ubiquitous Language is the shared language of a bounded context.
 

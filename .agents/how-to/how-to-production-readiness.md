@@ -1740,7 +1740,25 @@ A system with 8000 passing tests but all at one pyramid layer is not production-
 
 ---
 
+## 27.2 Enterprise Data and Runtime Readiness Rule
+
+**Status:** MANDATORY  
+**Severity:** BLOCKER  
+
+Before shipping any component or flow to production, the data system correctness controls defined in `.agents/how-to/how-to-data-systems.md` **MUST** be verified.
+
+### 27.2.1 Verification Checklist
+
+A component or flow **MUST NOT** be marked production-ready GREEN unless:
+1. **Transaction boundaries** are explicitly verified at the Flow layer.
+2. **Idempotency keys** are implemented and verified for all external write paths and queue consumers.
+3. **Cache invalidation triggers** are validated (no cache state drift or stale cached user data).
+4. **Aggregate mutation boundaries** are validated (no bypass of repository interfaces).
+
+---
+
 ## 28. Final Verdict
+
 
 > NOTE: This section is HISTORICAL. The current project state is GREEN across all V1-V5 stages as proven by
 > CURRENT_TRUTH.md (2026-05-15). 8351 tests pass, PHPStan 0 errors, all gates GREEN. The content below is preserved to

@@ -158,12 +158,6 @@ final class AssembleAuthIdentityGraph
         private string $mfaIssuer = 'Avax Auth',
         private string $passkeyRpId = 'localhost',
         private string $passkeyRpName = 'Avax Auth',
-        private CurrentAuthentication|null $currentAuthentication = null,
-        private ProjectAuthenticatedUser|null $projectAuthenticatedUser = null,
-        private RequireFreshMfa|null $requireFreshMfa = null,
-        private GenerateBackupCodes|null $generateBackupCodes = null,
-        private VerifyBackupCode|null $verifyBackupCode = null,
-        private StartMfaChallenge|null $startMfaChallenge = null,
     ) {
     }
 
@@ -272,12 +266,12 @@ final class AssembleAuthIdentityGraph
 
     private function resolveOrBuildCurrentAuthentication() : CurrentAuthentication
     {
-        return $this->currentAuthentication ?? new CurrentAuthentication();
+        return new CurrentAuthentication();
     }
 
     private function resolveOrBuildProjectAuthenticatedUser() : ProjectAuthenticatedUser
     {
-        return $this->projectAuthenticatedUser ?? new ProjectAuthenticatedUser(
+        return new ProjectAuthenticatedUser(
             emailVerificationStateStore: $this->emailVerificationStateStore,
             mfaStore: $this->mfaStore,
         );
@@ -285,22 +279,22 @@ final class AssembleAuthIdentityGraph
 
     private function resolveOrBuildRequireFreshMfa(CurrentAuthentication $currentAuthentication) : RequireFreshMfa
     {
-        return $this->requireFreshMfa ?? new RequireFreshMfa(currentAuthentication: $currentAuthentication, clock: $this->clock);
+        return new RequireFreshMfa(currentAuthentication: $currentAuthentication, clock: $this->clock);
     }
 
     private function resolveOrBuildGenerateBackupCodes() : GenerateBackupCodes
     {
-        return $this->generateBackupCodes ?? new GenerateBackupCodes(passwordHasher: $this->passwordHasher, clock: $this->clock);
+        return new GenerateBackupCodes(passwordHasher: $this->passwordHasher, clock: $this->clock);
     }
 
     private function resolveOrBuildVerifyBackupCode() : VerifyBackupCode
     {
-        return $this->verifyBackupCode ?? new VerifyBackupCode(mfaStore: $this->mfaStore, passwordHasher: $this->passwordHasher, auditLog: $this->auditLog, clock: $this->clock);
+        return new VerifyBackupCode(mfaStore: $this->mfaStore, passwordHasher: $this->passwordHasher, auditLog: $this->auditLog, clock: $this->clock);
     }
 
     private function resolveOrBuildStartMfaChallenge(CurrentAuthentication $currentAuthentication) : StartMfaChallenge
     {
-        return $this->startMfaChallenge ?? new StartMfaChallenge(
+        return new StartMfaChallenge(
             currentAuthentication: $currentAuthentication,
             generalMfaStore: $this->mfaStore,
             mfaChallengeStore: $this->mfaChallengeStore,

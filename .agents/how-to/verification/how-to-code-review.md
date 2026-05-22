@@ -1915,3 +1915,47 @@ Every review of a change touching data persistence, caching, transactions, or ex
 
 ---
 
+## 30. Engineering Laws Review Cross-Reference
+
+Every review must consider engineering laws from `.agents/how-to/architecture/how-to-engineering-laws.md`.
+
+These are review heuristics, not absolute doctrine. Laws default to YELLOW and escalate to BLOCKER only when they intersect with security, data integrity, runtime safety, public API breaks, or production readiness.
+
+| Law | When to Apply | Review Focus |
+|-----|--------------|--------------|
+| Goodhart's Law | Metrics, KPIs, SLAs, monitoring, test counts | Are metrics becoming targets? Is optimization gaming the metric? |
+| Hyrum's Law | Public APIs, PublicSurface, facades, DSLs | Are observable behaviors documented? Are implicit contracts broken? |
+| Leaky Abstractions | Any abstraction, layer, wrapper, proxy, adapter | Does the abstraction hide failure modes? Do callers need internals? |
+| Chesterton's Fence | Refactoring, removal, replacement | Is the original constraint understood before removal? |
+| Distributed Computing Fallacies | Network IO, microservices, cache, queue, external APIs | Are timeouts, retries, partial failures, latency handled? |
+| Law of Triviality | Review comments, bikeshedding, style debates | Is focus proportional to impact? |
+| Amdahl's Law | Performance optimization, parallelism | Is the optimized path the actual bottleneck? |
+| Jevons' Paradox | Efficiency gains, resource optimization | Does efficiency increase total consumption? |
+| Least Astonishment | API design, naming, defaults, error messages | Would a skilled developer expect this behavior? |
+
+### 30.1 Required Rule
+
+Engineering laws **MUST NOT** be used as blockers unless the law intersects with security, data integrity, runtime safety, public API compatibility, or production readiness.
+
+Engineering laws **MUST** default to YELLOW severity:
+
+- observation with ownership, risk, mitigation, and expiry
+- actionable for the next slice
+- does not block merge unless escalated
+
+Engineering laws **MUST** escalate to BLOCKER only when:
+
+- metric gaming creates a security or data integrity risk (Goodhart's)
+- observable public behavior change without migration path (Hyrum's)
+- abstraction hides failure modes that violate fail-closed guarantees (Leaky Abstractions)
+- fence removal eliminates a safety boundary (Chesterton's Fence)
+- network failure handling violates data integrity or security (Distributed Fallacies)
+- optimization bottleneck is wrong and creates production risk (Amdahl's)
+- efficiency gain creates unbounded resource consumption (Jevons')
+- behavior violates explicit security or safety contract (Least Astonishment)
+
+### 30.2 Review Classification
+
+- **BLOCKER:** Public API change breaks observable behavior without migration. Optimization targets non-bottleneck and creates production risk. Cache abstraction hides failure modes that violate fail-closed.
+- **RED:** No timeout on external service calls. Metrics used as targets without counter-metrics. Efficiency improvement without resource bounds.
+- **YELLOW:** Abstraction leaks internals but callers are aware and bounded. Observable behavior change is documented but migration is optional. Review focuses on naming over architecture.

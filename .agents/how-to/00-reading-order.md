@@ -15,38 +15,39 @@
 8. .agents/how-to/architecture/how-to-events-listeners-event-sourcing-cqrs-realtime.md
 9. .agents/how-to/architecture/how-to-use-advanced-architecture-patterns.md
 10. .agents/how-to/architecture/how-to-use-ai-assisted-execution.md
+11. .agents/how-to/architecture/how-to-engineering-laws.md
 
 ## Modeling Before Code
 
-11. .agents/how-to/modeling/how-to-model-flows.md — MISSING
-12. .agents/how-to/modeling/how-to-domain-discovery.md — MISSING
-13. .agents/how-to/modeling/how-to-scenario-input.md — MISSING
+12. .agents/how-to/modeling/how-to-model-flows.md — MISSING
+13. .agents/how-to/modeling/how-to-domain-discovery.md — MISSING
+14. .agents/how-to/modeling/how-to-scenario-input.md — MISSING
 
 ## Component Design
 
-14. .agents/how-to/components/how-to-design-components.md
-15. .agents/how-to/components/how-to-dogfooding.md
+15. .agents/how-to/components/how-to-design-components.md
+16. .agents/how-to/components/how-to-dogfooding.md
 
 ## Implementation
 
-16. .agents/how-to/implementation/how-to-clean-code.md
-17. .agents/how-to/implementation/how-to-code-style.md
-18. .agents/how-to/implementation/how-to-coding-standards.md
-19. .agents/how-to/implementation/how-to-modern-php-attributes-di.md
-20. .agents/how-to/implementation/how-to-dependency-injection.md
+17. .agents/how-to/implementation/how-to-clean-code.md
+18. .agents/how-to/implementation/how-to-code-style.md
+19. .agents/how-to/implementation/how-to-coding-standards.md
+20. .agents/how-to/implementation/how-to-modern-php-attributes-di.md
+21. .agents/how-to/implementation/how-to-dependency-injection.md
 
 ## Verification
 
-21. .agents/how-to/verification/how-to-code-review.md
-22. .agents/how-to/verification/how-to-unit-test.md
-23. .agents/how-to/verification/how-to-production-readiness.md
-24. .agents/how-to/verification/how-to-system-security.md
-25. .agents/how-to/verification/how-to-system-performance.md
-26. .agents/how-to/verification/how-to-data-systems.md
+22. .agents/how-to/verification/how-to-code-review.md
+23. .agents/how-to/verification/how-to-unit-test.md
+24. .agents/how-to/verification/how-to-production-readiness.md
+25. .agents/how-to/verification/how-to-system-security.md
+26. .agents/how-to/verification/how-to-system-performance.md
+27. .agents/how-to/verification/how-to-data-systems.md
 
 ## Documentation
 
-27. .agents/how-to/documentation/how-to-document.md
+28. .agents/how-to/documentation/how-to-document.md
 
 ## Project Local
 

@@ -2223,3 +2223,21 @@ runtimes from memory and state leaks.
 If performance makes the system clearer, safer, and more predictable, it belongs.
 
 If performance hides behavior behind vague optimizers, it failed.
+
+---
+
+## 47. Engineering Laws Cross-Reference
+
+Performance review must consider engineering laws from `.agents/how-to/architecture/how-to-engineering-laws.md`.
+
+| Law | Performance Focus |
+|-----|-------------------|
+| Amdahl's Law | Optimization targets the actual bottleneck, not a convenient hot path. Serial portions limit parallel gains. |
+| Jevons' Paradox | Efficiency gains must not create unbounded total resource consumption. Bounds and quotas required. |
+| Leaky Abstractions | Performance abstractions (cache, pool, proxy) must not hide failure modes or memory leaks. |
+
+### 47.1 Required Rule
+
+Amdahl's Law and Jevons' Paradox default to YELLOW in performance review.
+
+BLOCKER only when optimization creates production risk (wrong bottleneck, unbounded resource growth, or violates fail-closed guarantees).

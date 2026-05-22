@@ -2236,7 +2236,373 @@ earliest opportunity.
 **Severity:** BLOCKER
 
 ---
+## 54. Hard Enterprise OOP Boundary Rules
 
+### 54.1 Horizontal Blindness / Outward-Only Dependency Law
+
+Sibling subsystems on the same tier must not directly depend on each other.
+
+Communication between sibling subsystems is coordinated by the parent gateway/orchestrator.
+
+**Allowed:**
+
+```text
+AuthenticationGateway coordinates CredentialAuthority and SessionRegistry.
+```
+
+**Forbidden:**
+
+```text
+CredentialAuthority directly depends on SessionRegistry.
+```
+
+Dependencies flow:
+- Parent gateway/orchestrator -> child capabilities
+- Child capabilities -> their own internal units and foundation primitives
+- Child capabilities -> parent gateway (callbacks, events, results) — never to siblings
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+### 54.2 Boundary Value Object Rule
+
+Do not pass raw primitives across subsystem/capability boundaries when the value carries business grammar.
+
+**Values requiring value objects or domain IDs:** `EmailAddress`, `PlainPassword`, `TenantId`, `UserId`, `TokenId`, `PermissionName`, `RoleName`, `ClientId`, `SessionId`, `AuthContextId`.
+
+**Allowed primitives:** local counters, booleans, harmless formatting options, pagination limits when not domain-sensitive.
+
+When a value crosses a subsystem boundary and its meaning matters to the domain, wrap it.
+
+**Status:** MANDATORY  
+**Severity:** HIGH (BLOCKER for security-sensitive boundaries)
+
+### 54.3 Command/Query Clarity Rule
+
+Public methods must be clearly commands or queries, never both.
+
+Queries: read-only, side-effect-free, return data.
+
+Commands: may mutate, return void or meaningful command result (created ID, issued token, auth context, domain event, command result object). Must not smuggle unrelated queries.
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+### 54.4 HLD/LLD Mirror Rule
+
+Named HLD subsystem/capability blocks must map to same-named physical code directories or clearly documented public surfaces.
+
+No HLD block may disappear into generic folders like `Services/`, `Managers/`, `Helpers/`, `Support/`, `Utils/`.
+
+The code tree must be readable as the architecture map.
+
+**Status:** MANDATORY  
+**Severity:** HIGH
+
+### 54.5 Single Preferred Entry Rule
+
+Each subsystem should expose one preferred public surface/gateway for normal usage. Internal workers remain internal. Multiple public surfaces allowed only for distinct documented user-facing capabilities.
+
+**Status:** MANDATORY  
+**Severity:** MEDIUM
+
+
+## 55. Universal Enterprise Codecraft Rule
+
+**Status:** MANDATORY  
+**Scope:** All AvaX architecture — systems, subsystems, components, flows, capabilities, runtimes, public surfaces.  
+**Severity:** BLOCKER
+
+### 55.1 Enterprise-Grade and Human-Readable
+
+Every architectural unit must be enterprise-grade AND human-readable.
+
+Enterprise-grade does NOT mean: complicated, abstract, ceremonial, pattern-heavy, over-engineered, architecturally theatrical.
+
+Enterprise-grade means: explicit responsibility, low cognitive load, strong boundaries, predictable behavior, safe defaults, testable behavior, clear ownership, readable call-sites, discoverable structure, fluent APIs, maintainable evolution, no hidden complexity.
+
+### 55.2 Human-Readable Architecture
+
+Architecture must read like a story, not a warehouse.
+
+Folders tell the system story.
+Class names explain intent.
+Method names explain action.
+Call-sites must feel fluent and predictable.
+
+The architecture should explain itself without archaeological investigation.
+
+### 55.3 No Technical Theater
+
+Architecture must not introduce ceremony for its own sake.
+
+Builders, Factories, Graphs, Assemblies, Managers, Services, Helpers, Utils, Coordinators, Orchestrators, Setup/Wiring layers, and pattern-heavy abstractions are forbidden unless they solve a proven structural problem.
+
+Pattern usage must reduce cognitive load, not move complexity behind prettier names.
+
+### 55.4 Fluent Architecture
+
+Public surfaces should feel like small fluent APIs.
+
+Prefer: subsystem names, capability names, product names, domain names, fluent call-sites.
+
+Public fluent direction:
+
+```text
+App::flow(...)
+App::identity()->auth()
+App::identity()->access()
+```
+
+### 55.5 Cognitive Load at Scale
+
+The architecture must optimize for: fast understanding, safe modification, low surprise, easy navigation, discoverability, boring cohesion.
+
+If understanding a subsystem requires opening five other subsystems immediately, the architecture is suspicious.
+
+### 55.6 Structural Honesty
+
+Architecture must reveal real subsystem boundaries.
+
+Never hide god objects, dependency chaos, orchestration complexity, circular coupling, or unrelated responsibilities behind builders, graphs, factories, facades, or configuration wrappers.
+
+### 55.7 Recursive Decomposition at Scale
+
+When an architectural unit becomes large:
+
+- first identify hidden subsystems
+- then capabilities
+- then flows
+- then policies/rules/value objects
+
+Do not split mechanically. Split by real ownership and behavior.
+
+Stop decomposing when the unit becomes: boring, cohesive, readable, predictable.
+
+### 55.8 Readability vs Safety at Scale
+
+An architectural rule succeeds only if the system becomes safer AND easier to understand.
+
+If a rule improves safety but destroys readability: redesign the structure.
+If a shortcut improves readability but hides risk: reject the shortcut.
+
+### 55.9 Hard Architectural Boundaries
+
+#### 55.9.1 Horizontal Blindness
+
+Sibling subsystems do not directly depend on each other. Parent gateway/orchestrator coordinates them.
+
+#### 55.9.2 Boundary Value Objects
+
+Raw primitives must not cross subsystem boundaries when carrying business or security meaning.
+
+#### 55.9.3 Command/Query Clarity
+
+Commands mutate. Queries read. Mixed behavior requires explicit result object and evidence.
+
+#### 55.9.4 HLD/LLD Mirror
+
+Architecture language must match physical code structure.
+
+#### 55.9.5 Single Preferred Entry
+
+Each subsystem exposes one obvious public surface/gateway. Multiple entry points create unstable API and attack surface.
+
+### 55.10 Naming at Scale
+
+Avoid default usage of: Builder, Factory, Graph, Assembly, DSL, Wiring, Setup, Manager, Service, Helper, Util, Support.
+
+Avoid AvaX/Avax branding in class names by default.
+
+Prefer: subsystem names, capability names, product names, domain names, fluent call-sites.
+
+Examples:
+
+```text
+AuthenticationGateway
+CredentialAuthority
+SessionRegistry
+MfaProtection
+PasskeyAccess
+ExternalLogin
+TenantAccess
+PolicyEnforcement
+RiskAssessment
+TokenAuthority
+```
+
+### 55.11 GREEN / YELLOW / RED Criteria
+
+GREEN:
+
+- architecture reads naturally without cross-referencing multiple documents
+- public surfaces are fluent and intention-revealing
+- code structure matches architecture documentation
+- no pattern-heavy abstractions without proven need
+- boundaries use value objects, not raw primitives
+- one entry point per subsystem
+
+YELLOW:
+
+- technical theater exists in legacy architecture with documented migration plan
+- builder/factory used but justified with evidence
+- mixed command/query in non-critical subsystem with explicit result object
+
+RED:
+
+- god objects hidden behind architectural facades
+- sibling subsystems depend on each other directly
+- raw primitives cross security boundaries
+- architecture docs say one thing, code does another
+
+## 56. Object-Oriented Enterprise Architecting Rule
+
+**Status:** MANDATORY
+**Scope:** All AvaX architecture decisions, system design, subsystem boundaries, context maps, handovers, and strategic/tactical design.
+**Severity:** BLOCKER
+
+Source: Object-Oriented Enterprise Architecting principles, translated into AvaX governance.
+
+### 56.1 Object-Oriented Thinking at Scale
+
+Architecture is modeling real-world complexity as interacting systems with clear boundaries.
+
+Each subsystem must represent a meaningful domain concept, not a technical category.
+
+Architecture decisions must be justified by real ownership, information boundaries, and handover patterns — not by pattern names.
+
+### 56.2 Slicing Is Architecture
+
+The most important architecture decision is slicing the problem space.
+
+Slice by: cohesion, information ownership, task/role alignment, handover boundaries, deployability potential, runtime independence, coupling pressure.
+
+Bad slicing creates fragile handovers, information loss, rework, and accidental coupling.
+
+### 56.3 Bounded Context + Context Map
+
+Every major subsystem must define a bounded context with:
+
+- owned and consumed concepts
+- published APIs/events/views
+- upstream/downstream relationships
+- handover contracts
+- information ownership
+
+Context maps are required evidence for major redesigns.
+
+### 56.4 IRTV at Architecture Scale
+
+For complex subsystems, architecture must model:
+
+- Information: what knowledge matters?
+- Roles: who/what owns and uses it?
+- Tasks: what transformations occur?
+- Views: what surfaces expose it?
+
+IRTV guides boundary placement, PublicSurface design, and flow decomposition.
+
+### 56.5 Knowledge Backbone
+
+Important subsystems need an explicit knowledge backbone:
+
+- key information objects and their owners
+- transformations and update flows
+- consumers and views
+
+Core knowledge must not live accidentally inside services, builders, or configuration.
+
+### 56.6 Handover Risk at Scale
+
+Every handover between subsystems is an architectural risk.
+
+Handover evidence must identify: what crosses, who owns it, what can be lost, what must be transformed, what contract protects it, what tests prove it.
+
+Hidden handovers are architecture bugs.
+
+### 56.7 Enterprise Reality
+
+AvaX architecture assumes real systems contain multiple vendors, multiple technical generations, external systems, conflicting interests, political constraints, and legacy integration.
+
+Boundaries, APIs, events, ports, compatibility layers, and handover contracts must be explicit.
+
+Design as if the real world is not clean.
+
+### 56.8 Distributed vs Centralized Tradeoff
+
+Do not assume centralized or distributed is best. Record tradeoffs: strengths, weaknesses, opportunities, threats, assumptions, evidence, tactical feasibility.
+
+Use claims-based SWOT for major alternatives.
+
+### 56.9 Tactical Detail Before Strategic Bet
+
+High-level diagrams are not enough. Major architecture decisions require tactical LLD/code-level feasibility proof.
+
+No GREEN strategic decision without tactical evidence.
+
+### 56.10 Views as Loose Coupling
+
+Views are first-class architecture artifacts: public API, workspace, query surface, command surface, transformation boundary, event processing boundary, communication bridge.
+
+Views expose consumer-specific knowledge without leaking internal models.
+
+### 56.11 CQRS Thinking
+
+Separate commands that change state from queries that read state. Do not apply CQRS as ceremony — use it to clarify state change versus knowledge access.
+
+### 56.12 Data Product Thinking
+
+When AvaX exposes data across contexts, treat it as a product: owned, documented, stable, consumer-oriented, transformed for consumer needs, versioned where needed.
+
+### 56.13 Event Sourcing as Option
+
+Use Event Sourcing when auditability, reconstruction, time travel, or change history matters. Do not conflate with EventStorming. Do not use as ceremony.
+
+### 56.14 Model-to-Code Rule
+
+If a model exists, code must reflect it. If code diverges, update the model or fix the code. No stale architecture theater.
+
+### 56.15 Claims-Based Evidence
+
+For major architectural alternatives, record: expected benefit, risk, weakness, opportunity, threat, assumption, evidence, validation path.
+
+Architecture decisions must not be opinion-only.
+
+### 56.16 Architectural Quanta
+
+Bounded contexts, views, and capabilities may become independently deployable units. Design boundaries should keep that option possible.
+
+### 56.17 AvaX Translation
+
+All architectural ideas must be translated into AvaX terms: PublicSurface receives, Flows execute, Capabilities power, Configuration assembles, Foundation supports.
+
+Do not import terminology blindly if it conflicts with AvaX language.
+
+### 56.18 GREEN / YELLOW / RED
+
+GREEN:
+
+- subsystems represent real domain concepts
+- context maps exist for major subsystems
+- handovers documented and tested
+- IRTV applied to complex subsystems
+- knowledge backbone explicit
+- models match code
+- tactical evidence supports strategic decisions
+
+YELLOW:
+
+- partial context maps
+- handover contracts partially documented
+- knowledge partially hidden
+
+RED:
+
+- fake OOP at architecture scale
+- hidden handovers
+- no context map for major subsystem
+- models diverge from code
+- strategic decisions without tactical evidence
 ## 57. Separation of Concern Rule
 
 ### 57.1 Universal Concern Definition

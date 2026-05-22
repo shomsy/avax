@@ -1739,4 +1739,3 @@ For full SoC governance, see:
 
 ---
 
-## 27. Critical Quality Signal Rule

@@ -32,9 +32,15 @@ See `00-reading-order.md`.
 
 ### architecture/
 
-Structural laws, architecture decisions, DDD architecture extension, pattern translation, runtime composition, event-sourcing/CQRS, advanced architecture patterns, AI-assisted execution rules, and trade-off rules.
+Structural laws, architecture decisions, DDD architecture extension, pattern translation, runtime composition, event-sourcing/CQRS, advanced architecture patterns, engineering laws/heuristics for review discipline, AI-assisted execution rules, and trade-off rules.
 
 These documents define how the system is structured, how domains map to code, and how architectural patterns are translated into AvaX conventions.
+
+### modeling/
+
+Flow modeling, domain discovery, scenario input design, and public API ergonomics.
+
+These documents define how AvaX models Flows as use-case behavior, establishes intention-revealing public APIs, and treats string selectors as first-class developer experience.
 
 ### components/
 

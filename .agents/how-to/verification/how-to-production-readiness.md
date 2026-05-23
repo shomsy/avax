@@ -1783,3 +1783,24 @@ GREEN — V1 Kernel Green proven, V2-V5 all complete, all production-readiness g
 ```
 
 See `CURRENT_TRUTH.md` for current evidence.
+
+---
+
+## 29. Engineering Laws Cross-Reference
+
+Production readiness review must consider engineering laws from `.agents/how-to/architecture/how-to-engineering-laws.md`.
+
+| Law | Production Readiness Focus |
+|-----|---------------------------|
+| Goodhart's Law | SLA/SLO targets not gamed, counter-metrics exist, alerting measures real health |
+| Hyrum's Law | All observable public behaviors documented, migration paths for behavior changes |
+| Leaky Abstractions | Failure boundaries clear, abstraction layers do not hide critical failure modes |
+| Distributed Computing Fallacies | Network/partition/retry/timeout handling proven, not assumed |
+| Amdahl's Law | Performance bottlenecks identified, optimizations target actual hot paths |
+| Jevons' Paradox | Resource efficiency does not create unbounded total consumption |
+
+### 29.1 Required Rule
+
+Engineering laws default to YELLOW in production readiness review.
+
+BLOCKER only when the law intersects with security, data integrity, runtime safety, public API breaks, or production readiness.

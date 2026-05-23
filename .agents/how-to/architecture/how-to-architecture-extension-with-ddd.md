@@ -2689,4 +2689,21 @@ See:
 - `how-to-architecture-extension-with-ddd.md` — Section 30: Ubiquitous Language Dictionary
 - `how-to-architecture-extension-with-ddd.md` — Section 31: Required DDD Language Outputs
 
+### Engineering Laws Cross-Reference
+
+DDD and architecture review must consider engineering laws from `.agents/how-to/architecture/how-to-engineering-laws.md`.
+
+| Law | DDD/Architecture Focus |
+|-----|----------------------|
+| Hyrum's Law | PublicSurface observable behaviors must be explicit. Implicit contracts become accidental APIs. |
+| Leaky Abstractions | Aggregate and bounded context boundaries must not hide critical failure modes. |
+| Chesterton's Fence | Domain model changes must understand existing invariants before removal. |
+| Least Astonishment | Ubiquitous language must match domain expectations, not surprise practitioners. |
+
+### Engineering Laws Required Rule
+
+Engineering laws default to YELLOW in architecture review.
+
+BLOCKER only when the law intersects with security, data integrity, runtime safety, or public API breaks.
+
 ---

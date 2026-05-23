@@ -65,3 +65,22 @@ Data systems **MUST** be designed to handle retries safely:
 
 - Lacking explicit documentation separating the System of Record from derived/cached read models.
 - Failing to prove idempotency behavior under simulated network disconnects.
+
+---
+
+## 4. Engineering Laws Cross-Reference
+
+Data systems review must consider engineering laws from `.agents/how-to/architecture/how-to-engineering-laws.md`.
+
+| Law | Data Systems Focus |
+|-----|-------------------|
+| Distributed Computing Fallacies | Network is not reliable. Timeouts, retries, partial failures, and latency must be handled. |
+| Leaky Abstractions | ORM/repository abstractions must not hide N+1 queries, transaction boundaries, or connection pool exhaustion. |
+| Amdahl's Law | Query optimization targets actual bottlenecks, not convenient indexes. |
+| Hyrum's Law | Observable data behaviors (schema, ordering, null handling) must be explicit, not implicit. |
+
+### 4.1 Required Rule
+
+Engineering laws default to YELLOW in data systems review.
+
+BLOCKER only when the law intersects with data integrity, transaction safety, or fail-closed guarantees.

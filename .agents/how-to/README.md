@@ -36,6 +36,12 @@ Structural laws, architecture decisions, DDD architecture extension, pattern tra
 
 These documents define how the system is structured, how domains map to code, and how architectural patterns are translated into AvaX conventions.
 
+### modeling/
+
+Flow modeling, domain discovery, scenario input design, and public API ergonomics.
+
+These documents define how AvaX models Flows as use-case behavior, establishes intention-revealing public APIs, and treats string selectors as first-class developer experience.
+
 ### components/
 
 Component design laws, component completion rules, and component dogfooding requirements.

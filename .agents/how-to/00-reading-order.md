@@ -19,7 +19,7 @@
 
 ## Modeling Before Code
 
-12. .agents/how-to/modeling/how-to-model-flows.md — MISSING
+12. .agents/how-to/modeling/how-to-model-flows.md
 13. .agents/how-to/modeling/how-to-domain-discovery.md — MISSING
 14. .agents/how-to/modeling/how-to-scenario-input.md — MISSING
 
@@ -60,4 +60,4 @@
 - If the task touches a specific domain, the agent must read the relevant specific document even if it appears late in the order.
 - If a local AGENTS.md or project contract is stricter, the stricter rule wins.
 - For AvaX work, project-local governance must be read before implementation.
-- The modeling/ folder is currently empty; these documents are planned but not yet created.
+- The modeling/ folder contains how-to-model-flows.md; how-to-domain-discovery.md and how-to-scenario-input.md are planned.

@@ -606,12 +606,45 @@ accept string selectors where appropriate
 ```
 
 ```php
-// GOOD — PublicSurface receives, delegates, accepts string selector
+// GOOD — instance-based PublicSurface receives runtime via constructor,
+// delegates to runtime, runtime owns catalog/validation.
+// This is the preferred AvaX pattern.
 final readonly class Storage
 {
+    public function __construct(
+        private StorageRuntime $runtime,
+    ) {}
+
+    public function driver(string $name): StorageDriver
+    {
+        return $this->runtime->driver($name);
+    }
+}
+
+// GOOD — static facade as thin DX wrapper.
+// StorageFacade::runtime() returns the boot-configured StorageRuntime.
+// The facade is set during component registration (not via app()).
+// This is allowed ONLY at PublicSurface/facade boundary.
+final class Storage
+{
+    private static ?StorageRuntime $runtime = null;
+
+    /** @internal Called by component registration, not by callers. */
+    public static function setRuntime(StorageRuntime $runtime): void
+    {
+        self::$runtime = $runtime;
+    }
+
     public static function driver(string $name): StorageDriver
     {
-        return app(StorageRegistry::class)->driver($name);
+        if (self::$runtime === null) {
+            throw new StorageNotConfiguredException(
+                'Storage runtime has not been configured. '
+                . 'Ensure the Storage component is registered.'
+            );
+        }
+
+        return self::$runtime->driver($name);
     }
 }
 
@@ -633,6 +666,197 @@ final readonly class Storage
 
 ---
 
+## 12.1 AvaX Anti-Service-Locator DX Rule
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+AvaX intentionally exposes Laravel-like developer experience:
+
+```php
+Storage::driver('s3')->put($path, $contents);
+Auth::area('admin')->login($credentials);
+Cache::store('redis')->remember($key, $ttl, $callback);
+```
+
+But AvaX must **NOT** implement this DX through Laravel-like service locator shortcuts.
+
+Core principle:
+
+```text
+Laravel-like DX, AvaX-grade composition.
+```
+
+Public API may be static, fluent, and string-selector based.
+Internal runtime must be explicit, boot-time registered, verified, container-managed, and service-locator-free.
+
+### 12.1.1 What Is Forbidden
+
+PublicSurface **MUST NOT** call:
+
+```text
+app()
+container()
+resolve()
+make()
+$container->get()
+```
+
+Static facades **MUST NOT** perform ad-hoc runtime service lookup.
+
+String selectors **MUST NOT** map directly to container keys.
+
+Selector resolution **MUST NOT** bypass Catalog/Registry/RuntimePlan validation.
+
+Component runtime dependencies **MUST NOT** be pulled lazily from the container during behavior execution.
+
+```php
+// BAD — app() service locator shortcut
+public static function driver(string $name): StorageDriver
+{
+    return app(StorageRegistry::class)->driver($name);
+}
+
+// BAD — container() lookup
+public static function driver(string $name): StorageDriver
+{
+    return container(StorageRegistry::class)->driver($name);
+}
+
+// BAD — direct container get
+public static function driver(string $name): StorageDriver
+{
+    return Container::getInstance()->get("storage.driver.{$name}");
+}
+
+// BAD — string maps to container key
+public static function driver(string $name): StorageDriver
+{
+    return app(StorageDriver::class . '\\' . ucfirst($name));
+}
+```
+
+### 12.1.2 What Is Allowed
+
+PublicSurface **MAY** delegate to:
+
+```text
+injected runtime object (preferred)
+official boot-configured facade bridge (for static DX)
+generated/compiled runtime accessor approved by AvaX runtime composition rules
+```
+
+```php
+// GOOD — instance receives runtime via DI
+final readonly class Storage
+{
+    public function __construct(
+        private StorageRuntime $runtime,
+    ) {}
+
+    public function driver(string $name): StorageDriver
+    {
+        return $this->runtime->driver($name);
+    }
+}
+
+// GOOD — static facade delegates to boot-configured bridge
+final class Storage
+{
+    private static ?StorageRuntime $runtime = null;
+
+    public static function setRuntime(StorageRuntime $runtime): void
+    {
+        self::$runtime = $runtime;
+    }
+
+    public static function driver(string $name): StorageDriver
+    {
+        if (self::$runtime === null) {
+            throw new StorageNotConfiguredException('...');
+        }
+        return self::$runtime->driver($name);
+    }
+}
+```
+
+### 12.1.3 The Good Pipeline
+
+```text
+Storage::driver('s3')
+  -> Storage PublicSurface
+  -> StorageRuntime (boot-configured, DI-managed)
+  -> StorageDriverCatalog (validates selector, fails fast)
+  -> registered descriptor
+  -> container-managed driver instance
+```
+
+### 12.1.4 The Bad Pipeline
+
+```text
+Storage::driver('s3')
+  -> app(StorageRegistry::class)
+  -> hidden service locator lookup
+  -> whatever the container has keyed as 'StorageRegistry'
+  -> no catalog validation, no fail-fast, no observability
+```
+
+### 12.1.5 Responsibility Map
+
+```text
+Container builds and verifies the object graph.
+Catalog/Registry/RuntimePlan owns selector names.
+Runtime object executes behavior.
+PublicSurface receives and delegates.
+```
+
+The container is **NOT** the semantic selector registry.
+The container builds objects; the catalog validates names.
+
+### 12.1.6 Facade Bridge Contract
+
+A static facade bridge is allowed only when:
+
+```text
+1. The runtime is set during component registration (not at call time).
+2. The facade provides setRuntime() for test injection.
+3. The facade provides reset() for worker safety.
+4. The facade provides no ad-hoc resolve/get/make method.
+5. The facade throws when runtime is not configured (no silent fallback).
+6. The facade is documented with PHPDoc explaining lifecycle.
+```
+
+```php
+final class Storage
+{
+    private static ?StorageRuntime $runtime = null;
+
+    public static function setRuntime(StorageRuntime $runtime): void
+    {
+        self::$runtime = $runtime;
+    }
+
+    public static function reset(): void
+    {
+        self::$runtime = null;
+    }
+
+    public static function driver(string $name): StorageDriver
+    {
+        if (self::$runtime === null) {
+            throw new StorageNotConfiguredException('...');
+        }
+        return self::$runtime->driver($name);
+    }
+}
+```
+
+The ServiceProvider calls `Storage::setRuntime($runtime)` during boot.
+Callers call `Storage::driver('s3')` at runtime.
+No service locator is involved.
+
+---
+
 ## 13. Classification Rules
 
 ### 13.1 BLOCKER Findings
@@ -646,6 +870,23 @@ String selector resolved via service locator or dynamic class discovery
 String selector silently ignored or defaulted when unknown
 PublicSurface owning runtime machinery or assembling object graphs
 Flow without clear trigger, input, and output
+PublicSurface calls app(), container(), resolve(), make(), or container->get()
+Static facade performs ad-hoc runtime service lookup
+String selector maps directly to container key
+Selector resolution bypasses Catalog/Registry/RuntimePlan validation
+Component runtime dependency pulled lazily from container during behavior execution
+```
+
+### 13.1.1 PASS Examples
+
+The following are approved patterns:
+
+```text
+Static facade delegates to official boot-configured AvaX facade bridge
+Instance PublicSurface receives runtime via constructor
+ServiceProvider registers runtime, catalog, descriptors, and verification
+Runtime object receives catalog through DI
+Catalog validates selector and fails fast
 ```
 
 ### 13.2 HIGH Findings
@@ -1005,6 +1246,8 @@ When rules conflict, apply the precedence defined in AGENTS.md §3.
 | String selector fail-fast     | BLOCKER   | Review, negative tests          |
 | String selector no service loc| BLOCKER   | Review, grep, static analysis   |
 | PublicSurface delegates only  | BLOCKER   | Review, composition leak check  |
+| No app/container in PublicSurface| BLOCKER| Review, grep, static analysis   |
+| No ad-hoc facade resolution   | BLOCKER   | Review, facade audit            |
 | Domain verb method names      | HIGH      | Review, method name audit       |
 | Single input for complex data | HIGH      | Review, signature audit         |
 | Fluent API not exposing internals | HIGH  | Review, call site audit         |

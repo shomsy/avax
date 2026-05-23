@@ -814,6 +814,80 @@ proxy.
 Static facades are a compatibility layer. New code **SHOULD** use DI. Existing facades **SHOULD** be gradually replaced
 with injected dependencies.
 
+### 7.5 Component Registration Model
+
+#### 7.5.1 ServiceProvider Per Real Component Boundary
+
+Every real component boundary has a dedicated ServiceProvider.
+
+The ServiceProvider does not execute behavior. It registers and wires.
+
+#### 7.5.2 Register* Composition Actions
+
+Each subsystem and capability has its own `Register*` class in `Configuration/`.
+
+```text
+Component ServiceProvider
+  -> RegisterStorageRuntime
+  -> RegisterStorageDrivers
+  -> VerifyStorageConfiguration
+  -> StorageRuntime
+  -> StorageDriverCatalog
+```
+
+For Identity:
+
+```text
+IdentityServiceProvider
+  -> RegisterAuthRuntime
+  -> RegisterAccessRuntime
+  -> RegisterCredentialsRuntime
+  -> RegisterExternalIdentityRuntime
+  -> RegisterTokensRuntime
+  -> RegisterTenancyRuntime
+```
+
+#### 7.5.3 Catalog/Registry for String Selectors
+
+String selectors (driver names, store names, channel names) are owned by an explicit Catalog or Registry class.
+
+The Catalog:
+- holds the map of selector name to registered descriptor/driver
+- validates selectors at runtime and fails fast on unknown names
+- provides clear error messages listing available options
+- is built during registration, not discovered at runtime
+
+The Container is **NOT** the semantic selector registry.
+The Container builds and resolves the object graph.
+The Catalog owns selector names and validation.
+
+#### 7.5.4 Container as Object Graph Owner
+
+```text
+Container builds and verifies the object graph.
+Catalog/Registry owns selector names.
+Runtime object executes behavior.
+PublicSurface/facade receives and delegates.
+```
+
+The Container must not be used as a string-key lookup for runtime selectors.
+Binding `storage.driver.s3` in the container is not the same as registering `s3` in the StorageDriverCatalog.
+The former is container wiring; the latter is semantic selector validation.
+
+#### 7.5.5 PublicSurface/Facade Boundary Must Not Perform Service Location
+
+PublicSurface classes and static facades **MUST NOT** call `app()`, `container()`, `resolve()`, `make()`, or `$container->get()`.
+
+Allowed delegation targets:
+- injected runtime object (preferred, instance-based)
+- official boot-configured facade bridge (set during registration, not via lookup)
+- generated/compiled runtime accessor approved by AvaX runtime composition rules
+
+See also:
+```text
+.agents/how-to/modeling/how-to-model-flows.md — §12.1 AvaX Anti-Service-Locator DX Rule
+```
+
 ---
 
 ## 8. Ledger Classification System
@@ -920,6 +994,10 @@ When reviewing code that touches runtime execution, verify:
 - [ ] All infrastructure dependencies are injected via constructor
 - [ ] Optional capabilities are registered in ServiceProvider, not detected at runtime
 - [ ] Static facades (if any) have `reset()` and `setInstance()`
+- [ ] No `app()`, `container()`, `resolve()`, `make()`, or `$container->get()` in PublicSurface
+- [ ] Static facades do not perform ad-hoc runtime service lookup
+- [ ] String selectors are validated through Catalog/Registry, not container keys
+- [ ] Each component has a ServiceProvider with Register* composition actions
 
 ---
 

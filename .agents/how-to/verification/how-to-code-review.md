@@ -90,11 +90,15 @@ Implementation is complete only when:
 1. implementation/refactor/fix is done
 2. required validation passes
 3. required gates pass
-4. governance code review passes
-5. evidence is written
-6. truth/backlog files match reality
-7. staged files are intentional
-8. no forbidden generated/cache/local files are committed
+4. deviation audit and correction lifecycle passes (AGENTS.md §1A)
+5. governance code review passes
+6. evidence is written
+7. truth/backlog files match reality
+8. staged files are intentional
+9. no forbidden generated/cache/local files are committed
+10. no suppression was used to achieve GREEN (AGENTS.md §1C)
+11. GREEN status is semantically justified (AGENTS.md §1D)
+12. all remaining deviations are classified (AGENTS.md §1E)
 
 ### Rule
 
@@ -159,6 +163,12 @@ The review MUST explicitly check:
 * no broad suppressions
 * no fake shims
 * no fake GREEN
+* deviation audit lifecycle completed (AGENTS.md §1A)
+* every finding classified with canonical severity (AGENTS.md §1B)
+* no suppression used to fix findings (AGENTS.md §1C)
+* GREEN status semantically justified (AGENTS.md §1D)
+* all remaining deviations classified with owner/target (AGENTS.md §1E)
+* no unclassified drift remains
 
 ### Commit Rule
 
@@ -171,6 +181,10 @@ Commit is FORBIDDEN if:
 * evidence is missing
 * unrelated dirty files are staged
 * cache/generated/local files are staged without explicit approval
+* deviation audit and correction lifecycle did not complete (AGENTS.md §1A)
+* suppression was used to fix findings without exception register entry (AGENTS.md §1C)
+* GREEN status lacks semantic justification (AGENTS.md §1D)
+* any remaining deviation lacks severity/owner classification (AGENTS.md §1E)
 
 ### Recursive Review Accepted Debt Rule
 

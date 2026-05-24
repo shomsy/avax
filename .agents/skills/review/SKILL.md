@@ -61,6 +61,10 @@ Status:              (GREEN/YELLOW/RED/BLOCKER)
 Governance inventory:
 Governance findings:
 Violations by severity:
+Deviation audit:     (findings by severity — AGENTS.md §1A)
+Suppression check:   (whether suppression was detected — AGENTS.md §1C)
+GREEN justified:     (why this is GREEN — AGENTS.md §1D)
+Drift classified:    (all deviations have severity/owner — AGENTS.md §1E)
 Required actions:
 Next allowed action:
 ```
@@ -68,3 +72,12 @@ Next allowed action:
 ## Hard Rule
 
 A code review that does not explicitly check all applicable `how-to-*.md` documents is incomplete.
+
+## Governance Cross-Reference
+
+- Deviation audit and correction lifecycle: `AGENTS.md §1A`
+- Canonical severity system: `AGENTS.md §1B`
+- No fixed by suppression rule: `AGENTS.md §1C`
+- GREEN status justification: `AGENTS.md §1D`
+- Drift classification: `AGENTS.md §1E`
+- Every finding must use canonical severity (AGENTS.md §1B), not ad hoc severity

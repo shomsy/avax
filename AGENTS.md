@@ -104,7 +104,445 @@ The following laws apply to every task.
 13. PARTIAL is not a stop condition in autonomous work.
 14. HARD_BLOCKER is the real stop condition.
 15. Evidence is mandatory.
+16. Deviation audit is an execution gate, not an informational scan. Correction is mandatory before GREEN.
+17. No finding may be fixed by suppression, weakening, or bypass. Suppression is itself a governance violation.
+18. GREEN status must be semantically justified, not decorative. Every remaining deviation must be classified with severity, impact, owner, and phase allowance.
 ```
+
+---
+
+## 1A. Mandatory Deviation Audit and Correction Lifecycle
+
+### Status
+**MANDATORY**
+**Severity:** BLOCKER
+
+### Rule
+
+Deviation audit is NOT an informational scan.
+Deviation audit is an execution gate.
+
+GREEN status is forbidden until the deviation audit and correction lifecycle completes.
+
+### Lifecycle Stages
+
+The lifecycle has five mandatory stages:
+
+```text
+1. VALIDATION
+   Run all applicable validation commands, gates, and checkers.
+   Record every output, finding, and exit code.
+   No validation may be silently skipped.
+
+2. DEVIATION AUDIT
+   Classify every finding against the canonical severity system (see §1B).
+   Map each finding to:
+     - affected files/units
+     - violated rule or governance document
+     - severity level
+     - whether it blocks GREEN, commit, or merge
+
+3. CORRECTION PASS
+   Fix every BLOCKER and HIGH finding.
+   Fix every MEDIUM finding unless explicitly phase-allowed.
+   No correction may use suppression, weakening, or bypass.
+   Each correction must be validated in stage 5.
+
+4. RE-VALIDATION
+   Rerun all validation commands from stage 1.
+   Rerun deviation audit from stage 2 against the corrected state.
+   Verify that corrections did not introduce new findings.
+   Record before/after comparison.
+
+5. COMMIT GATE VERIFICATION
+   Verify no BLOCKER/HIGH finding remains.
+   Verify no MEDIUM finding remains unless explicitly phase-allowed with owner/target/risk.
+   Verify no suppression was used to achieve GREEN.
+   Verify GREEN status is semantically justified (see §1D).
+   Verify all remaining deviations are classified (see §1E).
+```
+
+### Stop Conditions
+
+The lifecycle stops and blocks GREEN when:
+
+```text
+- any BLOCKER finding remains uncorrected
+- any HIGH finding remains uncorrected unless explicitly phase-allowed
+- correction used suppression, weakening, or bypass
+- re-validation introduces new BLOCKER/HIGH findings
+- GREEN status cannot be semantically justified
+- remaining deviations lack severity/impact/owner classification
+```
+
+### Phase Allowance
+
+A finding may be explicitly phase-allowed when:
+
+```text
+- the finding belongs to a future stage locked by EXECUTION.md
+- the finding is LOW severity with documented cleanup plan
+- the finding is MEDIUM severity with owner/target/risk/expiry
+- the finding is accepted as YELLOW debt in the exception register
+```
+
+Phase allowance does not permit GREEN without justification.
+It permits GREEN_WITH_ACCEPTED_YELLOW_DEBT when justified.
+
+### Loop Enforcement
+
+The correction loop is:
+
+```text
+validate → audit → correct → revalidate → audit again → verify gate → commit
+```
+
+If re-validation reveals new findings, the loop restarts at correction.
+The loop continues until all stages pass.
+
+A single pass is not sufficient.
+Correction can introduce new deviations.
+Re-audit is mandatory.
+
+### Integration with Recursive Governance Review
+
+The deviation audit lifecycle is part of the recursive governance review loop.
+
+```text
+implement → validate → audit → correct → revalidate → review → evidence → commit
+```
+
+The deviation audit does not replace the governance review.
+The deviation audit is the validation → audit → correction gate within it.
+
+---
+
+## 1B. Canonical Severity Classification System
+
+### Status
+**MANDATORY**
+**Severity:** BLOCKER
+
+### Rule
+
+All governance findings across all AvaX governance documents, skills, how-to files, gates, and reviews must use the canonical severity system.
+
+Ad hoc severity definitions, document-local severity systems, or inconsistent severity naming are forbidden.
+
+### Severity Levels
+
+| Severity | Meaning | Blocks GREEN | Blocks Commit | Blocks Merge | Blocks Release |
+|----------|---------|:---:|:---:|:---:|:---:|
+| **BLOCKER** | Violation prevents safe operation, correctness, or security. Must be fixed immediately. | YES | YES | YES | YES |
+| **HIGH** | Significant gap affecting correctness, safety, architecture, or security. Must be fixed before completion. | YES | YES | YES* | YES* |
+| **MEDIUM** | Maintainability, documentation, local ownership, or test quality issue. Must be tracked and fixed or explicitly deferred. | NO* | NO* | NO | NO |
+| **LOW** | Cleanup, wording polish, or documentation improvement. Tracked but does not block. | NO | NO | NO | NO |
+| **INFO** | Observation or improvement suggestion. No action required. | NO | NO | NO | NO |
+
+\* HIGH blocks GREEN and commit by default. It may be phase-allowed with explicit owner/target/risk/expiry/exception-register entry, in which case status is GREEN_WITH_ACCEPTED_YELLOW_DEBT, not pure GREEN.
+\* MEDIUM blocks GREEN only when untracked. Tracked MEDIUM with owner/target permits GREEN_WITH_ACCEPTED_YELLOW_DEBT.
+
+### Severity Definitions
+
+**BLOCKER:**
+```text
+- security exploit or exploitable weakness
+- data corruption risk
+- runtime state stored in singleton
+- unresolved runtime composition leak in active runtime
+- fake GREEN evidence
+- gate PASS with RED content
+- mandatory gate scans zero active files
+- hidden fallback dependency in runtime
+- missing required dependency in business/runtime code
+- service locator in business/runtime code
+- authentication or authorization bypass
+- injection vulnerability
+- secret exposure in logs or responses
+- validation failure that cannot be classified
+- source-of-truth contradiction that cannot be reconciled
+- mandatory governance file missing
+```
+
+**HIGH:**
+```text
+- potential OWASP-class weakness
+- missing semantic PHPDoc on touched production class
+- public API or framework behavior undocumented
+- constructor with 8+ dependencies without design review
+- PublicSurface over 150 lines without behavior leak review
+- large unit without review decision
+- defense-in-depth gap
+- circular component dependency
+- horizontal sibling dependency on private internals
+- intrusive coupling on implementation details
+- missing negative test for security gate
+- test changed to fit broken behavior
+- missing regression test for fixed bug
+```
+
+**MEDIUM:**
+```text
+- missing PHPDoc on private non-trivial methods
+- unclear intent in internal docblocks
+- test organization issue
+- documentation wording
+- local naming inconsistency
+- missing component-local README
+- cross-cutting concern scattered but not dangerous
+```
+
+**LOW:**
+```text
+- wording polish
+- formatting consistency
+- minor documentation improvement
+- code style suggestion
+```
+
+**INFO:**
+```text
+- observation for future consideration
+- improvement suggestion with no current risk
+- design note or trade-off observation
+```
+
+### Severity Escalation
+
+Default severity escalates to BLOCKER when the issue threatens:
+```text
+security
+data integrity
+runtime safety
+long-lived worker safety
+truth/evidence integrity
+public API compatibility
+dependency graph correctness
+rollback/recovery safety
+```
+
+### Finding Format
+
+Every governance finding must include:
+```text
+severity: BLOCKER | HIGH | MEDIUM | LOW | INFO
+finding: what was discovered
+governance_source: which document and rule
+where: file/path/class/method
+why_it_matters: impact explanation
+required_action: what must be done
+blocks_GREEN: yes/no with justification
+```
+
+---
+
+## 1C. No Fixed By Suppression Rule
+
+### Status
+**MANDATORY**
+**Severity:** BLOCKER
+
+### Rule
+
+No finding may be resolved by suppression, weakening, bypass, or concealment.
+
+The following are classified as governance violations:
+
+```text
+- disabling a test to achieve GREEN
+- broadening ignore patterns or suppressions to silence findings
+- weakening assertions to make failures disappear
+- hiding failures behind fallbacks or catch-all handlers
+- adding nullable escape hatches to avoid missing dependency failures
+- bypassing validation gates with --skip or --ignore flags
+- silent catch-all exception handling that swallows meaningful errors
+- "temporary" fake fixes without evidence of real repair
+- changing test expectations to match broken behavior
+- removing checks instead of fixing the underlying issue
+- replacing specific validation with always-true returns
+- adding @suppress, @ignore, or @baseline to hide real errors
+- widening glob patterns to exclude affected files from scanning
+- downgrading severity without threat-model justification
+- marking findings as "pre-existing" without classification
+```
+
+### Suppression Is a Governance Violation
+
+Using suppression to achieve GREEN is itself a BLOCKER governance violation.
+
+The violation is not merely the suppressed finding.
+The violation is the act of concealment.
+
+### Allowed Suppression
+
+Suppression is allowed only when:
+
+```text
+- the suppression is recorded in the exception register at EVIDENCE/accepted-exceptions-ledger.md
+- the suppression has owner, target version, expiry, risk, and mitigation
+- the suppressed finding is classified with canonical severity
+- the final status says GREEN_WITH_ACCEPTED_YELLOW_DEBT, not GREEN
+- a human reviewer explicitly accepted the suppression
+```
+
+### Detection
+
+Agents must check for suppression by examining:
+```text
+- phpstan baseline files (new entries added in current work)
+- phpunit filter/skip configuration
+- tooling gate exclusions or ignore patterns
+- catch-all exception handlers added in current work
+- nullable type changes that avoid dependency failures
+- test assertion changes that weaken verification
+- gate configuration changes that broaden exclusions
+```
+
+If suppression is detected, the agent must:
+```text
+1. Classify it as a BLOCKER governance violation
+2. Document the suppression in evidence
+3. Refuse GREEN status
+4. Require real correction or explicit exception register entry
+```
+
+---
+
+## 1D. GREEN Status Justification Requirement
+
+### Status
+**MANDATORY**
+**Severity:** BLOCKER
+
+### Rule
+
+GREEN status must be semantically justified, not decorative.
+
+No agent may mark work as GREEN without explicit reasoning that defends the decision.
+
+### Required Justification Section
+
+Every final status report claiming GREEN or GREEN_WITH_ACCEPTED_YELLOW_DEBT must include:
+
+```text
+## Why This Is GREEN
+
+validation: [commands run and results]
+gates: [gates run and results]
+deviation_audit: [findings count by severity]
+corrections: [what was fixed in this pass]
+remaining_deviations: [count and classification of any remaining]
+suppression_check: [whether suppression was detected, and if so, what]
+exception_register: [entries added, if any]
+risk_assessment: [why remaining risk is contained]
+severity_decision: [why status is not YELLOW or RED]
+evidence: [files written with proof]
+```
+
+### GREEN Cannot Be Decorative
+
+GREEN without this justification section is UNPROVEN.
+
+The justification must answer:
+```text
+- What validation proves this?
+- What gate results support this?
+- What deviations remain, and why are they acceptable?
+- What suppression was checked, and was any found?
+- Why is this GREEN and not YELLOW?
+- What evidence file contains the proof?
+```
+
+### Status Truth Table
+
+| Condition | Required Status |
+|-----------|----------------|
+| All validation clean, gates clean, zero deviations, zero suppression | GREEN |
+| All validation clean, gates clean, deviations exist but classified with owner/target/risk, exception register entries exist | GREEN_WITH_ACCEPTED_YELLOW_DEBT |
+| BLOCKER or HIGH finding remains uncorrected | YELLOW_WITH_EXACT_BLOCKERS |
+| Validation failing, gates failing, or mandatory gates unreliable | RED |
+| GREEN claimed without justification section | UNPROVEN (treated as RED) |
+| Suppression detected without exception register entry | BLOCKER (treated as RED) |
+
+---
+
+## 1E. Remaining Drift Classification Rule
+
+### Status
+**MANDATORY**
+**Severity:** BLOCKER
+
+### Rule
+
+Every unresolved deviation, finding, or remaining issue must be explicitly classified.
+
+Unclassified drift is forbidden.
+"Pre-existing" without classification is forbidden.
+"Known issue" without owner is forbidden.
+
+### Required Classification Fields
+
+Every unresolved issue must contain:
+
+```text
+severity: BLOCKER | HIGH | MEDIUM | LOW | INFO
+impact: what happens if this is not fixed
+owner: who is responsible for fixing it (person, agent, or team)
+phase_allowance: whether this is allowed in the current phase or deferred
+mitigation: what reduces the risk until it is fixed
+future_plan: when and how it will be fixed
+evidence: which file or finding ID documents this
+```
+
+### Drift Categories
+
+**Active Blocker:**
+```text
+severity: BLOCKER or HIGH
+action: must be fixed before commit
+status: blocks GREEN
+```
+
+**Accepted Debt:**
+```text
+severity: HIGH or MEDIUM
+action: tracked in exception register
+status: permits GREEN_WITH_ACCEPTED_YELLOW_DEBT
+requires: owner, target version, expiry, risk, mitigation
+```
+
+**Phase-Locked:**
+```text
+severity: any
+action: belongs to a future stage locked by EXECUTION.md
+status: does not block current work if stage lock is respected
+requires: explicit reference to locked stage
+```
+
+**Cleanup Queue:**
+```text
+severity: LOW or INFO
+action: tracked for future cleanup
+status: does not block any status
+requires: description only
+```
+
+**Unclassified Drift:**
+```text
+severity: unknown
+action: BLOCKER — must be classified before commit
+status: blocks GREEN
+```
+
+### Enforcement
+
+If any finding lacks severity, it is BLOCKER.
+If any finding lacks owner, it is BLOCKER.
+If any HIGH finding lacks phase allowance decision, it is BLOCKER.
+
+Agents must not leave findings unclassified.
+Agents must not defer classification to "later."
+Classification happens during the deviation audit stage.
 
 ---
 

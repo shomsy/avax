@@ -80,6 +80,10 @@ Must produce:
 Stage:
 Status:            (GREEN/YELLOW/RED/BLOCKER)
 Validation run:
+Deviation audit:   (findings by severity — AGENTS.md §1A)
+Suppression check: (whether suppression was detected — AGENTS.md §1C)
+GREEN justified:   (why this is GREEN — AGENTS.md §1D)
+Drift classified:  (all deviations have severity/owner — AGENTS.md §1E)
 Evidence:
 Remaining risks:
 Next allowed action:
@@ -91,3 +95,11 @@ If a claim is important, it must point to test output, static analysis output, a
 rule.
 
 No evidence means not proven.
+
+## Governance Cross-Reference
+
+- Deviation audit and correction lifecycle: `AGENTS.md §1A`
+- Canonical severity system: `AGENTS.md §1B`
+- No fixed by suppression rule: `AGENTS.md §1C`
+- GREEN status justification: `AGENTS.md §1D`
+- Drift classification: `AGENTS.md §1E`

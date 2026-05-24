@@ -20,10 +20,11 @@ The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHO
 - **SHOULD**: expected default unless documented exception exists.
 - **SHOULD NOT**: discouraged pattern requiring justification.
 - **MAY**: optional behavior.
-- **BLOCKER**: violation prevents GREEN status.
-- **HIGH**: must be fixed before production-complete unless explicitly accepted.
-- **MEDIUM**: must be tracked and fixed or explicitly deferred.
-- **LOW**: cleanup or documentation issue.
+- **BLOCKER**: violation prevents GREEN status. See canonical severity system in AGENTS.md §1B.
+- **HIGH**: must be fixed before production-complete unless explicitly accepted. See canonical severity system in AGENTS.md §1B.
+- **MEDIUM**: must be tracked and fixed or explicitly deferred. See canonical severity system in AGENTS.md §1B.
+- **LOW**: cleanup or documentation issue. See canonical severity system in AGENTS.md §1B.
+- **INFO**: observation only. See canonical severity system in AGENTS.md §1B.
 
 A rule without an explicit exception **MUST** be treated as mandatory.
 
@@ -239,7 +240,13 @@ For the detailed recursive review protocol and required checks, see:
 
 ```text
 Implementation is not complete when tests pass.
-Implementation is complete only when validation passes AND governance review passes.
+Implementation is complete only when:
+  validation passes AND
+  deviation audit and correction lifecycle passes (AGENTS.md §1A) AND
+  governance review passes AND
+  no suppression was used (AGENTS.md §1C) AND
+  GREEN status is justified (AGENTS.md §1D) AND
+  all deviations are classified (AGENTS.md §1E).
 ```
 
 ---

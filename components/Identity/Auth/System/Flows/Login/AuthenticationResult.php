@@ -34,11 +34,11 @@ final readonly class AuthenticationResult
     ) : self
     {
         return new self(
-            accessToken : $accessToken,
-            refreshToken: $refreshToken,
-            state       : AuthenticationState::AUTHENTICATED,
-            context     : $authenticationContext,
-            user        : $authenticationContext->user(),
+            authenticationState : AuthenticationState::AUTHENTICATED,
+            authenticationContext: $authenticationContext,
+            authenticatedUser   : $authenticationContext->user(),
+            accessToken         : $accessToken,
+            refreshToken        : $refreshToken,
         );
     }
 
@@ -53,10 +53,10 @@ final readonly class AuthenticationResult
     ) : self
     {
         return new self(
-            mfaChallenge: $mfaChallenge,
-            state       : AuthenticationState::MFA_REQUIRED,
-            context     : AuthenticationContext::guest(reason: 'mfa_required'),
-            user        : $authenticatedUser,
+            mfaChallenge      : $mfaChallenge,
+            authenticationState: AuthenticationState::MFA_REQUIRED,
+            authenticationContext: AuthenticationContext::guest(reason: 'mfa_required'),
+            authenticatedUser : $authenticatedUser,
         );
     }
 

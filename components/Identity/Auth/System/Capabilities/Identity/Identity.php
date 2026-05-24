@@ -58,12 +58,6 @@ final readonly class Identity implements IdentityInterface
     /**
      * Create a fully populated Identity with all sub-capabilities.
      *
-     * Unlike the constructor, this method requires all 9 parameters to be non-null.
-     * This is the preferred way to create Identity for production runtime assembly.
-     */
-    /**
-     * Create a fully populated Identity with all sub-capabilities.
-     *
      * Unlike the constructor, this method requires all 7 sub-capability parameters
      * to be non-null. Backends (sessionIdentity/jwtIdentity) are nullable because
      * the constructor validates at least one is present.

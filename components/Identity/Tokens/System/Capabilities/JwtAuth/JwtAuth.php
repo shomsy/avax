@@ -8,6 +8,7 @@ use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Signing\JwtSigne
 use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Tokens\AccessToken;
 use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Tokens\TokenPair;
 use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Verification\TokenVerifier;
+use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\TokenBlacklist;
 use RuntimeException;
 use Throwable;
 
@@ -128,5 +129,39 @@ final class JwtAuth
         } catch (Throwable) {
             return ['active' => false];
         }
+    }
+
+    /**
+     * Reset static state for long-lived worker safety.
+     * MUST be called between requests in persistent runtimes.
+     */
+    public static function reset() : void
+    {
+        unset(self::$jwtSigner, self::$tokenVerifier);
+        self::$tokenBlacklist = new TokenBlacklist();
+    }
+
+    /**
+     * Replace the signer (for test injection).
+     */
+    public static function setSigner(JwtSigner $signer) : void
+    {
+        self::$jwtSigner = $signer;
+    }
+
+    /**
+     * Replace the verifier (for test injection).
+     */
+    public static function setVerifier(TokenVerifier $verifier) : void
+    {
+        self::$tokenVerifier = $verifier;
+    }
+
+    /**
+     * Replace the token blacklist (for test injection).
+     */
+    public static function setBlacklist(TokenBlacklist $blacklist) : void
+    {
+        self::$tokenBlacklist = $blacklist;
     }
 }

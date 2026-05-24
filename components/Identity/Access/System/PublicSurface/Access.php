@@ -21,9 +21,9 @@ final readonly class Access implements AccessInterface
     ) {}
 
     /**
- * @throws PermissionDenied
- */
-public function authorize(string $permission, mixed $resource = null) : void
+     * @throws PermissionDenied
+     */
+    public function authorize(string $permission, mixed $resource = null) : void
     {
         if ($this->denies(permission: $permission, resource: $resource)) {
             throw new PermissionDenied('Permission denied: ' . $permission);

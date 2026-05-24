@@ -9,6 +9,7 @@ use Avax\Components\Application\Container\System\PublicSurface\ContainerInterfac
 use Avax\Components\Identity\Access\System\Capabilities\Authorization\AuthorizationEngine;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\BeginAdminElevation;
 use Avax\Components\Identity\Access\System\Flows\AdminElevation\EndAdminElevation;
+use Avax\Components\Identity\Access\System\Capabilities\Policy\Policy;
 use Avax\Components\Identity\Access\System\PublicSurface\Access;
 
 /**
@@ -37,5 +38,8 @@ final class AccessServiceProvider implements ServiceProvider
     {
         // Reset static elevation state for worker safety
         BeginAdminElevation::reset();
+
+        // Reset static policy state for worker safety
+        Policy::reset();
     }
 }

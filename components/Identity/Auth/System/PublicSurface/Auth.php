@@ -15,8 +15,45 @@ use Avax\Components\Identity\Auth\System\Flows\Register\RegistrationResult;
  * Auth - Main entry point for Identity/Auth component.
  * Orchestrates flows and capabilities.
  */
-final readonly class Auth implements AuthInterface
+final class Auth implements AuthInterface
 {
+    private static ?Auth $instance = null;
+
+    /**
+     * Set the global Auth instance (called by AuthServiceProvider during boot).
+     * This enables the deprecated auth() helper without service locator.
+     */
+    public static function setInstance(Auth $auth) : void
+    {
+        self::$instance = $auth;
+    }
+
+    /**
+     * Get the global Auth instance.
+     *
+     * @deprecated Inject AuthInterface through DI instead.
+     */
+    public static function instance() : Auth
+    {
+        if (self::$instance === null) {
+            throw new \RuntimeException(
+                'Auth instance not set. '
+                . 'Ensure AuthServiceProvider is registered, or inject AuthInterface through DI.',
+            );
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * Reset static instance for long-lived worker safety.
+     * MUST be called between requests in persistent runtimes.
+     */
+    public static function resetInstance() : void
+    {
+        self::$instance = null;
+    }
+
     public function __construct(
         private Identity $identity,
     ) {}

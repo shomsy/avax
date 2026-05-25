@@ -9,6 +9,7 @@ use Avax\Components\Operations\Parallelism\System\Capabilities\RunThroughProcess
 use Avax\Components\Operations\Parallelism\System\Capabilities\RunThroughProcessPool\StopWorkerProcess;
 use Avax\Components\Operations\Parallelism\System\Capabilities\RunThroughProcessPool\SymfonyProcessParallelRuntime;
 use PHPUnit\Framework\Attributes\After;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\Process\Process;
@@ -25,7 +26,12 @@ use Symfony\Component\Process\Process;
  * - Result order is deterministic (matches input order)
  *
  * PID-based proof avoids flaky timing thresholds.
+ *
+ * @group process  — spawns child processes, unsafe for parallel test runner
+ * @group serial   — must run alone to avoid PID/temp-dir conflicts
  */
+#[Group('process')]
+#[Group('serial')]
 final class ProcessPoolParallelismProofTest extends TestCase
 {
     private string $tempDir;

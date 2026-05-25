@@ -43,13 +43,19 @@ final class RuntimeCompositionFacadeFixtureTest extends \PHPUnit\Framework\TestC
     {
         $output = [];
         $exitCode = 0;
-        exec('php ' . escapeshellarg($this->gatePath) . ' 2>&1', $output, $exitCode);
+        exec('php '.escapeshellarg($this->gatePath).' 2>&1', $output, $exitCode);
 
         $fullOutput = implode("\n", $output);
 
-        // If the gate outputs PASS, it must exit 0
-        if (str_contains($fullOutput, 'PASS')) {
+        // Gate must report either PASS (exit 0) or FAIL (exit 1)
+        $isPass = str_contains($fullOutput, 'PASS');
+        $isFail = str_contains($fullOutput, 'FAIL');
+        self::assertTrue($isPass || $isFail, 'Gate must report PASS or FAIL status');
+
+        if ($isPass) {
             self::assertSame(0, $exitCode, 'Gate with PASS status must exit 0');
+        } else {
+            self::assertSame(1, $exitCode, 'Gate with FAIL status must exit 1');
         }
     }
 

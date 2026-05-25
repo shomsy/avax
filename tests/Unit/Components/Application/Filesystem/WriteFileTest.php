@@ -6,8 +6,10 @@ namespace Avax\Tests\Unit\Components\Application\Filesystem;
 
 use Avax\Components\Application\Filesystem\System\Flows\WriteFile\WriteFile;
 use Avax\Components\Application\Filesystem\System\Foundation\Failure\FilesystemOperationFailed;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
+#[Group('serial')]
 final class WriteFileTest extends TestCase
 {
     private string    $tmpDir;
@@ -149,9 +151,19 @@ final class WriteFileTest extends TestCase
 
             $path = $readOnlyDir . '/can_write.txt';
 
-            // PHP error handler wraps permission errors in ErrorException
-            $this->expectExceptionMessage('Permission denied');
-            $this->flow->execute($path, 'content');
+            // The WriteFile flow may throw FilesystemOperationFailed with "Failed to write:"
+            // or PHP may throw an ErrorException with "Permission denied" depending on
+            // error handler state. Either proves the write was blocked.
+            try {
+                $this->flow->execute($path, 'content');
+                self::fail('Expected exception was not thrown');
+            } catch (\Throwable $e) {
+                self::assertTrue(
+                    str_contains($e->getMessage(), 'Permission denied')
+                        || str_contains($e->getMessage(), 'Failed to write'),
+                    "Expected permission error, got: {$e->getMessage()}",
+                );
+            }
         }
     }
 

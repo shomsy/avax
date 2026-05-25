@@ -20,4 +20,12 @@ final class InMemoryLifecycleStore implements LifecycleStoreInterface
     {
         return $this->records[$userId->value] ?? null;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->records = [];
+    }
 }

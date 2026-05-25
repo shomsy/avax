@@ -32,4 +32,12 @@ final class InMemoryDpopProofReplayStore implements DpopProofReplayStoreInterfac
 
         return true;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->proofs = [];
+    }
 }

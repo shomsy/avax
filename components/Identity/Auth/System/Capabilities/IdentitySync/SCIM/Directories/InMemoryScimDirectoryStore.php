@@ -46,4 +46,12 @@ final class InMemoryScimDirectoryStore implements ScimDirectoryStoreInterface
     {
         return $this->directories[$directoryId] ?? null;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->directories = [];
+    }
 }

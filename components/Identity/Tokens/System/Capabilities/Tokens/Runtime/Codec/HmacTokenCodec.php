@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Codec;
 
+use Avax\Components\Identity\Auth\System\Foundation\Values\SignedToken;
 use InvalidArgumentException;
 use JsonException;
 use SensitiveParameter;
@@ -11,8 +12,9 @@ use Throwable;
 
 /**
  * Encodes and decodes compact JWTs signed with shared-secret HMAC algorithms.
+ * Also implements SignToken and VerifyToken contracts for flow-level use.
  */
-final readonly class HmacTokenCodec implements TokenCodecInterface
+final readonly class HmacTokenCodec implements TokenCodecInterface, SignToken, VerifyToken
 {
     private const array SUPPORTED_ALGORITHMS
         = [
@@ -170,5 +172,25 @@ private function base64UrlDecode(string $value) : string
         }
 
         return $decoded;
+    }
+
+    /**
+     * SignToken interface — build claims array and return a SignedToken.
+     *
+     * @param array<string, mixed> $claims
+     */
+    public function sign(array $claims): SignedToken
+    {
+        return SignedToken::fromString($this->encode($claims));
+    }
+
+    /**
+     * VerifyToken interface — verify a SignedToken and return claims or null.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function verify(SignedToken $token): array|null
+    {
+        return $this->decode($token->toString());
     }
 }

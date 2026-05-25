@@ -175,4 +175,12 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
     {
         $this->setActive(isActive: true, id: $userId);
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->users = [];
+    }
 }

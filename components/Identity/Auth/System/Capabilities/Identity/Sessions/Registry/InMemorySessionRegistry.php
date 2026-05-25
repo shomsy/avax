@@ -88,4 +88,12 @@ final class InMemorySessionRegistry implements PruneExpiredSessionsInterface, Se
 
         return $removed;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->records = [];
+    }
 }

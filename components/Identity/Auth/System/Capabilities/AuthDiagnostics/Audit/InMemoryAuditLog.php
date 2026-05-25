@@ -32,4 +32,12 @@ final class InMemoryAuditLog implements DrainAuditLogInterface
 
         return $events;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->events = [];
+    }
 }

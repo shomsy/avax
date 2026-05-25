@@ -23,4 +23,12 @@ final class InMemoryEmailVerificationStateStore implements EmailVerificationStat
     {
         $this->verified[$userId->value] = true;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->verified = [];
+    }
 }

@@ -31,4 +31,12 @@ final class InMemoryTokenRevocationStore implements TokenRevocationStoreInterfac
 
         return true;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->revoked = [];
+    }
 }

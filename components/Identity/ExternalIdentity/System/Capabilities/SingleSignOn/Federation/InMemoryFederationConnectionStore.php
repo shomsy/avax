@@ -36,4 +36,12 @@ final class InMemoryFederationConnectionStore implements FederationConnectionSto
     {
         return array_values(array: $this->connections);
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->connections = [];
+    }
 }

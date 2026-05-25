@@ -319,6 +319,15 @@ final class InMemoryAttemptThrottleStore implements AttemptThrottleStoreInterfac
         unset($this->attempts[$key], $this->lastAttemptTimes[$key]);
     }
 
+    /**
+     * Reset all internal state for long-lived worker safety.
+     */
+    public function resetAll() : void
+    {
+        $this->attempts         = [];
+        $this->lastAttemptTimes = [];
+    }
+
     public function getLastAttemptTime(string $key) : int
     {
         return $this->lastAttemptTimes[$key] ?? 0;
@@ -1143,6 +1152,34 @@ final class Policy
     public static function explain(string $action, object $resource, array $context = []) : DecisionExplanation
     {
         return self::evaluator()->explain($action, $resource, $context);
+    }
+
+    /**
+     * Reset static state for long-lived worker safety.
+     * MUST be called between requests in persistent runtimes.
+     */
+    public static function reset() : void
+    {
+        unset(self::$policyEvaluator);
+        self::$definitions = [];
+    }
+
+    /**
+     * Replace the policy evaluator (for test injection).
+     */
+    public static function setEvaluator(PolicyEvaluator $evaluator) : void
+    {
+        self::$policyEvaluator = $evaluator;
+    }
+
+    /**
+     * Replace policy definitions (for test injection).
+     *
+     * @param array<string, array<string, mixed>> $definitions
+     */
+    public static function setDefinitions(array $definitions) : void
+    {
+        self::$definitions = $definitions;
     }
 }
 
@@ -2003,6 +2040,14 @@ final class InMemoryKnownAuthenticationEnvironmentStore implements KnownAuthenti
     {
         $this->seen[$userId][$this->key(ipAddress: $ipAddress, userAgent: $userAgent)] = true;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->seen = [];
+    }
 }
 
 === Access/System/Capabilities/RiskBasedAccess/Signals/InMemoryRiskSignalStore.php ===
@@ -2028,6 +2073,14 @@ final class InMemoryRiskSignalStore implements RiskSignalStoreInterface
                                        array   : $this->signals,
                                        callback: static fn (RiskSignal $riskSignal) : bool => $riskSignal->userId === $userId,
                                    ));
+    }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->signals = [];
     }
 }
 
@@ -2181,6 +2234,9 @@ final class AccessServiceProvider implements ServiceProvider
     {
         // Reset static elevation state for worker safety
         BeginAdminElevation::reset();
+
+        // Reset static policy state for worker safety
+        \Avax\Components\Identity\Access\System\Capabilities\Policy\Policy::reset();
     }
 }
 
@@ -2368,9 +2424,6 @@ Read and follow all rules in `.agents/AGENTS.md`.
 /composer.phar
 /tooling/local-phpdbg/
 /tooling/local-php-ext/
-
-=== Auth/.phpunit.cache/test-results ===
-{"version":2,"defects":[],"times":{"Avax\\Components\\Identity\\Auth\\Tests\\System\\AuthFoundationSmokeTest::test_password_hashing_round_trip_verifies_password":0.422,"Avax\\Components\\Identity\\Auth\\Tests\\System\\AuthFoundationSmokeTest::test_email_normalization_trims_and_lowercases":0}}
 
 === Auth/AGENTS.md ===
 # AGENTS.md — Local Project Contract
@@ -3088,6 +3141,14 @@ final class InMemoryAuditLog implements DrainAuditLogInterface
         $this->events = [];
 
         return $events;
+    }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->events = [];
     }
 }
 
@@ -5656,6 +5717,14 @@ final class InMemorySessionRegistry implements PruneExpiredSessionsInterface, Se
 
         return $removed;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->records = [];
+    }
 }
 
 === Auth/System/Capabilities/Identity/Sessions/Registry/PdoSessionRegistry.php ===
@@ -7428,6 +7497,14 @@ class InMemoryUserSource implements ProvisionableUserSourceInterface
     {
         $this->setActive(isActive: true, id: $userId);
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->users = [];
+    }
 }
 
 === Auth/System/Capabilities/Identity/UserSource/ProvisionableUserSourceInterface.php ===
@@ -7589,6 +7666,14 @@ final class InMemoryLifecycleStore implements LifecycleStoreInterface
     public function find(UserId $userId) : LifecycleRecord|null
     {
         return $this->records[$userId->value] ?? null;
+    }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->records = [];
     }
 }
 
@@ -7898,6 +7983,14 @@ final class InMemoryScimDirectoryStore implements ScimDirectoryStoreInterface
     {
         return $this->directories[$directoryId] ?? null;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->directories = [];
+    }
 }
 
 === Auth/System/Capabilities/IdentitySync/SCIM/Directories/InMemoryScimProvisionedIdentityStore.php ===
@@ -7938,6 +8031,14 @@ final class InMemoryScimProvisionedIdentityStore implements ScimProvisionedIdent
     public function remove(string $directoryId, string $externalId) : void
     {
         unset($this->identities[$this->key(directoryId: $directoryId, externalId: $externalId)]);
+    }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->identities = [];
     }
 }
 
@@ -10504,12 +10605,6 @@ final class AssembleAuthIdentityGraph
         private string $mfaIssuer = 'Avax Auth',
         private string $passkeyRpId = 'localhost',
         private string $passkeyRpName = 'Avax Auth',
-        private CurrentAuthentication|null $currentAuthentication = null,
-        private ProjectAuthenticatedUser|null $projectAuthenticatedUser = null,
-        private RequireFreshMfa|null $requireFreshMfa = null,
-        private GenerateBackupCodes|null $generateBackupCodes = null,
-        private VerifyBackupCode|null $verifyBackupCode = null,
-        private StartMfaChallenge|null $startMfaChallenge = null,
     ) {
     }
 
@@ -10618,12 +10713,12 @@ final class AssembleAuthIdentityGraph
 
     private function resolveOrBuildCurrentAuthentication() : CurrentAuthentication
     {
-        return $this->currentAuthentication ?? new CurrentAuthentication();
+        return new CurrentAuthentication();
     }
 
     private function resolveOrBuildProjectAuthenticatedUser() : ProjectAuthenticatedUser
     {
-        return $this->projectAuthenticatedUser ?? new ProjectAuthenticatedUser(
+        return new ProjectAuthenticatedUser(
             emailVerificationStateStore: $this->emailVerificationStateStore,
             mfaStore: $this->mfaStore,
         );
@@ -10631,22 +10726,22 @@ final class AssembleAuthIdentityGraph
 
     private function resolveOrBuildRequireFreshMfa(CurrentAuthentication $currentAuthentication) : RequireFreshMfa
     {
-        return $this->requireFreshMfa ?? new RequireFreshMfa(currentAuthentication: $currentAuthentication, clock: $this->clock);
+        return new RequireFreshMfa(currentAuthentication: $currentAuthentication, clock: $this->clock);
     }
 
     private function resolveOrBuildGenerateBackupCodes() : GenerateBackupCodes
     {
-        return $this->generateBackupCodes ?? new GenerateBackupCodes(passwordHasher: $this->passwordHasher, clock: $this->clock);
+        return new GenerateBackupCodes(passwordHasher: $this->passwordHasher, clock: $this->clock);
     }
 
     private function resolveOrBuildVerifyBackupCode() : VerifyBackupCode
     {
-        return $this->verifyBackupCode ?? new VerifyBackupCode(mfaStore: $this->mfaStore, passwordHasher: $this->passwordHasher, auditLog: $this->auditLog, clock: $this->clock);
+        return new VerifyBackupCode(mfaStore: $this->mfaStore, passwordHasher: $this->passwordHasher, auditLog: $this->auditLog, clock: $this->clock);
     }
 
     private function resolveOrBuildStartMfaChallenge(CurrentAuthentication $currentAuthentication) : StartMfaChallenge
     {
-        return $this->startMfaChallenge ?? new StartMfaChallenge(
+        return new StartMfaChallenge(
             currentAuthentication: $currentAuthentication,
             generalMfaStore: $this->mfaStore,
             mfaChallengeStore: $this->mfaChallengeStore,
@@ -11682,6 +11777,8 @@ namespace Avax\Components\Identity\Auth\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
 use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
+use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
+use Avax\Components\Identity\Auth\System\PublicSurface\AuthInterface;
 
 
 /**
@@ -11700,7 +11797,13 @@ final class AuthServiceProvider implements ServiceProvider
 
     public function boot(ContainerInterface $container) : void
     {
-        // No boot-time logic needed
+        // Bridge DI-registered Auth instance to deprecated static auth() helper
+        if ($container->has(AuthInterface::class)) {
+            Auth::setInstance($container->get(AuthInterface::class));
+        }
+
+        // Worker safety — reset static state for long-lived runtimes
+        Auth::instance()->logout();
     }
 }
 
@@ -13319,6 +13422,14 @@ final class InMemoryEmailChangeStore implements EmailChangeStoreInterface
             expiresAt: new DateTimeImmutable(datetime: '@' . $record['expires_at']),
         );
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->records = [];
+    }
 }
 
 === Auth/System/Flows/ChangePassword/ChangePassword.php ===
@@ -14097,11 +14208,11 @@ final readonly class AuthenticationResult
     ) : self
     {
         return new self(
-            accessToken : $accessToken,
-            refreshToken: $refreshToken,
-            state       : AuthenticationState::AUTHENTICATED,
-            context     : $authenticationContext,
-            user        : $authenticationContext->user(),
+            authenticationState : AuthenticationState::AUTHENTICATED,
+            authenticationContext: $authenticationContext,
+            authenticatedUser   : $authenticationContext->user(),
+            accessToken         : $accessToken,
+            refreshToken        : $refreshToken,
         );
     }
 
@@ -14116,10 +14227,10 @@ final readonly class AuthenticationResult
     ) : self
     {
         return new self(
-            mfaChallenge: $mfaChallenge,
-            state       : AuthenticationState::MFA_REQUIRED,
-            context     : AuthenticationContext::guest(reason: 'mfa_required'),
-            user        : $authenticatedUser,
+            mfaChallenge      : $mfaChallenge,
+            authenticationState: AuthenticationState::MFA_REQUIRED,
+            authenticationContext: AuthenticationContext::guest(reason: 'mfa_required'),
+            authenticatedUser : $authenticatedUser,
         );
     }
 
@@ -14306,6 +14417,15 @@ final class InMemoryLoginRateLimitStorage implements LoginRateLimitStorageInterf
     public function reset(string $identifier) : void
     {
         unset($this->attempts[$identifier], $this->lastAttemptTimes[$identifier]);
+    }
+
+    /**
+     * Reset all internal state for long-lived worker safety.
+     */
+    public function resetAll() : void
+    {
+        $this->attempts         = [];
+        $this->lastAttemptTimes = [];
     }
 
     public function getLastAttemptTime(string $identifier) : int
@@ -14808,6 +14928,14 @@ final class InMemoryPasswordResetStore implements PasswordResetStoreInterface, P
         }
 
         return $removed;
+    }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->records = [];
     }
 }
 
@@ -15360,6 +15488,14 @@ final class InMemoryEmailVerificationStateStore implements EmailVerificationStat
     {
         $this->verified[$userId->value] = true;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->verified = [];
+    }
 }
 
 === Auth/System/Flows/VerifyIdentity/EmailVerification/InMemoryEmailVerificationStore.php ===
@@ -15411,6 +15547,14 @@ final class InMemoryEmailVerificationStore implements EmailVerificationStoreInte
         }
 
         return new UserId(value: $record['user_id']);
+    }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->records = [];
     }
 }
 
@@ -16178,8 +16322,36 @@ use Avax\Components\Identity\Auth\System\Flows\Register\RegistrationResult;
  * Auth - Main entry point for Identity/Auth component.
  * Orchestrates flows and capabilities.
  */
-final readonly class Auth implements AuthInterface
+final class Auth implements AuthInterface
 {
+    private static ?Auth $instance = null;
+
+    /**
+     * Set the global Auth instance (called by AuthServiceProvider during boot).
+     * This enables the deprecated auth() helper without service locator.
+     */
+    public static function setInstance(Auth $auth) : void
+    {
+        self::$instance = $auth;
+    }
+
+    /**
+     * Get the global Auth instance.
+     *
+     * @deprecated Inject AuthInterface through DI instead.
+     */
+    public static function instance() : Auth
+    {
+        if (self::$instance === null) {
+            throw new \RuntimeException(
+                'Auth instance not set. '
+                . 'Ensure AuthServiceProvider is registered, or inject AuthInterface through DI.',
+            );
+        }
+
+        return self::$instance;
+    }
+
     public function __construct(
         private Identity $identity,
     ) {}
@@ -16296,6 +16468,10 @@ declare(strict_types=1);
 
 /**
  * Authentication shortcuts for global access.
+ *
+ * @deprecated Inject AuthInterface through constructor or method autowiring instead.
+ *             This helper uses a service locator pattern which is forbidden in runtime code.
+ *             The global instance is set during ServiceProvider boot via Auth::setInstance().
  */
 
 use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
@@ -16303,10 +16479,12 @@ use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
 if (! function_exists('auth')) {
     /**
      * Resolve the authentication instance.
+     *
+     * @deprecated Use DI injection of AuthInterface instead.
      */
     function auth() : Auth
     {
-        return app(Auth::class);
+        return Auth::instance();
     }
 }
 
@@ -21468,6 +21646,14 @@ final class InMemoryCredentialStore implements CredentialStoreInterface
     {
         unset($this->store[$userId]);
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->store = [];
+    }
 }
 
 === Credentials/System/Capabilities/Mfa/Mfa.php ===
@@ -22546,6 +22732,15 @@ final class InMemoryAttemptLimitStorage implements AttemptLimitStorageInterface
         unset($this->attempts[$key], $this->lastAttemptTimes[$key]);
     }
 
+    /**
+     * Reset all internal state for long-lived worker safety.
+     */
+    public function resetAll() : void
+    {
+        $this->attempts         = [];
+        $this->lastAttemptTimes = [];
+    }
+
     public function getLastAttemptTime(string $key) : int
     {
         return $this->lastAttemptTimes[$key] ?? 0;
@@ -23507,6 +23702,16 @@ final class InMemoryMfaStore implements MfaStoreInterface
     {
         unset($this->recoveryTokens[$tokenHash]);
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->methods            = [];
+        $this->pendingEnrollments = [];
+        $this->recoveryTokens     = [];
+    }
 }
 
 === Credentials/System/Capabilities/Mfa/Runtime/Stores/MfaStoreInterface.php ===
@@ -23895,6 +24100,14 @@ final class InMemoryMfaChallengeStore implements MfaChallengeStoreInterface, Pru
         }
 
         return $removed;
+    }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->records = [];
     }
 }
 
@@ -24580,6 +24793,14 @@ final class InMemoryPasskeyChallengeStore implements PasskeyChallengeStoreInterf
 
         return $removed;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->records = [];
+    }
 }
 
 === Credentials/System/Capabilities/Passkey/PasskeyCredentialCeremony/InMemoryPasskeyCredentialStore.php ===
@@ -24675,6 +24896,14 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
                                        array   : $this->credentials,
                                        callback: static fn (#[SensitiveParameter] PasskeyCredential $passkeyCredential) : bool => $passkeyCredential->userId === $userId,
                                    ));
+    }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->credentials = [];
     }
 }
 
@@ -25686,7 +25915,8 @@ final class CredentialsServiceProvider implements ServiceProvider
 
     public function boot(ContainerInterface $container) : void
     {
-        // No boot wiring needed — Credentials uses static store
+        // Reset static credential store for worker safety
+        \Avax\Components\Identity\Credentials\System\PublicSurface\Credentials::reset();
     }
 }
 
@@ -25798,6 +26028,15 @@ final class Credentials
         }
 
         return self::$store;
+    }
+
+    /**
+     * Reset static state for long-lived worker safety.
+     * MUST be called between requests in persistent runtimes.
+     */
+    public static function reset() : void
+    {
+        self::$store = null;
     }
 }
 
@@ -25934,6 +26173,14 @@ final class InMemoryExternalIdentityLinkStore implements ExternalIdentityLinkSto
     public function resolve(string $userId, string $provider) : array|null
     {
         return $this->links[$userId][$provider] ?? null;
+    }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->links = [];
     }
 }
 
@@ -26154,6 +26401,15 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         );
 
         return $removed;
+    }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->hashToCodeId = [];
+        $this->records      = [];
     }
 }
 
@@ -26561,6 +26817,14 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
         }
 
         return $this->passwordHasher->verify(password: $plainTextSecret, hash: $client->secretHash);
+    }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->clients = [];
     }
 }
 
@@ -27064,6 +27328,14 @@ final class InMemoryDpopProofReplayStore implements DpopProofReplayStoreInterfac
         $this->proofs[$proofId] = $expiresAt;
 
         return true;
+    }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->proofs = [];
     }
 }
 
@@ -29431,6 +29703,14 @@ final class InMemoryOidcRequestObjectStore implements OidcRequestObjectStoreInte
 
         return $object;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->objects = [];
+    }
 }
 
 === ExternalIdentity/System/Capabilities/OpenIDConnect/Protocol/OidcIdToken.php ===
@@ -31661,6 +31941,14 @@ final class InMemoryFederatedIdentityLinkStore implements FederatedIdentityLinkS
     {
         return $this->links[$this->key(connectionId: $connectionId, subject: $subject)] ?? null;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->links = [];
+    }
 }
 
 === ExternalIdentity/System/Capabilities/SingleSignOn/Federation/InMemoryFederationConnectionStore.php ===
@@ -31701,6 +31989,14 @@ final class InMemoryFederationConnectionStore implements FederationConnectionSto
     public function all() : array
     {
         return array_values(array: $this->connections);
+    }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->connections = [];
     }
 }
 
@@ -32704,7 +33000,8 @@ final class ExternalIdentityServiceProvider implements ServiceProvider
 
     public function boot(ContainerInterface $container) : void
     {
-        // No boot wiring needed — ExternalIdentity uses static state
+        // Reset static external identity store for worker safety
+        \Avax\Components\Identity\ExternalIdentity\System\PublicSurface\ExternalIdentity::reset();
     }
 }
 
@@ -32815,6 +33112,15 @@ final class ExternalIdentity
         }
 
         return self::$linkStore;
+    }
+
+    /**
+     * Reset static state for long-lived worker safety.
+     * MUST be called between requests in persistent runtimes.
+     */
+    public static function reset() : void
+    {
+        self::$linkStore = null;
     }
 }
 
@@ -33391,6 +33697,14 @@ final class InMemoryAdminElevationStore implements AdminElevationStoreInterface
             }
         }
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->records = [];
+    }
 }
 
 === Tenancy/System/Capabilities/AdminRealmRuntime/AdminElevation.php ===
@@ -33765,6 +34079,15 @@ final class TenantContext
 
         return self::$context;
     }
+
+    /**
+     * Reset static state for long-lived worker safety.
+     * MUST be called between requests in persistent runtimes.
+     */
+    public static function reset() : void
+    {
+        self::$context = null;
+    }
 }
 
 === Tenancy/System/Capabilities/Context/TenantContextInterface.php ===
@@ -33920,6 +34243,16 @@ final class InMemoryTenantStore implements TenantStoreInterface
             acceptedAt      : $acceptedAt,
             acceptedByUserId: $acceptedByUserId,
         );
+    }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->tenantsBySlug = [];
+        $this->members       = [];
+        $this->invites       = [];
     }
 }
 
@@ -35288,6 +35621,14 @@ final class InMemoryTenantSecurityChangeRequestStore implements TenantSecurityCh
                                        callback: static fn (TenantSecurityChangeRequest $tenantSecurityChangeRequest) : bool => $tenantSecurityChangeRequest->tenantSlug === trim(string: $tenantSlug),
                                    ));
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->changeRequests = [];
+    }
 }
 
 === Tenancy/System/Capabilities/Security/InMemoryTenantSecurityConfigurationStore.php ===
@@ -35310,6 +35651,14 @@ final class InMemoryTenantSecurityConfigurationStore implements TenantSecurityCo
     public function find(string $tenantSlug) : TenantSecurityConfiguration|null
     {
         return $this->configurations[$tenantSlug] ?? null;
+    }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->configurations = [];
     }
 }
 
@@ -35683,10 +36032,11 @@ namespace Avax\Components\Identity\Tenancy\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
 use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
+use Avax\Components\Identity\Tenancy\System\Capabilities\Context\DefaultTenantContext;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Context\TenantContext;
+use Avax\Components\Identity\Tenancy\System\Capabilities\Context\TenantContextInterface;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\InMemoryTenantStore;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\TenantStoreInterface;
-use Avax\Components\Identity\Tenancy\System\Capabilities\Resolution\TenantResolver;
 use Avax\Components\Identity\Tenancy\System\Configuration\TenancyConfiguration;
 
 /**
@@ -35699,6 +36049,9 @@ final class TenancyServiceProvider implements ServiceProvider
         // Tenancy configuration
         $container->singleton(TenancyConfiguration::class, static fn () : TenancyConfiguration => new TenancyConfiguration());
 
+        // Tenant context — request-scoped tenant identification
+        $container->singleton(TenantContextInterface::class, static fn () : TenantContextInterface => new DefaultTenantContext());
+
         // Tenant store — in-memory implementation
         $container->singleton(TenantStoreInterface::class, static fn () : TenantStoreInterface => new InMemoryTenantStore());
     }
@@ -35706,7 +36059,7 @@ final class TenancyServiceProvider implements ServiceProvider
     public function boot(ContainerInterface $container) : void
     {
         // Clear tenant context for worker safety
-        TenantContext::clear();
+        TenantContext::reset();
     }
 }
 
@@ -35949,6 +36302,40 @@ final class JwtAuth
         } catch (Throwable) {
             return ['active' => false];
         }
+    }
+
+    /**
+     * Reset static state for long-lived worker safety.
+     * MUST be called between requests in persistent runtimes.
+     */
+    public static function reset() : void
+    {
+        unset(self::$jwtSigner, self::$tokenVerifier);
+        self::$tokenBlacklist = new TokenBlacklist();
+    }
+
+    /**
+     * Replace the signer (for test injection).
+     */
+    public static function setSigner(JwtSigner $signer) : void
+    {
+        self::$jwtSigner = $signer;
+    }
+
+    /**
+     * Replace the verifier (for test injection).
+     */
+    public static function setVerifier(TokenVerifier $verifier) : void
+    {
+        self::$tokenVerifier = $verifier;
+    }
+
+    /**
+     * Replace the token blacklist (for test injection).
+     */
+    public static function setBlacklist(TokenBlacklist $blacklist) : void
+    {
+        self::$tokenBlacklist = $blacklist;
     }
 }
 
@@ -36407,6 +36794,14 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
         }
 
         return $record;
+    }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->codes = [];
     }
 }
 
@@ -37273,6 +37668,14 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             }
         }
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->tokens = [];
+    }
 }
 
 === Tokens/System/Capabilities/Tokens/Runtime/Store/InMemoryTokenRevocationStore.php ===
@@ -37308,6 +37711,14 @@ final class InMemoryTokenRevocationStore implements TokenRevocationStoreInterfac
         }
 
         return true;
+    }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->revoked = [];
     }
 }
 

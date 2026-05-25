@@ -53,4 +53,13 @@ final class TenantContext
 
         return self::$context;
     }
+
+    /**
+     * Reset static state for long-lived worker safety.
+     * MUST be called between requests in persistent runtimes.
+     */
+    public static function reset() : void
+    {
+        self::$context = null;
+    }
 }

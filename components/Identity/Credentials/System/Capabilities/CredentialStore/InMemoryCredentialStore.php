@@ -29,4 +29,12 @@ final class InMemoryCredentialStore implements CredentialStoreInterface
     {
         unset($this->store[$userId]);
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->store = [];
+    }
 }

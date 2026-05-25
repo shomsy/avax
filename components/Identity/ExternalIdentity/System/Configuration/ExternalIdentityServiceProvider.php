@@ -33,6 +33,7 @@ final class ExternalIdentityServiceProvider implements ServiceProvider
 
     public function boot(ContainerInterface $container) : void
     {
-        // No boot wiring needed — ExternalIdentity uses static state
+        // Reset static external identity store for worker safety
+        \Avax\Components\Identity\ExternalIdentity\System\PublicSurface\ExternalIdentity::reset();
     }
 }

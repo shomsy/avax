@@ -21,4 +21,12 @@ final class InMemoryRiskSignalStore implements RiskSignalStoreInterface
                                        callback: static fn (RiskSignal $riskSignal) : bool => $riskSignal->userId === $userId,
                                    ));
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->signals = [];
+    }
 }

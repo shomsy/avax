@@ -99,4 +99,14 @@ final class InMemoryMfaStore implements MfaStoreInterface
     {
         unset($this->recoveryTokens[$tokenHash]);
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->methods            = [];
+        $this->pendingEnrollments = [];
+        $this->recoveryTokens     = [];
+    }
 }

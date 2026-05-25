@@ -15,6 +15,7 @@ use Avax\Components\Foundation\CallableSerialization\System\Flows\EncodeCallable
 use Avax\Components\Foundation\CallableSerialization\System\Foundation\Failure\CallablePayloadFailure;
 use Avax\Components\Foundation\CallableSerialization\System\Foundation\Values\CallablePayload;
 use Avax\Components\Foundation\CallableSerialization\System\PublicSurface\CallableSerialization;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -27,7 +28,10 @@ use PHPUnit\Framework\TestCase;
  * - Corrupted payloads are rejected
  * - Signed payloads survive cross-process transport (JSON encode/decode)
  * - PublicSurface facade works correctly
+ *
+ * @group serial — manipulates static CallableSerialization state
  */
+#[Group('serial')]
 final class CallableSerializationProofTest extends TestCase
 {
     private const string TEST_SECRET_KEY = 'test-secret-key-for-closure-serialization';

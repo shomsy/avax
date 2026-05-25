@@ -108,4 +108,14 @@ final class InMemoryTenantStore implements TenantStoreInterface
             acceptedByUserId: $acceptedByUserId,
         );
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->tenantsBySlug = [];
+        $this->members       = [];
+        $this->invites       = [];
+    }
 }

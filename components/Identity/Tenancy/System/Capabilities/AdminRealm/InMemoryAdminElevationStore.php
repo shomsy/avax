@@ -32,4 +32,12 @@ final class InMemoryAdminElevationStore implements AdminElevationStoreInterface
             }
         }
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->records = [];
+    }
 }

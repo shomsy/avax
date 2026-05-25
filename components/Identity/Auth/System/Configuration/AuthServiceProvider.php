@@ -6,6 +6,8 @@ namespace Avax\Components\Identity\Auth\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
 use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
+use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
+use Avax\Components\Identity\Auth\System\PublicSurface\AuthInterface;
 
 
 /**
@@ -24,6 +26,12 @@ final class AuthServiceProvider implements ServiceProvider
 
     public function boot(ContainerInterface $container) : void
     {
-        // No boot-time logic needed
+        // Bridge DI-registered Auth instance to deprecated static auth() helper
+        if ($container->has(AuthInterface::class)) {
+            Auth::setInstance($container->get(AuthInterface::class));
+        }
+
+        // Worker safety — reset static state for long-lived runtimes
+        Auth::instance()->logout();
     }
 }

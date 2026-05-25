@@ -83,4 +83,12 @@ final class InMemoryRefreshTokenStore implements RefreshTokenStoreInterface
             }
         }
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->tokens = [];
+    }
 }

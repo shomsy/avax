@@ -91,7 +91,18 @@
     "test:runtime": "vendor/bin/phpunit --no-coverage --testsuite Runtime",
     "test:slow": "vendor/bin/phpunit --no-coverage --testsuite GoldenPath",
     "test:full": "vendor/bin/phpunit --no-coverage --testsuite Full",
-    "test:parallel": "@php tooling/testing/run-tests-in-parallel.php",
+    "test:parallel": "php tooling/testing/run-tests-in-parallel.php --exclude-group serial,process,slow",
+    "test:parallel:fast": "php tooling/testing/run-tests-in-parallel.php --testsuite Full --exclude-group serial,process,slow",
+    "test:serial": "php tooling/testing/run-serial-tests.php",
+    "test:fast": [
+      "@test:parallel:fast"
+    ],
+    "test:full:parallel": [
+      "@test:parallel:fast",
+      "@test:serial",
+      "@phpstan"
+    ],
+    "test:full:sequential": "vendor/bin/phpunit --no-coverage --testsuite Full",
     "test:timing": "@php tooling/testing/measure-test-runtime.php",
     "test:shard": "@php tooling/testing/split-tests-by-runtime.php",
     "test:security": "vendor/bin/phpunit --no-coverage --testsuite Security",

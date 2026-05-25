@@ -26,4 +26,9 @@ final readonly class TokenId implements Stringable
     {
         return $this->value;
     }
+
+    public static function random(): self
+    {
+        return new self(bin2hex(random_bytes(16)));
+    }
 }

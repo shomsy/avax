@@ -36,4 +36,12 @@ final class InMemoryScimProvisionedIdentityStore implements ScimProvisionedIdent
     {
         unset($this->identities[$this->key(directoryId: $directoryId, externalId: $externalId)]);
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->identities = [];
+    }
 }

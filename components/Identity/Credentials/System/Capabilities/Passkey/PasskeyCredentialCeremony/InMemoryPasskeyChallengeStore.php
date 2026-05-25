@@ -59,4 +59,12 @@ final class InMemoryPasskeyChallengeStore implements PasskeyChallengeStoreInterf
 
         return $removed;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->records = [];
+    }
 }

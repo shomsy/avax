@@ -33,6 +33,10 @@
         </testsuite>
         <testsuite name="Full">
             <directory>tests</directory>
+            <directory>components</directory>
+            <directory>labs</directory>
+            <exclude>components/SystemDesign/System/Capabilities/ArchitectureTesting/ArchitectureTest.php</exclude>
+            <exclude>labs/SystemDesignKit/System/Capabilities/ArchitectureTesting/ArchitectureTest.php</exclude>
         </testsuite>
     </testsuites>
 </phpunit>

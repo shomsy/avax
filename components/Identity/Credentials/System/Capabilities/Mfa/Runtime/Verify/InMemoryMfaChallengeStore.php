@@ -60,4 +60,12 @@ final class InMemoryMfaChallengeStore implements MfaChallengeStoreInterface, Pru
 
         return $removed;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->records = [];
+    }
 }

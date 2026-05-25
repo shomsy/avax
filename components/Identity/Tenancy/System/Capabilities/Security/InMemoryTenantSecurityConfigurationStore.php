@@ -18,4 +18,12 @@ final class InMemoryTenantSecurityConfigurationStore implements TenantSecurityCo
     {
         return $this->configurations[$tenantSlug] ?? null;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->configurations = [];
+    }
 }

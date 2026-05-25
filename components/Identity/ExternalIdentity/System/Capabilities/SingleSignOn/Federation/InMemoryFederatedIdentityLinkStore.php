@@ -23,4 +23,12 @@ final class InMemoryFederatedIdentityLinkStore implements FederatedIdentityLinkS
     {
         return $this->links[$this->key(connectionId: $connectionId, subject: $subject)] ?? null;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->links = [];
+    }
 }

@@ -53,4 +53,12 @@ final class InMemoryEmailChangeStore implements EmailChangeStoreInterface
             expiresAt: new DateTimeImmutable(datetime: '@' . $record['expires_at']),
         );
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->records = [];
+    }
 }

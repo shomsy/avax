@@ -31,6 +31,15 @@ final class InMemoryAttemptThrottleStore implements AttemptThrottleStoreInterfac
         unset($this->attempts[$key], $this->lastAttemptTimes[$key]);
     }
 
+    /**
+     * Reset all internal state for long-lived worker safety.
+     */
+    public function resetAll() : void
+    {
+        $this->attempts         = [];
+        $this->lastAttemptTimes = [];
+    }
+
     public function getLastAttemptTime(string $key) : int
     {
         return $this->lastAttemptTimes[$key] ?? 0;

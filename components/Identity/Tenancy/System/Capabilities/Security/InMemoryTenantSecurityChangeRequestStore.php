@@ -26,4 +26,12 @@ final class InMemoryTenantSecurityChangeRequestStore implements TenantSecurityCh
                                        callback: static fn (TenantSecurityChangeRequest $tenantSecurityChangeRequest) : bool => $tenantSecurityChangeRequest->tenantSlug === trim(string: $tenantSlug),
                                    ));
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->changeRequests = [];
+    }
 }

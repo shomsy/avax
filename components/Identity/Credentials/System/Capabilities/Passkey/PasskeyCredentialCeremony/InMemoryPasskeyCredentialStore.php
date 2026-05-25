@@ -91,4 +91,12 @@ final class InMemoryPasskeyCredentialStore implements PasskeyCredentialStoreInte
                                        callback: static fn (#[SensitiveParameter] PasskeyCredential $passkeyCredential) : bool => $passkeyCredential->userId === $userId,
                                    ));
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->credentials = [];
+    }
 }

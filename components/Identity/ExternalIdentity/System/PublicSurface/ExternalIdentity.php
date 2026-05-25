@@ -50,4 +50,13 @@ final class ExternalIdentity
 
         return self::$linkStore;
     }
+
+    /**
+     * Reset static state for long-lived worker safety.
+     * MUST be called between requests in persistent runtimes.
+     */
+    public static function reset() : void
+    {
+        self::$linkStore = null;
+    }
 }

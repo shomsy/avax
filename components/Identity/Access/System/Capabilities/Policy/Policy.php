@@ -58,4 +58,32 @@ final class Policy
     {
         return self::evaluator()->explain($action, $resource, $context);
     }
+
+    /**
+     * Reset static state for long-lived worker safety.
+     * MUST be called between requests in persistent runtimes.
+     */
+    public static function reset() : void
+    {
+        unset(self::$policyEvaluator);
+        self::$definitions = [];
+    }
+
+    /**
+     * Replace the policy evaluator (for test injection).
+     */
+    public static function setEvaluator(PolicyEvaluator $evaluator) : void
+    {
+        self::$policyEvaluator = $evaluator;
+    }
+
+    /**
+     * Replace policy definitions (for test injection).
+     *
+     * @param array<string, array<string, mixed>> $definitions
+     */
+    public static function setDefinitions(array $definitions) : void
+    {
+        self::$definitions = $definitions;
+    }
 }

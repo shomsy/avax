@@ -21,6 +21,7 @@ final class CredentialsServiceProvider implements ServiceProvider
 
     public function boot(ContainerInterface $container) : void
     {
-        // No boot wiring needed — Credentials uses static store
+        // Reset static credential store for worker safety
+        \Avax\Components\Identity\Credentials\System\PublicSurface\Credentials::reset();
     }
 }

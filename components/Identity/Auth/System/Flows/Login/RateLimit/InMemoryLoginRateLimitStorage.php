@@ -31,6 +31,15 @@ final class InMemoryLoginRateLimitStorage implements LoginRateLimitStorageInterf
         unset($this->attempts[$identifier], $this->lastAttemptTimes[$identifier]);
     }
 
+    /**
+     * Reset all internal state for long-lived worker safety.
+     */
+    public function resetAll() : void
+    {
+        $this->attempts         = [];
+        $this->lastAttemptTimes = [];
+    }
+
     public function getLastAttemptTime(string $identifier) : int
     {
         return $this->lastAttemptTimes[$identifier] ?? 0;

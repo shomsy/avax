@@ -25,4 +25,12 @@ final class InMemoryKnownAuthenticationEnvironmentStore implements KnownAuthenti
     {
         $this->seen[$userId][$this->key(ipAddress: $ipAddress, userAgent: $userAgent)] = true;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->seen = [];
+    }
 }

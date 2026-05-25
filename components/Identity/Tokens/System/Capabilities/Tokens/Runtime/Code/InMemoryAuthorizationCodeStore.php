@@ -51,4 +51,12 @@ final class InMemoryAuthorizationCodeStore implements AuthorizationCodeStoreInte
 
         return $record;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->codes = [];
+    }
 }

@@ -47,4 +47,12 @@ final class InMemoryEmailVerificationStore implements EmailVerificationStoreInte
 
         return new UserId(value: $record['user_id']);
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->records = [];
+    }
 }

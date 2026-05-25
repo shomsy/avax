@@ -1,0 +1,21 @@
+{
+  "name": "avax/identity-enterprise-reference",
+  "description": "Greenfield enterprise-grade AvaX Identity component reference implementation.",
+  "type": "library",
+  "require": {
+    "php": ">=8.4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Avax\\Components\\Identity\\": "components/Identity/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Avax\\Tests\\Unit\\Components\\Identity\\": "tests/Unit/Components/Identity/"
+    }
+  }
+}

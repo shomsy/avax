@@ -24,4 +24,12 @@ final class InMemoryExternalIdentityLinkStore implements ExternalIdentityLinkSto
     {
         return $this->links[$userId][$provider] ?? null;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->links = [];
+    }
 }

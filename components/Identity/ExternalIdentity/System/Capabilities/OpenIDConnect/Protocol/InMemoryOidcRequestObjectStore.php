@@ -62,4 +62,12 @@ final class InMemoryOidcRequestObjectStore implements OidcRequestObjectStoreInte
 
         return $object;
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->objects = [];
+    }
 }

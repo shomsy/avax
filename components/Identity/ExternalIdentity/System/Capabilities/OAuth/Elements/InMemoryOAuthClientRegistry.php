@@ -402,4 +402,12 @@ final class InMemoryOAuthClientRegistry implements OAuthClientRegistryInterface
 
         return $this->passwordHasher->verify(password: $plainTextSecret, hash: $client->secretHash);
     }
+
+    /**
+     * Reset internal state for long-lived worker safety.
+     */
+    public function reset() : void
+    {
+        $this->clients = [];
+    }
 }

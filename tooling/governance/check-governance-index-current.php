@@ -24,10 +24,31 @@ $requiredDocs = [
 
 $violations = [];
 
+function findHowToDoc(string $howToDir, string $docName): bool
+{
+    if (! is_dir($howToDir)) {
+        return false;
+    }
+
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($howToDir, RecursiveDirectoryIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::LEAVES_ONLY,
+    );
+
+    foreach ($iterator as $file) {
+        if ($file->getFilename() === $docName) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+$howToDir = $agentsDir.'/how-to';
+
 foreach ($requiredDocs as $doc) {
-    $path = $agentsDir.'/how-to/'.$doc;
-    if (! file_exists($path)) {
-        $violations[] = "Missing: $path";
+    if (! findHowToDoc($howToDir, $doc)) {
+        $violations[] = "Missing: $doc (not found anywhere under $howToDir/)";
     }
 }
 

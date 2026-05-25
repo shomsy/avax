@@ -26,8 +26,8 @@ use Symfony\Component\Process\Process;
 
 $options = getopt('', ['processes:', 'exclude-group:', 'testsuite:']);
 $processCount = isset($options['processes']) ? (int) $options['processes'] : 0;
-$excludeGroup = $options['exclude-group'] ?? '';
-$testsuite = $options['testsuite'] ?? '';
+$excludeGroup = is_string($options['exclude-group'] ?? null) ? $options['exclude-group'] : '';
+$testsuite = is_string($options['testsuite'] ?? null) ? $options['testsuite'] : '';
 
 if ($processCount <= 0) {
     $processCount = (int) shell_exec('nproc 2>/dev/null || echo 4') ?: 4;

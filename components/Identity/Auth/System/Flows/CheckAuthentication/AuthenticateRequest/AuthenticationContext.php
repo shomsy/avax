@@ -68,6 +68,8 @@ final readonly class AuthenticationContext
     {
         return new self(
             authenticated       : true,
+            authenticationMode  : $authenticationMode,
+            authenticatedUser   : $authenticatedUser,
             sessionId           : $sessionId,
             accessTokenId       : $accessTokenId,
             accessTokenExpiresAt: $accessTokenExpiresAt,
@@ -75,8 +77,6 @@ final readonly class AuthenticationContext
             refreshTokenFamilyId: $refreshTokenFamilyId,
             mfaVerifiedAt       : $mfaVerifiedAt,
             phishingResistant   : $phishingResistant,
-            mode                : $authenticationMode,
-            user                : $authenticatedUser,
         );
     }
 

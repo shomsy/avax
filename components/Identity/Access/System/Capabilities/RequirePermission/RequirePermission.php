@@ -34,8 +34,8 @@ final readonly class RequirePermission
             throw new Unauthenticated();
         }
 
-        if (! $user->hasPermission(permission: $userPermission)) {
-            throw new PermissionDenied(requirement: $userPermission);
+        if (! $user->hasPermission($userPermission)) {
+            throw new PermissionDenied($userPermission);
         }
     }
 }

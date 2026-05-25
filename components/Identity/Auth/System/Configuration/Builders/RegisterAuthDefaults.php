@@ -127,6 +127,11 @@ final readonly class RegisterAuthDefaults
             ),
         );
 
+        // === Access / Authorization Graph ===
+
+        // Access component — registers AuthorizationEngine, Require* boundaries, PolicyEvaluator, Access facade
+        \Avax\Components\Identity\Access\System\Configuration\Builders\RegisterAccessDependencies::register($container);
+
         // === Passkey Infrastructure ===
 
         $container->singleton(
@@ -373,6 +378,22 @@ final readonly class RegisterAuthDefaults
         $container->singleton(
             \Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\MfaChallengeStoreInterface::class,
             static fn () : \Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\MfaChallengeStoreInterface => new \Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\InMemoryMfaChallengeStore(),
+        );
+
+        // === Current Authentication Context ===
+
+        // CurrentAuthentication — shared auth context required by all Require* boundaries
+        $container->singleton(
+            \Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication::class,
+            static fn () : \Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication => new \Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication(),
+        );
+
+        // === Admin Elevation Store ===
+
+        // InMemoryAdminElevationStore — stores admin elevation state for tenancy
+        $container->singleton(
+            \Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\AdminElevationStoreInterface::class,
+            static fn () : \Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\AdminElevationStoreInterface => new \Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\InMemoryAdminElevationStore(),
         );
 
         // === Identity & Auth Facades ===

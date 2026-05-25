@@ -18,15 +18,18 @@ use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionId
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\SessionStoreInterface;
-use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
-use Avax\Components\Identity\Auth\System\Configuration\Graphs\IdentityAssembler;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\SessionCookieSettings;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\NativeSessionStore;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store\GenerateSessionId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store\InMemorySessionStore;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store\RandomSessionId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store\SessionStore;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\InMemoryLifecycleStore;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\InMemoryScimDirectoryStore;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\InMemoryScimProvisionedIdentityStore;
+use Avax\Components\Identity\Auth\System\Configuration\Graphs\IdentityAssembler;
 use Avax\Components\Identity\Auth\System\Configuration\Graphs\SessionGraph;
 use Avax\Components\Identity\Auth\System\Configuration\Graphs\TokenGraph;
 use Avax\Components\Identity\Auth\System\Configuration\IdentityConfiguration;
@@ -47,8 +50,8 @@ use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Limit\L
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Stores\InMemoryMfaStore;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Totp\Totp;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\InMemoryMfaChallengeStore;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\InMemoryPasskeyChallengeStore;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\InMemoryPasskeyCredentialStore;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\MfaChallengeStoreInterface;
+use Avax\Components\Identity\Credentials\System\Configuration\Graphs\CredentialsGraph;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\InMemoryAuthorizationCodeStore;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\InMemoryOAuthClientRegistry;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\InMemoryOidcRequestObjectStore;
@@ -132,17 +135,10 @@ final readonly class RegisterAuthDefaults
         // Access component — registers AuthorizationEngine, Require* boundaries, PolicyEvaluator, Access facade
         \Avax\Components\Identity\Access\System\Configuration\Builders\RegisterAccessDependencies::register($container);
 
-        // === Passkey Infrastructure ===
+        // === Credentials Graph ===
 
-        $container->singleton(
-            InMemoryPasskeyCredentialStore::class,
-            static fn () : InMemoryPasskeyCredentialStore => new InMemoryPasskeyCredentialStore(),
-        );
-
-        $container->singleton(
-            InMemoryPasskeyChallengeStore::class,
-            static fn () : InMemoryPasskeyChallengeStore => new InMemoryPasskeyChallengeStore(),
-        );
+        // Credentials component — registers MFA stores, Passkey stores, TOTP, credential store
+        CredentialsGraph::register($container);
 
         // === Federation Infrastructure ===
 
@@ -162,26 +158,6 @@ final readonly class RegisterAuthDefaults
         $container->singleton(InMemoryEmailVerificationStore::class, static fn () : InMemoryEmailVerificationStore => new InMemoryEmailVerificationStore());
         $container->singleton(InMemoryEmailChangeStore::class, static fn () : InMemoryEmailChangeStore => new InMemoryEmailChangeStore());
         $container->singleton(InMemoryEmailVerificationStateStore::class, static fn () : InMemoryEmailVerificationStateStore => new InMemoryEmailVerificationStateStore());
-
-        // === MFA Infrastructure ===
-
-        $container->singleton(InMemoryMfaStore::class, static fn () : InMemoryMfaStore => new InMemoryMfaStore());
-        $container->singleton(InMemoryMfaChallengeStore::class, static fn () : InMemoryMfaChallengeStore => new InMemoryMfaChallengeStore());
-        $container->singleton(Totp::class, static fn () : Totp => new Totp());
-
-        // MFA attempt limit
-        $container->singleton(
-            InMemoryAttemptLimitStorage::class,
-            static fn () : InMemoryAttemptLimitStorage => new InMemoryAttemptLimitStorage(),
-        );
-
-        $container->singleton(
-            LimitMfaAttempts::class,
-            static fn (ContainerInterface $c) : LimitMfaAttempts => new LimitMfaAttempts(
-                clock  : $c->get(Clock::class),
-                attemptLimitStorage: $c->get(InMemoryAttemptLimitStorage::class),
-            ),
-        );
 
         // === Throttling Infrastructure ===
 
@@ -353,7 +329,7 @@ final readonly class RegisterAuthDefaults
         // InMemoryUserSource — default user source for dev/test (no constructor)
         $container->singleton(
             UserSourceInterface::class,
-            static fn (ContainerInterface $c) : UserSourceInterface => new \Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource(),
+            static fn (ContainerInterface $c) : UserSourceInterface => new InMemoryUserSource(),
         );
 
         // === Session Storage ===
@@ -361,39 +337,15 @@ final readonly class RegisterAuthDefaults
         // NativeSessionStore — PHP $_SESSION wrapper for session-based identity
         $container->singleton(
             SessionStoreInterface::class,
-            static fn (ContainerInterface $c) : SessionStoreInterface => new \Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\NativeSessionStore(
-                $c->get(\Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\SessionCookieSettings::class),
+            static fn (ContainerInterface $c) : SessionStoreInterface => new NativeSessionStore(
+                $c->get(SessionCookieSettings::class),
             ),
         );
 
         // SessionCookieSettings — default cookie policy for native sessions
         $container->singleton(
-            \Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\SessionCookieSettings::class,
-            static fn () : \Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\SessionCookieSettings => new \Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\SessionCookieSettings(),
-        );
-
-        // === MFA Challenge Store ===
-
-        // InMemoryMfaChallengeStore — stores MFA challenge lifecycle state
-        $container->singleton(
-            \Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\MfaChallengeStoreInterface::class,
-            static fn () : \Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\MfaChallengeStoreInterface => new \Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\InMemoryMfaChallengeStore(),
-        );
-
-        // === Current Authentication Context ===
-
-        // CurrentAuthentication — shared auth context required by all Require* boundaries
-        $container->singleton(
-            \Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication::class,
-            static fn () : \Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication => new \Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication(),
-        );
-
-        // === Admin Elevation Store ===
-
-        // InMemoryAdminElevationStore — stores admin elevation state for tenancy
-        $container->singleton(
-            \Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\AdminElevationStoreInterface::class,
-            static fn () : \Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\AdminElevationStoreInterface => new \Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\InMemoryAdminElevationStore(),
+            SessionCookieSettings::class,
+            static fn () : SessionCookieSettings => new SessionCookieSettings(),
         );
 
         // === Identity & Auth Facades ===

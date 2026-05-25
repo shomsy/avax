@@ -64,6 +64,8 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Security\InMemoryTenant
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Blacklist\InMemoryTokenBlacklist;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Blacklist\TokenBlacklist;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Codec\HmacTokenCodec;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\InMemoryRefreshTokenStore;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\InMemoryTokenRevocationStore;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\RefreshTokenStoreInterface;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\TokenRevocationStoreInterface;
 use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
@@ -139,6 +141,20 @@ final readonly class RegisterAuthDefaults
 
         // Credentials component — registers MFA stores, Passkey stores, TOTP, credential store
         CredentialsGraph::register($container);
+
+        // === Token Infrastructure ===
+
+        // Token revocation store — denies revoked access tokens
+        $container->singleton(
+            TokenRevocationStoreInterface::class,
+            static fn () : TokenRevocationStoreInterface => new InMemoryTokenRevocationStore(),
+        );
+
+        // Refresh token store — issues, rotates, and revokes refresh tokens
+        $container->singleton(
+            RefreshTokenStoreInterface::class,
+            static fn () : RefreshTokenStoreInterface => new InMemoryRefreshTokenStore(),
+        );
 
         // === Federation Infrastructure ===
 

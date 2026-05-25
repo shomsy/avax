@@ -12,6 +12,14 @@ use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\InMemoryRiskSignalStore;
 use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\NullAuditLog;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentity;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\SessionStoreInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Components\Identity\Auth\System\Configuration\Graphs\IdentityAssembler;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store\GenerateSessionId;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store\InMemorySessionStore;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store\RandomSessionId;
@@ -53,6 +61,8 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\Security\InMemoryTenant
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Blacklist\InMemoryTokenBlacklist;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Blacklist\TokenBlacklist;
 use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Codec\HmacTokenCodec;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\RefreshTokenStoreInterface;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\TokenRevocationStoreInterface;
 use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 
 final readonly class RegisterAuthDefaults
@@ -260,9 +270,11 @@ final readonly class RegisterAuthDefaults
         // HmacTokenCodec — signs and verifies HMAC-signed JWTs (implements SignToken + VerifyToken)
         $container->singleton(
             HmacTokenCodec::class,
-            static fn (ContainerInterface $c) : HmacTokenCodec => new HmacTokenCodec(
-                secret: $c->get(IdentityConfiguration::class)->tokenSecret(),
-            ),
+            static function (ContainerInterface $c) : HmacTokenCodec {
+                /** @var IdentityConfiguration $config */
+                $config = $c->get(IdentityConfiguration::class);
+                return new HmacTokenCodec(secret: $config->tokenSecret());
+            },
         );
 
         // TokenBlacklist — in-memory token revocation checks
@@ -331,10 +343,96 @@ final readonly class RegisterAuthDefaults
             ),
         );
 
+        // === User Source ===
+
+        // InMemoryUserSource — default user source for dev/test (no constructor)
+        $container->singleton(
+            UserSourceInterface::class,
+            static fn (ContainerInterface $c) : UserSourceInterface => new \Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource(),
+        );
+
+        // === Session Storage ===
+
+        // NativeSessionStore — PHP $_SESSION wrapper for session-based identity
+        $container->singleton(
+            SessionStoreInterface::class,
+            static fn (ContainerInterface $c) : SessionStoreInterface => new \Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\NativeSessionStore(
+                $c->get(\Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\SessionCookieSettings::class),
+            ),
+        );
+
+        // SessionCookieSettings — default cookie policy for native sessions
+        $container->singleton(
+            \Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\SessionCookieSettings::class,
+            static fn () : \Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\SessionCookieSettings => new \Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\SessionCookieSettings(),
+        );
+
+        // === MFA Challenge Store ===
+
+        // InMemoryMfaChallengeStore — stores MFA challenge lifecycle state
+        $container->singleton(
+            \Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\MfaChallengeStoreInterface::class,
+            static fn () : \Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\MfaChallengeStoreInterface => new \Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\InMemoryMfaChallengeStore(),
+        );
+
         // === Identity & Auth Facades ===
 
-        // Identity capability coordinator
-        $container->singleton(Identity::class, static fn () : Identity => new Identity());
+        // SessionIdentity — session-based identity backend
+        $container->singleton(
+            SessionIdentityInterface::class,
+            static function (ContainerInterface $c) : SessionIdentityInterface {
+                /** @var IdentityConfiguration $config */
+                $config = $c->get(IdentityConfiguration::class);
+                return new SessionIdentity(
+                    sessionStore    : $c->get(SessionStoreInterface::class),
+                    clock           : $c->get(Clock::class),
+                    auditLog        : $c->get(NullAuditLog::class),
+                    sessionLifetime : $config->sessionLifetime(),
+                    sessionRegistry : $c->get(SessionRegistryInterface::class),
+                );
+            },
+        );
+
+        // JwtIdentity — JWT-based identity backend
+        $container->singleton(
+            JwtIdentityInterface::class,
+            static function (ContainerInterface $c) : JwtIdentityInterface {
+                /** @var IdentityConfiguration $config */
+                $config = $c->get(IdentityConfiguration::class);
+                $now = new \DateTimeImmutable();
+                $tokenExpiry = (int) $now->diff($now->add($config->defaultTokenTtl()))->format('%s')
+                    + (int) $config->defaultTokenTtl()->i * 60
+                    + (int) $config->defaultTokenTtl()->h * 3600
+                    + (int) $config->defaultTokenTtl()->d * 86400;
+                $refreshTokenExpiry = (int) $now->diff($now->add($config->defaultRefreshTokenTtl()))->format('%s')
+                    + (int) $config->defaultRefreshTokenTtl()->i * 60
+                    + (int) $config->defaultRefreshTokenTtl()->h * 3600
+                    + (int) $config->defaultRefreshTokenTtl()->d * 86400;
+
+                return new JwtIdentity(
+                    userSource          : $c->get(UserSourceInterface::class),
+                    tokenCodec          : $c->get(HmacTokenCodec::class),
+                    clock               : $c->get(Clock::class),
+                    tokenRevocationStore: $c->has(TokenRevocationStoreInterface::class) ? $c->get(TokenRevocationStoreInterface::class) : null,
+                    refreshTokenStore   : $c->has(RefreshTokenStoreInterface::class) ? $c->get(RefreshTokenStoreInterface::class) : null,
+                    tokenExpiry         : $tokenExpiry,
+                    refreshTokenExpiry  : $refreshTokenExpiry,
+                    issuer              : $config->tokenIssuer(),
+                );
+            },
+        );
+
+        // Identity capability coordinator — assembled via factory to handle circular deps
+        // Flows that need IdentityInterface get it via lazy container resolution
+        $container->singleton(Identity::class, static function (ContainerInterface $c) : Identity {
+            // Break circular dependency: Identity → Authentication → Login → IdentityInterface
+            // by using lazy resolution through the container
+            $sessionIdentity = $c->get(SessionIdentityInterface::class);
+            $jwtIdentity     = $c->get(JwtIdentityInterface::class);
+
+            // Build Identity using a factory that resolves circular references
+            return IdentityAssembler::assemble($c, $sessionIdentity, $jwtIdentity);
+        });
 
         // Auth facade — requires Identity
         $container->singleton(AuthInterface::class, static fn (ContainerInterface $c) : Auth => new Auth(

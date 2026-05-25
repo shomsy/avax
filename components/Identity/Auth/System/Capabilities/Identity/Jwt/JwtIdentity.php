@@ -301,9 +301,13 @@ final readonly class JwtIdentity implements JwtIdentityInterface
      * @throws DateMalformedStringException
      */
     public function issueRefreshToken(
-        User  $user, DateTimeImmutable|null $issuedAt = null,
-        bool  $phishingResistant = false, string|null $audience = null,
-        array $scopes = [], OAuthSenderConstraint|null $oAuthSenderConstraint = null,
+        User                      $user,
+        DateTimeImmutable|null    $mfaVerifiedAt = null,
+        bool                      $phishingResistant = false,
+        string|null               $audience = null,
+        array                     $scopes = [],
+        string|null               $clientId = null,
+        OAuthSenderConstraint|null $oAuthSenderConstraint = null,
     ) : IssuedRefreshToken|null
     {
         if (! $this->refreshTokenStore instanceof RefreshTokenStoreInterface) {
@@ -328,11 +332,13 @@ final readonly class JwtIdentity implements JwtIdentityInterface
      * @throws DateMalformedStringException
      */
     public function issue(
-        User    $user, DateTimeImmutable|null $issuedAt = null,
-        bool    $phishingResistant = false, string|null $audience = null,
-        array                  $scopes = [],
-        #[SensitiveParameter]
-        ?string $issuer = null, OAuthSenderConstraint|null $oAuthSenderConstraint = null,
+        User                 $user,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool                 $phishingResistant = false,
+        string|null          $clientId = null,
+        array                $scopes = [],
+        string|null          $refreshTokenFamilyId = null,
+        OAuthSenderConstraint|null $oAuthSenderConstraint = null,
     ) : IssuedToken
     {
         if (! $user->isActive()) {

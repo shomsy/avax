@@ -58,7 +58,7 @@ final readonly class SymfonyProcessParallelRuntime implements ParallelRuntimeInt
                     signingKey: $this->signingKey,
                 );
 
-                $process          = $this->starter->start($payload, $workerScript);
+                $process          = $this->starter->start($payload, $workerScript, $this->signingKey);
                 $batch[$workerId] = [
                     'name'    => $name,
                     'process' => $process,

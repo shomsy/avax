@@ -13,19 +13,25 @@ final readonly class StartWorkerProcess
     /**
      * Start a worker process with a signed callable payload.
      *
-     * @param string $signedPayload JSON-encoded signed callable payload from CallableSerialization
+     * @param string      $signedPayload JSON-encoded signed callable payload from CallableSerialization
+     * @param string|null $signingKey    Signing key for the worker to decode the payload
      */
-    public function start(string $signedPayload, string|null $workerScript = null) : Process
+    public function start(string $signedPayload, string|null $workerScript = null, string|null $signingKey = null) : Process
     {
         $script  = $workerScript ?? $this->getDefaultWorkerScript();
         $encoded = base64_encode($signedPayload);
+
+        $env = [];
+        if ($signingKey !== null) {
+            $env['AVAX_WORKER_SIGNING_KEY'] = $signingKey;
+        }
 
         $process = new Process([
                                    self::PHP_BINARY,
                                    $script,
                                    '--payload',
                                    $encoded,
-                               ]);
+                               ], env: $env);
 
         $process->setTimeout(300.0);
         $process->start();

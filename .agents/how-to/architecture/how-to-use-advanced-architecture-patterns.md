@@ -2,7 +2,7 @@
 
 ## 1. Status of This Document
 
-This document is part of the AvaX architecture governance.
+This document is part of the The architecture governance.
 
 It defines when and how advanced architecture patterns may be used.
 
@@ -51,7 +51,7 @@ Advanced patterns are allowed only when they reduce real pressure.
 
 They are forbidden when they create architecture theater.
 
-The core AvaX architecture law still wins:
+The core The architecture law still wins:
 
 ```text
 folder says flow or capability
@@ -1804,13 +1804,13 @@ Fitness tests belong in tooling or architecture tests.
 
 They are stronger than review comments.
 
-Naming:
+Project-specific example:
 
 ```text
-tooling/refactor/check-public-surface.php
-tooling/refactor/check-runtime-leaks.php
-tooling/refactor/check-namespace-drift.php
-tooling/refactor/check-advanced-pattern-usage.php
+configured public-surface checker
+configured runtime-leak checker
+configured namespace-drift checker
+configured advanced-pattern checker
 ```
 
 ---
@@ -1928,7 +1928,7 @@ If the design is harder to explain after adding the pattern, remove the pattern.
 ```text
 Pattern solves real pressure.
 Ownership is clear.
-Naming follows AvaX laws.
+Naming follows project laws.
 Behavior is proven by tests.
 ADR exists when required.
 ```
@@ -1966,7 +1966,7 @@ Pattern is called production-ready without tests.
 
 ## 35. Existing Code Recovery Rule
 
-When recovering old code from `avax-backup.txt`, `Framework.txt`, `Components.txt`, or git history, do not restore
+When recovering old code from legacy backups (`Framework.txt`, `Components.txt`), or git history, do not restore
 advanced pattern structure blindly.
 
 Translate by pressure and ownership.
@@ -2050,11 +2050,11 @@ If the pattern makes that harder, remove it.
 **Status:** MANDATORY  
 **Severity:** BLOCKER  
 
-This section defines how Fowler's *Patterns of Enterprise Application Architecture* (PEAA) map directly to AvaX architectural boundaries.
+This section defines how Fowler's *Patterns of Enterprise Application Architecture* (PEAA) map directly to the project's architectural boundaries.
 
 ### 37.1 Pattern Mapping
 
-Every enterprise pattern used in AvaX **MUST** translate to screaming, flow-oriented units:
+Every enterprise pattern used in the project **MUST** translate to screaming, flow-oriented units:
 1. **Transaction Script:** Mapped directly to a single **Flow** orchestrator class (e.g., `Flows/RegisterUser/RegisterUser.php`).
 2. **Domain Model (Rich):** Mapped to domain capabilities (Aggregates, Entities, and Value Objects) residing inside component capability namespaces (e.g., `Capabilities/ReleaseReadiness/`).
 3. **Table Module / Table Data Gateway:** Mapped to persistence capabilities (Repositories or Query Builders) residing under component persistence boundaries (e.g., `Capabilities/Persistence/`).
@@ -2064,4 +2064,3 @@ Every enterprise pattern used in AvaX **MUST** translate to screaming, flow-orie
 
 - **BLOCKER:** Creating folders or namespaces named after structural patterns (e.g., `TransactionScripts/`, `DomainModels/`, `TableModules/`, `Services/`).
 - **RED:** Mixing transaction scripts or data mutation logic directly inside Active Record classes, or bypassing capability layers by mapping Table Data Gateways directly to controller actions.
-

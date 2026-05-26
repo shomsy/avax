@@ -3,17 +3,16 @@
 Started: 2026-05-01  
 Status: **Complete / Enforced**  
 Current Readiness: **Architecture: GREEN · Testing/Integrity: GREEN · Production: GREEN_WITH_ACCEPTED_YELLOW_DEBT**  
-Roadmap Source: `EVIDENCE/master-plan/avax-master-development-plan.md`  
+Roadmap Source: configured master development plan evidence
 Current Truth Source: `CURRENT_TRUTH.md`
 
 ## Status
 
-**MANDATORY** - This document defines non-negotiable production readiness rules for AvaX.
+**MANDATORY** - This document defines non-negotiable production readiness rules for the project.
 
 ## Normative Language
 
-The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
-*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, **BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
 
 - **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
 - **MUST NOT / FORBIDDEN**: prohibited pattern.
@@ -32,7 +31,7 @@ A rule without an explicit exception **MUST** be treated as mandatory.
 
 ## 0. Purpose
 
-This document is the operational production-readiness report and governance contract for AvaX.
+This document is the operational production-readiness report and governance contract for the project.
 
 It is not a vision document.  
 It is not a marketing document.  
@@ -44,7 +43,7 @@ It answers one practical question:
 What defines production-readiness, and how is it proven?
 ```
 
-AvaX is production-ready only when:
+The framework is production-ready only when:
 
 ```text
 architecture, taxonomy, autoload, namespaces, tests, static analysis,
@@ -197,7 +196,7 @@ Production readiness requires all of these to be green.
 [ ] Framework PHPStan is green.
 [ ] Component PHPStan is green for every component under components/.
 [ ] Psalm is green or has a conscious baseline that does not hide missing classes.
-[ ] Broken reference audit has no unresolved internal AvaX/component references.
+[ ] Broken reference audit has no unresolved internal framework/component references.
 [ ] Documentation checks are green.
 [ ] Docs mirror source.
 [ ] Forbidden folder and naming checks are green.
@@ -289,15 +288,15 @@ git status --short
 composer validate --no-check-publish
 composer dump-autoload -o
 
-php tooling/refactor/check-component-suite-structure.php
-php tooling/refactor/check-duplicate-owners.php
-php tooling/refactor/check-namespace-drift.php
-php tooling/refactor/check-public-surface.php
-php tooling/refactor/check-runtime-leaks.php
-php tooling/refactor/check-docs-mirror.php
-php tooling/refactor/check-forbidden-folders.php
-php tooling/refactor/check-vendor-monolith-isolation.php
-php tooling/refactor/check-compat-aliases.php
+run the configured component-suite structure checker
+run the configured duplicate-owner checker
+run the configured namespace-drift checker
+run the configured public-boundary checker
+run the configured runtime-leak checker
+run the configured documentation-mirror checker
+run the configured forbidden-folder checker
+run the configured vendor-isolation checker
+run the configured compatibility-alias checker
 
 ./vendor/bin/phpunit --no-coverage
 ./vendor/bin/phpstan analyse framework components tests --memory-limit=1G --error-format=raw
@@ -340,7 +339,7 @@ Required output:
 
 ```text
 CURRENT_TRUTH.md
-EVIDENCE/master-plan/phase-status.md
+configured phase-status evidence
 ```
 
 Acceptance:
@@ -368,8 +367,8 @@ and reference-architecture tree before more repair work.
 Required output:
 
 ```text
-EVIDENCE/master-plan/avax-master-project-tree.md
-EVIDENCE/master-plan/component-owner-map.md
+configured project-tree evidence
+configured component-owner-map evidence
 ```
 
 Acceptance:
@@ -404,9 +403,9 @@ find components -type d -path '*System/Foundation/*/System*' | sort
 find components -type d -path '*System/PublicSurface/*/System*' | sort
 
 composer dump-autoload -o
-php tooling/refactor/check-component-suite-structure.php
-php tooling/refactor/check-duplicate-owners.php
-php tooling/refactor/check-namespace-drift.php
+run the configured component-suite structure checker
+run the configured duplicate-owner checker
+run the configured namespace-drift checker
 ```
 
 Acceptance:
@@ -423,7 +422,7 @@ Acceptance:
 [ ] CLI/Commands is not a separate runtime owner.
 [ ] CLI/UI is folded into CLI/Console.
 [ ] Operations/Monitoring is folded into Operations/Observability.
-[ ] Application/Cache has no stale Avax\Cache namespace.
+[ ] The cache component has no stale project-specific namespace.
 [ ] composer dump-autoload passes.
 [ ] suite checker passes.
 [ ] duplicate owner checker passes.
@@ -448,7 +447,7 @@ Required output:
 docs/governance/public-api-policy.md
 docs/governance/deprecation-policy.md
 docs/governance/compatibility-policy.md
-EVIDENCE/master-plan/api-classification-matrix.md
+configured API-classification matrix evidence
 ```
 
 Acceptance:
@@ -496,7 +495,7 @@ A component is complete only when:
 Required output:
 
 ```text
-EVIDENCE/master-plan/component-completion-matrix.md
+configured component-completion matrix evidence
 ```
 
 Priority:
@@ -530,7 +529,7 @@ Required output:
 
 ```text
 build/canonical-class-map.json
-EVIDENCE/master-plan/canonical-class-map.md
+configured canonical-class-map evidence
 ```
 
 Each class entry must include:
@@ -581,8 +580,8 @@ Commands:
 
 ```bash
 composer dump-autoload -o
-php tooling/refactor/check-namespace-drift.php
-php tooling/refactor/check-compat-aliases.php
+run the configured namespace-drift checker
+run the configured compatibility-alias checker
 ```
 
 Acceptance:
@@ -610,7 +609,7 @@ Turn tests from legacy archaeology into canonical proof.
 Canonical test namespace:
 
 ```php
-Avax\Tests\...
+Project\Tests\...
 ```
 
 Canonical test tree:
@@ -683,7 +682,7 @@ Acceptance:
 
 ---
 
-### Stage 09: AvaX Kernel Green
+### Stage 09: Kernel Green
 
 Status: **NOT YET PROVEN**
 
@@ -709,8 +708,8 @@ Commands:
 ```bash
 vendor/bin/phpunit tests/Feature/Framework
 vendor/bin/phpunit tests/PublicApi
-php tooling/refactor/check-public-surface.php
-php tooling/refactor/check-runtime-leaks.php
+run the configured public-boundary checker
+run the configured runtime-leak checker
 ```
 
 Acceptance:
@@ -761,7 +760,7 @@ A governance exception is a conscious, documented decision to temporarily or per
 ### 8.2 Mandatory Registration
 
 Every governance deviation MUST be recorded in the **Exception Register**.
-The register is a centralized ledger at `EVIDENCE/accepted-exceptions-ledger.md`.
+The register is a centralized ledger at the configured accepted-exceptions ledger path.
 
 ### 8.3 Required Exception Data
 
@@ -893,7 +892,7 @@ Closed hard-fail signals:
 Verification completed before environment execution limit:
 
 ```bash
-./vendor/bin/phpunit tests/Unit/Components/Identity/Access/AccessPublicSurfaceTest.php tests/Unit/Components/Identity/Security/SecurityChangeWorkflowTest.php tests/Unit/Components/Identity/Tokens/TokensPublicSurfaceTest.php tests/Unit/Components/HTTP/ApiVersioning/ApiVersionTest.php tests/Unit/Components/HTTP/Request/ServerRequestTest.php
+run the configured focused tests for the active component's access, security, token, versioning, and request boundaries
 ```
 
 Result:
@@ -905,7 +904,7 @@ OK (7 tests, 22 assertions)
 Verification blocked after additional Auth/Diagnostics/Request completion:
 
 ```bash
-./vendor/bin/phpunit tests/Unit/Components/Identity/Auth/AuthTokenCapabilityTest.php tests/Unit/Components/DeveloperTools/Diagnostics/HealthCheckTest.php tests/Unit/Components/Identity/Access/AccessPublicSurfaceTest.php tests/Unit/Components/Identity/Security/SecurityChangeWorkflowTest.php tests/Unit/Components/Identity/Tokens/TokensPublicSurfaceTest.php tests/Unit/Components/HTTP/ApiVersioning/ApiVersionTest.php tests/Unit/Components/HTTP/Request/ServerRequestTest.php
+run the configured focused tests for authentication, diagnostics, access, security, token, versioning, and request boundaries
 ```
 
 Required next action:
@@ -952,7 +951,7 @@ Findings:
 
 ```text
 [ ] Public cache facade and compiled cache facade still use old named arguments.
-[ ] AvaxCache still calls cache-store contracts with old argument names.
+[ ] The cache facade still calls cache-store contracts with old argument names.
 [ ] CacheResult redeclares promoted readonly properties.
 [ ] Several cache tests use PHPUnit named arguments, which PHPStan rejects because PHPUnit marks those APIs as no-named-arguments.
 ```
@@ -962,7 +961,7 @@ Required fixes:
 ```text
 [ ] Update cache facade calls to canonical argument names.
 [ ] Update compiled cache facade calls to canonical argument names.
-[ ] Update AvaxCache calls to match current cache-store contract.
+[ ] Update cache facade calls to match current cache-store contract.
 [ ] Fix CacheResult readonly promoted property redeclaration.
 [ ] Replace PHPUnit named arguments in cache tests with positional arguments.
 [ ] Re-run PHPStan for components/Application/Cache.
@@ -990,15 +989,15 @@ find components -type d -path '*System/Foundation/*/System*' | sort
 find components -type d -path '*System/PublicSurface/*/System*' | sort
 
 composer dump-autoload -o
-php tooling/refactor/check-component-suite-structure.php
-php tooling/refactor/check-duplicate-owners.php
-php tooling/refactor/check-namespace-drift.php
+run the configured component-suite structure checker
+run the configured duplicate-owner checker
+run the configured namespace-drift checker
 ```
 
 ### 8.2 Re-run blocked targeted tests
 
 ```bash
-./vendor/bin/phpunit tests/Unit/Components/Identity/Auth/AuthTokenCapabilityTest.php tests/Unit/Components/DeveloperTools/Diagnostics/HealthCheckTest.php tests/Unit/Components/Identity/Access/AccessPublicSurfaceTest.php tests/Unit/Components/Identity/Security/SecurityChangeWorkflowTest.php tests/Unit/Components/Identity/Tokens/TokensPublicSurfaceTest.php tests/Unit/Components/HTTP/ApiVersioning/ApiVersionTest.php tests/Unit/Components/HTTP/Request/ServerRequestTest.php
+run the configured focused tests for authentication, diagnostics, access, security, token, versioning, and request boundaries
 ```
 
 ### 8.3 Fix Application/Cache PHPStan
@@ -1466,7 +1465,7 @@ If a class assembles runtime services, it belongs in `ServiceProvider`, `System/
 A documented exception is valid only when recorded in the exception register at:
 
 ```text
-EVIDENCE/accepted-exceptions-ledger.md
+configured accepted-exceptions ledger
 ```
 
 Exception without owner and expiry is not an exception. It is unresolved governance debt.
@@ -1480,7 +1479,7 @@ Exception without owner and expiry is not an exception. It is unresolved governa
 
 ### Rule
 
-Semantic PHPDoc is part of AvaX architecture readability. Missing or fake PHPDoc can block GREEN.
+Semantic PHPDoc is part of architecture readability. Missing or fake PHPDoc can block GREEN.
 
 Severity:
 
@@ -1780,7 +1779,7 @@ RED
 Historical reason:
 
 ```text
-AvaX had meaningful architecture and component recovery progress, but production readiness was blocked by component PHPStan errors, broken reference audit issues, incomplete test-layer repair, incomplete runtime safety proof, and incomplete component-level validation.
+The project had meaningful architecture and component recovery progress, but production readiness was blocked by component PHPStan errors, broken reference audit issues, incomplete test-layer repair, incomplete runtime safety proof, and incomplete component-level validation.
 ```
 
 Current actual status (2026-05-15):

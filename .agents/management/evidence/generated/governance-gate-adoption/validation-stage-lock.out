@@ -1,0 +1,9 @@
+V1 Kernel Green: PROVEN
+V2 Implementation: UNKNOWN
+V3 Implementation: CLOSED / GREEN (SystemDesignKit promoted to components/SystemDesign)
+Active Stage: **REMEDIATION_ACTIVE — All P0 BLOCKERs CLOSED (0/7 remaining)**
+
+Allowed: next stage work according to EVIDENCE/EXECUTION.md; V2 only when explicitly unlocked there
+FORBIDDEN: V3/V4 production implementation until their locks are lifted
+
+Run: php tooling/governance/check-stage-lock.php

@@ -2,12 +2,11 @@
 
 ## Status
 
-**MANDATORY** - This document defines non-negotiable security rules for AvaX.
+**MANDATORY** - This document defines non-negotiable security rules for the project.
 
 ## Normative Language
 
-The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
-*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, **BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
 
 - **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
 - **MUST NOT / FORBIDDEN**: prohibited pattern.
@@ -23,9 +22,9 @@ The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHO
 
 ## 1. Status of This Document
 
-This document is part of the AvaX governance system.
+This document is part of the The project's governance system.
 
-It defines how security must be designed, implemented, reviewed, tested, observed, and proven across AvaX.
+It defines how security must be designed, implemented, reviewed, tested, observed, and proven across the project.
 
 This document applies to:
 
@@ -62,7 +61,7 @@ Security must shape the design before code exists.
 
 Security must be proven before production-ready claims are made.
 
-The core AvaX law still wins:
+The core architecture law still wins:
 
 ```text
 folder says flow or capability
@@ -121,7 +120,7 @@ Capabilities/
 
 ## 2. Security Thesis
 
-AvaX must be secure by default.
+The framework must be secure by default.
 
 Risk must be explicit.
 
@@ -159,7 +158,7 @@ security verification as evidence
 
 These references are guidance.
 
-AvaX governance remains the project-specific source of truth.
+The project's governance remains the project-specific source of truth.
 
 If an external standard is stricter for a specific project, the stricter rule wins.
 
@@ -1738,7 +1737,7 @@ Audit events must be tamper-aware where required by project policy.
 
 ## 30. Runtime Security Rule
 
-AvaX targets long-lived runtime readiness.
+The system targets long-lived runtime readiness.
 
 Long-lived runtimes make state leaks dangerous.
 
@@ -2075,6 +2074,112 @@ A security test suite that only proves the happy path is not a security test sui
 
 ---
 
+## 40A. Testing Requirements
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+This section defines the mandatory testing requirements for every security boundary in the project.
+
+### 40A.1 Required Test Types Per Security Boundary
+
+Every security boundary MUST have ALL of the following test types:
+
+| Test Type | Purpose |
+|-----------|---------|
+| **Positive test** | Proves the boundary allows valid, authorized, well-formed requests |
+| **Negative test** | Proves the boundary denies invalid, unauthorized, or malformed requests |
+| **Invalid-input test** | Proves the boundary rejects hostile, boundary, or unexpected input safely |
+| **Fail-closed test** | Proves the boundary denies access when dependencies fail, data is missing, or errors occur |
+
+A security boundary with any missing test type is NOT proven.
+
+### 40A.2 Tests Must Prove Denial, Not Just Existence
+
+Security tests MUST prove that the boundary actually denies unsafe operations:
+
+```text
+a test that only proves the security class exists is NOT a security test
+a test that only proves a method was called is NOT a security test
+a test that only proves the boundary was reached is NOT a security test
+a test must prove the boundary said NO when it should say NO
+```
+
+Required assertions for denial tests:
+
+```text
+exact exception type or denial result is asserted
+denial reason or error code is verified where applicable
+the denied actor/resource/input is verified in the assertion
+no broad catch-all exception that swallows the real denial reason
+```
+
+A security test without a denial assertion proves nothing about security.
+
+### 40A.3 Replay and Invalidity Behavior
+
+Security tests MUST include replay and invalidity behavior where applicable:
+
+```text
+replayed token: same token used twice is rejected on second use
+replayed request: identical request with same idempotency key is handled correctly
+expired token: token past its expiry is rejected
+tampered token: modified signature or payload is rejected
+revoked token: token explicitly revoked is rejected
+malformed input: structurally invalid input is rejected, not parsed dangerously
+encoding attack: Unicode normalization, case manipulation, or encoding bypass is rejected
+```
+
+Applicable security areas:
+
+```text
+token-based authentication
+session management
+webhook signature verification
+idempotent write operations
+signed URLs or API keys
+password reset tokens
+CSRF tokens
+any time-limited or single-use credential
+```
+
+### 40A.4 No Green With Happy-Path Only
+
+NO security flow may go GREEN with only happy-path coverage.
+
+A security flow with only positive tests is classified as UNPROVEN.
+
+Required minimum for GREEN:
+
+```text
+at least one positive test proving the happy path
+at least one negative test proving denial
+at least one invalid-input test proving safe rejection
+at least one fail-closed test proving denial under failure
+```
+
+If any of these are missing, status is YELLOW at minimum, BLOCKER if the boundary is critical.
+
+### 40A.5 Enforcement
+
+During review and validation:
+
+```text
+1. Identify every security boundary in the changed scope
+2. For each boundary, verify all four test types exist
+3. For each test, verify it proves the behavior described
+4. For denial tests, verify the denial reason is asserted
+5. For replay/invalidity, verify applicable areas are covered
+6. Flag violations:
+   - BLOCKER: security boundary without negative test
+   - BLOCKER: security boundary without fail-closed test
+   - BLOCKER: security flow with only happy-path coverage
+   - HIGH: denial test does not assert the denial reason
+   - HIGH: replay/invalidity test missing where applicable
+```
+
+---
+
 ## 41. Security Static Analysis Rule
 
 Static checks should catch repeatable security mistakes.
@@ -2278,7 +2383,7 @@ Planning may continue.
 
 ## 47. Existing Code Recovery Rule
 
-When recovering code from `avax-backup.txt`, `Framework.txt`, `Components.txt`, or git history, security must be
+When recovering code from legacy backups or git history, security must be
 revalidated.
 
 Old code is not automatically safe.
@@ -2336,7 +2441,7 @@ Configuration can be an attack surface.
 
 AI-generated code is untrusted until proven.
 
-AvaX must fail closed, redact by default, expose only what is necessary, and prove security with tests and evidence.
+The framework must fail closed, redact by default, expose only what is necessary, and prove security with tests and evidence.
 
 If security makes the design clearer and safer, it belongs.
 

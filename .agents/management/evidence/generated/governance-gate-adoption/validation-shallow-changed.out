@@ -1,0 +1,8 @@
+=== Shallow Test Detection ===
+Scanning: /home/shomsy/projects/avax-auth-rewrite-v2/tests
+
+=== shallow-tests Changed Mode ===
+Changed files: 183
+Findings in changed scope: 0
+Blocking findings: 0
+GREEN — changed scope has no blocking findings for this gate.

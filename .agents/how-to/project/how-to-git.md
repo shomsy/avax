@@ -1,6 +1,6 @@
 # how-to-git.md
 
-# AvaX Git & Workflow Governance
+# AvaX Git and Workflow Governance
 
 ## 1. Status
 
@@ -12,7 +12,7 @@
 
 AvaX is governed by evidence, not optimism.
 
-Commit/push is forbidden after validation only.
+Commit/push is allowed only after validation passes.
 
 ---
 
@@ -24,7 +24,7 @@ Commit/push is allowed only after:
 2. **Validation Passes**: The focused or full validation set (per `AGENTS.md`) is GREEN.
 3. **Relevant Gates Pass**: Architecture, security, and performance gates are GREEN.
 4. **Recursive Governance Code Review Passes**: The work has been reviewed against all relevant `how-to-*.md` documents.
-5. **Evidence is Written**: Operational artifacts and proof reports are updated in `EVIDENCE/`.
+5. **Evidence is Written**: Operational artifacts and proof reports are updated in `.agents/management/evidence/generated/<task-name>/`.
 6. **Truth/Backlog Reconciled**: `CURRENT_TRUTH.md`, `TODO.md`, and `BUGS.md` are updated.
 7. **Staged Files are Intentional**: `git status` shows only the intended changes.
 8. **No Local Junk**: No cache, generated, or local files (`.phpunit.cache`, `vendor`, `.qoder/worktrees`, etc.) are
@@ -37,7 +37,7 @@ Commit/push is allowed only after:
 For the detailed recursive review protocol and required checks, see:
 
 ```text
-.agents/how-to/how-to-code-review.md
+.agents/how-to/verification/how-to-code-review.md
 ```
 
 **Short version:**
@@ -158,8 +158,8 @@ Quality metrics MUST NOT regress from the previously established baseline.
 For full rule text including tracked metrics and evidence table, see:
 
 ```text
-.agents/how-to/how-to-code-review.md §14.1
-.agents/how-to/how-to-production-readiness.md §18
+.agents/how-to/verification/how-to-code-review.md §14.1
+.agents/how-to/verification/how-to-production-readiness.md §18
 ```
 
 ---
@@ -173,8 +173,10 @@ If examples teach an anti-pattern, the codebase will reproduce it.
 
 ## 14. Governance Exception Register Rule
 
-Every governance exception MUST be recorded in `EVIDENCE/accepted-exceptions-ledger.md` with owner and expiry. An
+Every governance exception MUST be recorded under `.agents/management/evidence/` or `.agents/management/baselines/` with owner and expiry. An
 exception without owner and expiry is not an exception — it is unresolved governance debt.
+
+Root `EVIDENCE/` is legacy/transitional. If an exception file must be written there for legacy tooling, its filename MUST start with `YYYY-MM-DD-HH-MM-SS-`.
 
 ---
 

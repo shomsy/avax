@@ -108,8 +108,8 @@ governance code review before commit or push.
 The review MUST check the changed scope against:
 
 - `AGENTS.md`
-- `.agents/how-to/how-to-code-review.md`
-- every applicable `.agents/how-to/how-to-*.md`
+- `.agents/how-to/verification/how-to-code-review.md`
+- every applicable categorized `.agents/how-to/**/*.md`
 - current stage evidence
 - current acceptance criteria
 - component-specific governance
@@ -437,7 +437,7 @@ When these files exist, the review MUST check them explicitly:
   DI/autowiring discipline, constructor bloat rules (0-4 normal, 5-7 check, 8+ warning), compiled metadata vs hot-path
   reflection,
   WeakMap cache policy, property hooks, asymmetric visibility, NoDiscard, pipe operator for pure transformations only,
-  superglobal isolation behind AvaX Request, tooling gates
+  superglobal isolation behind the project's Request, tooling gates
 - `how-to-unit-test.md`: behavior-first tests, happy/failure/edge/regression/security scenarios, naming,
   Arrange/Act/Assert, one-act rule, assertion precision, test data clarity
 - `how-to-document.md`: docs location, filesystem-first documentation, `how-this-works.md`, mermaid diagrams, real
@@ -460,7 +460,7 @@ Hard rule:
 A code review that does not explicitly check `how-to-dogfooding.md` and `how-to-modern-php-attributes-di.md` when they
 exist is incomplete.
 
-These two documents are central to AvaX V5 governance.
+These two documents are central to the project V5 governance.
 
 If either is missing from the checklist, the checklist is stale and the review is invalid.
 
@@ -690,7 +690,7 @@ Map responsibilities explicitly:
 
 - Completed table
 
-- A 3 line summary:  
+- A 3 line summary:
   **"Responsibility boundaries are: clear / stressed / violated."**
 
 ---
@@ -739,7 +739,7 @@ List all mutable objects:
 
 - Table
 
-- Summary sentence:  
+- Summary sentence:
   **"Mutability is: justified / excessive / misplaced."**
 
 ---
@@ -876,7 +876,7 @@ Answer Yes / No:
 
 - Is reflection on the hot path without mitigation?
 
-If 2 or more are Yes, mark:  
+If 2 or more are Yes, mark:
 **Design-Level Performance Risk**
 
 **Deliverable:**
@@ -1130,7 +1130,7 @@ Metrics and quality scores MUST NOT regress from the previously established base
 - **Runtime Leaks**: MUST stay at 0 confirmed leaks.
 - **Namespace Drift**: MUST stay at 0.
 
-**Status:** MANDATORY  
+**Status:** MANDATORY
 **Severity:** BLOCKER
 
 ### 14.2 Gate Self-Test Rule
@@ -1163,7 +1163,7 @@ DI gate must fail on:
 Git gate must fail on:
   .phpunit.cache/**
   .qoder/worktrees/**
-  avax.txt
+  legacy backup files
   generated local cache files
   forbidden local AI cache files
 
@@ -1183,7 +1183,7 @@ Rules:
 - gate that scans zero active files is FAIL, not PASS
 - gate PASS with RED content is FAIL
 
-**Status:** MANDATORY  
+**Status:** MANDATORY
 **Severity:** BLOCKER
 
 ### 14.3 No Zero-Scan Gate Rule
@@ -1193,8 +1193,133 @@ A validation command that reports success but scanned 0 files/units is a failure
 - Every validation report MUST include the count of items scanned.
 - 0 items scanned = UNPROVEN.
 
-**Status:** MANDATORY  
+**Status:** MANDATORY
 **Severity:** BLOCKER
+
+---
+
+### 14.4 Test Quality Gate
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+During code review, the reviewer MUST verify test quality for every changed or affected unit. This is not an optional scan — it is a mandatory gate.
+
+A scope cannot be marked GREEN when the test quality gate fails.
+
+#### 14.4.1 Security Boundaries Have Negative Tests
+
+The reviewer MUST verify that every security-sensitive boundary has at least one negative test proving denial:
+
+```text
+security-sensitive boundaries identified in changed scope
+negative test exists for each identified boundary
+negative test proves explicit denial, not accidental failure
+negative test verifies the denial reason or exception type
+test name describes the denial condition
+```
+
+If a security boundary has only happy-path tests, mark as BLOCKER.
+
+Reference: `how-to-unit-test.md §94` — Security-Sensitive Testing Gate
+
+#### 14.4.2 Fail-Closed Behavior Is Tested
+
+The reviewer MUST verify that fail-closed behavior is tested where security or safety depends on it:
+
+```text
+fail-closed test exists for security decisions
+fail-closed test simulates dependency failure or missing data
+fail-closed test verifies denial, not crash or bypass
+fail-closed test covers configuration error scenario
+```
+
+If a security-sensitive flow lacks a fail-closed test, mark as BLOCKER.
+
+#### 14.4.3 No Test Changed to Fit Broken Behavior
+
+The reviewer MUST check that tests were NOT weakened to match broken implementation behavior:
+
+```text
+test assertions were not broadened to accept incorrect results
+test exception types were not widened to catch-all
+test expectations were not lowered to match buggy output
+test negative cases were not removed to make tests pass
+test data was not modified to avoid triggering a known failure
+```
+
+If a test was changed to fit broken behavior, mark as BLOCKER. This is a suppression violation (AGENTS.md §1C).
+
+#### 14.4.4 No Meaningless Assertions
+
+The reviewer MUST reject tests that use meaningless or vacuous assertions:
+
+```text
+assertTrue(true) — always passes, proves nothing
+assertFalse(false) — always passes, proves nothing
+assertNotNull($result) without testing the value — meaningless
+assertIsArray($result) without testing content — meaningless
+assertCount(1, $result) without testing what is in the array — weak
+assertEmpty($result) where result should not be empty — wrong
+assertNotNull on a newly constructed object — proves construction only
+```
+
+If a test uses only meaningless assertions without meaningful behavioral verification, mark as HIGH.
+
+#### 14.4.5 No Constructor-Only Tests Without Behavior
+
+The reviewer MUST reject tests that only prove a class can be instantiated:
+
+```text
+test that only calls new ClassName() and asserts not null
+test that only calls constructor and asserts instance type
+test that only verifies the object was created without exercising behavior
+```
+
+Constructor-only tests are acceptable ONLY when:
+- They are a small subset of a larger test class that also has behavior tests
+- The unit has meaningful behavior tests alongside them
+
+If a test class has ONLY constructor tests and no behavior tests, mark as HIGH.
+
+#### 14.4.6 Test File Size vs Unit Complexity
+
+The reviewer MUST assess whether the test file size is proportional to the unit's complexity:
+
+```text
+complex unit with many decision branches → tests should cover multiple paths
+simple value object with single invariant → few tests may be sufficient
+security-sensitive unit → tests must cover positive, negative, invalid, fail-closed
+flow with multiple steps → tests should verify the complete behavior
+```
+
+A test file is suspiciously small when:
+
+```text
+production unit has 200+ lines with 3 decision branches but test file has 1 test
+security-sensitive capability has only 1 happy-path test
+flow with external dependencies has no failure-path tests
+unit with 5+ constructor dependencies has no behavior tests
+```
+
+A trivially small test file for a complex unit is not automatically BLOCKER, but it MUST be flagged as HIGH with the note that behavioral confidence is insufficient.
+
+#### 14.4.7 Test Quality Gate Summary
+
+The reviewer MUST include in the review output:
+
+```text
+Test Quality Gate:
+  security_negative_tests: PASS / FAIL / NOT_APPLICABLE
+  fail_closed_tests: PASS / FAIL / NOT_APPLICABLE
+  no_broken_behavior_fit: PASS / FAIL
+  no_meaningless_assertions: PASS / FAIL
+  no_constructor_only: PASS / FAIL
+  test_size_vs_complexity: PASS / YELLOW / FAIL
+  overall: PASS / FAIL
+```
+
+If overall is FAIL, the scope cannot be marked GREEN.
 
 ---
 
@@ -1217,7 +1342,7 @@ AI-generated code MUST NOT be accepted based on "logic review" alone. It MUST be
 If an AI agent proposes a governance exception, it MUST be independently verified by a human or a secondary,
 disconnected validation process.
 
-**Status:** MANDATORY  
+**Status:** MANDATORY
 **Severity:** HIGH
 
 ---
@@ -1555,7 +1680,7 @@ Events, Runtime, Boot DSL, FailureBoundary, Database lifecycle, security-sensiti
 A documented governance exception is valid only when recorded in the exception register at:
 
 ```text
-EVIDENCE/accepted-exceptions-ledger.md
+configured accepted-exceptions ledger
 ```
 
 An exception without owner and expiry is not an exception. It is unresolved governance debt.
@@ -1755,8 +1880,8 @@ For full SoC governance, see:
 
 ## 27. Balanced Coupling Review Rule
 
-**Status:** MANDATORY  
-**Severity:** BLOCKER  
+**Status:** MANDATORY
+**Severity:** BLOCKER
 
 This section defines review rules to balance and verify coupling in all code reviews, based on *Balancing Coupling in Software Design* (Khononov).
 
@@ -1887,8 +2012,8 @@ Is the reason behavioral (good) or technical-category-based (bad)?
 
 ## 28. Trade-Off Analysis Review Rule
 
-**Status:** MANDATORY  
-**Severity:** HIGH  
+**Status:** MANDATORY
+**Severity:** HIGH
 
 Every review of a non-trivial architecture or design change **MUST** verify that explicit trade-off reasoning exists.
 
@@ -1908,8 +2033,8 @@ Every review of a non-trivial architecture or design change **MUST** verify that
 
 ## 29. Data System Correctness Review Rule
 
-**Status:** MANDATORY  
-**Severity:** BLOCKER  
+**Status:** MANDATORY
+**Severity:** BLOCKER
 
 Every review of a change touching data persistence, caching, transactions, or external data stores **MUST** verify correctness controls defined in `.agents/how-to/verification/how-to-data-systems.md`.
 
@@ -1973,3 +2098,38 @@ Engineering laws **MUST** escalate to BLOCKER only when:
 - **BLOCKER:** Public API change breaks observable behavior without migration. Optimization targets non-bottleneck and creates production risk. Cache abstraction hides failure modes that violate fail-closed.
 - **RED:** No timeout on external service calls. Metrics used as targets without counter-metrics. Efficiency improvement without resource bounds.
 - **YELLOW:** Abstraction leaks internals but callers are aware and bounded. Observable behavior change is documented but migration is optional. Review focuses on naming over architecture.
+
+---
+
+## 31. Phased Gate Adoption Review Rule
+
+**Status:** MANDATORY
+**Severity:** BLOCKER for new or changed-scope violations.
+
+New governance gates may enter the project in phased adoption mode only when legacy findings are recorded as explicit baseline debt.
+
+### 31.1 Review Requirements
+
+- New code has no baseline excuse. A new finding in PHPStan, self-explaining architecture, or shallow-test quality is a review blocker.
+- Changed code must leave the touched area cleaner or equal. It must not increase baseline counts.
+- Security-sensitive changed code requires fail-closed behavioral tests and negative tests.
+- Identity rewrite slices treat changed-scope PHPStan, self-explaining architecture, and shallow-test findings as HARD BLOCKERS.
+- Legacy findings are allowed only when recorded in `.agents/management/baselines/` with owner, reason, expiry or review date, remediation category, and proof that the debt is pre-existing.
+- FULL_GREEN requires full-mode clean gates or an accepted governance record that explicitly says why remaining debt is not production-ready GREEN.
+
+### 31.2 Required Commands
+
+```bash
+php tooling/validation/check-phpstan-baseline.php --mode=baseline
+php tooling/validation/check-phpstan-baseline.php --mode=changed
+php tooling/governance/check-self-explaining-architecture.php --mode=baseline
+php tooling/governance/check-self-explaining-architecture.php --mode=changed
+php tooling/testing/check-shallow-tests.php --mode=baseline
+php tooling/testing/check-shallow-tests.php --mode=changed
+```
+
+### 31.3 Review Classification
+
+- **BLOCKER:** changed-scope gate scans zero active files when the worktree is dirty; new HIGH/BLOCKER finding appears outside the baseline; baseline count increases.
+- **RED:** baseline exists but lacks owner, reason, remediation category, or review date.
+- **YELLOW:** legacy debt remains baselined and tracked; Identity may proceed only slice-by-slice under changed-scope enforcement.

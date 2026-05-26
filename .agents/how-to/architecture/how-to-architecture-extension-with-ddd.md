@@ -1,15 +1,15 @@
 # Architecture Extension
 
-## Public Surface and DDD Domain Modeling for AvaX Screaming Architecture
+## Public Surface and DDD Domain Modeling for the project Screaming Architecture
 
 ## 1. Status of This Document
 
-This document is an architecture extension to the main AvaX architecture governance.
+This document is an architecture extension to the main The architecture governance.
 
 It defines two related rules:
 
 1. When and how a framework or component system root may expose a `PublicSurface/` folder.
-2. How selected Domain-Driven Design concepts may be used without violating the AvaX architecture law.
+2. How selected Domain-Driven Design concepts may be used without violating the The architecture law.
 
 This document is not a style preference.
 This document is not a generic DDD folder template.
@@ -19,7 +19,7 @@ This document is not a justification for technical buckets such as `Entities/`, 
 
 This document exists to protect clarity.
 
-The main AvaX architecture law still wins:
+The main The architecture law still wins:
 
 ```text
 folder says flow or capability
@@ -351,7 +351,7 @@ Allowed framework example:
 framework/
   System/
     PublicSurface/
-      Avax.php
+      Kernel.php
       HttpKernel.php
       ConsoleKernel.php
       RuntimeKernel.php
@@ -616,7 +616,7 @@ Files inside `PublicSurface/` must use public API names.
 Good:
 
 ```text
-Avax.php
+Kernel.php
 HttpKernel.php
 ConsoleKernel.php
 RuntimeKernel.php
@@ -1844,7 +1844,7 @@ Flows/
     UserLoggedIn.php
 ```
 
-This is critical for `avax-backup.txt`, `Framework.txt`, `Components.txt`, and git history recovery.
+This is critical for legacy backups (`Framework.txt`, `Components.txt`), and git history recovery.
 
 Old code is evidence.
 
@@ -2564,7 +2564,7 @@ See:
 
 ### How DDD and OO Architecting Align
 
-| DDD Concept | OO Architecting Equivalent | AvaX Translation |
+| DDD Concept | OO Architecting Equivalent | Project Translation |
 |---|---|---|
 | Bounded Context | Subsystem boundary | System/ folder |
 | Aggregate | Information owner + invariant protector | Capability with clear ownership |
@@ -2609,7 +2609,7 @@ When DDD meets enterprise reality:
 
 DDD provides the ideal model.
 OO Enterprise Architecting provides the reality check.
-AvaX provides the implementation.
+The framework provides the implementation.
 
 ---
 

@@ -2,7 +2,7 @@
 
 ## Status
 
-**MANDATORY** — This document defines non-negotiable flow modeling and public API design rules for AvaX.
+**MANDATORY** — This document defines non-negotiable flow modeling and public API design rules for the project.
 
 A rule without an explicit exception **MUST** be treated as mandatory.
 
@@ -30,7 +30,7 @@ Code review **MUST NOT** mark a scope GREEN when a mandatory rule is violated.
 
 ## 1. Purpose
 
-This document defines how AvaX models Flows as use-case, command, and application-level behavior units.
+This document defines how the framework models Flows as use-case, command, and application-level behavior units.
 
 It establishes that:
 
@@ -51,7 +51,7 @@ A Flow is a named business or runtime action that completes a story.
 **Status:** MANDATORY
 **Severity:** BLOCKER
 
-A Flow in AvaX answers one question:
+A Flow in the project answers one question:
 
 ```text
 What happens from start to finish?
@@ -59,7 +59,7 @@ What happens from start to finish?
 
 A Flow owns one complete action.
 
-A Flow is the AvaX representation of a use case, command, or application-level behavior.
+A Flow is the representation of a use case, command, or application-level behavior.
 
 A Flow is not:
 
@@ -252,7 +252,7 @@ If a sub-phase is reused by other Flows, extract it to a Capability.
 **Status:** MANDATORY
 **Severity:** BLOCKER
 
-String selectors are **first-class developer experience** in AvaX.
+String selectors are **first-class developer experience** in the project.
 
 They are not second-class citizens.
 They are not a hack.
@@ -276,7 +276,7 @@ Logger::channel('payments')->info('payment received');
 
 ### 7.2 String Selectors Are First-Class
 
-String selectors are the **primary** way operators and developers select runtime behavior in AvaX.
+String selectors are the **primary** way operators and developers select runtime behavior in the project.
 
 They are preferred over:
 
@@ -393,7 +393,7 @@ Cache::store('redis')->remember($key, $ttl, $callback);
 
 The fluent chain selects, then acts.
 
-This is the intended AvaX pattern for runtime APIs.
+This is the intended pattern for runtime APIs.
 
 ---
 
@@ -584,7 +584,7 @@ Technical patterns (Command, Query, Handler, Processor) describe **how** somethi
 
 Behavioral names describe **what** the system does.
 
-AvaX prefers **what** over **how** at the Flow level.
+The framework prefers **what** over **how** at the Flow level.
 
 ---
 
@@ -608,7 +608,7 @@ accept string selectors where appropriate
 ```php
 // GOOD — instance-based PublicSurface receives runtime via constructor,
 // delegates to runtime, runtime owns catalog/validation.
-// This is the preferred AvaX pattern.
+// This is the preferred pattern.
 final readonly class Storage
 {
     public function __construct(
@@ -666,12 +666,12 @@ final readonly class Storage
 
 ---
 
-## 12.1 AvaX Anti-Service-Locator DX Rule
+## 12.1 Anti-Service-Locator DX Rule
 
 **Status:** MANDATORY
 **Severity:** BLOCKER
 
-AvaX intentionally exposes Laravel-like developer experience:
+The framework intentionally exposes Laravel-like developer experience:
 
 ```php
 Storage::driver('s3')->put($path, $contents);
@@ -679,12 +679,12 @@ Auth::area('admin')->login($credentials);
 Cache::store('redis')->remember($key, $ttl, $callback);
 ```
 
-But AvaX must **NOT** implement this DX through Laravel-like service locator shortcuts.
+But The framework must **NOT** implement this DX through Laravel-like service locator shortcuts.
 
 Core principle:
 
 ```text
-Laravel-like DX, AvaX-grade composition.
+Laravel-like DX, enterprise-grade composition.
 ```
 
 Public API may be static, fluent, and string-selector based.
@@ -743,7 +743,7 @@ PublicSurface **MAY** delegate to:
 ```text
 injected runtime object (preferred)
 official boot-configured facade bridge (for static DX)
-generated/compiled runtime accessor approved by AvaX runtime composition rules
+generated/compiled runtime accessor approved by runtime composition rules
 ```
 
 ```php
@@ -882,7 +882,7 @@ Component runtime dependency pulled lazily from container during behavior execut
 The following are approved patterns:
 
 ```text
-Static facade delegates to official boot-configured AvaX facade bridge
+Static facade delegates to official boot-configured facade bridge
 Instance PublicSurface receives runtime via constructor
 ServiceProvider registers runtime, catalog, descriptors, and verification
 Runtime object receives catalog through DI
@@ -1079,14 +1079,14 @@ System/
 
 ### 15.1 Why Flows Over UseCases
 
-AvaX uses `Flows/` instead of `UseCases/` because:
+The framework uses `Flows/` instead of `UseCases/` because:
 
 ```text
 Flow implies a complete action from start to finish.
 Use case is a DDD/application services term that invites technical categorization.
 Flow names naturally read as verbs (RegisterUser, ChangePassword).
 Use case names naturally read as nouns (RegisterUserUseCase, ChangePasswordUseCase).
-AvaX prefers verb-first naming at the public boundary.
+The framework prefers verb-first naming at the public boundary.
 ```
 
 ### 15.2 Why String Selectors Over Enums

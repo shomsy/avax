@@ -1,0 +1,4 @@
+Generating optimized autoload files
+Class Avax\Tests\Unit\Components\Identity\Auth\Login\RateLimitExceptionTest located in ./tests/Unit/Components/Identity/Auth/Login/RateLimit/RateLimitExceptionTest.php does not comply with psr-4 autoloading standard (rule: Avax\Tests\ => ./tests). Skipping.
+Class xhp_ located in ./framework/System/Foundation/compat.php does not comply with psr-4 autoloading standard (rule: Avax\Framework\ => ./framework). Skipping.
+Generated optimized autoload files containing 9497 classes

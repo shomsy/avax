@@ -1,10 +1,10 @@
-# AvaX Architecture Governance
+# Architecture Governance
 
 ## Pragmatic Fractal Flow Architecture and Recursive Ownership Standard
 
 ## Status
 
-**MANDATORY** - This document defines non-negotiable architecture rules for AvaX.
+**MANDATORY** - This document defines non-negotiable architecture rules for the project.
 
 ---
 
@@ -572,10 +572,10 @@ Do not globalize too early.
 
 ### 11.6 Use Case Goal Level Mapping
 
-We map Alistair Cockburn's use case levels (*Writing Effective Use Cases*) directly to AvaX architecture layers:
-1. **Summary Level (Cloud/Kite):** High-level business process (e.g. `ManageCustomerAccounts`). Mapped to AvaX subsystems or components (e.g. `components/AccountManagement/`), never to a single Flow.
-2. **User-Goal Level (Sea Level):** A primary goal of a primary actor (e.g. `RegisterUser`, `CheckoutBasket`). Mapped directly to an AvaX **Flow Slice** (e.g. `Flows/RegisterUser/RegisterUser.php`).
-3. **Subfunction Level (Fish/Underwater):** A low-level step or helper action (e.g. `VerifyEmailToken`, `HashPassword`). Mapped to an AvaX **Capability** (e.g. `Capabilities/VerifyEmailToken/`) or a private helper method inside the Flow, NEVER to its own Flow slice.
+We map Alistair Cockburn's use case levels (*Writing Effective Use Cases*) directly to The architecture layers:
+1. **Summary Level (Cloud/Kite):** High-level business process (e.g. `ManageCustomerAccounts`). Mapped to framework subsystems or components (e.g. `components/AccountManagement/`), never to a single Flow.
+2. **User-Goal Level (Sea Level):** A primary goal of a primary actor (e.g. `RegisterUser`, `CheckoutBasket`). Mapped directly to a **Flow Slice** (e.g. `Flows/RegisterUser/RegisterUser.php`).
+3. **Subfunction Level (Fish/Underwater):** A low-level step or helper action (e.g. `VerifyEmailToken`, `HashPassword`). Mapped to a **Capability** (e.g. `Capabilities/VerifyEmailToken/`) or a private helper method inside the Flow, NEVER to its own Flow slice.
 
 ### 11.7 Constraints on Flow Size and Complexity
 
@@ -736,7 +736,7 @@ The method says the exact action/product.
 * Builder improves ownership, cohesion, and dependency direction.
 * Builder makes failure/assembly timing clearer.
 * Builder preserves public API compatibility.
-* Builder uses existing AvaX components/capabilities through correct boundaries where appropriate.
+* Builder uses existing component capabilities through correct boundaries where appropriate.
 
 **Forbidden:**
 
@@ -764,7 +764,7 @@ Before introducing a builder, the agent must answer:
 7. Which tests prove behavior?
 8. Does this reduce or merely hide constructor bloat?
 9. Does this improve dependency direction?
-10. Does this use existing AvaX components where appropriate?
+10. Does this use existing components where appropriate?
 
 If these questions cannot be answered clearly, the builder should not exist.
 
@@ -2341,7 +2341,7 @@ Each subsystem should expose one preferred public surface/gateway for normal usa
 ## 55. Universal Enterprise Codecraft Rule
 
 **Status:** MANDATORY  
-**Scope:** All AvaX architecture — systems, subsystems, components, flows, capabilities, runtimes, public surfaces.  
+**Scope:** All The architecture — systems, subsystems, components, flows, capabilities, runtimes, public surfaces.
 **Severity:** BLOCKER
 
 ### 55.1 Enterprise-Grade and Human-Readable
@@ -2443,7 +2443,7 @@ Each subsystem exposes one obvious public surface/gateway. Multiple entry points
 
 Avoid default usage of: Builder, Factory, Graph, Assembly, DSL, Wiring, Setup, Manager, Service, Helper, Util, Support.
 
-Avoid AvaX/Avax branding in class names by default.
+Avoid framework branding in class names by default.
 
 Prefer: subsystem names, capability names, product names, domain names, fluent call-sites.
 
@@ -2489,10 +2489,10 @@ RED:
 ## 56. Object-Oriented Enterprise Architecting Rule
 
 **Status:** MANDATORY
-**Scope:** All AvaX architecture decisions, system design, subsystem boundaries, context maps, handovers, and strategic/tactical design.
+**Scope:** All The architecture decisions, system design, subsystem boundaries, context maps, handovers, and strategic/tactical design.
 **Severity:** BLOCKER
 
-Source: Object-Oriented Enterprise Architecting principles, translated into AvaX governance.
+Source: Object-Oriented Enterprise Architecting principles, translated into The project's governance.
 
 ### 56.1 Object-Oriented Thinking at Scale
 
@@ -2553,7 +2553,7 @@ Hidden handovers are architecture bugs.
 
 ### 56.7 Enterprise Reality
 
-AvaX architecture assumes real systems contain multiple vendors, multiple technical generations, external systems, conflicting interests, political constraints, and legacy integration.
+The architecture assumes real systems contain multiple vendors, multiple technical generations, external systems, conflicting interests, political constraints, and legacy integration.
 
 Boundaries, APIs, events, ports, compatibility layers, and handover contracts must be explicit.
 
@@ -2583,7 +2583,7 @@ Separate commands that change state from queries that read state. Do not apply C
 
 ### 56.12 Data Product Thinking
 
-When AvaX exposes data across contexts, treat it as a product: owned, documented, stable, consumer-oriented, transformed for consumer needs, versioned where needed.
+When the framework exposes data across contexts, treat it as a product: owned, documented, stable, consumer-oriented, transformed for consumer needs, versioned where needed.
 
 ### 56.13 Event Sourcing as Option
 
@@ -2603,11 +2603,11 @@ Architecture decisions must not be opinion-only.
 
 Bounded contexts, views, and capabilities may become independently deployable units. Design boundaries should keep that option possible.
 
-### 56.17 AvaX Translation
+### 56.17 Project Translation
 
-All architectural ideas must be translated into AvaX terms: PublicSurface receives, Flows execute, Capabilities power, Configuration assembles, Foundation supports.
+All architectural ideas must be translated into the project terms: PublicSurface receives, Flows execute, Capabilities power, Configuration assembles, Foundation supports.
 
-Do not import terminology blindly if it conflicts with AvaX language.
+Do not import terminology blindly if it conflicts with the project language.
 
 ### 56.18 GREEN / YELLOW / RED
 
@@ -2660,7 +2660,7 @@ Separation of Concern applies at every architectural level:
 - configuration
 - test
 
-AvaX rules must be valid across all levels, not only at layer boundaries.
+Framework rules must be valid across all levels, not only at layer boundaries.
 
 **Status:** MANDATORY  
 **Severity:** BLOCKER
@@ -2842,7 +2842,7 @@ Real separation changes the dependency graph, not only the line count.
 **Status:** MANDATORY  
 **Severity:** HIGH
 
-### 57.16 AvaX SoC Summary
+### 57.16 SoC Summary
 
 ```text
 Concern = reason to change.
@@ -2861,11 +2861,11 @@ SoC = universal principle, not one pattern.
 **Status:** MANDATORY  
 **Severity:** BLOCKER  
 
-This section establishes rules for balancing coupling within software design, translating lessons from *Balancing Coupling in Software Design* (Khononov) to the AvaX Screaming Architecture.
+This section establishes rules for balancing coupling within software design, translating lessons from *Balancing Coupling in Software Design* (Khononov) to the Screaming Architecture.
 
 ### 58.1 Coupling Dimensions
 
-Every unit and subsystem in AvaX **MUST** control its coupling across three primary dimensions:
+Every unit and subsystem in the project **MUST** control its coupling across three primary dimensions:
 1. **Afferent (Inward) & Efferent (Outward) Coupling:** High-level orchestrators (Flows) may depend on low-level capabilities, but low-level capabilities or foundation components **MUST NOT** depend on high-level orchestrators. Sibling components **MUST NOT** cross-couple.
 2. **Temporal Coupling:** Actions that must occur in sequence or simultaneously **MUST** be coordinated explicitly by a Flow or event-handling structure. They **MUST NOT** be coupled implicitly via shared mutable state, filesystems, or global side-effects.
 3. **Semantic Coupling:** Subsystems **MUST NOT** share internal schema details, database structures, or mutable states. Sibling communication **MUST** be mediated strictly via explicit, immutable PublicSurface contracts (boundary value objects).
@@ -3220,4 +3220,3 @@ Can the author state the decomposition principle in one sentence?
 Does the principle reference behavior, knowledge, or change axis — NOT technical category?
 Would a reader who knows the principle immediately know where to put a new feature?
 ```
-

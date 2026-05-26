@@ -120,14 +120,14 @@ These are the baseline rules that override author-specific preferences unless ex
 ### 5.4.1 Intent-First Fluent API Rule
 
 **Status:** MANDATORY  
-**Scope:** All AvaX production code, especially PublicSurface, Flows, Runtime, Router, Request, Response, Queue,
+**Scope:** All project production code, especially PublicSurface, Flows, Runtime, Router, Request, Response, Queue,
 Container, Events, Cache, Config, DataTransfer, Metadata, and orchestration code.  
 **Severity:** HIGH in production flow/orchestration code, MEDIUM in internal capabilities, LOW in tests.  
 **Enforcement:** Manual review, grep for nested `from()` chains
 
 #### Requirement
 
-AvaX call sites **MUST** read like **intent**, not like **internal plumbing**.
+Call sites **MUST** read like **intent**, not like **internal plumbing**.
 
 The caller **MUST** express what it wants to happen.
 
@@ -722,7 +722,7 @@ Public value objects and configuration objects must not leak mutable internal st
 Arrays crossing public boundaries must be copied, normalized, or converted into immutable/value-safe structures when
 mutation would be dangerous.
 
-#### AvaX Interpretation
+#### Interpretation
 
 Bloch has priority in:
 
@@ -829,7 +829,7 @@ Command as a message-bus concept can exist.
 
 Command as a folder `Commands/` should not exist.
 
-In AvaX style, use case is a `Flow`:
+In the project style, use case is a `Flow`:
 
 ```text
 RegisterUser
@@ -1757,8 +1757,8 @@ PHPDoc is part of clean code. For the full semantic PHPDoc rule including class,
 severity, GREEN status block criteria, and review criteria, see:
 
 ```text
-.agents/how-to/how-to-document.md — Semantic PHPDoc Rule
-.agents/how-to/how-to-code-review.md — §24 PHPDoc Review Rule
+.agents/how-to/documentation/how-to-document.md — Semantic PHPDoc Rule
+.agents/how-to/verification/how-to-code-review.md — §24 PHPDoc Review Rule
 ```
 
 ## 24.5 Separation of Concern Cross-Reference
@@ -1766,8 +1766,8 @@ severity, GREEN status block criteria, and review criteria, see:
 For Separation of Concern governance including Room Rule, Change-Axis Test, Cross-Cutting Concern Rule, and Composition After Separation, see:
 
 ```text
-.agents/how-to/how-to-architecture.md — Section 57 (Separation of Concern Rule)
-.agents/how-to/how-to-design-components.md — Section 32 (Separation of Concern Rule)
+.agents/how-to/architecture/how-to-architecture.md — Section 57 (Separation of Concern Rule)
+.agents/how-to/components/how-to-design-components.md — Section 32 (Separation of Concern Rule)
 ```
 
 Clean code requires honest separation. Splitting files without reducing coupling is not clean code. It is file shuffling.

@@ -6,12 +6,11 @@
 
 ## Status
 
-**MANDATORY** - This document defines non-negotiable unit testing rules for AvaX.
+**MANDATORY** - This document defines non-negotiable unit testing rules for the project.
 
 ## Normative Language
 
-The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
-*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, **BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
 
 - **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
 - **MUST NOT / FORBIDDEN**: prohibited pattern.
@@ -2553,14 +2552,14 @@ A gate that cannot fail is not a gate.
 ## 91. Practical Test Pyramid Rule
 
 **Status:** MANDATORY
-**Scope:** All AvaX tests, validation pipelines, CI stages, agent output, and evidence claims.
+**Scope:** All tests, validation pipelines, CI stages, agent output, and evidence claims.
 **Severity:** BLOCKER
 
-Source: Practical Test Pyramid (Martin Fowler), translated into AvaX governance.
+Source: Practical Test Pyramid (Martin Fowler), translated into The project's governance.
 
 ### 91.1 Test Portfolio Rule
 
-AvaX requires tests at different granularities. The pyramid is not about layer names — it is a principle: many fast focused tests at the base, fewer broad tests in the middle, very few full end-to-end tests at the top.
+The framework requires tests at different granularities. The pyramid is not about layer names — it is a principle: many fast focused tests at the base, fewer broad tests in the middle, very few full end-to-end tests at the top.
 
 Test portfolio:
 
@@ -2739,7 +2738,7 @@ They are a safety net, not a design guide.
 
 ### 91.15 Test Naming Consistency Rule
 
-AvaX may define its own names for test layers, but names must be consistent across:
+The framework may define its own names for test layers, but names must be consistent across:
 
 - documentation
 - test folders
@@ -2747,7 +2746,7 @@ AvaX may define its own names for test layers, but names must be consistent acro
 - agent output
 - pipeline configuration
 
-Current AvaX test layer names:
+Current test layer names:
 
 - Unit/Behavior tests
 - Component tests
@@ -2830,3 +2829,487 @@ The final standard is simple:
 A unit test should make the behavior so obvious that the production code has nowhere to hide.
 ```
 
+---
+
+## 93. Risk-Based Behavioral Testing Policy
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+**Source:** `.agents/how-to/verification/how-to-test-risk-based-behavioral-testing.md`
+
+This section is the detailed unit-test companion to the risk-based behavioral testing rule. It defines enforceable risk-based testing rules for every production unit in the project.
+
+### 93.1 Testing Philosophy
+
+The framework's testing strategy is risk-based and behavior-first.
+
+Coverage percentage is NOT truth.
+Behavioral proof is truth.
+
+V1 optimizes for:
+
+```text
+architectural velocity
+critical behavioral confidence
+runtime safety
+security invariants
+meaningful branch coverage
+```
+
+V1 does NOT optimize for:
+
+```text
+meaningless line coverage inflation
+boilerplate tests
+fake confidence
+tests that only prove execution
+```
+
+A test suite that is 100% covered but has no negative tests, no security tests, and no edge case tests is WEAK.
+
+A test suite that is 60% covered but proves every critical behavior, every failure mode, and every security boundary is STRONG.
+
+The framework chooses strong over inflated.
+
+### 93.2 Required Test Types
+
+Every meaningful production unit MUST have tests from the applicable categories listed below. A unit with only happy-path coverage is NOT proven.
+
+#### 93.2.1 Happy Path Testing
+
+Proves the unit works when all inputs, state, and dependencies are valid.
+
+```text
+- valid input produces expected result
+- valid input produces expected state transition
+- valid input produces expected side effect where contract
+```
+
+#### 93.2.2 Failed-When / Sad-Path Testing
+
+Proves the unit rejects invalid conditions intentionally.
+
+```text
+- invalid input fails with expected error
+- unauthorized access fails with denial
+- expired token fails with rejection
+- invalid session fails with rejection
+- invalid credentials fail with authentication error
+- missing dependency fails with explicit error
+- malformed boundary data fails with validation error
+- missing required field fails with validation error
+```
+
+A unit with no sad-path test is incomplete.
+
+#### 93.2.3 Validation-Path Testing
+
+Proves input validation and normalization work correctly.
+
+```text
+- DTO validation rejects invalid data
+- value object validation rejects malformed values
+- boundary normalization produces correct values
+- invalid state transitions are rejected
+- type/length/format constraints are enforced
+```
+
+#### 93.2.4 Security-Path Testing
+
+Proves the unit fails closed under attack or misuse.
+
+```text
+- fail-closed behavior: system refuses unsafe operation
+- authorization denial: unauthorized actor cannot access resource
+- token misuse rejection: stolen/invalid/replayed token is rejected
+- secret leakage prevention: secrets are not exposed in output/error/log
+- invalid tenant context rejection: cross-tenant access is denied
+- replay/invalidity behavior: replayed or expired requests are rejected
+- injection resistance: malformed input does not bypass security
+```
+
+Security tests must prove that unsafe behavior is rejected intentionally, not accidentally.
+
+A security boundary without a negative test is NOT proven.
+
+#### 93.2.5 Runtime/Lifecycle Testing
+
+Proves runtime safety in long-lived and stateful environments.
+
+```text
+- reset behavior: state is properly reset between operations
+- worker/runtime safety: no state leak between requests
+- state cleanup: temporary state is cleaned after use
+- long-running process safety: no memory/resource leak over time
+- concurrent safety where applicable: no race conditions
+```
+
+### 93.3 Forbidden Shallow Tests
+
+The following patterns are FORBIDDEN unless explicitly accepted as YELLOW debt with owner, risk, mitigation, and expiry:
+
+```text
+- assertTrue(true) — no meaningful assertion
+- assertNotNull($result) without testing the value — meaningless
+- constructor-only tests — test instantiation, not behavior
+- getter/setter-only tests — test mechanical code, not behavior
+- coverage-padding tests — added only to increase percentage
+- implementation-detail obsession — testing private internals
+- mocking the entire subject under test — mock everything, prove nothing
+- tests that only prove execution ran — no behavioral assertion
+- tests written only to increase percentages — no behavioral purpose
+- test that asserts the same thing at multiple levels — duplicated validation
+```
+
+A test with no behavioral assertion is not a test.
+
+### 93.4 Coverage Policy by Phase
+
+Coverage is a signal, not the goal. The required confidence level changes by project phase.
+
+#### V1 (Active Development)
+
+```text
+100% line coverage NOT required
+meaningful behavioral confidence REQUIRED
+branch/path coverage preferred over line coverage
+critical flows MUST be tested with behavior tests
+```
+
+Priority:
+
+```text
+1. Security boundaries — fail-closed proof
+2. Domain rules — invariant protection
+3. Public API contracts — stability proof
+4. Critical flows — behavior proof
+5. Edge cases — boundary proof
+6. Remaining paths — incremental coverage
+```
+
+#### Production Hardening Phase
+
+```text
+coverage may be increased toward 100%
+coverage used as review/completeness aid
+remaining uncovered code becomes audit/review target
+uncovered branches get explicit risk assessment
+```
+
+#### Final Enterprise-Grade Readiness
+
+```text
+high coverage expected
+behavioral correctness remains more important than raw percentage
+uncovered code must be explicitly justified
+remaining gaps become exception register entries
+```
+
+### 93.5 Identity/Security Special Rules
+
+Identity, Authentication, Authorization, Tokens, Sessions, Security, and Tenant boundaries are subject to stricter rules.
+
+These boundaries MUST have:
+
+```text
+positive tests:
+  - valid credentials authenticate successfully
+  - valid token authorizes access
+  - valid session resumes correctly
+
+negative tests:
+  - invalid credentials fail authentication
+  - missing token fails authorization
+  - expired token fails authorization
+
+denial-path tests:
+  - unauthorized role is denied
+  - cross-tenant access is denied
+  - revoked permission is denied
+
+invalidity-path tests:
+  - malformed token is rejected
+  - tampered session is rejected
+  - replayed request is rejected
+
+fail-closed tests:
+  - system failure still denies access
+  - missing data still denies access
+  - configuration error still denies access
+```
+
+No security-sensitive flow may be GREEN with only happy-path coverage.
+
+A security boundary without a negative test is NOT proven.
+
+### 93.6 Relationship to Other Rules
+
+This rule complements:
+
+```text
+.agents/how-to/verification/how-to-test-risk-based-behavioral-testing.md — Risk-based behavioral testing rule
+.agents/how-to/verification/how-to-code-review.md — Review proof and evidence rule
+how-to-unit-test.md §12-17 — Scenario coverage rules
+how-to-unit-test.md §43 — Coverage rule
+how-to-unit-test.md §81 — Forbidden anti-patterns
+avax-test-evidence-quality SKILL — Test evidence skill
+```
+
+This rule does NOT override existing coverage of happy path, failure path, edge case, regression, and security tests from earlier sections.
+
+This rule adds the explicit risk-based philosophy, coverage phase policy, and forbidden-shallow-tests enforcement.
+
+### 93.7 Enforcement
+
+During review and validation:
+
+```text
+1. Check that every meaningful unit has at least happy + sad path
+2. Check that security-sensitive units have negative/fail-closed tests
+3. Check that no shallow tests exist (assertTrue, constructor-only, coverage-padding)
+4. Check that V1 coverage policy is followed (behavioral confidence > line percentage)
+5. Check that identity/security boundaries have all required test types
+6. Flag violations by severity:
+   - BLOCKER: security boundary without negative test
+   - BLOCKER: shallow test used to claim coverage
+   - HIGH: meaningful unit with only happy-path test
+   - HIGH: identity boundary missing required test type
+   - MEDIUM: coverage-padding test without owner acceptance
+```
+
+---
+
+## 94. Security-Sensitive Testing Gate
+
+**Status:** MANDATORY
+**Severity:** BLOCKER
+
+This section defines the non-negotiable security testing gate that applies to every security-sensitive flow in the project.
+
+### 94.1 Definition: Security-Sensitive Flow
+
+A flow, capability, or unit is classified as **security-sensitive** when it participates in any of the following:
+
+```text
+Identity: user registration, login, logout, profile mutation, identity verification
+Authentication: credential verification, token issuance, token validation, session creation
+Session: session lifecycle, session rotation, session invalidation, session storage
+Token: token generation, token signing, token verification, token revocation, token expiry
+Tenant: tenant context resolution, tenant isolation, cross-tenant boundary enforcement
+Authorization: role checks, permission checks, policy evaluation, object-level authorization
+Runtime isolation: request-scoped state, worker state reset, singleton state safety
+Security-sensitive HTTP: endpoints handling credentials, tokens, secrets, personal data, or protected resources
+Cryptography: hashing, encryption, decryption, signature generation/verification, key management
+Secrets: secret storage, secret access, secret rotation, secret redaction
+Input validation at security boundary: input that influences authorization, access control, or trust decisions
+```
+
+If a flow touches any of these concerns, it is security-sensitive by default.
+If uncertain, classify as security-sensitive rather than assuming it is safe.
+
+### 94.2 Mandatory Test Requirements
+
+NO security-sensitive flow may be marked GREEN without ALL of the following test types:
+
+| Test Type | What It Must Prove |
+|-----------|-------------------|
+| **Positive path test** | Valid, authorized, well-formed input produces the expected successful result. The flow works when everything is correct. |
+| **Negative path test** | Invalid, unauthorized, or malformed input is explicitly rejected. The flow denies when it should deny. |
+| **Invalid-input test** | Boundary, malformed, unexpected, or hostile input is rejected safely. The flow does not crash, leak data, or bypass security. |
+| **Fail-closed test** | When a dependency fails, configuration is missing, data is unavailable, or an error occurs, the flow denies access rather than granting it. The system refuses unsafe operation under failure. |
+
+### 94.3 Positive Path Test
+
+A positive path test must prove:
+
+```text
+valid credentials authenticate successfully
+valid token authorizes access to the protected resource
+valid session resumes correctly with expected state
+valid input produces the expected secure output
+expected audit/observability events are recorded where contract
+secrets are not exposed in the successful response
+```
+
+Example:
+
+```php
+test_it_authenticates_user_when_credentials_are_valid()
+test_it_authorizes_access_when_user_has_required_permission()
+test_it_validates_token_when_signature_is_correct_and_not_expired()
+```
+
+### 94.4 Negative Path Test
+
+A negative path test must prove:
+
+```text
+invalid credentials fail authentication
+missing token fails authorization
+expired token fails authorization
+unauthorized role is denied access
+cross-tenant access is denied
+revoked permission is denied
+revoked token is denied
+tampered session is rejected
+```
+
+Example:
+
+```php
+test_it_denies_authentication_when_password_is_incorrect()
+test_it_denies_access_when_token_is_expired()
+test_it_denies_cross_tenant_access_when_tenant_id_does_not_match()
+```
+
+### 94.5 Invalid-Input Test
+
+An invalid-input test must prove:
+
+```text
+malformed token is rejected
+tampered signature is rejected
+empty or null credentials are rejected
+oversized input is rejected or truncated safely
+injection-like input does not bypass validation
+replayed request is rejected where replay protection applies
+duplicate action is handled idempotently or rejected where applicable
+encoding attacks (Unicode, normalization, case) do not bypass checks
+```
+
+Example:
+
+```php
+test_it_rejects_token_when_signature_bytes_are_modified()
+test_it_rejects_request_when_token_is_replayed()
+test_it_rejects_email_when_unicode_normalization_bypass_is_attempted()
+```
+
+### 94.6 Fail-Closed Test
+
+A fail-closed test must prove:
+
+```text
+system failure still denies access rather than granting it
+missing configuration data still denies access
+unavailable dependency (database, cache, external service) results in denial
+corrupted or unreadable token results in denial, not bypass
+configuration error results in denial, not permissive fallback
+```
+
+Example:
+
+```php
+test_it_denies_access_when_user_repository_is_unavailable()
+test_it_denies_access_when_token_key_is_missing()
+test_it_denies_access_when_signature_verification_throws()
+test_it_denies_access_when_configuration_is_corrupted()
+```
+
+### 94.7 Scope of Applicability
+
+This gate is MANDATORY for:
+
+```text
+Identity flows and capabilities
+Authentication flows and capabilities
+Session management flows and capabilities
+Token handling flows and capabilities
+Tenant isolation flows and capabilities
+Authorization flows and capabilities
+Runtime isolation behavior
+Security-sensitive HTTP endpoints and flows
+Cryptography capabilities
+Secret handling capabilities
+Input validation at security boundaries
+```
+
+### 94.8 Forbidden Shallow Tests for Security Testing
+
+The following patterns are FORBIDDEN for security testing unless explicitly accepted as YELLOW debt with owner, risk, mitigation, and expiry:
+
+```text
+assertTrue(true) — no meaningful security assertion
+assertNotNull($result) without testing denial — meaningless
+constructor-only tests — test instantiation, not security behavior
+test that only proves the security class exists — no behavioral proof
+test that only proves a method was called — does not prove denial
+test that asserts success without testing denial — one-sided
+test that mocks the entire security decision — mock everything, prove nothing
+test changed to fit broken security behavior — weakens verification
+test that accepts any exception type — too broad, does not prove specific denial
+test that does not verify the denial reason — denial without reason is not proven
+```
+
+A security test without a behavioral assertion about denial, rejection, or fail-closed behavior is not a security test.
+
+### 94.9 Risk-Based Behavioral Testing for Security Boundaries
+
+Security boundaries are subject to stricter behavioral testing requirements:
+
+```text
+positive tests:
+  - valid credentials authenticate successfully
+  - valid token authorizes access
+  - valid session resumes correctly
+
+negative tests:
+  - invalid credentials fail authentication
+  - missing token fails authorization
+  - expired token fails authorization
+
+denial-path tests:
+  - unauthorized role is denied
+  - cross-tenant access is denied
+  - revoked permission is denied
+
+invalidity-path tests:
+  - malformed token is rejected
+  - tampered session is rejected
+  - replayed request is rejected
+
+fail-closed tests:
+  - system failure still denies access
+  - missing data still denies access
+  - configuration error still denies access
+```
+
+### 94.10 Enforcement
+
+During review and validation:
+
+```text
+1. Identify whether the touched unit is security-sensitive (see §94.1)
+2. If security-sensitive, verify all four test types exist (§94.2)
+3. Verify each test type proves the behavior described in its definition
+4. Verify no forbidden shallow tests are used (§94.8)
+5. Flag violations by severity:
+   - BLOCKER: security-sensitive flow without positive path test
+   - BLOCKER: security-sensitive flow without negative path test
+   - BLOCKER: security-sensitive flow without invalid-input test
+   - BLOCKER: security-sensitive flow without fail-closed test
+   - BLOCKER: security-sensitive flow with only happy-path coverage
+   - HIGH: security test uses forbidden shallow pattern
+   - HIGH: fail-closed test proves denial but not the denial reason
+```
+
+No security-sensitive flow may go GREEN with only happy-path coverage.
+
+A security boundary without a negative test is NOT proven.
+
+### 94.11 Relationship to Other Rules
+
+This gate complements:
+
+```text
+.agents/how-to/verification/how-to-test-risk-based-behavioral-testing.md — Risk-Based Behavioral Testing Rule
+how-to-unit-test.md §17 — Security and Abuse Case Tests
+how-to-unit-test.md §93 — Risk-Based Behavioral Testing Policy
+how-to-system-security.md §40 — Security Test Rule
+how-to-system-security.md §51 — Security Must Scream Rule
+avax-test-evidence-quality skill — Test evidence quality skill
+avax-security-threat-model skill — Security threat modeling skill
+```
+
+This gate does NOT override existing testing requirements from earlier sections.
+This gate adds explicit mandatory security test type enforcement.

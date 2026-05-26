@@ -1,0 +1,14 @@
+=== Self-Explaining Architecture Check ===
+Scanning: /home/shomsy/projects/avax-auth-rewrite-v2/components
+Docs scan: /home/shomsy/projects/avax-auth-rewrite-v2/docs
+
+Class index: 3610 files, 3582 classes indexed
+
+Scanning documentation files...
+Scanning flow directories for diagram coverage...
+=== self-explaining-architecture Baseline Mode ===
+Baseline entries: 563
+Current findings: 563
+New findings: 0
+Stale baseline entries: 0
+GREEN_WITH_BASELINE — current findings match the recorded legacy baseline.

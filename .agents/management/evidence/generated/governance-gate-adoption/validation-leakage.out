@@ -1,0 +1,41 @@
+================================================================
+GOVERNANCE LEAKAGE DETECTION (RECURSIVE)
+Scanning all generic .agents/how-to/ markdown files
+================================================================
+
+Files to scan: 26
+
+CLEAN: .agents/how-to/architecture/how-to-architecture-decisions.md
+CLEAN: .agents/how-to/architecture/how-to-architecture-extension-with-ddd.md
+CLEAN: .agents/how-to/architecture/how-to-architecture.md
+CLEAN: .agents/how-to/architecture/how-to-engineering-laws.md
+CLEAN: .agents/how-to/architecture/how-to-events-listeners-event-sourcing-cqrs-realtime.md
+CLEAN: .agents/how-to/architecture/how-to-runtime-composition.md
+CLEAN: .agents/how-to/architecture/how-to-use-advanced-architecture-patterns.md
+CLEAN: .agents/how-to/architecture/how-to-use-ai-assisted-execution.md
+CLEAN: .agents/how-to/components/how-to-design-components.md
+CLEAN: .agents/how-to/components/how-to-dogfooding.md
+CLEAN: .agents/how-to/documentation/how-to-document.md
+CLEAN: .agents/how-to/documentation/how-to-write-self-explaining-architecture.md
+CLEAN: .agents/how-to/implementation/how-to-clean-code.md
+CLEAN: .agents/how-to/implementation/how-to-code-style.md
+CLEAN: .agents/how-to/implementation/how-to-coding-standards.md
+CLEAN: .agents/how-to/implementation/how-to-dependency-injection.md
+CLEAN: .agents/how-to/implementation/how-to-modern-php-attributes-di.md
+CLEAN: .agents/how-to/modeling/how-to-model-flows.md
+CLEAN: .agents/how-to/verification/how-to-code-review.md
+CLEAN: .agents/how-to/verification/how-to-create-ai-code-review-packs.md
+CLEAN: .agents/how-to/verification/how-to-data-systems.md
+CLEAN: .agents/how-to/verification/how-to-production-readiness.md
+CLEAN: .agents/how-to/verification/how-to-system-performance.md
+CLEAN: .agents/how-to/verification/how-to-system-security.md
+CLEAN: .agents/how-to/verification/how-to-test-risk-based-behavioral-testing.md
+CLEAN: .agents/how-to/verification/how-to-unit-test.md
+
+================================================================
+CHECK COMPLETE
+Files checked: 26
+Files with leaks: 0
+Total findings: 0
+GREEN: No unapproved project leakage found in generic governance.
+================================================================

@@ -1,35 +1,59 @@
-# EVIDENCE — Human Dashboard Only
+# EVIDENCE - Legacy Root Dashboard
 
-Root EVIDENCE/ is a small human-readable dashboard only (max 10 files, max 10MB, no subdirectories).
-Canonical machine evidence lives under `.agents/management/evidence/`.
+Root `EVIDENCE/` is not the normal evidence workspace.
 
-## Current Dashboard Files
+New agent evidence belongs under:
 
-| File | Purpose |
-|:---|:---|
-| `README.md` | Dashboard model and rules |
-| `CURRENT.md` | Current operational state |
-| `ACTIVE_PLAN.md` | Active execution plan |
-| `FLOW.md` | Execution flow and phases |
-| `LINKS.md` | Quick links to machine evidence |
-| `EXECUTION.md` | Canonical execution control and stage lock |
-| `accepted-exceptions-ledger.md` | Governance exception ledger |
-| `cleanup_execution_report.md` | Latest cleanup summary |
+```text
+.agents/management/evidence/generated/<task-name>/
+```
 
-## Where Machine Evidence Lives
+Root `EVIDENCE/` remains only as a small legacy/transitional dashboard for paths that current tooling or tests still require.
 
-| Path | Contents |
-|:---|:---|
-| `.agents/management/evidence/generated/` | Generated reports, reconciliation, benchmarks |
-| `.agents/management/evidence/archive/legacy-evidence/` | Historical version evidence (v1-v5, recovery) |
-| `.agents/management/evidence/indexes/` | JSON ledgers and structured catalogs |
-| `.agents/management/evidence/validation/` | Raw validation outputs |
+## Current Root Files
+
+| File | Why It Remains |
+|---|---|
+| `README.md` | Explains the legacy root dashboard policy. |
+| `EXECUTION.md` | Legacy stage-lock source still read by current tooling. |
+| `route-cache-plan.md` | Legacy V4 developer-experience plan still asserted by an existing composition test. |
+
+## Moved Files
+
+Legacy root evidence files were moved to:
+
+```text
+.agents/management/evidence/legacy-root-evidence/2026-05-26-root-evidence-restructure/
+```
+
+The governance exception register now lives at:
+
+```text
+.agents/management/evidence/accepted-exceptions-ledger.md
+```
+
+## New Root Evidence Rule
+
+Do not create new root `EVIDENCE/` files.
+
+If a legacy tool or explicit human instruction requires a new file in root `EVIDENCE/`, the filename must use this format:
+
+```text
+YYYY-MM-DD-HH-MM-SS-descriptive-name.md
+```
+
+Example:
+
+```text
+2026-05-26-14-30-00-runtime-doctor-validation.md
+```
 
 ## Enforcement
 
-Hygiene is enforced by `php tooling/governance/check-root-evidence-hygiene.php`.
-Fails if: any subdirectory, >10 files, >10MB, archive folders, or .install-archive.
+Run:
 
-## Last Cleanup
+```bash
+php tooling/governance/check-root-evidence-hygiene.php
+```
 
-2026-05-19 — Moved 34 dirs to archive, 17 reports to generated, deleted 2 runtime noise items.
+The root dashboard should stay small, flat, and transitional.

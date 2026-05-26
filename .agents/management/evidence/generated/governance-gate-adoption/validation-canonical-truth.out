@@ -1,0 +1,24 @@
+=== Governance Canonical Truth Checker ===
+
+Files found: 30
+
+--- Check 1: Root-Level Shadow Governance ---
+PASS: No root-level shadow governance.
+
+--- Check 2: Duplicate Canonical Filenames ---
+PASS: No duplicate filenames.
+
+--- Check 3: Reading Order Integrity ---
+PASS: Reading order parsed; findings, if any, are reported below.
+
+--- Check 4: GOVERNANCE_INDEX.md Reference Integrity ---
+PASS: Governance index references parsed; findings, if any, are reported below.
+
+=== Findings ===
+GREEN: Governance canonical truth is coherent.
+
+Why this matters:
+- No root shadow how-to files remain.
+- Every canonical governance file is listed exactly once.
+- Planned docs are not treated as required governance.
+- Evidence is not mandatory canonical governance.

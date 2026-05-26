@@ -1,0 +1,9 @@
+=== Shallow Test Detection ===
+Scanning: /home/shomsy/projects/avax-auth-rewrite-v2/tests
+
+=== shallow-tests Baseline Mode ===
+Baseline entries: 392
+Current findings: 392
+New findings: 0
+Stale baseline entries: 0
+GREEN_WITH_BASELINE — current findings match the recorded legacy baseline.

@@ -1,15 +1,14 @@
 # how-to-dogfooding.md
 
-# AvaX Internal Dogfooding Governance
+# Internal Dogfooding Governance
 
 ## Status
 
-**MANDATORY** - This document defines non-negotiable dogfooding rules for AvaX.
+**MANDATORY** - This document defines non-negotiable dogfooding rules for the project.
 
 ## Normative Language
 
-The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
-*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, **BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
 
 - **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
 - **MUST NOT / FORBIDDEN**: prohibited pattern.
@@ -25,17 +24,17 @@ The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHO
 
 ## 1. Status
 
-This document is mandatory governance for AvaX framework development.
+This document is mandatory governance for The framework development.
 
-It defines how AvaX components must be reused inside AvaX itself.
+It defines how components must be reused inside the framework itself.
 
 This is not an optional architecture preference.
 
 This is a correctness, maintainability, performance, and system-integrity rule.
 
-AvaX must not become a collection of strong components that are bypassed by its own runtime.
+The framework must not become a collection of strong components that are bypassed by its own runtime.
 
-AvaX must use AvaX.
+The framework must use the project.
 
 ---
 
@@ -43,7 +42,7 @@ AvaX must use AvaX.
 
 The purpose of this document is to prevent duplicate internal capability ownership.
 
-If AvaX already has a component that owns a capability, other components must use that owner through the correct
+If the framework already has a component that owns a capability, other components must use that owner through the correct
 boundary.
 
 The goal is:
@@ -54,7 +53,7 @@ all consumers = use that owner
 no local mini-version
 ```
 
-AvaX must behave like one composed framework engine, not like unrelated packages placed next to each other.
+The framework must behave like one composed framework engine, not like unrelated packages placed next to each other.
 
 ---
 
@@ -66,7 +65,7 @@ A component becomes enterprise-grade when:
 
 1. it has a clear ownership boundary
 2. it provides real behavior
-3. other parts of AvaX use it where appropriate
+3. other parts of the project use it where appropriate
 4. duplicate local behavior is removed
 5. public APIs stay small
 6. internal composition stays clean
@@ -76,14 +75,14 @@ A component becomes enterprise-grade when:
 The core law:
 
 ```text
-If AvaX owns a capability in one component, no other component may reimplement that capability locally.
+If the framework owns a capability in one component, no other component may reimplement that capability locally.
 ```
 
 ---
 
-## 4. What Dogfooding Means In AvaX
+## 4. What Dogfooding Means In The Framework
 
-Dogfooding means AvaX uses its own components internally.
+Dogfooding means The framework uses its own components internally.
 
 Examples:
 
@@ -346,7 +345,7 @@ Allowed exceptions:
 
 ## 11. Queue Dogfooding Rule
 
-Queue must use existing AvaX components.
+Queue must use existing components.
 
 Queue must use:
 
@@ -454,7 +453,7 @@ Router route list
 
 ## 14. Runtime Dogfooding Rule
 
-Runtime and App layers must use AvaX components.
+Runtime and App layers must use components.
 
 Runtime must use:
 
@@ -768,7 +767,7 @@ Where practical, add automated checks.
 Recommended script:
 
 ```text
-php tooling/refactor/check-component-adoption.php
+run the configured component-adoption checker
 ```
 
 The check should detect:
@@ -833,8 +832,8 @@ Each component documentation must state:
 ```text
 - what component owns
 - what component does not own
-- which AvaX components it uses
-- which AvaX components use it
+- which components it uses
+- which components use it
 - approved exceptions
 - local runtime safety rules
 - external integrations marked GREEN/YELLOW/LABS/ROADMAP
@@ -843,7 +842,7 @@ Each component documentation must state:
 Add a section to every HOW_THIS_WORKS.md:
 
 ```md
-## Internal AvaX Usage
+## Internal Framework Usage
 
 This component is used by:
 
@@ -887,7 +886,7 @@ A component may be marked GREEN only if:
 
 ```text
 - it owns exactly one clear capability
-- it uses existing AvaX components where appropriate
+- it uses existing components where appropriate
 - other components use it instead of duplicating it
 - public API is stable and thin
 - runtime state is safe
@@ -956,7 +955,7 @@ Dogfooding test requirements:
 - **Contract Tests:** Every component boundary exposed to other components needs contract tests. Consumer expectations must be executable.
 - **Integration Tests:** Component-to-component integration should be tested separately from unit behavior.
 - **No Duplication:** Do not test the same component behavior at every pyramid layer. Test details in unit tests, contracts at boundaries, journeys in E2E.
-- **Sociable Tests:** Use real AvaX components where they remain fast. Use fakes only for slow/external dependencies.
+- **Sociable Tests:** Use real components where they remain fast. Use fakes only for slow/external dependencies.
 
 A component that is dogfooded without contract tests is a ticking integration bomb.
 
@@ -964,7 +963,7 @@ A component that is dogfooded without contract tests is a ticking integration bo
 
 ## 29. Final Law
 
-AvaX must use AvaX.
+The framework must use the project.
 
 If a component exists but the framework bypasses it, the component is decorative.
 

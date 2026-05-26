@@ -2,12 +2,11 @@
 
 ## Status
 
-**MANDATORY** - This document defines non-negotiable documentation rules for AvaX.
+**MANDATORY** - This document defines non-negotiable documentation rules for the project.
 
 ## Normative Language
 
-The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
-*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, **BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
 
 - **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
 - **MUST NOT / FORBIDDEN**: prohibited pattern.
@@ -47,35 +46,159 @@ If documentation cannot explain the design **without opening the code**, the des
 
 ---
 
-## Canonical Documentation Location (HARD RULE)
+## Four-Layer Documentation Model
 
-All documentation MUST live inside a top-level folder named:
+The framework uses a **four-layer documentation model** that distinguishes between global system-wide truth, project overlay, local component-boundary documentation, and generated evidence.
 
-```
-docs/
-```
+### Layer 1 — Global / Canonical Documentation
 
-Rules:
+**Purpose:** System-wide truth, cross-component standards, and centralized reference.
 
-- `docs/` is the **single canonical location** for all documentation
+**Location:** `docs/` and `.agents/`
 
-- The documentation folder structure MUST mirror the source code structure
+**Examples of what belongs here:**
 
-- If the `docs/` folder does NOT exist, you MUST create it
-
-- You MUST NOT scatter documentation across the repository
-
-- No documentation is allowed outside `docs/`
-
-Example mapping:
-
-```
-src/Core/Kernel/ContainerKernel.php
-→
-docs/Core/Kernel/ContainerKernel.md
+```text
+- architecture philosophy and runtime design
+- framework-wide rules and conventions
+- global ADRs that affect the entire system
+- release process, CI/CD, operations
+- governance rules (.agents/)
+- security baseline and threat model
+- cross-component standards and naming rules
+- system-wide glossary of canonical terms
+- onboarding and development guides
 ```
 
-This rule is **non-negotiable**.
+**Rules:**
+
+- `docs/` is the canonical home for long-form system documentation
+- `.agents/` is the canonical home for governance and AI execution rules
+- Documentation in `docs/` MUST mirror source structure where it explains source
+- `docs/` documentation MUST be written for an intelligent reader unfamiliar with the system
+
+### Layer 2 — Project Overlay Documentation
+
+**Purpose:** Project-specific rules, conventions, and governance that extend or override generic governance for this project.
+
+**Location:** `.agents/how-to/project/` and `docs/project/` (if used)
+
+**Examples of what belongs here:**
+
+```text
+- project-specific writing conventions
+- project-specific git workflow
+- project-specific architecture decisions
+- project-specific security policies
+- project-local README overlays
+```
+
+**Rules:**
+
+- Project overlay extends generic governance; it does not replace it
+- If a rule applies to any project, it belongs in generic governance, not in project overlay
+- Project overlay MUST NOT redefine generic governance rules
+- Project overlay MAY narrow generic rules for local context
+- Generic governance wins for universal principles; project overlay wins for project-specific matters
+
+### Layer 3 — Local / Component Documentation
+
+**Purpose:** Local design decisions, component-specific knowledge, ADRs, dictionary, flow explanations at the ownership boundary where the code lives.
+
+**Location:** `components/<Area>/<Component>/docs/`
+
+**Examples of what belongs here:**
+
+```text
+- component-local README.md (ownership summary)
+- component-local ADRs (decisions that affect this component only)
+- component-local dictionary (terms specific to this boundary)
+- component-local how-this-works.md (flow explanation)
+- component-local mistakes.md (known mistakes and prevention)
+- component-local Mermaid diagrams (non-trivial flows)
+```
+
+**Rules:**
+
+- Component-local documentation MUST NOT duplicate global documentation
+- If a concept applies system-wide, it belongs in `docs/`, not in a component
+- Component-local docs MAY reference global docs but MUST NOT redefine them
+- A component with self-explaining architecture documentation (README, dictionary, ADRs) is preferred over a component with only global docs coverage
+
+### Layer 4 — Generated Evidence
+
+**Purpose:** Validation evidence, audits, recovery reports, and operational proof. Proves status but is NOT canonical governance unless explicitly promoted.
+
+**Location:** the configured generated-evidence directory and the configured evidence directory.
+
+**Examples of what belongs here:**
+
+```text
+- validation output reports
+- audit findings and closure evidence
+- deviation audit lifecycle reports
+- benchmark results
+- security review reports
+- generation logs
+```
+
+**Rules:**
+
+- Evidence documents what happened; they do not define what must happen
+- Evidence MUST NOT be loaded as mandatory governance preflight
+- Evidence MAY be promoted to canonical governance by explicit decision
+- Promoted evidence must be moved to the appropriate governance location
+- Stale evidence must be archived or removed
+
+### Negative Space: What Does Not Belong Where
+
+```text
+In docs/ (FORBIDDEN):
+  - component-local implementation details
+  - component-internal ADRs that don't affect other components
+  - per-component dictionaries (belong at the component boundary)
+
+In component docs/ (FORBIDDEN):
+  - system-wide architecture philosophy
+  - cross-component standards
+  - governance rules
+  - global release process
+
+In project overlay (FORBIDDEN):
+  - generic reusable rules (belong in Layer 1)
+  - evidence and logs (belong in Layer 4)
+
+In evidence (FORBIDDEN):
+  - canonical governance rules (belong in Layer 1 or Layer 2)
+  - local component design docs (belong in Layer 3)
+```
+
+### Documentation Location Resolution
+
+When determining where documentation belongs, apply this decision tree:
+
+```text
+Is this a governance rule?
+  → Does it apply to any project?
+     → YES → .agents/how-to/<category>/
+     → NO → .agents/how-to/project/
+Is this a system-wide concept?
+  → YES → docs/
+  → NO → Does it explain a single component's internal design?
+     → YES → components/<Area>/<Component>/docs/
+     → NO → Does it prove or validate behavior?
+        → YES → .agents/management/evidence/generated/<task-name>/
+        → NO → docs/
+```
+
+### Mirror Rule
+
+```text
+docs/ + .agents/ explains system truth.
+project overlay/ extends system truth for local context.
+component docs/ explains local truth.
+.agents/management/evidence/ proves status.
+```
 
 ---
 
@@ -377,11 +500,10 @@ Before you ship or approve a page, ask:
 If any answer is `no`, **revise the page**.
 
 ### Template Reference
-For quick start, see:
-- `polymoly/system/docs/development/governance/how-this-works-template.md`
-- `polymoly/system/docs/development/governance/how-to-document-flow.md`
 
-If this section and the template disagree, **this section wins**.
+For quick start, see the templates in `.agents/templates/architecture/` or component-local `docs/` templates.
+
+If this section and a local template disagree, **this section wins**.
 
 
 
@@ -427,31 +549,290 @@ If something is missing:
 
 ---
 
-## Documentation Location Resolution Rule
+## Documentation Location Resolution Reference
 
-`docs/` is the canonical home for long-form documentation.
+This section summarizes the two-layer model in compact form.
 
-Component-local `README.md` is allowed only as a short ownership summary.
-
-`EVIDENCE/` is allowed only for temporary recovery reports, validation evidence, audits, and execution artifacts.
-
-### Rules
+### Locations
 
 ```text
-architecture docs live in docs/
-component ownership summaries may live as components/<Area>/<Component>/README.md
-recovery and validation evidence may live in EVIDENCE/recovery-reports/
-no random documentation may be scattered elsewhere
-if component README and docs disagree, docs are canonical unless README is explicitly newer and linked
+docs/                      — global system documentation (canonical system-wide truth)
+.agents/                   — governance rules, skills, AI execution rules
+.agents/how-to/project/    — project overlay governance (extends generic for local context)
+docs/project/              — project overlay documentation (if used)
+components/<A>/<C>/docs/   — local component documentation (local design decisions)
+.agents/management/evidence/generated/ — generated evidence (proves status, not governance)
+EVIDENCE/                  — legacy/transitional evidence only; new files require YYYY-MM-DD-HH-MM-SS prefix
+```
+
+### Documentation Authority
+
+```text
+When docs/ and component docs/ disagree:
+  → docs/ wins for system-wide rules
+  → component docs/ wins for component-internal design decisions
+  → If a global rule is violated by a local decision, an ADR must explain the deviation
+When generic governance and project overlay disagree:
+  → Generic governance wins for universal principles
+  → Project overlay wins for project-specific matters
 ```
 
 ### Mirror Rule
 
 ```text
-A component README may summarize.
-The docs folder must explain.
-Reports may prove.
+docs/ + .agents/ explains system truth.
+project overlay/ extends system truth for local context.
+component docs/ explains local truth.
+.agents/management/evidence/ proves status.
 ```
+
+---
+
+## Documentation Quality Gate
+
+### Status
+
+**MANDATORY**
+**Severity:** BLOCKER
+
+### Rule
+
+Documentation quality is not optional. Documentation that exists but is shallow, stale, or misleading is worse than no documentation at all.
+
+This gate defines minimum quality standards for every documentation artifact in the project.
+
+### README Quality Heuristics
+
+Every README at an important ownership boundary MUST pass these quality checks:
+
+```text
+1. Ownership explained: README explains what this boundary owns and why it exists here.
+2. Negative space explained: README explains what does NOT belong here (mandatory for AI grounding).
+3. Failure modes documented: README explains how this boundary fails and what failure looks like.
+4. Public API documented: README explains what is stable and callable from outside.
+5. Configuration explained: README explains how this boundary is configured.
+6. Observation explained: README explains how this boundary is monitored.
+7. Testing explained: README explains how this boundary is tested.
+8. Dependencies documented: README explains what this boundary depends on.
+```
+
+A README that merely restates the folder name fails this gate. A README that does not explain negative space fails this gate. A README that does not document failure modes fails this gate.
+
+### README Quality Severity
+
+```text
+BLOCKER: README missing on important boundary
+HIGH: README exists but does not explain ownership
+HIGH: README exists but does not explain negative space
+HIGH: README exists but does not explain failure modes
+MEDIUM: README exists but does not explain configuration
+MEDIUM: README exists but does not explain observation
+MEDIUM: README exists but does not explain testing
+LOW: README exists but could be clearer in wording
+```
+
+### Dictionary Completeness Validation
+
+Every dictionary at a complex boundary MUST pass these checks:
+
+```text
+1. Every public term used by the boundary has a dictionary entry.
+2. Every entry explains "What It Is" in plain language.
+3. Every entry explains "What It Is NOT" (mandatory for AI grounding).
+4. Every entry explains "Common Confusion" (mandatory for AI grounding).
+5. Terms use canonical names from docs/governance/canonical-terms.md.
+6. Entries are grounded in real code behavior, not abstract definitions.
+```
+
+Dictionary completeness is validated by checking that every term referenced in README.md, ADRs, and public API signatures has a corresponding dictionary entry.
+
+### Dictionary Entry Format
+
+Every dictionary entry MUST follow this format:
+
+```markdown
+<a id="term-slug"></a>
+
+### `TermName`
+
+**What It Is:**
+Plain explanation of the concept. One to three sentences. Grounded in real behavior.
+
+**What It Is NOT:**
+Clear boundaries on what this term does not mean. What would be a wrong interpretation.
+Why someone might misunderstand this term.
+
+**Common Confusion:**
+What other terms this is easily confused with. Why they are different.
+How to tell them apart in practice.
+```
+
+"What It Is NOT" is mandatory. A dictionary entry without negative definition is incomplete for AI grounding.
+
+"Common Confusion" is mandatory. A dictionary entry without confusion guidance is incomplete for new developer onboarding.
+
+### Dictionary Quality Severity
+
+```text
+HIGH: dictionary missing on complex boundary (5+ domain terms)
+MEDIUM: dictionary entry missing "What It Is" section
+MEDIUM: dictionary entry missing "What It Is NOT" section
+MEDIUM: dictionary entry missing "Common Confusion" section
+MEDIUM: dictionary uses non-canonical term names
+LOW: dictionary entry could be clearer in wording
+INFO: dictionary could include additional related terms
+```
+
+### ADR Requirements
+
+Every Architecture Decision Record MUST include:
+
+```text
+1. Status: proposed | accepted | deprecated | superseded
+2. Context: why this decision needed to be made
+3. Decision: what was decided
+4. Consequences: what this means for the codebase, team, and future work
+5. Trade-off analysis: why this option was chosen over alternatives
+```
+
+ADR format:
+
+```markdown
+# ADR-NNN: Short Decision Title
+
+**Status:** proposed | accepted | deprecated | superseded
+**Date:** YYYY-MM-DD
+**Context:** <boundary or subsystem>
+
+## Context
+Why this decision needed to be made. What problem existed before.
+
+## Decision
+What was decided. Clear and unambiguous.
+
+## Consequences
+What this means for the codebase. What changes. What becomes easier. What becomes harder.
+
+## Trade-off Analysis
+| Option | Pros | Cons | Why Rejected |
+|--------|------|------|--------------|
+| Option A | ... | ... | ... |
+| Option B (chosen) | ... | ... | — |
+
+## Assumptions
+- What was assumed when making this decision.
+
+## Risks
+- What could go wrong because of this decision.
+```
+
+ADR without trade-off analysis is incomplete. ADR without consequences is misleading. ADR without status is unactionable.
+
+### ADR Quality Severity
+
+```text
+MEDIUM: ADR missing Status field
+MEDIUM: ADR missing Context section
+MEDIUM: ADR missing Decision section
+MEDIUM: ADR missing Consequences section
+LOW: ADR missing trade-off analysis table
+LOW: ADR missing assumptions
+LOW: ADR missing risks
+INFO: ADR could include implementation references
+```
+
+### Mermaid Diagram Requirements
+
+Non-trivial flows MUST have Mermaid diagrams:
+
+```text
+- flows with 3+ handoffs require sequenceDiagram
+- flows with 5+ steps require step-by-step annotation
+- flows crossing component boundaries require explicit participant labels
+- diagrams use real file/function names, not abstract participant names
+- autonumber is used by default unless it makes the picture worse
+- flowchart is used only when topology teaches better than call order
+- colors carry meaning, not decoration
+```
+
+Mermaid quality checks:
+
+```text
+1. Participants are real files or functions, not abstract names.
+2. Steps are numbered (autonumber) unless unnumbered is clearer.
+3. Arrows show real data flow, not conceptual flow.
+4. Return values and file writes are shown where relevant.
+5. Diagram matches actual code behavior, not aspirational design.
+```
+
+A diagram that does not match code behavior is misleading and worse than no diagram.
+
+### Mermaid Quality Severity
+
+```text
+MEDIUM: non-trivial flow missing Mermaid diagram
+MEDIUM: diagram participants are abstract instead of real names
+MEDIUM: diagram does not match actual code behavior
+LOW: diagram could be clearer with different layout
+INFO: diagram could include additional detail
+```
+
+### Stale Doc Markers and Orphan Doc Detection
+
+Documentation becomes stale when:
+
+```text
+- README references files that no longer exist
+- README references functions that were renamed or removed
+- Dictionary defines terms that are no longer used
+- ADR references code paths that were changed
+- Mermaid diagram no longer matches code flow
+- how-this-works.md references commands or triggers that changed
+- PHPDoc @see links point to non-existent Markdown sections
+```
+
+Stale documentation MUST be classified:
+
+```text
+HIGH: stale documentation that misleads about behavior or security
+MEDIUM: stale documentation that references non-existent files
+LOW: stale documentation that has outdated wording
+INFO: documentation could be refreshed for clarity
+```
+
+Orphan documentation detection:
+
+```text
+- Markdown files in docs/ with no corresponding source files
+- Dictionary entries for terms not used anywhere
+- ADRs for decisions that were reversed without superseding
+- how-this-works.md for folders that no longer contain code
+```
+
+Orphan documentation MUST be removed or archived. Orphan documentation is misleading noise.
+
+### Stale Doc Detection Severity
+
+```text
+HIGH: stale documentation misleads about behavior or security
+MEDIUM: stale documentation references non-existent files
+MEDIUM: orphan documentation with no corresponding source
+LOW: documentation wording is outdated
+```
+
+### Gate Integration
+
+The documentation quality gate is enforced by:
+
+```text
+- the configured self-explaining architecture checker (automated scanning)
+- code review (human quality check)
+- governance review (compliance check)
+```
+
+Automated gates check presence and structure. Human review checks quality and truthfulness.
+
+No automated gate replaces human judgment. But no human judgment bypasses automated gates.
 
 ---
 
@@ -465,7 +846,7 @@ Reports may prove.
 
 ### Core Philosophy
 
-PHPDoc in AvaX is not decorative.
+PHPDoc in the project is not decorative.
 
 PHPDoc is part of the architecture reading model.
 
@@ -484,7 +865,7 @@ PHPDoc MUST follow:
 
 - PSR-12 formatting rules for PHP code layout
 - phpDocumentor/PHPStan/Psalm-compatible tag style
-- AvaX plain-English documentation style
+- plain-English documentation style
 - screaming architecture language: folder says flow or capability, class says responsibility, method says exact action
 
 PHPDoc MUST NOT become noise.
@@ -554,7 +935,7 @@ Private methods MUST have PHPDoc when they:
 - use array shapes, generics, iterables, callables, or mixed values
 - exist because of a design decision that is not obvious from the name
 
-For maximum AI-readability, AvaX MAY require PHPDoc on every method including private methods, but the docblock must
+For maximum AI-readability, the framework MAY require PHPDoc on every method including private methods, but the docblock must
 remain useful and concise.
 
 Method PHPDoc MUST explain:
@@ -627,7 +1008,7 @@ Use PHPDoc tags only when they add information that native PHP types cannot expr
 
 ### Flow/Action Documentation Rule
 
-PHPDoc must strengthen the AvaX reading model.
+PHPDoc must strengthen the reading model.
 
 Class PHPDoc should answer:
 
@@ -686,7 +1067,7 @@ PublicSurface/runtime/security-sensitive: upgrade first.
 
 ### PHPDoc GREEN Status Rule
 
-Semantic PHPDoc is part of AvaX architecture readability. Missing or fake PHPDoc can block GREEN.
+Semantic PHPDoc is part of architecture readability. Missing or fake PHPDoc can block GREEN.
 
 Severity:
 

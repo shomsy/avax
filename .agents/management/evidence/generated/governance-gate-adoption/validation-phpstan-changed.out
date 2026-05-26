@@ -1,0 +1,3 @@
+=== phpstan Changed Mode ===
+Changed PHP files in configured analysis scope: 0
+GREEN — no changed PHP files under framework/, components/, or tests/.

@@ -1,12 +1,12 @@
 # how-to-modern-php-attributes-di.md
 
-# AvaX Modern PHP, Attributes & Dependency Injection Governance
+# Modern PHP, Attributes & Dependency Injection Governance
 
 ## 1. Status
 
-This document is mandatory governance for AvaX framework development.
+This document is mandatory governance for The framework development.
 
-It defines how AvaX uses modern PHP 8.0 through 8.5 language features, attributes as declarative metadata,
+It defines how the framework uses modern PHP 8.0 through 8.5 language features, attributes as declarative metadata,
 and dependency injection with autowiring discipline.
 
 This is not a style preference document.
@@ -24,7 +24,7 @@ DI composes.
 Methods act.
 ```
 
-AvaX uses attributes as the central declaration style — similar to NestJS decorators, Java annotations, or .NET
+The framework uses attributes as the central declaration style — similar to NestJS decorators, Java annotations, or .NET
 attributes.
 
 But attributes must not become runtime chaos.
@@ -96,7 +96,7 @@ Every feature must have a clear use case.
 |-----------------------|----------------------------------------------------------|
 | property hooks        | value normalization, invariant enforcement on properties |
 | asymmetric visibility | public-read/private-write state                          |
-| request_parse_body()  | multipart parsing in AvaX Request                        |
+| request_parse_body()  | multipart parsing in the project Request                        |
 | PDO driver subclasses | type-safe database access where PDO is used              |
 
 ### 3.6 PHP 8.5 — Futuristic Syntax
@@ -166,7 +166,7 @@ Use pipeline or flow orchestration for side-effect-heavy code.
 
 ### 5.1 Attribute Areas
 
-AvaX uses these attribute categories:
+The framework uses these attribute categories:
 
 #### Routing and Controllers
 
@@ -677,7 +677,7 @@ free-form text fields
 
 ## 16. Superglobal Isolation Rule
 
-All PHP superglobals must be isolated behind AvaX Request object.
+All PHP superglobals must be isolated behind a Request object.
 
 ```text
 $_GET -> Request::query()
@@ -698,16 +698,16 @@ The Request component is the sole owner of superglobal access.
 
 ## 17. Tooling Gates
 
-The following tooling gates enforce this governance:
+The following configured gates enforce this governance:
 
 ```bash
-php tooling/refactor/check-modern-php-style.php
-php tooling/refactor/check-constructor-bloat.php
-php tooling/refactor/check-container-service-locator.php
-php tooling/refactor/check-raw-reflection-hot-path.php
-php tooling/refactor/check-cacheable-metadata.php
-php tooling/refactor/check-superglobal-usage.php
-php tooling/refactor/check-naked-domain-strings.php
+run the configured modern-PHP style checker
+run the configured constructor-bloat checker
+run the configured container service-locator checker
+run the configured raw-reflection hot-path checker
+run the configured cacheable-metadata checker
+run the configured superglobal-usage checker
+run the configured naked-domain-string checker
 ```
 
 These gates are mandatory before any V5 stage may be marked GREEN.
@@ -742,7 +742,7 @@ constructor dependencies are 0-4 (or justified 5-7)
 no Container::get() in business logic
 method injection used for runtime context only
 pipe operator used for pure transformations only
-superglobals isolated behind AvaX Request
+superglobals isolated behind framework Request
 enums used for closed domain/state values
 readonly used for honestly immutable objects
 final by default unless extension point

@@ -28,3 +28,9 @@ var/
 
 # Local aggregate dumps
 avax.part-*.txt
+
+# AI review export packs
+_pack/
+
+# Generated aggregate governance artifact
+.agents/how-to/how-to.txt

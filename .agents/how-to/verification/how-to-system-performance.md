@@ -2,9 +2,9 @@
 
 ## 1. Status of This Document
 
-This document is part of the AvaX governance system.
+This document is part of the The project's governance system.
 
-It defines how performance must be designed, implemented, reviewed, tested, measured, observed, and proven across AvaX.
+It defines how performance must be designed, implemented, reviewed, tested, measured, observed, and proven across the project.
 
 This document applies to:
 
@@ -43,7 +43,7 @@ Performance must serve the system.
 
 Performance must be proven with evidence.
 
-The core AvaX architecture law still wins:
+The core The architecture law still wins:
 
 ```text
 folder says flow or capability
@@ -103,15 +103,15 @@ Capabilities/
 
 ## 2. Performance Thesis
 
-AvaX must be fast where speed matters.
+The framework must be fast where speed matters.
 
-AvaX must be predictable where latency matters.
+The framework must be predictable where latency matters.
 
-AvaX must be memory-safe where workers are long-lived.
+The framework must be memory-safe where workers are long-lived.
 
-AvaX must be observable where performance can degrade.
+The framework must be observable where performance can degrade.
 
-AvaX must be honest where performance is unknown.
+The framework must be honest where performance is unknown.
 
 No code may be called fast, optimized, lightweight, scalable, production-grade, or high-performance without evidence.
 
@@ -189,7 +189,7 @@ Security wins over speed.
 
 ### 3.4 Predictability Beats Peak Speed
 
-AvaX should prefer predictable behavior over impressive single-run numbers.
+The framework should prefer predictable behavior over impressive single-run numbers.
 
 Good systems control:
 
@@ -2077,7 +2077,7 @@ Planning may continue.
 
 ## 45. Existing Code Recovery Rule
 
-When recovering code from `avax-backup.txt`, `Framework.txt`, `Components.txt`, or git history, performance must be
+When recovering code from legacy backups or git history, performance must be
 revalidated.
 
 Old code is not automatically performant.
@@ -2217,7 +2217,7 @@ Fast without security is dangerous.
 
 Fast without observability is fragile.
 
-AvaX must measure before optimizing, bound every public operation, expose performance truth, and protect long-lived
+The framework must measure before optimizing, bound every public operation, expose performance truth, and protect long-lived
 runtimes from memory and state leaks.
 
 If performance makes the system clearer, safer, and more predictable, it belongs.

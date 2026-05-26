@@ -1,0 +1,73 @@
+[pack-gen] === AI Review Pack Generator ===
+[pack-gen] Root: /home/shomsy/projects/avax-auth-rewrite-v2
+[pack-gen] Pack dir: /home/shomsy/projects/avax-auth-rewrite-v2/_pack
+[pack-gen] DUPLICATE files detected:
+[pack-gen]   - File 'tooling/governance' appears in both '01-governance-architecture' and '04-governance-tooling'
+[pack-gen]   - File '.agents/management/baselines' appears in both '01-governance-architecture' and '04-governance-tooling'
+[pack-gen]   - File 'tooling/validation' appears in both '01-governance-architecture' and '04-governance-tooling'
+[pack-gen]   - File 'tooling/testing' appears in both '04-governance-tooling' and '05-testing-strategy'
+[pack-gen] 
+Generating: 01-governance-architecture
+[pack-gen]   Copied 464 files
+[pack-gen]   Generating TREE.txt
+[pack-gen]   Generating STATS.md
+[pack-gen]   Generating REVIEW_CONTEXT.md
+[pack-gen]   Creating ZIP: review-01-governance-architecture.zip
+[pack-gen]   Validation: {"valid":true,"zip_entries":467,"size":3515387,"size_mb":3.35,"has_review_context":true,"has_tree":true,"has_stats":true,"forbidden_entries":[],"metadata_errors":[]}
+[pack-gen] 
+Generating: 02-identity-component
+[pack-gen]   Copied 777 files
+[pack-gen]   Generating TREE.txt
+[pack-gen]   Generating STATS.md
+[pack-gen]   Generating REVIEW_CONTEXT.md
+[pack-gen]   Creating ZIP: review-02-identity-component.zip
+[pack-gen]   Validation: {"valid":true,"zip_entries":780,"size":3650825,"size_mb":3.48,"has_review_context":true,"has_tree":true,"has_stats":true,"forbidden_entries":[],"metadata_errors":[]}
+[pack-gen] 
+Generating: 03-framework-core
+[pack-gen]   Copied 458 files
+[pack-gen]   Generating TREE.txt
+[pack-gen]   Generating STATS.md
+[pack-gen]   Generating REVIEW_CONTEXT.md
+[pack-gen]   Creating ZIP: review-03-framework-core.zip
+[pack-gen]   Validation: {"valid":true,"zip_entries":461,"size":1056160,"size_mb":1.01,"has_review_context":true,"has_tree":true,"has_stats":true,"forbidden_entries":[],"metadata_errors":[]}
+[pack-gen] 
+Generating: 04-governance-tooling
+[pack-gen]   SKIP (not found): EVIDENCE/governance
+[pack-gen]   Copied 191 files
+[pack-gen]   Generating TREE.txt
+[pack-gen]   Generating STATS.md
+[pack-gen]   Generating REVIEW_CONTEXT.md
+[pack-gen]   Creating ZIP: review-04-governance-tooling.zip
+[pack-gen]   Validation: {"valid":true,"zip_entries":193,"size":2699936,"size_mb":2.57,"has_review_context":true,"has_tree":true,"has_stats":true,"forbidden_entries":[],"metadata_errors":[]}
+[pack-gen] 
+Generating: 05-testing-strategy
+[pack-gen]   Copied 412 files
+[pack-gen]   Generating TREE.txt
+[pack-gen]   Generating STATS.md
+[pack-gen]   Generating REVIEW_CONTEXT.md
+[pack-gen]   Creating ZIP: review-05-testing-strategy.zip
+[pack-gen]   Validation: {"valid":true,"zip_entries":415,"size":2953392,"size_mb":2.82,"has_review_context":true,"has_tree":true,"has_stats":true,"forbidden_entries":[],"metadata_errors":[]}
+[pack-gen] 
+Generating: 06-self-explaining-architecture
+[pack-gen]   Copied 40 files
+[pack-gen]   Generating TREE.txt
+[pack-gen]   Generating STATS.md
+[pack-gen]   Generating REVIEW_CONTEXT.md
+[pack-gen]   Creating ZIP: review-06-self-explaining-architecture.zip
+[pack-gen]   Validation: {"valid":true,"zip_entries":42,"size":185548,"size_mb":0.18,"has_review_context":true,"has_tree":true,"has_stats":true,"forbidden_entries":[],"metadata_errors":[]}
+[pack-gen] Cleaning staging directory: /home/shomsy/projects/avax-auth-rewrite-v2/_pack/staging
+[pack-gen] 
+Staging cleaned
+[pack-gen] 
+Manifest written to: /home/shomsy/projects/avax-auth-rewrite-v2/_pack/2026-05-26-02-58-36-governance-gate-adoption-blocked-review/MANIFEST.md
+[pack-gen] 
+=== Pack Generation Summary ===
+[pack-gen] Generated: 6 packs
+[pack-gen]   review-01-governance-architecture.zip    copied=   464  zip_entries=   467    3.35 MB  OK
+[pack-gen]   review-02-identity-component.zip         copied=   777  zip_entries=   780    3.48 MB  OK
+[pack-gen]   review-03-framework-core.zip             copied=   458  zip_entries=   461    1.01 MB  OK
+[pack-gen]   review-04-governance-tooling.zip         copied=   191  zip_entries=   193    2.57 MB  OK
+[pack-gen]   review-05-testing-strategy.zip           copied=   412  zip_entries=   415    2.82 MB  OK
+[pack-gen]   review-06-self-explaining-architecture.zip copied=    40  zip_entries=    42    0.18 MB  OK
+[pack-gen] 
+Done.

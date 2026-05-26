@@ -37,7 +37,7 @@ Discover and classify:
 - fix-this.md
 - latest evidence for selected TODO
 - CURRENT_TRUTH.md
-- EVIDENCE/EXECUTION.md
+- EVIDENCE/EXECUTION.md only as legacy/transitional source when current evidence activates it
 - how-to rules
 - learning / memory files
 - older archived evidence

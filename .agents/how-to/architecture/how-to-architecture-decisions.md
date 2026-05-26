@@ -2,7 +2,7 @@
 
 ## Status
 
-**MANDATORY** — This document defines non-negotiable rules for recording architecture decisions and executing architecture fitness functions in AvaX.
+**MANDATORY** — This document defines non-negotiable rules for recording architecture decisions and executing architecture fitness functions in the project.
 
 ## Normative Language
 
@@ -52,7 +52,7 @@ Every ADR **MUST** use the following markdown template:
 Describe the technical context, the specific problem being solved, and why it matters now.
 
 ## 2. Decision
-State the exact architectural choice being made. Describe the design, the target boundaries, and how it aligns with AvaX principles.
+State the exact architectural choice being made. Describe the design, the target boundaries, and how it aligns with the project's architectural principles.
 
 ## 3. Trade-Off Analysis (Mandatory)
 Weigh the forces involved. Use the following structured table:
@@ -92,10 +92,12 @@ An **Architecture Fitness Function** is an automated script, test, or static ana
 
 ### 3.2 Mandatory Automated Checks
 
-AvaX enforces the following fitness functions during validation:
-1. **Namespace Drift Check:** `php tooling/refactor/check-namespace-drift.php` (must verify no classes live outside their namespace).
-2. **Public Surface Boundary Check:** `php tooling/refactor/check-public-surface.php` (must verify internal classes do not leak).
-3. **Component Shape Check:** `php tooling/refactor/check-component-canonical-shape.php` (must verify components conform to System/PublicSurface/Flows/Capabilities structure).
+The project enforces the following fitness functions during validation:
+1. **Namespace Drift Check:** A configured validation tool verifies no classes live outside their namespace.
+
+2. **Public Surface Boundary Check:** A configured validation tool verifies internal classes do not leak.
+
+3. **Component Shape Check:** A configured validation tool verifies components conform to the canonical public boundary, flow, and capability structure.
 4. **Deptrac Coupling Check:** `vendor/bin/deptrac analyse` (must verify no horizontal or circular dependency violations).
 
 ### 3.3 Execution and Verification Rules

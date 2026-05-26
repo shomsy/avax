@@ -1,8 +1,8 @@
-# How To Write Avax
+# How To Write AvaX
 
 ## Status
 
-**MANDATORY** — This document defines Avax-specific governance deviations and
+**MANDATORY** — This document defines AvaX-specific governance deviations and
 extensions on top of the reusable baseline profiles.
 
 A rule without an explicit exception **MUST** be treated as mandatory.
@@ -13,12 +13,12 @@ Code review **MUST NOT** mark a scope GREEN when a mandatory rule is violated.
 
 ## 0. What This File Is
 
-This file defines **Avax local deviations and extensions** from the reusable
+This file defines **AvaX local deviations and extensions** from the reusable
 governance baseline.
 
 It does NOT duplicate reusable rules.
 It does NOT weaken reusable rules.
-It extends them where Avax has specific architectural discipline.
+It extends them where AvaX has specific architectural discipline.
 
 ### Imports
 
@@ -37,7 +37,7 @@ When a rule is not mentioned here, the reusable baseline applies.
 ### Precedence
 
 ```
-L4 Avax overlay (this file) wins for Avax-specific naming,
+L4 AvaX overlay (this file) wins for AvaX-specific naming,
 filesystem shape, component structure, stage lock, and local architecture rules.
 
 L1-L3 reusable profiles provide the baseline for everything else.
@@ -82,7 +82,7 @@ components/<Area>/<Component>/System/
   Foundation/
 ```
 
-See `AGENTS.md §13` for the full canonical component shape.
+See `.agents/how-to/components/how-to-design-components.md` for the full canonical component shape.
 
 ### 2.2 Use Case to Flow Mapping (Cockburn)
 
@@ -173,7 +173,7 @@ Singletons **MUST NOT** retain request-specific data. Static state must be bound
 
 ### 4.5 Runtime Hot Path Prohibitions
 
-Runtime hot paths **MUST** avoid reflection, filesystem scans, config parsing, env reads, dynamic discovery, and object-graph assembly unless explicitly justified. See `AGENTS.md §1 Law 10`.
+Runtime hot paths **MUST** avoid reflection, filesystem scans, config parsing, env reads, dynamic discovery, and object-graph assembly unless explicitly justified. See `.agents/how-to/verification/how-to-system-performance.md` and `.agents/how-to/architecture/how-to-runtime-composition.md`.
 
 ---
 
@@ -181,7 +181,7 @@ Runtime hot paths **MUST** avoid reflection, filesystem scans, config parsing, e
 
 ### 5.1 Verification Proof and Evidence
 
-Every architectural claim or implementation slice **MUST** write or update context-loaded evidence per the specifications in `AGENTS.md`.
+Every architectural claim or implementation slice **MUST** write or update context-loaded evidence per the root evidence contract in `AGENTS.md` and the task-specific governance documents.
 
 - **Evidence Location:** Evidence files live under `.agents/management/evidence/`.
 - **Validation Commands:** Code structure validation runs through tooling:
@@ -217,6 +217,28 @@ Every mandatory validation gate **MUST** have at least one negative test case. A
 ### 6.5 Fitness Function Gates
 
 Architecture fitness functions defined in ADRs **MUST** be implemented as automated tests or static analysis gates. See `how-to-architecture-decisions.md §3`.
+
+### 6.6 Gate Adoption for Legacy Debt
+
+AvaX allows phased adoption of newly introduced governance gates only through explicit baselines:
+
+```bash
+php tooling/validation/check-phpstan-baseline.php --mode=baseline
+php tooling/validation/check-phpstan-baseline.php --mode=changed
+php tooling/governance/check-self-explaining-architecture.php --mode=baseline
+php tooling/governance/check-self-explaining-architecture.php --mode=changed
+php tooling/testing/check-shallow-tests.php --mode=baseline
+php tooling/testing/check-shallow-tests.php --mode=changed
+```
+
+Rules:
+
+- New AvaX code has no baseline excuse.
+- Changed AvaX code must leave its area cleaner or equal and must not add baseline debt.
+- Security-sensitive changed code must prove fail-closed behavior with negative tests.
+- Identity rewrite work treats changed-scope PHPStan, self-explaining architecture, and shallow-test findings as HARD BLOCKERS.
+- Legacy findings may remain only when recorded under `.agents/management/baselines/` with owner, reason, remediation category, and review date.
+- FULL_GREEN_ENTERPRISE_READY is forbidden until full-mode gates are clean or remaining debt is formally accepted as YELLOW governance debt.
 
 ---
 
@@ -284,12 +306,56 @@ When this file summarizes a rule, the referenced document is authoritative.
 
 ---
 
+## 9. Generated Artifact Discipline
+
+### 9.1 Cleanup After Generation
+
+Any agent that generates artifacts (review packs, dumps, reports, ZIPs, evidence files)
+MUST clean up failed or botched attempts before declaring work complete.
+
+Successful historical artifacts MUST be preserved — they serve as development
+history, backup, and audit trail.
+
+```text
+Rule: Keep all valid outputs. Delete only failed/botched ones.
+Action: Inspect each artifact folder. If valid (complete metadata, intact archives),
+        leave it. If broken or incomplete, delete it.
+Evidence: git status must show no tracked generated artifacts.
+```
+
+### 9.2 Permission Awareness
+
+Agents MUST be aware of file ownership when creating artifacts.
+
+```text
+If the agent runs with elevated permissions (root), generated files
+will be owned by root and may not be deletable by the regular user.
+
+Rules:
+1. Prefer running as the project owner user (shomsy).
+2. If root files are created, chown or chmod them back to the project user.
+3. If deletion fails, use PHP recursive deletion (RecursiveDirectoryIterator
+   with CHILD_FIRST) which runs in-process and bypasses shell permission issues.
+```
+
+### 9.3 Stale Artifact Detection
+
+Before starting a generation task, check for and report pre-existing stale artifacts.
+
+```text
+Check: ls -d _pack/*/ 2>/dev/null
+If more than one folder exists, report the staleness as a YELLOW finding
+and clean up (or document) before creating new output.
+```
+
+---
+
 ## 10. Override Semantics
 
-This file declares Avax-specific overrides. The override behavior is:
+This file declares AvaX-specific overrides. The override behavior is:
 
 1. **This file extends** reusable profiles — it does not replace them.
 2. **When this file is silent**, the reusable baseline applies.
-3. **When this file speaks**, it wins for Avax.
+3. **When this file speaks**, it wins for AvaX.
 4. **Reusable profiles cannot be weakened** by this file for safety/security rules.
-5. **Reusable profiles can be narrowed** by this file for stricter Avax discipline.
+5. **Reusable profiles can be narrowed** by this file for stricter AvaX discipline.

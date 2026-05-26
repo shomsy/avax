@@ -6,9 +6,9 @@ Evo kompletan predlog za ceo `how-to-prompt-to-ai.md`, preuređen iz tvog drafta
 ## Status
 
 - Status: INTERNAL_DRAFT
-- Scope: AvaX AI-assisted execution prompts
-- Applies to: Codex, Qoder, OpenCode, Antigravity, Copilot-style agents, and any AI executor working on AvaX
-- Owner: AvaX maintainer
+- Scope: Project AI-assisted execution prompts
+- Applies to: Codex, Qoder, OpenCode, Antigravity, Copilot-style agents, and any AI executor working on this stack
+- Owner: Project maintainer
 - Purpose: Defines how AI agents must be prompted, constrained, reviewed, validated, and allowed to commit
 - Non-goal: This file does not replace `AGENTS.md` or `.agents/how-to/*.md`; it explains how prompts must force agents to obey them
 
@@ -16,9 +16,9 @@ Evo kompletan predlog za ceo `how-to-prompt-to-ai.md`, preuređen iz tvog drafta
 
 ## 1. Purpose
 
-AvaX uses AI-assisted engineering, but AI speed is useful only when it preserves engineering quality.
+The framework uses AI-assisted engineering, but AI speed is useful only when it preserves engineering quality.
 
-This document defines the required standard for writing prompts to AI agents working on AvaX.
+This document defines the required standard for writing prompts to AI agents working on the project.
 
 Every AI prompt must produce work that is:
 
@@ -34,7 +34,7 @@ Every AI prompt must produce work that is:
 
 A fast low-quality patch is failure.
 
-AvaX must look like the work of a serious framework engineer.
+The framework must look like the work of a serious framework engineer.
 
 If a change would embarrass the project in a Staff/Principal-level review, it must not be committed.
 
@@ -66,7 +66,7 @@ All implementation must be at the level of:
 - Staff/Principal engineer review
 - enterprise-grade PHP 8.5 style
 - advanced OOP, not cheap OOP
-- strict AvaX how-to governance
+- strict how-to governance
 - behavior-first tests
 - security/runtime safety
 - clear ownership boundaries
@@ -708,7 +708,7 @@ The agent must stop if unrelated production/test/composer/autoload files are dir
 
 The agent must not stage:
 
-* `avax.part-*` files
+* project-specific part files (`*.part-*`)
 * `.codex` files
 * screenshots
 * IDE/editor files
@@ -926,25 +926,14 @@ vendor/bin/phpstan analyse <focused-paths> --memory-limit=1G
 Then add relevant gates:
 
 ```bash
-php tooling/refactor/check-component-suite-structure.php
-php tooling/refactor/check-duplicate-owners.php
-php tooling/refactor/check-namespace-drift.php
-php tooling/refactor/check-public-surface.php
-php tooling/refactor/check-runtime-composition-leaks.php
-php tooling/governance/check-governance-index-current.php
-php tooling/governance/check-root-evidence-hygiene.php
-bash verify-governance.sh .
+php tooling/<governance-area>/check-<specific-rule>.php
+php tooling/<governance-area>/check-<other-rule>.php
 ```
 
 Use optional gates when available and relevant:
 
 ```bash
-php tooling/refactor/check-direct-instantiation.php
-php tooling/refactor/check-constructor-bloat.php
-php tooling/refactor/check-service-provider-coverage.php
-php tooling/refactor/check-broken-reference-semantics.php
-php tooling/governance/check-large-unit-thresholds.php
-php tooling/governance/check-semantic-phpdoc.php
+php tooling/<governance-area>/check-<optional-rule>.php
 ```
 
 If a command is unavailable, the agent must document:
@@ -1102,7 +1091,7 @@ Use this skeleton for remediation prompts:
 ```text
 MISSION: <Exact mission> to 11++
 
-Project: AvaX
+Project: <project-name>
 Mode: HARNESS-FULL
 Prompt Type: Remediation
 Assigned TODO: <TODO-ID>
@@ -1175,7 +1164,7 @@ Use this skeleton for verification-only prompts:
 ```text
 MISSION: <Exact verification mission> to 11++
 
-Project: AvaX
+Project: <project-name>
 Mode: HARNESS-FULL
 Prompt Type: Verification-only
 Assigned TODO: <TODO-ID>
@@ -1238,7 +1227,7 @@ Use this skeleton for review-only prompts:
 ```text
 MISSION: <Exact review mission> to 11++
 
-Project: AvaX
+Project: <project-name>
 Mode: HARNESS-FULL
 Prompt Type: Review-only
 
@@ -1295,11 +1284,11 @@ FINAL OUTPUT:
 
 ## 28. Final Rule
 
-AI agents are allowed to accelerate AvaX.
+AI agents are allowed to accelerate the project.
 
 They are not allowed to lower its engineering standard.
 
-AvaX must look like the work of a serious framework engineer.
+The framework must look like the work of a serious framework engineer.
 
 No context, no code.
 

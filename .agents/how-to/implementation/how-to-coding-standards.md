@@ -2,12 +2,11 @@
 
 ## Status
 
-**MANDATORY** - This document defines non-negotiable coding standards for AvaX.
+**MANDATORY** - This document defines non-negotiable coding standards for the project.
 
 ## Normative Language
 
-The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
-*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, **BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
 
 - **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
 - **MUST NOT / FORBIDDEN**: prohibited pattern.
@@ -1498,7 +1497,7 @@ Your final output must include:
 
 Call sites must be intent-first, fluent, and DSL-like.
 
-## General AvaX Rule
+## General Rule
 
 Do not expose nested conversion/wrapping mechanics in flow, public surface, runtime, or orchestration code.
 

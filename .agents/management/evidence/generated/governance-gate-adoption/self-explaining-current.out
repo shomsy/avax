@@ -1,0 +1,1710 @@
+=== Self-Explaining Architecture Check ===
+Scanning: /home/shomsy/projects/avax-auth-rewrite-v2/components
+Docs scan: /home/shomsy/projects/avax-auth-rewrite-v2/docs
+
+Class index: 3610 files, 3582 classes indexed
+
+Scanning documentation files...
+Scanning flow directories for diagram coverage...
+=== FINDINGS ===
+
+--- HIGH (172) ---
+  [HIGH] components/API/ApiBlueprint
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/API/ApiBlueprint/System
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/API/ApiBlueprint/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/API/ApiBlueprint/System/Flows
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/API/Contracts
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/API/GraphQL
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/API/GraphQL/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/API/OpenAPI
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/API/SchemaGeneration
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Cache/System
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Cache/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Cache/System/Capabilities/CompiledCache
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Cache/System/Capabilities/Distribution
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Cache/System/Capabilities/Lifecycle
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Cache/System/Capabilities/Observability
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Cache/System/Capabilities/Source
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Cache/System/Capabilities/Storage
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Cache/System/PublicSurface
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Config
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Config/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Container
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Container/System
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Container/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Container/System/Capabilities/Composition
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Container/System/Capabilities/ContainerObservability
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Container/System/Capabilities/Declaration
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Container/System/Flows
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/DateTime
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Facade
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Facade/System
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/FeatureFlags
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Filesystem
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Filesystem/System/Flows
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Localization
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Pipeline
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Storage
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Text/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Validation
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Application/Validation/System/Capabilities/Metadata
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/CLI
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/CLI/Console
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/CLI/Console/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Data
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Data/System
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Data/System/Capabilities/Operators
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Data/System/Capabilities/Structures
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Data/System/Flows
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/DataTransfer
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/DataTransfer/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/DataTransfer/System/Flows
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Database
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Database/System
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Database/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Database/System/Capabilities/Connections
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Database/System/Capabilities/Migrations
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Database/System/Capabilities/ORM
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Database/System/Capabilities/Query
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Database/System/Capabilities/Query/Advanced
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Database/System/Capabilities/Query/Builder
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Database/System/Capabilities/Query/IR
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Database/System/Capabilities/Telemetry
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Database/System/Flows
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Database/System/Foundation/Lifecycle
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Persistence
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Persistence/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DataStack/Persistence/System/Flows
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DeveloperTools
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DeveloperTools/CodeGeneration
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DeveloperTools/Diagnostics
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DeveloperTools/Documentation/Api
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DeveloperTools/DumpDebugger
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DeveloperTools/Dx
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/DeveloperTools/TestSupport
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Foundation/CallableSerialization
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/AfterResponse
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/ApiVersioning
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/Client
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/Client/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/ContentNegotiation
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/Context
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/Dispatcher
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/Middleware
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/Request
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/Request/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/Request/System/Flows
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/Response
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/Router
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/Router/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/Router/System/Flows
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/SecureRequest
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/Security
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/Session
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/Session/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/System
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/HTTP/URI
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Access
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Access/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Access/System/Capabilities/RiskBasedAccess
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Auth/System
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Auth/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Auth/System/Capabilities/Identity
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Auth/System/Capabilities/Identity/Sessions
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Auth/System/Capabilities/IdentitySync/SCIM
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Auth/System/Capabilities/IdentitySync/SCIM/Runtime
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Auth/System/Configuration
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Auth/System/Flows
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Auth/System/Flows/VerifyIdentity
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Credentials
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Credentials/System/Capabilities/Mfa/Runtime
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Credentials/System/Capabilities/Passkey
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Credentials/System/Capabilities/Passkey/Runtime
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/ExternalIdentity
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/ExternalIdentity/System/Capabilities/OAuth
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/ExternalIdentity/System/Capabilities/OAuth/Runtime
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/ExternalIdentity/System/Capabilities/OpenIDConnect
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/ExternalIdentity/System/Capabilities/OpenIDConnect/Runtime
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/ExternalIdentity/System/Capabilities/SingleSignOn
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/ExternalIdentity/System/Capabilities/SingleSignOn/FederationRuntime
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Security
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Tenancy
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Tenancy/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Tenancy/System/Capabilities/Runtime/Tenant
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Tokens
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Identity/Tokens/System/Capabilities/Tokens/Runtime
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Integration/ObjectStorage
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/ApplicationWorkflow
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/ApplicationWorkflow/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/ApplicationWorkflow/System/Flows/Saga
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/BackgroundProcesses
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Concurrency
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Concurrency/System
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Delivery
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Events
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Events/System
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Filesystem
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Logging
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Mail
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Mail/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/MemoryLifecycle
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/MessageBus
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/MessageBus/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Notifications
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Observability
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Observability/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Parallelism
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Queue
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Queue/System
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Queue/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Realtime
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Realtime/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Resilience
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Resilience/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Resilience/System/Flows
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/RuntimeSupervision
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Scheduler
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Operations/Tasks
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Presentation
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Presentation/View
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Security
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Security/Cryptography
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Security/DataProtection
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Security/Hashing
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Security/Privacy
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Security/Redaction
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/Security/Secrets
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/SystemDesign/System/Capabilities
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/SystemDesign/System/Capabilities/Capacity
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/SystemDesign/System/Capabilities/Messaging
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+  [HIGH] components/SystemDesign/System/Flows
+    Important boundary missing README.md — readers and AI cannot understand ownership
+
+--- MEDIUM (184) ---
+  [MEDIUM] components/API/ApiBlueprint
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/API/ApiBlueprint/System
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/API/ApiBlueprint/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/API/ApiBlueprint/System/Flows
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/API/Contracts
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/API/GraphQL
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/API/GraphQL/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/API/OpenAPI
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/API/SchemaGeneration
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Cache/README.md
+    README does not explain what does NOT belong here (negative space required for AI)
+
+  [MEDIUM] components/Application/Cache
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Cache/System
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Cache/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Cache/System/Capabilities/CompiledCache
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Cache/System/Capabilities/Distribution
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Cache/System/Capabilities/Lifecycle
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Cache/System/Capabilities/Observability
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Cache/System/Capabilities/Source
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Cache/System/Capabilities/Storage
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Cache/System/PublicSurface
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Config
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Config/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Container
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Container/docs/adr/index.md
+    ADR missing Context (why this decision needed to be made)
+
+  [MEDIUM] components/Application/Container/docs/adr/index.md
+    ADR missing Decision (what was decided)
+
+  [MEDIUM] components/Application/Container/docs/adr/index.md
+    ADR missing Consequences (what this means for the codebase)
+
+  [MEDIUM] components/Application/Container/System
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Container/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Container/System/Capabilities/Composition
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Container/System/Capabilities/ContainerObservability
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Container/System/Capabilities/Declaration
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Container/System/Flows
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/DateTime
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Facade
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Facade/System
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/FeatureFlags
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Filesystem
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Filesystem/System/Flows
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Localization
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Pipeline
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Storage
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Text/README.md
+    README does not explain what does NOT belong here (negative space required for AI)
+
+  [MEDIUM] components/Application/Text
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Text/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Validation
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Application/Validation/System/Capabilities/Metadata
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/CLI
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/CLI/Console
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/CLI/Console/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Data
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Data/System
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Data/System/Capabilities/Operators
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Data/System/Capabilities/Structures
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Data/System/Flows
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/DataTransfer
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/DataTransfer/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/DataTransfer/System/Flows
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Database
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Database/System
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Database/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Database/System/Capabilities/Connections
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Database/System/Capabilities/Migrations
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Database/System/Capabilities/ORM
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Database/System/Capabilities/Query
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Database/System/Capabilities/Query/Advanced
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Database/System/Capabilities/Query/Builder
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Database/System/Capabilities/Query/IR
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Database/System/Capabilities/Telemetry
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Database/System/Flows
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Database/System/Foundation/Lifecycle
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Persistence
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Persistence/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DataStack/Persistence/System/Flows
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DeveloperTools
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DeveloperTools/CodeGeneration
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DeveloperTools/Diagnostics
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DeveloperTools/Documentation/Api
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DeveloperTools/DumpDebugger
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DeveloperTools/Dx
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/DeveloperTools/TestSupport
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Foundation/CallableSerialization
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/AfterResponse
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/ApiVersioning
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/Client
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/Client/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/ContentNegotiation
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/Context
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/Dispatcher
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/Middleware
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/Request
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/Request/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/Request/System/Flows
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/Response
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/Router
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/Router/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/Router/System/Flows
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/SecureRequest
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/Security
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/Session
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/Session/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/System
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/HTTP/URI
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Access
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Access/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Access/System/Capabilities/RiskBasedAccess
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Auth/README.md
+    README does not explain what does NOT belong here (negative space required for AI)
+
+  [MEDIUM] components/Identity/Auth
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Auth/System
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Auth/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Auth/System/Capabilities/Identity
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Auth/System/Capabilities/Identity/Sessions
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Auth/System/Capabilities/IdentitySync/SCIM
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Auth/System/Capabilities/IdentitySync/SCIM/Runtime
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Auth/System/Configuration
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Auth/System/Flows
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Auth/System/Flows/VerifyIdentity
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Credentials
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Credentials/System/Capabilities/Mfa/Runtime
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Credentials/System/Capabilities/Passkey
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Credentials/System/Capabilities/Passkey/Runtime
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/ExternalIdentity
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/ExternalIdentity/System/Capabilities/OAuth
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/ExternalIdentity/System/Capabilities/OAuth/Runtime
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/ExternalIdentity/System/Capabilities/OpenIDConnect
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/ExternalIdentity/System/Capabilities/OpenIDConnect/Runtime
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/ExternalIdentity/System/Capabilities/SingleSignOn
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/ExternalIdentity/System/Capabilities/SingleSignOn/FederationRuntime
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Security
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Tenancy
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Tenancy/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Tenancy/System/Capabilities/Runtime/Tenant
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Tokens
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Identity/Tokens/System/Capabilities/Tokens/Runtime
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Integration/ObjectStorage
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/ApplicationWorkflow
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/ApplicationWorkflow/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/ApplicationWorkflow/System/Flows/Saga
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/BackgroundProcesses
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Concurrency
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Concurrency/System
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Delivery
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Events
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Events/System
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Filesystem
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Logging
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Mail
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Mail/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/MemoryLifecycle
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/MessageBus
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/MessageBus/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Notifications
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Observability
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Observability/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Parallelism
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Queue
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Queue/System
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Queue/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Realtime
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Realtime/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Resilience
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Resilience/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Resilience/System/Flows
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/RuntimeSupervision
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Scheduler
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Operations/Tasks
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Presentation
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Presentation/View
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Security
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Security/Cryptography
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Security/DataProtection
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Security/Hashing
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Security/Privacy
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Security/Redaction
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/Security/Secrets
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/SystemDesign/README.md
+    README lacks explicit ownership statement — needs a clear "This X owns/is responsible for Y" declaration
+
+  [MEDIUM] components/SystemDesign/README.md
+    README does not explain what does NOT belong here (negative space required for AI)
+
+  [MEDIUM] components/SystemDesign
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/SystemDesign/System/Capabilities
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/SystemDesign/System/Capabilities/Capacity
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/SystemDesign/System/Capabilities/Messaging
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+  [MEDIUM] components/SystemDesign/System/Flows
+    Important boundary missing dictionary/ — terms are not grounded for AI and new developers
+
+--- LOW (207) ---
+  [LOW] components/API/ApiBlueprint
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/API/ApiBlueprint/System
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/API/ApiBlueprint/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/API/ApiBlueprint/System/Flows
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/API/Contracts
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/API/GraphQL
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/API/GraphQL/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/API/OpenAPI
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/API/SchemaGeneration
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Cache
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Cache/System
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Cache/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Cache/System/Capabilities/CompiledCache
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Cache/System/Capabilities/Distribution
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Cache/System/Capabilities/Lifecycle
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Cache/System/Capabilities/Observability
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Cache/System/Capabilities/Source
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Cache/System/Capabilities/Storage
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Cache/System/PublicSurface
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Config
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Config/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Container/System
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Container/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Container/System/Capabilities/Composition
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Container/System/Capabilities/ContainerObservability
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Container/System/Capabilities/Declaration
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Container/System/Flows
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/DateTime
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Facade
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Facade/System
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/FeatureFlags
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Filesystem
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Filesystem/System/Flows
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Localization
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Pipeline
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Storage
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Text
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Text/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Validation
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Application/Validation/System/Capabilities/Metadata
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/CLI
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/CLI/Console
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/CLI/Console/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Data
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Data/System
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Data/System/Capabilities/Operators
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Data/System/Capabilities/Structures
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Data/System/Flows
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/DataTransfer
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/DataTransfer/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/DataTransfer/System/Flows
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Database
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Database/System
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Database/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Database/System/Capabilities/Connections
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Database/System/Capabilities/Migrations
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Database/System/Capabilities/ORM
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Database/System/Capabilities/Query
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Database/System/Capabilities/Query/Advanced
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Database/System/Capabilities/Query/Builder
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Database/System/Capabilities/Query/IR
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Database/System/Capabilities/Telemetry
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Database/System/Flows
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Database/System/Foundation/Lifecycle
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Persistence
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Persistence/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DataStack/Persistence/System/Flows
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DeveloperTools
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DeveloperTools/CodeGeneration
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DeveloperTools/Diagnostics
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DeveloperTools/Documentation/Api
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DeveloperTools/DumpDebugger
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DeveloperTools/Dx
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/DeveloperTools/TestSupport
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Foundation/CallableSerialization
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/AfterResponse
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/ApiVersioning
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/Client
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/Client/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/ContentNegotiation
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/Context
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/Dispatcher
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/Middleware
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/Request
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/Request/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/Request/System/Flows
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/Response
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/Router
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/Router/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/Router/System/Flows
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/SecureRequest
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/Security
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/Session
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/Session/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/System
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/HTTP/URI
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Access
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Access/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Access/System/Capabilities/RiskBasedAccess
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Auth
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Auth/System
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Auth/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Auth/System/Capabilities/Identity
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Auth/System/Capabilities/Identity/Sessions
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Auth/System/Capabilities/IdentitySync/SCIM
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Auth/System/Capabilities/IdentitySync/SCIM/Runtime
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Auth/System/Configuration
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Auth/System/Flows
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Auth/System/Flows/VerifyIdentity
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Credentials
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Credentials/System/Capabilities/Mfa/Runtime
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Credentials/System/Capabilities/Passkey
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Credentials/System/Capabilities/Passkey/Runtime
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/ExternalIdentity
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/ExternalIdentity/System/Capabilities/OAuth
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/ExternalIdentity/System/Capabilities/OAuth/Runtime
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/ExternalIdentity/System/Capabilities/OpenIDConnect
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/ExternalIdentity/System/Capabilities/OpenIDConnect/Runtime
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/ExternalIdentity/System/Capabilities/SingleSignOn
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/ExternalIdentity/System/Capabilities/SingleSignOn/FederationRuntime
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Security
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Tenancy
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Tenancy/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Tenancy/System/Capabilities/Runtime/Tenant
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Tokens
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Identity/Tokens/System/Capabilities/Tokens/Runtime
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Integration/ObjectStorage
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/ApplicationWorkflow
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/ApplicationWorkflow/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/ApplicationWorkflow/System/Flows/Saga
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/BackgroundProcesses
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Concurrency
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Concurrency/System
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Delivery
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Events
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Events/System
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Filesystem
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Logging
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Mail
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Mail/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/MemoryLifecycle
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/MessageBus
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/MessageBus/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Notifications
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Observability
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Observability/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Parallelism
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Queue
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Queue/System
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Queue/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Realtime
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Realtime/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Resilience
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Resilience/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Resilience/System/Flows
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/RuntimeSupervision
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Scheduler
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Operations/Tasks
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Presentation
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Presentation/View
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Security
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Security/Cryptography
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Security/DataProtection
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Security/Hashing
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Security/Privacy
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Security/Redaction
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/Security/Secrets
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/SystemDesign
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/SystemDesign/System/Capabilities
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/SystemDesign/System/Capabilities/Capacity
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/SystemDesign/System/Capabilities/Messaging
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] components/SystemDesign/System/Flows
+    Important boundary has no adr/ folder — create when architectural decisions are made
+
+  [LOW] docs/examples/self-explaining-architecture/events/docs/adr/0001-event-dispatch-strategy.md
+    Documentation references class/interface 'SendWelcomeEmail' which does not exist in the codebase
+
+  [LOW] docs/examples/self-explaining-architecture/events/docs/mistakes/common-event-mistakes.md
+    Documentation references class/interface 'ProcessPayment' which does not exist in the codebase
+
+  [LOW] docs/examples/self-explaining-architecture/events/docs/mistakes/common-event-mistakes.md
+    Documentation references class/interface 'ProcessPaymentListener' which does not exist in the codebase
+
+  [LOW] docs/examples/self-explaining-architecture/events/docs/mistakes/common-event-mistakes.md
+    Documentation references class/interface 'OrderPlaced' which does not exist in the codebase
+
+  [LOW] docs/examples/self-explaining-architecture/events/docs/mistakes/common-event-mistakes.md
+    Documentation references class/interface 'PlaceOrderFlow' which does not exist in the codebase
+
+  [LOW] docs/examples/self-explaining-architecture/events/docs/mistakes/common-event-mistakes.md
+    Documentation references class/interface 'SendWelcomeEmail' which does not exist in the codebase
+
+  [LOW] docs/examples/self-explaining-architecture/events/docs/mistakes/common-event-mistakes.md
+    Documentation references class/interface 'CreateUserAuditRecord' which does not exist in the codebase
+
+  [LOW] docs/examples/self-explaining-architecture/events/docs/mistakes/common-event-mistakes.md
+    Documentation references class/interface 'OnUserRegistered' which does not exist in the codebase
+
+  [LOW] docs/examples/self-explaining-architecture/events/docs/mistakes/common-event-mistakes.md
+    Documentation references class/interface 'GenerateInvoicePdf' which does not exist in the codebase
+
+  [LOW] docs/examples/self-explaining-architecture/events/docs/mistakes/common-event-mistakes.md
+    Documentation references class/interface 'UserRegistered' which does not exist in the codebase
+
+  [LOW] docs/examples/self-explaining-architecture/cache/docs/mistakes/common-cache-mistakes.md
+    Documentation references class/interface 'LocalCache' which does not exist in the codebase
+
+  [LOW] docs/examples/self-explaining-architecture/http/docs/adr/0001-routing-strategy.md
+    Documentation references class/interface 'GetUserProfile' which does not exist in the codebase
+
+  [LOW] docs/examples/self-explaining-architecture/http/docs/mistakes/common-http-mistakes.md
+    Documentation references class/interface 'UserController' which does not exist in the codebase
+
+  [LOW] docs/examples/self-explaining-architecture/http/docs/mistakes/common-http-mistakes.md
+    Documentation references class/interface 'GetUserProfile' which does not exist in the codebase
+
+  [LOW] docs/examples/self-explaining-architecture/http/docs/mistakes/common-http-mistakes.md
+    Documentation references class/interface 'RouteCache' which does not exist in the codebase
+
+  [LOW] docs/governance/compatibility-policy.md
+    Documentation references class/interface 'NewClass' which does not exist in the codebase
+
+  [LOW] docs/governance/compatibility-policy.md
+    Documentation references class/interface 'OldClass' which does not exist in the codebase
+
+  [LOW] docs/architecture/extension-plugin-architecture.md
+    Documentation references class/interface 'PaymentExtensionProvider' which does not exist in the codebase
+
+  [LOW] docs/failure-boundary/http-integration.md
+    Documentation references class/interface 'UserController' which does not exist in the codebase
+
+  [LOW] docs/events/fluent-events-dsl.md
+    Documentation references class/interface 'UserRegistered' which does not exist in the codebase
+
+  [LOW] docs/events/fluent-events-dsl.md
+    Documentation references class/interface 'SendWelcomeEmail' which does not exist in the codebase
+
+  [LOW] docs/events/fluent-events-dsl.md
+    Documentation references class/interface 'OrderValidation' which does not exist in the codebase
+
+  [LOW] docs/events/fluent-events-dsl.md
+    Documentation references class/interface 'BlockInvalidOrders' which does not exist in the codebase
+
+  [LOW] docs/database/database-lifecycle-events.md
+    Documentation references class/interface 'EmitUserRegistered' which does not exist in the codebase
+
+  [LOW] components/Identity/Auth/System/Flows/ChangeEmail
+    Complex flow (9 PHP files, ~391 lines) lacks a corresponding Mermaid diagram in docs/ or local directory
+
+  [LOW] components/Identity/Auth/System/Flows/CheckAuthentication
+    Complex flow (9 PHP files, ~557 lines) lacks a corresponding Mermaid diagram in docs/ or local directory
+
+  [LOW] components/Identity/Auth/System/Flows/RecoverAccess
+    Complex flow (9 PHP files, ~385 lines) lacks a corresponding Mermaid diagram in docs/ or local directory
+
+  [LOW] components/Identity/Auth/System/Flows/VerifyIdentity
+    Complex flow (10 PHP files, ~330 lines) lacks a corresponding Mermaid diagram in docs/ or local directory
+
+  [LOW] components/DataStack/DataTransfer/System/Flows/SerializeDataObject
+    Complex flow (6 PHP files, ~186 lines) lacks a corresponding Mermaid diagram in docs/ or local directory
+
+  [LOW] components/Operations/ApplicationWorkflow/System/Flows/Saga
+    Complex flow (97 PHP files, ~5012 lines) lacks a corresponding Mermaid diagram in docs/ or local directory
+
+  [LOW] components/HTTP/Request/System/Flows/CreateRequestFromGlobals
+    Complex flow (6 PHP files, ~135 lines) lacks a corresponding Mermaid diagram in docs/ or local directory
+
+  [LOW] components/HTTP/Request/System/Flows/ReadRequestInput
+    Complex flow (5 PHP files, ~91 lines) lacks a corresponding Mermaid diagram in docs/ or local directory
+
+=== SUMMARY ===
+Boundaries scanned: 1818
+Important boundaries: 177
+BLOCKER: 0
+HIGH: 172
+MEDIUM: 184
+LOW: 207
+Total findings: 563

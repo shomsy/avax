@@ -2,7 +2,7 @@
 
 ## Status
 
-**MANDATORY** — This document defines non-negotiable runtime composition rules for AvaX.
+**MANDATORY** — This document defines non-negotiable runtime composition rules for the project.
 
 A rule without an explicit exception **MUST** be treated as mandatory.
 
@@ -10,8 +10,7 @@ Code review **MUST NOT** mark a scope GREEN when a mandatory rule is violated.
 
 ## Normative Language
 
-The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
-*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, **BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
 
 - **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
 - **MUST NOT / FORBIDDEN**: prohibited pattern.
@@ -288,7 +287,7 @@ Foundation value objects (named constructors)
 event classes (data objects only)
 exception classes
 DTO classes
-composition roots (Avax::create, CreateApplication)
+composition roots (Application::create, CreateApplication)
 ```
 
 A composition root is the highest-level entry point that wires the entire application. It is the only place where the
@@ -881,11 +880,11 @@ PublicSurface classes and static facades **MUST NOT** call `app()`, `container()
 Allowed delegation targets:
 - injected runtime object (preferred, instance-based)
 - official boot-configured facade bridge (set during registration, not via lookup)
-- generated/compiled runtime accessor approved by AvaX runtime composition rules
+- generated/compiled runtime accessor approved by runtime composition rules
 
 See also:
 ```text
-.agents/how-to/modeling/how-to-model-flows.md — §12.1 AvaX Anti-Service-Locator DX Rule
+.agents/how-to/modeling/how-to-model-flows.md — §12.1 Anti-Service-Locator DX Rule
 ```
 
 ---
@@ -921,7 +920,7 @@ The Container Ownership Rule, which defines when classes must be DI-managed vers
 defined in:
 
 ```text
-.agents/how-to/how-to-dependency-injection.md — Section 6: Container Ownership Rule
+.agents/how-to/implementation/how-to-dependency-injection.md — Section 6: Container Ownership Rule
 ```
 
 That document includes:
@@ -938,7 +937,7 @@ The DI document defines the broader ownership law.
 ### 9.1 Detection tool
 
 ```bash
-php tooling/refactor/check-runtime-composition-leaks.php
+run the configured runtime-composition leak checker
 ```
 
 The tool scans production runtime folders and detects:
@@ -970,9 +969,9 @@ The tool is context-aware:
 This tool runs alongside existing gates:
 
 ```bash
-php tooling/refactor/check-runtime-leaks.php
-php tooling/refactor/check-component-canonical-shape.php
-php tooling/refactor/check-public-surface.php
+run the configured runtime-leak checker
+run the configured component-shape checker
+run the configured public-boundary checker
 ```
 
 ### 9.3 CI enforcement
@@ -1041,7 +1040,7 @@ runtime.
 Runtime classes MUST use constructor injection.
 
 - **FORBIDDEN**: `$container->get(...)` inside a Flow or Capability.
-- **FORBIDDEN**: `Avax::get(...)` inside a Flow or Capability.
+- **FORBIDDEN**: `Application::get(...)` inside a Flow or Capability.
 - **FORBIDDEN**: Passing the container itself as a dependency to a runtime class.
 
 **Status:** MANDATORY  
@@ -1118,7 +1117,7 @@ Runtime receives ready pipeline.
 
 ## 14. Root Application Container Rule
 
-AvaX MUST use one canonical root Application Container as the runtime object graph owner.
+The framework MUST use one canonical root Application Container as the runtime object graph owner.
 
 ---
 
@@ -1139,8 +1138,8 @@ Mixing them in runtime code is a SoC violation.
 For Separation of Concern governance, see:
 
 ```text
-.agents/how-to/how-to-architecture.md — Section 57
-.agents/how-to/how-to-design-components.md — Section 32
+.agents/how-to/architecture/how-to-architecture.md — Section 57
+.agents/how-to/components/how-to-design-components.md — Section 32
 ```
 
 ---
@@ -1148,7 +1147,7 @@ For Separation of Concern governance, see:
 ## 14. Root Application Container Rule
 
 ```text
-.agents/how-to/how-to-dependency-injection.md
+.agents/how-to/implementation/how-to-dependency-injection.md
 ```
 
 **Short version:**
@@ -1180,4 +1179,3 @@ Relevant principles for runtime composition:
 - **Structural Honesty:** Runtime composition must reveal real dependency boundaries. Never hide machinery behind `app()` shortcuts or global state.
 - **Cognitive Load:** Runtime code should execute, not assemble. If a runtime flow assembles its own dependencies, the design is suspicious.
 - **Fluent API:** Runtime entrypoints should feel fluent. `$runtime->handle($request)` not `$runtime->execute(Factory::create(Builder::build(...)))`.
-

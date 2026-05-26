@@ -1,99 +1,10 @@
 # how-to-dependency-injection.md
 
-# AvaX Dependency Injection, ServiceProvider & Fluent API Governance
+# Dependency Injection, ServiceProvider & Fluent API Governance
 
-## 1. Status
-
-This document is mandatory governance for AvaX framework development.
-
-It defines how AvaX uses dependency injection, service providers, autowiring, and fluent API design.
-
-This is not a suggestion.
-This is not a style preference.
-This is a correctness, maintainability, and architecture rule.
-
----
-
-## 2. Core Philosophy
-
-```text
-Framework = DI.
-Every dependency flows through the container.
-No cheap code. No hidden instantiation. No scattered responsibilities.
-```
-
-AvaX is a dependency injection framework at its core.
-
-Every component, every flow, every capability receives its dependencies through the container.
-
-No class instantiates another class unless it is a composition root, factory, or test.
-
-No method masks missing dependencies with `?? new Fallback()`.
-
-No static call replaces what DI should resolve.
-
----
-
-## 3. Dependency Injection Law
-
-### 3.1 Constructor Injection — The Default
-
-Constructor injection is the primary mechanism for stable, long-lived dependencies.
-
-```php
-final readonly class RegisterUser
-{
-    public function __construct(
-        private UserRepository $users,
-        private HashPassword $hashPassword,
-        private PublishDomainEvent $publishEvent,
-    ) {}
-}
-```
-
-Rules:
-
-```text
-Constructor promotion is mandatory for DI parameters.
-final readonly class is the default.
-0-4 dependencies: normal.
-5-7 dependencies: check responsibility.
-8+ dependencies: architecture warning, consider splitting.
-```
-
-### 3.2 Method Injection / Autowiring — Runtime Context
-
-Method injection is allowed for request-scoped or runtime-scoped context:
-
-```text
-request-scoped dependencies
-controller action parameters
-command handler context
-message consumer context
-policy context
-current user / session / request
-transaction scope
-```
-
-```php
-public function __invoke(
-    #[Body] RegisterRequest $request,
-    #[CurrentUser] User|null $user,
-    #[Config('security.registration_enabled')] bool $enabled,
-): Response {
-    // ...
-}
-```
-
-### 3.3 Method-Level Autowiring — Mandatory for Route Handlers
-
-Route handlers and CLI commands MUST support method-level autowiring.
-
-The container resolves method parameters by type at invocation time.
-
-This is not optional.
-This is not "nice to have."
-This is how AvaX eliminates `new Class()` in runtime code.
+It defines how the project uses dependency injection, service providers, autowiring, and fluent API design.
+Dependency injection is at the framework's core.
+This is how the framework eliminates `new Class()` in runtime code.
 
 ### 3.4 Forbidden
 
@@ -291,7 +202,7 @@ The framework MUST have a dedicated `FrameworkBootstrapServiceProvider` located 
 This provider is responsible for the earliest bootstrap phase and MUST:
 
 1. Bind the `RootApplicationContainer` itself into the container.
-2. Use the canonical alias `avax.container` for the root container.
+2. Use the canonical alias `app.container` for the root container.
 3. Ensure the container is available as a service for approved composition contexts.
 
 **Status:** MANDATORY  
@@ -588,7 +499,7 @@ Every other `new Class()` in production code is a violation.
 
 ## 6. Container Lifetime and Scope Taxonomy
 
-AvaX uses a strict taxonomy for container object lifetimes and scopes.
+The framework uses a strict taxonomy for container object lifetimes and scopes.
 Bindings MUST explicitly declare their intended scope.
 
 ### 7.1 Singleton Scope
@@ -986,7 +897,7 @@ final readonly class HandleIncomingHttp
 For the full runtime composition law, see:
 
 ```text
-.agents/how-to/how-to-runtime-composition.md
+.agents/how-to/architecture/how-to-runtime-composition.md
 ```
 
 ### 6.10 Golden Path Example Rule
@@ -1073,7 +984,7 @@ Is it optional? It is registered, not detected.
 
 ## 7.6 Root Application Container Rule
 
-AvaX MUST use one canonical root Application Container as the runtime object graph owner.
+The framework MUST use one canonical root Application Container as the runtime object graph owner.
 
 Components MUST NOT own independent runtime containers by default.
 
@@ -1505,7 +1416,7 @@ System/Configuration/Builders/
 explicit factory classes (for result objects, not graph assembly)
 test setup (tests/)
 tooling scripts (tooling/)
-composition roots (Avax::create, CreateApplication)
+composition roots (Application::create, CreateApplication)
 ```
 
 **GOOD:**
@@ -1567,13 +1478,13 @@ Non-instantiable class MUST report: is it abstract? interface? missing autoload?
 
 ## 11. Tooling Gates
 
-The following tooling gates enforce this governance:
+The following configured gates enforce this governance:
 
 ```bash
-php tooling/refactor/check-container-service-locator.php
-php tooling/refactor/check-constructor-bloat.php
-php tooling/refactor/check-direct-instantiation.php
-php tooling/refactor/check-service-provider-coverage.php
+run the configured container service-locator checker
+run the configured constructor-bloat checker
+run the configured direct-instantiation checker
+run the configured service-provider coverage checker
 ```
 
 These gates are mandatory before any stage may be marked GREEN.
@@ -1817,8 +1728,8 @@ DI ensures that:
 For Separation of Concern governance, see:
 
 ```text
-.agents/how-to/how-to-architecture.md — Section 57 (Separation of Concern Rule)
-.agents/how-to/how-to-design-components.md — Section 32 (Separation of Concern Rule)
+.agents/how-to/architecture/how-to-architecture.md — Section 57 (Separation of Concern Rule)
+.agents/how-to/components/how-to-design-components.md — Section 32 (Separation of Concern Rule)
 ```
 
 DI without SoC creates well-wired god objects. SoC without DI creates separated but uncomposable fragments. Both are required.

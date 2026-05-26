@@ -12,6 +12,7 @@ declare(strict_types=1);
  * - Max 10MB total size
  * - No archive-like folders
  * - No .install-archive (runtime noise)
+ * - Root files must be known legacy anchors or timestamp-prefixed
  *
  * Exit 0 = GREEN, Exit 1 = FAIL
  */
@@ -90,6 +91,25 @@ foreach ($dirs as $dir) {
     }
 }
 
+// --- Rule 5: New root files must be timestamp-prefixed ---
+$legacyRootFiles = [
+    'README.md',
+    'EXECUTION.md',
+    'route-cache-plan.md',
+];
+
+foreach ($files as $file) {
+    if (in_array($file, $legacyRootFiles, true)) {
+        continue;
+    }
+
+    if (preg_match('/^\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}-[a-z0-9][a-z0-9-]*\.md$/', $file) === 1) {
+        continue;
+    }
+
+    $failures[] = "Root evidence file is not a legacy anchor or timestamp-prefixed: {$file}";
+}
+
 // Also check files for obvious runtime noise
 $noisePatterns = [
     'EVIDENCE.txt',     // raw dump
@@ -115,7 +135,7 @@ foreach (array_merge($dirs, $files) as $name) {
     }
 }
 
-// --- Rule 5: .install-archive specifically forbidden ---
+// --- Rule 6: .install-archive specifically forbidden ---
 if (is_dir($evidenceDir . '/.install-archive') || is_dir($evidenceDir . '/install-archive')) {
     $failures[] = '.install-archive found (runtime noise, must be deleted or moved to archive)';
 }

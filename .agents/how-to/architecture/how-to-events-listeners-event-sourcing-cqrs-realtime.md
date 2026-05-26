@@ -1,17 +1,16 @@
-# How To Use Events, Listeners, Event Sourcing, CQRS & Realtime Architecture In AvaX
+# How To Use Events, Listeners, Event Sourcing, CQRS & Realtime Architecture
 
 ## Status
 
-Normative / AvaX Governance
+Normative / Events Governance
 
 ## Scope
 
-AvaX framework, components, examples, tests, docs, evidence, and future event-driven features.
+The framework, components, examples, tests, docs, evidence, and future event-driven features.
 
 ## Normative Language
 
-The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
-*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, **BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
 
 - **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
 - **MUST NOT / FORBIDDEN**: prohibited pattern.
@@ -31,12 +30,12 @@ Code review **MUST NOT** mark a scope GREEN when a mandatory rule is violated.
 
 ## 1. Purpose
 
-This document defines how AvaX uses events, listeners, event-driven reactions, event sourcing, CQRS, projections,
+This document defines how The framework uses events, listeners, event-driven reactions, event sourcing, CQRS, projections,
 outbox/inbox, sagas, realtime delivery, and event governance.
 
 It complements `how-to-use-advanced-architecture-patterns.md`, which covers the generic pattern mechanics. This document
-covers the AvaX-specific model: how events work in AvaX, what the fluent DSL looks like, how listeners are compiled, how
-realtime delivery fits, how event observability works, and how AvaX governance itself uses event-sourced thinking.
+covers the project-specific model: how events work in the project, what the fluent DSL looks like, how listeners are compiled, how
+realtime delivery fits, how event observability works, and how The project's governance itself uses event-sourced thinking.
 
 Core philosophy:
 
@@ -182,14 +181,14 @@ final readonly class SendWelcomeEmail
 
 ---
 
-## 4. AvaX Event / Listener Public Model
+## 4. Event / Listener Public Model
 
 ### Rules
 
 - Userland events **SHOULD** be plain readonly classes.
 - Userland listeners **SHOULD** be concrete invokable classes.
-- AvaX **MUST NOT** require every event to implement `EventInterface`.
-- AvaX **MUST NOT** require every listener to implement `ListenerInterface`.
+- The framework **MUST NOT** require every event to implement `EventInterface`.
+- The framework **MUST NOT** require every listener to implement `ListenerInterface`.
 - Stoppable behavior **MAY** use `PSR\StoppableEventInterface` when PSR-14 is available.
 - Infrastructure contracts belong around emitter, dispatcher, provider, registry, compiler, and adapters — not userland
   events.
@@ -236,7 +235,7 @@ That is a capability choice, not a requirement.
 
 ---
 
-## 5. AvaX Fluent Events DSL
+## 5. Fluent Events DSL
 
 ### Target API
 
@@ -374,7 +373,7 @@ That is wrong.
 
 ### Rules
 
-- AvaX event system **MUST** be dogfooded before full GREEN.
+- The event system **MUST** be dogfooded before full GREEN.
 - At least one real/reference flow **SHOULD** emit a real event.
 - At least one real listener **SHOULD** react.
 - Tests **MUST** prove listener execution.
@@ -464,7 +463,7 @@ ProjectionRunner
 ### Conceptual Example (Future Capability)
 
 ```php
-// Event sourcing is a future capability in AvaX.
+// Event sourcing is a future capability in the project.
 // This is conceptual, not implemented.
 
 final readonly class OrderPlaced
@@ -505,7 +504,7 @@ CQRS separates write intent from read models when they have different reasons to
 
 See `how-to-use-advanced-architecture-patterns.md` section 13 for detailed CQRS rules.
 
-### AvaX-Specific Rules
+### Project-Specific Rules
 
 - CQRS **MUST NOT** become a default folder style.
 - CQRS **SHOULD** be used when write side and read side have different models, performance needs, or complexity.
@@ -530,13 +529,13 @@ See `how-to-use-advanced-architecture-patterns.md` section 13 for detailed CQRS 
 - fake Commands/Queries folders created for style
 ```
 
-### AvaX Structure Rule
+### Structure Rule
 
 Do not create generic top-level `CQRS/` folder by default.
 
 Place command/query/read-model logic inside the owning flow/capability.
 
-The AvaX architecture law still wins:
+The The architecture law still wins:
 
 ```text
 folder says flow or capability
@@ -981,7 +980,7 @@ Examples in this section are design targets, not working APIs.
 
 ### Philosophy
 
-AvaX governance uses event-sourced thinking for its own evidence trail.
+The project's governance uses event-sourced thinking for its own evidence trail.
 
 ```text
 Evidence files are the event log.
@@ -1050,7 +1049,7 @@ The evidence history must always reconcile to current truth.
 
 ### Rules
 
-- Events capability should have one canonical owner: `components/Operations/Events/`.
+- The events capability should have one canonical owner in a dedicated component.
 - Domain-specific event sources may exist, but they must not claim generic ownership.
 - MessageBus/EventBus may be adapter-specific if documented.
 - Database telemetry events may be event sources.
@@ -1074,7 +1073,7 @@ Only `Operations/Events/` owns the general-purpose event system.
 
 The others are domain-specific sources that may emit through canonical events in the future.
 
-### AvaX Architecture Law
+### Architecture Law
 
 ```text
 folder says flow or capability
@@ -1323,7 +1322,7 @@ This document works with:
 
 | Document                                       | Relationship                                                                                                |
 |------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
-| `how-to-use-advanced-architecture-patterns.md` | That document covers generic pattern mechanics. This covers AvaX-specific event model, DSL, and governance. |
+| `how-to-use-advanced-architecture-patterns.md` | That document covers generic pattern mechanics. This covers project-specific event model, DSL, and governance. |
 | `how-to-design-components.md`                  | Events capability follows canonical component shape.                                                        |
 | `how-to-dogfooding.md`                         | Event system must be dogfooded before GREEN.                                                                |
 | `how-to-system-security.md`                    | Event payloads must be redacted. Realtime channels must be authorized.                                      |

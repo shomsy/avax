@@ -1,0 +1,13 @@
+=== Self-Explaining Architecture Check ===
+Scanning: /home/shomsy/projects/avax-auth-rewrite-v2/components
+Docs scan: /home/shomsy/projects/avax-auth-rewrite-v2/docs
+
+Class index: 3610 files, 3582 classes indexed
+
+Scanning documentation files...
+Scanning flow directories for diagram coverage...
+=== self-explaining-architecture Changed Mode ===
+Changed files: 183
+Findings in changed scope: 14
+Blocking findings: 0
+GREEN — changed scope has no blocking findings for this gate.

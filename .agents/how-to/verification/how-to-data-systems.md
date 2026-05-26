@@ -2,7 +2,7 @@
 
 ## Status
 
-**MANDATORY** — This document defines non-negotiable rules for data system correctness, transaction handling, and consistency boundaries in AvaX.
+**MANDATORY** — This document defines non-negotiable rules for data system correctness, transaction handling, and consistency boundaries in the project.
 
 ## Normative Language
 

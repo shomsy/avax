@@ -2,12 +2,11 @@
 
 ## Status
 
-**MANDATORY** - This document defines non-negotiable component design rules for AvaX.
+**MANDATORY** - This document defines non-negotiable component design rules for the project.
 
 ## Normative Language
 
-The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
-*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, **BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
 
 - **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
 - **MUST NOT / FORBIDDEN**: prohibited pattern.
@@ -27,12 +26,12 @@ Code review **MUST NOT** mark a scope GREEN when a mandatory rule is violated.
 
 ## 1. Purpose
 
-This document defines how AvaX components must be designed, completed, composed, exported, tested, and promoted into
+This document defines how components must be designed, completed, composed, exported, tested, and promoted into
 platform-level capabilities.
 
-AvaX must not become a pile of components.
+The framework must not become a pile of components.
 
-AvaX must become a coherent platform made of clear planes:
+The framework must become a coherent platform made of clear planes:
 
 ```text
 runtime
@@ -50,15 +49,15 @@ A component is not finished because it has folders.
 A component is finished only when it solves a real platform problem through a stable public boundary, strong internal
 behavior, testable adapters, failure handling, diagnostics, documentation, and operational proof.
 
-This document is a hard governance rule for AvaX component design.
+This document is a hard governance rule for component design.
 
 ---
 
 ## 2. Core Philosophy
 
-AvaX components are not decorative modules.
+Components are not decorative modules.
 
-AvaX components are reusable platform muscles.
+Components are reusable platform muscles.
 
 A component must have a clear reason to exist:
 
@@ -85,9 +84,9 @@ Internal machinery may be powerful, but it must stay behind the component bounda
 
 ## 3. Platform Plane Model
 
-AvaX is not only a component collection.
+The framework is not only a component collection.
 
-AvaX must be organized around platform planes.
+The framework must be organized around platform planes.
 
 ### 3.1 Runtime Plane
 
@@ -327,7 +326,7 @@ If it creates production code for V2/V3 behavior, it waits for Kernel Green.
 
 ## 6. Canonical Component Filesystem Law
 
-Every production AvaX component must follow one canonical filesystem shape.
+Every production A component must follow one canonical filesystem shape.
 
 The component root must make ownership obvious.
 
@@ -1025,9 +1024,9 @@ The filesystem must still say flow or capability.
 
 ## 6.8 Use Case Translation Rule
 
-AvaX does not use `UseCases/` as a default folder.
+The framework does not use `UseCases/` as a default folder.
 
-In AvaX vocabulary, a use case is represented as a `Flow`.
+In the framework's vocabulary, a use case is represented as a `Flow`.
 
 A flow owns one complete user, system, runtime, or platform action.
 
@@ -1066,10 +1065,10 @@ Use Capability when behavior is reusable across multiple flows.
 
 ### 6.8.1 Use Case Goal Level Mapping
 
-We map Alistair Cockburn's use case levels (*Writing Effective Use Cases*) directly to AvaX architecture layers:
-1. **Summary Level (Cloud/Kite):** High-level business process (e.g. `ManageCustomerAccounts`). Mapped to AvaX subsystems or components (e.g. `components/AccountManagement/`), never to a single Flow.
-2. **User-Goal Level (Sea Level):** A primary goal of a primary actor (e.g. `RegisterUser`, `CheckoutBasket`). Mapped directly to an AvaX **Flow Slice** (e.g. `Flows/RegisterUser/RegisterUser.php`).
-3. **Subfunction Level (Fish/Underwater):** A low-level step or helper action (e.g. `VerifyEmailToken`, `HashPassword`). Mapped to an AvaX **Capability** (e.g. `Capabilities/VerifyEmailToken/`) or a private helper method inside the Flow, NEVER to its own Flow slice.
+We map Alistair Cockburn's use case levels (*Writing Effective Use Cases*) directly to The architecture layers:
+1. **Summary Level (Cloud/Kite):** High-level business process (e.g. `ManageCustomerAccounts`). Mapped to framework subsystems or components (e.g. `components/AccountManagement/`), never to a single Flow.
+2. **User-Goal Level (Sea Level):** A primary goal of a primary actor (e.g. `RegisterUser`, `CheckoutBasket`). Mapped directly to a **Flow Slice** (e.g. `Flows/RegisterUser/RegisterUser.php`).
+3. **Subfunction Level (Fish/Underwater):** A low-level step or helper action (e.g. `VerifyEmailToken`, `HashPassword`). Mapped to a **Capability** (e.g. `Capabilities/VerifyEmailToken/`) or a private helper method inside the Flow, NEVER to its own Flow slice.
 
 ### 6.8.2 Constraints on Flow Size and Complexity
 
@@ -1267,9 +1266,18 @@ Production code and tests must not be mixed without a clear reason.
 
 Documentation is required.
 
-A `Docs/` folder inside `System/` is not required by default.
+A `Docs/` folder inside `System/` is forbidden as a generic technical bucket.
 
-Prefer project-level documentation and reports unless the component is a package that intentionally ships its own docs.
+Use the documentation layer that matches the ownership boundary:
+
+```text
+docs/                                  global or cross-component documentation
+components/<Area>/<Component>/docs/    component-local self-explaining architecture
+components/<Area>/<Component>/README.md short component ownership summary
+EVIDENCE/ or .agents/management/evidence/ proof and reports
+```
+
+Component-local `docs/` is allowed when it explains local ownership, ADRs, dictionaries, diagrams, mistakes, or flow behavior. It must not redefine global governance.
 
 Allowed:
 
@@ -1281,6 +1289,20 @@ components/
       System/
         PublicSurface/
         Capabilities/
+```
+
+Allowed:
+
+```text
+components/
+  Application/
+    Cache/
+      docs/
+        README.md
+        adr/
+        dictionary/
+        diagrams/
+        mistakes.md
 ```
 
 Allowed:
@@ -1305,7 +1327,7 @@ System/
   Docs/
 ```
 
-unless the component is explicitly package-shaped and the docs are meant to ship with it.
+Use component-local `docs/` outside `System/` instead.
 
 ---
 
@@ -1405,7 +1427,7 @@ Do not create `Manifests/` as a dumping ground.
 | `Contracts/`     |                      no | Prefer the real promise, e.g. Compatibility, PublicApi, CacheStore. |
 | `UseCases/`      |                      no | Use Flows instead.                                                  |
 | `Tests/`         |                      no | Prefer central test tree unless exporting a test kit.               |
-| `Docs/`          |                      no | Prefer component README, docs, or reports.                          |
+| `Docs/`          |                      no | Forbidden as a `System/` bucket. Use component-local `docs/`.        |
 | `Domain/`        |                      no | DDD concepts live inside owning flows or capabilities.              |
 | `Services/`      |                      no | Use exact action names.                                             |
 | `Commands/`      |                      no | Use flow names.                                                     |
@@ -1598,7 +1620,7 @@ Router does not own the full HTTP lifecycle.
 
 ### 11.6 External Boundary Implementation
 
-Use when AvaX integrates with external infrastructure.
+Use when the framework integrates with external infrastructure.
 
 Example:
 
@@ -1607,7 +1629,7 @@ ObjectStorage exposes a stable public storage promise.
 LocalObjectStorage provides local storage behavior.
 S3ObjectStorage provides S3-backed storage behavior.
 CheckObjectStorageHealth verifies reachability.
-MapObjectStorageFailure maps external failures into AvaX failures.
+MapObjectStorageFailure maps external failures into the project failures.
 ```
 
 ### 11.7 Reliability Wrapper
@@ -1707,7 +1729,7 @@ Before a component is marked complete, it must answer every section below.
 [ ] Is there a local implementation where useful?
 [ ] Is there a production implementation boundary?
 [ ] Are production implementations isolated from public API?
-[ ] Are production failures mapped into AvaX failures?
+[ ] Are production failures mapped into the project failures?
 ```
 
 ### 13.4 Configuration
@@ -2151,6 +2173,258 @@ A component with stale documentation is not complete.
 
 ---
 
+## 24A. Self-Explaining Documentation Gate
+
+### Status
+**MANDATORY**
+**Severity:** BLOCKER
+
+### Rule
+
+NO component may be marked GREEN without self-explaining documentation at every important ownership boundary.
+
+Self-explaining documentation is not optional. It is the difference between a component that explains itself and a component that requires archaeological excavation.
+
+Every important boundary must be readable by a human or AI agent without opening the code.
+
+### 24A.1 Minimum Required Documentation
+
+Every important boundary MUST have:
+
+| Document | Required When | Severity If Missing |
+|----------|--------------|---------------------|
+| `README.md` | Always for important boundaries | HIGH |
+| `dictionary/` | When complexity justifies it (5+ domain-specific terms) | MEDIUM |
+| `docs/adr/` | When architectural decisions are locked | MEDIUM |
+| Mermaid diagrams | When flows are non-trivial (3+ handoffs or 5+ steps) | MEDIUM |
+| `mistakes.md` | When the area is risky (security, persistence, external I/O, runtime state) | HIGH |
+
+### 24A.2 Complexity Thresholds
+
+A boundary is **important** when ANY of the following are true:
+
+```text
+- boundary has 10+ PHP files
+- boundary has System/ folder (canonical component shape)
+- boundary has PublicSurface/ folder
+- boundary has Flows/ or Capabilities/ folder
+- boundary exposes public API
+- boundary owns security-sensitive behavior
+- boundary owns persistence or external I/O
+- boundary owns runtime state or worker lifecycle
+```
+
+A boundary is **complex** when ANY of the following are true:
+
+```text
+- boundary has 25+ PHP files
+- boundary has 3+ sub-boundaries
+- boundary has 5+ domain-specific terms
+- boundary has 3+ external dependencies
+- boundary has non-trivial flow (3+ handoffs or 5+ steps)
+- boundary has locked architectural decisions
+```
+
+Complex boundaries require the full documentation suite. Important boundaries require at minimum README.md.
+
+### 24A.3 Exemptions
+
+The following boundaries are exempt from mandatory documentation:
+
+```text
+- small utilities under 3 PHP files with no subdirectories
+- Foundation/ folders (tiny neutral primitives)
+- InternalSystem/ concept folders
+- ExportedCapabilities/ concept folders
+- single-file adapters or shims
+- test fixtures and test helpers
+- generated or compiled artifacts
+```
+
+Exempt boundaries must still follow naming rules and responsibility clarity. Exemption does not mean chaos.
+
+### 24A.4 README.md Requirements
+
+Every important boundary README.md MUST explain:
+
+```text
+- what this boundary owns (positive space)
+- what does NOT belong here (negative space — mandatory for AI grounding)
+- which platform plane it belongs to
+- what public API it exposes
+- what flows it owns or participates in
+- what capabilities it provides
+- how it is configured
+- how it fails
+- how it is observed
+- how it is tested
+- what is not owned here
+```
+
+A README that only restates the folder name is insufficient. A README that does not explain negative space is incomplete.
+
+### 24A.5 Dictionary Requirements
+
+When a boundary is complex enough to warrant a dictionary:
+
+```text
+- every public term must have an entry
+- every term must explain "What It Is"
+- every term must explain "What It Is NOT" (mandatory for AI grounding)
+- every term must explain "Common Confusion" (mandatory for AI grounding)
+- terms must use canonical names from docs/governance/canonical-terms.md
+- entries must be grounded in real code behavior, not abstract definitions
+```
+
+Dictionary entry format:
+
+```markdown
+<a id="term-slug"></a>
+
+### `TermName`
+
+**What It Is:**
+Plain explanation of the concept.
+
+**What It Is NOT:**
+Clear boundaries on what this term does not mean.
+
+**Common Confusion:**
+What other terms this is easily confused with and why they are different.
+```
+
+### 24A.6 ADR Requirements
+
+When architectural decisions are locked:
+
+```text
+- ADR MUST have Status (proposed | accepted | deprecated | superseded)
+- ADR MUST have Context (why this decision needed to be made)
+- ADR MUST have Decision (what was decided)
+- ADR MUST have Consequences (what this means for the codebase)
+- ADR MUST include trade-off analysis (why this option over alternatives)
+- ADR MUST record assumptions and risks
+```
+
+ADR format:
+
+```markdown
+# ADR-NNN: Short Decision Title
+
+**Status:** proposed | accepted | deprecated | superseded
+
+## Context
+Why this decision needed to be made.
+
+## Decision
+What was decided.
+
+## Consequences
+What this means for the codebase, team, and future work.
+
+## Trade-off Analysis
+| Option | Pros | Cons | Why Rejected |
+|--------|------|------|--------------|
+| Option A | ... | ... | ... |
+| Option B (chosen) | ... | ... | — |
+
+## Assumptions
+- ...
+
+## Risks
+- ...
+```
+
+### 24A.7 Mermaid Diagram Requirements
+
+Non-trivial flows MUST have Mermaid diagrams:
+
+```text
+- flows with 3+ handoffs require sequenceDiagram
+- flows with 5+ steps require step-by-step annotation
+- flows crossing component boundaries require explicit participant labels
+- diagrams use real file/function names, not abstract participant names
+- autonumber is used by default unless it makes the picture worse
+- flowchart is used only when topology teaches better than call order
+```
+
+### 24A.8 Mistakes Documentation Requirements
+
+Risky areas MUST document known mistakes:
+
+```text
+- security-sensitive areas: common attack vectors and how this boundary defends
+- persistence areas: data corruption scenarios and prevention
+- external I/O areas: failure modes and recovery
+- runtime state areas: state leak scenarios and reset behavior
+- configuration areas: misconfiguration scenarios and early detection
+```
+
+Mistakes file format:
+
+```markdown
+# Known Mistakes in <Boundary>
+
+## Mistake: <What Goes Wrong>
+
+**Symptom:** What you see when this happens.
+
+**Root Cause:** Why it happens.
+
+**Prevention:** How this boundary prevents it.
+
+**Recovery:** What to do when it happens anyway.
+```
+
+### 24A.9 Ownership Rules
+
+```text
+Who writes docs: The agent or developer who creates or modifies the boundary writes the docs.
+When docs are reviewed: Docs are reviewed as part of every code review touching the boundary.
+When docs are updated: Docs MUST be updated in the same commit as the code change.
+Who approves docs: The reviewer who approves the code change must also approve the docs.
+Stale doc markers: If docs reference files/functions that no longer exist, docs are stale.
+```
+
+Code without docs is incomplete. Code with stale docs is misleading. Both block GREEN.
+
+### 24A.10 GREEN Status Requirement
+
+A component without self-explaining documentation at every important boundary MUST NOT be marked GREEN.
+
+Severity:
+
+```text
+BLOCKER: missing README.md on important boundary
+BLOCKER: missing mistakes.md on risky security/persistence boundary
+HIGH: missing README.md negative space explanation
+HIGH: missing dictionary on complex boundary
+MEDIUM: missing dictionary entry "What It Is NOT" section
+MEDIUM: missing dictionary entry "Common Confusion" section
+MEDIUM: missing Mermaid diagram on non-trivial flow
+MEDIUM: missing ADR on locked architectural decision
+LOW: ADR missing trade-off analysis table
+LOW: dictionary entry could be clearer
+```
+
+### 24A.11 Gate Integration
+
+The configured self-explaining architecture gate validates:
+
+```text
+- important boundaries have README.md
+- README.md explains ownership
+- README.md explains negative space
+- complex boundaries have dictionary/
+- dictionary entries have required sections
+- locked decisions have adr/
+- ADRs have required sections
+```
+
+The gate is an automated check. Human review must still verify quality, not just presence.
+
+---
+
 ## 25. Review Checklist
 
 A component design passes review only if:
@@ -2197,7 +2471,7 @@ It must not be marked production-ready.
 
 ### V1: Production Kernel
 
-V1 proves that AvaX is real.
+V1 proves that The framework is real.
 
 V1 owns:
 
@@ -2273,9 +2547,9 @@ proof.
 
 ## 27. Final Law
 
-AvaX components must not become a pile of folders.
+Components must not become a pile of folders.
 
-AvaX components must become platform muscles.
+Components must become platform muscles.
 
 Concepts are not folders.
 
@@ -2405,170 +2679,15 @@ Threshold trigger requires documented decision. No large unit may be called GREE
 
 ---
 
-<<<<<<< HEAD
-## 31. Hard Enterprise OOP Boundary Rules
-
-### 31.1 Horizontal Blindness / Outward-Only Dependency Law
-
-Sibling subsystems on the same tier must not directly depend on each other.
-
-Communication between sibling subsystems is coordinated by the parent gateway/orchestrator.
-
-**Allowed:**
-
-```text
-AuthenticationGateway coordinates CredentialAuthority and SessionRegistry.
-App::identity()->auth() delegates to internal auth capabilities.
-```
-
-**Forbidden:**
-
-```text
-CredentialAuthority directly depends on SessionRegistry.
-SessionRegistry calls into CredentialAuthority.
-Two sibling capabilities import each other's internal classes.
-```
-
-Dependencies flow:
-- Parent gateway/orchestrator -> child capabilities
-- Child capabilities -> their own internal units and foundation primitives
-- Child capabilities -> parent gateway (callbacks, events, results) — never to siblings
-
-**Status:** MANDATORY  
-**Severity:** HIGH
-
-### 31.2 Boundary Value Object Rule
-
-Do not pass raw primitives across subsystem/capability boundaries when the value carries business grammar.
-
-**Values requiring value objects or domain IDs:**
-
-```text
-EmailAddress, PlainPassword, TenantId, UserId, TokenId,
-PermissionName, RoleName, ClientId, SessionId, AuthContextId
-```
-
-**Allowed primitives (no value object required):**
-
-```text
-local counters, booleans, harmless formatting options,
-pagination limits when not domain-sensitive
-```
-
-When a value crosses a subsystem boundary and its meaning matters to the domain, wrap it. The receiving subsystem must not interpret a raw string that represents a domain concept.
-
-**Status:** MANDATORY  
-**Severity:** HIGH (BLOCKER for security-sensitive boundaries: passwords, tokens, permissions)
-
-### 31.3 Command/Query Clarity Rule
-
-Public methods must be clearly commands or queries, never both.
-
-**Queries:**
-- Must be read-only and side-effect-free
-- Must return data (result object, collection, value, null)
-- Must not mutate state, write to disk, send events, or call external IO
-
-**Commands:**
-- May mutate state and perform side effects
-- Should return `void` or a meaningful command result only:
-  - created ID
-  - issued token
-  - authentication context
-  - domain event
-  - command result object
-- Must not perform unrelated queries (no query-result smuggling)
-
-**Allowed:**
-
-```text
-allows(): bool                    // query
-authentication(): AuthContext     // query
-requireAuthenticatedUser(): void  // command
-issueToken(): Token               // command result
-```
-
-**Forbidden:**
-
-```text
-authenticateAndReturnUser(): User  // command smuggling a query
-saveAndReload(): Entity            // command smuggling a query
-getStatus(): void                  // query returning nothing
-```
-
-**Status:** MANDATORY  
-**Severity:** HIGH
-
-### 31.4 HLD/LLD Mirror Rule
-
-Named HLD subsystem/capability blocks must map to same-named physical code directories or clearly documented public surfaces.
-
-No HLD block may disappear into generic folders like `Services/`, `Managers/`, `Helpers/`, `Support/`, `Utils/`.
-
-The code tree must be readable as the architecture map.
-
-**Allowed:**
-
-```text
-HLD: AuthenticationGateway, CredentialAuthority, SessionRegistry
-Code: AuthenticationGateway/, CredentialAuthority/, SessionRegistry/
-```
-
-**Forbidden:**
-
-```text
-HLD: AuthenticationGateway, CredentialAuthority, SessionRegistry
-Code: Services/AuthService.php, Services/CredentialService.php, Services/SessionService.php
-```
-
-If the HLD says "Gateway" but the code says "Service", the mirror is broken.
-
-**Status:** MANDATORY  
-**Severity:** HIGH
-
-### 31.5 Single Preferred Entry Rule
-
-Each subsystem should expose one preferred public surface/gateway for normal usage.
-
-Internal workers remain internal.
-
-Multiple public surfaces are allowed only when they represent distinct user-facing capabilities and are documented.
-
-**Allowed:**
-
-```text
-AuthenticationGateway         // single preferred entry
-  - authenticate()
-  - requires()
-  - tokens()
-  - sessions()
-```
-
-**Allowed (distinct documented capabilities):**
-
-```text
-AuthenticationGateway         // auth flows
-TokenAuthority                // token lifecycle, documented separately
-```
-
-**Forbidden:**
-
-```text
-AuthHelper, AuthManager, AuthService, AuthProcessor  // fragmented, undocumented entries
-```
-
-**Status:** MANDATORY  
-**Severity:** MEDIUM
-=======
 ## 30. Universal Enterprise Codecraft Rule
 
 **Status:** MANDATORY  
-**Scope:** All AvaX production code, configuration, tests, and infrastructure.  
+**Scope:** All production code, configuration, tests, and infrastructure.
 **Severity:** BLOCKER
 
 ### 30.1 Enterprise-Grade and Human-Readable
 
-Every AvaX unit must be:
+Every unit must be:
 
 - enterprise-grade
 - readable
@@ -2610,7 +2729,7 @@ Enterprise-grade means:
 
 ### 30.2 Human-Readable Enterprise Design
 
-AvaX code must read naturally.
+The framework's code must read naturally.
 
 Folders tell the system story.
 Class names explain intent.
@@ -2785,7 +2904,7 @@ Avoid default usage of:
 - Util
 - Support
 
-Avoid AvaX/Avax branding in class names by default.
+Avoid framework branding in class names by default.
 
 Prefer:
 
@@ -2834,7 +2953,6 @@ RED:
 - raw primitives cross security boundaries
 - architecture docs say one thing, code does another
 - multiple uncontrolled public entry points per subsystem
->>>>>>> 86677e5b8e9e4a41502c82272c1ead440c422dbb
 
 ---
 
@@ -2868,10 +2986,10 @@ A stage **MUST** be RED if:
 ## 30. Object-Oriented Enterprise Architecting Rule
 
 **Status:** MANDATORY
-**Scope:** All AvaX systems, subsystems, components, flows, capabilities, configuration, tests.
+**Scope:** All systems, subsystems, components, flows, capabilities, configuration, tests.
 **Severity:** BLOCKER
 
-Source: Object-Oriented Enterprise Architecting principles, translated into AvaX governance.
+Source: Object-Oriented Enterprise Architecting principles, translated into The project's governance.
 
 ### 30.1 Object-Oriented Thinking Rule
 
@@ -2894,7 +3012,7 @@ Poor OO creates:
 - expensive change because every change ripples through hidden dependencies
 - systems that become impossible to adapt without rewriting
 
-AvaX review must treat fake OOP as an architectural risk, not a style nit.
+Framework review must treat fake OOP as an architectural risk, not a style nit.
 
 Fake OOP indicators:
 
@@ -2923,7 +3041,7 @@ Pattern names must not become class-name theater.
 
 ### 30.4 Ubiquitous Language Rule
 
-AvaX class, folder, and API names must make sense to both developers and system/domain stakeholders.
+Framework class, folder, and API names must make sense to both developers and system/domain stakeholders.
 
 Names must support conversation, not just compilation.
 
@@ -3096,7 +3214,7 @@ Mixed behavior requires explicit result object and evidence.
 
 ### 30.13 Data Mesh / Data Product Thinking
 
-When AvaX exposes data across components or contexts, treat it as a product:
+When the framework exposes data across components or contexts, treat it as a product:
 
 - owned by a clear producer
 - documented for consumers
@@ -3133,7 +3251,7 @@ Do not use Event Sourcing as ceremony.
 
 ### 30.15 Enterprise Reality Rule
 
-AvaX architecture must assume real systems contain:
+The architecture must assume real systems contain:
 
 - multiple vendors
 - multiple technical generations
@@ -3183,7 +3301,7 @@ No GREEN strategic decision without tactical evidence.
 
 ### 30.18 Transformation / Constructor Mental Model
 
-AvaX components can be understood as repeatable transformation machines:
+Components can be understood as repeatable transformation machines:
 
 - input received
 - recipe/rules applied
@@ -3244,9 +3362,9 @@ This affects:
 - event contract stability
 - test independence
 
-### 30.22 AvaX Translation Rule
+### 30.22 Project Translation Rule
 
-All extracted ideas must be translated into AvaX terms:
+All extracted ideas must be translated into the project terms:
 
 - PublicSurface receives
 - Flows execute
@@ -3258,7 +3376,7 @@ All extracted ideas must be translated into AvaX terms:
 - Governance Review validates
 - Component Dogfooding ensures reuse
 
-Do not import terminology blindly if it conflicts with AvaX language.
+Do not import terminology blindly if it conflicts with project language.
 
 ### 30.23 GREEN / YELLOW / RED Criteria
 
@@ -3297,11 +3415,11 @@ RED:
 **Status:** MANDATORY  
 **Severity:** BLOCKER  
 
-This section establishes rules for balancing coupling within software design, translating lessons from *Balancing Coupling in Software Design* (Khononov) to the AvaX Screaming Architecture.
+This section establishes rules for balancing coupling within software design, translating lessons from *Balancing Coupling in Software Design* (Khononov) to the Screaming Architecture.
 
 ### 32.1 Coupling Dimensions
 
-Every unit and subsystem in AvaX **MUST** control its coupling across three primary dimensions:
+Every unit and subsystem in the project **MUST** control its coupling across three primary dimensions:
 1. **Afferent (Inward) & Efferent (Outward) Coupling:** High-level orchestrators (Flows) may depend on low-level capabilities, but low-level capabilities or foundation components **MUST NOT** depend on high-level orchestrators. Sibling components **MUST NOT** cross-couple.
 2. **Temporal Coupling:** Actions that must occur in sequence or simultaneously **MUST** be coordinated explicitly by a Flow or event-handling structure. They **MUST NOT** be coupled implicitly via shared mutable state, filesystems, or global side-effects.
 3. **Semantic Coupling:** Subsystems **MUST NOT** share internal schema details, database structures, or mutable states. Sibling communication **MUST** be mediated strictly via explicit, immutable PublicSurface contracts (boundary value objects).
@@ -3400,6 +3518,4 @@ the component boundaries are suspect.
 If moving two coupled components into the same component makes the coupling obviously acceptable,
 the coupling was intrusive regardless of component distance.
 ```
-
-
 

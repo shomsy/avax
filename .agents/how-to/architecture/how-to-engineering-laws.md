@@ -4,7 +4,7 @@
 
 This document collects engineering laws, heuristics, and cognitive biases that affect software design, review, and operation.
 
-It is project-agnostic. It contains no AvaX-specific details. It applies to any software engineering context.
+It is project-agnostic. It contains no project-specific details. It applies to any software engineering context.
 
 It exists to make review heuristics explicit, consistent, and actionable.
 

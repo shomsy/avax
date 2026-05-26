@@ -1,315 +1,156 @@
+# AGENTS.md - AvaX Thin Execution Contract
 
-
-````markdown
-# AGENTS.md - AvaX Local Project Contract
-
-Version: 3.0.0  
-Status: Normative / Local / Root Contract  
-Scope: `./**`  
+Version: 4.0.0
+Status: Normative / Local / Root Contract
+Scope: `./**`
 Project: AvaX
 
-This file is the root execution contract for AI agents working in this repository.
+This file is the first contract every AI agent must read before planning, editing, validating, reviewing, committing, or reporting work in AvaX.
 
-It is not optional.  
-It is not advisory.  
-It is not a generic hint file.  
-It is the first local contract every agent must read and obey before planning, editing, reviewing, validating, committing, or reporting work in AvaX.
+AGENTS.md is intentionally small. It is the constitution and router, not the encyclopedia.
 
-AvaX uses `.agents` as a project-local AI engineering operating system.
+Detailed SDLC rules live in:
 
-The AvaX Enterprise Remediation Skill is the mandatory bootloader.
+```text
+.agents/how-to/00-how-to-reading-order.md
+.agents/how-to/**
+.agents/skills/**
+.agents/management/**
+ARCHITECTURE.md
+```
 
-The full `.agents` ecosystem is the operating system.
-
-Current governance is the target.  
-Current validation is the judge.  
-Evidence is the proof.
+If this file and another governance document disagree, this file wins for routing, stop conditions, precedence, source-of-truth selection, evidence, validation, branch policy, and final reporting.
 
 ---
 
-## 0. Core Operating Principle
+## 0. AvaX Goal
 
-AvaX is governed by evidence, not optimism.
+AvaX is a runtime-agnostic PHP application platform and engineering system.
 
-No agent may mark work as complete, green, production-ready, secure, performant, architecture-compliant, or review-ready unless current evidence proves it.
-
-Every important claim must be backed by:
+The goal is to build AvaX as:
 
 ```text
-current git state
-current source files
-current validation output
-current evidence
-current TODO/fix-this state
-````
-
-If evidence is missing, the correct status is:
-
-```text
-NOT_PROVEN
+flow-oriented
+capability-oriented
+runtime-neutral
+component-based
+evidence-first
+security-aware
+performance-aware
+AI-readable
+production-readiness governed
 ```
 
-not:
+The project north star is `ARCHITECTURE.md`.
 
-```text
-probably fine
-looks good
-should work
-almost done
-```
+The execution map is `.agents/how-to/00-how-to-reading-order.md`.
 
-Agents must always distinguish between:
-
-```text
-Rule Precedence:
-Which governance rules win when documents disagree.
-
-Project State Source of Truth:
-Which files describe the current project status, active backlog, blockers, completed work, and next allowed action.
-
-Execution Routing:
-Which skills, workflows, and operating loops must be loaded for the current task.
-```
-
-These are separate concerns.
-
-A project status file describes current work.
-It does not override governance.
-
-A governance rule defines how work must be done.
-It does not prove current project status.
-
-A skill routes execution.
-It does not override AGENTS.md or local how-to rules.
+The project overlay is `.agents/how-to/project/how-to-write-avax.md`.
 
 ---
 
-## 1. Non-Negotiable Laws
+## 1. What AGENTS.md Does
 
-The following laws apply to every task.
+AGENTS.md defines:
 
 ```text
-1. No implementation on dirty main.
-2. No production-code implementation directly on main.
-3. One task or bounded slice = one branch/worktree/evidence package/review candidate.
-4. PublicSurface receives and delegates. It must not own runtime machinery.
-5. Configuration/Assembly/Provider boundaries assemble object graphs.
-6. Flows execute behavior.
-7. Capabilities power reusable behavior.
-8. Foundation stays small and primitive.
-9. Components must dogfood existing AvaX capabilities where appropriate.
-10. Runtime hot paths must avoid reflection, filesystem scans, config parsing, env reads, dynamic discovery, and object-graph assembly unless explicitly justified.
+- non-negotiable stop laws
+- rule precedence
+- source-of-truth order
+- execution mode routing
+- mandatory skill routing
+- required preflight
+- branch/worktree policy
+- validation and evidence contract
+- output/reporting contract
+```
+
+AGENTS.md does not duplicate detailed rules for architecture, components, testing, security, performance, documentation, review, or implementation. Those rules are loaded through `.agents/how-to/00-how-to-reading-order.md` and task-relevant skills.
+
+---
+
+## 2. Non-Negotiable Laws
+
+These laws apply to every task:
+
+```text
+1. Evidence beats optimism.
+2. Current validation is the judge.
+3. No production-code implementation directly on main.
+4. No implementation on dirty main.
+5. One bounded task slice owns one evidence package and one review decision.
+6. No Identity implementation may start during governance-only work.
+7. No finding may be fixed by suppression, weakening, bypass, or concealment.
+8. No GREEN claim without current validation and evidence.
+9. BLOCKER and unresolved HIGH findings block GREEN and commit.
+10. Tests must prove behavior, not construction trivia.
 11. Security-sensitive behavior must fail closed and have negative tests.
-12. Tests must prove behavior, not construction trivia.
-13. PARTIAL is not a stop condition in autonomous work.
-14. HARD_BLOCKER is the real stop condition.
-15. Evidence is mandatory.
-16. Deviation audit is an execution gate, not an informational scan. Correction is mandatory before GREEN.
-17. No finding may be fixed by suppression, weakening, or bypass. Suppression is itself a governance violation.
-18. GREEN status must be semantically justified, not decorative. Every remaining deviation must be classified with severity, impact, owner, and phase allowance.
+12. Runtime hot paths must be proven safe for long-lived workers.
+13. PublicSurface receives and delegates; it must not own runtime machinery.
+14. Configuration/Assembly/Provider boundaries assemble object graphs.
+15. Flows execute behavior; Capabilities power reusable behavior.
+16. Components must dogfood AvaX capabilities where appropriate.
+17. Generated evidence proves status but is not canonical governance unless promoted.
+18. PARTIAL is not a stop condition in autonomous work.
+19. HARD_BLOCKER is the real stop condition.
+20. Every remaining deviation must be classified.
+```
+
+Detailed architecture laws are in:
+
+```text
+ARCHITECTURE.md
+.agents/how-to/project/how-to-write-avax.md
+.agents/how-to/architecture/**
+.agents/how-to/components/**
 ```
 
 ---
 
-## 1A. Mandatory Deviation Audit and Correction Lifecycle
+## 2A. Deviation Audit Lifecycle
 
-### Status
-**MANDATORY**
-**Severity:** BLOCKER
-
-### Rule
-
-Deviation audit is NOT an informational scan.
-Deviation audit is an execution gate.
-
-GREEN status is forbidden until the deviation audit and correction lifecycle completes.
-
-### Lifecycle Stages
-
-The lifecycle has five mandatory stages:
+For implementation, refactor, remediation, validation, review, or readiness claims, use this lifecycle:
 
 ```text
-1. VALIDATION
-   Run all applicable validation commands, gates, and checkers.
-   Record every output, finding, and exit code.
-   No validation may be silently skipped.
-
-2. DEVIATION AUDIT
-   Classify every finding against the canonical severity system (see §1B).
-   Map each finding to:
-     - affected files/units
-     - violated rule or governance document
-     - severity level
-     - whether it blocks GREEN, commit, or merge
-
-3. CORRECTION PASS
-   Fix every BLOCKER and HIGH finding.
-   Fix every MEDIUM finding unless explicitly phase-allowed.
-   No correction may use suppression, weakening, or bypass.
-   Each correction must be validated in stage 5.
-
-4. RE-VALIDATION
-   Rerun all validation commands from stage 1.
-   Rerun deviation audit from stage 2 against the corrected state.
-   Verify that corrections did not introduce new findings.
-   Record before/after comparison.
-
-5. COMMIT GATE VERIFICATION
-   Verify no BLOCKER/HIGH finding remains.
-   Verify no MEDIUM finding remains unless explicitly phase-allowed with owner/target/risk.
-   Verify no suppression was used to achieve GREEN.
-   Verify GREEN status is semantically justified (see §1D).
-   Verify all remaining deviations are classified (see §1E).
+validate
+audit findings
+classify severity
+correct BLOCKER/HIGH
+revalidate
+audit again
+write evidence
+report final status
 ```
 
-### Stop Conditions
-
-The lifecycle stops and blocks GREEN when:
+GREEN is forbidden when:
 
 ```text
-- any BLOCKER finding remains uncorrected
-- any HIGH finding remains uncorrected unless explicitly phase-allowed
-- correction used suppression, weakening, or bypass
-- re-validation introduces new BLOCKER/HIGH findings
-- GREEN status cannot be semantically justified
-- remaining deviations lack severity/impact/owner classification
+- any BLOCKER remains
+- any HIGH remains without explicit phase allowance
+- validation failed or was skipped
+- a finding was hidden by suppression or weakened tooling
+- remaining deviations are unclassified
+- evidence does not support the claim
 ```
 
-### Phase Allowance
-
-A finding may be explicitly phase-allowed when:
-
-```text
-- the finding belongs to a future stage locked by EXECUTION.md
-- the finding is LOW severity with documented cleanup plan
-- the finding is MEDIUM severity with owner/target/risk/expiry
-- the finding is accepted as YELLOW debt in the exception register
-```
-
-Phase allowance does not permit GREEN without justification.
-It permits GREEN_WITH_ACCEPTED_YELLOW_DEBT when justified.
-
-### Loop Enforcement
-
-The correction loop is:
-
-```text
-validate → audit → correct → revalidate → audit again → verify gate → commit
-```
-
-If re-validation reveals new findings, the loop restarts at correction.
-The loop continues until all stages pass.
-
-A single pass is not sufficient.
-Correction can introduce new deviations.
-Re-audit is mandatory.
-
-### Integration with Recursive Governance Review
-
-The deviation audit lifecycle is part of the recursive governance review loop.
-
-```text
-implement → validate → audit → correct → revalidate → review → evidence → commit
-```
-
-The deviation audit does not replace the governance review.
-The deviation audit is the validation → audit → correction gate within it.
+Phase allowance is allowed only with owner, risk, mitigation, expiry or review date, and evidence.
 
 ---
 
-## 1B. Canonical Severity Classification System
+## 2B. Canonical Severity System
 
-### Status
-**MANDATORY**
-**Severity:** BLOCKER
+All findings use these severities:
 
-### Rule
+| Severity | Meaning | Blocks GREEN | Blocks Commit |
+|---|---|:---:|:---:|
+| BLOCKER | Unsafe, false, exploitable, corrupting, or mandatory-governance failure. | YES | YES |
+| HIGH | Significant correctness, safety, architecture, security, or evidence gap. | YES | YES unless explicitly phase-allowed |
+| MEDIUM | Maintainability, documentation, local ownership, or test-quality issue. | NO if tracked | NO if tracked |
+| LOW | Cleanup, wording, or minor consistency issue. | NO | NO |
+| INFO | Observation with no required action. | NO | NO |
 
-All governance findings across all AvaX governance documents, skills, how-to files, gates, and reviews must use the canonical severity system.
+Escalate to BLOCKER when the issue threatens:
 
-Ad hoc severity definitions, document-local severity systems, or inconsistent severity naming are forbidden.
-
-### Severity Levels
-
-| Severity | Meaning | Blocks GREEN | Blocks Commit | Blocks Merge | Blocks Release |
-|----------|---------|:---:|:---:|:---:|:---:|
-| **BLOCKER** | Violation prevents safe operation, correctness, or security. Must be fixed immediately. | YES | YES | YES | YES |
-| **HIGH** | Significant gap affecting correctness, safety, architecture, or security. Must be fixed before completion. | YES | YES | YES* | YES* |
-| **MEDIUM** | Maintainability, documentation, local ownership, or test quality issue. Must be tracked and fixed or explicitly deferred. | NO* | NO* | NO | NO |
-| **LOW** | Cleanup, wording polish, or documentation improvement. Tracked but does not block. | NO | NO | NO | NO |
-| **INFO** | Observation or improvement suggestion. No action required. | NO | NO | NO | NO |
-
-\* HIGH blocks GREEN and commit by default. It may be phase-allowed with explicit owner/target/risk/expiry/exception-register entry, in which case status is GREEN_WITH_ACCEPTED_YELLOW_DEBT, not pure GREEN.
-\* MEDIUM blocks GREEN only when untracked. Tracked MEDIUM with owner/target permits GREEN_WITH_ACCEPTED_YELLOW_DEBT.
-
-### Severity Definitions
-
-**BLOCKER:**
-```text
-- security exploit or exploitable weakness
-- data corruption risk
-- runtime state stored in singleton
-- unresolved runtime composition leak in active runtime
-- fake GREEN evidence
-- gate PASS with RED content
-- mandatory gate scans zero active files
-- hidden fallback dependency in runtime
-- missing required dependency in business/runtime code
-- service locator in business/runtime code
-- authentication or authorization bypass
-- injection vulnerability
-- secret exposure in logs or responses
-- validation failure that cannot be classified
-- source-of-truth contradiction that cannot be reconciled
-- mandatory governance file missing
-```
-
-**HIGH:**
-```text
-- potential OWASP-class weakness
-- missing semantic PHPDoc on touched production class
-- public API or framework behavior undocumented
-- constructor with 8+ dependencies without design review
-- PublicSurface over 150 lines without behavior leak review
-- large unit without review decision
-- defense-in-depth gap
-- circular component dependency
-- horizontal sibling dependency on private internals
-- intrusive coupling on implementation details
-- missing negative test for security gate
-- test changed to fit broken behavior
-- missing regression test for fixed bug
-```
-
-**MEDIUM:**
-```text
-- missing PHPDoc on private non-trivial methods
-- unclear intent in internal docblocks
-- test organization issue
-- documentation wording
-- local naming inconsistency
-- missing component-local README
-- cross-cutting concern scattered but not dangerous
-```
-
-**LOW:**
-```text
-- wording polish
-- formatting consistency
-- minor documentation improvement
-- code style suggestion
-```
-
-**INFO:**
-```text
-- observation for future consideration
-- improvement suggestion with no current risk
-- design note or trade-off observation
-```
-
-### Severity Escalation
-
-Default severity escalates to BLOCKER when the issue threatens:
 ```text
 security
 data integrity
@@ -321,375 +162,110 @@ dependency graph correctness
 rollback/recovery safety
 ```
 
-### Finding Format
+Every finding must include:
 
-Every governance finding must include:
 ```text
-severity: BLOCKER | HIGH | MEDIUM | LOW | INFO
-finding: what was discovered
-governance_source: which document and rule
-where: file/path/class/method
-why_it_matters: impact explanation
-required_action: what must be done
-blocks_GREEN: yes/no with justification
+severity
+finding
+governance_source
+where
+why_it_matters
+required_action
+blocks_GREEN
 ```
 
 ---
 
-## 1C. No Fixed By Suppression Rule
+## 2C. No Suppression Rule
 
-### Status
-**MANDATORY**
-**Severity:** BLOCKER
-
-### Rule
-
-No finding may be resolved by suppression, weakening, bypass, or concealment.
-
-The following are classified as governance violations:
+Do not resolve findings by:
 
 ```text
-- disabling a test to achieve GREEN
-- broadening ignore patterns or suppressions to silence findings
-- weakening assertions to make failures disappear
-- hiding failures behind fallbacks or catch-all handlers
-- adding nullable escape hatches to avoid missing dependency failures
-- bypassing validation gates with --skip or --ignore flags
-- silent catch-all exception handling that swallows meaningful errors
-- "temporary" fake fixes without evidence of real repair
-- changing test expectations to match broken behavior
-- removing checks instead of fixing the underlying issue
-- replacing specific validation with always-true returns
-- adding @suppress, @ignore, or @baseline to hide real errors
-- widening glob patterns to exclude affected files from scanning
-- downgrading severity without threat-model justification
-- marking findings as "pre-existing" without classification
+disabling tests
+weakening assertions
+broadening ignores
+adding baselines for new violations
+hiding failures behind fallbacks
+changing tests to match broken behavior
+removing checks instead of fixing causes
+marking issues pre-existing without classification
 ```
 
-### Suppression Is a Governance Violation
+Allowed legacy baselines must live under `.agents/management/baselines/` with owner, reason, severity, remediation category, creation date, and review date.
 
-Using suppression to achieve GREEN is itself a BLOCKER governance violation.
-
-The violation is not merely the suppressed finding.
-The violation is the act of concealment.
-
-### Allowed Suppression
-
-Suppression is allowed only when:
-
-```text
-- the suppression is recorded in the exception register at EVIDENCE/accepted-exceptions-ledger.md
-- the suppression has owner, target version, expiry, risk, and mitigation
-- the suppressed finding is classified with canonical severity
-- the final status says GREEN_WITH_ACCEPTED_YELLOW_DEBT, not GREEN
-- a human reviewer explicitly accepted the suppression
-```
-
-### Detection
-
-Agents must check for suppression by examining:
-```text
-- phpstan baseline files (new entries added in current work)
-- phpunit filter/skip configuration
-- tooling gate exclusions or ignore patterns
-- catch-all exception handlers added in current work
-- nullable type changes that avoid dependency failures
-- test assertion changes that weaken verification
-- gate configuration changes that broaden exclusions
-```
-
-If suppression is detected, the agent must:
-```text
-1. Classify it as a BLOCKER governance violation
-2. Document the suppression in evidence
-3. Refuse GREEN status
-4. Require real correction or explicit exception register entry
-```
+New or changed-scope violations may not use the legacy baseline as an excuse.
 
 ---
 
-## 1D. GREEN Status Justification Requirement
+## 2D. GREEN Justification
 
-### Status
-**MANDATORY**
-**Severity:** BLOCKER
-
-### Rule
-
-GREEN status must be semantically justified, not decorative.
-
-No agent may mark work as GREEN without explicit reasoning that defends the decision.
-
-### Required Justification Section
-
-Every final status report claiming GREEN or GREEN_WITH_ACCEPTED_YELLOW_DEBT must include:
+Any final status claiming GREEN or GREEN_WITH_ACCEPTED_YELLOW must explain:
 
 ```text
-## Why This Is GREEN
-
-validation: [commands run and results]
-gates: [gates run and results]
-deviation_audit: [findings count by severity]
-corrections: [what was fixed in this pass]
-remaining_deviations: [count and classification of any remaining]
-suppression_check: [whether suppression was detected, and if so, what]
-exception_register: [entries added, if any]
-risk_assessment: [why remaining risk is contained]
-severity_decision: [why status is not YELLOW or RED]
-evidence: [files written with proof]
+validation
+gates
+deviation_audit
+corrections
+remaining_deviations
+suppression_check
+exception_register_or_baseline
+risk_assessment
+evidence
+why status is not YELLOW or RED
 ```
 
-### GREEN Cannot Be Decorative
-
-GREEN without this justification section is UNPROVEN.
-
-The justification must answer:
-```text
-- What validation proves this?
-- What gate results support this?
-- What deviations remain, and why are they acceptable?
-- What suppression was checked, and was any found?
-- Why is this GREEN and not YELLOW?
-- What evidence file contains the proof?
-```
-
-### Status Truth Table
-
-| Condition | Required Status |
-|-----------|----------------|
-| All validation clean, gates clean, zero deviations, zero suppression | GREEN |
-| All validation clean, gates clean, deviations exist but classified with owner/target/risk, exception register entries exist | GREEN_WITH_ACCEPTED_YELLOW_DEBT |
-| BLOCKER or HIGH finding remains uncorrected | YELLOW_WITH_EXACT_BLOCKERS |
-| Validation failing, gates failing, or mandatory gates unreliable | RED |
-| GREEN claimed without justification section | UNPROVEN (treated as RED) |
-| Suppression detected without exception register entry | BLOCKER (treated as RED) |
+GREEN without this justification is UNPROVEN and must be treated as RED.
 
 ---
 
-## 1E. Remaining Drift Classification Rule
+## 2E. Remaining Drift Classification
 
-### Status
-**MANDATORY**
-**Severity:** BLOCKER
-
-### Rule
-
-Every unresolved deviation, finding, or remaining issue must be explicitly classified.
-
-Unclassified drift is forbidden.
-"Pre-existing" without classification is forbidden.
-"Known issue" without owner is forbidden.
-
-### Required Classification Fields
-
-Every unresolved issue must contain:
+Every unresolved issue must include:
 
 ```text
-severity: BLOCKER | HIGH | MEDIUM | LOW | INFO
-impact: what happens if this is not fixed
-owner: who is responsible for fixing it (person, agent, or team)
-phase_allowance: whether this is allowed in the current phase or deferred
-mitigation: what reduces the risk until it is fixed
-future_plan: when and how it will be fixed
-evidence: which file or finding ID documents this
+severity
+impact
+owner
+phase_allowance
+mitigation
+future_plan
+evidence
 ```
 
-### Drift Categories
-
-**Active Blocker:**
-```text
-severity: BLOCKER or HIGH
-action: must be fixed before commit
-status: blocks GREEN
-```
-
-**Accepted Debt:**
-```text
-severity: HIGH or MEDIUM
-action: tracked in exception register
-status: permits GREEN_WITH_ACCEPTED_YELLOW_DEBT
-requires: owner, target version, expiry, risk, mitigation
-```
-
-**Phase-Locked:**
-```text
-severity: any
-action: belongs to a future stage locked by EXECUTION.md
-status: does not block current work if stage lock is respected
-requires: explicit reference to locked stage
-```
-
-**Cleanup Queue:**
-```text
-severity: LOW or INFO
-action: tracked for future cleanup
-status: does not block any status
-requires: description only
-```
-
-**Unclassified Drift:**
-```text
-severity: unknown
-action: BLOCKER — must be classified before commit
-status: blocks GREEN
-```
-
-### Enforcement
-
-If any finding lacks severity, it is BLOCKER.
-If any finding lacks owner, it is BLOCKER.
-If any HIGH finding lacks phase allowance decision, it is BLOCKER.
-
-Agents must not leave findings unclassified.
-Agents must not defer classification to "later."
-Classification happens during the deviation audit stage.
-
----
-
-## 2. Operating Modes
-
-### 2.1 Standard Mode
-
-Standard Mode is the default mode for normal requests.
-
-Triggered by requests such as:
-
-```text
-review this
-implement this
-refactor this
-fix this
-inspect this
-continue this task
-generate this
-```
-
-Standard Mode requires reading:
-
-```text
-AGENTS.md
-relevant .agents/how-to/**
-relevant .agents/skills/**
-TODO.md
-fix-this.md
-latest relevant evidence
-relevant source files
-relevant tests
-```
-
-Standard Mode still obeys all AvaX local governance.
-
-It may use focused context when the task is narrow.
-
-It must not ignore matching skills or local rules.
-
-### 2.2 Harness-Full Mode
-
-Harness-Full Mode is activated by any of these signals:
-
-```text
-HARNESS-FULL
-uradi po pravilima .agents
-Use full .agents potential
-Use the AvaX Enterprise Remediation Skill
-maximum sweep
-autonomous backlog loop
-radi što više
-nastavi sam
-bez dodatnih promptova
-zatvori listu
-task po task
-dok ima tokena
-full governance
-11++
-enterprise-grade
-```
-
-Harness-Full Mode expands the rule set.
-
-It requires full `.agents` discovery, classification, skill routing, evidence reading, source-of-truth resolution, and task-specific governance.
-
-Harness-Full Mode does not weaken local AvaX rules.
-
-### 2.3 Autonomous Backlog Mode
-
-Autonomous Backlog Mode is used when the user asks the agent to continue through the backlog without repeated prompts.
-
-It must use:
-
-```text
-avax-enterprise-remediation
-avax-autonomous-backlog-loop
-avax-source-of-truth-resolver
-all task-relevant skills
-all task-relevant how-to rules
-all task-relevant evidence
-```
-
-In this mode:
-
-```text
-PARTIAL means continue with the next smallest safe slice.
-PARTIAL_WITH_YELLOW means continue with the next smallest safe slice if ownership is clear.
-TODO_CLOSED means move to the next highest-priority TODO.
-HARD_BLOCKER means stop and write evidence.
-```
-
-The agent must not stop merely because one slice is complete.
+Unclassified drift is a BLOCKER.
 
 ---
 
 ## 3. Rule Precedence
 
-This section decides which governance rule wins when documents disagree.
-
-Rule precedence:
+When governance sources disagree, use this order:
 
 ```text
 1. AGENTS.md
-2. .agents/GOVERNANCE_INDEX.md if present
-3. .agents/how-to/**
-4. project-local skill contracts in .agents/skills/**
-5. mounted reusable rules in .agents/.rules/**
-6. task-local evidence instructions
-7. docs/**
-8. README.md
-9. old reviews, archives, backups, generated dumps
+2. .agents/GOVERNANCE_INDEX.md
+3. .agents/how-to/README.md
+4. .agents/how-to/00-how-to-reading-order.md
+5. task-relevant .agents/how-to/**
+6. task-relevant .agents/skills/**
+7. ARCHITECTURE.md for project north-star architecture
+8. .agents/.rules/**
+9. task-local evidence
+10. docs/**
+11. README.md
+12. old reviews, archives, backups, generated dumps
 ```
 
-Local AvaX rules win for:
+Old code and old reports are evidence, not governance.
 
-```text
-filesystem shape
-component structure
-naming
-PublicSurface rules
-Flow vs Capability rules
-forbidden folders
-runtime-agnostic framework direction
-long-lived worker safety
-component dogfooding
-AvaX-specific DI/runtime rules
-AvaX-specific stage/backlog rules
-```
-
-Mounted reusable rules are valuable, but they do not override local AvaX architecture laws.
-
-If a lower-priority rule disagrees with a higher-priority rule, the higher-priority rule wins.
-
-If old code, old reviews, backups, dumps, or archived evidence disagree with current governance, they are evidence only.
-
-Old code is evidence.
 Current governance is the target.
-Validation is the judge.
+
+Current validation is the judge.
 
 ---
 
-## 4. Project State Source of Truth
+## 4. Project State Source Of Truth
 
-This section decides current project status, not governance priority.
-
-State source-of-truth order:
+Project state is resolved in this order:
 
 ```text
 1. current git state
@@ -697,90 +273,69 @@ State source-of-truth order:
 3. latest task-specific evidence
 4. TODO.md
 5. fix-this.md
-6. CURRENT_TRUTH.md, only if not marked stale
-7. EVIDENCE/EXECUTION.md, only for active execution flow
-8. .agents/management/ACTIVE.md, if current
-9. .agents/management/TODO.md, if explicitly marked current
-10. .agents/management/BUGS.md, if current
+6. CURRENT_TRUTH.md if present and not stale
+7. EVIDENCE/EXECUTION.md only as a legacy/transitional source when current evidence activates it
+8. .agents/management/ACTIVE.md if current
+9. .agents/management/TODO.md if explicitly current
+10. .agents/management/BUGS.md if current
 11. learning and memory
-12. older reports, reviews, plans, archives, dumps, backups
+12. older reports, plans, archives, dumps, backups
 ```
 
-If project state files disagree:
+If sources disagree:
 
 ```text
 current git state beats old reports
 latest validation beats old assumptions
-latest evidence beats old planning
+latest evidence beats old plans
 TODO.md beats stale CURRENT_TRUTH.md
-fix-this.md defines canonical backlog items when TODO.md references it
-CURRENT_TRUTH.md is advisory if it declares itself stale
-old V4/V5/V5.9 notes are advisory unless current evidence activates them
+fix-this.md owns canonical remediation findings when TODO.md references it
 ```
 
-If there is no current validation evidence, the agent must say:
-
-```text
-status not proven
-```
-
-### 4.1 Backlog File Roles
-
-AvaX uses the following roles:
-
-```text
-fix-this.md
-  Canonical remediation backlog and source finding map.
-
-TODO.md
-  Operational execution board for AI iterations, current lanes, priorities, and active remediation planning.
-
-.agents/management/TODO.md
-  Advisory or legacy unless explicitly marked as the current execution board.
-
-CURRENT_TRUTH.md
-  Current project truth only if fresh and not contradicted by newer evidence.
-
-EVIDENCE/EXECUTION.md
-  Active execution instructions only when current evidence says that flow is active.
-```
-
-No agent may select a TODO if it is already DONE, VERIFIED, VERIFIED_WITH_MAPPINGS, or integrated on main.
-
-No agent may recommend a completed task as the next batch.
+If the contradiction cannot be reconciled, stop with HARD_BLOCKER and write evidence.
 
 ---
 
-## 5. Execution Routing Precedence
+## 5. Execution Modes
 
-Execution routing decides which workflow and skills must be loaded.
+### Standard Mode
 
-Routing order:
+Default for focused requests such as fix, inspect, review, refactor, generate, explain, or validate.
+
+Required `.agents` SDLC load for every task:
 
 ```text
-1. avax-enterprise-remediation as mandatory bootloader
-2. avax-source-of-truth-resolver for every task
-3. avax-autonomous-backlog-loop for autonomous or multi-task execution
-4. task-relevant specialized skills
-5. task-relevant how-to rules
-6. task-relevant evidence
-7. task-specific validation commands
+AGENTS.md
+.agents/GOVERNANCE_INDEX.md
+.agents/how-to/README.md
+.agents/how-to/00-how-to-reading-order.md
+.agents/how-to/**/*.md (complete governance reading order)
+.agents/skills/**/SKILL.md (all skills loaded before routing)
+.agents/management/** (active state, evidence, learning, memory, baselines)
+ARCHITECTURE.md
+latest relevant .agents/management/evidence/**
+relevant source/test/docs files
 ```
 
-The bootloader starts the process.
-It is not the whole operating system.
+After loading the complete `.agents` SDLC, apply the task-relevant subset. Do not skip the complete discovery step just because the task looks small.
 
-Agents must not use only the bootloader when more specific skills apply.
+### Harness-Full Mode
 
----
+Triggered by:
 
-## 6. Full `.agents` Operating System Rule
+```text
+enterprise-grade
+11++
+full governance
+uradi po pravilima .agents
+maximum sweep
+radi sto vise
+nastavi sam
+bez dodatnih promptova
+autonomous backlog loop
+```
 
-The `.agents` folder is part of the execution contract.
-
-Agents must discover, classify, and apply the full `.agents` ecosystem.
-
-Required discovery in Harness-Full and Autonomous modes:
+Required discovery:
 
 ```bash
 find .agents -maxdepth 5 -type f | sort
@@ -789,306 +344,89 @@ find .agents/how-to -type f | sort 2>/dev/null || true
 find .agents/management -maxdepth 5 -type f | sort 2>/dev/null || true
 ```
 
-Classify discovered files as:
+Classify discovered files as mandatory, task-relevant, evidence, memory, learning, advisory, stale, or skipped with reason.
 
-```text
-MANDATORY_BOOT
-TASK_RELEVANT_SKILLS
-TASK_RELEVANT_HOW_TO
-PROJECT_MEMORY
-PROJECT_LEARNING
-CURRENT_TRUTH
-EVIDENCE
-ADVISORY_ONLY
-STALE_OR_SKIP_WITH_REASON
-```
+### Autonomous Backlog Mode
 
-Every task must write or update context-loaded evidence containing:
-
-```text
-current branch
-current worktree
-base commit
-dirty status
-AGENTS.md read
-skills discovered
-skills used
-skills skipped with reason
-how-to files discovered
-how-to files applied
-learning files discovered
-learning files used
-memory files discovered
-memory files used
-evidence files read
-TODO.md section read
-fix-this.md section read
-source finding IDs
-source conflicts found
-final source-of-truth decision
-```
-
----
-
-## 7. Mandatory Skill Routing
-
-### 7.1 Required Skills by Task Type
-
-Every task:
-
-```text
-avax-enterprise-remediation
-avax-source-of-truth-resolver
-```
-
-Autonomous backlog work:
-
-```text
-avax-autonomous-backlog-loop
-```
-
-Production-code implementation, refactor, architecture cleanup:
-
-```text
-avax-enterprise-codecraft
-```
-
-Component work or framework-internal reuse:
-
-```text
-avax-component-dogfooding
-```
-
-Runtime, hot path, cache, metadata, worker, performance-sensitive work:
-
-```text
-avax-runtime-performance-cache
-```
-
-Security-sensitive work:
-
-```text
-avax-security-threat-model
-```
-
-Public API, PublicSurface, facade, DSL, builder, configuration API work:
-
-```text
-avax-api-compatibility-contract
-```
-
-Tests or validation claims:
-
-```text
-avax-test-evidence-quality
-```
-
-Failure-prone work, runtime work, IO, security, persistence, queue, HTTP, cache:
-
-```text
-avax-observability-failure-semantics
-```
-
-Review work:
-
-```text
-review skill if present
-how-to-code-review.md
-all task-relevant how-to rules
-```
-
-Validation work:
-
-```text
-validation skill if present
-task-specific validation commands
-governance validation gates
-```
-
-Recovery work:
-
-```text
-recovery skill if present
-Recovery Rule in this file
-source-of-truth resolver
-```
-
-### 7.2 Skill Absence Rule
-
-If a referenced skill is missing, the agent must report:
-
-```text
-SKILL_MISSING
-```
-
-and classify impact:
-
-```text
-NO_IMPACT
-YELLOW
-BLOCKER
-```
-
-If the missing skill is required for safe execution, the task must stop.
-
----
-
-## 8. Autonomous Backlog Loop Rule
-
-Autonomous work must not stop after one partial slice.
+Use when the user asks to continue through backlog without repeated prompts.
 
 Loop:
 
 ```text
-1. Resolve current source of truth.
-2. Select highest-priority active TODO.
-3. Create or reuse the correct branch/worktree.
-4. Execute the smallest safe slice.
-5. Validate.
-6. Write evidence.
-7. Commit the slice.
-8. Self-review.
-9. Merge to main only if review says MERGE_READY or MERGE_READY_WITH_YELLOW.
-10. Run post-merge focused validation.
-11. Update TODO.md/fix-this.md only when truth changed.
-12. If TODO is still PARTIAL, continue the next slice.
-13. If TODO is CLOSED, move to the next TODO.
-14. Stop only on HARD_BLOCKER.
+resolve source of truth
+select active highest-priority task
+execute smallest safe slice
+validate
+audit
+write evidence
+review
+continue on PARTIAL
+stop only on HARD_BLOCKER
 ```
-
-Soft continue conditions:
-
-```text
-focused validation GREEN
-focused validation GREEN_WITH_ACCEPTED_YELLOW
-remaining findings belong to the same TODO
-ownership remains clear
-next slice has bounded file scope
-main is clean
-evidence can be written
-```
-
-Hard stop conditions:
-
-```text
-dirty main cannot be classified
-ownership boundary unclear
-public API break required without evidence
-new validation failure in changed files cannot be fixed in scope
-security behavior cannot be proven fail-closed
-source-of-truth contradiction cannot be reconciled
-mandatory governance file missing
-evidence cannot be written
-branch/worktree contamination
-human architecture decision required
-context budget too low to safely continue
-```
-
-PARTIAL is not a stop condition.
 
 ---
 
-## 9. Branch and Worktree Policy
+## 6. Mandatory Skill Routing
 
-### 9.1 Current Remediation Policy
+Every task must load every local skill contract before routing:
 
-For current remediation and backlog execution:
-
-```text
-main
-  integration branch
-
-task branches/worktrees
-  implementation, remediation, analysis, review, and evidence work
-
-origin/main
-  remote integration truth after push
+```bash
+find .agents/skills -type f -name SKILL.md | sort
 ```
 
-Rules:
+Every task must use at least:
 
 ```text
-No production-code implementation directly on main.
-Governance-only changes may be committed on main if main is clean and scope is documentation/agents/evidence only.
-One active task or bounded slice uses one dedicated branch/worktree.
-A multi-slice TODO may continue on the same task branch if the branch remains clean, scoped, and reviewed per slice.
-Merge into main is sequential.
-No self-push unless explicitly instructed.
-No force push.
-No squash unless explicitly justified.
-No stale worktree reuse without inspection.
+avax-source-of-truth-resolver
 ```
 
-Branch naming:
+Task routing:
 
-```text
-architecture/todo-XXX-short-name
-security/todo-XXX-short-name
-cleanup/todo-XXX-short-name
-verify/todo-XXX-short-name
-docs/todo-XXX-short-name
-review/todo-XXX-short-name
-```
+| Task type | Required skill/docs |
+|---|---|
+| production code, refactor, architecture | `avax-enterprise-codecraft` |
+| component work | `avax-component-dogfooding` |
+| runtime, hot path, cache, workers | `avax-runtime-performance-cache` |
+| security-sensitive work | `avax-security-threat-model` |
+| public API, PublicSurface, DSL, builder, config API | `avax-api-compatibility-contract` |
+| tests or validation claims | `avax-test-evidence-quality` |
+| failure-prone IO/runtime/security/persistence/cache/HTTP | `avax-observability-failure-semantics` |
+| review | review skill if present and `.agents/how-to/verification/how-to-code-review.md` |
+| self-explaining docs | `self-explaining-architecture` |
+| autonomous backlog | `avax-autonomous-backlog-loop` |
 
-Worktree naming:
-
-```text
-../avax-todo-XXX-short-name
-```
-
-Every task branch must include:
-
-```text
-context evidence
-implementation or analysis evidence
-validation evidence
-governance review
-final decision
-```
-
-### 9.2 Stage-Specific Branch Policy
-
-Older stage-specific branch policies, including V4 branch policies, apply only when current evidence explicitly activates that stage workflow.
-
-If current remediation evidence says task branches/worktrees from `main` are active, the current remediation policy wins for the active work.
-
-Stage-specific policies remain useful, but must not override the current execution mode unless explicitly activated.
+If a required skill is missing, report `SKILL_MISSING` with impact: NO_IMPACT, YELLOW, or BLOCKER.
 
 ---
 
-## 10. Required Preflight
+## 7. Required Preflight
 
-Before editing code or documentation, every agent must identify:
+Before editing, identify:
 
 ```text
 active mode
 active task
-active stage or remediation context
 source-of-truth decision
 forbidden scope
 required skills
 required how-to documents
-relevant source files
+relevant files
 expected validation commands
 expected evidence files
 next allowed action
 ```
 
-For implementation, refactor, recovery, review, or merge work, the agent must read:
+Before editing production code, also read:
 
 ```text
-AGENTS.md
-relevant .agents/skills/**
-relevant .agents/how-to/**
-TODO.md
-fix-this.md
-latest relevant evidence
-relevant source files
+ARCHITECTURE.md
+.agents/how-to/project/how-to-write-avax.md
+task-relevant architecture/component/implementation/verification docs
 relevant tests
 latest relevant validation reports
 ```
 
-No agent may edit code if it cannot answer:
+No agent may edit if it cannot answer:
 
 ```text
 What task is active?
@@ -1101,939 +439,74 @@ What branch/worktree owns this work?
 
 ---
 
-## 11. AvaX Vision
+## 8. SDLC Rule Map
 
-AvaX is not another MVC framework.
+Use this map instead of searching from memory:
 
-AvaX is a runtime-agnostic modern PHP application platform and engineering system.
-
-It targets:
-
-```text
-PHP-FPM
-FrankenPHP
-RoadRunner
-Swoole
-Workerman
-ReactPHP
-Amp
-Fibers
-CLI
-tests
-long-lived workers
-future async/concurrent runtimes
-```
-
-AvaX is:
-
-```text
-flow-oriented
-capability-oriented
-runtime-neutral
-governance-driven
-component-based
-evidence-first
-developer-experience aware
-production-readiness oriented
-```
-
-AvaX is inspired by:
-
-```text
-Laravel
-  expressive public API and developer experience
-
-Symfony
-  decoupled components and explicit boundaries
-
-Spring Boot
-  enterprise assembly and configuration discipline
-
-ASP.NET Core
-  middleware/runtime clarity and performance discipline
-
-Phoenix / Elixir
-  supervision mindset, runtime clarity, fault awareness
-
-Go
-  simplicity, explicitness, small interfaces, low magic
-```
-
-Inspiration is not imitation.
-
-AvaX keeps its own law:
-
-```text
-Folder says flow or capability.
-Unit says responsibility.
-Function says exact action.
-```
+| Concern | Canonical rule source |
+|---|---|
+| reading order | `.agents/how-to/00-how-to-reading-order.md` |
+| governance index | `.agents/GOVERNANCE_INDEX.md` |
+| AvaX project overlay | `.agents/how-to/project/how-to-write-avax.md` |
+| git/commit/push | `.agents/how-to/project/how-to-git.md` |
+| architecture | `.agents/how-to/architecture/how-to-architecture.md` |
+| architecture decisions | `.agents/how-to/architecture/how-to-architecture-decisions.md` |
+| runtime composition | `.agents/how-to/architecture/how-to-runtime-composition.md` |
+| component shape | `.agents/how-to/components/how-to-design-components.md` |
+| dogfooding | `.agents/how-to/components/how-to-dogfooding.md` |
+| flow modeling | `.agents/how-to/modeling/how-to-model-flows.md` |
+| clean code | `.agents/how-to/implementation/how-to-clean-code.md` |
+| coding standards | `.agents/how-to/implementation/how-to-coding-standards.md` |
+| code style | `.agents/how-to/implementation/how-to-code-style.md` |
+| DI | `.agents/how-to/implementation/how-to-dependency-injection.md` |
+| documentation | `.agents/how-to/documentation/how-to-document.md` |
+| self-explaining architecture | `.agents/how-to/documentation/how-to-write-self-explaining-architecture.md` |
+| review | `.agents/how-to/verification/how-to-code-review.md` |
+| tests | `.agents/how-to/verification/how-to-unit-test.md` |
+| risk-based testing | `.agents/how-to/verification/how-to-test-risk-based-behavioral-testing.md` |
+| production readiness | `.agents/how-to/verification/how-to-production-readiness.md` |
+| security | `.agents/how-to/verification/how-to-system-security.md` |
+| performance/cache | `.agents/how-to/verification/how-to-system-performance.md` |
+| data correctness | `.agents/how-to/verification/how-to-data-systems.md` |
+| review packs | `.agents/how-to/verification/how-to-create-ai-code-review-packs.md` |
 
 ---
 
-## 12. Fundamental Architecture Law
+## 9. Documentation Shape Clarification
 
-Strictly follow this hierarchy:
+Global documentation, project overlays, local component docs, and evidence are different layers.
 
-```text
-Folder = Flow or Capability
-File/Class/Module = Responsibility
-Method/Function = Exact Action
-```
-
-Equivalent form:
+Use:
 
 ```text
-folder says flow or capability
-unit says responsibility
-function says exact action
+docs/                               global documentation
+.agents/how-to/project/             AvaX project overlay governance
+components/<Area>/<Component>/docs/ local component documentation
+.agents/management/evidence/**      proof and reports
 ```
 
-The system must read like a story of ownership and behavior.
+`Docs/` as a generic technical bucket inside `System/` is forbidden by component shape rules.
 
-It must not read like a warehouse of technical categories.
-
-This applies to:
-
-```text
-framework
-components
-tooling
-tests
-docs where practical
-agents
-evidence
-generated code
-recovered code
-```
+`components/<Area>/<Component>/docs/` is allowed for local self-explaining architecture and does not violate the `Docs/` bucket prohibition.
 
 ---
 
-## 13. Canonical Component Shape
+## 10. Branch, Worktree, Commit, Push
 
-Every production component must follow the canonical AvaX shape:
-
-```text
-components/
-  <Area>/
-    <Component>/
-      System/
-        PublicSurface/
-        Flows/
-        Capabilities/
-        Configuration/
-        Foundation/
-```
-
-Rules:
+Default policy:
 
 ```text
-System/ is required.
-Capabilities/ is required for real components.
-PublicSurface/ is conditional.
-Flows/ is conditional.
-Configuration/ is conditional.
-Foundation/ is optional and must stay small.
+main is integration
+task branches/worktrees own implementation slices
+governance-only work may be committed on main only if main is clean and scope is documentation/agents/evidence only
+production-code implementation does not happen directly on main
+no force push
+no self-push unless explicitly instructed
 ```
-
-No other top-level folders inside `System/` are allowed by default.
-
-`InternalSystem` is a concept, not a folder.
-`ExportedCapabilities` is a decision, not a folder.
-Diagnostics are capabilities, not root folders.
-
-Tests normally live in the central test tree unless a component intentionally exports a test kit.
-
-Documentation normally lives in `docs/`, with component-local README allowed only as a short ownership summary.
-
----
-
-## 14. Framework Shape
-
-Framework code uses:
-
-```text
-framework/System/PublicSurface/
-  User-facing and framework-facing public entrypoints.
-
-framework/System/Flows/
-  Framework-level and multi-component orchestration flows.
-
-framework/System/Capabilities/
-  Internal framework capabilities and runtime machinery.
-
-framework/System/Configuration/
-  Assembly, registration, configuration, providers, bootstrapping.
-
-framework/System/Foundation/
-  Tiny neutral primitives.
-```
-
-Rules:
-
-```text
-PublicSurface receives and delegates.
-Flows execute.
-Capabilities power.
-Configuration assembles.
-Foundation supports.
-```
-
-PublicSurface must stay small, stable, and thin.
-
-Runtime/business flows must not assemble missing object graphs.
-
-Configuration/Assembly/Provider owns construction.
-
----
-
-## 15. Strict Naming and Folder Prohibitions
-
-Do not use these as default directories, namespaces, or broad buckets:
-
-```text
-Services
-Helpers
-Utils
-Common
-Shared
-Managers
-Core
-Support
-Adapters
-Contracts
-Handlers
-Processors
-Commands
-Queries
-Domain
-Entities
-ValueObjects
-Aggregates
-Repositories
-Events
-CQRS
-EventSourcing
-Sagas
-Policies
-Specifications
-Diagnostics
-Tests
-Docs
-InternalSystem
-ExportedCapabilities
-```
-
-This list is not exhaustive.
-
-Concept words may describe responsibilities, but they must not automatically become folders.
-
-Correct:
-
-```text
-Capabilities/
-  PublicApiCompatibility/
-  S3ObjectStorage/
-  CheckCacheHealth/
-  RegisterUser/
-  ReadUserProfile/
-```
-
-Wrong:
-
-```text
-Contracts/
-Adapters/
-Diagnostics/
-Tests/
-Docs/
-Commands/
-Queries/
-Security/
-Performance/
-```
-
-If a forbidden term is truly domain language, the exception must be documented with:
-
-```text
-rule
-path
-reason
-risk
-owner
-expiry
-cleanup
-validation
-```
-
-No just-in-case folders.
-No dumping grounds.
-No scaffolding theater.
-
----
-
-## 16. Flow and Capability Rule
-
-AvaX does not use `UseCases/` as a default folder.
-
-A use case is represented as a Flow.
-
-A Flow owns one complete user, system, runtime, or platform action.
-
-Correct:
-
-```text
-System/
-  Flows/
-    RegisterUser/
-      RegisterUser.php
-
-    ChangePassword/
-      ChangePassword.php
-
-    RunMigration/
-      RunMigration.php
-```
-
-Incorrect:
-
-```text
-Application/
-  UseCases/
-    RegisterUserUseCase.php
-
-System/
-  UseCases/
-    ChangePasswordUseCase.php
-```
-
-Use `Flow` when one action completes the story.
-
-Use `Capability` when behavior is reusable across multiple flows.
-
-Default to Flow first.
-
-Extract to Capability only after reuse is honest.
-
----
-
-## 17. PublicSurface Rule
-
-PublicSurface is a boundary, not a place for machinery.
-
-Allowed:
-
-```text
-stable public API
-DSL entrypoint
-facade method
-input normalization for public ergonomics
-delegation to internal Flow/Capability/Configuration owner
-```
-
-Forbidden:
-
-```text
-runtime machinery
-object graph assembly
-fallback construction of required dependencies
-service locator logic
-business logic
-security-sensitive decisions
-cache ownership
-worker state
-filesystem scanning
-reflection/class discovery
-hidden mutable state
-```
-
-PublicSurface must be tested through public contract tests.
-
-Any PublicSurface change must use:
-
-```text
-avax-api-compatibility-contract
-avax-enterprise-codecraft
-avax-test-evidence-quality
-avax-source-of-truth-resolver
-```
-
----
-
-## 18. Dependency Injection and Assembly Rule
-
-Required dependencies must fail during configuration, provider registration, compile, verify, or boot.
-
-They must not fail deep inside runtime business code.
-
-Assembly belongs in:
-
-```text
-Configuration/
-Assembly/
-Provider/
-Builder
-Boot/bootstrap boundary
-```
-
-Runtime flow code should execute, not assemble.
-
-Forbidden:
-
-```text
-new MissingDependency() as fallback in runtime/business code
-hidden service locator usage
-global app() shortcuts inside component internals
-runtime object graph construction in PublicSurface
-runtime class discovery for dependency resolution
-```
-
-Allowed exceptions must be documented.
-
----
-
-## 19. Component Dogfooding Rule
-
-AvaX components must dogfood AvaX capabilities.
-
-Before adding local logic, raw PHP, or ad-hoc infrastructure, the agent must ask:
-
-```text
-Does AvaX already have a component or capability for this concern?
-Am I bypassing an existing first-party boundary?
-Am I duplicating logic?
-Is this allowed Foundation/adapter code?
-Is dependency direction valid?
-Can this create a circular dependency?
-```
-
-Components should reuse existing AvaX capabilities where architecturally appropriate:
-
-```text
-Filesystem
-Clock / Time
-Logger / Observability
-Events
-Cache
-Configuration
-Container / DI
-Runtime lifecycle
-Security / Cryptography / Redaction
-HTTP abstractions
-Validation
-Serialization
-Failure boundaries
-Testing utilities
-Metadata / Compilation
-```
-
-Allowed dependency paths:
-
-```text
-stable PublicSurface APIs
-approved Capability APIs
-Configuration/Assembly/Provider boundaries
-documented internal component dependency
-adapter boundary
-Foundation primitive where appropriate
-test utility in tests only
-```
-
-Forbidden:
-
-```text
-reaching into another component private internals
-circular component dependency
-hidden service locator calls
-global app() shortcuts inside internals
-raw filesystem IO where Filesystem should own it
-raw env/config access where Configuration should own it
-raw logging/echo/print where Logger/Observability should own it
-raw cache arrays where Cache should own it
-raw security primitives without Security/Cryptography boundary
-duplicated serializers/parsers/validators
-local mini-frameworks inside components
-```
-
-Every production-code task must include component dogfooding review when relevant.
-
----
-
-## 20. Enterprise Codecraft Rule
-
-Production code must be enterprise-grade by design, not merely test-passing.
-
-Every production-code change must use `avax-enterprise-codecraft`.
-
-Before code, the agent must write or update design evidence answering:
-
-```text
-What behavior is owned here?
-Which class owns it?
-Which invariant is protected?
-Which system boundary is involved?
-What lifecycle phase is affected?
-What public API must remain stable?
-What dependencies are injected?
-What dependencies are assembled?
-What failure modes exist?
-What must fail closed?
-What tests prove behavior?
-```
-
-Architecture-heavy changes require:
-
-```text
-high-level-design.md
-low-level-design.md
-ownership-boundary.md
-dependency-boundary.md
-```
-
-Every meaningful implementation must assess:
-
-```text
-SOLID
-high cohesion
-low coupling
-coupling direction
-dependency inversion
-runtime safety
-security impact
-performance impact
-testability
-observability
-operability
-backward compatibility
-```
-
-Forbidden classifications:
-
-```text
-TOO_MECHANICAL
-FAKE_OOP
-ARCHITECTURE_THEATER
-NEEDS_REDESIGN
-```
-
-These block commit unless explicitly accepted as YELLOW with owner, risk, mitigation, and expiry.
-
----
-
-## 21. Runtime Performance and Cache Discipline Rule
-
-Runtime hot paths must avoid:
-
-```text
-reflection
-filesystem scans
-glob/recursive directory scans
-config parsing
-env reads
-dynamic class discovery
-class_exists as runtime discovery
-service locator lookup
-container compilation
-repeated metadata parsing
-repeated route compilation
-repeated attribute scanning
-unbounded array growth
-mutable static per-request cache without reset lifecycle
-hidden singleton state
-```
-
-Caching requires:
-
-```text
-owner
-purpose
-key shape
-namespace
-scope
-lifecycle
-invalidation
-stale-data risk
-memory bound
-concurrency behavior
-serialization format if any
-observability/debugging
-fallback/failure behavior
-worker safety
-```
-
-Cache without invalidation/lifecycle is forbidden unless it is immutable deployment-time compiled data.
-
-Long-lived worker state leaks are blocking findings.
-
-Performance claims require proof:
-
-```text
-benchmark
-before/after timing
-memory comparison
-proof work moved from request-time to boot/compile/warmup
-static gate proving no hot-path reflection/filesystem scan
-```
-
----
-
-## 22. Security Rule
-
-Security is a property of every boundary.
-
-Security-sensitive work must use:
-
-```text
-avax-security-threat-model
-.agents/how-to/verification/how-to-system-security.md
-```
-
-Security-sensitive areas include:
-
-```text
-public surface
-HTTP
-authentication
-authorization
-session
-CSRF
-tokens
-secrets
-configuration
-database
-cache
-filesystem
-queue
-events
-messages
-external IO
-logs
-telemetry
-runtime state
-serialization
-request signing
-cookies
-headers
-admin/control plane
-AI-generated code
-```
-
-Security work must answer:
-
-```text
-what asset is protected?
-who is the attacker?
-which inputs are untrusted?
-what must fail closed?
-where can injection/tamper/replay/leak/stale state happen?
-what negative test proves the boundary?
-```
-
-No secret may be logged, dumped, returned raw, or exposed in evidence.
-
-Authentication is not authorization.
-
-Authorization must protect the object, not only the route.
-
----
-
-## 23. API Compatibility Rule
-
-Public API, PublicSurface, facade, DSL, builder, and configuration API work must use:
-
-```text
-avax-api-compatibility-contract
-```
-
-Every public API task must document:
-
-```text
-public API changed: YES/NO
-backward compatible: YES/NO
-migration needed: YES/NO
-contract tests updated: YES/NO
-old behavior preserved: YES/NO
-deprecation path if changed
-semantic version impact
-examples still work
-```
-
-Public API break without explicit approval is a blocker.
-
----
-
-## 24. Test Evidence Rule
-
-Tests must prove behavior.
-
-They must not merely instantiate classes or assert implementation trivia.
-
-Every test-related task must use:
-
-```text
-avax-test-evidence-quality
-.agents/how-to/verification/how-to-unit-test.md
-```
-
-Required proof where relevant:
-
-```text
-behavior test
-negative test
-regression test
-public contract test
-worker/runtime safety test
-security boundary test
-performance proof
-```
-
-Forbidden:
-
-```text
-changing tests to fit broken behavior
-fake GREEN by running irrelevant tests
-tests that only prove construction
-no negative tests for security
-no regression test for fixed bug
-no contract test for public API change
-```
-
----
-
-## 25. Observability and Failure Semantics Rule
-
-Meaningful runtime, IO, security, persistence, queue, cache, HTTP, DI, and boot changes must use:
-
-```text
-avax-observability-failure-semantics
-```
-
-Every failure-prone task must document:
-
-```text
-what can fail
-where it should fail
-exception type
-message safety
-sensitive data redaction
-log event needed
-metric/tracing needed
-retryable or fatal
-fail-open or fail-closed
-worker state after failure
-user-facing vs developer-facing message
-debuggability
-```
-
-Failure mode unclear for a critical path is a blocker.
-
----
-
-## 26. Documentation Rule
-
-Documentation must follow:
-
-```text
-.agents/how-to/documentation/how-to-document.md
-```
-
-Documentation must explain:
-
-```text
-why this exists
-where it belongs
-what it owns
-what it does not own
-how to use it
-how it fails
-how it is tested
-```
-
-Documentation must not merely restate code.
-
-Documentation location:
-
-```text
-docs/
-  canonical long-form documentation
-
-component README
-  short ownership summary only
-
-EVIDENCE/
-  execution reports, validation reports, audits, operational proof
-
-inline PHPDoc/comments
-  local intent, constraints, failure behavior, public API explanation
-```
-
-README summarizes.
-Docs explain.
-Reports prove.
-
----
-
-## 27. Required Validation
-
-Canonical validation set:
-
-```bash
-composer validate --no-check-publish
-composer dump-autoload -o
-vendor/bin/phpunit --no-coverage
-vendor/bin/phpstan analyse framework components tests --memory-limit=1G --error-format=raw --no-progress
-php tooling/refactor/check-component-suite-structure.php
-php tooling/refactor/check-duplicate-owners.php
-php tooling/refactor/check-namespace-drift.php
-php tooling/refactor/check-public-surface.php
-php tooling/refactor/check-runtime-composition-leaks.php
-php tooling/audit_broken_refs.php
-php avax runtime:doctor
-```
-
-Governance validation when available:
-
-```bash
-php tooling/governance/check-governance-index-current.php
-php tooling/governance/check-stage-lock.php
-php tooling/governance/check-root-evidence-hygiene.php
-php tooling/refactor/check-component-canonical-shape.php
-php tooling/refactor/check-advanced-pattern-folder-violations.php
-php tooling/refactor/check-direct-instantiation.php
-php tooling/refactor/check-service-provider-coverage.php
-php tooling/refactor/check-constructor-bloat.php
-php tooling/security/check-security-governance.php
-php tooling/performance/check-performance-governance.php
-```
-
-If a command does not exist, report:
-
-```text
-PLANNED / NOT IMPLEMENTED
-```
-
-Do not report missing commands as pass.
-
-### 27.1 Full vs Focused Validation
-
-Run full validation when work changes:
-
-```text
-architecture
-component shape
-namespaces
-autoload
-public surface
-runtime behavior
-security-sensitive behavior
-performance-sensitive behavior
-stage progress
-production-readiness claims
-```
-
-Focused validation is allowed for narrow work.
-
-If full validation was not run, final status must say:
-
-```text
-focused validation only
-full validation not run
-remaining risk
-```
-
----
-
-## 28. Evidence Rule
-
-Every important claim must point to evidence.
-
-Examples:
-
-```text
-Tests pass because command X produced Y.
-PHPStan is clean because command X produced no errors.
-Runtime doctor is green because command X passed.
-Security redaction is proven because tests X passed.
-Performance claim is proven because benchmark X shows Y.
-Public API compatibility is proven because contract tests X passed.
-```
-
-Evidence packages for production-code tasks should include:
-
-```text
-context-loaded.md
-source-of-truth-decision.md
-design-before-code.md
-high-level-design.md when architecture/system impact exists
-low-level-design.md when non-trivial implementation exists
-ownership-boundary.md
-dependency-boundary.md when dependencies changed
-component-dogfooding-review.md when relevant
-api-compatibility.md when public API is touched
-threat-analysis.md when security-sensitive
-performance-design.md when performance-sensitive
-cache-design.md when caching
-cache-not-used.md when caching is rejected
-runtime-safety-proof.md when runtime/worker state is touched
-failure-semantics.md when failure-prone
-test-proof.md
-negative-test-proof.md when relevant
-regression-proof.md when relevant
-validation-output.md
-governance-review.md
-final-decision.md
-```
-
-Evidence must describe what was proven and what remains unproven.
-
----
-
-## 29. Review Rule
-
-Any code review must apply:
-
-```text
-.agents/how-to/verification/how-to-code-review.md
-all task-relevant .agents/how-to/**/how-to-*.md
-all task-relevant skills
-```
-
-A review must include:
-
-```text
-governance documents read
-skills applied
-rules applied
-compliance matrix
-violations
-severity
-security findings
-architecture findings
-runtime findings
-test evidence findings
-required action
-final decision
-```
-
-Review decisions:
-
-```text
-MERGE_READY
-MERGE_READY_WITH_YELLOW
-MERGE_BLOCKED
-NEEDS_REPAIR
-NEEDS_DEEPER_AUDIT
-```
-
-Security HIGH/BLOCKER findings must be loud and blocking unless explicitly accepted with evidence.
-
----
-
-## 30. Commit and Push Rule
 
 Before commit:
 
-```text
+```bash
 git status --short
 git diff --stat
 git diff --check
@@ -2054,154 +527,128 @@ unrelated generated dumps
 unrelated evidence
 ```
 
-Commit only scoped files.
+---
 
-Commit message must describe the actual change.
+## 11. Validation Contract
 
-Implementation commits must not be mixed with unrelated governance commits unless explicitly justified.
+Validation must match the scope.
 
-Push only when explicitly instructed by the user or current workflow says push is allowed.
+Run full validation when work changes:
+
+```text
+architecture
+component shape
+namespaces/autoload
+public surface
+runtime behavior
+security-sensitive behavior
+performance-sensitive behavior
+stage progress
+production-readiness claims
+```
+
+Focused validation is allowed for narrow governance/doc/tooling work, but the final report must say:
+
+```text
+focused validation only
+full validation not run
+remaining risk
+```
+
+Canonical validation commands are defined by `.agents/how-to/verification/how-to-production-readiness.md` and current gate adoption evidence.
+
+At minimum for governance work, run applicable:
+
+```bash
+git diff --check
+php tooling/governance/check-governance-canonical-truth.php
+php tooling/governance/check-governance-leakage.php
+php tooling/governance/check-governance-index-current.php
+php tooling/governance/check-self-explaining-architecture.php --mode=changed
+php tooling/testing/check-shallow-tests.php --mode=changed
+```
+
+Report missing commands as MISSING, not PASS.
 
 ---
 
-## 31. Recovery Rule
+## 12. Evidence Contract
 
-When recovering from old sources:
+Every important claim must point to current evidence.
 
-```text
-avax-backup.txt
-Framework.txt
-Components.txt
-old branches
-git history
-old reviews
-old archives
-generated dumps
-```
-
-apply:
+Evidence should record:
 
 ```text
-Old behavior is valuable.
-Old structure is not automatically valuable.
+current branch
+dirty status
+sources loaded
+skills used
+how-to docs applied
+source-of-truth decision
+validation commands
+validation outputs
+findings
+corrections
+remaining risks
+final decision
 ```
 
-Recovery must classify:
+Write task evidence under:
 
 ```text
-source
-old path
-old namespace
-behavior summary
-target component
-target flow or capability
-tests needed
-risk
-decision
+.agents/management/evidence/generated/<task-name>/
 ```
 
-Do not restore old architecture mechanically.
+New agent evidence belongs in `.agents/management/evidence/**`.
 
-Do not create skeletons to silence tools.
+Root `EVIDENCE/` is a legacy/transitional evidence surface. Do not write new task evidence there unless a legacy tool or explicit human instruction requires it.
 
-Do not promote old code without current tests.
+If a file must be written under root `EVIDENCE/`, its filename must start with a timestamp:
+
+```text
+YYYY-MM-DD-HH-MM-SS-descriptive-name.md
+```
+
+Example:
+
+```text
+EVIDENCE/2026-05-26-14-30-00-runtime-doctor-validation.md
+```
+
+Evidence proves what happened. It does not become canonical governance unless explicitly promoted.
 
 ---
 
-## 32. Stage Lock Rule
+## 13. Final Output Contract
 
-Only one implementation stage may be active at a time unless current evidence explicitly authorizes parallel remediation.
+Every final response must include enough information for a reviewer to know what happened.
 
-Stage lock applies to product/runtime feature stages.
-
-Backlog remediation may proceed through task branches when current TODO.md/fix-this.md/evidence authorizes it.
-
-Agents must not bypass stage lock by calling work:
+For normal tasks include:
 
 ```text
-preparation
-scaffolding
-harmless foundation
-future-proofing
-temporary
-placeholder
+Stage
+Status
+Files changed
+Validation commands
+Validation summary
+Evidence written
+Remaining risks
+Next allowed action
 ```
 
-If it creates production behavior for a locked stage, it is forbidden.
-
----
-
-## 33. Local Agent Workspace
-
-The `.agents/` folder is the local AI engineering workspace.
-
-Routing:
+For larger tasks also include:
 
 ```text
-.agents/skills/**
-  executable playbooks and task routing
-
-.agents/how-to/**
-  local governance rules and quality laws
-
-.agents/management/**
-  active state, learning, memory, evidence, coordination
-
-.agents/management/learning/**
-  lessons to avoid repeated mistakes
-
-.agents/management/memory/**
-  durable project memory if present
-
-.agents/review/**
-  prior reviews and review state
-
-.agents/business-logic/**
-  project meaning and business language if present
-
-.agents/.rules/**
-  mounted reusable governance
+Mode
+Skills used
+How-to files read
+Source-of-truth decision
+Reports updated
+Final git status
+Push readiness
 ```
 
-If a matching skill exists, read it.
-
-Memory and learning guide execution.
-Validation proves execution.
-
----
-
-## 34. Agent Output Contract
-
-Every agent execution must end with:
-
-```text
-Stage:
-Status:
-Files changed:
-Validation commands:
-Validation summary:
-Evidence written:
-Remaining risks:
-Next allowed action:
-```
-
-For larger tasks, also include:
-
-```text
-Mode:
-Skills discovered:
-Skills used:
-Skills skipped with reason:
-How-to files read:
-Rules applied:
-Rules intentionally not applicable:
-Source-of-truth decision:
-Reports updated:
-Final git status:
-Push readiness:
-```
-
-Allowed status values:
+Allowed statuses:
 
 ```text
 GREEN
@@ -2213,103 +660,20 @@ PARTIAL
 UNKNOWN
 ```
 
-Autonomous loop final decisions:
-
-```text
-AUTONOMOUS_BACKLOG_LOOP_COMPLETE
-AUTONOMOUS_BACKLOG_LOOP_PARTIAL
-AUTONOMOUS_BACKLOG_LOOP_BLOCKED
-```
-
-Task final decisions:
-
-```text
-TODO_CLOSED
-TODO_PARTIAL_WITH_YELLOW
-TODO_BLOCKED
-```
-
 Do not use vague final status.
 
 ---
 
-## 35. Production Readiness Rule
-
-Production readiness requires agreement between:
-
-```text
-architecture
-taxonomy
-autoload
-namespaces
-tests
-static analysis
-runtime safety
-public API stability
-security baseline
-performance baseline
-observability
-documentation
-compatibility bridges
-current validation evidence
-```
-
-No marketing language.
-
-No optimism.
-
-Only evidence.
-
----
-
-## 36. Final Law
-
-AvaX must stay simple, explicit, and strong.
-
-The repository must not become a pile of components.
-
-Components must not become a pile of folders.
-
-Folders must say flow or capability.
-
-Units must say responsibility.
-
-Functions must say exact action.
-
-Concept words are not folder names.
-
-PublicSurface receives.
-
-Flows execute.
-
-Capabilities power.
-
-Configuration assembles.
-
-Foundation supports.
-
-Components dogfood AvaX.
-
-Security protects every boundary.
-
-Performance requires evidence.
-
-Caching requires lifecycle and invalidation.
-
-Tests prove behavior.
-
-Reports prove status.
-
-Stage lock controls scope.
-
-Old code is evidence.
-
-Current governance is the target.
-
-Validation is the judge.
-
-PARTIAL means continue.
-
-HARD_BLOCKER means stop.
+## 14. Final Law
 
 AvaX builds AvaX with AvaX.
+
+Keep the root contract thin.
+
+Load the right `.agents` rules.
+
+Prove claims with current validation.
+
+Stop on HARD_BLOCKER.
+
+Continue on PARTIAL when ownership is clear.

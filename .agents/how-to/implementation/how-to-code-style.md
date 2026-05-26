@@ -2,12 +2,11 @@
 
 ## Status
 
-**MANDATORY** - This document defines non-negotiable code style rules for AvaX.
+**MANDATORY** - This document defines non-negotiable code style rules for the project.
 
 ## Normative Language
 
-The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, *
-*BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
+The words **MUST**, **MUST NOT**, **REQUIRED**, **MANDATORY**, **SHOULD**, **SHOULD NOT**, **MAY**, **FORBIDDEN**, **BLOCKER**, **HIGH**, **MEDIUM**, **LOW** are governance keywords.
 
 - **MUST / REQUIRED / MANDATORY**: non-negotiable rule.
 - **MUST NOT / FORBIDDEN**: prohibited pattern.
@@ -406,8 +405,8 @@ For the full semantic PHPDoc governance including class PHPDoc, method PHPDoc, t
 review criteria, gate rules, and phased adoption, see:
 
 ```text
-.agents/how-to/how-to-document.md — Semantic PHPDoc Rule
-.agents/how-to/how-to-code-review.md — §24 PHPDoc Review Rule
+.agents/how-to/documentation/how-to-document.md — Semantic PHPDoc Rule
+.agents/how-to/verification/how-to-code-review.md — §24 PHPDoc Review Rule
 ```
 
 ### Summary

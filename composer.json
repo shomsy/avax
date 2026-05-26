@@ -112,6 +112,10 @@
       "@composer validate --no-check-publish",
       "@composer dump-autoload -o"
     ],
-    "phpstan": "vendor/bin/phpstan analyse framework components tests --memory-limit=1G"
+    "phpstan": "vendor/bin/phpstan analyse framework components tests --memory-limit=1G",
+    "sdlc:preflight": "tooling/sdlc/run-sdlc tooling/sdlc/preflight.php",
+    "sdlc:changed": "tooling/sdlc/run-sdlc tooling/sdlc/validate-changed.php",
+    "sdlc:governance": "tooling/sdlc/run-sdlc tooling/sdlc/validate-governance.php",
+    "sdlc:agent-task": "tooling/sdlc/run-sdlc tooling/sdlc/validate-agent-task.php"
   }
 }

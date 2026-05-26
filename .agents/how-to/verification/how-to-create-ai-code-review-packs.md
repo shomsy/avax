@@ -526,6 +526,93 @@ Repository tests, governance, security rules, and source-of-truth documents rema
 5. `review-testing-strategy.zip` — the proof
 6. `review-self-explaining-architecture.zip` — the documentation
 
+## Actual Changes Review Pack
+
+Use an actual-changes review pack when the standard review packs are structurally valid but do not contain the real current working-tree delta. This pack is for human review of changed tracked files, staged files, and untracked files.
+
+This pack is not canonical governance and does not replace normal review packs.
+
+Required structure:
+
+```text
+_pack/YYYY-MM-DD-HH-MM-SS-<purpose>-actual-changes-review/
+  metadata/
+  files/
+  patches/
+  validation/
+```
+
+Required metadata:
+
+- `metadata/README.md`
+- `metadata/git-status-short.txt`
+- `metadata/git-status-porcelain-v1.txt`
+- `metadata/git-diff-name-only.txt`
+- `metadata/git-diff-cached-name-only.txt`
+- `metadata/git-untracked-files.txt`
+- `metadata/all-changed-and-untracked-files.txt`
+- `metadata/copied-files.txt`
+- `metadata/skipped-files.txt`
+- `metadata/deleted-files.txt`
+- `metadata/repo-info.txt`
+- `metadata/tree-files.txt`
+- `metadata/sha256sums.txt`
+
+Required patches:
+
+- `patches/git-diff.patch`
+- `patches/git-diff-cached.patch`
+- `patches/git-diff-stat.txt`
+- `patches/git-diff-cached-stat.txt`
+
+Required validation files:
+
+- `validation/tar-list.txt`
+- `validation/zip-test.txt`
+- `validation/zip-list.txt`
+- `validation/expected-engineering-canon-presence.md` when reviewing Engineering Canon work
+
+The pack must include untracked files unless excluded by safety rules.
+
+Always exclude:
+
+```text
+_pack/**
+vendor/**
+.git/**
+node_modules/**
+cache/**
+coverage/**
+tmp/**
+.qoder/**
+.env
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*engineering-canon-actual-changes-review*.zip
+*engineering-canon-actual-changes-review*.tar.gz
+```
+
+Do not copy prior generated review archives into `files/`.
+
+The pack must create and validate both:
+
+```text
+_pack/<run-id>.tar.gz
+_pack/<run-id>.zip
+```
+
+Validation must prove:
+
+- tar archive lists successfully;
+- zip archive tests successfully;
+- copied files list is generated from `files/`;
+- skipped files list names every excluded changed/untracked path;
+- expected required files exist in repo and in the pack;
+- archive paths are reported exactly.
+
 ## Future Tooling
 
 A future automated tool should be created at:

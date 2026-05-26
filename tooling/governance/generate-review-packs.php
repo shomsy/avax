@@ -924,7 +924,10 @@ function command_output(string $command, string $cwd): string
 
 function git_output(string $arguments, string $root): string
 {
-    $git = is_executable('/usr/bin/git') ? '/usr/bin/git' : 'git';
+    $git = trim((string) shell_exec('command -v git 2>/dev/null'));
+    if ($git === '') {
+        return 'UNKNOWN';
+    }
 
     return command_output($git . ' ' . $arguments, $root);
 }

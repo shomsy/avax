@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Canonical SDLC runner — ensures a PHP runtime with git access is used.
+#
+# Why: The default `php` command in this environment may be a Docker wrapper
+# (php:8.5-cli container) that cannot access the host git binary. SDLC runners
+# require git for changed-scope detection, branch validation, and commit checks.
+#
+# This wrapper locates a native PHP binary that can execute git commands.
+# It is the single source of truth for which PHP runs SDLC tooling.
+#
+# Usage:
+#   tooling/sdlc/run-sdlc <script.php> [args...]
+#   composer run sdlc:agent-task
+#
+# Override: set PHP_BIN to force a specific binary.
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
+
+# 1. User override
+if [[ -n "${PHP_BIN:-}" ]]; then
+    PHP="$PHP_BIN"
+    if ! "$PHP" -r 'exit(0);' 2>/dev/null; then
+        echo "RED: PHP_BIN=$PHP_BIN is not a valid PHP binary." >&2
+        exit 1
+    fi
+else
+    # 2. Find native PHP with git access
+    PHP=""
+    for candidate in php8.4 php8.5 php; do
+        bin="$(command -v "$candidate" 2>/dev/null || true)"
+        if [[ -z "$bin" ]]; then
+            continue
+        fi
+        # Resolve symlink to get real path
+        real_bin="$(readlink -f "$bin" 2>/dev/null || echo "$bin")"
+        # Reject Docker wrappers (common patterns)
+        case "$real_bin" in
+            */docker*|*php:*) continue ;;
+        esac
+        # Check if git is accessible from this PHP
+        has_git=$("$bin" -r 'echo function_exists("shell_exec") && trim((string)shell_exec("command -v git 2>/dev/null")) !== "" ? "yes" : "no";' 2>/dev/null || echo "no")
+        if [[ "$has_git" == "yes" ]]; then
+            PHP="$bin"
+            break
+        fi
+    done
+fi
+
+if [[ -z "${PHP:-}" ]]; then
+    echo "SDLC Runtime Error" >&2
+    echo "PHP_BINARY=N/A" >&2
+    echo "git=missing (all candidates rejected)" >&2
+    echo "" >&2
+    echo "RED: No PHP runtime with git access found." >&2
+    echo "The default 'php' command is a Docker wrapper that cannot access git." >&2
+    echo "" >&2
+    echo "Fix options:" >&2
+    echo "  1. Install native PHP: sudo apt install php8.4-cli" >&2
+    echo "  2. Override: export PHP_BIN=/usr/bin/php8.4" >&2
+    echo "  3. Run directly: /usr/bin/php8.4 tooling/sdlc/<script>.php" >&2
+    echo "" >&2
+    echo "See: .agents/how-to/verification/how-to-sdlc-runners.md" >&2
+    exit 1
+fi
+
+PHP_REAL="$(readlink -f "$PHP" 2>/dev/null || echo "$PHP")"
+GIT_PATH="$(command -v git 2>/dev/null || echo "missing")"
+
+echo "SDLC Runner"
+echo "PHP_BINARY=$PHP_REAL"
+echo "php_version=$("$PHP" -r 'echo PHP_VERSION;' 2>/dev/null || echo "unknown")"
+echo "git=$GIT_PATH"
+
+if [[ "$GIT_PATH" == "missing" ]]; then
+    echo "RED: Wrapper detected git is missing despite PHP candidate selection." >&2
+    exit 1
+fi
+
+# 3. Execute the requested script
+if [[ $# -eq 0 ]]; then
+    echo "Usage: run-sdlc <script.php> [args...]" >&2
+    exit 1
+fi
+
+SCRIPT="$1"
+shift
+
+# Resolve script path relative to project root if not absolute
+if [[ "$SCRIPT" != /* ]]; then
+    SCRIPT="$PROJECT_ROOT/$SCRIPT"
+fi
+
+if [[ ! -f "$SCRIPT" ]]; then
+    echo "RED: Script not found: $SCRIPT" >&2
+    exit 1
+fi
+
+exec "$PHP" "$SCRIPT" "$@"

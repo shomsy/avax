@@ -23,7 +23,45 @@ If this file and another governance document disagree, this file wins for routin
 
 ---
 
-## 0. AvaX Goal
+## 0. Mandatory Immediate `.agents` SDLC Load
+
+This rule is mandatory for every task, no matter how small.
+
+Before planning, editing, validating, reviewing, committing, reporting, or answering with implementation guidance, every agent must immediately load the complete AvaX `.agents` SDLC surface.
+
+Required immediate load:
+
+```text
+AGENTS.md
+.agents/GOVERNANCE_INDEX.md
+.agents/how-to/README.md
+.agents/how-to/00-how-to-reading-order.md
+all .agents/how-to/**/*.md
+all .agents/skills/**/SKILL.md
+.agents/management/**
+ARCHITECTURE.md
+latest relevant .agents/management/evidence/**
+```
+
+This is a strict discovery requirement.
+
+After the complete `.agents` SDLC is loaded, the agent may apply the task-relevant subset for execution. The agent must not skip complete discovery because the request appears simple, local, cosmetic, documentation-only, or urgent.
+
+Every task must explicitly identify:
+
+```text
+skills loaded
+how-to rules loaded
+management/evidence sources considered
+task-relevant rules selected
+rules skipped with reason
+```
+
+If the complete `.agents` SDLC cannot be loaded, the agent must report `SDLC_LOAD_BLOCKED`, classify the impact, and avoid GREEN claims.
+
+---
+
+## 0A. AvaX Goal
 
 AvaX is a runtime-agnostic PHP application platform and engineering system.
 

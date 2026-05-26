@@ -112,7 +112,8 @@ The following governance tooling is available:
 | `tooling/validation/check-phpstan-baseline.php`        | Enforces PHPStan in full, baseline, and changed modes during phased legacy adoption | console + baseline JSON |
 | `tooling/governance/check-root-evidence-hygiene.php`     | Checks evidence directory hygiene | console |
 | `tooling/governance/check-how-to-document-structure.php` | Validates how-to document structure | console |
-| `tooling/governance/generate-review-packs.php`           | Generates timestamped AI review packs with TREE.txt, STATS.md, REVIEW_CONTEXT.md, manifest validation, template fragment detection | console + ZIP packs |
+| `tooling/governance/generate-review-packs.php`           | Generates timestamped AI review packs with TREE.txt, STATS.md, REVIEW_CONTEXT.md, immutable run id, root/ZIP metadata consistency, manifest validation, and template fragment detection | console + ZIP packs |
+| `tooling/governance/validate-review-pack-integrity.php`  | Independently validates generated review pack folders against actual ZIP contents, manifest counts, STATS metadata, forbidden entries, and stale/run-id mismatch risk | console |
 | `tooling/governance/check-intrusive-coupling.php`        | Detects intrusive coupling patterns | console |
 | `tooling/governance/check-large-unit-thresholds.php`     | Checks unit size thresholds | console |
 | `tooling/governance/check-serviceprovider-governance-consistency.php` | Validates ServiceProvider governance | console |
@@ -184,6 +185,20 @@ The following governance tooling is available:
 | how-to-events-listeners-event-sourcing-cqrs-realtime.md (architecture/) | Events DSL, listeners, event sourcing, CQRS, realtime, governance event sourcing |
 | how-to-create-ai-code-review-packs.md (verification/)   | AI review pack creation, ZIP export, manifest validation, cleanup rules          |
 | components/Identity/docs/                               | Identity component documentation skeleton: ownership, APIs, flows, security model  |
+
+## Evidence Integrity Expectations
+
+Generated review packs must be validated by independent ZIP inspection, not only manifest self-reporting.
+
+Required agreement:
+
+- root `README.md`
+- root `MANIFEST.md`
+- root `manifest.json`
+- each ZIP `REVIEW_CONTEXT.md`
+- each ZIP `STATS.md`
+
+All must share the same generated timestamp, purpose, and run id. `manifest.json` `zip_entries` must match actual ZIP file-entry counts.
 
 ## Conflict Resolution
 

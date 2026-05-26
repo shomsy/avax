@@ -20,12 +20,105 @@ $stagingDir = $packDir . '/staging';
 
 // ── Configuration ──────────────────────────────────────────────────────────
 
-// Purpose name for the batch folder (used in _pack/YYYY-MM-DD-HH-MM-SS-purpose-review/)
-$packPurpose = $argv[1] ?? getenv('REVIEW_PACK_PURPOSE') ?: 'governance-final-hardening';
-if (! preg_match('/^[a-z0-9-]+$/', $packPurpose)) {
-    fwrite(STDERR, "Invalid pack purpose. Use lowercase letters, numbers, and hyphens only.\n");
-    exit(1);
+const GENERATOR_VERSION = '2.0.0';
+
+function usage(): string
+{
+    return <<<'USAGE'
+Usage:
+  php tooling/governance/generate-review-packs.php
+  php tooling/governance/generate-review-packs.php --purpose=<lowercase-hyphen-name>
+  php tooling/governance/generate-review-packs.php --name=<lowercase-hyphen-name>
+  php tooling/governance/generate-review-packs.php --purpose=<lowercase-hyphen-name> --name=<lowercase-hyphen-name>
+
+Options:
+  --help                         Print this help and exit without generating packs.
+  --purpose=<name>               Metadata purpose. Only lowercase letters, numbers, and hyphens.
+  --name=<name>                  Run folder name stem. Only lowercase letters, numbers, and hyphens.
+
+Rules:
+  If both --purpose and --name are provided, they must be identical.
+  Unknown options fail.
+  Malformed values fail.
+USAGE;
 }
+
+function parse_cli_args(array $argv): array
+{
+    $purpose = getenv('REVIEW_PACK_PURPOSE') ?: 'governance-final-hardening';
+    $name = null;
+
+    for ($i = 1; $i < count($argv); $i++) {
+        $arg = $argv[$i];
+
+        if ($arg === '--help' || $arg === '-h') {
+            echo usage();
+            exit(0);
+        }
+
+        if (str_starts_with($arg, '--purpose=')) {
+            $purpose = substr($arg, strlen('--purpose='));
+            continue;
+        }
+
+        if ($arg === '--purpose') {
+            $i++;
+            if (!isset($argv[$i])) {
+                fwrite(STDERR, "Missing value for --purpose.\n");
+                exit(1);
+            }
+            $purpose = $argv[$i];
+            continue;
+        }
+
+        if (str_starts_with($arg, '--name=')) {
+            $name = substr($arg, strlen('--name='));
+            continue;
+        }
+
+        if ($arg === '--name') {
+            $i++;
+            if (!isset($argv[$i])) {
+                fwrite(STDERR, "Missing value for --name.\n");
+                exit(1);
+            }
+            $name = $argv[$i];
+            continue;
+        }
+
+        if (str_starts_with($arg, '--')) {
+            fwrite(STDERR, "Unknown option: {$arg}\n");
+            exit(1);
+        }
+
+        // We do not accept positional arguments
+        fwrite(STDERR, "Unexpected argument: {$arg}\n");
+        exit(1);
+    }
+
+    $name ??= $purpose;
+
+    foreach (['purpose' => $purpose, 'name' => $name] as $label => $value) {
+        if (!is_string($value) || !preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $value)) {
+            fwrite(STDERR, "Invalid {$label}. Use lowercase letters, numbers, and hyphens only.\n");
+            exit(1);
+        }
+    }
+
+    if ($purpose !== $name) {
+        fwrite(STDERR, "--purpose and --name must be identical for a single immutable run id.\n");
+        exit(1);
+    }
+
+    return [
+        'purpose' => $purpose,
+        'name' => $name,
+    ];
+}
+
+$cli = parse_cli_args($argv);
+$packPurpose = $cli['purpose'];
+$packName = $cli['name'];
 
 $definitions = [
     '01-governance-architecture' => [
@@ -332,7 +425,31 @@ function generate_tree_txt(string $stagingPath): string
     return implode("\n", array_slice($files, 0, 5000)) . "\n";
 }
 
-function generate_stats_md(string $stagingPath, string $context): string
+function count_files(string $path): int
+{
+    $count = 0;
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS)
+    );
+
+    foreach ($iterator as $file) {
+        if ($file->isFile()) {
+            $count++;
+        }
+    }
+
+    return $count;
+}
+
+function generate_stats_md(
+    string $stagingPath,
+    string $context,
+    string $generatedAt,
+    string $purpose,
+    string $runId,
+    int $filesCopiedBeforeMetadata,
+    int $zipEntries
+): string
 {
     $totalFiles = 0;
     $phpFiles = 0;
@@ -363,7 +480,6 @@ function generate_stats_md(string $stagingPath, string $context): string
         }
     }
 
-    $generatedAt = date('Y-m-d H:i:s');
     $otherFiles = $totalFiles - $phpFiles - $mdFiles;
     $phpLinesApprox = $totalFiles > 0 ? (int) round($totalLines * $phpFiles / $totalFiles) : 0;
 
@@ -372,6 +488,10 @@ function generate_stats_md(string $stagingPath, string $context): string
 
 **Context:** {$context}
 **Generated:** {$generatedAt}
+**Purpose:** {$purpose}
+**Run ID:** {$runId}
+**Files Copied Before Metadata:** {$filesCopiedBeforeMetadata}
+**ZIP Entries:** {$zipEntries}
 
 ## File Counts
 
@@ -397,7 +517,7 @@ It is NOT a backup. It is NOT the full repository.
 STATS;
 }
 
-function generate_review_context(string $context): string
+function generate_review_context(string $context, array $runMetadata): string
 {
     $contexts = [
         'governance-quality' => <<<CTX
@@ -610,7 +730,18 @@ This package contains the self-explaining architecture documentation system:
 CTX,
     ];
 
-    return $contexts[$context] ?? "# Review Context\n\nNo specific context available.\n";
+    $body = $contexts[$context] ?? "# Review Context\n\nNo specific context available.\n";
+    $header = "# Run Metadata\n\n"
+        . "- Generated: {$runMetadata['generated_at']}\n"
+        . "- Purpose: {$runMetadata['purpose']}\n"
+        . "- Run ID: {$runMetadata['run_id']}\n"
+        . "- Generator Version: {$runMetadata['generator_version']}\n"
+        . "- Git Branch: {$runMetadata['git_branch']}\n"
+        . "- Git Commit: {$runMetadata['git_commit']}\n"
+        . "- Dirty Status: {$runMetadata['dirty_status']}\n\n"
+        . "---\n\n";
+
+    return $header . $body;
 }
 
 function create_zip(string $stagingPath, string $zipPath): bool
@@ -636,6 +767,8 @@ function metadata_fragment_findings(string $content): array
         $rawConcatenatedExpression => 'unevaluated concatenated expression',
         $rawExpressionFragment => 'unevaluated expression fragment',
         '<?php' => 'PHP source fragment in generated metadata',
+        '$totalFiles' => 'unevaluated total-files template variable',
+        '$generatedAt' => 'unevaluated generated-at template variable',
     ];
 
     $findings = [];
@@ -669,10 +802,14 @@ function validate_generated_metadata_files(string $basePath): array
     return $errors;
 }
 
-function validate_zip(string $zipPath): array
+function validate_zip(string $zipPath, array $runMetadata, int $expectedZipEntries, string $expectedRunDir): array
 {
     if (!file_exists($zipPath)) {
         return ['valid' => false, 'error' => 'ZIP file not created'];
+    }
+
+    if (dirname($zipPath) !== $expectedRunDir) {
+        return ['valid' => false, 'error' => 'ZIP path does not belong to current run folder'];
     }
 
     try {
@@ -681,6 +818,7 @@ function validate_zip(string $zipPath): array
         $fileCount = 0;
         $forbiddenEntries = [];
         $metadataErrors = [];
+        $statsContent = null;
 
         foreach (new RecursiveIteratorIterator($zip) as $file) {
             $relativePath = str_replace('phar://' . $zipPath . '/', '', $file->getPathname());
@@ -692,15 +830,41 @@ function validate_zip(string $zipPath): array
             }
 
             if (in_array(basename($relativePath), ['REVIEW_CONTEXT.md', 'TREE.txt', 'STATS.md'], true)) {
-                foreach (metadata_fragment_findings((string) file_get_contents($file->getPathname())) as $finding) {
+                $content = (string) file_get_contents($file->getPathname());
+                foreach (metadata_fragment_findings($content) as $finding) {
                     $metadataErrors[] = "{$relativePath}: {$finding}";
+                }
+                if ($relativePath === 'STATS.md') {
+                    $statsContent = $content;
                 }
             }
         }
-        $fileListStr = implode("\n", $fileList);
         $hasTree = in_array('TREE.txt', $fileList, true);
         $hasStats = in_array('STATS.md', $fileList, true);
         $hasContext = in_array('REVIEW_CONTEXT.md', $fileList, true);
+
+        if ($fileCount !== $expectedZipEntries) {
+            $metadataErrors[] = "ZIP entry count mismatch: expected {$expectedZipEntries}, actual {$fileCount}";
+        }
+
+        if ($statsContent === null) {
+            $metadataErrors[] = 'STATS.md could not be read from ZIP';
+        } else {
+            $expectedStats = [
+                'Generated' => $runMetadata['generated_at'],
+                'Purpose' => $runMetadata['purpose'],
+                'Run ID' => $runMetadata['run_id'],
+                'ZIP Entries' => (string) $expectedZipEntries,
+            ];
+
+            foreach ($expectedStats as $label => $expected) {
+                $actual = extract_stats_value($statsContent, $label);
+                if ($actual !== $expected) {
+                    $metadataErrors[] = "STATS.md {$label} mismatch: expected '{$expected}', actual '" . ($actual ?? 'MISSING') . "'";
+                }
+            }
+        }
+
         $size = filesize($zipPath);
         $sizeMb = round($size / 1024 / 1024, 2);
         $valid = $fileCount > 0
@@ -729,6 +893,274 @@ function validate_zip(string $zipPath): array
 function manifest_json(array $manifest): string
 {
     return json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n";
+}
+
+function command_output(string $command, string $cwd): string
+{
+    $descriptorSpec = [
+        1 => ['pipe', 'w'],
+        2 => ['pipe', 'w'],
+    ];
+
+    $process = proc_open($command, $descriptorSpec, $pipes, $cwd);
+    if (!is_resource($process)) {
+        return 'UNKNOWN';
+    }
+
+    $stdout = stream_get_contents($pipes[1]);
+    $stderr = stream_get_contents($pipes[2]);
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+    $exitCode = proc_close($process);
+
+    if ($exitCode !== 0) {
+        $value = trim((string) $stderr);
+        return $value !== '' ? $value : 'UNKNOWN';
+    }
+
+    $value = trim((string) $stdout);
+    return $value !== '' ? $value : 'UNKNOWN';
+}
+
+function git_output(string $arguments, string $root): string
+{
+    $git = is_executable('/usr/bin/git') ? '/usr/bin/git' : 'git';
+
+    return command_output($git . ' ' . $arguments, $root);
+}
+
+function git_dir_path(string $root): ?string
+{
+    $gitPath = $root . '/.git';
+    if (is_dir($gitPath)) {
+        return $gitPath;
+    }
+
+    if (!is_file($gitPath)) {
+        return null;
+    }
+
+    $content = trim((string) file_get_contents($gitPath));
+    if (str_starts_with($content, 'gitdir:')) {
+        $path = trim(substr($content, strlen('gitdir:')));
+        if ($path !== '' && $path[0] !== '/') {
+            $path = $root . '/' . $path;
+        }
+
+        return $path;
+    }
+
+    return null;
+}
+
+function git_metadata_from_files(string $root): array
+{
+    $gitDir = git_dir_path($root);
+    if ($gitDir === null || !is_file($gitDir . '/HEAD')) {
+        return ['branch' => 'UNKNOWN', 'commit' => 'UNKNOWN'];
+    }
+
+    $head = trim((string) file_get_contents($gitDir . '/HEAD'));
+    if (!str_starts_with($head, 'ref:')) {
+        return ['branch' => 'DETACHED', 'commit' => $head !== '' ? $head : 'UNKNOWN'];
+    }
+
+    $ref = trim(substr($head, strlen('ref:')));
+    $branch = str_starts_with($ref, 'refs/heads/') ? substr($ref, strlen('refs/heads/')) : $ref;
+    $commit = 'UNKNOWN';
+
+    $refFile = $gitDir . '/' . $ref;
+    if (is_file($refFile)) {
+        $commit = trim((string) file_get_contents($refFile));
+    } else {
+        $commonDir = $gitDir;
+        if (is_file($gitDir . '/commondir')) {
+            $common = trim((string) file_get_contents($gitDir . '/commondir'));
+            $commonDir = $common[0] === '/' ? $common : $gitDir . '/' . $common;
+        }
+
+        foreach ([$commonDir . '/' . $ref, $commonDir . '/packed-refs'] as $candidate) {
+            if (!is_file($candidate)) {
+                continue;
+            }
+
+            if (basename($candidate) !== 'packed-refs') {
+                $commit = trim((string) file_get_contents($candidate));
+                break;
+            }
+
+            foreach (file($candidate, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [] as $line) {
+                if ($line[0] === '#' || $line[0] === '^') {
+                    continue;
+                }
+                [$sha, $packedRef] = array_pad(explode(' ', $line, 2), 2, '');
+                if ($packedRef === $ref) {
+                    $commit = $sha;
+                    break 2;
+                }
+            }
+        }
+    }
+
+    return [
+        'branch' => $branch !== '' ? $branch : 'UNKNOWN',
+        'commit' => $commit !== '' ? $commit : 'UNKNOWN',
+    ];
+}
+
+function dirty_status_summary(string $root): string
+{
+    $status = git_output('status --short', $root);
+    if ($status === 'UNKNOWN' || $status === '' || str_contains($status, 'not found')) {
+        return 'UNKNOWN (git status unavailable in PHP runtime)';
+    }
+
+    $lines = array_values(array_filter(explode("\n", $status), static fn(string $line): bool => trim($line) !== ''));
+    if ($lines === []) {
+        return 'clean';
+    }
+
+    return count($lines) . ' dirty entries';
+}
+
+function extract_stats_value(string $stats, string $label): ?string
+{
+    if (preg_match('/^\*\*' . preg_quote($label, '/') . ':\*\*\s*(.+)$/m', $stats, $matches)) {
+        return trim($matches[1]);
+    }
+
+    return null;
+}
+
+function validate_existing_pack_folder(string $folder): array
+{
+    $errors = [];
+    foreach (['README.md', 'MANIFEST.md', 'manifest.json'] as $required) {
+        if (!is_file($folder . '/' . $required)) {
+            $errors[] = "Missing root metadata file: {$required}";
+        }
+    }
+
+    if ($errors !== []) {
+        return $errors;
+    }
+
+    $manifestContent = (string) file_get_contents($folder . '/manifest.json');
+    $manifest = json_decode($manifestContent, true);
+    if (!is_array($manifest)) {
+        return ['manifest.json is not valid JSON: ' . json_last_error_msg()];
+    }
+
+    foreach (['generated_at', 'purpose', 'run_id', 'packs'] as $field) {
+        if (!array_key_exists($field, $manifest)) {
+            $errors[] = "manifest.json missing field: {$field}";
+        }
+    }
+
+    if ($errors !== []) {
+        return $errors;
+    }
+
+    foreach (['README.md', 'MANIFEST.md', 'manifest.json'] as $metadataFile) {
+        $content = (string) file_get_contents($folder . '/' . $metadataFile);
+        foreach (metadata_fragment_findings($content) as $finding) {
+            $errors[] = "{$metadataFile}: {$finding}";
+        }
+    }
+
+    $readme = (string) file_get_contents($folder . '/README.md');
+    $manifestMd = (string) file_get_contents($folder . '/MANIFEST.md');
+    foreach (['generated_at' => 'Generated', 'purpose' => 'Purpose', 'run_id' => 'Run ID'] as $field => $label) {
+        $expectedLine = "{$label}: {$manifest[$field]}";
+        if (!str_contains($readme, $expectedLine)) {
+            $errors[] = "README.md missing '{$expectedLine}'";
+        }
+        if (!str_contains($manifestMd, $expectedLine)) {
+            $errors[] = "MANIFEST.md missing '{$expectedLine}'";
+        }
+    }
+
+    $runMetadata = [
+        'generated_at' => (string) $manifest['generated_at'],
+        'purpose' => (string) $manifest['purpose'],
+        'run_id' => (string) $manifest['run_id'],
+    ];
+
+    foreach ($manifest['packs'] as $pack) {
+        if (!is_array($pack) || !isset($pack['name'], $pack['zip_entries'])) {
+            $errors[] = 'Invalid pack entry in manifest.json';
+            continue;
+        }
+
+        $zipPath = $folder . '/' . $pack['name'];
+        if (!is_file($zipPath)) {
+            $errors[] = "Missing ZIP listed in manifest: {$pack['name']}";
+            continue;
+        }
+
+        if (dirname($zipPath) !== $folder) {
+            $errors[] = "ZIP path is outside current run folder: {$zipPath}";
+            continue;
+        }
+
+        try {
+            $zip = new PharData($zipPath);
+            $entries = [];
+            $statsContent = null;
+            foreach (new RecursiveIteratorIterator($zip) as $file) {
+                $relativePath = str_replace('phar://' . $zipPath . '/', '', $file->getPathname());
+                $entries[] = $relativePath;
+
+                if (is_forbidden_pack_path($relativePath)) {
+                    $errors[] = "{$pack['name']}: forbidden entry {$relativePath}";
+                }
+
+                if (basename($relativePath) === 'STATS.md') {
+                    $statsContent = (string) file_get_contents($file->getPathname());
+                }
+
+                if (in_array(basename($relativePath), ['REVIEW_CONTEXT.md', 'TREE.txt', 'STATS.md'], true)) {
+                    foreach (metadata_fragment_findings((string) file_get_contents($file->getPathname())) as $finding) {
+                        $errors[] = "{$pack['name']}: {$relativePath}: {$finding}";
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            $errors[] = "{$pack['name']}: cannot read ZIP: {$e->getMessage()}";
+            continue;
+        }
+
+        foreach (['REVIEW_CONTEXT.md', 'TREE.txt', 'STATS.md'] as $required) {
+            if (!in_array($required, $entries, true)) {
+                $errors[] = "{$pack['name']}: missing {$required}";
+            }
+        }
+
+        $actualEntries = count($entries);
+        $expectedEntries = (int) $pack['zip_entries'];
+        if ($actualEntries !== $expectedEntries) {
+            $errors[] = "{$pack['name']}: zip_entries mismatch expected {$expectedEntries}, actual {$actualEntries}";
+        }
+
+        if ($statsContent === null) {
+            $errors[] = "{$pack['name']}: STATS.md missing or unreadable";
+            continue;
+        }
+
+        foreach ([
+            'Generated' => $runMetadata['generated_at'],
+            'Purpose' => $runMetadata['purpose'],
+            'Run ID' => $runMetadata['run_id'],
+            'ZIP Entries' => (string) $expectedEntries,
+        ] as $label => $expected) {
+            $actual = extract_stats_value($statsContent, $label);
+            if ($actual !== $expected) {
+                $errors[] = "{$pack['name']}: STATS.md {$label} mismatch expected '{$expected}', actual '" . ($actual ?? 'MISSING') . "'";
+            }
+        }
+    }
+
+    return $errors;
 }
 
 // ── Main Execution ─────────────────────────────────────────────────────────
@@ -767,13 +1199,25 @@ if (!empty($duplicates)) {
 
 // Step 4: Generate each pack
 $timestamp = date('Y-m-d-H-i-s');
-$packDirName = "{$timestamp}-{$packPurpose}-review";
+$generatedAt = date('Y-m-d H:i:s');
+$packDirName = "{$timestamp}-{$packName}-review";
 $packDirTimestamped = $packDir . '/' . $packDirName;
 if (!is_dir($packDirTimestamped)) {
     mkdir($packDirTimestamped, 0755, true);
 }
 $generatedPacks = [];
 $generationErrors = [];
+$gitMetadata = git_metadata_from_files($root);
+$runMetadata = [
+    'generated_at' => $generatedAt,
+    'purpose' => $packPurpose,
+    'run_id' => $packDirName,
+    'generator_version' => GENERATOR_VERSION,
+    'repo_root' => $root,
+    'git_branch' => $gitMetadata['branch'],
+    'git_commit' => $gitMetadata['commit'],
+    'dirty_status' => dirty_status_summary($root),
+];
 
 foreach ($definitions as $name => $def) {
     log_msg("\nGenerating: {$name}");
@@ -799,15 +1243,26 @@ foreach ($definitions as $name => $def) {
     $tree = generate_tree_txt($stagingPath);
     file_put_contents($stagingPath . '/TREE.txt', $tree);
 
+    // Generate REVIEW_CONTEXT.md before STATS.md so the expected ZIP entry
+    // count is based on actual unique staging files, not copy operations.
+    log_msg("  Generating REVIEW_CONTEXT.md");
+    $context = generate_review_context($def['context'], $runMetadata);
+    file_put_contents($stagingPath . '/REVIEW_CONTEXT.md', $context);
+
+    $expectedZipEntries = count_files($stagingPath) + 1;
+
     // Generate STATS.md
     log_msg("  Generating STATS.md");
-    $stats = generate_stats_md($stagingPath, $def['context']);
+    $stats = generate_stats_md(
+        $stagingPath,
+        $def['context'],
+        $generatedAt,
+        $packPurpose,
+        $packDirName,
+        $fileCount,
+        $expectedZipEntries
+    );
     file_put_contents($stagingPath . '/STATS.md', $stats);
-
-    // Generate REVIEW_CONTEXT.md
-    log_msg("  Generating REVIEW_CONTEXT.md");
-    $context = generate_review_context($def['context']);
-    file_put_contents($stagingPath . '/REVIEW_CONTEXT.md', $context);
 
     $metadataErrors = validate_generated_metadata_files($stagingPath);
     if ($metadataErrors !== []) {
@@ -826,7 +1281,7 @@ foreach ($definitions as $name => $def) {
     }
 
     // Validate ZIP
-    $validation = validate_zip($zipPath);
+    $validation = validate_zip($zipPath, $runMetadata, $expectedZipEntries, $packDirTimestamped);
     log_msg("  Validation: " . json_encode($validation));
 
     if (!$validation['valid']) {
@@ -854,9 +1309,16 @@ log_msg("\nStaging cleaned");
 
 // Step 6: Write manifest
 $manifest = [
-    'generated_at' => date('Y-m-d H:i:s'),
+    'generated_at' => $runMetadata['generated_at'],
     'purpose' => $packPurpose,
+    'run_id' => $packDirName,
     'folder' => $packDirName,
+    'name' => $packName,
+    'generator_version' => GENERATOR_VERSION,
+    'repo_root' => $root,
+    'git_branch' => $runMetadata['git_branch'],
+    'git_commit' => $runMetadata['git_commit'],
+    'dirty_status' => $runMetadata['dirty_status'],
     'packs' => $generatedPacks,
     'stale_packs' => $stale,
     'duplicates' => $duplicates,
@@ -879,6 +1341,12 @@ $statusText = $isBlockedReview
 $readme = "# AI Review Packs\n\n"
     . "Generated: {$manifest['generated_at']}\n\n"
     . "Purpose: {$packPurpose}\n\n"
+    . "Run ID: {$packDirName}\n\n"
+    . "Generator Version: " . GENERATOR_VERSION . "\n\n"
+    . "Git Branch: {$runMetadata['git_branch']}\n\n"
+    . "Git Commit: {$runMetadata['git_commit']}\n\n"
+    . "Dirty Status: {$runMetadata['dirty_status']}\n\n"
+    . "Validation Status: PENDING\n\n"
     . $statusText
     . "This folder contains focused review ZIPs generated from current repository files.\n"
     . "It is not a backup and it is not canonical governance.\n\n"
@@ -904,6 +1372,12 @@ $generationErrorLines = $generationErrors === []
 
 $manifestMarkdown = "# Review Pack Manifest\n\nGenerated: {$manifest['generated_at']}\n\n"
     . "Purpose: {$packPurpose}\n\n"
+    . "Run ID: {$packDirName}\n\n"
+    . "Generator Version: " . GENERATOR_VERSION . "\n\n"
+    . "Git Branch: {$runMetadata['git_branch']}\n\n"
+    . "Git Commit: {$runMetadata['git_commit']}\n\n"
+    . "Dirty Status: {$runMetadata['dirty_status']}\n\n"
+    . "Validation Status: PENDING\n\n"
     . "Counts distinguish source files copied before metadata from actual ZIP entries after metadata.\n\n"
     . "## Packs\n\n| Pack | Files | Size | Status |\n|------|-------|------|--------|\n"
     . $packRows
@@ -922,6 +1396,33 @@ foreach (['README.md', 'MANIFEST.md', 'manifest.json'] as $metadataFile) {
     $metadataPath = $packDirTimestamped . '/' . $metadataFile;
     foreach (metadata_fragment_findings((string) file_get_contents($metadataPath)) as $finding) {
         $generationErrors[] = "{$metadataFile}: {$finding}";
+    }
+}
+
+foreach (validate_existing_pack_folder($packDirTimestamped) as $error) {
+    $generationErrors[] = "post-generation integrity: {$error}";
+}
+
+if ($generationErrors !== []) {
+    $manifest['generation_errors'] = $generationErrors;
+    $manifest['validation_status'] = 'FAIL';
+    file_put_contents($packDirTimestamped . '/manifest.json', manifest_json($manifest));
+    foreach (['README.md', 'MANIFEST.md'] as $metadataFile) {
+        $metadataPath = $packDirTimestamped . '/' . $metadataFile;
+        file_put_contents(
+            $metadataPath,
+            str_replace('Validation Status: PENDING', 'Validation Status: FAIL', (string) file_get_contents($metadataPath))
+        );
+    }
+} else {
+    $manifest['validation_status'] = 'OK';
+    file_put_contents($packDirTimestamped . '/manifest.json', manifest_json($manifest));
+    foreach (['README.md', 'MANIFEST.md'] as $metadataFile) {
+        $metadataPath = $packDirTimestamped . '/' . $metadataFile;
+        file_put_contents(
+            $metadataPath,
+            str_replace('Validation Status: PENDING', 'Validation Status: OK', (string) file_get_contents($metadataPath))
+        );
     }
 }
 

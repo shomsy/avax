@@ -1479,8 +1479,8 @@ final readonly class RequirePermission
             throw new Unauthenticated();
         }
 
-        if (! $user->hasPermission(permission: $userPermission)) {
-            throw new PermissionDenied(requirement: $userPermission);
+        if (! $user->hasPermission($userPermission)) {
+            throw new PermissionDenied($userPermission);
         }
     }
 }
@@ -1643,8 +1643,8 @@ final readonly class RequireRole
             throw new Unauthenticated();
         }
 
-        if (! $user->canAccessRole(requiredRole: $userRole)) {
-            throw new RoleDenied(requirement: $userRole);
+        if (! $user->canAccessRole($userRole)) {
+            throw new RoleDenied($userRole);
         }
     }
 }
@@ -2203,40 +2203,24 @@ namespace Avax\Components\Identity\Access\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
 use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
-use Avax\Components\Identity\Access\System\Capabilities\Authorization\AuthorizationEngine;
-use Avax\Components\Identity\Access\System\Flows\AdminElevation\BeginAdminElevation;
-use Avax\Components\Identity\Access\System\Flows\AdminElevation\EndAdminElevation;
-use Avax\Components\Identity\Access\System\PublicSurface\Access;
+use Avax\Components\Identity\Access\System\Configuration\Graphs\AccessGraph;
 
 /**
- * AccessServiceProvider — registers access component dependencies.
+ * AccessServiceProvider — service provider for the Access component.
+ *
+ * Delegates registration and boot to AccessGraph for complete DI assembly
+ * of all Access/Authorization capabilities, boundaries, and the public surface.
  */
 final class AccessServiceProvider implements ServiceProvider
 {
     public function register(ContainerInterface $container) : void
     {
-        // Authorization engine — permission checking engine
-        $container->singleton(AuthorizationEngine::class, static fn () : AuthorizationEngine => new AuthorizationEngine());
-
-        // Admin elevation flows
-        $container->singleton(BeginAdminElevation::class, static fn () : BeginAdminElevation => new BeginAdminElevation());
-        $container->singleton(EndAdminElevation::class, static fn () : EndAdminElevation => new EndAdminElevation());
-
-        // Access public surface — combines authorization engine + admin elevation
-        $container->singleton(Access::class, static fn (ContainerInterface $c) : Access => new Access(
-            authorizationEngine: $c->get(AuthorizationEngine::class),
-            beginAdminElevation: $c->get(BeginAdminElevation::class),
-            endAdminElevation  : $c->get(EndAdminElevation::class),
-        ));
+        AccessGraph::register($container);
     }
 
     public function boot(ContainerInterface $container) : void
     {
-        // Reset static elevation state for worker safety
-        BeginAdminElevation::reset();
-
-        // Reset static policy state for worker safety
-        \Avax\Components\Identity\Access\System\Capabilities\Policy\Policy::reset();
+        AccessGraph::boot($container);
     }
 }
 
@@ -2247,7 +2231,209 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Access\System\Configuration\Builders;
 
-final class RegisterAccessDependencies {}
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
+use Avax\Components\Identity\Access\System\Configuration\Graphs\AccessGraph;
+
+/**
+ * RegisterAccessDependencies — registers all Access/Authorization DI services.
+ *
+ * Delegates to AccessGraph which assembles the complete Access capability tree:
+ *   - AuthorizationEngine, PolicyEvaluator
+ *   - All Require* boundaries (Authentication, Role, Permission, ResourceOwner,
+ *     PhishingResistant, FreshMfa, AdminElevation)
+ *   - RequireAccessPolicy orchestrator
+ *   - Authorization capability
+ *   - Access public surface
+ */
+final class RegisterAccessDependencies
+{
+    public static function register(ContainerInterface $container) : void
+    {
+        AccessGraph::register($container);
+    }
+
+    public static function boot(ContainerInterface $container) : void
+    {
+        AccessGraph::boot($container);
+    }
+}
+
+=== Access/System/Configuration/Graphs/AccessGraph.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Access\System\Configuration\Graphs;
+
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
+use Avax\Components\Identity\Access\System\Capabilities\Authorization\Authorization;
+use Avax\Components\Identity\Access\System\Capabilities\Authorization\AuthorizationEngine;
+use Avax\Components\Identity\Access\System\Capabilities\Policy\Engine\PolicyEvaluator;
+use Avax\Components\Identity\Access\System\Capabilities\RequireAccessPolicy\RequireAccessPolicy;
+use Avax\Components\Identity\Access\System\Capabilities\RequireAuthentication\RequireAuthentication;
+use Avax\Components\Identity\Access\System\Capabilities\RequirePermission\RequirePermission;
+use Avax\Components\Identity\Access\System\Capabilities\RequirePhishingResistantAuthentication\RequirePhishingResistantAuthentication;
+use Avax\Components\Identity\Access\System\Capabilities\RequireResourceOwner\RequireResourceOwner;
+use Avax\Components\Identity\Access\System\Capabilities\RequireRole\RequireRole;
+use Avax\Components\Identity\Access\System\Flows\AdminElevation\BeginAdminElevation;
+use Avax\Components\Identity\Access\System\Flows\AdminElevation\EndAdminElevation;
+use Avax\Components\Identity\Access\System\PublicSurface\Access;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\StepUp\RequireFreshMfa;
+use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\AdminElevationStoreInterface;
+use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealmRuntime\RequireAdminElevation\RequireAdminElevation;
+
+/**
+ * AccessGraph — assembles the Access/Authorization capability tree from DI.
+ *
+ * Builds two tiers:
+ *   1. PublicSurface (Access) — allows/denies/authorize + admin elevation
+ *   2. Capabilities (Authorization) — requireAuthentication/Role/Permission/Policy
+ *
+ * All Require* boundaries and the RequireAccessPolicy orchestrator are
+ * registered as singletons with their full dependency chains resolved.
+ */
+final class AccessGraph
+{
+    /**
+     * Register all Access/Authorization services in the container.
+     */
+    public static function register(ContainerInterface $container) : void
+    {
+        // === Foundation ===
+
+        // AuthorizationEngine — simple permission store
+        $container->singleton(
+            AuthorizationEngine::class,
+            static fn () : AuthorizationEngine => new AuthorizationEngine(),
+        );
+
+        // PolicyEvaluator — rule-based policy evaluation engine
+        $container->singleton(
+            PolicyEvaluator::class,
+            static fn () : PolicyEvaluator => new PolicyEvaluator(),
+        );
+
+        // Admin elevation flows (static state — reset in boot)
+        $container->singleton(
+            BeginAdminElevation::class,
+            static fn () : BeginAdminElevation => new BeginAdminElevation(),
+        );
+        $container->singleton(
+            EndAdminElevation::class,
+            static fn () : EndAdminElevation => new EndAdminElevation(),
+        );
+
+        // === Require* Boundaries ===
+
+        // RequireAuthentication — checks auth presence
+        $container->singleton(
+            RequireAuthentication::class,
+            static fn (ContainerInterface $c) : RequireAuthentication => new RequireAuthentication(
+                $c->get(CurrentAuthentication::class),
+            ),
+        );
+
+        // RequireRole — checks user role
+        $container->singleton(
+            RequireRole::class,
+            static fn (ContainerInterface $c) : RequireRole => new RequireRole(
+                $c->get(CurrentAuthentication::class),
+            ),
+        );
+
+        // RequirePermission — checks user permission
+        $container->singleton(
+            RequirePermission::class,
+            static fn (ContainerInterface $c) : RequirePermission => new RequirePermission(
+                $c->get(CurrentAuthentication::class),
+            ),
+        );
+
+        // RequireResourceOwner — checks resource ownership
+        $container->singleton(
+            RequireResourceOwner::class,
+            static fn (ContainerInterface $c) : RequireResourceOwner => new RequireResourceOwner(
+                $c->get(CurrentAuthentication::class),
+            ),
+        );
+
+        // RequirePhishingResistantAuthentication — checks phishing-resistant auth
+        $container->singleton(
+            RequirePhishingResistantAuthentication::class,
+            static fn (ContainerInterface $c) : RequirePhishingResistantAuthentication => new RequirePhishingResistantAuthentication(
+                $c->get(CurrentAuthentication::class),
+            ),
+        );
+
+        // RequireFreshMfa — step-up MFA guard (from Credentials component)
+        $container->singleton(
+            RequireFreshMfa::class,
+            static fn (ContainerInterface $c) : RequireFreshMfa => new RequireFreshMfa(
+                $c->get(CurrentAuthentication::class),
+                $c->get(\Avax\Components\Identity\Auth\System\Foundation\Clock::class),
+            ),
+        );
+
+        // RequireAdminElevation — checks admin elevation (from Tenancy component)
+        $container->singleton(
+            RequireAdminElevation::class,
+            static fn (ContainerInterface $c) : RequireAdminElevation => new RequireAdminElevation(
+                $c->get(CurrentAuthentication::class),
+                $c->get(AdminElevationStoreInterface::class),
+                $c->get(\Avax\Components\Identity\Auth\System\Foundation\Clock::class),
+            ),
+        );
+
+        // RequireAccessPolicy — orchestrates all requirement checks
+        $container->singleton(
+            RequireAccessPolicy::class,
+            static fn (ContainerInterface $c) : RequireAccessPolicy => new RequireAccessPolicy(
+                requireAuthentication             : $c->get(RequireAuthentication::class),
+                requireRole                       : $c->get(RequireRole::class),
+                requirePermission                 : $c->get(RequirePermission::class),
+                requireResourceOwner              : $c->get(RequireResourceOwner::class),
+                requirePhishingResistantAuthentication: $c->get(RequirePhishingResistantAuthentication::class),
+                requireFreshMfa                   : $c->get(RequireFreshMfa::class),
+                requireAdminElevation             : $c->get(RequireAdminElevation::class),
+            ),
+        );
+
+        // === Authorization Capability ===
+
+        // Authorization — root authorization logic with all 4 boundaries
+        $container->singleton(
+            Authorization::class,
+            static fn (ContainerInterface $c) : Authorization => new Authorization(
+                requireAuthenticationBoundary: $c->get(RequireAuthentication::class),
+                requireRoleBoundary          : $c->get(RequireRole::class),
+                requirePermissionBoundary    : $c->get(RequirePermission::class),
+                requireAccessPolicyBoundary  : $c->get(RequireAccessPolicy::class),
+            ),
+        );
+
+        // === PublicSurface ===
+
+        // Access — public entry point combining authorization engine + admin elevation
+        $container->singleton(
+            Access::class,
+            static fn (ContainerInterface $c) : Access => new Access(
+                authorizationEngine: $c->get(AuthorizationEngine::class),
+                beginAdminElevation: $c->get(BeginAdminElevation::class),
+                endAdminElevation  : $c->get(EndAdminElevation::class),
+            ),
+        );
+    }
+
+    /**
+     * Boot-time actions: reset static state for worker safety.
+     */
+    public static function boot(ContainerInterface $container) : void
+    {
+        BeginAdminElevation::reset();
+        \Avax\Components\Identity\Access\System\Capabilities\Policy\Policy::reset();
+    }
+}
 
 === Access/System/Flows/AdminElevation/BeginAdminElevation.php ===
 <?php
@@ -2349,9 +2535,9 @@ final readonly class Access implements AccessInterface
     ) {}
 
     /**
- * @throws PermissionDenied
- */
-public function authorize(string $permission, mixed $resource = null) : void
+     * @throws PermissionDenied
+     */
+    public function authorize(string $permission, mixed $resource = null) : void
     {
         if ($this->denies(permission: $permission, resource: $resource)) {
             throw new PermissionDenied('Permission denied: ' . $permission);
@@ -4331,12 +4517,6 @@ final readonly class Identity implements IdentityInterface
     /**
      * Create a fully populated Identity with all sub-capabilities.
      *
-     * Unlike the constructor, this method requires all 9 parameters to be non-null.
-     * This is the preferred way to create Identity for production runtime assembly.
-     */
-    /**
-     * Create a fully populated Identity with all sub-capabilities.
-     *
      * Unlike the constructor, this method requires all 7 sub-capability parameters
      * to be non-null. Backends (sessionIdentity/jwtIdentity) are nullable because
      * the constructor validates at least one is present.
@@ -5090,9 +5270,13 @@ final readonly class JwtIdentity implements JwtIdentityInterface
      * @throws DateMalformedStringException
      */
     public function issueRefreshToken(
-        User  $user, DateTimeImmutable|null $issuedAt = null,
-        bool  $phishingResistant = false, string|null $audience = null,
-        array $scopes = [], OAuthSenderConstraint|null $oAuthSenderConstraint = null,
+        User                      $user,
+        DateTimeImmutable|null    $mfaVerifiedAt = null,
+        bool                      $phishingResistant = false,
+        string|null               $audience = null,
+        array                     $scopes = [],
+        string|null               $clientId = null,
+        OAuthSenderConstraint|null $oAuthSenderConstraint = null,
     ) : IssuedRefreshToken|null
     {
         if (! $this->refreshTokenStore instanceof RefreshTokenStoreInterface) {
@@ -5117,11 +5301,13 @@ final readonly class JwtIdentity implements JwtIdentityInterface
      * @throws DateMalformedStringException
      */
     public function issue(
-        User    $user, DateTimeImmutable|null $issuedAt = null,
-        bool    $phishingResistant = false, string|null $audience = null,
-        array                  $scopes = [],
-        #[SensitiveParameter]
-        ?string $issuer = null, OAuthSenderConstraint|null $oAuthSenderConstraint = null,
+        User                 $user,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool                 $phishingResistant = false,
+        string|null          $clientId = null,
+        array                $scopes = [],
+        string|null          $refreshTokenFamilyId = null,
+        OAuthSenderConstraint|null $oAuthSenderConstraint = null,
     ) : IssuedToken
     {
         if (! $user->isActive()) {
@@ -5204,9 +5390,13 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
      * @param list<string> $scopes
      */
     public function issue(
-        User  $user, DateTimeImmutable|null $issuedAt = null,
-        bool  $phishingResistant = false, string|null $audience = null,
-        array $scopes = [], string|null $issuer = null, OAuthSenderConstraint|null $oAuthSenderConstraint = null,
+        User                 $user,
+        DateTimeImmutable|null $mfaVerifiedAt = null,
+        bool                 $phishingResistant = false,
+        string|null          $clientId = null,
+        array                $scopes = [],
+        string|null          $refreshTokenFamilyId = null,
+        OAuthSenderConstraint|null $oAuthSenderConstraint = null,
     ) : IssuedToken;
 
     public function resolve(string $token) : ResolvedToken|null;
@@ -5228,9 +5418,13 @@ interface JwtIdentityInterface extends TokenIssuerInterface, TokenVerifierInterf
      * @param list<string> $scopes
      */
     public function issueRefreshToken(
-        User  $user, DateTimeImmutable|null $issuedAt = null,
-        bool  $phishingResistant = false, string|null $audience = null,
-        array $scopes = [], OAuthSenderConstraint|null $oAuthSenderConstraint = null,
+        User                      $user,
+        DateTimeImmutable|null    $mfaVerifiedAt = null,
+        bool                      $phishingResistant = false,
+        string|null               $audience = null,
+        array                     $scopes = [],
+        string|null               $clientId = null,
+        OAuthSenderConstraint|null $oAuthSenderConstraint = null,
     ) : IssuedRefreshToken|null;
 
     public function revoke(string $tokenId, DateTimeImmutable $expiresAt) : void;
@@ -6917,6 +7111,173 @@ final readonly class Sessions
     {
         $this->revokeSession->execute(sessionId: $sessionId);
     }
+}
+
+=== Auth/System/Capabilities/Identity/Sessions/Store/GenerateSessionId.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store;
+
+use Avax\Components\Identity\Auth\System\Foundation\Ids\SessionId;
+
+/**
+ * GenerateSessionId — contract for session ID generation.
+ *
+ * Adapted from the enterprise reference package.
+ */
+interface GenerateSessionId
+{
+    public function generate(): SessionId;
+}
+
+=== Auth/System/Capabilities/Identity/Sessions/Store/IdentitySession.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store;
+
+use Avax\Components\Identity\Auth\System\Foundation\Ids\SessionId;
+use Avax\Components\Identity\Auth\System\Foundation\Ids\TenantId;
+use Avax\Components\Identity\Auth\System\Foundation\Ids\UserId;
+use DateTimeImmutable;
+
+/**
+ * IdentitySession — value object representing an authenticated user session.
+ *
+ * Adapted from the enterprise reference package.
+ * Immutable; expiresAt determines session lifetime.
+ */
+final readonly class IdentitySession
+{
+    public function __construct(
+        private SessionId $sessionId,
+        private UserId $userId,
+        private DateTimeImmutable $createdAt,
+        private DateTimeImmutable $expiresAt,
+        private TenantId|null $tenantId = null,
+    ) {}
+
+    public function sessionId(): SessionId
+    {
+        return $this->sessionId;
+    }
+
+    public function userId(): UserId
+    {
+        return $this->userId;
+    }
+
+    public function tenantId(): TenantId|null
+    {
+        return $this->tenantId;
+    }
+
+    public function createdAt(): DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function expiresAt(): DateTimeImmutable
+    {
+        return $this->expiresAt;
+    }
+
+    public function isExpiredAt(DateTimeImmutable $time): bool
+    {
+        return $this->expiresAt <= $time;
+    }
+}
+
+=== Auth/System/Capabilities/Identity/Sessions/Store/InMemorySessionStore.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store;
+
+use Avax\Components\Identity\Auth\System\Foundation\Ids\SessionId;
+use Avax\Components\Identity\Auth\System\Foundation\State\ResettableIdentityState;
+
+/**
+ * InMemorySessionStore — in-memory session persistence for runtime.
+ *
+ * Adapted from the enterprise reference package.
+ * Implements ResettableIdentityState for long-lived worker safety.
+ */
+final class InMemorySessionStore implements SessionStore, ResettableIdentityState
+{
+    /** @var array<string, IdentitySession> */
+    private array $sessions = [];
+
+    public function find(SessionId $sessionId): IdentitySession|null
+    {
+        return $this->sessions[$sessionId->value] ?? null;
+    }
+
+    public function save(IdentitySession $session): void
+    {
+        $this->sessions[$session->sessionId()->value] = $session;
+    }
+
+    public function remove(SessionId $sessionId): void
+    {
+        unset($this->sessions[$sessionId->value]);
+    }
+
+    public function reset(): void
+    {
+        $this->sessions = [];
+    }
+}
+
+=== Auth/System/Capabilities/Identity/Sessions/Store/RandomSessionId.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store;
+
+use Avax\Components\Identity\Auth\System\Foundation\Ids\SessionId;
+
+/**
+ * RandomSessionId — cryptographically secure session ID generator.
+ *
+ * Adapted from the enterprise reference package.
+ * Generates 32-byte random session IDs as hex strings.
+ */
+final class RandomSessionId implements GenerateSessionId
+{
+    public function generate(): SessionId
+    {
+        return new SessionId(bin2hex(random_bytes(32)));
+    }
+}
+
+=== Auth/System/Capabilities/Identity/Sessions/Store/SessionStore.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store;
+
+use Avax\Components\Identity\Auth\System\Foundation\Ids\SessionId;
+
+/**
+ * SessionStore — contract for session persistence during runtime.
+ *
+ * Adapted from the enterprise reference package.
+ * Used by the StartSession flow to persist new sessions.
+ */
+interface SessionStore
+{
+    public function find(SessionId $sessionId): IdentitySession|null;
+
+    public function save(IdentitySession $session): void;
+
+    public function remove(SessionId $sessionId): void;
 }
 
 === Auth/System/Capabilities/Identity/User.php ===
@@ -12384,14 +12745,36 @@ use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\
 use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\InMemoryRiskSignalStore;
 use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\NullAuditLog;
 use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentity;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentity;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\SessionStoreInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\SessionCookieSettings;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\NativeSessionStore;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store\GenerateSessionId;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store\InMemorySessionStore;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store\RandomSessionId;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store\SessionStore;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\InMemoryUserSource;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\Lifecycle\InMemoryLifecycleStore;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\InMemoryScimDirectoryStore;
 use Avax\Components\Identity\Auth\System\Capabilities\IdentitySync\SCIM\Directories\InMemoryScimProvisionedIdentityStore;
+use Avax\Components\Identity\Auth\System\Configuration\Graphs\IdentityAssembler;
+use Avax\Components\Identity\Auth\System\Configuration\Graphs\SessionGraph;
+use Avax\Components\Identity\Auth\System\Configuration\Graphs\TokenGraph;
+use Avax\Components\Identity\Auth\System\Configuration\IdentityConfiguration;
 use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\InMemoryEmailChangeStore;
+use Avax\Components\Identity\Auth\System\Flows\IssueAccessToken\IssueAccessToken;
 use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\InMemoryPasswordResetStore;
+use Avax\Components\Identity\Auth\System\Flows\StartSession\StartSession;
+use Avax\Components\Identity\Auth\System\Flows\VerifyAccessToken\VerifyAccessToken;
 use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\InMemoryEmailVerificationStateStore;
 use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\InMemoryEmailVerificationStore;
 use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\System\Foundation\Time\ClockInterface;
 use Avax\Components\Identity\Auth\System\Foundation\IdGenerator;
 use Avax\Components\Identity\Auth\System\PublicSurface\Auth;
 use Avax\Components\Identity\Auth\System\PublicSurface\AuthInterface;
@@ -12400,8 +12783,8 @@ use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Limit\L
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Stores\InMemoryMfaStore;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Totp\Totp;
 use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\InMemoryMfaChallengeStore;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\InMemoryPasskeyChallengeStore;
-use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\InMemoryPasskeyCredentialStore;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\MfaChallengeStoreInterface;
+use Avax\Components\Identity\Credentials\System\Configuration\Graphs\CredentialsGraph;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\InMemoryAuthorizationCodeStore;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OAuth\Elements\InMemoryOAuthClientRegistry;
 use Avax\Components\Identity\ExternalIdentity\System\Capabilities\OpenIDConnect\Protocol\InMemoryOidcRequestObjectStore;
@@ -12411,6 +12794,13 @@ use Avax\Components\Identity\Tenancy\System\Capabilities\AdminRealm\InMemoryAdmi
 use Avax\Components\Identity\Tenancy\System\Capabilities\Model\InMemoryTenantStore;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Security\InMemoryTenantSecurityChangeRequestStore;
 use Avax\Components\Identity\Tenancy\System\Capabilities\Security\InMemoryTenantSecurityConfigurationStore;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Blacklist\InMemoryTokenBlacklist;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Blacklist\TokenBlacklist;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Codec\HmacTokenCodec;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\InMemoryRefreshTokenStore;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\InMemoryTokenRevocationStore;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\RefreshTokenStoreInterface;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\TokenRevocationStoreInterface;
 use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
 
 final readonly class RegisterAuthDefaults
@@ -12475,16 +12865,28 @@ final readonly class RegisterAuthDefaults
             ),
         );
 
-        // === Passkey Infrastructure ===
+        // === Access / Authorization Graph ===
 
+        // Access component — registers AuthorizationEngine, Require* boundaries, PolicyEvaluator, Access facade
+        \Avax\Components\Identity\Access\System\Configuration\Builders\RegisterAccessDependencies::register($container);
+
+        // === Credentials Graph ===
+
+        // Credentials component — registers MFA stores, Passkey stores, TOTP, credential store
+        CredentialsGraph::register($container);
+
+        // === Token Infrastructure ===
+
+        // Token revocation store — denies revoked access tokens
         $container->singleton(
-            InMemoryPasskeyCredentialStore::class,
-            static fn () : InMemoryPasskeyCredentialStore => new InMemoryPasskeyCredentialStore(),
+            TokenRevocationStoreInterface::class,
+            static fn () : TokenRevocationStoreInterface => new InMemoryTokenRevocationStore(),
         );
 
+        // Refresh token store — issues, rotates, and revokes refresh tokens
         $container->singleton(
-            InMemoryPasskeyChallengeStore::class,
-            static fn () : InMemoryPasskeyChallengeStore => new InMemoryPasskeyChallengeStore(),
+            RefreshTokenStoreInterface::class,
+            static fn () : RefreshTokenStoreInterface => new InMemoryRefreshTokenStore(),
         );
 
         // === Federation Infrastructure ===
@@ -12505,26 +12907,6 @@ final readonly class RegisterAuthDefaults
         $container->singleton(InMemoryEmailVerificationStore::class, static fn () : InMemoryEmailVerificationStore => new InMemoryEmailVerificationStore());
         $container->singleton(InMemoryEmailChangeStore::class, static fn () : InMemoryEmailChangeStore => new InMemoryEmailChangeStore());
         $container->singleton(InMemoryEmailVerificationStateStore::class, static fn () : InMemoryEmailVerificationStateStore => new InMemoryEmailVerificationStateStore());
-
-        // === MFA Infrastructure ===
-
-        $container->singleton(InMemoryMfaStore::class, static fn () : InMemoryMfaStore => new InMemoryMfaStore());
-        $container->singleton(InMemoryMfaChallengeStore::class, static fn () : InMemoryMfaChallengeStore => new InMemoryMfaChallengeStore());
-        $container->singleton(Totp::class, static fn () : Totp => new Totp());
-
-        // MFA attempt limit
-        $container->singleton(
-            InMemoryAttemptLimitStorage::class,
-            static fn () : InMemoryAttemptLimitStorage => new InMemoryAttemptLimitStorage(),
-        );
-
-        $container->singleton(
-            LimitMfaAttempts::class,
-            static fn (ContainerInterface $c) : LimitMfaAttempts => new LimitMfaAttempts(
-                clock  : $c->get(Clock::class),
-                attemptLimitStorage: $c->get(InMemoryAttemptLimitStorage::class),
-            ),
-        );
 
         // === Throttling Infrastructure ===
 
@@ -12599,10 +12981,180 @@ final readonly class RegisterAuthDefaults
             static fn () : InMemoryTenantSecurityChangeRequestStore => new InMemoryTenantSecurityChangeRequestStore(),
         );
 
+        // === Slice 2: Token & Session Infrastructure ===
+
+        // IdentityConfiguration — token secret and default TTLs
+        $container->singleton(
+            IdentityConfiguration::class,
+            static fn () : IdentityConfiguration => new IdentityConfiguration(
+                tokenSecret: $_ENV['IDENTITY_TOKEN_SECRET'] ?? $_SERVER['IDENTITY_TOKEN_SECRET'] ?? 'default-secret-must-be-overridden-in-production-at-least-32-chars!',
+            ),
+        );
+
+        // ClockInterface — alias to concrete Clock
+        $container->singleton(
+            ClockInterface::class,
+            static fn (ContainerInterface $c) : ClockInterface => $c->get(Clock::class),
+        );
+
+        // HmacTokenCodec — signs and verifies HMAC-signed JWTs (implements SignToken + VerifyToken)
+        $container->singleton(
+            HmacTokenCodec::class,
+            static function (ContainerInterface $c) : HmacTokenCodec {
+                /** @var IdentityConfiguration $config */
+                $config = $c->get(IdentityConfiguration::class);
+                return new HmacTokenCodec(secret: $config->tokenSecret());
+            },
+        );
+
+        // TokenBlacklist — in-memory token revocation checks
+        $container->singleton(InMemoryTokenBlacklist::class, static fn () : InMemoryTokenBlacklist => new InMemoryTokenBlacklist());
+        $container->singleton(
+            TokenBlacklist::class,
+            static fn (ContainerInterface $c) : TokenBlacklist => $c->get(InMemoryTokenBlacklist::class),
+        );
+
+        // IssueAccessToken flow — issues signed access tokens
+        $container->singleton(
+            IssueAccessToken::class,
+            static fn (ContainerInterface $c) : IssueAccessToken => new IssueAccessToken(
+                tokens: $c->get(HmacTokenCodec::class),
+                clock: $c->get(ClockInterface::class),
+            ),
+        );
+
+        // VerifyAccessToken flow — verifies signed access tokens
+        $container->singleton(
+            VerifyAccessToken::class,
+            static fn (ContainerInterface $c) : VerifyAccessToken => new VerifyAccessToken(
+                tokens: $c->get(HmacTokenCodec::class),
+                blacklist: $c->get(TokenBlacklist::class),
+                clock: $c->get(ClockInterface::class),
+            ),
+        );
+
+        // TokenGraph — composition root for token flows
+        $container->singleton(
+            TokenGraph::class,
+            static fn (ContainerInterface $c) : TokenGraph => new TokenGraph(
+                issueAccessToken: $c->get(IssueAccessToken::class),
+                verifyAccessToken: $c->get(VerifyAccessToken::class),
+                blacklist: $c->get(TokenBlacklist::class),
+            ),
+        );
+
+        // SessionStore — in-memory session persistence
+        $container->singleton(InMemorySessionStore::class, static fn () : InMemorySessionStore => new InMemorySessionStore());
+        $container->singleton(
+            SessionStore::class,
+            static fn (ContainerInterface $c) : SessionStore => $c->get(InMemorySessionStore::class),
+        );
+
+        // GenerateSessionId — cryptographically secure session ID generation
+        $container->singleton(GenerateSessionId::class, static fn () : GenerateSessionId => new RandomSessionId());
+
+        // StartSession flow — starts authenticated user sessions
+        $container->singleton(
+            StartSession::class,
+            static fn (ContainerInterface $c) : StartSession => new StartSession(
+                sessionIds: $c->get(GenerateSessionId::class),
+                sessions: $c->get(SessionStore::class),
+                clock: $c->get(ClockInterface::class),
+            ),
+        );
+
+        // SessionGraph — composition root for session flows
+        $container->singleton(
+            SessionGraph::class,
+            static fn (ContainerInterface $c) : SessionGraph => new SessionGraph(
+                startSession: $c->get(StartSession::class),
+                sessions: $c->get(SessionStore::class),
+                sessionIds: $c->get(GenerateSessionId::class),
+            ),
+        );
+
+        // === User Source ===
+
+        // InMemoryUserSource — default user source for dev/test (no constructor)
+        $container->singleton(
+            UserSourceInterface::class,
+            static fn (ContainerInterface $c) : UserSourceInterface => new InMemoryUserSource(),
+        );
+
+        // === Session Storage ===
+
+        // NativeSessionStore — PHP $_SESSION wrapper for session-based identity
+        $container->singleton(
+            SessionStoreInterface::class,
+            static fn (ContainerInterface $c) : SessionStoreInterface => new NativeSessionStore(
+                $c->get(SessionCookieSettings::class),
+            ),
+        );
+
+        // SessionCookieSettings — default cookie policy for native sessions
+        $container->singleton(
+            SessionCookieSettings::class,
+            static fn () : SessionCookieSettings => new SessionCookieSettings(),
+        );
+
         // === Identity & Auth Facades ===
 
-        // Identity capability coordinator
-        $container->singleton(Identity::class, static fn () : Identity => new Identity());
+        // SessionIdentity — session-based identity backend
+        $container->singleton(
+            SessionIdentityInterface::class,
+            static function (ContainerInterface $c) : SessionIdentityInterface {
+                /** @var IdentityConfiguration $config */
+                $config = $c->get(IdentityConfiguration::class);
+                return new SessionIdentity(
+                    sessionStore    : $c->get(SessionStoreInterface::class),
+                    clock           : $c->get(Clock::class),
+                    auditLog        : $c->get(NullAuditLog::class),
+                    sessionLifetime : $config->sessionLifetime(),
+                    sessionRegistry : $c->get(SessionRegistryInterface::class),
+                );
+            },
+        );
+
+        // JwtIdentity — JWT-based identity backend
+        $container->singleton(
+            JwtIdentityInterface::class,
+            static function (ContainerInterface $c) : JwtIdentityInterface {
+                /** @var IdentityConfiguration $config */
+                $config = $c->get(IdentityConfiguration::class);
+                $now = new \DateTimeImmutable();
+                $tokenExpiry = (int) $now->diff($now->add($config->defaultTokenTtl()))->format('%s')
+                    + (int) $config->defaultTokenTtl()->i * 60
+                    + (int) $config->defaultTokenTtl()->h * 3600
+                    + (int) $config->defaultTokenTtl()->d * 86400;
+                $refreshTokenExpiry = (int) $now->diff($now->add($config->defaultRefreshTokenTtl()))->format('%s')
+                    + (int) $config->defaultRefreshTokenTtl()->i * 60
+                    + (int) $config->defaultRefreshTokenTtl()->h * 3600
+                    + (int) $config->defaultRefreshTokenTtl()->d * 86400;
+
+                return new JwtIdentity(
+                    userSource          : $c->get(UserSourceInterface::class),
+                    tokenCodec          : $c->get(HmacTokenCodec::class),
+                    clock               : $c->get(Clock::class),
+                    tokenRevocationStore: $c->has(TokenRevocationStoreInterface::class) ? $c->get(TokenRevocationStoreInterface::class) : null,
+                    refreshTokenStore   : $c->has(RefreshTokenStoreInterface::class) ? $c->get(RefreshTokenStoreInterface::class) : null,
+                    tokenExpiry         : $tokenExpiry,
+                    refreshTokenExpiry  : $refreshTokenExpiry,
+                    issuer              : $config->tokenIssuer(),
+                );
+            },
+        );
+
+        // Identity capability coordinator — assembled via factory to handle circular deps
+        // Flows that need IdentityInterface get it via lazy container resolution
+        $container->singleton(Identity::class, static function (ContainerInterface $c) : Identity {
+            // Break circular dependency: Identity → Authentication → Login → IdentityInterface
+            // by using lazy resolution through the container
+            $sessionIdentity = $c->get(SessionIdentityInterface::class);
+            $jwtIdentity     = $c->get(JwtIdentityInterface::class);
+
+            // Build Identity using a factory that resolves circular references
+            return IdentityAssembler::assemble($c, $sessionIdentity, $jwtIdentity);
+        });
 
         // Auth facade — requires Identity
         $container->singleton(AuthInterface::class, static fn (ContainerInterface $c) : Auth => new Auth(
@@ -12737,6 +13289,720 @@ final class RegisterAuthDependencies extends BaseRegisterDependency
         return new LoginRateLimit(
             clock  : $this->container->get(id: Clock::class),
             loginRateLimitStorage: $this->container->get(id: LoginRateLimitStorageInterface::class),
+        );
+    }
+}
+
+=== Auth/System/Configuration/Graphs/IdentityAssembler.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Configuration\Graphs;
+
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
+use Avax\Components\Identity\Access\System\Capabilities\Authentication\Throttle\AttemptThrottle;
+use Avax\Components\Identity\Access\System\Capabilities\RiskBasedAccess\Signals\DeterministicRiskEngine;
+use Avax\Components\Identity\Auth\System\Capabilities\AuthDiagnostics\Audit\AuditLogInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Identity;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners\Account;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners\Authentication;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners\Recovery;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\IdentityOwners\Verification;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Jwt\JwtIdentityInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Registry\SessionRegistryInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Sessions;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\LogoutAllSessions\LogoutAllSessions;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\ReadActiveSessions\ReadActiveSessions;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Runtime\RevokeSession\RevokeSession;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionIdentityInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\ProvisionableUserSourceInterface;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\UserSource\UserSourceInterface;
+use Avax\Components\Identity\Auth\System\Configuration\IdentityConfiguration;
+use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\BeginEmailChange;
+use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\ConfirmEmailChange;
+use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\EmailChangeStoreInterface;
+use Avax\Components\Identity\Auth\System\Flows\ChangeEmail\InMemoryEmailChangeStore;
+use Avax\Components\Identity\Auth\System\Flows\ChangePassword\ChangePassword;
+use Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\CurrentAuthentication;
+use Avax\Components\Identity\Auth\System\Flows\Login\FindUserByCredentials;
+use Avax\Components\Identity\Auth\System\Flows\Login\Login;
+use Avax\Components\Identity\Auth\System\Flows\Login\RateLimit\LoginRateLimit;
+use Avax\Components\Identity\Auth\System\Flows\Login\StartAuthenticatedSession;
+use Avax\Components\Identity\Auth\System\Flows\Login\VerifyPassword;
+use Avax\Components\Identity\Auth\System\Flows\Logout\ClearAuthenticatedIdentity;
+use Avax\Components\Identity\Auth\System\Flows\Logout\Logout;
+use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\BeginPasswordReset;
+use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\InMemoryPasswordResetStore;
+use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\PasswordResetStoreInterface;
+use Avax\Components\Identity\Auth\System\Flows\RecoverAccess\PasswordReset\ResetPassword;
+use Avax\Components\Identity\Auth\System\Flows\Register\CreateRegisteredUser;
+use Avax\Components\Identity\Auth\System\Flows\Register\HashRegisteredPassword;
+use Avax\Components\Identity\Auth\System\Flows\Register\Register;
+use Avax\Components\Identity\Auth\System\Flows\Register\ValidateRegistrationData;
+use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\BeginEmailVerification;
+use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\EmailVerificationStoreInterface;
+use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\EmailVerificationStateStoreInterface;
+use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\InMemoryEmailVerificationStateStore;
+use Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\VerifyEmail;
+use Avax\Components\Identity\Auth\System\Foundation\Clock;
+use Avax\Components\Identity\Auth\System\Foundation\IdGenerator;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Mfa;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Backup\GenerateBackupCodes;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Backup\RegenerateBackupCodes;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Disable\DisableMfa;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Enroll\CancelMfaEnrollment;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Enroll\ConfirmMfaEnrollment;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Enroll\StartMfaEnrollment;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Limit\InMemoryAttemptLimitStorage;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Limit\LimitMfaAttempts;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Recover\ConfirmMfaRecovery;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Recover\StartMfaRecovery;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\StepUp\RequireFreshMfa;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Stores\InMemoryMfaStore;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Totp\Totp;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\InMemoryMfaChallengeStore;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\MfaChallengeStoreInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\VerifyMfaChallenge;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Passkey;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyChallengeStoreInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredentialStoreInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\BeginAuthentication\BeginPasskeyAuthentication;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\BeginRegistration\BeginPasskeyRegistration;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\CompleteAuthentication\CompletePasskeyAuthentication;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\CompleteRegistration\CompletePasskeyRegistration;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\ListPasskeys\ListPasskeys;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\RenamePasskey\RenamePasskey;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\Runtime\RevokePasskey\RevokePasskey;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Flow\RefreshAuthentication;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\RefreshTokenStoreInterface;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Store\TokenRevocationStoreInterface;
+use Avax\Components\Security\Hashing\System\Capabilities\PasswordHashing\PasswordHasher;
+
+/**
+ * IdentityAssembler — assembles the Identity capability coordinator from DI-registered services.
+ *
+ * This is a Configuration/Assembly class. It resolves the circular dependency
+ * between Identity and its sub-capabilities by using lazy container resolution.
+ */
+final class IdentityAssembler
+{
+    /**
+     * Assemble the Identity coordinator from container-registered services.
+     */
+    public static function assemble(
+        ContainerInterface $container,
+        SessionIdentityInterface $sessionIdentity,
+        JwtIdentityInterface $jwtIdentity,
+    ) : Identity {
+        $clock = $container->get(Clock::class);
+        $auditLog = $container->get(AuditLogInterface::class);
+        $userSource = $container->get(UserSourceInterface::class);
+        $passwordHasher = $container->get(PasswordHasher::class);
+
+        // CurrentAuthentication — shared context for session + JWT identity
+        $currentAuth = new CurrentAuthentication();
+
+        // RequireFreshMfa — step-up MFA guard
+        $requireFreshMfa = new RequireFreshMfa(
+            currentAuthentication: $currentAuth,
+            clock                : $clock,
+        );
+
+        // === Authentication owner ===
+        $authentication = self::assembleAuthentication($container, $currentAuth, $jwtIdentity, $requireFreshMfa);
+
+        // === Sessions owner ===
+        $sessions = self::assembleSessions($container, $currentAuth);
+
+        // === Account owner ===
+        $account = self::assembleAccount($container, $currentAuth, $requireFreshMfa);
+
+        // === Recovery owner ===
+        $recovery = self::assembleRecovery($container, $currentAuth);
+
+        // === Verification owner ===
+        $verification = self::assembleVerification($container, $currentAuth);
+
+        // === Mfa owner ===
+        $mfa = self::assembleMfa($container, $currentAuth, $requireFreshMfa);
+
+        // === Passkey owner ===
+        $passkey = self::assemblePasskey($container, $currentAuth, $requireFreshMfa);
+
+        return Identity::create(
+            authentication : $authentication,
+            sessions       : $sessions,
+            account        : $account,
+            recovery       : $recovery,
+            verification   : $verification,
+            mfa            : $mfa,
+            passkey        : $passkey,
+            sessionIdentity: $sessionIdentity,
+            jwtIdentity    : $jwtIdentity,
+        );
+    }
+
+    private static function assembleAuthentication(
+        ContainerInterface $container,
+        CurrentAuthentication $currentAuth,
+        JwtIdentityInterface $jwtIdentity,
+        RequireFreshMfa $requireFreshMfa,
+    ) : Authentication {
+        $userSource = $container->get(UserSourceInterface::class);
+        $passwordHasher = $container->get(PasswordHasher::class);
+
+        // Lazy IdentityInterface for Login/Logout flows (circular dep resolution)
+        $identityResolver = static fn () : Identity => $container->get(Identity::class);
+
+        return new Authentication(
+            login: new Login(
+                findUserByCredentials    : new FindUserByCredentials($userSource),
+                verifyPassword           : new VerifyPassword($passwordHasher),
+                startAuthenticatedSession: new StartAuthenticatedSession($container->get(Sessions::class)),
+                identity                 : $container->get(Identity::class),
+            ),
+            logout: new Logout(
+                clearAuthenticatedIdentity: new ClearAuthenticatedIdentity($container->get(Sessions::class)),
+                identity                  : $container->get(Identity::class),
+            ),
+            refreshAuthentication: new RefreshAuthentication(
+                userSource             : $userSource,
+                projectAuthenticatedUser: new \Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser(
+                    emailVerificationStateStore: new InMemoryEmailVerificationStateStore(),
+                    mfaStore                   : new InMemoryMfaStore(),
+                ),
+                currentAuthentication  : $currentAuth,
+                auditLog               : $container->get(AuditLogInterface::class),
+                clock                  : $container->get(Clock::class),
+                refreshTokenStore      : $container->has(RefreshTokenStoreInterface::class) ? $container->get(RefreshTokenStoreInterface::class) : null,
+                jwtIdentity            : $jwtIdentity,
+                deterministicRiskEngine: $container->has(DeterministicRiskEngine::class) ? $container->get(DeterministicRiskEngine::class) : null,
+            ),
+        );
+    }
+
+    private static function assembleSessions(
+        ContainerInterface $container,
+        CurrentAuthentication $currentAuth,
+    ) : Sessions {
+        $sessionRegistry = $container->has(SessionRegistryInterface::class)
+            ? $container->get(SessionRegistryInterface::class)
+            : null;
+        $refreshTokenStore = $container->has(RefreshTokenStoreInterface::class)
+            ? $container->get(RefreshTokenStoreInterface::class)
+            : null;
+
+        return new Sessions(
+            logoutAllSessions: new LogoutAllSessions(
+                identity           : $container->get(Identity::class),
+                currentAuthentication: $currentAuth,
+                auditLog           : $container->get(AuditLogInterface::class),
+                clock              : $container->get(Clock::class),
+                sessionRegistry    : $sessionRegistry,
+                refreshTokenStore  : $refreshTokenStore,
+            ),
+            readActiveSessions: new ReadActiveSessions(
+                currentAuthentication: $currentAuth,
+                clock              : $container->get(Clock::class),
+                sessionRegistry    : $sessionRegistry,
+            ),
+            revokeSession: new RevokeSession(
+                identity           : $container->get(Identity::class),
+                currentAuthentication: $currentAuth,
+                auditLog           : $container->get(AuditLogInterface::class),
+                clock              : $container->get(Clock::class),
+                sessionRegistry    : $sessionRegistry,
+            ),
+        );
+    }
+
+    private static function assembleAccount(
+        ContainerInterface $container,
+        CurrentAuthentication $currentAuth,
+        RequireFreshMfa $requireFreshMfa,
+    ) : Account {
+        $passwordHasher = $container->get(PasswordHasher::class);
+        $userSource = $container->get(UserSourceInterface::class);
+        $auditLog = $container->get(AuditLogInterface::class);
+        $clock = $container->get(Clock::class);
+        $sessionRegistry = $container->has(SessionRegistryInterface::class) ? $container->get(SessionRegistryInterface::class) : null;
+        $mfaChallengeStore = $container->has(MfaChallengeStoreInterface::class) ? $container->get(MfaChallengeStoreInterface::class) : null;
+        $refreshTokenStore = $container->has(RefreshTokenStoreInterface::class) ? $container->get(RefreshTokenStoreInterface::class) : null;
+
+        // Lazy identity for circular dep resolution
+        $identity = $container->get(Identity::class);
+
+        // ChangePassword
+        $changePassword = new ChangePassword(
+            userSource           : $userSource,
+            passwordHasher       : $passwordHasher,
+            identity             : $identity,
+            currentAuthentication: $currentAuth,
+            auditLog             : $auditLog,
+            clock                : $clock,
+            sessionRegistry      : $sessionRegistry,
+            mfaChallengeStore    : $mfaChallengeStore,
+            refreshTokenStore    : $refreshTokenStore,
+            loginRateLimit       : null,
+            requireFreshMfa      : $requireFreshMfa,
+        );
+
+        // BeginEmailChange
+        $emailChangeStore = $container->has(EmailChangeStoreInterface::class)
+            ? $container->get(EmailChangeStoreInterface::class)
+            : new InMemoryEmailChangeStore();
+
+        $beginEmailChange = new BeginEmailChange(
+            currentAuthentication: $currentAuth,
+            userSource         : $userSource,
+            passwordHasher     : $passwordHasher,
+            emailChangeStore   : $emailChangeStore,
+            requireFreshMfa    : $requireFreshMfa,
+            auditLog           : $auditLog,
+            clock              : $clock,
+        );
+
+        // ConfirmEmailChange
+        $emailVerificationStateStore = $container->has(EmailVerificationStateStoreInterface::class)
+            ? $container->get(EmailVerificationStateStoreInterface::class)
+            : new InMemoryEmailVerificationStateStore();
+
+        $provisionableSource = $userSource instanceof ProvisionableUserSourceInterface ? $userSource : null;
+        $confirmEmailChange = $provisionableSource !== null
+            ? new ConfirmEmailChange(
+                provisionableUserSource     : $provisionableSource,
+                emailChangeStore            : $emailChangeStore,
+                emailVerificationStateStore : $emailVerificationStateStore,
+                auditLog                    : $auditLog,
+                clock                       : $clock,
+                currentAuthentication       : $currentAuth,
+                identity                    : $identity,
+                sessionRegistry             : $sessionRegistry,
+                mfaChallengeStore           : $mfaChallengeStore,
+                refreshTokenStore           : $refreshTokenStore,
+            )
+            : null;
+
+        // Register
+        $register = new Register(
+            validateRegistrationData: new ValidateRegistrationData(),
+            hashRegisteredPassword  : new HashRegisteredPassword($passwordHasher),
+            createRegisteredUser    : new CreateRegisteredUser($userSource, new IdGenerator()),
+            identity                : $identity,
+        );
+
+        return new Account($changePassword, $beginEmailChange, $confirmEmailChange, $register);
+    }
+
+    private static function assembleRecovery(
+        ContainerInterface $container,
+        CurrentAuthentication $currentAuth,
+    ) : Recovery {
+        $passwordResetStore = $container->has(PasswordResetStoreInterface::class)
+            ? $container->get(PasswordResetStoreInterface::class)
+            : new InMemoryPasswordResetStore();
+
+        return new Recovery(
+            beginPasswordReset: new BeginPasswordReset(
+                userSource       : $container->get(UserSourceInterface::class),
+                passwordResetStore: $passwordResetStore,
+                auditLog         : $container->get(AuditLogInterface::class),
+                clock            : $container->get(Clock::class),
+                attemptThrottle  : $container->has(AttemptThrottle::class) ? $container->get(AttemptThrottle::class) : null,
+            ),
+            resetPassword: new ResetPassword(
+                userSource       : $container->get(UserSourceInterface::class),
+                passwordHasher   : $container->get(PasswordHasher::class),
+                passwordResetStore: $passwordResetStore,
+                auditLog         : $container->get(AuditLogInterface::class),
+                clock            : $container->get(Clock::class),
+                sessionRegistry  : $container->has(SessionRegistryInterface::class) ? $container->get(SessionRegistryInterface::class) : null,
+                mfaChallengeStore: $container->has(MfaChallengeStoreInterface::class) ? $container->get(MfaChallengeStoreInterface::class) : null,
+                refreshTokenStore: $container->has(RefreshTokenStoreInterface::class) ? $container->get(RefreshTokenStoreInterface::class) : null,
+            ),
+        );
+    }
+
+    private static function assembleVerification(
+        ContainerInterface $container,
+        CurrentAuthentication $currentAuth,
+    ) : Verification {
+        $emailVerificationStore = $container->has(EmailVerificationStoreInterface::class)
+            ? $container->get(EmailVerificationStoreInterface::class)
+            : new \Avax\Components\Identity\Auth\System\Flows\VerifyIdentity\EmailVerification\InMemoryEmailVerificationStore();
+        $emailVerificationStateStore = $container->has(EmailVerificationStateStoreInterface::class)
+            ? $container->get(EmailVerificationStateStoreInterface::class)
+            : new InMemoryEmailVerificationStateStore();
+
+        return new Verification(
+            beginEmailVerification: new BeginEmailVerification(
+                userSource           : $container->get(UserSourceInterface::class),
+                emailVerificationStore: $emailVerificationStore,
+                auditLog             : $container->get(AuditLogInterface::class),
+                clock                : $container->get(Clock::class),
+            ),
+            verifyEmail: new VerifyEmail(
+                emailVerificationStore   : $emailVerificationStore,
+                emailVerificationStateStore: $emailVerificationStateStore,
+                auditLog                 : $container->get(AuditLogInterface::class),
+                clock                    : $container->get(Clock::class),
+            ),
+        );
+    }
+
+    private static function assembleMfa(
+        ContainerInterface $container,
+        CurrentAuthentication $currentAuth,
+        RequireFreshMfa $requireFreshMfa,
+    ) : Mfa {
+        $mfaStore = new InMemoryMfaStore();
+        $mfaChallengeStore = $container->has(MfaChallengeStoreInterface::class)
+            ? $container->get(MfaChallengeStoreInterface::class)
+            : new InMemoryMfaChallengeStore();
+        $clock = $container->get(Clock::class);
+        $auditLog = $container->get(AuditLogInterface::class);
+        $userSource = $container->get(UserSourceInterface::class);
+        $passwordHasher = $container->get(PasswordHasher::class);
+
+        $attemptLimitStorage = new InMemoryAttemptLimitStorage();
+        $limitMfaAttempts = new LimitMfaAttempts(
+            attemptLimitStorage: $attemptLimitStorage,
+            clock              : $clock,
+        );
+
+        $totp = new Totp();
+        $generateBackupCodes = new GenerateBackupCodes($passwordHasher, $clock);
+        $emailVerificationStateStore = new InMemoryEmailVerificationStateStore();
+
+        return new Mfa(
+            startMfaEnrollment   : new StartMfaEnrollment(
+                currentAuthentication: $currentAuth,
+                mfaStore           : $mfaStore,
+                totp               : $totp,
+                auditLog           : $auditLog,
+                clock              : $clock,
+            ),
+            confirmMfaEnrollment : new ConfirmMfaEnrollment(
+                currentAuthentication: $currentAuth,
+                mfaStore           : $mfaStore,
+                totp               : $totp,
+                generateBackupCodes: $generateBackupCodes,
+                auditLog           : $auditLog,
+                clock              : $clock,
+            ),
+            cancelMfaEnrollment  : new CancelMfaEnrollment(
+                currentAuthentication: $currentAuth,
+                mfaStore           : $mfaStore,
+                auditLog           : $auditLog,
+                clock              : $clock,
+            ),
+            startMfaChallenge    : new \Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\StartMfaChallenge(
+                currentAuthentication: $currentAuth,
+                generalMfaStore    : $mfaStore,
+                mfaChallengeStore  : $mfaChallengeStore,
+                auditLog           : $auditLog,
+                clock              : $clock,
+            ),
+            verifyMfaChallenge   : new VerifyMfaChallenge(
+                mfaChallengeStore  : $mfaChallengeStore,
+                mfaStore           : $mfaStore,
+                totp               : $totp,
+                verifyBackupCode   : new \Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Backup\VerifyBackupCode(
+                    mfaStore       : $mfaStore,
+                    passwordHasher : $passwordHasher,
+                    auditLog       : $auditLog,
+                    clock          : $clock,
+                ),
+                userSource         : $userSource,
+                identity           : $container->get(Identity::class),
+                projectAuthenticatedUser: new \Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser(
+                    emailVerificationStateStore: $emailVerificationStateStore,
+                    mfaStore                   : $mfaStore,
+                ),
+                currentAuthentication: $currentAuth,
+                auditLog           : $auditLog,
+                clock              : $clock,
+                limitMfaAttempts   : $limitMfaAttempts,
+                deterministicRiskEngine: null,
+            ),
+            regenerateBackupCodes: new RegenerateBackupCodes(
+                currentAuthentication: $currentAuth,
+                requireFreshMfa    : $requireFreshMfa,
+                mfaStore           : $mfaStore,
+                generateBackupCodes: $generateBackupCodes,
+                auditLog           : $auditLog,
+                clock              : $clock,
+            ),
+            disableMfa           : new DisableMfa(
+                currentAuthentication: $currentAuth,
+                requireFreshMfa    : $requireFreshMfa,
+                mfaStore           : $mfaStore,
+                mfaChallengeStore  : $mfaChallengeStore,
+                auditLog           : $auditLog,
+                clock              : $clock,
+                refreshTokenStore  : null,
+            ),
+            startMfaRecovery     : new StartMfaRecovery(
+                userSource         : $userSource,
+                mfaStore           : $mfaStore,
+                auditLog           : $auditLog,
+                clock              : $clock,
+            ),
+            confirmMfaRecovery   : new ConfirmMfaRecovery(
+                mfaStore           : $mfaStore,
+                mfaChallengeStore  : $mfaChallengeStore,
+                auditLog           : $auditLog,
+                clock              : $clock,
+                sessionRegistry    : null,
+                refreshTokenStore  : null,
+                currentAuthentication: null,
+                identity           : null,
+            ),
+        );
+    }
+
+    private static function assemblePasskey(
+        ContainerInterface $container,
+        CurrentAuthentication $currentAuth,
+        RequireFreshMfa $requireFreshMfa,
+    ) : Passkey {
+        $passkeyChallengeStore = $container->has(PasskeyChallengeStoreInterface::class)
+            ? $container->get(PasskeyChallengeStoreInterface::class) : null;
+        $passkeyCredentialStore = $container->has(PasskeyCredentialStoreInterface::class)
+            ? $container->get(PasskeyCredentialStoreInterface::class) : null;
+        $passkeyRuntime = $container->has(\Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyRuntimeInterface::class)
+            ? $container->get(\Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyRuntimeInterface::class) : null;
+
+        // Passkey requires PasskeyRuntimeInterface which needs a WebAuthn library.
+        // Without it, passkey capabilities stay disabled.
+        if ($passkeyChallengeStore === null || $passkeyCredentialStore === null || $passkeyRuntime === null) {
+            return new Passkey(
+                beginPasskeyRegistration     : null,
+                completePasskeyRegistration  : null,
+                beginPasskeyAuthentication   : null,
+                completePasskeyAuthentication: null,
+                listPasskeys                 : null,
+                renamePasskey                : null,
+                revokePasskey                : null,
+            );
+        }
+
+        $clock = $container->get(Clock::class);
+        $auditLog = $container->get(AuditLogInterface::class);
+        $userSource = $container->get(UserSourceInterface::class);
+        $emailVerificationStateStore = new InMemoryEmailVerificationStateStore();
+        $mfaStore = new InMemoryMfaStore();
+
+        // RP configuration — defaults for now, should come from config in production
+        $rpId = 'localhost';
+        $rpName = 'AvaX';
+
+        return new Passkey(
+            beginPasskeyRegistration    : new BeginPasskeyRegistration(
+                currentAuthentication  : $currentAuth,
+                requireFreshMfa        : $requireFreshMfa,
+                passkeyRuntime         : $passkeyRuntime,
+                passkeyCredentialStore : $passkeyCredentialStore,
+                passkeyChallengeStore  : $passkeyChallengeStore,
+                auditLog               : $auditLog,
+                clock                  : $clock,
+                rpId                   : $rpId,
+                rpName                 : $rpName,
+            ),
+            completePasskeyRegistration : new CompletePasskeyRegistration(
+                currentAuthentication  : $currentAuth,
+                passkeyRuntime         : $passkeyRuntime,
+                passkeyCredentialStore : $passkeyCredentialStore,
+                passkeyChallengeStore  : $passkeyChallengeStore,
+                auditLog               : $auditLog,
+                clock                  : $clock,
+                rpId                   : $rpId,
+            ),
+            beginPasskeyAuthentication  : new BeginPasskeyAuthentication(
+                userSource             : $userSource,
+                passkeyRuntime         : $passkeyRuntime,
+                passkeyCredentialStore : $passkeyCredentialStore,
+                passkeyChallengeStore  : $passkeyChallengeStore,
+                auditLog               : $auditLog,
+                clock                  : $clock,
+                rpId                   : $rpId,
+            ),
+            completePasskeyAuthentication: new CompletePasskeyAuthentication(
+                passkeyRuntime         : $passkeyRuntime,
+                passkeyChallengeStore  : $passkeyChallengeStore,
+                passkeyCredentialStore : $passkeyCredentialStore,
+                userSource             : $userSource,
+                identity               : $container->get(Identity::class),
+                projectAuthenticatedUser: new \Avax\Components\Identity\Auth\System\Flows\CheckAuthentication\AuthenticateRequest\ProjectAuthenticatedUser(
+                    emailVerificationStateStore: $emailVerificationStateStore,
+                    mfaStore                   : $mfaStore,
+                ),
+                currentAuthentication  : $currentAuth,
+                auditLog               : $auditLog,
+                clock                  : $clock,
+                rpId                   : $rpId,
+            ),
+            listPasskeys              : new ListPasskeys(
+                currentAuthentication  : $currentAuth,
+                passkeyCredentialStore : $passkeyCredentialStore,
+            ),
+            renamePasskey             : new RenamePasskey(
+                currentAuthentication  : $currentAuth,
+                passkeyCredentialStore : $passkeyCredentialStore,
+            ),
+            revokePasskey             : new RevokePasskey(
+                currentAuthentication  : $currentAuth,
+                requireFreshMfa        : $requireFreshMfa,
+                passkeyCredentialStore : $passkeyCredentialStore,
+                auditLog               : $auditLog,
+                clock                  : $clock,
+            ),
+        );
+    }
+}
+
+=== Auth/System/Configuration/Graphs/SessionGraph.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Configuration\Graphs;
+
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store\GenerateSessionId;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store\SessionStore;
+use Avax\Components\Identity\Auth\System\Flows\StartSession\StartSession;
+
+/**
+ * SessionGraph — composition root for session management.
+ *
+ * Adapted from the enterprise reference package.
+ * Groups the StartSession flow with the SessionStore and GenerateSessionId
+ * for complete session lifecycle management.
+ */
+final readonly class SessionGraph
+{
+    public function __construct(
+        private StartSession $startSession,
+        private SessionStore $sessions,
+        private GenerateSessionId $sessionIds,
+    ) {}
+
+    public function startSession(): StartSession
+    {
+        return $this->startSession;
+    }
+
+    public function sessions(): SessionStore
+    {
+        return $this->sessions;
+    }
+
+    public function sessionIds(): GenerateSessionId
+    {
+        return $this->sessionIds;
+    }
+}
+
+=== Auth/System/Configuration/Graphs/TokenGraph.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Configuration\Graphs;
+
+use Avax\Components\Identity\Auth\System\Flows\IssueAccessToken\IssueAccessToken;
+use Avax\Components\Identity\Auth\System\Flows\VerifyAccessToken\VerifyAccessToken;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Blacklist\TokenBlacklist;
+
+/**
+ * TokenGraph — composition root for token issuing and verification.
+ *
+ * Adapted from the enterprise reference package.
+ * Groups the IssueAccessToken and VerifyAccessToken flows with the
+ * TokenBlacklist for runtime token lifecycle management.
+ */
+final readonly class TokenGraph
+{
+    public function __construct(
+        private IssueAccessToken $issueAccessToken,
+        private VerifyAccessToken $verifyAccessToken,
+        private TokenBlacklist $blacklist,
+    ) {}
+
+    public function issueAccessToken(): IssueAccessToken
+    {
+        return $this->issueAccessToken;
+    }
+
+    public function verifyAccessToken(): VerifyAccessToken
+    {
+        return $this->verifyAccessToken;
+    }
+
+    public function blacklist(): TokenBlacklist
+    {
+        return $this->blacklist;
+    }
+}
+
+=== Auth/System/Configuration/IdentityConfiguration.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Configuration;
+
+use DateInterval;
+
+/**
+ * IdentityConfiguration — value object for Identity token and session settings.
+ *
+ * Adapted from the enterprise reference package.
+ * Holds the token signing secret and default TTLs for tokens and sessions.
+ */
+final readonly class IdentityConfiguration
+{
+    public function __construct(
+        private string $tokenSecret,
+        private DateInterval $defaultTokenTtl = new DateInterval('PT1H'),
+        private DateInterval $defaultSessionTtl = new DateInterval('PT24H'),
+        private DateInterval $defaultRefreshTokenTtl = new DateInterval('P30D'),
+        private string $tokenIssuer = 'avax-auth-system',
+        private int $sessionIdleTimeoutSeconds = 1800,
+        private int $sessionAbsoluteTimeoutSeconds = 86400,
+    ) {}
+
+    public function tokenSecret(): string
+    {
+        return $this->tokenSecret;
+    }
+
+    public function defaultTokenTtl(): DateInterval
+    {
+        return $this->defaultTokenTtl;
+    }
+
+    public function defaultSessionTtl(): DateInterval
+    {
+        return $this->defaultSessionTtl;
+    }
+
+    public function defaultRefreshTokenTtl(): DateInterval
+    {
+        return $this->defaultRefreshTokenTtl;
+    }
+
+    public function tokenIssuer(): string
+    {
+        return $this->tokenIssuer;
+    }
+
+    public function sessionLifetime(): \Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionLifetime
+    {
+        return new \Avax\Components\Identity\Auth\System\Capabilities\Identity\Session\SessionLifetime(
+            idleTimeoutSeconds: $this->sessionIdleTimeoutSeconds,
+            absoluteTimeoutSeconds: $this->sessionAbsoluteTimeoutSeconds,
         );
     }
 }
@@ -13906,6 +15172,8 @@ final readonly class AuthenticationContext
     {
         return new self(
             authenticated       : true,
+            authenticationMode  : $authenticationMode,
+            authenticatedUser   : $authenticatedUser,
             sessionId           : $sessionId,
             accessTokenId       : $accessTokenId,
             accessTokenExpiresAt: $accessTokenExpiresAt,
@@ -13913,8 +15181,6 @@ final readonly class AuthenticationContext
             refreshTokenFamilyId: $refreshTokenFamilyId,
             mfaVerifiedAt       : $mfaVerifiedAt,
             phishingResistant   : $phishingResistant,
-            mode                : $authenticationMode,
-            user                : $authenticatedUser,
         );
     }
 
@@ -14157,6 +15423,120 @@ final readonly class ReadCurrentUser
     public function execute() : AuthenticatedUser|null
     {
         return $this->currentAuthentication->read()->user();
+    }
+}
+
+=== Auth/System/Flows/IssueAccessToken/IssueAccessToken.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Flows\IssueAccessToken;
+
+use Avax\Components\Identity\Auth\System\Foundation\Time\ClockInterface;
+use Avax\Components\Identity\Auth\System\Foundation\Values\TokenClaims;
+use Avax\Components\Identity\Auth\System\Foundation\Ids\TokenId;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Codec\SignToken;
+
+/**
+ * IssueAccessToken — flow for issuing signed access tokens.
+ *
+ * Adapted from the enterprise reference package.
+ * Takes a request DTO, builds TokenClaims, signs them via SignToken codec,
+ * and returns an IssuedAccessToken value object.
+ */
+final readonly class IssueAccessToken
+{
+    public function __construct(
+        private SignToken $tokens,
+        private ClockInterface $clock,
+    ) {}
+
+    public function issue(IssueAccessTokenRequest $request): IssuedAccessToken
+    {
+        $now = $this->clock->now();
+        $claims = new TokenClaims(
+            tokenId: TokenId::random(),
+            userId: $request->userId(),
+            issuedAt: $now,
+            expiresAt: $now->add($request->ttl()),
+            tenantId: $request->tenantId(),
+            scopes: $request->scopes(),
+        );
+
+        return new IssuedAccessToken($this->tokens->sign($claims->toPayload()));
+    }
+}
+
+=== Auth/System/Flows/IssueAccessToken/IssueAccessTokenRequest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Flows\IssueAccessToken;
+
+use Avax\Components\Identity\Auth\System\Foundation\Ids\TenantId;
+use Avax\Components\Identity\Auth\System\Foundation\Ids\UserId;
+use DateInterval;
+
+/**
+ * IssueAccessTokenRequest — DTO carrying input for issuing an access token.
+ *
+ * Adapted from the enterprise reference package.
+ */
+final readonly class IssueAccessTokenRequest
+{
+    /** @param list<string> $scopes */
+    public function __construct(
+        private UserId $userId,
+        private DateInterval $ttl,
+        private TenantId|null $tenantId = null,
+        private array $scopes = [],
+    ) {}
+
+    public function userId(): UserId
+    {
+        return $this->userId;
+    }
+
+    public function ttl(): DateInterval
+    {
+        return $this->ttl;
+    }
+
+    public function tenantId(): TenantId|null
+    {
+        return $this->tenantId;
+    }
+
+    /** @return list<string> */
+    public function scopes(): array
+    {
+        return $this->scopes;
+    }
+}
+
+=== Auth/System/Flows/IssueAccessToken/IssuedAccessToken.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Flows\IssueAccessToken;
+
+use Avax\Components\Identity\Auth\System\Foundation\Values\SignedToken;
+
+/**
+ * IssuedAccessToken — value object wrapping a newly issued signed token.
+ *
+ * Adapted from the enterprise reference package.
+ */
+final readonly class IssuedAccessToken
+{
+    public function __construct(private SignedToken $token) {}
+
+    public function token(): SignedToken
+    {
+        return $this->token;
     }
 }
 
@@ -15313,6 +16693,190 @@ final readonly class ValidateRegistrationData
     }
 }
 
+=== Auth/System/Flows/StartSession/StartSession.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Flows\StartSession;
+
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store\GenerateSessionId;
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store\SessionStore;
+use Avax\Components\Identity\Auth\System\Foundation\Time\ClockInterface;
+
+/**
+ * StartSession — flow for starting authenticated user sessions.
+ *
+ * Adapted from the enterprise reference package.
+ * Generates a session ID, creates an IdentitySession with the requested
+ * TTL and tenant, persists it to the session store, and returns StartedSession.
+ */
+final readonly class StartSession
+{
+    public function __construct(
+        private GenerateSessionId $sessionIds,
+        private SessionStore $sessions,
+        private ClockInterface $clock,
+    ) {}
+
+    public function start(StartSessionRequest $request): StartedSession
+    {
+        $now = $this->clock->now();
+        $session = new \Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store\IdentitySession(
+            sessionId: $this->sessionIds->generate(),
+            userId: $request->userId(),
+            createdAt: $now,
+            expiresAt: $now->add($request->ttl()),
+            tenantId: $request->tenantId(),
+        );
+
+        $this->sessions->save($session);
+
+        return new StartedSession($session);
+    }
+}
+
+=== Auth/System/Flows/StartSession/StartSessionRequest.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Flows\StartSession;
+
+use Avax\Components\Identity\Auth\System\Foundation\Ids\TenantId;
+use Avax\Components\Identity\Auth\System\Foundation\Ids\UserId;
+use DateInterval;
+
+/**
+ * StartSessionRequest — DTO carrying input for starting a user session.
+ *
+ * Adapted from the enterprise reference package.
+ */
+final readonly class StartSessionRequest
+{
+    public function __construct(
+        private UserId $userId,
+        private DateInterval $ttl,
+        private TenantId|null $tenantId = null,
+    ) {}
+
+    public function userId(): UserId
+    {
+        return $this->userId;
+    }
+
+    public function ttl(): DateInterval
+    {
+        return $this->ttl;
+    }
+
+    public function tenantId(): TenantId|null
+    {
+        return $this->tenantId;
+    }
+}
+
+=== Auth/System/Flows/StartSession/StartedSession.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Flows\StartSession;
+
+use Avax\Components\Identity\Auth\System\Capabilities\Identity\Sessions\Store\IdentitySession;
+
+/**
+ * StartedSession — value object wrapping a newly started session.
+ *
+ * Adapted from the enterprise reference package.
+ */
+final readonly class StartedSession
+{
+    public function __construct(private IdentitySession $session) {}
+
+    public function session(): IdentitySession
+    {
+        return $this->session;
+    }
+}
+
+=== Auth/System/Flows/VerifyAccessToken/VerifiedAccessToken.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Flows\VerifyAccessToken;
+
+use Avax\Components\Identity\Auth\System\Foundation\Values\TokenClaims;
+
+/**
+ * VerifiedAccessToken — value object wrapping verified token claims.
+ *
+ * Adapted from the enterprise reference package.
+ * Returned by VerifyAccessToken flow when a token passes all checks.
+ */
+final readonly class VerifiedAccessToken
+{
+    public function __construct(private TokenClaims $claims) {}
+
+    public function claims(): TokenClaims
+    {
+        return $this->claims;
+    }
+}
+
+=== Auth/System/Flows/VerifyAccessToken/VerifyAccessToken.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Flows\VerifyAccessToken;
+
+use Avax\Components\Identity\Auth\System\Foundation\Failures\TokenRejected;
+use Avax\Components\Identity\Auth\System\Foundation\Time\ClockInterface;
+use Avax\Components\Identity\Auth\System\Foundation\Values\SignedToken;
+use Avax\Components\Identity\Auth\System\Foundation\Values\TokenClaims;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Blacklist\TokenBlacklist;
+use Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Codec\VerifyToken;
+
+/**
+ * VerifyAccessToken — flow for verifying signed access tokens.
+ *
+ * Adapted from the enterprise reference package.
+ * Checks: (1) signature verification via VerifyToken codec,
+ *         (2) expiry via ClockInterface,
+ *         (3) blacklist presence via TokenBlacklist.
+ * Throws TokenRejected on any failure.
+ */
+final readonly class VerifyAccessToken
+{
+    public function __construct(
+        private VerifyToken $tokens,
+        private TokenBlacklist $blacklist,
+        private ClockInterface $clock,
+    ) {}
+
+    public function verify(SignedToken $token): VerifiedAccessToken
+    {
+        $claims = $this->tokens->verify($token);
+        if ($claims === null) {
+            throw TokenRejected::because('Token signature is invalid.');
+        }
+
+        $tokenClaims = TokenClaims::fromPayload($claims);
+
+        if ($tokenClaims->isExpiredAt($this->clock->now())) {
+            throw TokenRejected::because('Token is expired.');
+        }
+
+        if ($this->blacklist->contains($tokenClaims->tokenId())) {
+            throw TokenRejected::because('Token has been revoked.');
+        }
+
+        return new VerifiedAccessToken($tokenClaims);
+    }
+}
+
 === Auth/System/Flows/VerifyIdentity/EmailVerification/BeginEmailVerification.php ===
 <?php
 
@@ -15670,12 +17234,13 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Auth\System\Foundation;
 
+use Avax\Components\Identity\Auth\System\Foundation\Time\ClockInterface;
 use DateTimeImmutable;
 
 /**
  * Clock service for time-related operations.
  */
-class Clock
+class Clock implements ClockInterface
 {
     /**
      * Get the current time.
@@ -15859,6 +17424,51 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Auth\System\Foundation\Exceptions;
 
 final class IdentitySyncException extends AuthException {}
+
+=== Auth/System/Foundation/Failures/AccessDenied.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Foundation\Failures;
+
+use RuntimeException;
+
+/**
+ * AccessDenied — thrown when tenant membership or resource access is denied.
+ *
+ * Adapted from the enterprise reference package.
+ */
+final class AccessDenied extends RuntimeException
+{
+    public static function because(string $reason): self
+    {
+        return new self($reason);
+    }
+}
+
+=== Auth/System/Foundation/Failures/TokenRejected.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Foundation\Failures;
+
+use RuntimeException;
+
+/**
+ * TokenRejected — thrown when a token fails signature verification, is expired, or is revoked.
+ *
+ * Adapted from the enterprise reference package.
+ * Used by VerifyAccessToken flow for all token rejection paths.
+ */
+final class TokenRejected extends RuntimeException
+{
+    public static function because(string $reason): self
+    {
+        return new self($reason);
+    }
+}
 
 === Auth/System/Foundation/IdGenerator.php ===
 <?php
@@ -16116,6 +17726,11 @@ final readonly class TokenId implements Stringable
     {
         return $this->value;
     }
+
+    public static function random(): self
+    {
+        return new self(bin2hex(random_bytes(16)));
+    }
 }
 
 === Auth/System/Foundation/Ids/UserId.php ===
@@ -16147,6 +17762,31 @@ final readonly class UserId implements Stringable
     {
         return $this->value;
     }
+}
+
+=== Auth/System/Foundation/State/ResettableIdentityState.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Foundation\State;
+
+/**
+ * ResettableIdentityState — contract for in-memory state that must be cleared
+ * between requests in long-lived runtimes (RoadRunner, Swoole, Workerman, FrankenPHP).
+ *
+ * Adapted from the enterprise reference package.
+ * All InMemory store implementations in the Identity component must implement this interface.
+ */
+interface ResettableIdentityState
+{
+    /**
+     * Clears request/runtime-local mutable state.
+     *
+     * Long-lived runtimes must call this between requests when this implementation
+     * is used as in-memory state.
+     */
+    public function reset(): void;
 }
 
 === Auth/System/Foundation/Text/MaskSecret.php ===
@@ -16230,7 +17870,27 @@ namespace Avax\Components\Identity\Auth\System\Foundation\Time;
 
 use Avax\Components\Identity\Auth\System\Foundation\Clock as BaseClock;
 
-final class Clock extends BaseClock {}
+final class Clock extends BaseClock implements ClockInterface {}
+
+=== Auth/System/Foundation/Time/ClockInterface.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Foundation\Time;
+
+use DateTimeImmutable;
+
+/**
+ * ClockInterface — contract for time abstraction in Identity flows.
+ *
+ * Adapted from the enterprise reference package.
+ * The concrete Clock class in Auth/System/Foundation/Clock.php implements this contract.
+ */
+interface ClockInterface
+{
+    public function now(): DateTimeImmutable;
+}
 
 === Auth/System/Foundation/Time/Expiry.php ===
 <?php
@@ -16258,6 +17918,31 @@ final readonly class Expiry
         $now ??= new DateTimeImmutable();
 
         return $now >= $this->at;
+    }
+}
+
+=== Auth/System/Foundation/Time/FrozenClock.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Foundation\Time;
+
+use DateTimeImmutable;
+
+/**
+ * FrozenClock — fixed-time clock for deterministic testing.
+ *
+ * Adapted from the enterprise reference package.
+ * Returns the same time on every call until replaced.
+ */
+final readonly class FrozenClock implements ClockInterface
+{
+    public function __construct(private DateTimeImmutable $time) {}
+
+    public function now(): DateTimeImmutable
+    {
+        return $this->time;
     }
 }
 
@@ -16301,6 +17986,146 @@ final readonly class TimeWindow
     public function contains(DateTimeImmutable $moment) : bool
     {
         return $moment >= $this->startsAt && $moment <= $this->endsAt;
+    }
+}
+
+=== Auth/System/Foundation/Values/SignedToken.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Foundation\Values;
+
+use InvalidArgumentException;
+
+/**
+ * SignedToken — value object wrapping a raw signed token string.
+ *
+ * Adapted from the enterprise reference package.
+ */
+final readonly class SignedToken
+{
+    private function __construct(private string $value) {}
+
+    public static function fromString(string $value): self
+    {
+        $value = trim($value);
+        if ($value === '') {
+            throw new InvalidArgumentException('Signed token cannot be empty.');
+        }
+
+        return new self($value);
+    }
+
+    public function toString(): string
+    {
+        return $this->value;
+    }
+}
+
+=== Auth/System/Foundation/Values/TokenClaims.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Auth\System\Foundation\Values;
+
+use Avax\Components\Identity\Auth\System\Foundation\Ids\TenantId;
+use Avax\Components\Identity\Auth\System\Foundation\Ids\TokenId;
+use Avax\Components\Identity\Auth\System\Foundation\Ids\UserId;
+use DateTimeImmutable;
+
+/**
+ * TokenClaims — value object representing the claims inside an access token.
+ *
+ * Adapted from the enterprise reference package.
+ * Immutable; provides serialization to/from payload arrays for signing codecs.
+ */
+final readonly class TokenClaims
+{
+    /** @param list<string> $scopes */
+    public function __construct(
+        private TokenId $tokenId,
+        private UserId $userId,
+        private DateTimeImmutable $issuedAt,
+        private DateTimeImmutable $expiresAt,
+        private TenantId|null $tenantId = null,
+        private array $scopes = [],
+    ) {}
+
+    public function tokenId(): TokenId
+    {
+        return $this->tokenId;
+    }
+
+    public function userId(): UserId
+    {
+        return $this->userId;
+    }
+
+    public function tenantId(): TenantId|null
+    {
+        return $this->tenantId;
+    }
+
+    /** @return list<string> */
+    public function scopes(): array
+    {
+        return $this->scopes;
+    }
+
+    public function issuedAt(): DateTimeImmutable
+    {
+        return $this->issuedAt;
+    }
+
+    public function expiresAt(): DateTimeImmutable
+    {
+        return $this->expiresAt;
+    }
+
+    public function isExpiredAt(DateTimeImmutable $time): bool
+    {
+        return $this->expiresAt <= $time;
+    }
+
+    /** @return array<string, mixed> */
+    public function toPayload(): array
+    {
+        return [
+            'jti' => (string) $this->tokenId,
+            'sub' => (string) $this->userId,
+            'iat' => $this->issuedAt->getTimestamp(),
+            'exp' => $this->expiresAt->getTimestamp(),
+            'tenant' => $this->tenantId !== null ? (string) $this->tenantId : null,
+            'scopes' => $this->scopes,
+        ];
+    }
+
+    /** @param array<string, mixed> $payload */
+    public static function fromPayload(array $payload): self
+    {
+        $tenant = isset($payload['tenant']) && is_string($payload['tenant']) && $payload['tenant'] !== ''
+            ? new TenantId($payload['tenant'])
+            : null;
+
+        $scopes = [];
+        if (isset($payload['scopes']) && is_array($payload['scopes'])) {
+            foreach ($payload['scopes'] as $scope) {
+                if (is_string($scope)) {
+                    $scopes[] = $scope;
+                }
+            }
+        }
+
+        return new self(
+            tokenId: new TokenId((string) $payload['jti']),
+            userId: new UserId((string) $payload['sub']),
+            issuedAt: (new DateTimeImmutable())->setTimestamp((int) $payload['iat']),
+            expiresAt: (new DateTimeImmutable())->setTimestamp((int) $payload['exp']),
+            tenantId: $tenant,
+            scopes: $scopes,
+        );
     }
 }
 
@@ -16350,6 +18175,15 @@ final class Auth implements AuthInterface
         }
 
         return self::$instance;
+    }
+
+    /**
+     * Reset static instance for long-lived worker safety.
+     * MUST be called between requests in persistent runtimes.
+     */
+    public static function resetInstance() : void
+    {
+        self::$instance = null;
     }
 
     public function __construct(
@@ -25851,30 +27685,6 @@ final readonly class RevokePasskey
     }
 }
 
-=== Credentials/System/Configuration/Assembly/CredentialsGraph.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\Identity\Credentials\System\Configuration\Assembly;
-
-use Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\CredentialStoreInterface;
-use Avax\Components\Identity\Credentials\System\PublicSurface\Credentials;
-
-/**
- * Configures the Credentials static facade with a backing store.
- *
- * @deprecated Inject CredentialStoreInterface directly instead.
- *             This class remains for backward-compatible assembly.
- */
-final class CredentialsGraph
-{
-    public static function fromStore(CredentialStoreInterface $store) : void
-    {
-        Credentials::setStore($store);
-    }
-}
-
 === Credentials/System/Configuration/CredentialsConfiguration.php ===
 <?php
 
@@ -25900,22 +27710,156 @@ namespace Avax\Components\Identity\Credentials\System\Configuration;
 
 use Avax\Components\Application\Container\System\Capabilities\ServiceProvider\ServiceProvider;
 use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
-use Avax\Components\Identity\Credentials\System\Configuration\CredentialsConfiguration;
+use Avax\Components\Identity\Credentials\System\Configuration\Graphs\CredentialsGraph;
 
 /**
- * CredentialsServiceProvider — registers credentials component dependencies.
+ * CredentialsServiceProvider — delegates to CredentialsGraph for all registrations.
  */
 final class CredentialsServiceProvider implements ServiceProvider
 {
     public function register(ContainerInterface $container) : void
     {
-        // Credentials configuration — encryption and credential limits
-        $container->singleton(CredentialsConfiguration::class, static fn () : CredentialsConfiguration => new CredentialsConfiguration());
+        CredentialsGraph::register($container);
     }
 
     public function boot(ContainerInterface $container) : void
     {
-        // Reset static credential store for worker safety
+        CredentialsGraph::boot();
+    }
+}
+
+=== Credentials/System/Configuration/Graphs/CredentialsGraph.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Credentials\System\Configuration\Graphs;
+
+use Avax\Components\Application\Container\System\PublicSurface\ContainerInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\CredentialStoreInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\CredentialStore\InMemoryCredentialStore;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Limit\InMemoryAttemptLimitStorage;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Limit\LimitMfaAttempts;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Stores\InMemoryMfaStore;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Stores\MfaStoreInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Totp\Totp;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Totp\TotpInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\InMemoryMfaChallengeStore;
+use Avax\Components\Identity\Credentials\System\Capabilities\Mfa\Runtime\Verify\MfaChallengeStoreInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\InMemoryPasskeyChallengeStore;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\InMemoryPasskeyCredentialStore;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyChallengeStoreInterface;
+use Avax\Components\Identity\Credentials\System\Capabilities\Passkey\PasskeyCredentialCeremony\PasskeyCredentialStoreInterface;
+use Avax\Components\Identity\Credentials\System\Configuration\CredentialsConfiguration;
+
+/**
+ * CredentialsGraph — canonical DI registration for Credentials component infrastructure.
+ *
+ * Registers:
+ * - MFA stores (InMemoryMfaStore, InMemoryMfaChallengeStore)
+ * - TOTP implementation
+ * - MFA attempt limiting
+ * - Passkey stores (credential + challenge)
+ * - Credential store
+ * - CredentialsConfiguration
+ *
+ * The Credentials component is a capability provider — its classes are consumed
+ * by Auth's IdentityAssembler. This graph ensures all infrastructure singletons
+ * are registered before assembly.
+ */
+final class CredentialsGraph
+{
+    /**
+     * Register all Credentials component dependencies in the container.
+     */
+    public static function register(ContainerInterface $container) : void
+    {
+        // === Configuration ===
+
+        $container->singleton(
+            CredentialsConfiguration::class,
+            static fn () : CredentialsConfiguration => new CredentialsConfiguration(),
+        );
+
+        // === Credential Store ===
+
+        $container->singleton(
+            InMemoryCredentialStore::class,
+            static fn () : InMemoryCredentialStore => new InMemoryCredentialStore(),
+        );
+        $container->singleton(
+            CredentialStoreInterface::class,
+            static fn (ContainerInterface $c) : CredentialStoreInterface => $c->get(InMemoryCredentialStore::class),
+        );
+
+        // === MFA Infrastructure ===
+
+        $container->singleton(
+            InMemoryMfaStore::class,
+            static fn () : InMemoryMfaStore => new InMemoryMfaStore(),
+        );
+        $container->singleton(
+            MfaStoreInterface::class,
+            static fn (ContainerInterface $c) : MfaStoreInterface => $c->get(InMemoryMfaStore::class),
+        );
+
+        $container->singleton(
+            InMemoryMfaChallengeStore::class,
+            static fn () : InMemoryMfaChallengeStore => new InMemoryMfaChallengeStore(),
+        );
+        $container->singleton(
+            MfaChallengeStoreInterface::class,
+            static fn (ContainerInterface $c) : MfaChallengeStoreInterface => $c->get(InMemoryMfaChallengeStore::class),
+        );
+
+        $container->singleton(
+            Totp::class,
+            static fn () : Totp => new Totp(),
+        );
+        $container->singleton(
+            TotpInterface::class,
+            static fn (ContainerInterface $c) : TotpInterface => $c->get(Totp::class),
+        );
+
+        // MFA attempt limiting
+        $container->singleton(
+            InMemoryAttemptLimitStorage::class,
+            static fn () : InMemoryAttemptLimitStorage => new InMemoryAttemptLimitStorage(),
+        );
+        $container->singleton(
+            LimitMfaAttempts::class,
+            static fn (ContainerInterface $c) : LimitMfaAttempts => new LimitMfaAttempts(
+                attemptLimitStorage: $c->get(InMemoryAttemptLimitStorage::class),
+                clock              : $c->get(\Avax\Components\Identity\Auth\System\Foundation\Clock::class),
+            ),
+        );
+
+        // === Passkey Infrastructure ===
+
+        $container->singleton(
+            InMemoryPasskeyCredentialStore::class,
+            static fn () : InMemoryPasskeyCredentialStore => new InMemoryPasskeyCredentialStore(),
+        );
+        $container->singleton(
+            PasskeyCredentialStoreInterface::class,
+            static fn (ContainerInterface $c) : PasskeyCredentialStoreInterface => $c->get(InMemoryPasskeyCredentialStore::class),
+        );
+
+        $container->singleton(
+            InMemoryPasskeyChallengeStore::class,
+            static fn () : InMemoryPasskeyChallengeStore => new InMemoryPasskeyChallengeStore(),
+        );
+        $container->singleton(
+            PasskeyChallengeStoreInterface::class,
+            static fn (ContainerInterface $c) : PasskeyChallengeStoreInterface => $c->get(InMemoryPasskeyChallengeStore::class),
+        );
+    }
+
+    /**
+     * Boot — reset static state for long-lived worker safety.
+     */
+    public static function boot() : void
+    {
         \Avax\Components\Identity\Credentials\System\PublicSurface\Credentials::reset();
     }
 }
@@ -36182,6 +38126,7 @@ use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Signing\JwtSigne
 use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Tokens\AccessToken;
 use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Tokens\TokenPair;
 use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Verification\TokenVerifier;
+use Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\TokenBlacklist;
 use RuntimeException;
 use Throwable;
 
@@ -36555,42 +38500,6 @@ final readonly class RefreshToken
     }
 }
 
-=== Tokens/System/Capabilities/JwtAuth/Tokens/TokenBlacklist.php ===
-<?php
-
-declare(strict_types=1);
-
-namespace Avax\Components\Identity\Tokens\System\Capabilities\JwtAuth\Tokens;
-
-final class TokenBlacklist
-{
-    /** @var array<string, true> */
-    private static array $revoked = [];
-
-    public function revoke(string $token) : void
-    {
-        self::$revoked[$token] = true;
-    }
-
-    public function isRevoked(string $token) : bool
-    {
-        return isset(self::$revoked[$token]);
-    }
-
-    public function clear() : void
-    {
-        self::$revoked = [];
-    }
-
-    /**
-     * Reset static state for long-lived worker safety.
-     */
-    public static function reset(): void
-    {
-        self::$revoked = [];
-    }
-}
-
 === Tokens/System/Capabilities/JwtAuth/Tokens/TokenPair.php ===
 <?php
 
@@ -36684,6 +38593,68 @@ declare(strict_types=1);
 namespace Avax\Components\Identity\Tokens\System\Capabilities\Tokens;
 
 final class ReadToken {}
+
+=== Tokens/System/Capabilities/Tokens/Runtime/Blacklist/InMemoryTokenBlacklist.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Blacklist;
+
+use Avax\Components\Identity\Auth\System\Foundation\Ids\TokenId;
+use Avax\Components\Identity\Auth\System\Foundation\State\ResettableIdentityState;
+
+/**
+ * InMemoryTokenBlacklist — in-memory token denylist for runtime verification.
+ *
+ * Adapted from the enterprise reference package.
+ * Implements ResettableIdentityState for long-lived worker safety.
+ * Does NOT perform TTL-based eviction — tokens stay revoked until reset.
+ * For production with expiry-based eviction, use a Redis or database-backed implementation.
+ */
+final class InMemoryTokenBlacklist implements TokenBlacklist, ResettableIdentityState
+{
+    /** @var array<string, true> */
+    private array $revoked = [];
+
+    public function contains(TokenId $tokenId): bool
+    {
+        return isset($this->revoked[$tokenId->value]);
+    }
+
+    public function add(TokenId $tokenId): void
+    {
+        $this->revoked[$tokenId->value] = true;
+    }
+
+    public function reset(): void
+    {
+        $this->revoked = [];
+    }
+}
+
+=== Tokens/System/Capabilities/Tokens/Runtime/Blacklist/TokenBlacklist.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Blacklist;
+
+use Avax\Components\Identity\Auth\System\Foundation\Ids\TokenId;
+
+/**
+ * TokenBlacklist — contract for token revocation checks during verification.
+ *
+ * Adapted from the enterprise reference package.
+ * Simpler than TokenRevocationStoreInterface: only checks presence, not expiry.
+ * Used by the VerifyAccessToken flow for runtime token verification.
+ */
+interface TokenBlacklist
+{
+    public function contains(TokenId $tokenId): bool;
+
+    public function add(TokenId $tokenId): void;
+}
 
 === Tokens/System/Capabilities/Tokens/Runtime/Code/AuthorizationCodeRecord.php ===
 <?php
@@ -36939,6 +38910,7 @@ declare(strict_types=1);
 
 namespace Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Codec;
 
+use Avax\Components\Identity\Auth\System\Foundation\Values\SignedToken;
 use InvalidArgumentException;
 use JsonException;
 use SensitiveParameter;
@@ -36946,8 +38918,9 @@ use Throwable;
 
 /**
  * Encodes and decodes compact JWTs signed with shared-secret HMAC algorithms.
+ * Also implements SignToken and VerifyToken contracts for flow-level use.
  */
-final readonly class HmacTokenCodec implements TokenCodecInterface
+final readonly class HmacTokenCodec implements TokenCodecInterface, SignToken, VerifyToken
 {
     private const array SUPPORTED_ALGORITHMS
         = [
@@ -37106,6 +39079,26 @@ private function base64UrlDecode(string $value) : string
 
         return $decoded;
     }
+
+    /**
+     * SignToken interface — build claims array and return a SignedToken.
+     *
+     * @param array<string, mixed> $claims
+     */
+    public function sign(array $claims): SignedToken
+    {
+        return SignedToken::fromString($this->encode($claims));
+    }
+
+    /**
+     * VerifyToken interface — verify a SignedToken and return claims or null.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function verify(SignedToken $token): array|null
+    {
+        return $this->decode($token->toString());
+    }
 }
 
 === Tokens/System/Capabilities/Tokens/Runtime/Codec/MultiKeyHmacTokenCodec.php ===
@@ -37155,6 +39148,29 @@ final readonly class MultiKeyHmacTokenCodec implements TokenCodecInterface
     }
 }
 
+=== Tokens/System/Capabilities/Tokens/Runtime/Codec/SignToken.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Codec;
+
+use Avax\Components\Identity\Auth\System\Foundation\Values\SignedToken;
+
+/**
+ * SignToken — contract for issuing signed tokens.
+ *
+ * Adapted from the enterprise reference package.
+ * Implemented by HmacTokenCodec and MultiKeyHmacTokenCodec.
+ */
+interface SignToken
+{
+    /**
+     * @param array<string, mixed> $claims
+     */
+    public function sign(array $claims): SignedToken;
+}
+
 === Tokens/System/Capabilities/Tokens/Runtime/Codec/TokenCodecInterface.php ===
 <?php
 
@@ -37178,6 +39194,29 @@ interface TokenCodecInterface
      * @return array<string, mixed>|null
      */
     public function decode(#[SensitiveParameter] string $token) : array|null;
+}
+
+=== Tokens/System/Capabilities/Tokens/Runtime/Codec/VerifyToken.php ===
+<?php
+
+declare(strict_types=1);
+
+namespace Avax\Components\Identity\Tokens\System\Capabilities\Tokens\Runtime\Codec;
+
+use Avax\Components\Identity\Auth\System\Foundation\Values\SignedToken;
+
+/**
+ * VerifyToken — contract for verifying signed tokens.
+ *
+ * Adapted from the enterprise reference package.
+ * Implemented by HmacTokenCodec and MultiKeyHmacTokenCodec.
+ */
+interface VerifyToken
+{
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function verify(SignedToken $token): array|null;
 }
 
 === Tokens/System/Capabilities/Tokens/Runtime/Flow/RefreshAuthentication.php ===
